@@ -6,8 +6,8 @@ freedom to choose where they live. Milestones below advance reusable capabilitie
 The FilOz demo-hosting use case is a candidate first pilot, not the north star.
 Only M7a has entered implementation; later milestones remain proposals.
 
-M7a's native Void implementation is qualified locally; independent teammate
-onboarding remains an open acceptance check. See the [fixture guide](../examples/guestbook/README.md)
+M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
+Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
 and [implementation report](report.md). M7b is the next implementation slice.
 
 ## Current foundation
@@ -23,7 +23,7 @@ Do not infer product support from the runtimes' feature lists.
 
 | Milestone | Capability and goal | Exit evidence | Outside this milestone |
 | --- | --- | --- | --- |
-| M7a. One complete Void app, twice | Qualify the full-stack development/deploy loop (G1, G3, G4) | One supported UI/assets/typed API/D1 fixture; two releases retain records; submitter-visible status; approval checks; offline second-target build; a second developer reproduces the local steps | Shared remote hosting, app-auth/provider integration, new binding families |
+| M7a. One complete Void app, twice | Qualify the full-stack development/deploy loop (G1, G3, G4) | One supported UI/assets/typed API/D1 fixture; two releases retain records; submitter-visible status; approval checks; offline second-target build; a fresh agent reproduces the documented local workflow without author assistance | Shared remote hosting, app-auth/provider integration, new binding families |
 | M7b. Grow that application | Add resources without abandoning data (G1, G3, G4) | One compatible resource addition preserves identities and records; logical export/restore fixture covers the supported data profile; unsupported/destructive changes fail explicitly | Resource renames/deletions, general migration tools, slot reuse |
 | M7c. Private configuration and app identity | Preserve the supported Void environment/auth experience (G1, G3) | Required-secret declarations validate before activation; operator-supplied secret values stay out of submitted/downloadable artifacts and status; a bounded native Void auth flow and its migrations work; app login is separate from deploy permission | Every auth provider, universal SSO/RBAC, weakening reserved-route protection |
 | M8. Recoverable installation | Operators can keep and recover applications (G2, G3) | Document required state and identities; establish a stopped/quiesced backup; restore onto fresh storage; test upgrade/interruption; record recovery time and loss boundary; qualify separate platform identities, TLS/access policy, secret recovery, and quotas for shared operation | Global HA, live geo-replication, arbitrary untrusted tenants |
@@ -60,8 +60,8 @@ See [compatibility-policy.md](compatibility-policy.md).
 | A personal homelab application | Installation, small-capacity operation, recovery, and operator clarity | Worldwide availability or shared-team identity requirements |
 | An independent app with an offline managed-target handoff | Code/data portability and specific incompatibilities | Actual hosted execution or business demand |
 
-Before the next implementation, qualify the pinned starter against the
-[M7a proposal](next-milestone.md). Inventory a candidate pilot app when one is available. App selection can refine
+The pinned starter has passed the local [M7a qualification](next-milestone.md).
+Inventory a candidate pilot app when one is available. App selection can refine
 requirements; lack of an immediately supplied demo need not block documenting the
 reusable contract. Do not invent a dashboard or force each app to use every binding.
 
@@ -72,11 +72,15 @@ platform resources before designing a custom scheduler or Kubernetes operator.
 
 ## What the next spec needs to resolve
 
-The M7a proposal chooses one local Void React fixture, preserves approval, and
-defers app authentication to M7c and shared remote access to M8/M9 qualification. Confirm
-the pinned template, the submitter status authorization boundary, and offline build
-behavior before implementation. Record setup/update effort and assistance. These
-are proposed defaults, not framework restrictions or changes to deploy policy.
+M7b needs a bounded resource-addition contract: which declarations may be added,
+how existing identities and records remain stable, and how approval handles partial
+failure. Select one logical export/restore profile and test its data roundtrip.
+Keep destructive changes and resource retirement outside this slice. M7c retains
+app authentication; M8/M9 retain shared remote operation.
+
+Fresh-agent onboarding measures whether the written workflow can be executed
+without author assistance. It does not establish human usability. Human feedback
+can improve the product later and is not a milestone dependency.
 
 HTTP route pauses do not drain in-flight requests or existing Durable Object alarms.
 M7 uses a documented compatible migration contract; incompatible migrations and

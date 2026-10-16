@@ -193,3 +193,27 @@ debug-artifact channel needs an explicit privacy policy. Asset ignore rules cann
 publish a file matching the mandatory exclusions, which is stricter than upstream
 Void. Application code and deliberately embedded values still enter the bundle;
 this does not make untrusted builds safe or implement secret injection.
+
+## ADR 010: use fresh-agent onboarding as the reproducibility gate
+
+**Context.** M7a's remaining acceptance condition required another developer to
+follow the setup. That makes progress depend on human availability even when the
+written workflow can be exercised independently by an agent.
+
+**Options.** Wait for a human; reuse the implementation agent and its context; or
+run a fresh agent from README with isolated checkout and application state.
+
+**Decision.** Use a fresh, smaller agent without conversation history. Give it a
+clean checkout, fresh Compose volumes and credentials, the user objective, and
+only environment/safety constraints. It discovers the procedure through README
+and linked user guides. Documented automation is allowed. It must report missing
+instructions instead of reading implementation internals or repairing the product.
+If documentation needs repair, repeat with a new agent and clean state.
+
+**Consequences.** Reproducibility no longer waits for another person. Record the
+model, revision, commands, failures, assistance, and isolation limits. Existing
+host tools and dependency/image caches may be shared and must be disclosed.
+Success qualifies agent execution of the documented workflow, not human usability
+or a fresh operating-system installation. Human feedback remains optional. A
+smaller model can still infer steps a human would miss, so successful automation
+must not be described as proof of an intuitive manual workflow.

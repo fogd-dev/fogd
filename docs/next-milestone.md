@@ -1,12 +1,13 @@
 # M7a: one complete Void app, twice
 
-**Implementation qualified locally; independent onboarding remains open.** Demonstrate Void's full-stack developer
+**Qualified locally, including fresh-agent onboarding.** Demonstrate Void's full-stack developer
 experience on fogd through two releases of one local application. This advances G1
 and G3 in the [vision](vision.md), starts G4 portability evidence, and qualifies part
 of scenarios U1/U2/U4. It does not establish shared production hosting or complete
 support for every Void feature. The [guestbook guide](../examples/guestbook/README.md) reproduces the implemented
 qualification; [report.md](report.md) records results. The original proposal is
-preserved in the vision review snapshot.
+preserved in the vision review snapshot. The [onboarding record](onboarding.md)
+documents the fresh-agent result and its limits.
 
 ## Scope and defaults
 
@@ -22,8 +23,8 @@ operator may submit and approve using the existing separate roles. Do not add an
 approval bypass. App authentication and private configuration belong to M7c. Named teammate
 identities, TLS/DNS, backups, and remote shared operation belong to M8/M9 before
 sharing valuable data.
-A second developer can run the same local procedure without needing infrastructure
-access to the author's machine.
+A fresh agent follows the public instructions in a clean checkout with fresh stack
+state. Human usability feedback is optional and does not block this milestone.
 
 ## Acceptance conditions
 
@@ -36,7 +37,7 @@ access to the author's machine.
 | Approval remains authoritative | Pending/rejected artifacts are unreachable; the approved digest is the active release; test the browser flow against that release |
 | Submitters can diagnose their submission without admin credentials | Inspect status and a bounded failure reason for an authorized submission; unauthorized access is rejected; no runtime/admin credentials appear in the response |
 | Portability work begins now | Produce the offline managed-target build from the same app logic with network access disabled during the build; record configuration and bundle differences; mark hosted execution unverified |
-| Results are reproducible | A second developer follows the written steps; record setup/update steps, assistance, and failures rather than assuming an effort reduction |
+| Results are reproducible | A fresh agent without conversation history follows README and linked user guides in a clean checkout with fresh credentials/volumes; record commands, results, failures, and assistance. Documented automation is allowed; code inspection to recover missing instructions is not. Human feedback is optional |
 
 Reuse existing migration fault tests where they cover the required behavior. Add
 new tests only for newly qualified paths. Type correctness is a build-time check;

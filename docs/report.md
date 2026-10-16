@@ -38,8 +38,12 @@ additive migration, existing rows with the new default, a new history page, and
 controller/workerd restart. The ordinary Void development server passed the same
 browser form/API check with its separate local database. Type-checking includes
 negative client contracts. Both ordinary and fogd builds passed in a Docker run
-with `--network none`; hosted execution remains unverified. Independent teammate
-onboarding has not been observed, so the reproducibility gate remains open.
+with `--network none`; hosted execution remains unverified.
+
+A fresh smaller agent independently completed the documented automated workflow
+from a clean checkout with new credentials and volumes, without author hints.
+The [onboarding record](onboarding.md) closes the revised M7a reproducibility gate.
+Human usability and manual admin-UI onboarding remain unverified and optional.
 
 ## Runtime boundary and corrections to the initial assumptions
 

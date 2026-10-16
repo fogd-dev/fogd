@@ -160,7 +160,8 @@ node scripts/fullstack-smoke.mjs
 ```
 
 The fixture guide also covers normal Void local development and both target builds
-in a Docker container with networking disabled. Hosted execution and independent
-teammate onboarding remain unverified. Existing examples can be redeployed from
+in a Docker container with networking disabled. A [fresh-agent onboarding test](docs/onboarding.md)
+passed from a clean checkout without author hints. Hosted execution remains
+unverified; human usability feedback is optional. Existing examples can be redeployed from
 source; keep volumes only when you need their data. No separate always-running test
 stack is required.
