@@ -15,14 +15,14 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 4. CLI | `fogd up` creates private local credentials and starts Docker; `fogd deploy` builds in a Void app and submits its artifact |
 | 5. Platform design | Claude and Gemini independently reviewed the selected custom approval gate; original proposals and responses are preserved in `reviews/` |
 | 6. Platform | Two apps, exact subdomain routing, Basic-authenticated admin UI/CLI, immutable-digest approval, rejection, failure/retry, and runtime resource limits |
+| 7a. Native full-stack qualification | Guestbook pages, form actions, typed client/API, split client assets, two approved releases and additive SQL; see the [fixture guide](../examples/guestbook/README.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
 rejection, artifact-path rejection, D1/R2/DO writes, isolated SQL activation failure,
 corrected resubmission, and controller/workerd restart persistence. Seventeen unit tests cover
 interrupted activation, migration reconciliation, controller metadata loss, auth,
-artifact validation, ownership conflicts, and ingress behavior. Both production
-builds pass. The final implementation also passed the approval smoke on fresh
+artifact validation, ownership conflicts, and ingress behavior. The sample production builds pass. The final implementation also passed the approval smoke on fresh
 Docker volumes after review fixes.
 
 The initial direct runtime recovery test passed with both replicas force-stopped in
@@ -31,6 +31,15 @@ with fresh Docker volumes passed installation, startup, both CLI builds, and the
 complete approval smoke test; details are recorded in [notes](notes.md).
 Run `node scripts/platform-smoke.mjs` on a fresh stack and `node scripts/recovery.mjs`
 after approving notebook second. The README contains all six reproduction sections.
+
+The M7a browser smoke passed on fresh local Docker volumes: rejection before first
+activation, approved pages and CSS, form writes/reload, typed API reads, a generated
+additive migration, existing rows with the new default, a new history page, and
+controller/workerd restart. The ordinary Void development server passed the same
+browser form/API check with its separate local database. Type-checking includes
+negative client contracts. Both ordinary and fogd builds passed in a Docker run
+with `--network none`; hosted execution remains unverified. Independent teammate
+onboarding has not been observed, so the reproducibility gate remains open.
 
 ## Runtime boundary and corrections to the initial assumptions
 
@@ -67,7 +76,8 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   Unsupported AI, WfP, Hyperdrive, queues/workflows, cron, cross-app service bindings,
   auth-managed migrations, and other nonempty declarations fail rather than disappear.
 - R2 multipart handles are process-local upstream. Examples exercise ordinary puts
-  and gets. Streaming, WebSockets, asset-heavy applications, and remote two-host
+  and gets. Native React pages and client assets are tested; larger asset collections,
+  streaming, WebSockets, and remote two-host
   deployment have not been qualified by these tests.
 - Approval pauses routing. Schema changes and deployment are not one transaction;
   in-flight requests and existing Durable Object alarms are not quiesced. Use
@@ -78,7 +88,7 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   scoped teammate credentials, audit retention, and stronger identity management.
 - CPU/memory/V8/request-size limits are coarse. There is no per-request CPU billing,
   hostile-code isolation, total artifact-storage quota, or automatic artifact pruning.
-- The npm package remains unpublished. Use the workspace CLI or invoke its script
+- The expanded CLI has not been published to npm. Use the workspace CLI or invoke its script
   with `FOGD_HOME` pointing at this checkout. Future package names use `@fogd/`.
 
 ## Decisions in one place
@@ -91,7 +101,16 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
 6. Use a small approval controller with conditional bucket ownership fences and
    static workerd backend bindings. Pause before activation, verify both versions,
    reconcile migration ledgers, and require explicit retry after interruption.
+7. Select the native Void worker entry and materialize asset ignore rules before
+   celld deployment, while retaining normal client splitting.
+8. Expose status through the existing team credential with fixed failure messages;
+   individual identities and raw diagnostics remain separate concerns.
+9. Upload only runtime worker modules and enforce secret-file asset exclusions;
+   omit local preview secrets and worker source maps.
 
 The [feature table](features.md) compares the implemented platform with its runtimes,
 Void, and hosted Cloudflare. Read [decisions.md](decisions.md) for context, alternatives, and reasons, and
 [platform.md](platform.md) for the deployment state machine and operational scope.
+
+The [M7a review response](reviews/m7-response.md) records Claude and Gemini findings,
+including preview-secret packaging and browser-test fixes.

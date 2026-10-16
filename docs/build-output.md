@@ -15,7 +15,7 @@ migration. It also generated Vite and Void configuration. Builds run with
 
 | Void output | celld input | workerd input |
 | --- | --- | --- |
-| `dist/ssr/index.js` and imported modules | Single Worker entry, loaded with `no_bundle: true` | None: the app executes in celld |
+| `dist/ssr/index.js` and Wasm siblings | Single Worker entry, loaded with `no_bundle: true` | None: the app executes in celld |
 | `dist/ssr/wrangler.json` | Validated configuration subset with stable local resource identities | None |
 | Client assets, when present | `assets.directory` referencing staged files | HTTP responses from celld |
 | `db/migrations/*.sql` | Staged `migrations_dir`, applied with `celld d1 migrations apply` | None |
@@ -41,3 +41,42 @@ The build adapter disables code splitting for the `void_worker` environment.
 celld 0.6.2's `no_bundle` collector includes one JavaScript entry and Wasm siblings,
 but does not upload Vite's JavaScript chunks. The default split output fails at
 runtime. Client-side splitting is unaffected. See ADR 004 in [decisions.md](decisions.md).
+
+## Native React pages and client assets
+
+`examples/guestbook` derives from the pinned Void `createPagesStarterTemplate`
+with React pages and SQLite, then adds a typed API read and compile-time negative
+client checks. It uses Void-generated Drizzle migration metadata. The template's
+React compiler dependency is aligned with the installed React plugin's peer range.
+
+The [build adapter](../packages/cli/src/build.mjs) restores the worker entry before
+disabling splitting. The [asset staging helper](../packages/runtime/src/assets.mjs)
+applies `.assetsignore` patterns before celld sees the tree. Excluded files and the
+ignore file do not enter the approved artifact; `_headers` and `_redirects` remain
+available to celld as metadata. The original app and normal `vite build` output are
+not rewritten. Unsupported multi-output worker configurations fail explicitly.
+
+Pinned source evidence:
+
+- [Void React pages input](https://github.com/voidzero-dev/void/blob/6ef71cfe1b3364e04fd0ec261f7f00bef6aeb99f/packages/react/src/plugin-pages.ts)
+  contributes the client entry through root build options.
+- [Void's environment entry reset](https://github.com/voidzero-dev/void/blob/6ef71cfe1b3364e04fd0ec261f7f00bef6aeb99f/packages/void/src/index.ts)
+  provides the upstream pattern for selecting the Cloudflare virtual worker entry.
+- [Void asset packaging](https://github.com/voidzero-dev/void/blob/6ef71cfe1b3364e04fd0ec261f7f00bef6aeb99f/packages/void/src/cli/package.ts)
+  applies gitignore-style exclusions.
+- [celld deploy](https://github.com/denoland/celld/blob/90b43017241f81189453d326d05948f388b34652/crates/celld/deploy.rs)
+  rejects `.assetsignore` and collects the single prebuilt worker module.
+
+The [verification image](../docker/verify.Dockerfile) installs dependencies during
+image construction, then builds the unchanged guestbook source twice with network
+access disabled: ordinary Vite output targeting Cloudflare, then fogd's single
+worker output targeting celld. Both retain the split client assets. This proves
+local compilation, not Cloudflare-hosted execution or data portability.
+
+Staging rejects all symlinks before applying asset exclusions, including symlinks
+under ignored paths. This is stricter than Void packaging. The worker directory contains only the JavaScript entry and Wasm files. Preview
+secrets, source maps, and raw generated config stay out of the upload. The translated
+config lives at the artifact root. Dotenv and `.dev.vars` variants are mandatory
+asset exclusions that user ignore negations cannot override. This is not a guarantee of byte-identical builds across
+machines or toolchains. The offline verifier retains both target outputs in the
+container and prints their file sizes and supported configuration for comparison.

@@ -3,4 +3,11 @@
 .fogd
 **/node_modules
 **/dist
-.env
+**/.env
+**/.env.*
+**/.dev.vars
+**/.dev.vars.*
+.slopcheck
+**/.void
+**/.wrangler
+**/.void-wrangler.jsonc

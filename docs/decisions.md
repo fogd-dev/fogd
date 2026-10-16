@@ -123,3 +123,73 @@ Activation deliberately pauses routing before migrations; a failed activation st
 paused until explicit retry. Migration ledgers are reconciled after partial failures.
 Local bucket credentials are shared; trusted, reviewed code is required. See the
 [review response](reviews/platform-response.md) for accepted findings and tradeoffs.
+
+## ADR 007: preserve native Void pages through build and asset translation
+
+**Context.** The native React pages plugin contributes a client entry to root
+Vite options. It reaches the worker environment alongside the worker entry, so
+turning off worker splitting alone fails with multiple inputs. Its client output
+also contains `.assetsignore`, which celld rejects. Leaving these unchanged
+prevents native pages deployment.
+
+**Options.** Patch the pinned upstream tools; rebundle generated code; or adapt
+Vite environment options and materialize asset exclusions before staging.
+
+**Decision.** Restore `virtual:cloudflare/worker-entry` as the native worker's
+single input, preserving other output settings and normal client splitting.
+Void uses the same entry-reset pattern for its Vinext integration. Apply
+`.assetsignore` with the same `ignore` library used by Void, omit the control
+file, and retain `_headers`/`_redirects` for celld's parser. Default dotenv and
+OS metadata exclusions follow Void's packager. Hash the resulting staged tree.
+
+**Consequences.** Native React pages deploy without an upstream fork or a second
+bundler. This is an adapter for the pinned native Void build environment, not a
+promise for all framework outputs. Changes to upstream entries or asset rules
+require requalification. A celld multi-module collector remains the more general
+upstream opportunity; fogd bears the adapter maintenance cost in the meantime.
+Source references and the fixture are in [build-output.md](build-output.md).
+
+## ADR 008: expose team deployment status through a bounded projection
+
+**Context.** Submitters can create releases but need admin credentials to inspect
+progress. Backend failure text can include SQL or credentials. The current deploy
+token identifies the whole team, not an individual teammate.
+
+**Options.** Keep status admin-only; introduce individual identities now; or expose
+bounded status to the existing team credential.
+
+**Decision.** Add `fogd status <deployment-id>` and a read-only endpoint authenticated
+with the deploy token. Return only deployment identity, digest, status, timestamp,
+step, and fixed failure guidance for releases owned by `team-token`. Keep raw
+errors, artifact inspection, and mutation admin-only.
+
+**Consequences.** Team members can check progress without admin credentials, but
+any team-token holder can inspect another team submission if they know its ID.
+This is not per-person ownership. Rotation does not create a new ownership
+boundary. Detailed diagnostics still require an administrator; named identities
+and scoped tokens remain M8 work. Unknown failure steps reveal no raw text.
+
+## ADR 009: stage runtime modules and enforce secret-file exclusions
+
+**Context.** Gemini's M7a review identified that Vite can emit local preview secrets
+in `dist/ssr/.dev.vars`. Copying the complete build directory would upload them with
+the artifact. Claude also identified unused generated config containing host paths.
+Asset ignore rules alone do not protect the server bundle directory.
+
+**Options.** Keep copying all output; maintain a growing worker-file denylist; or
+stage only the worker entry and Wasm files that celld's prebuilt loader consumes.
+For public assets, allow upstream ignore negations to override default secret-file
+exclusions or make those exclusions mandatory.
+
+**Decision.** Stage only the JavaScript entry and Wasm files as worker modules.
+Keep the validated, translated config at the artifact root. Always omit dotenv,
+`.dev.vars` variants, and OS metadata from public assets, even when `.assetsignore`
+negates them. Preserve root `_headers` and `_redirects` for celld parsing. This
+narrows the asset semantics recorded in ADR 007.
+
+**Consequences.** Preview secrets, source maps, and unused generated worker metadata
+stay out of uploads. Administrators lose uploaded worker source maps; a future
+debug-artifact channel needs an explicit privacy policy. Asset ignore rules cannot
+publish a file matching the mandatory exclusions, which is stricter than upstream
+Void. Application code and deliberately embedded values still enter the bundle;
+this does not make untrusted builds safe or implement secret injection.

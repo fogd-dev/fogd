@@ -1,8 +1,11 @@
 node_modules/
 .upstream/
 .fogd/
+.slopcheck/
 .env
 .env.*
+.dev.vars
+.dev.vars.*
 !.env.example
 dist/
 *.log

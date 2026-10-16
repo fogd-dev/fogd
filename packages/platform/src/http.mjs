@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { createHash, timingSafeEqual, randomBytes } from 'node:crypto';
 import { manifest, MAX_UPLOAD } from '@fogd/runtime/manifest';
+import { deploymentStatus } from './deployment-status.mjs';
 
 const equal = (a, b) => timingSafeEqual(createHash('sha256').update(String(a)).digest(), createHash('sha256').update(String(b)).digest());
 const html = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -13,6 +14,21 @@ async function body(request) {
     parts.push(chunk);
   }
   return JSON.parse(Buffer.concat(parts).toString());
+}
+async function deploymentRequest(request, url, controller, deployToken, send) {
+  const submitting = url.pathname === '/v1/deployments' && request.method === 'POST';
+  const match = request.method === 'GET' && /^\/v1\/deployments\/([a-f0-9-]{36})$/.exec(url.pathname);
+  if (!submitting && !match) return false;
+  if (!equal(request.headers.authorization, `Bearer ${deployToken}`)) {
+    send(401, { error: 'Unauthorized' });
+  } else if (submitting) {
+    send(201, await controller.submit(await body(request), 'team-token'));
+  } else {
+    const release = controller.state.deployments[match[1]];
+    if (release?.submitter !== 'team-token') send(404, { error: 'Deployment not found' });
+    else send(200, deploymentStatus(release));
+  }
+  return true;
 }
 export function server(controller, credentials) {
   const csrf = randomBytes(32).toString('hex');
@@ -28,10 +44,7 @@ export function server(controller, credentials) {
         if (!equal(request.headers.authorization, `Bearer ${credentials.gateway}`)) return send(401, { error: 'Unauthorized' });
         return send(200, controller.route(url.searchParams.get('host') || ''));
       }
-      if (url.pathname === '/v1/deployments' && request.method === 'POST') {
-        if (!equal(request.headers.authorization, `Bearer ${credentials.deploy}`)) return send(401, { error: 'Unauthorized' });
-        return send(201, await controller.submit(await body(request), 'team-token'));
-      }
+      if (await deploymentRequest(request, url, controller, credentials.deploy, send)) return;
       if (!equal(request.headers.authorization, basic)) {
         response.setHeader('WWW-Authenticate', 'Basic realm="fogd admin", charset="UTF-8"');
         return send(401, { error: 'Admin authentication required' });

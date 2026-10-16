@@ -28,21 +28,32 @@ test('rejects paths outside the artifact/project and invalid app names', () => {
 import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { stageArtifact, artifactDigest } from '../src/artifact.mjs';
+import { stageArtifact, artifactDigest, regularFiles } from '../src/artifact.mjs';
 
 test('stages the exact application SQL list and produces a content digest', async t => {
   const root = await mkdtemp(join(tmpdir(), 'fogd-artifact-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   await mkdir(join(root, 'dist/ssr'), { recursive: true });
   await mkdir(join(root, 'db/migrations'), { recursive: true });
+  await mkdir(join(root, 'dist/client/nested'), { recursive: true });
+  for (const name of ['main.js', 'wrangler.json', '.dev.vars', '.dev.vars.local', '.env', '.env.local', '_headers', '_redirects', 'nested/private.txt', 'nested/public.txt', 'nested/.env', 'nested/.dev.vars']) {
+    await writeFile(join(root, 'dist/client', name), 'fixture');
+  }
+  await writeFile(join(root, 'dist/client/.assetsignore'), '!.*\n!nested/.*\nwrangler.json\nnested/*.txt\n!nested/public.txt\n_headers\n_redirects\n');
+  for (const name of ['.dev.vars', '.dev.vars.local', '.env', 'index.js.map']) {
+    await writeFile(join(root, 'dist/ssr', name), 'private-preview-secret');
+  }
+  await writeFile(join(root, 'dist/ssr/math.wasm'), 'wasm-fixture');
   await writeFile(join(root, 'dist/ssr/index.js'), 'export default {fetch(){return new Response("ok")}}');
-  await writeFile(join(root, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', d1_databases: [{ binding: 'DB' }] }));
+  await writeFile(join(root, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', d1_databases: [{ binding: 'DB' }], assets: { directory: '../client' } }));
   await writeFile(join(root, 'db/migrations/0001_init.sql'), 'CREATE TABLE entries(id TEXT PRIMARY KEY);');
   await writeFile(join(root, 'db/migrations/seed.sql'), 'INSERT INTO entries VALUES ("seed");');
   const release = await stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' });
   assert.equal(release.migrations.length, 1);
   assert.equal(release.migrations[0].name, '0001_init.sql');
   assert.equal(release.digest, await artifactDigest(join(root, 'release')));
+  assert.deepEqual(await regularFiles(join(root, 'release/worker')), ['index.js', 'math.wasm']);
+  assert.deepEqual(await regularFiles(join(root, 'release/assets')), ['_headers', '_redirects', 'main.js', 'nested/public.txt']);
   await writeFile(join(root, 'release/worker/index.js'), 'tampered');
   assert.notEqual(release.digest, await artifactDigest(join(root, 'release')));
   await assert.rejects(stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' }), /EEXIST/);

@@ -128,3 +128,39 @@ Both temporary acceptance stacks were stopped after verification; their volumes
 were preserved. The primary `fogd` stack retains both approved sample applications.
 The feature overview requested during implementation is in `docs/features.md`, with
 runtime/API evidence separated from the capabilities fogd actually exposes.
+
+## M7a local qualification, 2026-10-16
+
+The native React guestbook uses the pinned Void starter generator, D1 schema and
+Drizzle migration metadata. Its first build exposed inherited client inputs in the
+worker environment; selecting Void's virtual worker entry fixed the single-module
+build. The first activation exposed celld's rejection of `.assetsignore`; staging
+with Void-style exclusion semantics fixed publication. Neither required an upstream
+source patch. ADR 007 records the adapter boundary.
+
+The browser smoke then exposed test-harness assumptions: React inserts comments
+between text nodes in SSR HTML, hydration can finish after the form becomes visible,
+and Playwright's browser path must be configured before importing its registry.
+The assertions now check the route heading and API data, establish client readiness
+with a read-only action, and initialize Playwright in one helper. The full smoke
+passed from fresh Docker volumes through two releases and a controller/gateway
+restart. The same browser helper passed against normal Void development with a
+separate local database. The generated second release remains an ignored temporary
+copy; the checked-in example always starts at release one.
+
+The original example stack was stopped with its volumes retained. The disposable
+`fogd-m7` project used the normal local ports and fresh test volumes; preserving two
+running copies is not a requirement. Recreate examples from source when needed.
+
+The verification image excludes host-generated Void/Wrangler state. With dependencies
+already installed, a `--network none` run passed guestbook type-checking, ordinary
+Vite build, and fogd build. No hosted deployment was attempted. These are agent-run
+reproductions, not evidence that a second developer completed onboarding unaided.
+
+M7a review fixes restrict uploaded worker files to the runtime entry and Wasm;
+source maps and preview secret files are excluded. Asset secret exclusions cannot
+be negated. The offline comparison observed 14 server JavaScript files in ordinary
+Void output and one in fogd output; both retained `nodejs_als`, D1 `DB`, and the
+same client asset configuration. These counts describe this fixture and pinned
+build, not a size or determinism guarantee. The verifier now also stages the fogd
+artifact while offline. Full findings and responses are in `reviews/m7-response.md`.

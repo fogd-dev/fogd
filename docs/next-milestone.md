@@ -1,10 +1,12 @@
-# M7a proposal: one complete Void app, twice
+# M7a: one complete Void app, twice
 
-**Proposed next implementation spec.** Demonstrate Void's full-stack developer
+**Implementation qualified locally; independent onboarding remains open.** Demonstrate Void's full-stack developer
 experience on fogd through two releases of one local application. This advances G1
 and G3 in the [vision](vision.md), starts G4 portability evidence, and qualifies part
 of scenarios U1/U2/U4. It does not establish shared production hosting or complete
-support for every Void feature. No runtime implementation accompanies this proposal.
+support for every Void feature. The [guestbook guide](../examples/guestbook/README.md) reproduces the implemented
+qualification; [report.md](report.md) records results. The original proposal is
+preserved in the vision review snapshot.
 
 ## Scope and defaults
 

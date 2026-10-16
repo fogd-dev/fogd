@@ -94,7 +94,8 @@ stay together; [ADR 005](docs/decisions.md) explains why.
 
 `fogd up` starts the stack. `fogd deploy [--name app]` builds with app-local Vite,
 validates the supported binding subset, packages SQL and assets, and submits an
-immutable digest. `fogd.json` supplies the app name and optional `buildOutput` and
+immutable digest. `fogd status <deployment-id>` shows team-visible progress and
+a bounded failure explanation using the deploy token. `fogd.json` supplies the app name and optional `buildOutput` and
 `migrationsDir`; otherwise the package name supplies the app name.
 
 From an external project, set `FOGD_HOME` to this checkout and invoke its
@@ -145,3 +146,21 @@ are enforced where the runtimes support them. These are not per-request CPU quot
 MinIO and the controller remain single points of failure. Public/homelab deployment
 still needs TLS, private peer networking, scoped storage credentials, coordinated
 backups, and an operator-provisioned slot on each host.
+
+## Milestone 7a: a complete native Void app, twice
+
+[Guestbook](examples/guestbook/README.md) exercises React pages, typed forms and API
+calls, client assets, and D1. Its qualification script rejects and approves releases,
+adds a column and a page, verifies old records survive, and restarts the controller
+and workerd. Run it against a running stack with an unused app slot:
+
+```sh
+PLAYWRIGHT_BROWSERS_PATH="$PWD/.fogd/browsers" pnpm exec playwright install chromium
+node scripts/fullstack-smoke.mjs
+```
+
+The fixture guide also covers normal Void local development and both target builds
+in a Docker container with networking disabled. Hosted execution and independent
+teammate onboarding remain unverified. Existing examples can be redeployed from
+source; keep volumes only when you need their data. No separate always-running test
+stack is required.

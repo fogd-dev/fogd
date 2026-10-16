@@ -26,7 +26,7 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 
 | Feature | fogd v0 | celld standalone | workerd standalone | Void SDK / Platform | Cloudflare hosted |
 | --- | --- | --- | --- | --- | --- |
-| HTTP Workers / Void server routes | Yes; two samples tested | Yes | Yes | SDK + Vite build | Yes |
+| HTTP Workers / Void server routes | Yes; hello, notebook, and guestbook tested | Yes | Yes | SDK + Vite build | Yes |
 | D1 database backend | Partial; one DB/app, primary sessions | Yes; primary-only sessions | Partial; client, no DB server | SDK / Drizzle | Yes |
 | SQL-backed Durable Objects | Yes; notebook tested | Yes | Yes; local storage | SDK | Yes |
 | R2 object storage | Partial; put/get tested, multipart not portable | Partial; multipart handles process-local | Partial; client needs backend | Storage SDK | Yes |
@@ -34,13 +34,18 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | Queues | No; adapter rejects them | Yes | Partial; needs broker | SDK/config | Yes |
 | Workflows | No; adapter rejects them | Yes | Partial; needs execution backend | Config passthrough | Yes |
 | Cron scheduling | No; adapter rejects it | Yes; fleet scheduler | Partial; external scheduler | SDK/config | Yes |
-| Static assets | Partial; accepted, no asset-heavy acceptance test | Yes | Partial; configure asset service | Vite / Platform routing | Yes |
+| Static assets | Partial; native React pages, CSS and split client JS tested | Yes | Partial; configure asset service | Vite / Platform routing | Yes |
 | Cross-app service bindings / RPC | No; adapter rejects them | Partial; RPC boundary restrictions | Yes | Config passthrough | Yes |
 | Workers AI | No | No | Partial; client, no inference backend | SDK/config | Yes |
 | Hyperdrive | No | No | Partial; client, no managed pool | Config / Platform | Yes |
 | Workers-for-Platforms dispatch namespaces | No | No | No | Platform depends on it | Yes |
 | Dynamic worker loading | No; not exposed to apps | Yes | Yes | Not required by fogd's Void adapter | Yes |
 | Analytics Engine | No | No | Partial; needs analytics backend | Platform usage pipeline | Yes |
+
+The [native Void guestbook](../examples/guestbook/README.md) also qualifies typed
+forms, page loaders, and client calls across local development and fogd deployment.
+These SDK capabilities come from Void. They do not establish full SDK or framework
+adapter support.
 
 Cloudflare's dispatch product has its own
 [Workers-for-Platforms contract](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/).
@@ -52,14 +57,16 @@ configuration; unsupported nonempty declarations fail explicitly.
 
 fogd evidence comes from the [controller](../packages/platform/src/controller.mjs),
 [Compose stack](../compose.yaml), [acceptance script](../scripts/platform-smoke.mjs),
-and [recovery script](../scripts/recovery.mjs). Runtime configuration and Void
+[full-stack qualification](../scripts/fullstack-smoke.mjs), and
+[recovery script](../scripts/recovery.mjs). Runtime configuration and Void
 Platform dependencies remain source-linked in [compat.md](compat.md).
 
 | Feature | fogd v0 | celld standalone | workerd standalone | Void SDK / Platform | Cloudflare hosted |
 | --- | --- | --- | --- | --- | --- |
-| Run production apps on your hardware without Cloudflare APIs | Yes; Docker | Yes; bucket required | Yes; supply services | SDK apps portable; Platform targets Cloudflare | No; managed service |
+| Run apps on your hardware without Cloudflare APIs | Yes; Docker | Yes; bucket required | Yes; supply services | SDK apps portable; Platform targets Cloudflare | No; managed service |
 | Build/deploy a Void project | Yes; `fogd deploy` | Partial; consumes prepared bundle | Partial; needs generated config/services | Yes; `void deploy` | Runtime target; use a deployment tool |
 | Multiple apps and hostname routing | Yes; two reserved fleets | Partial; one live entrypoint/fleet | Multiple workers; supply routing/control plane | Platform dispatch | Yes; Workers/WfP |
+| Submitter deployment status | Yes; team token, bounded diagnostics | No control plane | No control plane | Platform deploy tracking | Not audited for this exact workflow |
 | Exact-artifact approval before publication | Yes; separate submit/admin credentials | No control plane | No control plane | OAuth publish approval exists; scope differs | Not audited for this exact workflow |
 | User/project roles and OAuth login | Partial; shared team token + admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |

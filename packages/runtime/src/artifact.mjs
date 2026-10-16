@@ -1,6 +1,8 @@
-import { readdir, readFile, writeFile, mkdir, lstat, cp } from 'node:fs/promises';
+import { readdir, readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
+import { stageAssets } from './assets.mjs';
+import { copyFiles } from './files.mjs';
 
 const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle']);
 const generated = new Set(['$schema', 'configPath', 'userConfigPath', 'topLevelName', 'definedEnvironments', 'jsx_factory', 'jsx_fragment', 'exports', 'upload_source_maps', 'python_modules', 'dev', 'rules', 'observability', 'version_metadata']);
@@ -106,23 +108,28 @@ export async function artifactDigest(dir) {
   }
   return hash.digest('hex');
 }
-export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 'dist/ssr', migrationsDir = 'db/migrations' }) {
-  appName(app);
-  const bundleDir = inside(projectDir, buildOutput);
+async function workerBundle(bundleDir) {
   const moduleFiles = await regularFiles(bundleDir);
   if (moduleFiles.filter(path => /\.[cm]?js$/.test(path)).length !== 1) {
     throw new Error("celld requires a single JavaScript module; build with fogd to disable worker code splitting");
   }
   const input = JSON.parse(await readFile(join(bundleDir, 'wrangler.json'), 'utf8'));
+  const entry = relative(bundleDir, inside(bundleDir, input.main));
+  if (!moduleFiles.includes(entry) || !/\.[cm]?js$/.test(entry)) throw new Error('Worker main must identify the built JavaScript entry');
+  return { input, entry, moduleFiles };
+}
+export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 'dist/ssr', migrationsDir = 'db/migrations' }) {
+  appName(app);
+  const bundleDir = inside(projectDir, buildOutput);
+  const { input, entry, moduleFiles } = await workerBundle(bundleDir);
   const config = translateConfig(input, app);
-  // The entry remains in its original module directory so relative chunk imports survive.
-  config.main = `worker/${relative(bundleDir, inside(bundleDir, input.main))}`;
+  // Keep the entry and Wasm paths; celld does not load preview config or maps.
+  config.main = `worker/${entry}`;
   await mkdir(outputDir, { recursive: false });
-  await cp(bundleDir, join(outputDir, 'worker'), { recursive: true });
+  await copyFiles(bundleDir, join(outputDir, 'worker'), moduleFiles.filter(path => path === entry || path.endsWith('.wasm')));
   if (input.assets) {
     const assets = inside(projectDir, resolve(bundleDir, input.assets.directory));
-    await regularFiles(assets);
-    await cp(assets, join(outputDir, 'assets'), { recursive: true });
+    await stageAssets(assets, join(outputDir, 'assets'), await regularFiles(assets));
   }
   if (config.d1_databases.length > 1) throw new Error('v0 supports one D1 database per app; multiple migration mappings need explicit support');
   const migrations = [];

@@ -1,0 +1,21 @@
+{
+  "extends": "./.void/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "types": [
+      "void/env",
+      "vite/client"
+    ]
+  },
+  "include": [
+    "pages",
+    "routes",
+    "db",
+    "type-tests"
+  ]
+}

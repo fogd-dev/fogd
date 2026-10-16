@@ -104,7 +104,7 @@ test('lost controller metadata quarantines bucket owners and prevents slot reass
 });
 
 test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact digest', async t => {
-  const { controller: c, artifact, publishes } = await setup(t);
+  const { controller: c, artifact, publishes, backend } = await setup(t);
   const http = server(c, { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' });
   await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => http.close(resolve)));
@@ -115,6 +115,18 @@ test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact
   assert.equal((await fetch(base + '/v1/admin', { headers: { authorization: 'Bearer deploy' } })).status, 401);
   assert.equal((await post('/v1/deployments', 'Bearer bad', await artifact())).status, 401);
   const d = await (await post('/v1/deployments', 'Bearer deploy', await artifact())).json();
+  const statusPath = `/v1/deployments/${d.id}`;
+  for (const authorization of ['Bearer bad', 'Bearer gateway', '']) {
+    assert.equal((await fetch(base + statusPath, { headers: { authorization } })).status, 401);
+  }
+  const inspect = async id => fetch(`${base}/v1/deployments/${id}`, { headers: { authorization: 'Bearer deploy' } });
+  const pending = await inspect(d.id);
+  assert.equal(pending.headers.get('Cache-Control'), 'no-store');
+  assert.deepEqual(await pending.json(), { id: d.id, app: d.app, digest: d.digest, status: 'pending', submittedAt: d.submittedAt, step: 'submitted', error: null });
+  assert.equal((await inspect('00000000-0000-0000-0000-000000000000')).status, 404);
+  const other = await c.submit(await artifact('other'), 'another-submitter');
+  assert.equal((await inspect(other.id)).status, 404);
+  assert.equal((await fetch(base + statusPath + '/artifact', { headers: { authorization: 'Bearer deploy' } })).status, 401);
   const path = `/v1/deployments/${d.id}/approve`;
   assert.equal((await post(path, 'Bearer deploy', { digest: d.digest })).status, 401);
   assert.equal((await post(path, auth, { digest: d.digest })).status, 403);
@@ -122,6 +134,17 @@ test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact
   assert.equal((await post(path, auth, { digest: d.digest }, { 'X-Fogd-CSRF': csrf, Origin: 'http://evil.test' })).status, 403);
   assert.equal(publishes(), 0);
   const result = await post(path, auth, { digest: d.digest }, { 'X-Fogd-CSRF': csrf }); assert.equal(result.status, 200); assert.equal((await result.json()).status, 'active');
+  assert.equal((await (await inspect(d.id)).json()).status, 'active');
+  backend.migrate = async () => { throw new Error('SQL containing secret=private-test-value'); };
+  const failed = await (await post('/v1/deployments', 'Bearer deploy', await artifact())).json();
+  await post(`/v1/deployments/${failed.id}/approve`, auth, { digest: failed.digest }, { 'X-Fogd-CSRF': csrf });
+  const failure = await (await inspect(failed.id)).json();
+  assert.equal(failure.status, 'failed'); assert.equal(failure.step, 'migrating');
+  assert.match(failure.error, /migration failed/);
+  assert.ok(!JSON.stringify(failure).includes('private-test-value'));
+  assert.ok(!('resources' in failure)); assert.ok(!('version' in failure));
+  const adminState = await (await fetch(base + '/v1/admin', { headers: { authorization: auth } })).json();
+  assert.match(adminState.deployments[failed.id].error, /private-test-value/);
 });
 
 test('bucket owner mismatch and changed stored bytes prevent activation', async t => {

@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792166816564,
+      "tag": "20261016160656_complete_ser_duncan",
+      "breakpoints": true
+    }
+  ]
+}

@@ -4,14 +4,19 @@
 an integrated platform for building, deploying, and running applications, with
 freedom to choose where they live. Milestones below advance reusable capabilities.
 The FilOz demo-hosting use case is a candidate first pilot, not the north star.
-This planning work does not start the next large implementation.
+Only M7a has entered implementation; later milestones remain proposals.
+
+M7a's native Void implementation is qualified locally; independent teammate
+onboarding remains an open acceptance check. See the [fixture guide](../examples/guestbook/README.md)
+and [implementation report](report.md). M7b is the next implementation slice.
 
 ## Current foundation
 
 The local prototype builds selected Void apps, requires approval of an immutable
 artifact, routes two apps, and tests a subset of D1/R2/Durable Object behavior and
-replica recovery. Complete browser/SDK workflows, shared remote operation, resource
-evolution, and backup/restore remain gaps. See [report.md](report.md) for exact evidence.
+replica recovery. One native React browser/SDK workflow is qualified. Additional
+SDK/framework paths, shared remote operation, resource evolution, and backup/restore
+remain gaps. See [report.md](report.md) for exact evidence.
 Do not infer product support from the runtimes' feature lists.
 
 ## Milestones and acceptance gates
@@ -27,8 +32,9 @@ Do not infer product support from the runtimes' feature lists.
 | M11. Background and collaborative applications | Supported app types expand with tested semantics (G1, G3) | Separate slices qualify queue/scheduled/workflow and Durable Object alarm activation, retries, draining, and idempotency; another qualifies live sessions, reconnect, and reconciliation through updates/failure | Enabling every upstream binding together; claiming sockets survive process loss |
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
-Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md) is the next
-proposed implementation slice; later milestones are capability groups to split
+Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
+records the current qualification; M7b is the next implementation slice. Later
+milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
 
