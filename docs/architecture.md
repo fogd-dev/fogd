@@ -53,8 +53,8 @@ handles cannot survive node changes, so v0 examples use ordinary object puts/get
 
 1. Build with Vite locally, with remote bindings disabled and no runtime credentials.
 2. Stage the worker modules, assets, exact application SQL list, and validated config.
-   Reject unsupported bindings/flags, auth-managed migrations, unsafe paths, and
-   resource identity changes. Exclude `seed.sql` and preserve migration order.
+   Reject unsupported bindings/flags, runtime-managed auth migrations, unsafe paths,
+   and unsupported resource identity changes. Native auth uses generated SQL. Exclude `seed.sql` and preserve migration order.
 3. Record an immutable content digest. Platform v0 requires an admin to approve
    that exact artifact before any celld publication, migration, or background work.
 4. Serialize publication and pause routing durably. For an existing app, apply
@@ -70,6 +70,12 @@ celld is the authoritative SQL migration runner, using its own ledger. Moving an
 existing Cloudflare database with a Void migration ledger requires an explicit
 baseline operation outside v0. Neither runtime publication nor migrations are an
 atomic transaction across replicas. Schema rollback is not automatic.
+
+Private configuration adds required names to the immutable artifact. The admin
+selects a separate secret revision; the controller persists that selection before
+backend effects, injects values into a temporary copy, and removes the copy after
+activation. Both replicas must pass Void environment validation before routing.
+Values remain in celld's plaintext deployment bucket. See [ADR 013](decisions.md).
 
 ## Scope and operational constraints
 

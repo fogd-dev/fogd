@@ -8,13 +8,13 @@ M7a and M7b have entered implementation; later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b is locally qualified; M7c is the next slice to specify.
+and [implementation report](report.md). M7b and M7c are locally qualified; M8 is next.
 
 ## Current foundation
 
 The local prototype builds selected Void apps, requires approval of an immutable
 artifact, routes two apps, and tests a subset of D1/R2/Durable Object behavior and
-replica recovery. One native React browser/SDK workflow is qualified. Additional
+replica recovery. Native React browser/SDK workflows and a bounded email/password auth flow are qualified. Additional
 SDK/framework paths, shared remote operation, broader resource evolution, and
 installation backup/restore remain gaps. M7b qualifies R2 additions and one bounded
 logical transfer profile. See [report.md](report.md) for exact evidence.
@@ -34,7 +34,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b is locally qualified; M7c is the next slice to specify. Later
+records the current qualification; M7b and M7c are locally qualified; M8 is next. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -74,9 +74,12 @@ platform resources before designing a custom scheduler or Kubernetes operator.
 ## What the next spec needs to resolve
 
 The [M7b contract](m7b.md) qualifies additive R2 declarations and the guestbook
-logical transfer profile. M7c needs a bounded secret-injection and native Void app
-authentication contract, including artifact privacy, provider choice, migrations,
-and failure behavior. M8/M9 retain shared remote operation.
+logical transfer profile. The [M7c contract](m7c.md) and [review amendments](reviews/m7c-response.md) qualify
+private configuration and one native Void auth flow. Next, split M8 into a stopped
+installation backup/restore slice followed by shared-operation identity, TLS/access
+policy, and quota qualification. Preserve secret revisions, controller metadata,
+bucket state, and every replica identity/log together. M9 retains the second
+deployment environment.
 
 Fresh-agent onboarding measures whether the written workflow can be executed
 without author assistance. It does not establish human usability. Human feedback

@@ -1,8 +1,10 @@
 const failures = {
+  'preparing-activation': 'Activation preparation failed. Ask an administrator to inspect and retry this release.',
   approved: 'Activation could not start. Ask an administrator to inspect this release.',
   publishing: 'Publishing failed. The application remains paused; an administrator can inspect and retry.',
   'waiting-for-replicas': 'The replicas did not adopt this release. Ask an administrator to check their health.',
   'checking-migration-ledger': 'Migration history could not be verified. An administrator must reconcile it before retrying.',
+  'validating-application': 'The application environment failed validation. Ask an administrator to check the declared configuration.',
   migrating: 'A database migration failed or was interrupted. Ask an administrator to inspect the migration before retrying.',
   complete: 'Activation was interrupted while recording its result. Ask an administrator to inspect this release.',
 };

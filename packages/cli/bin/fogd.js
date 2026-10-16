@@ -13,8 +13,11 @@ try {
   } else if (command === 'status') {
     if (args.length !== 1) throw new Error('Usage: fogd status <deployment-id>');
     await status(args[0]);
-  } else if (command === 'admin') await admin(...args);
+  } else if (command === 'admin') {
+    if (args.length > 4) throw new Error('Too many admin arguments');
+    await admin(...args);
+  }
   else if (!command || command === '--help' || command === 'help') {
-    console.log('fogd up                    Start the local Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using the team deploy token\nfogd admin list            List submissions\nfogd admin approve ID SHA  Approve an exact artifact (also retries failures)\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
+    console.log('fogd up                    Start the local Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using the team deploy token\nfogd admin list            List submissions and secret revision names\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }

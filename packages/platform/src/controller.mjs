@@ -5,11 +5,13 @@ import { isDeepStrictEqual } from 'node:util';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { receiveArtifact } from '@fogd/runtime/manifest';
 import { readJson, saveJson } from './store.mjs';
+import { Secrets } from './secrets.mjs';
 import { resourceChanges } from './resources.mjs';
 
 export class Controller {
   constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20 }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
+    this.secrets = new Secrets(dir);
     this.queue = Promise.resolve();
     this.occupied = new Set();
   }
@@ -19,6 +21,7 @@ export class Controller {
     return result;
   }
   async init() {
+    await this.secrets.init();
     await mkdir(join(this.dir, 'artifacts'), { recursive: true });
     this.state = await readJson(join(this.dir, 'state.json'), { apps: {}, deployments: {} });
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
@@ -79,6 +82,13 @@ export class Controller {
     });
   }
   async reconcile(app, slot) {
+    try { await this.reconcileLedger(app, slot); }
+    catch (error) {
+      if (app.privateConfiguration) throw new Error('Private migration reconciliation failed; runtime diagnostics are withheld');
+      throw error;
+    }
+  }
+  async reconcileLedger(app, slot) {
     if (!app.uncertain) return;
     const attempt = this.state.deployments[app.uncertain];
     if (!attempt || await artifactDigest(this.artifact(attempt.id)) !== attempt.digest) throw new Error('Cannot reconcile migration attempt: restore its original artifact');
@@ -94,7 +104,8 @@ export class Controller {
     });
     app.uncertain = null; await this.save();
   }
-  mutate(id, digest, action) {
+  replaceSecrets(app, values) { return this.exclusive(() => this.secrets.replace(app, values)); }
+  mutate(id, digest, action, secretRevision) {
     return this.exclusive(async () => {
       const request = this.state.deployments[id];
       if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
@@ -109,45 +120,73 @@ export class Controller {
       if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
       this.compatible(request, app);
+      const selected = await this.secrets.select(request, secretRevision);
+      return this.prepareActivation(request, app, slot, selected);
+    });
+  }
+  async prepareActivation(request, app, slot, selected) {
+    // Pin the approval before any backend effect, including a first slot claim.
+    request.secretRevision = selected.revision;
+    request.status = 'activating'; request.step = 'preparing-activation'; request.error = null;
+    if (app) { app.privateConfiguration ||= Boolean(selected.revision); app.route = 'paused'; }
+    await this.save();
+    try {
       await this.backend.claim(slot, request.app);
       this.occupied.add(slot.id);
       if (!app) {
-        app = { slot: slot.id, resources: request.resources, migrations: [], active: null, route: 'paused', uncertain: null };
+        app = { slot: slot.id, resources: request.resources, migrations: [], active: null, route: 'paused', uncertain: null, privateConfiguration: Boolean(selected.revision) };
         this.state.apps[request.app] = app; await this.save();
       }
       await this.reconcile(app, slot);
       request.resourceChanges = this.compatible(request, app);
-      if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
-      request.status = 'activating'; request.error = null; app.route = 'paused';
-      const step = async value => { request.step = value; await this.save(); };
-      const publish = async () => {
-        await step('publishing');
-        request.version = await this.backend.publish(slot, this.artifact(id));
-        await step('waiting-for-replicas');
-        await this.backend.ready(slot, request.version);
-      };
-      try {
-        app.resources = structuredClone(request.resources);
-        await step('approved');
-        if (!app.active) await publish();
-        app.uncertain = id; await step('checking-migration-ledger');
-        await this.reconcile(app, slot);
-        app.uncertain = id; await step('migrating');
-        await this.backend.migrate(slot, this.artifact(id), request.resources);
-        await this.reconcile(app, slot);
-        if (app.active) await publish();
-        app.active = id; app.route = 'active';
-        for (const other of Object.values(this.state.deployments)) {
-          if (other.app === request.app && other.id !== id && ['pending', 'failed', 'active'].includes(other.status)) other.status = 'superseded';
-        }
-        request.status = 'active'; await step('complete');
-      } catch (error) {
-        request.status = 'failed'; request.error = error.message; app.route = 'paused';
-        try { await this.reconcile(app, slot); } catch (reconcileError) { request.error += `; migration reconciliation pending: ${reconcileError.message}`; }
-        await this.save();
+      if (await artifactDigest(this.artifact(request.id)) !== request.digest) throw new Error('Stored artifact digest mismatch');
+    } catch (error) {
+      request.status = 'failed';
+      request.error = selected.revision || app?.privateConfiguration ? 'Private activation preparation failed; runtime diagnostics are withheld' : error.message;
+      await this.save();
+      throw new Error(request.error);
+    }
+    return this.activate(request, app, slot, selected);
+  }
+  async activate(request, app, slot, selected) {
+    const id = request.id;
+    request.secretRevision = selected.revision;
+    app.privateConfiguration ||= Boolean(selected.revision);
+    let execution = this.artifact(id);
+    request.status = 'activating'; request.error = null; app.route = 'paused';
+    const step = async value => { request.step = value; await this.save(); };
+    const publish = async () => {
+      await step('publishing');
+      request.version = await this.backend.publish(slot, execution);
+      await step('waiting-for-replicas');
+      await this.backend.ready(slot, request.version);
+      if ((request.requiredSecrets || []).length) {
+        await step('validating-application');
+        await this.backend.applicationReady(slot);
       }
-      return request;
-    });
+    };
+    try {
+      app.resources = structuredClone(request.resources);
+      await step('approved');
+      execution = await this.secrets.materialize(request, this.artifact(id), selected.values);
+      if (!app.active) await publish();
+      app.uncertain = id; await step('checking-migration-ledger');
+      await this.reconcile(app, slot);
+      app.uncertain = id; await step('migrating');
+      await this.backend.migrate(slot, execution, request.resources);
+      await this.reconcile(app, slot);
+      if (app.active) await publish();
+      app.active = id; app.route = 'active';
+      for (const other of Object.values(this.state.deployments)) {
+        if (other.app === request.app && other.id !== id && ['pending', 'failed', 'active'].includes(other.status)) other.status = 'superseded';
+      }
+      request.status = 'active'; await step('complete');
+    } catch (error) {
+      request.status = 'failed'; request.error = app.privateConfiguration ? 'Private activation failed; secret values and runtime diagnostics are withheld. Check the recorded step and retry explicitly.' : error.message; app.route = 'paused';
+      try { await this.reconcile(app, slot); } catch (reconcileError) { request.error += app.privateConfiguration ? '; migration reconciliation pending' : `; migration reconciliation pending: ${reconcileError.message}`; }
+      await this.save();
+    } finally { await this.secrets.cleanup(id); }
+    return request;
   }
   route(host) {
     const entry = Object.entries(this.state.apps).find(([name]) => `${name}.${this.baseDomain}` === host.toLowerCase());

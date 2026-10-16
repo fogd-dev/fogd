@@ -69,6 +69,7 @@ app, publish privately, wait for replicas, and migrate before public routing. v0
 rejects background consumers, cross-app service bindings, AI, Hyperdrive, and other
 capabilities whose activation cannot be safely gated by this sequence. Authentication
 schema auto-migrations and importing existing Void migration ledgers remain gaps.
+The accounts fixture instead applies checked-in Void-generated SQL.
 
 Pausing HTTP routing does not drain requests already in flight or stop existing
 Durable Object alarms. Use backward-compatible SQL changes. A consistent backup
@@ -134,3 +135,19 @@ additions remain reserved; a corrected release must retain them. Admin details
 show additions relative to the active release. Stale incompatible approvals fail
 without silently rejecting their pending request. See ADR 011 in
 [decisions.md](decisions.md) and the [growth fixture](../examples/guestbook/TRANSFER.md).
+
+## Private app configuration
+
+Admin-only `fogd admin secrets APP` reads a JSON object from stdin and replaces the
+app's secret set with an immutable revision. Values never enter its submitted
+artifact. Approval explicitly selects a revision alongside the artifact digest;
+retries retain that revision. Rotation requires a new submission and approval.
+The [accounts guide](../examples/accounts/README.md) covers the supported Void auth
+workflow and invalid-configuration recovery. App sessions grant no platform rights.
+
+The controller stores private revisions outside artifacts, and materializes a
+separate execution copy after approval. It withholds backend diagnostics and private
+runtime version hashes from inspection responses. celld still stores the injected
+values in plaintext deployment objects; operators must protect its bucket and all
+backups. Shared remote operation and an encrypted secret-storage design remain
+outside this local qualification.

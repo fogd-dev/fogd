@@ -18,6 +18,7 @@ async function setup(t) {
     claim: async (slot, app) => { if (owners[slot.id]?.app && owners[slot.id].app !== app) throw Error('Slot owner mismatch'); owners[slot.id] = { app }; },
     publish: async () => { publishes++; return 'version'; },
     ready: async () => {},
+    applicationReady: async () => {},
     migrate: async (slot, dir, resources) => {
       for (const db of resources.d1) {
         const files = (await import('node:fs/promises')).readdir;
@@ -251,4 +252,83 @@ test('failed additive migration retains reservations through rejection and corre
   const corrected = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'CREATE TABLE attachments (id TEXT);'], resources), 'team');
   assert.equal(corrected.resourceChanges.r2Added.length, 1);
   await c.mutate(corrected.id, corrected.digest, 'approve'); assert.equal(corrected.status, 'active');
+});
+
+test('private revisions are pinned, isolated, absent from artifacts, and redacted on failure', async t => {
+  const { controller: c, artifact, backend, owners } = await setup(t);
+  const body = await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } });
+  const release = await c.submit(body, 'team');
+  await assert.rejects(c.mutate(release.id, release.digest, 'approve'), /secret revision/);
+  assert.deepEqual(owners, {}); assert.equal(release.status, 'pending');
+  const first = await c.replaceSecrets('hello', { TOKEN: 'private-first-value', EXTRA: 'not-injected' });
+  const second = await c.replaceSecrets('hello', { TOKEN: 'private-second-value' });
+  await assert.rejects(c.mutate(release.id, release.digest, 'approve', first.revision), /secret revision/);
+  let observed;
+  backend.publish = async (_slot, dir) => { observed = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8')).vars; throw Error(`provider said ${observed.TOKEN}`); };
+  await c.mutate(release.id, release.digest, 'approve', second.revision);
+  assert.equal(release.status, 'failed'); assert.deepEqual(observed, { TOKEN: 'private-second-value' });
+  assert.ok(!JSON.stringify(c.state).includes('private-second-value'));
+  assert.equal(release.secretRevision, second.revision);
+  assert.deepEqual(await manifest(c.artifact(release.id), release), body);
+  const rotated = await c.replaceSecrets('hello', { TOKEN: 'private-third-value' });
+  await assert.rejects(c.mutate(release.id, release.digest, 'approve', rotated.revision), /pinned/);
+  const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
+  backend.publish = async (_slot, dir) => { observed = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8')).vars; return 'version'; };
+  await restarted.mutate(release.id, release.digest, 'approve', second.revision);
+  assert.equal(restarted.state.deployments[release.id].status, 'active'); assert.equal(observed.TOKEN, 'private-second-value');
+  const other = await restarted.submit(await artifact('other', undefined, { secrets: { required: ['TOKEN'] } }), 'team');
+  await assert.rejects(restarted.mutate(other.id, other.digest, 'approve', second.revision), /secret revision/);
+  const { readdir } = await import('node:fs/promises');
+  assert.deepEqual(await readdir(join(c.dir, 'execution')), []);
+});
+
+test('secret updates require administrator CSRF and never return submitted values or malformed JSON', async t => {
+  const { controller: c } = await setup(t);
+  const http = server(c, { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' });
+  await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => http.close(resolve)));
+  const base = `http://127.0.0.1:${http.address().port}`;
+  const auth = `Basic ${Buffer.from('admin:password').toString('base64')}`;
+  const { csrf } = await (await fetch(base + '/v1/admin', { headers: { authorization: auth } })).json();
+  const put = (authorization, extra = {}, data = '{"TOKEN":"private-http-value"}') => fetch(base + '/v1/apps/hello/secrets', { method: 'PUT', headers: { authorization, 'Content-Type': 'application/json', ...extra }, body: data });
+  assert.equal((await put('Bearer deploy', { 'X-Fogd-CSRF': csrf })).status, 401);
+  assert.equal((await put(auth)).status, 403);
+  assert.equal((await put(auth, { 'X-Fogd-CSRF': csrf, Origin: 'http://evil.test' })).status, 403);
+  const result = await put(auth, { 'X-Fogd-CSRF': csrf }); assert.equal(result.status, 200); assert.ok(!(await result.text()).includes('private-http-value'));
+  const bad = await put(auth, { 'X-Fogd-CSRF': csrf }, '{"TOKEN":"private-http-value"'); assert.equal(bad.status, 400); assert.ok(!(await bad.text()).includes('private-http-value'));
+  const state = await (await fetch(base + '/v1/admin', { headers: { authorization: auth } })).text(); assert.ok(!state.includes('private-http-value'));
+});
+
+
+test('approval pins private revisions before a failing slot claim and retains them across restart', async t => {
+  const { controller: c, artifact, backend } = await setup(t);
+  const release = await c.submit(await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } }), 'team');
+  const first = await c.replaceSecrets('hello', { TOKEN: 'private-claim-value' });
+  const claim = backend.claim;
+  backend.claim = async () => {
+    const persisted = JSON.parse(await readFile(join(c.dir, 'state.json'), 'utf8'));
+    assert.equal(persisted.deployments[release.id].secretRevision, first.revision);
+    throw Error('private-claim-value');
+  };
+  await assert.rejects(c.mutate(release.id, release.digest, 'approve', first.revision), /diagnostics are withheld/);
+  assert.equal(release.status, 'failed'); assert.equal(release.step, 'preparing-activation');
+  assert.ok(!JSON.stringify(c.state).includes('private-claim-value'));
+  const next = await c.replaceSecrets('hello', { TOKEN: 'private-next-value' });
+  const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
+  await assert.rejects(restarted.mutate(release.id, release.digest, 'approve', next.revision), /pinned/);
+  backend.claim = claim;
+  await restarted.mutate(release.id, release.digest, 'approve', first.revision);
+  assert.equal(restarted.state.deployments[release.id].status, 'active');
+  const plain = await restarted.submit(await artifact('other'), 'team');
+  await assert.rejects(restarted.mutate(plain.id, plain.digest, 'approve', next.revision), /does not declare secrets/);
+});
+
+
+test('submitted metadata must be canonical and cannot add hidden configuration', async t => {
+  const { controller: c, artifact } = await setup(t);
+  for (const metadata of [{ requiredSecrets: [] }, { requiredSecrets: ['Z', 'A'] }, { requiredSecrets: ['TOKEN'], values: { TOKEN: 'hidden-value' } }]) {
+    const body = await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } });
+    body.files.find(file => file.path === 'fogd-deployment.json').data = Buffer.from(JSON.stringify(metadata)).toString('base64');
+    await assert.rejects(c.submit(body, 'team'), /metadata/);
+  }
 });

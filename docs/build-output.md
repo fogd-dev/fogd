@@ -80,3 +80,18 @@ config lives at the artifact root. Dotenv and `.dev.vars` variants are mandatory
 asset exclusions that user ignore negations cannot override. This is not a guarantee of byte-identical builds across
 machines or toolchains. The offline verifier retains both target outputs in the
 container and prints their file sizes and supported configuration for comparison.
+
+## Required private environment names
+
+Void's generated `secrets.required` becomes `fogd-deployment.json`, covered by the
+artifact digest. The canonical celld config contains no secret declaration or values.
+Only the approved execution copy receives values as celld vars. The accounts fixture
+uses a non-optional `env.ts` declaration; optional/defaulted schema entries do not
+request injection. Required names cannot conflict with other bindings or ordinary
+variables. Unsupported secret directives fail explicitly.
+
+Generated `build.watch_dir` is accepted as inert build metadata and stripped;
+submitted build commands are refused. Local builds filter inherited managed Void
+deployment flags as well as platform credentials. No Cloudflare deployment mode or
+internal auth proxy token is injected. The offline verifier covers accounts and its
+required-secret metadata alongside the base and attachment guestbook fixtures.

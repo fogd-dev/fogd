@@ -77,3 +77,19 @@ A celld bucket prefix is a fleet. Its deploy code writes named script pointers a
 [W-d1]: https://github.com/cloudflare/workerd/blob/e0bf62429359aa01de6f02887fbbf6e889601156/src/cloudflare/internal/d1-api.ts
 [W-ai]: https://github.com/cloudflare/workerd/blob/e0bf62429359aa01de6f02887fbbf6e889601156/src/cloudflare/internal/ai-api.ts
 [W-workflows]: https://github.com/cloudflare/workerd/blob/e0bf62429359aa01de6f02887fbbf6e889601156/src/cloudflare/internal/workflows-api.ts
+
+## Native Void authentication qualification
+
+The [accounts fixture](../examples/accounts/README.md) qualifies email/password
+accounts, sessions, and generated D1 migrations. Void's
+`packages/void/src/runtime/better-auth-shared.ts` supplies the default password
+format; celld's `crates/celld/js/node_crypto.js` marks both scrypt primitives
+unimplemented. The fixture's explicit noble-hashes adapter preserves that format
+and parameters, with bidirectional Node tests. No runtime fork is applied.
+
+Void's `plugin-worker-bindings.ts` emits required environment names; fogd preserves
+these in digest-covered metadata and injects selected values only after approval.
+The fixture declares BETTER_AUTH_SECRET explicitly. celld's `deploy.rs` converts
+vars to plaintext bindings, so protecting bucket storage remains an operator duty.
+This bounded qualification does not imply every Void auth provider or SDK feature
+works. See [ADR 013–014](decisions.md) and the [review response](reviews/m7c-response.md).

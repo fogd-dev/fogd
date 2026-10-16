@@ -1,3 +1,4 @@
+import { deploymentMetadata } from './deployment.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -19,7 +20,7 @@ export async function receiveArtifact(body, dir) {
   const paths = new Set(); let total = 0;
   for (const file of body.files) {
     const path = file.path;
-    if (typeof path !== 'string' || path.length > 512 || !/^(wrangler\.json|(?:worker|assets|migrations)\/[^\x00-\x1f\\]+)$/.test(path) || path.split('/').some(p => !p || p === '.' || p === '..')) throw new Error(`Invalid artifact path: ${path}`);
+    if (typeof path !== 'string' || path.length > 512 || !/^(wrangler\.json|fogd-deployment\.json|(?:worker|assets|migrations)\/[^\x00-\x1f\\]+)$/.test(path) || path.split('/').some(p => !p || p === '.' || p === '..')) throw new Error(`Invalid artifact path: ${path}`);
     if (paths.has(path)) throw new Error('Duplicate artifact path');
     paths.add(path);
     if (typeof file.data !== 'string') throw new Error('Invalid file encoding');
@@ -31,6 +32,7 @@ export async function receiveArtifact(body, dir) {
     await writeFile(join(dir, path), data, { flag: 'wx', mode: 0o600 });
   }
   const config = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8'));
+  const metadata = await readMetadata(dir, paths, config);
   const canonical = translateConfig(config, body.app);
   if (typeof config.main !== 'string' || !paths.has(config.main) || !/^worker\/.*\.[cm]?js$/.test(config.main)) throw new Error('Invalid worker entry');
   canonical.main = config.main;
@@ -50,5 +52,13 @@ export async function receiveArtifact(body, dir) {
   }
   for (const path of paths) if (path.startsWith('migrations/') && !allowedMigrations.has(path)) throw new Error('Unmapped migration');
   if (await artifactDigest(dir) !== body.digest) throw new Error('Artifact digest mismatch');
-  return { app: body.app, digest: body.digest, resources: resourceIdentity(config), migrations };
+  return { app: body.app, digest: body.digest, ...metadata, resources: resourceIdentity(config), migrations };
+}
+
+async function readMetadata(dir, paths, config) {
+  if (!paths.has('fogd-deployment.json')) return { requiredSecrets: [] };
+  const input = JSON.parse(await readFile(join(dir, 'fogd-deployment.json'), 'utf8'));
+  const canonical = deploymentMetadata(input, config);
+  if (!canonical.requiredSecrets.length || !isDeepStrictEqual(input, canonical)) throw new Error('Noncanonical deployment metadata');
+  return canonical;
 }

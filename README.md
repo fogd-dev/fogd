@@ -183,3 +183,26 @@ and verifies an identical retry, post-restore writes, and restart persistence.
 The profile covers this guestbook's messages and referenced attachments. General
 installation backups remain M8 work. See [M7b](docs/m7b.md) and the
 [roadmap](docs/roadmap.md) for the exact boundary.
+
+## M7c: private configuration and application accounts
+
+The [accounts fixture](examples/accounts/README.md) uses native Void email/password
+signup, login, sessions, and generated auth migrations. Admins provide secrets over
+stdin with `fogd admin secrets APP`; approval pins both the artifact digest and the
+secret revision. App login grants no deployment permission.
+
+To test on empty disposable volumes, first stop the current fogd stack occupying
+the configured ports, then use a new Compose project name:
+
+```sh
+docker compose stop
+COMPOSE_PROJECT_NAME=fogd-accounts-test pnpm exec fogd up
+COMPOSE_PROJECT_NAME=fogd-accounts-test node scripts/accounts-smoke.mjs
+```
+
+The smoke deploys two isolated apps and checks browser authentication, secret
+rotation, and restart recovery. Reuse of a populated project is refused. The
+fixture guide covers manual deployment and failed configuration. A labeled password
+adapter fills celld's missing Node scrypt primitive. Secrets stay out of submitted
+artifacts, but celld's bucket stores injected values in plaintext. This remains a
+trusted local qualification; installation recovery and shared hosting are M8 work.

@@ -29,9 +29,12 @@ async function verifyApp(app, label) {
   const fogd = await snapshot(app, `${label}-fogd`);
   assert.equal(fogd.files.filter(file => /^ssr\/.*\.[cm]?js$/.test(file.path)).length, 1);
   const release = await stageArtifact({ projectDir: app, outputDir: join(results, `${label}-staged`), app: label });
+  assert.deepEqual(release.requiredSecrets, label === 'accounts' ? ['BETTER_AUTH_SECRET'] : []);
   console.log('Offline artifact staged:', release.digest);
   console.log(JSON.stringify({ managed, fogd }, null, 2));
 }
 await verifyApp(join(stackRoot, 'examples/guestbook'), 'guestbook');
 const grown = await prepareGrowth(join(results, 'grown-source'));
 await verifyApp(grown, 'grown');
+
+await verifyApp(join(stackRoot, 'examples/accounts'), 'accounts');

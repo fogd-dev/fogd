@@ -42,6 +42,10 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | Dynamic worker loading | No; not exposed to apps | Yes | Yes | Not required by fogd's Void adapter | Yes |
 | Analytics Engine | No | No | Partial; needs analytics backend | Platform usage pipeline | Yes |
 
+The [accounts fixture](../examples/accounts/README.md) qualifies native Void email/password
+auth with an explicit scrypt adapter, generated SQL, and admin-supplied private
+configuration. Other providers and production auth operations remain unqualified.
+
 The [native Void guestbook](../examples/guestbook/README.md) also qualifies typed
 forms, page loaders, and client calls across local development and fogd deployment.
 These SDK capabilities come from Void. They do not establish full SDK or framework
@@ -72,6 +76,7 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | Multiple apps and hostname routing | Yes; two reserved fleets | Partial; one live entrypoint/fleet | Multiple workers; supply routing/control plane | Platform dispatch | Yes; Workers/WfP |
 | Submitter deployment status | Yes; team token, bounded diagnostics | No control plane | No control plane | Platform deploy tracking | Not audited for this exact workflow |
 | Exact-artifact approval before publication | Yes; separate submit/admin credentials | No control plane | No control plane | OAuth publish approval exists; scope differs | Not audited for this exact workflow |
+| Private app configuration | Partial; admin revisions pinned to approval, plaintext runtime bucket | Text bindings in deployment objects | Text bindings in config | Environment schema / Platform secrets | Not audited here |
 | User/project roles and OAuth login | Partial; shared team token + admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |
 | Whole-stack high availability | No; bucket/controller single points of failure | Depends on bucket/fleet topology | External orchestration required | Depends on hosting/services | Managed platform; outside this test scope |

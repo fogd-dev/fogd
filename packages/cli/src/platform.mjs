@@ -1,3 +1,4 @@
+import { readSecretInput } from './secret-input.mjs';
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -41,16 +42,23 @@ export async function status(id) {
   const result = await api(env, `/v1/deployments/${id}`, { headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}` } });
   console.log(JSON.stringify(result, null, 2));
 }
-export async function admin(action, id, digest) {
+export async function admin(action, id, digest, secretRevision) {
   const env = await configEnv();
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD');
   const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
   const state = await api(env, '/v1/admin', { headers });
   if (action === 'list') {
-    console.log(JSON.stringify(Object.values(state.deployments).map(({ id, app, digest, status, step, error }) => ({ id, app, digest, status, step, error })), null, 2)); return;
+    console.log(JSON.stringify({ deployments: Object.values(state.deployments), secrets: state.secrets }, null, 2)); return;
+  }
+  if (action === 'secrets') {
+    if (!id || digest || secretRevision) throw new Error('Usage: fogd admin secrets APP < values.json');
+    const values = await readSecretInput();
+    const result = await api(env, `/v1/apps/${encodeURIComponent(id)}/secrets`, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify(values) });
+    console.log(JSON.stringify(result, null, 2)); return;
   }
   if (!['approve', 'reject'].includes(action) || !id || !digest) throw new Error('Usage: fogd admin list | approve|reject <id> <digest>');
-  const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest }) });
+  if (action === 'approve' && state.deployments[id]?.requiredSecrets?.length && !secretRevision) throw new Error('Approval requires an explicit secret revision: fogd admin approve ID SHA SECRET_REVISION (see fogd admin list)');
+  const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest, secretRevision: secretRevision || null }) });
   console.log(JSON.stringify(result, null, 2));
   if (result.status === 'failed') throw new Error('Activation failed; inspect the error above and explicitly approve again to retry');
 }

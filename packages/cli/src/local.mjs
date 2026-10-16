@@ -32,7 +32,7 @@ export async function buildArtifact(projectDir, nameOverride) {
   const settings = await readJson(join(project, 'fogd.json'), {});
   const pkg = await readJson(join(project, 'package.json'), {});
   const app = appName(nameOverride || settings.name || pkg.name?.split('/').at(-1));
-  const buildEnv = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^(CLOUDFLARE_|CF_|AWS_|MINIO_)/i.test(key) && !/^FOGD_.*(TOKEN|PASSWORD|SECRET)/i.test(key)));
+  const buildEnv = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^(CLOUDFLARE_|CF_|AWS_|MINIO_|VOID_DEPLOY_PROJECT_ID$|VOID_CLOUDFLARE_DEPLOY_BUILD$|VOID_MANAGED$)/i.test(key) && !/^FOGD_.*(TOKEN|PASSWORD|SECRET)/i.test(key)));
   await run(process.execPath, [fileURLToPath(new URL('./build.mjs', import.meta.url)), project], { cwd: project, env: buildEnv });
   const parent = join(stackRoot, '.fogd', 'releases', app);
   await mkdir(parent, { recursive: true });

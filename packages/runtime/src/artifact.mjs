@@ -1,11 +1,12 @@
 import { readdir, readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
+import { buildMetadata } from './deployment.mjs';
 import { stageAssets } from './assets.mjs';
 import { copyFiles } from './files.mjs';
 
-const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle']);
-const generated = new Set(['$schema', 'configPath', 'userConfigPath', 'topLevelName', 'definedEnvironments', 'jsx_factory', 'jsx_fragment', 'exports', 'upload_source_maps', 'python_modules', 'dev', 'rules', 'observability', 'version_metadata']);
+const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle', 'secrets']);
+const generated = new Set(['$schema', 'configPath', 'userConfigPath', 'topLevelName', 'definedEnvironments', 'jsx_factory', 'jsx_fragment', 'exports', 'upload_source_maps', 'python_modules', 'dev', 'rules', 'observability', 'version_metadata', 'build']);
 const flags = new Set(['nodejs_als', 'nodejs_compat', 'js_rpc', 'fetcher_no_get_put_delete', 'delete_all_deletes_alarm', 'websocket_standard_binary_type']);
 const empty = value => value == null || value === false || value === '' || (typeof value === 'object' && Object.values(value).every(empty));
 export function appName(value) {
@@ -34,6 +35,7 @@ function validateStorage(input, app) {
 }
 export function translateConfig(input, app) {
   appName(app);
+  buildMetadata(input);
   for (const [key, value] of Object.entries(input)) {
     if (!supported.has(key) && !generated.has(key) && !empty(value)) throw new Error(`Unsupported binding/config: ${key}`);
   }
@@ -130,6 +132,7 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
   appName(app);
   const bundleDir = inside(projectDir, buildOutput);
   const { input, entry, moduleFiles } = await workerBundle(bundleDir);
+  const metadata = buildMetadata(input);
   const config = translateConfig(input, app);
   // Keep the entry and Wasm paths; celld does not load preview config or maps.
   config.main = `worker/${entry}`;
@@ -159,8 +162,9 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
     }
   }
   await writeFile(join(outputDir, 'wrangler.json'), JSON.stringify(config, null, 2));
+  if (metadata.requiredSecrets.length) await writeFile(join(outputDir, 'fogd-deployment.json'), JSON.stringify(metadata));
   const digest = await artifactDigest(outputDir);
-  const release = { app, digest, resources: resourceIdentity(config), migrations };
+  const release = { app, digest, ...metadata, resources: resourceIdentity(config), migrations };
   await writeFile(join(outputDir, 'fogd-release.json'), JSON.stringify(release, null, 2));
   return release;
 }

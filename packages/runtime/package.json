@@ -11,6 +11,7 @@
   "exports": {
     "./artifact": "./src/artifact.mjs",
     "./manifest": "./src/manifest.mjs",
-    "./bucket": "./src/bucket.mjs"
+    "./bucket": "./src/bucket.mjs",
+    "./deployment": "./src/deployment.mjs"
   }
 }

@@ -57,6 +57,12 @@ export class Backend {
       if (last) throw new Error(`${node}: ${last.message}`);
     }
   }
+  async applicationReady(slot) {
+    for (const node of slot.nodes) {
+      const response = await fetch(`http://${node}:8080/__void/ready`, { signal: AbortSignal.timeout(10000) });
+      if (!response.ok || (await response.json()).ready !== true) throw new Error('Void application environment validation failed');
+    }
+  }
   async migrate(slot, dir, resources) {
     for (const db of resources.d1) await this.run(slot, ['d1', 'migrations', 'apply', db.database_name, dir]);
   }

@@ -17,6 +17,7 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 6. Platform | Two apps, exact subdomain routing, Basic-authenticated admin UI/CLI, immutable-digest approval, rejection, failure/retry, and runtime resource limits |
 | 7a. Native full-stack qualification | Guestbook pages, form actions, typed client/API, split client assets, two approved releases and additive SQL; see the [fixture guide](../examples/guestbook/README.md) |
 | 7b. Application growth and logical transfer | R2 additions preserve D1 records; browser attachments and bounded restore with failure/retry; see the [transfer guide](../examples/guestbook/TRANSFER.md) |
+| 7c. Private configuration and native auth | Revision-pinned admin secret input, native Void account/session flow, two-app isolation, rotation, and restart checks; see the [accounts guide](../examples/accounts/README.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
@@ -54,6 +55,14 @@ refused, a new message was saved after restore, and controller/workerd restart
 preserved the records. Base and attachment fixtures also built with networking
 disabled. See the [M7b review response](reviews/m7b-response.md).
 
+M7c qualifies the accounts fixture with two isolated apps, CLI secret input and
+approval, browser signup/login/logout, private API checks, ordinary updates, rotation,
+and controller/workerd/celld restart persistence. Invalid environment values leave
+routing paused; failed retries retain their pinned revision. Void's native auth uses
+an explicit scrypt adapter because celld lacks that Node primitive. Secret revisions
+stay outside artifacts, but injected values are plaintext in celld's bucket. See the
+[review amendments](reviews/m7c-response.md) for the scope and upstream gap.
+
 ## Runtime boundary and corrections to the initial assumptions
 
 Splitting a worker's native bindings across workerd and celld would need an API
@@ -88,7 +97,8 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   reserved after approved failures; D1/DO additions and resource retirement remain
   unsupported.
   Unsupported AI, WfP, Hyperdrive, queues/workflows, cron, cross-app service bindings,
-  auth-managed migrations, and other nonempty declarations fail rather than disappear.
+  automatic runtime auth-migration control paths, and other unsupported nonempty
+  declarations fail rather than disappear. Native auth uses checked-in generated SQL.
 - R2 multipart handles are process-local upstream. Examples exercise ordinary puts
   and gets. Native React pages and client assets are tested; larger asset collections,
   streaming, WebSockets, and remote two-host
@@ -133,3 +143,26 @@ Void, and hosted Cloudflare. Read [decisions.md](decisions.md) for context, alte
 
 The [M7a review response](reviews/m7-response.md) records Claude and Gemini findings,
 including preview-secret packaging and browser-test fixes.
+
+M7c adds ADR 013 (private revision pinning) and ADR 014 (the explicit password
+primitive adapter). The next roadmap milestone is M8: recoverable installation,
+starting with a stopped backup/restore qualification before shared hosting.
+
+## M7c verification record
+
+The final unit suite passes 31 tests, including pre-claim secret pinning across
+restart and canonical metadata rejection. `pnpm build` and syntax checks pass.
+The quality gate passes without relaxed thresholds. The original platform smoke
+also passes on fresh volumes, covering hello/notebook approval, failed SQL recovery,
+D1/R2/DO behavior, and controller/workerd restart.
+
+`docker build -f docker/verify.Dockerfile -t fogd-verify:m7c .` followed by
+`docker run --rm --network none fogd-verify:m7c` passes ordinary and fogd builds
+for guestbook, attachments, and accounts. It verifies the accounts secret declaration
+survives staging. This is build portability evidence, not hosted Cloudflare execution.
+
+The final accounts smoke passes on fresh rebuilt Docker volumes with both
+`accounts` and `accounts-peer` active. It checks CLI secret input/approval, missing
+and invalid configuration, pinned retries, browser account/session behavior,
+cross-app cookie refusal, control-plane separation, ordinary updates, rotation,
+and restart persistence. Review evidence is retained for both Claude and Gemini.

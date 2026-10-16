@@ -275,3 +275,53 @@ must inspect failures and explicitly resume ingress or retry. Content-addressed
 keys were considered; stable UUID keys plus digest checks preserve attachment
 identity without introducing deduplication. Filecoin and Cloudflare-hosted migration
 remain outside this qualification. M8 still owns installation backup/recovery.
+
+## ADR 013: pin private configuration to each approval
+
+**Context.** Native Void apps need runtime secrets without embedding values in
+reviewable build artifacts. A secret update during a failed deployment must not
+silently change what a retry executes.
+
+**Options.** Keep private configuration unsupported; embed values in builds; or
+store immutable app-scoped revisions separately and select one during approval.
+A dedicated encrypted vault would improve operator controls but would not encrypt
+celld's plaintext deployment bindings without a separate runtime design.
+
+**Decision.** Admit required names emitted by Void into digest-covered metadata.
+Admin-only stdin/API input creates an opaque secret revision. Approval pins that
+revision before backend effects. Materialize only declared values in a temporary
+execution copy; remove it after execution and on controller startup. Preserve the
+original artifact. Hide private deployment version hashes and raw backend errors
+from API responses. A private app keeps diagnostic redaction on subsequent releases.
+
+**Consequences.** Admins must manage secret sets and explicitly approve rotations.
+Retries retain the original revision, so correcting a bad value requires a new
+submission. The controller retains old revisions for retries; pruning is deferred.
+Its private storage and celld's bucket require coordinated backup and access control.
+The bucket still contains plaintext values. Trusted local operation is qualified;
+public or hostile-tenant operation is not. Fixed failure stages give operators less
+detail than raw backend errors. M8 must address recovery and shared-operation policy.
+
+## ADR 014: qualify Void auth with a password primitive adapter
+
+**Context.** The pinned celld Node crypto shim throws for scrypt and scryptSync,
+which prevents Void's default password implementation from serving signup/login.
+Native Void auth remains valuable even while this runtime primitive is missing.
+
+**Options.** Defer auth; patch celld immediately; or supply an explicit app-level
+password adapter. Patching celld is the preferred eventual runtime outcome but
+requires upstream crypto API work and a separate qualification.
+
+**Decision.** The accounts fixture uses pinned noble-hashes scrypt with Void's exact
+cost parameters, normalization, salt encoding, and record format. Verify both
+Node-to-adapter and adapter-to-Node password records. Keep native Void accounts,
+sessions, cookies, API routes, and generated SQL migrations. The fixture explicitly
+declares its signing secret through the non-optional Void environment schema.
+
+**Consequences.** The adapter is visible compatibility code app authors must carry
+until upstream support is qualified. It adds a dependency and performs scrypt in
+JavaScript; this milestone does not establish password-service throughput. No cost
+parameter is reduced. Ordinary offline Void builds pass, while hosted execution
+remains untested. Internal auth-migration routes stay blocked; fogd applies the
+checked-in generated SQL. Provider breadth and production auth operations remain
+outside this milestone.
