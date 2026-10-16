@@ -19,8 +19,11 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
 rejection, artifact-path rejection, D1/R2/DO writes, isolated SQL activation failure,
-corrected resubmission, and controller/workerd restart persistence. Unit tests cover
-interrupted activation, migration reconciliation, and controller metadata loss.
+corrected resubmission, and controller/workerd restart persistence. Seventeen unit tests cover
+interrupted activation, migration reconciliation, controller metadata loss, auth,
+artifact validation, ownership conflicts, and ingress behavior. Both production
+builds pass. The final implementation also passed the approval smoke on fresh
+Docker volumes after review fixes.
 
 The initial direct runtime recovery test passed with both replicas force-stopped in
 turn, a write between rejoining/failing replicas, and a workerd restart. The same recovery check passed on the platform fleet. A separate clean checkout

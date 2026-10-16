@@ -113,3 +113,18 @@ force-stopped in turn, the survivor served acknowledged D1/R2/DO data, a new wri
 was made after the first rejoin, both replicas rejoined, and workerd restarted.
 No missing-witness recovery errors appeared. The script defaults now target
 notebook's second platform slot and allow replica-service overrides.
+
+## Final verification after implementation review
+
+The clean-checkout recovery test also passed with both replica failures, a write
+between failures, and workerd restart. After Claude's implementation review, commit
+`cd55741` passed the full approval smoke again with another fresh set of Docker
+volumes (`fogd-final`, ports 8977/8978). Seventeen unit tests and both production
+builds passed. The added regressions cover shrinking migration ledgers, duplicate
+bucket ownership markers, concurrent/stale approvals, stored-artifact tampering,
+encoded internal paths, and avoiding replay of ambiguous writes.
+
+Both temporary acceptance stacks were stopped after verification; their volumes
+were preserved. The primary `fogd` stack retains both approved sample applications.
+The feature overview requested during implementation is in `docs/features.md`, with
+runtime/API evidence separated from the capabilities fogd actually exposes.
