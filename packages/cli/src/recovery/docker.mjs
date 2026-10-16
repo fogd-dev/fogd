@@ -1,14 +1,16 @@
+import { devNull } from 'node:os';
 import { spawn } from 'node:child_process';
 import { open } from 'node:fs/promises';
 
 // Keep configuration and credentials out of command diagnostics.
-export async function docker(args, { env = process.env, output, input } = {}) {
+export async function docker(args, { env = process.env, output, input, inputText } = {}) {
   const out = output ? await open(output, 'wx', 0o600) : null;
   const source = input ? await open(input, 'r') : null;
   try {
     return await new Promise((resolve, reject) => {
       let stdout = '';
-      const child = spawn('docker', args, { env, stdio: [source?.fd ?? 'ignore', out?.fd ?? 'pipe', 'pipe'] });
+      const child = spawn('docker', args, { env, stdio: [source?.fd ?? (inputText === undefined ? 'ignore' : 'pipe'), out?.fd ?? 'pipe', 'pipe'] });
+      if (inputText !== undefined) { child.stdin.on('error', reject); child.stdin.end(inputText); }
       child.stdout?.on('data', chunk => { stdout += chunk; });
       child.stderr.resume();
       child.on('error', reject);
@@ -21,9 +23,10 @@ export async function json(args, options) {
   try { return JSON.parse(output); }
   catch { throw new Error(`Docker ${args[0]} returned unreadable JSON`); }
 }
-export const composeArgs = (file, project) => ['compose', '-f', file, '-p', project];
+export const composeArgs = (file, project) => ['compose', '--env-file', devNull, '-f', file, '-p', project];
 export const services = ['bucket-init', 'controller', 'minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'workerd'];
 export const volumes = ['bucket', 'controller', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'];
+export const volumeNames = config => Object.hasOwn(config.volumes || {}, 'tls') ? [...volumes, 'tls'] : [...volumes];
 export function projectName(name) {
   if (!/^[a-z0-9][a-z0-9_-]{0,62}$/.test(name || '')) throw new Error('Expected a Docker project name (lowercase letters, digits, hyphens, underscores)');
   return name;

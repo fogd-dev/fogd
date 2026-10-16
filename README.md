@@ -228,5 +228,19 @@ work; approval remains separate. See the [access guide](docs/deploy-access.md).
 
 `node scripts/scoped-deploy-smoke.mjs` on a fresh stack qualifies two scoped CLI
 users, revocation, disabled legacy access, quota refusal, and fresh-volume recovery.
-Artifact and concurrent-upload limits are configurable. HTTPS/shared-mode operation
-is the next slice, M8b2; scoped credentials alone do not qualify remote hosting.
+Artifact and concurrent-upload limits are configurable. M8b2 adds HTTPS/shared-mode operation; remote host qualification remains M9 work.
+
+## M8b2: HTTPS and the shared profile
+
+`fogd tls import CERT KEY` installs an operator-provided certificate into a stopped
+installation. `fogd up --shared` requires TLS and scoped deploy credentials. Follow
+[shared installation](docs/shared-installation.md) for domain settings, private-CA
+trust, approval, renewal, and upgrade steps. `FOGD_ENV_FILE` selects an installation
+without rewriting the checkout's default configuration.
+
+The [TLS drill](scripts/tls-smoke.mjs) checks CLI trust, native Void Secure sessions,
+forwarding-header rejection, and fresh-volume recovery. The
+[upgrade drill](scripts/tls-upgrade.mjs) starts from a six-volume M8a snapshot and
+checks the same data and approval history after adopting HTTPS. This is a local
+shared-profile qualification; remote host/storage/network failure evidence belongs
+to M9.

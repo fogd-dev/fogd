@@ -1,7 +1,7 @@
 import { chromium, expect } from './guestbook-browser.mjs';
 
-export async function accountsBrowser(url, email, password) {
-  const browser = await chromium.launch();
+export async function accountsBrowser(url, email, password, launchOptions = {}) {
+  const browser = await chromium.launch(launchOptions);
   const context = await browser.newContext();
   const page = await context.newPage();
   async function ready(expected) {

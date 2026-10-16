@@ -1,15 +1,17 @@
+import { devNull } from 'node:os';
 import { inventory } from './inventory.mjs';
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { configEnv, stackRoot } from '../local.mjs';
-import { docker, json, composeArgs, projectContainers, projectName, stopped, volumes } from './docker.mjs';
+import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { fingerprint, writeJson, validateTopology, composeResolved } from './bundle.mjs';
 
 export async function backup(directory) {
   const env = await configEnv();
   const file = resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
-  const config = composeResolved(await json(['compose', '-f', file, 'config', '--format', 'json'], { env }));
+  const config = composeResolved(await json(['compose', '--env-file', devNull, '-f', file, 'config', '--format', 'json'], { env }));
   projectName(config.name); validateTopology(config);
+  const volumes = volumeNames(config);
   const images = await inventory(config);
   const dir = resolve(directory); await mkdir(dir, { mode: 0o700 });
   const started = Date.now(), command = composeArgs(file, config.name);

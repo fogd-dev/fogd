@@ -3,10 +3,11 @@ import { join } from 'node:path';
 import { configEnv, stackRoot, run } from '../packages/cli/src/local.mjs';
 import { request } from './http.mjs';
 
-export async function platformClient() {
-  const env = await configEnv();
-  const origin = env.FOGD_SERVER || `http://127.0.0.1:${env.FOGD_ADMIN_PORT || 8788}`;
-  const publicOrigin = env.FOGD_URL || `http://127.0.0.1:${env.FOGD_HTTP_PORT || 8787}`;
+export async function platformClient(env = null) {
+  env ||= await configEnv();
+  const scheme = env.FOGD_TLS === '1' ? 'https' : 'http';
+  const origin = env.FOGD_SERVER || `${scheme}://127.0.0.1:${env.FOGD_ADMIN_PORT || 8788}`;
+  const publicOrigin = env.FOGD_URL || `${scheme}://127.0.0.1:${env.FOGD_HTTP_PORT || 8787}`;
   const basic = `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`;
   async function api(path, options = {}) {
     const response = await fetch(origin + path, { ...options, headers: { Authorization: basic, 'Content-Type': 'application/json', ...options.headers }, signal: AbortSignal.timeout(900000) });

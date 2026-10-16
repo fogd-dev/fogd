@@ -377,3 +377,25 @@ credential metadata and revocations in the controller volume. Capacity exhaustio
 requires operator action; automatic pruning could discard migration/recovery evidence
 and is deferred to M10. Logical byte limits do not bound app data or filesystem block
 usage. M8b2 must add transport and shared-mode enforcement before shared-network use.
+
+## ADR 017: native TLS and an explicit shared profile
+
+**Context.** Scoped credentials need encrypted app and admin ingress. Void sessions
+need the actual HTTPS origin, and recovery must retain transport configuration.
+
+**Options.** Keep loopback HTTP only; add a reverse proxy that owns certificates and
+forwarding; or use the existing workerd and Node HTTPS listeners. A reverse proxy
+would offer mature renewal integrations but adds another deployment component.
+
+**Decision.** Use native TLS, an operator-imported managed keypair, and an explicit
+shared profile that requires TLS and disables legacy deploy access. Separate private
+gateway routing from public admin ingress. The gateway replaces forwarding headers;
+celld trusts them on private networks. Retain six-volume recovery compatibility and
+include the optional TLS volume in new snapshots.
+
+**Consequences.** Operators own certificate issuance, renewal and trust. The profile
+validates declared bind settings, not firewall configuration. Private traffic stays
+HTTP and workloads remain trusted. Certificate import rebuilds/recreates stopped
+containers, so upgrades require backups and preserved identities. A proxy advocate
+may prefer automated renewal; that can become a separate adapter once a deployment
+target needs it. Local HTTP remains available for loopback development.

@@ -107,3 +107,12 @@ and this page's date at the same time. Do not turn an unaudited feature into “
 This table is the capability overview. [compat.md](compat.md) owns detailed source
 qualifications, [report.md](report.md) owns implementation evidence and open gaps,
 and [decisions.md](decisions.md) owns the reasons for the architecture.
+
+
+## Qualified transport boundary
+
+fogd's [shared profile](shared-installation.md) provides native HTTPS for app and
+admin/deploy ingress, scoped credentials, and certificate-inclusive stopped recovery.
+The local drill qualifies Void Secure sessions and upgrade from the six-volume HTTP
+installation. Certificate renewal, remote host failure, and hostile-tenant isolation
+remain outside that evidence; private Docker traffic remains HTTP.

@@ -64,3 +64,20 @@ test('malformed backup JSON does not echo private configuration', async t => {
   await writeFile(file, '{"SECRET":"private-config-value"');
   await assert.rejects(readJson(file), error => /Unreadable backup JSON/.test(error.message) && !error.message.includes('private-config-value'));
 });
+
+test('TLS archives are optional but must match the declared managed volumes', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'fogd-tls-backup-')); t.after(() => rm(dir, { recursive: true, force: true }));
+  const source = config(); source.volumes.tls = { name: 'original_tls' };
+  source.services.controller.volumes = [{ type: 'volume', source: 'tls', target: '/var/lib/fogd-tls', read_only: true }];
+  const files = {};
+  for (const file of ['compose.json', 'images.tar', ...[...volumes, 'tls'].map(v => `${v}.tar`)]) {
+    await writeFile(join(dir, file), file === 'compose.json' ? JSON.stringify(source) : 'archive');
+    files[file] = await fingerprint(join(dir, file));
+  }
+  const manifest = { format: 'fogd-stopped-v1', files, images: Object.fromEntries(services.map(name => [name, 'sha256:' + 'b'.repeat(64)])) };
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+  assert.equal((await verifyBundle(dir)).config.volumes.tls.name, 'original_tls');
+  delete manifest.files['tls.tar'];
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+  await assert.rejects(verifyBundle(dir), /volume inventory/);
+});

@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { docker, json, composeArgs, projectContainers, projectName, stopped, volumes } from './docker.mjs';
+import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson } from './bundle.mjs';
 
 async function requireFresh(project, config) {
@@ -16,6 +16,7 @@ export async function restore(directory, project, output) {
   projectName(project);
   const dir = resolve(directory), destination = resolve(output);
   const { manifest, config } = await verifyBundle(dir);
+  const volumes = volumeNames(config);
   if (project === manifest.sourceProject) throw new Error('Restore requires a different project from its source');
   const target = restoredConfig(config, project, manifest.images);
   await requireFresh(project, target);

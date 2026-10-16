@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { importTLS } from '../src/tls.mjs';
 import { backup } from '../src/recovery/backup.mjs';
 import { restore } from '../src/recovery/restore.mjs';
 import { up, deploy, admin, status } from '../src/platform.mjs';
@@ -11,7 +12,13 @@ try {
   } else if (command === 'restore') {
     if (args.length !== 5 || args[1] !== '--project' || args[3] !== '--output') throw new Error('Usage: fogd restore DIRECTORY --project NAME --output DIRECTORY');
     await restore(args[0], args[2], args[4]);
-  } else if (command === 'up') await up();
+  } else if (command === 'tls') {
+    if (args.length !== 3 || args[0] !== 'import') throw new Error('Usage: fogd tls import CERTIFICATE_PEM PRIVATE_KEY_PEM');
+    await importTLS(args[1], args[2]);
+  } else if (command === 'up') {
+    if (args.length > 1 || (args.length === 1 && args[0] !== '--shared')) throw new Error('Usage: fogd up [--shared]');
+    await up(args[0] === '--shared');
+  }
   else if (command === 'deploy') {
     const nameIndex = args.indexOf('--name');
     const name = nameIndex === -1 ? undefined : args[nameIndex + 1];
@@ -26,6 +33,6 @@ try {
     await admin(...args);
   }
   else if (!command || command === '--help' || command === 'help') {
-    console.log('fogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd up                    Start the local Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
+    console.log('fogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY   Install a certificate while stopped\nfogd up [--shared]         Start the local or TLS/scoped Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }

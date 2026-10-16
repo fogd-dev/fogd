@@ -12,6 +12,7 @@
     "./artifact": "./src/artifact.mjs",
     "./manifest": "./src/manifest.mjs",
     "./bucket": "./src/bucket.mjs",
-    "./deployment": "./src/deployment.mjs"
+    "./deployment": "./src/deployment.mjs",
+    "./transport": "./src/transport.mjs"
   }
 }

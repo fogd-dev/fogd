@@ -55,7 +55,7 @@ services:
       <<: *celld-env
       CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_1_PREFIX:-slots/slot-1}
       CELLD_NODE: ${FOGD_SLOT_1_A_ID:-slot-1-a}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_A_HOST:-slot-1-a}:8081']
+    command: [--trust-forwarded-headers, --listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_A_HOST:-slot-1-a}:8081']
     volumes: [slot-1-a:/var/lib/celld]
     networks: [fleet-1]
   slot-1-b:
@@ -64,7 +64,7 @@ services:
       <<: *celld-env
       CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_1_PREFIX:-slots/slot-1}
       CELLD_NODE: ${FOGD_SLOT_1_B_ID:-slot-1-b}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_B_HOST:-slot-1-b}:8081']
+    command: [--trust-forwarded-headers, --listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_B_HOST:-slot-1-b}:8081']
     volumes: [slot-1-b:/var/lib/celld]
     networks: [fleet-1]
   slot-2-a:
@@ -73,7 +73,7 @@ services:
       <<: *celld-env
       CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_2_PREFIX:-slots/slot-2}
       CELLD_NODE: ${FOGD_SLOT_2_A_ID:-slot-2-a}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_A_HOST:-slot-2-a}:8081']
+    command: [--trust-forwarded-headers, --listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_A_HOST:-slot-2-a}:8081']
     volumes: [slot-2-a:/var/lib/celld]
     networks: [fleet-2]
   slot-2-b:
@@ -82,7 +82,7 @@ services:
       <<: *celld-env
       CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_2_PREFIX:-slots/slot-2}
       CELLD_NODE: ${FOGD_SLOT_2_B_ID:-slot-2-b}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_B_HOST:-slot-2-b}:8081']
+    command: [--trust-forwarded-headers, --listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_B_HOST:-slot-2-b}:8081']
     volumes: [slot-2-b:/var/lib/celld]
     networks: [fleet-2]
   controller:
@@ -92,6 +92,9 @@ services:
     ports: ['${FOGD_BIND_ADDRESS:-127.0.0.1}:${FOGD_ADMIN_PORT:-8788}:8082']
     environment:
       <<: [*bucket-env, *slots-env]
+      FOGD_PROFILE: ${FOGD_PROFILE:-local}
+      FOGD_TLS: ${FOGD_TLS:-0}
+      FOGD_PUBLIC_BIND_ADDRESS: ${FOGD_BIND_ADDRESS:-127.0.0.1}
       FOGD_ADMIN_USER: ${FOGD_ADMIN_USER:-admin}
       FOGD_ADMIN_PASSWORD: ${FOGD_ADMIN_PASSWORD:?Run fogd up to initialize credentials}
       FOGD_DEPLOY_TOKEN: ${FOGD_DEPLOY_TOKEN:-}
@@ -101,7 +104,7 @@ services:
       FOGD_MAX_PENDING_PER_CREDENTIAL: ${FOGD_MAX_PENDING_PER_CREDENTIAL:-5}
       FOGD_MAX_ARTIFACT_BYTES: ${FOGD_MAX_ARTIFACT_BYTES:-268435456}
       FOGD_MAX_UPLOADS: ${FOGD_MAX_UPLOADS:-2}
-    volumes: [controller:/var/lib/fogd]
+    volumes: [controller:/var/lib/fogd, tls:/var/lib/fogd-tls:ro]
     networks: [control, fleet-1, fleet-2]
     mem_limit: 512m
     cpus: 1
@@ -114,9 +117,13 @@ services:
     ports: ['${FOGD_BIND_ADDRESS:-127.0.0.1}:${FOGD_HTTP_PORT:-8787}:8080']
     environment:
       <<: *slots-env
-      FOGD_CONTROLLER: ${FOGD_CONTROLLER:-controller:8082}
+      FOGD_PROFILE: ${FOGD_PROFILE:-local}
+      FOGD_TLS: ${FOGD_TLS:-0}
+      FOGD_PUBLIC_BIND_ADDRESS: ${FOGD_BIND_ADDRESS:-127.0.0.1}
+      FOGD_CONTROLLER: ${FOGD_CONTROLLER:-controller:8083}
       FOGD_GATEWAY_TOKEN: ${FOGD_GATEWAY_TOKEN:?Run fogd up to initialize credentials}
     networks: [control, fleet-1, fleet-2]
+    volumes: [tls:/var/lib/fogd-tls:ro]
     mem_limit: 256m
     cpus: 1
 networks:
@@ -124,6 +131,7 @@ networks:
   fleet-1:
   fleet-2:
 volumes:
+  tls:
   bucket:
   controller:
   slot-1-a:

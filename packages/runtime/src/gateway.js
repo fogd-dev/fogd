@@ -22,8 +22,10 @@ export default {
     }
     const headers = new Headers(request.headers);
     for (const key of [...headers.keys()]) {
-      if (key.startsWith('x-void-') || key.startsWith('x-fogd-') || key.startsWith('cf-')) headers.delete(key);
+      if (key.startsWith('x-void-') || key.startsWith('x-fogd-') || key.startsWith('cf-') || key.startsWith('x-forwarded-') || key === 'forwarded') headers.delete(key);
     }
+    headers.set('x-forwarded-proto', url.protocol.slice(0, -1));
+    headers.set('x-forwarded-host', url.host);
     const backends = next++ % 2 ? pair.toReversed() : pair;
     for (const backend of backends) {
       try {

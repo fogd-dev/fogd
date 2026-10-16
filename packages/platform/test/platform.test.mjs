@@ -414,3 +414,18 @@ test('concurrent upload cap refuses excess bodies while admitted uploads complet
   a.req.end(payload.slice(1)); b.req.end(payload.slice(1));
   assert.deepEqual(await Promise.all([a.done, b.done]), [201, 201]);
 });
+
+test('private routing listener exposes no public administration and public listener exposes no routes', async t => {
+  const { controller: c } = await setup(t);
+  const credentials = { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' };
+  const publicServer = server(c, credentials), internal = server(c, credentials, { role: 'internal' });
+  for (const http of [publicServer, internal]) {
+    await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+    t.after(() => new Promise(resolve => http.close(resolve)));
+  }
+  const get = (http, path, authorization) => fetch(`http://127.0.0.1:${http.address().port}${path}`, { headers: { authorization } });
+  assert.equal((await get(publicServer, '/internal/route?host=hello.localhost', 'Bearer gateway')).status, 404);
+  assert.equal((await get(internal, '/internal/route?host=hello.localhost', 'Bearer bad')).status, 401);
+  assert.deepEqual(await (await get(internal, '/internal/route?host=hello.localhost', 'Bearer gateway')).json(), { state: 'unknown' });
+  assert.equal((await get(internal, '/v1/admin', `Basic ${Buffer.from('admin:password').toString('base64')}`)).status, 404);
+});

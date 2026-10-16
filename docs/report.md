@@ -19,6 +19,7 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 7b. Application growth and logical transfer | R2 additions preserve D1 records; browser attachments and bounded restore with failure/retry; see the [transfer guide](../examples/guestbook/TRANSFER.md) |
 | 7c. Private configuration and native auth | Revision-pinned admin secret input, native Void account/session flow, two-app isolation, rotation, and restart checks; see the [accounts guide](../examples/accounts/README.md) |
 | 8a. Stopped installation recovery | Fresh-volume restore with exact images, full replica logs, private configuration, interrupted approval retry, and continued writes; see the [recovery guide](recovery.md) |
+| 8b2. HTTPS shared profile | Native TLS, Secure Void sessions, private routing listener, certificate recovery, and six-volume installation upgrade; see the [shared installation guide](shared-installation.md) |
 | 8b1. Scoped access and admission limits | Named app-scoped deploy credentials, revocation, retained artifact/pending/upload limits, and recovery evidence; see the [access guide](deploy-access.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
@@ -218,3 +219,28 @@ history, and transient activation copies. Orphans count conservatively; pruning 
 not automatic. One bootstrap admin and optional legacy local access remain. The next
 slice qualifies HTTPS and explicit shared-mode policy; remote hosting is not yet
 claimed. See [review amendments](reviews/m8b-response.md).
+
+
+## M8b2 transport and upgrade evidence
+
+The local shared-profile drill passed scoped CLI deployment/approval over HTTPS,
+untrusted-CA refusal, plaintext refusal, public/private routing separation, native
+Void Secure/HttpOnly sessions, and spoofed forwarding-header rejection. A stopped
+snapshot restored the TLS volume, credentials, secrets, and live login session into
+fresh volumes; normal certificate verification still rejected untrusted clients.
+
+A separate drill restored the original six-volume M8a snapshot with its old images,
+verified HTTP account login, then deliberately upgraded the configuration/images
+and enabled shared HTTPS. D1/R2/DO records, account login, private revisions, and
+approval history survived. A release pending before the upgrade activated afterward.
+This tests a fogd control-plane/configuration upgrade with pinned upstream runtimes.
+
+Claude reviewed design and code. The code review found Compose's implicit root
+`.env` fallback; every CLI Compose call now suppresses it and uses the resolved
+installation environment. A real Compose configuration check verified that missing
+settings no longer inherit root credentials. See [review response](reviews/m8b2-response.md).
+
+Certificate renewal remains operator-managed. Private network traffic remains HTTP,
+end-user IP forwarding is absent, and shared mode does not qualify untrusted tenants.
+M9a starts with isolated local Kubernetes evidence; actual remote host/storage/network
+failure qualification is still open.

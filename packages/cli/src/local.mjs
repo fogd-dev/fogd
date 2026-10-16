@@ -1,3 +1,4 @@
+import { devNull } from 'node:os';
 import { spawn } from 'node:child_process';
 import { readFile, mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
@@ -11,9 +12,10 @@ export async function readJson(path, fallback) {
   try { return JSON.parse(await readFile(path, 'utf8')); }
   catch (error) { if (error.code === 'ENOENT') return fallback; throw error; }
 }
+export const configPath = () => resolve(process.env.FOGD_ENV_FILE || join(stackRoot, '.env'));
 export async function configEnv() {
   let local = {};
-  try { local = parseEnv(await readFile(join(stackRoot, '.env'), 'utf8')); }
+  try { local = parseEnv(await readFile(configPath(), 'utf8')); }
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   return { ...local, ...process.env };
 }
@@ -26,7 +28,7 @@ export function run(command, args, options = {}) {
     child.on('exit', code => code === 0 ? resolve(output) : reject(new Error(`${command} exited ${code}`)));
   });
 }
-export const compose = (args, env, capture = false) => run('docker', ['compose', '--project-directory', stackRoot, '-f', resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml')), ...args], { env, capture });
+export const compose = (args, env, capture = false) => run('docker', ['compose', '--env-file', devNull, '--project-directory', stackRoot, '-f', resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml')), ...args], { env, capture });
 export async function buildArtifact(projectDir, nameOverride) {
   const project = resolve(projectDir);
   const settings = await readJson(join(project, 'fogd.json'), {});

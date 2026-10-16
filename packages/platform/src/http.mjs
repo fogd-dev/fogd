@@ -1,5 +1,6 @@
 import { equal } from './security.mjs';
 import { createServer } from 'node:http';
+import { createServer as createSecureServer } from 'node:https';
 import { randomBytes } from 'node:crypto';
 import { manifest, MAX_UPLOAD } from '@fogd/runtime/manifest';
 import { adminDeployment, adminState } from './admin-view.mjs';
@@ -20,21 +21,23 @@ async function body(request, limit = MAX_UPLOAD * 1.4) {
   try { return JSON.parse(Buffer.concat(parts).toString()); }
   catch { throw new Error('Invalid JSON body'); }
 }
-export function server(controller, credentials, { maxUploads = 2 } = {}) {
+export function server(controller, credentials, { maxUploads = 2, role = 'public', tls = null } = {}) {
   const deploymentRequest = deploymentHandler(controller, credentials.deploy, body, maxUploads);
   const csrf = randomBytes(32).toString('hex');
   const basic = `Basic ${Buffer.from(`${credentials.user}:${credentials.password}`).toString('base64')}`;
-  return createServer({ requestTimeout: 300000, maxHeaderSize: 16384 }, async (request, response) => {
+  const create = tls ? createSecureServer : createServer;
+  return create({ ...tls, requestTimeout: 300000, maxHeaderSize: 16384 }, async (request, response) => {
     const send = (status, value, type = 'application/json') => {
       response.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" });
       response.end(type === 'application/json' ? JSON.stringify(value) : value);
     };
     try {
       const url = new URL(request.url, 'http://controller');
-      if (url.pathname === '/internal/route' && request.method === 'GET') {
+      if (role === 'internal' && url.pathname === '/internal/route' && request.method === 'GET') {
         if (!equal(request.headers.authorization, `Bearer ${credentials.gateway}`)) return send(401, { error: 'Unauthorized' });
         return send(200, controller.route(url.searchParams.get('host') || ''));
       }
+      if (role === 'internal' || url.pathname.startsWith('/internal/')) return send(404, { error: 'Not found' });
       if (await deploymentRequest(request, url, send)) return;
       if (!equal(request.headers.authorization, basic)) {
         response.setHeader('WWW-Authenticate', 'Basic realm="fogd admin", charset="UTF-8"');

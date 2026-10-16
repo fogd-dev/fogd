@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from 'node:util';
-import { json, projectContainers, services, volumes } from './docker.mjs';
+import { json, projectContainers, services, volumeNames } from './docker.mjs';
 
 export function checkContainer(service, container, image) {
   const actual = Object.fromEntries(container.Config.Env.map(entry => { const i = entry.indexOf('='); return [entry.slice(0, i), entry.slice(i + 1)]; }));
@@ -25,7 +25,7 @@ export async function inventory(config) {
     if (!isDeepStrictEqual(expected, actual)) throw new Error('Container volumes do not match the resolved configuration');
   }
   if (containers.length !== services.length) throw new Error('Unexpected project containers');
-  for (const name of volumes) {
+  for (const name of volumeNames(config)) {
     const [volume] = await json(['volume', 'inspect', config.volumes[name].name]);
     if (volume.Labels?.['com.docker.compose.project'] !== config.name || volume.Labels?.['com.docker.compose.volume'] !== name || volume.Driver !== 'local' || Object.keys(volume.Options || {}).length) throw new Error('Volume is not owned local project storage');
   }
