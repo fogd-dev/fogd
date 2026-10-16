@@ -46,43 +46,43 @@ async function setup(t) {
 
 test('pending/rejected bytes never publish; exact approval activates two isolated hostnames', async t => {
   const { controller: c, artifact, publishes } = await setup(t);
-  const a = await c.submit(await artifact(), 'team');
+  const a = await c.submit(await artifact(), 'team-token');
   assert.equal(c.route('hello.localhost').state, 'unknown'); assert.equal(publishes(), 0);
   await assert.rejects(c.mutate(a.id, '0'.repeat(64), 'approve'), /digest/);
   await c.mutate(a.id, a.digest, 'reject'); assert.equal(publishes(), 0);
-  const b = await c.submit(await artifact(), 'team'); await c.mutate(b.id, b.digest, 'approve');
-  const other = await c.submit(await artifact('second'), 'team'); await c.mutate(other.id, other.digest, 'approve');
+  const b = await c.submit(await artifact(), 'team-token'); await c.mutate(b.id, b.digest, 'approve');
+  const other = await c.submit(await artifact('second'), 'team-token'); await c.mutate(other.id, other.digest, 'approve');
   assert.equal(c.route('hello.localhost').state, 'active');
   assert.notEqual(c.route('hello.localhost').slot, c.route('second.localhost').slot);
   assert.equal(c.route('hello.localhost.evil').state, 'unknown');
-  await assert.rejects(c.submit(await artifact('third'), 'team'), /slots/);
+  await assert.rejects(c.submit(await artifact('third'), 'team-token'), /slots/);
 });
 
 test('rejects traversal, excluded metadata, nested config, bad digest and duplicates', async t => {
   const { controller: c, artifact } = await setup(t);
   for (const path of ['../secret', 'worker/../secret', 'fogd-release.json', '/secret', 'worker\\secret']) {
-    const body = await artifact(); body.files.push({ path, data: 'eA==' }); await assert.rejects(c.submit(body, 'team'), /path/);
+    const body = await artifact(); body.files.push({ path, data: 'eA==' }); await assert.rejects(c.submit(body, 'team-token'), /path/);
   }
-  const bad = await artifact(); bad.digest = '0'.repeat(64); await assert.rejects(c.submit(bad, 'team'), /digest/);
-  const duplicate = await artifact(); duplicate.files.push(duplicate.files[0]); await assert.rejects(c.submit(duplicate, 'team'), /Duplicate/);
+  const bad = await artifact(); bad.digest = '0'.repeat(64); await assert.rejects(c.submit(bad, 'team-token'), /digest/);
+  const duplicate = await artifact(); duplicate.files.push(duplicate.files[0]); await assert.rejects(c.submit(duplicate, 'team-token'), /Duplicate/);
   const nested = await artifact(); const file = nested.files.find(f => f.path === 'wrangler.json'); const config = JSON.parse(Buffer.from(file.data, 'base64')); config.durable_objects = { bindings: [{ name: '../DB', class_name: 'Unsafe', script_name: 'other' }] }; file.data = Buffer.from(JSON.stringify(config)).toString('base64');
-  await assert.rejects(c.submit(nested, 'team'), /identifier/);
+  await assert.rejects(c.submit(nested, 'team-token'), /identifier/);
 });
 
 test('partial migration failure preserves applied hashes but allows correction of unapplied SQL', async t => {
   const { controller: c, artifact } = await setup(t);
-  const failed = await c.submit(await artifact('hello', ['CREATE TABLE test(id TEXT);', 'BAD SQL']), 'team');
+  const failed = await c.submit(await artifact('hello', ['CREATE TABLE test(id TEXT);', 'BAD SQL']), 'team-token');
   await c.mutate(failed.id, failed.digest, 'approve');
   assert.equal(failed.status, 'failed'); assert.equal(c.route('hello.localhost').state, 'paused');
   assert.equal(c.state.apps.hello.migrations.length, 1);
-  await assert.rejects(c.submit(await artifact('hello', ['CHANGED', 'fixed']), 'team'), /Applied migration/);
-  const fixed = await c.submit(await artifact('hello', ['CREATE TABLE test(id TEXT);', 'fixed']), 'team');
+  await assert.rejects(c.submit(await artifact('hello', ['CHANGED', 'fixed']), 'team-token'), /Applied migration/);
+  const fixed = await c.submit(await artifact('hello', ['CREATE TABLE test(id TEXT);', 'fixed']), 'team-token');
   await c.mutate(fixed.id, fixed.digest, 'approve'); assert.equal(fixed.status, 'active');
 });
 
 test('interruptions stay paused, require explicit retry, and reconcile attempted migrations', async t => {
   const { controller: c, artifact, backend } = await setup(t);
-  const d = await c.submit(await artifact(), 'team');
+  const d = await c.submit(await artifact(), 'team-token');
   backend.ready = async () => { throw Error('Replica down'); };
   await c.mutate(d.id, d.digest, 'approve'); assert.equal(d.status, 'failed');
   d.status = 'activating'; await c.save();
@@ -95,13 +95,13 @@ test('interruptions stay paused, require explicit retry, and reconcile attempted
 
 test('lost controller metadata quarantines bucket owners and prevents slot reassignment', async t => {
   const { controller: c, artifact, backend } = await setup(t);
-  const d = await c.submit(await artifact(), 'team'); await c.mutate(d.id, d.digest, 'approve');
+  const d = await c.submit(await artifact(), 'team-token'); await c.mutate(d.id, d.digest, 'approve');
   await rm(join(c.dir, 'state.json'));
   const fresh = new Controller({ dir: c.dir, slots, backend }); await fresh.init();
   assert.equal(fresh.route('hello.localhost').state, 'paused');
   assert.equal(fresh.state.apps.hello.quarantined, true);
   assert.equal(fresh.available('different').id, 'slot-2');
-  await assert.rejects(fresh.submit(await artifact(), 'team'), /quarantined/);
+  await assert.rejects(fresh.submit(await artifact(), 'team-token'), /quarantined/);
 });
 
 test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact digest', async t => {
@@ -125,7 +125,8 @@ test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact
   assert.equal(pending.headers.get('Cache-Control'), 'no-store');
   assert.deepEqual(await pending.json(), { id: d.id, app: d.app, digest: d.digest, status: 'pending', submittedAt: d.submittedAt, step: 'submitted', error: null });
   assert.equal((await inspect('00000000-0000-0000-0000-000000000000')).status, 404);
-  const other = await c.submit(await artifact('other'), 'another-submitter');
+  const credential = await c.issueCredential('Another submitter', ['other']);
+  const other = await c.submit(await artifact('other'), credential.id);
   assert.equal((await inspect(other.id)).status, 404);
   assert.equal((await fetch(base + statusPath + '/artifact', { headers: { authorization: 'Bearer deploy' } })).status, 401);
   const path = `/v1/deployments/${d.id}/approve`;
@@ -150,7 +151,7 @@ test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact
 
 test('bucket owner mismatch and changed stored bytes prevent activation', async t => {
   const { controller: c, artifact, owners, publishes } = await setup(t);
-  const d = await c.submit(await artifact(), 'team');
+  const d = await c.submit(await artifact(), 'team-token');
   owners['slot-1'] = { app: 'someone-else' };
   await assert.rejects(c.mutate(d.id, d.digest, 'approve'), /owner mismatch/);
   assert.equal(publishes(), 0);
@@ -162,8 +163,8 @@ test('bucket owner mismatch and changed stored bytes prevent activation', async 
 
 test('concurrent approvals revalidate applied SQL and pause before side effects', async t => {
   const { controller: c, artifact, backend } = await setup(t);
-  const first = await c.submit(await artifact('hello', ['first']), 'team');
-  const stale = await c.submit(await artifact('hello', ['changed']), 'team');
+  const first = await c.submit(await artifact('hello', ['first']), 'team-token');
+  const stale = await c.submit(await artifact('hello', ['changed']), 'team-token');
   const publish = backend.publish;
   backend.publish = async (...args) => {
     assert.equal(c.route('hello.localhost').state, 'paused');
@@ -178,9 +179,9 @@ test('concurrent approvals revalidate applied SQL and pause before side effects'
 
 test('a regressed ledger cannot erase applied hashes or clear uncertain activation', async t => {
   const { controller: c, artifact, backend } = await setup(t);
-  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const initial = await c.submit(await artifact(), 'team-token'); await c.mutate(initial.id, initial.digest, 'approve');
   const hashes = structuredClone(c.state.apps.hello.migrations);
-  const next = await c.submit(await artifact(), 'team');
+  const next = await c.submit(await artifact(), 'team-token');
   backend.applied = async () => [];
   let migrations = 0; backend.migrate = async () => { migrations++; };
   await c.mutate(next.id, next.digest, 'approve');
@@ -194,7 +195,7 @@ test('a regressed ledger cannot erase applied hashes or clear uncertain activati
 
 test('duplicate owner markers quarantine both slots without overwriting app history', async t => {
   const { controller: c, artifact, owners, backend } = await setup(t);
-  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const initial = await c.submit(await artifact(), 'team-token'); await c.mutate(initial.id, initial.digest, 'approve');
   const original = structuredClone(c.state.apps.hello);
   owners['slot-2'] = { app: 'hello' };
   const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
@@ -209,15 +210,15 @@ test('duplicate owner markers quarantine both slots without overwriting app hist
 test('R2 additions reserve identities before effects and survive failed activation', async t => {
   const { controller: c, artifact, backend, publishes } = await setup(t);
   const base = await artifact();
-  const initial = await c.submit(base, 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const initial = await c.submit(base, 'team-token'); await c.mutate(initial.id, initial.digest, 'approve');
   const before = structuredClone(c.state.apps.hello.resources);
   const grown = await artifact('hello', undefined, { r2_buckets: [{ binding: 'STORAGE' }] });
-  const rejected = await c.submit(grown, 'team');
+  const rejected = await c.submit(grown, 'team-token');
   assert.deepEqual(rejected.resourceChanges.r2Added, [{ binding: 'STORAGE', bucket_name: 'hello-storage' }]);
   await c.mutate(rejected.id, rejected.digest, 'reject');
   assert.deepEqual(c.state.apps.hello.resources, before);
-  const stale = await c.submit(base, 'team');
-  const addition = await c.submit(grown, 'team');
+  const stale = await c.submit(base, 'team-token');
+  const addition = await c.submit(grown, 'team-token');
   const ready = backend.ready;
   backend.ready = async () => {
     const disk = JSON.parse(await readFile(join(c.dir, 'state.json'), 'utf8'));
@@ -228,7 +229,7 @@ test('R2 additions reserve identities before effects and survive failed activati
   assert.equal(addition.status, 'failed'); assert.equal(c.route('hello.localhost').state, 'paused');
   const count = publishes();
   const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
-  await assert.rejects(restarted.submit(base, 'team'), /Resource identities changed/);
+  await assert.rejects(restarted.submit(base, 'team-token'), /Resource identities changed/);
   await assert.rejects(restarted.mutate(stale.id, stale.digest, 'approve'), /Resource identities changed/);
   assert.equal(publishes(), count);
   backend.ready = ready;
@@ -242,14 +243,14 @@ test('R2 additions reserve identities before effects and survive failed activati
 
 test('failed additive migration retains reservations through rejection and corrected submission', async t => {
   const { controller: c, artifact } = await setup(t);
-  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const initial = await c.submit(await artifact(), 'team-token'); await c.mutate(initial.id, initial.digest, 'approve');
   const resources = { r2_buckets: [{ binding: 'STORAGE' }] };
-  const failed = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'BAD SQL'], resources), 'team');
+  const failed = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'BAD SQL'], resources), 'team-token');
   await c.mutate(failed.id, failed.digest, 'approve');
   assert.equal(failed.status, 'failed'); assert.equal(failed.step, 'migrating');
   await c.mutate(failed.id, failed.digest, 'reject');
-  await assert.rejects(c.submit(await artifact(), 'team'), /Resource identities changed/);
-  const corrected = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'CREATE TABLE attachments (id TEXT);'], resources), 'team');
+  await assert.rejects(c.submit(await artifact(), 'team-token'), /Resource identities changed/);
+  const corrected = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'CREATE TABLE attachments (id TEXT);'], resources), 'team-token');
   assert.equal(corrected.resourceChanges.r2Added.length, 1);
   await c.mutate(corrected.id, corrected.digest, 'approve'); assert.equal(corrected.status, 'active');
 });
@@ -257,7 +258,7 @@ test('failed additive migration retains reservations through rejection and corre
 test('private revisions are pinned, isolated, absent from artifacts, and redacted on failure', async t => {
   const { controller: c, artifact, backend, owners } = await setup(t);
   const body = await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } });
-  const release = await c.submit(body, 'team');
+  const release = await c.submit(body, 'team-token');
   await assert.rejects(c.mutate(release.id, release.digest, 'approve'), /secret revision/);
   assert.deepEqual(owners, {}); assert.equal(release.status, 'pending');
   const first = await c.replaceSecrets('hello', { TOKEN: 'private-first-value', EXTRA: 'not-injected' });
@@ -276,7 +277,7 @@ test('private revisions are pinned, isolated, absent from artifacts, and redacte
   backend.publish = async (_slot, dir) => { observed = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8')).vars; return 'version'; };
   await restarted.mutate(release.id, release.digest, 'approve', second.revision);
   assert.equal(restarted.state.deployments[release.id].status, 'active'); assert.equal(observed.TOKEN, 'private-second-value');
-  const other = await restarted.submit(await artifact('other', undefined, { secrets: { required: ['TOKEN'] } }), 'team');
+  const other = await restarted.submit(await artifact('other', undefined, { secrets: { required: ['TOKEN'] } }), 'team-token');
   await assert.rejects(restarted.mutate(other.id, other.digest, 'approve', second.revision), /secret revision/);
   const { readdir } = await import('node:fs/promises');
   assert.deepEqual(await readdir(join(c.dir, 'execution')), []);
@@ -302,7 +303,7 @@ test('secret updates require administrator CSRF and never return submitted value
 
 test('approval pins private revisions before a failing slot claim and retains them across restart', async t => {
   const { controller: c, artifact, backend } = await setup(t);
-  const release = await c.submit(await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } }), 'team');
+  const release = await c.submit(await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } }), 'team-token');
   const first = await c.replaceSecrets('hello', { TOKEN: 'private-claim-value' });
   const claim = backend.claim;
   backend.claim = async () => {
@@ -319,7 +320,7 @@ test('approval pins private revisions before a failing slot claim and retains th
   backend.claim = claim;
   await restarted.mutate(release.id, release.digest, 'approve', first.revision);
   assert.equal(restarted.state.deployments[release.id].status, 'active');
-  const plain = await restarted.submit(await artifact('other'), 'team');
+  const plain = await restarted.submit(await artifact('other'), 'team-token');
   await assert.rejects(restarted.mutate(plain.id, plain.digest, 'approve', next.revision), /does not declare secrets/);
 });
 
@@ -329,6 +330,87 @@ test('submitted metadata must be canonical and cannot add hidden configuration',
   for (const metadata of [{ requiredSecrets: [] }, { requiredSecrets: ['Z', 'A'] }, { requiredSecrets: ['TOKEN'], values: { TOKEN: 'hidden-value' } }]) {
     const body = await artifact('hello', undefined, { secrets: { required: ['TOKEN'] } });
     body.files.find(file => file.path === 'fogd-deployment.json').data = Buffer.from(JSON.stringify(metadata)).toString('base64');
-    await assert.rejects(c.submit(body, 'team'), /metadata/);
+    await assert.rejects(c.submit(body, 'team-token'), /metadata/);
   }
+});
+
+test('scoped identities cannot cross app/status/admin boundaries and revocation survives restart', async t => {
+  const { controller: c, artifact, backend } = await setup(t);
+  const a = await c.issueCredential('Alice', ['hello']);
+  const b = await c.issueCredential('Bob', ['other']);
+  const http = server(c, { user: 'admin', password: 'password', deploy: null, gateway: 'gateway' });
+  await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => http.close(resolve)));
+  const base = `http://127.0.0.1:${http.address().port}`;
+  const call = (path, token, data) => fetch(base + path, { method: data ? 'POST' : 'GET', headers: { authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: data ? JSON.stringify(data) : undefined });
+  const body = await artifact();
+  assert.equal((await call('/v1/deployments', 'deploy', body)).status, 401);
+  assert.equal((await call('/v1/deployments', b.token, body)).status, 400);
+  assert.equal(c.quota.used, 0); assert.equal(Object.keys(c.state.deployments).length, 0);
+  const result = await call('/v1/deployments', a.token, body); assert.equal(result.status, 201);
+  const release = await result.json();
+  assert.equal((await call(`/v1/deployments/${release.id}`, b.token)).status, 404);
+  assert.equal((await call(`/v1/deployments/${release.id}`, a.token)).status, 200);
+  for (const path of ['/v1/admin', `/v1/deployments/${release.id}/artifact`]) assert.equal((await call(path, a.token)).status, 401);
+  assert.equal((await call('/v1/credentials', a.token, { name: 'Escalate', apps: ['other'] })).status, 401);
+  const auth = `Basic ${Buffer.from('admin:password').toString('base64')}`;
+  const admin = await (await fetch(base + '/v1/admin', { headers: { authorization: auth } })).json();
+  assert.ok(!JSON.stringify(admin).includes(a.token)); assert.equal(admin.credentials[0].hash, undefined);
+  await c.revokeCredential(a.id);
+  assert.equal((await call(`/v1/deployments/${release.id}`, a.token)).status, 401);
+  const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
+  assert.equal(restarted.credentials.authenticate(`Bearer ${a.token}`), null);
+  assert.equal(restarted.credentials.authenticate(`Bearer ${b.token}`).id, b.id);
+  assert.equal(restarted.quota.used, c.quota.used);
+});
+
+test('serialized revocation and quota admission refuse queued writes without storing artifacts', async t => {
+  const { controller: c, artifact, backend } = await setup(t);
+  const a = await c.issueCredential('Alice', ['hello']);
+  const body = await artifact();
+  const revoked = c.revokeCredential(a.id);
+  const queued = c.submit(body, a.id);
+  await revoked; await assert.rejects(queued, /revoked/);
+  assert.equal(c.quota.used, 0);
+  const b = await c.issueCredential('Bob', ['hello']);
+  c.maxPendingPerCredential = 1;
+  const results = await Promise.allSettled([c.submit(body, b.id), c.submit(body, b.id)]);
+  assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
+  assert.match(results.find(r => r.status === 'rejected').reason.message, /pending/);
+  const first = results.find(r => r.status === 'fulfilled').value;
+  await c.mutate(first.id, first.digest, 'reject');
+  const retained = c.quota.used;
+  const restarted = new Controller({ dir: c.dir, slots, backend, maxArtifactBytes: retained }); await restarted.init();
+  await assert.rejects(restarted.submit(body, b.id), /capacity/);
+  const { readdir } = await import('node:fs/promises');
+  assert.deepEqual(await readdir(join(c.dir, 'artifacts')), [first.id]);
+  assert.equal(restarted.quota.used, retained);
+  assert.equal((await Promise.all([c.submit(body, 'team-token'), c.submit(body, 'team-token')])).length, 2, 'Legacy token retains the global pending limit');
+});
+
+test('concurrent upload cap refuses excess bodies while admitted uploads complete', async t => {
+  const { controller: c, artifact } = await setup(t);
+  const http = server(c, { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' }, { maxUploads: 2 });
+  await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => http.close(resolve)));
+  const url = `http://127.0.0.1:${http.address().port}/v1/deployments`;
+  const payload = JSON.stringify(await artifact());
+  const { request } = await import('node:http');
+  let count = 0, both;
+  const arrived = new Promise(resolve => { both = resolve; });
+  http.on('request', () => { if (++count === 2) both(); });
+  const slow = () => {
+    let req;
+    const done = new Promise((resolve, reject) => {
+      req = request(url, { method: 'POST', headers: { Authorization: 'Bearer deploy', 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } }, res => { res.resume(); res.on('end', () => resolve(res.statusCode)); });
+      req.on('error', reject); req.write(payload.slice(0, 1));
+    });
+    t.after(() => req.destroy());
+    return { req, done };
+  };
+  const a = slow(), b = slow(); await arrived;
+  const excess = await fetch(url, { method: 'POST', headers: { Authorization: 'Bearer deploy', 'Content-Type': 'application/json' }, body: payload });
+  assert.equal(excess.status, 429); assert.equal(Object.keys(c.state.deployments).length, 0);
+  a.req.end(payload.slice(1)); b.req.end(payload.slice(1));
+  assert.deepEqual(await Promise.all([a.done, b.done]), [201, 201]);
 });

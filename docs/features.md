@@ -77,11 +77,11 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | Submitter deployment status | Yes; team token, bounded diagnostics | No control plane | No control plane | Platform deploy tracking | Not audited for this exact workflow |
 | Exact-artifact approval before publication | Yes; separate submit/admin credentials | No control plane | No control plane | OAuth publish approval exists; scope differs | Not audited for this exact workflow |
 | Private app configuration | Partial; admin revisions pinned to approval, plaintext runtime bucket | Text bindings in deployment objects | Text bindings in config | Environment schema / Platform secrets | Not audited here |
-| User/project roles and OAuth login | Partial; shared team token + admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
+| User/project roles and OAuth login | Partial; scoped/revocable deploy credentials + bootstrap admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |
 | Installation backup/restore | Partial; stopped local stack, exact images, fresh-volume recovery tested | Requires bucket and all node logs/identities | External orchestration required | Operator responsibility | Not audited here |
 | Whole-stack high availability | No; bucket/controller single points of failure | Depends on bucket/fleet topology | External orchestration required | Depends on hosting/services | Managed platform; outside this test scope |
-| Resource limits | Partial; containers, heap, cells, body size, uploads | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
+| Resource limits | Partial; containers, heap, cells, body size, retained artifacts, pending requests, concurrent uploads | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
 | Automatic schema rollback | No | No fogd rollback mechanism | No deployment migration runner | Not audited | Not audited |
 
 Void already implements roles and artifact-scoped OAuth publish approval. This is

@@ -1,0 +1,67 @@
+import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { platformClient } from './platform-client.mjs';
+import { run, compose, stackRoot } from '../packages/cli/src/local.mjs';
+import { expect } from './guestbook-browser.mjs';
+
+const client = await platformClient();
+assert.equal(Object.keys((await client.api('/v1/admin')).apps).length, 0, 'Use a fresh disposable stack');
+const cli = join(stackRoot, 'packages/cli/bin/fogd.js');
+const issue = async (name, app) => JSON.parse(await run(process.execPath, [cli, 'admin', 'issue-token', name, app], { env: client.env, capture: true }));
+const alice = await issue('Alice', 'hello'), bob = await issue('Bob', 'notebook');
+const origin = client.env.FOGD_SERVER || `http://127.0.0.1:${client.env.FOGD_ADMIN_PORT || 8788}`;
+async function as(token, path, data) {
+  return fetch(origin + path, { method: data ? 'POST' : 'GET', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: data ? JSON.stringify(data) : undefined });
+}
+const aliceEnv = { ...client.env, FOGD_DEPLOY_TOKEN: alice.token };
+await run(process.execPath, [cli, 'deploy'], { cwd: join(stackRoot, 'examples/hello'), env: aliceEnv });
+const first = Object.values((await client.api('/v1/admin')).deployments).find(d => d.submitter === alice.id);
+assert.ok(first); assert.equal(first.app, 'hello');
+const artifact = await client.api(`/v1/deployments/${first.id}/artifact`);
+assert.equal((await as(bob.token, '/v1/deployments', artifact)).status, 400);
+assert.equal((await as(bob.token, `/v1/deployments/${first.id}`)).status, 404);
+assert.equal((await as(alice.token, '/v1/admin')).status, 401);
+assert.equal((await as(alice.token, '/v1/credentials', { name: 'Escalate', apps: ['notebook'] })).status, 401);
+assert.equal((await as(alice.token, `/v1/deployments/${first.id}`)).status, 200);
+assert.equal((await client.decide(first)).status, 'active');
+await run(process.execPath, [cli, 'deploy'], { cwd: join(stackRoot, 'examples/notebook'), env: { ...client.env, FOGD_DEPLOY_TOKEN: bob.token } });
+const second = Object.values((await client.api('/v1/admin')).deployments).find(d => d.submitter === bob.id);
+assert.equal((await client.decide(second)).status, 'active');
+const state = await client.api('/v1/admin');
+assert.ok(state.quota.retainedArtifactBytes > 0);
+for (const issued of [alice, bob]) {
+  assert.ok(!JSON.stringify(state).includes(issued.token));
+  assert.equal(state.credentials.find(c => c.id === issued.id).hash, undefined);
+}
+await run(process.execPath, [cli, 'admin', 'revoke-token', alice.id], { env: client.env, capture: true });
+assert.equal((await as(alice.token, `/v1/deployments/${first.id}`)).status, 401);
+assert.equal((await as(alice.token, '/v1/deployments', artifact)).status, 401);
+await compose(['restart', 'controller'], client.env);
+await expect.poll(async () => { try { return (await as(bob.token, `/v1/deployments/${second.id}`)).status; } catch { return 0; } }, { timeout: 60000 }).toBe(200);
+assert.equal((await as(alice.token, `/v1/deployments/${first.id}`)).status, 401);
+assert.equal((await client.api('/v1/admin')).quota.retainedArtifactBytes, state.quota.retainedArtifactBytes);
+const legacy = client.env.FOGD_DEPLOY_TOKEN;
+client.env.FOGD_DEPLOY_TOKEN = '';
+client.env.FOGD_MAX_ARTIFACT_BYTES = String(state.quota.retainedArtifactBytes);
+await compose(['up', '-d', '--no-deps', 'controller'], client.env);
+await expect.poll(async () => { try { return (await as(bob.token, `/v1/deployments/${second.id}`)).status; } catch { return 0; } }, { timeout: 60000 }).toBe(200);
+assert.equal((await as(legacy, '/v1/deployments', artifact)).status, 401);
+const notebookArtifact = await client.api(`/v1/deployments/${second.id}/artifact`);
+const refused = await as(bob.token, '/v1/deployments', notebookArtifact);
+assert.equal(refused.status, 400); assert.match((await refused.json()).error, /capacity/);
+assert.equal(Object.keys((await client.api('/v1/admin')).deployments).length, 2);
+const project = client.env.COMPOSE_PROJECT_NAME;
+assert.ok(project, 'Use an explicit disposable Compose project');
+const bundle = join(stackRoot, '.fogd', `${project}-credentials-backup`);
+const output = join(stackRoot, '.fogd', `${project}-credentials-restore`);
+const target = `${project}-restore`;
+await run(process.execPath, [cli, 'backup', bundle], { env: client.env });
+await run(process.execPath, [cli, 'restore', bundle, '--project', target, '--output', output], { env: client.env });
+await compose(['up', '-d', '--pull', 'never'], { ...client.env, COMPOSE_PROJECT_NAME: target, FOGD_COMPOSE_FILE: join(output, 'compose.json') });
+await expect.poll(async () => { try { return (await as(bob.token, `/v1/deployments/${second.id}`)).status; } catch { return 0; } }, { timeout: 90000 }).toBe(200);
+assert.equal((await as(alice.token, `/v1/deployments/${first.id}`)).status, 401);
+assert.equal((await as(legacy, '/v1/deployments', artifact)).status, 401);
+assert.equal((await as(bob.token, '/v1/deployments', notebookArtifact)).status, 400);
+assert.equal((await client.api('/v1/admin')).quota.retainedArtifactBytes, state.quota.retainedArtifactBytes);
+console.log('PASS: fresh-volume credential/revocation/quota recovery and disabled legacy token');
+console.log('PASS: real CLI scoped issuance/deployment/revocation, isolated app/status/admin permissions, two approvals, redacted metadata, restart persistence and retained-byte accounting');

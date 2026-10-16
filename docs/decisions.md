@@ -351,3 +351,29 @@ replaceable empty nodes. Snapshot and restore failures leave resources stopped;
 partial targets cannot be reused automatically. Same-origin source/clone concurrency,
 external storage, cross-version upgrades, scheduling, and retention are unqualified.
 The approach is reversible and testable now; M8b still owns shared-operation policy.
+
+## ADR 016: scoped credentials and conservative artifact admission
+
+**Context.** The original shared token grants every teammate the same deployment
+scope and status visibility. Unbounded retained artifacts and concurrent uploads
+can also consume controller resources during otherwise ordinary development.
+
+**Options.** Keep the shared token; adopt an external identity provider immediately;
+or add revocable, app-scoped deployment credentials while retaining the existing
+approval administrator. For storage, automatically delete old artifacts or refuse
+admission at a declared limit.
+
+**Decision.** Issue high-entropy credentials with immutable app scopes, stable IDs,
+and stored SHA-256 hashes. Scope/revocation checks and credential mutations share
+the controller's submission queue. Status is restricted to its submitting identity.
+Keep credential storage separate from deployment state and omit hashes from every
+inspection response. Bound retained logical artifact bytes, pending requests per
+credential, and concurrent authenticated uploads. Validate all limits at startup.
+
+**Consequences.** Teammates receive narrower authority without becoming cluster
+operators. Admins must distribute tokens privately and revoke/reissue to change
+scope. The initial administrator remains a single bootstrap identity. Restores carry
+credential metadata and revocations in the controller volume. Capacity exhaustion
+requires operator action; automatic pruning could discard migration/recovery evidence
+and is deferred to M10. Logical byte limits do not bound app data or filesystem block
+usage. M8b2 must add transport and shared-mode enforcement before shared-network use.

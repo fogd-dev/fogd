@@ -48,17 +48,32 @@ export async function admin(action, id, digest, secretRevision) {
   const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
   const state = await api(env, '/v1/admin', { headers });
   if (action === 'list') {
-    console.log(JSON.stringify({ deployments: Object.values(state.deployments), secrets: state.secrets }, null, 2)); return;
+    console.log(JSON.stringify({ deployments: Object.values(state.deployments), secrets: state.secrets, credentials: state.credentials, quota: state.quota }, null, 2)); return;
+  }
+  if (action === 'issue-token' || action === 'revoke-token') {
+    await manageCredential(env, headers, state.csrf, action, id, digest, secretRevision); return;
   }
   if (action === 'secrets') {
-    if (!id || digest || secretRevision) throw new Error('Usage: fogd admin secrets APP < values.json');
-    const values = await readSecretInput();
-    const result = await api(env, `/v1/apps/${encodeURIComponent(id)}/secrets`, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify(values) });
-    console.log(JSON.stringify(result, null, 2)); return;
+    await manageSecrets(env, headers, state.csrf, id, digest, secretRevision); return;
   }
   if (!['approve', 'reject'].includes(action) || !id || !digest) throw new Error('Usage: fogd admin list | approve|reject <id> <digest>');
   if (action === 'approve' && state.deployments[id]?.requiredSecrets?.length && !secretRevision) throw new Error('Approval requires an explicit secret revision: fogd admin approve ID SHA SECRET_REVISION (see fogd admin list)');
   const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest, secretRevision: secretRevision || null }) });
   console.log(JSON.stringify(result, null, 2));
   if (result.status === 'failed') throw new Error('Activation failed; inspect the error above and explicitly approve again to retry');
+}
+
+async function manageCredential(env, headers, csrf, action, id, apps, extra) {
+  if (!id || extra || (action === 'issue-token' ? !apps : apps)) throw new Error('Usage: fogd admin issue-token NAME APP[,APP] | revoke-token ID');
+  const path = action === 'issue-token' ? '/v1/credentials' : `/v1/credentials/${encodeURIComponent(id)}/revoke`;
+  const data = action === 'issue-token' ? { name: id, apps: apps.split(',') } : {};
+  const result = await api(env, path, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(data) });
+  console.log(JSON.stringify(result, null, 2));
+}
+
+async function manageSecrets(env, headers, csrf, id, digest, revision) {
+  if (!id || digest || revision) throw new Error('Usage: fogd admin secrets APP < values.json');
+  const values = await readSecretInput();
+  const result = await api(env, `/v1/apps/${encodeURIComponent(id)}/secrets`, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(values) });
+  console.log(JSON.stringify(result, null, 2));
 }

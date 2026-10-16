@@ -4,11 +4,11 @@
 an integrated platform for building, deploying, and running applications, with
 freedom to choose where they live. Milestones below advance reusable capabilities.
 The FilOz demo-hosting use case is a candidate first pilot, not the north star.
-M7a–M7c and M8a are locally qualified; later milestones remain proposals.
+M7a–M7c, M8a, and M8b1 are locally qualified; later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b, M7c, and M8a are locally qualified; M8b is next.
+and [implementation report](report.md). M7b, M7c, M8a, and M8b1 are locally qualified; M8b2 is next.
 
 ## Current foundation
 
@@ -34,7 +34,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b, M7c, and M8a are locally qualified; M8b is next. Later
+records the current qualification; M7b, M7c, M8a, and M8b1 are locally qualified; M8b2 is next. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -76,7 +76,8 @@ platform resources before designing a custom scheduler or Kubernetes operator.
 The [M7b contract](m7b.md) qualifies additive R2 declarations and the guestbook
 logical transfer profile. The [M7c contract](m7c.md) and [review amendments](reviews/m7c-response.md) qualify
 private configuration and one native Void auth flow. The [M8a recovery contract](m8a.md) qualifies stopped local backup/restore.
-Next is M8b: shared-operation identity, TLS/access policy, and quota qualification. Preserve secret revisions, controller metadata,
+M8b1 qualifies scoped credentials and admission limits. Next is [M8b2](m8b2.md):
+HTTPS, explicit shared-mode policy, and recovery/upgrade evidence with those controls. Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.
 

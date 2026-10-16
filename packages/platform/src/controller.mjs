@@ -1,3 +1,5 @@
+import { Credentials } from './credentials.mjs';
+import { ArtifactQuota, positiveLimit, uploadBytes } from './quota.mjs';
 import { mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -9,8 +11,12 @@ import { Secrets } from './secrets.mjs';
 import { resourceChanges } from './resources.mjs';
 
 export class Controller {
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20 }) {
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024 }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
+    this.maxPending = positiveLimit(maxPending, 'Pending deployment limit');
+    this.maxPendingPerCredential = positiveLimit(maxPendingPerCredential, 'Per-credential pending limit');
+    this.quota = new ArtifactQuota(maxArtifactBytes);
+    this.credentials = new Credentials(dir);
     this.secrets = new Secrets(dir);
     this.queue = Promise.resolve();
     this.occupied = new Set();
@@ -22,7 +28,9 @@ export class Controller {
   }
   async init() {
     await this.secrets.init();
+    await this.credentials.init();
     await mkdir(join(this.dir, 'artifacts'), { recursive: true });
+    await this.quota.init(join(this.dir, 'artifacts'));
     this.state = await readJson(join(this.dir, 'state.json'), { apps: {}, deployments: {} });
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
@@ -69,6 +77,10 @@ export class Controller {
   }
   submit(body, submitter) {
     return this.exclusive(async () => {
+      if (submitter !== 'team-token') this.credentials.requireScope(submitter, body.app);
+      const pending = Object.values(this.state.deployments).filter(d => d.submitter === submitter && ['pending', 'failed'].includes(d.status));
+      if (submitter !== 'team-token' && pending.length >= this.maxPendingPerCredential) throw new Error('Credential pending deployment limit reached');
+      const bytes = uploadBytes(body); this.quota.admit(bytes);
       if (Object.values(this.state.deployments).filter(d => ['pending', 'failed'].includes(d.status)).length >= this.maxPending) throw new Error('Pending deployment limit reached');
       const id = randomUUID(), dir = this.artifact(id);
       try {
@@ -77,8 +89,8 @@ export class Controller {
         const changes = this.compatible(release, this.state.apps[release.app]);
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
         this.state.deployments[id] = request;
-        await this.save(); return request;
-      } catch (error) { await rm(dir, { recursive: true, force: true }); throw error; }
+        await this.save(); this.quota.used += bytes; return request;
+      } catch (error) { delete this.state.deployments[id]; await rm(dir, { recursive: true, force: true }); throw error; }
     });
   }
   async reconcile(app, slot) {
@@ -104,6 +116,8 @@ export class Controller {
     });
     app.uncertain = null; await this.save();
   }
+  issueCredential(name, apps) { return this.exclusive(() => this.credentials.issue(name, apps)); }
+  revokeCredential(id) { return this.exclusive(() => this.credentials.revoke(id)); }
   replaceSecrets(app, values) { return this.exclusive(() => this.secrets.replace(app, values)); }
   mutate(id, digest, action, secretRevision) {
     return this.exclusive(async () => {

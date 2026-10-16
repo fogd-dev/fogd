@@ -94,10 +94,13 @@ services:
       <<: [*bucket-env, *slots-env]
       FOGD_ADMIN_USER: ${FOGD_ADMIN_USER:-admin}
       FOGD_ADMIN_PASSWORD: ${FOGD_ADMIN_PASSWORD:?Run fogd up to initialize credentials}
-      FOGD_DEPLOY_TOKEN: ${FOGD_DEPLOY_TOKEN:?Run fogd up to initialize credentials}
+      FOGD_DEPLOY_TOKEN: ${FOGD_DEPLOY_TOKEN:-}
       FOGD_GATEWAY_TOKEN: ${FOGD_GATEWAY_TOKEN:?Run fogd up to initialize credentials}
       FOGD_BASE_DOMAIN: ${FOGD_BASE_DOMAIN:-localhost}
       FOGD_MAX_PENDING: ${FOGD_MAX_PENDING:-20}
+      FOGD_MAX_PENDING_PER_CREDENTIAL: ${FOGD_MAX_PENDING_PER_CREDENTIAL:-5}
+      FOGD_MAX_ARTIFACT_BYTES: ${FOGD_MAX_ARTIFACT_BYTES:-268435456}
+      FOGD_MAX_UPLOADS: ${FOGD_MAX_UPLOADS:-2}
     volumes: [controller:/var/lib/fogd]
     networks: [control, fleet-1, fleet-2]
     mem_limit: 512m

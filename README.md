@@ -218,3 +218,15 @@ The [recovery drill](scripts/installation-recovery.mjs) restores accounts and no
 after an interrupted approval and forced replica stops, then checks sessions,
 D1/R2/Durable Object data, approval retry, and new writes. This qualifies local
 same-version replacement; shared-operation controls remain M8b work.
+
+## M8b1: scoped teammate access and capacity
+
+Admins can issue a named credential for specific apps with
+`fogd admin issue-token NAME APP[,APP]` and revoke it with
+`fogd admin revoke-token ID`. A teammate can submit and inspect only its authorized
+work; approval remains separate. See the [access guide](docs/deploy-access.md).
+
+`node scripts/scoped-deploy-smoke.mjs` on a fresh stack qualifies two scoped CLI
+users, revocation, disabled legacy access, quota refusal, and fresh-volume recovery.
+Artifact and concurrent-upload limits are configurable. HTTPS/shared-mode operation
+is the next slice, M8b2; scoped credentials alone do not qualify remote hosting.

@@ -6,5 +6,5 @@ export function adminDeployment(request) {
   return visible;
 }
 export function adminState(controller) {
-  return { ...controller.state, deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe() };
+  return { ...controller.state, deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
 }

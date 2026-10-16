@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { platformClient } from './platform-client.mjs';
+import { compose } from '../packages/cli/src/local.mjs';
+import { expect } from './guestbook-browser.mjs';
+import { MAX_UPLOAD } from '../packages/runtime/src/manifest.mjs';
+
+const client = await platformClient();
+let state;
+await expect.poll(async () => { try { state = await client.api('/v1/admin'); return true; } catch { return false; } }, { timeout: 60000 }).toBe(true);
+const active = state.apps.hello?.active;
+assert.ok(active, 'Approve hello on a disposable stack first');
+assert.ok(state.quota.maxArtifactBytes - state.quota.retainedArtifactBytes >= MAX_UPLOAD * 2, 'Allow room for two maximum artifacts');
+const artifact = await client.api(`/v1/deployments/${active}/artifact`);
+const { csrf } = state;
+const credential = await client.api('/v1/credentials', { method: 'POST', headers: { 'X-Fogd-CSRF': csrf }, body: JSON.stringify({ name: 'Upload capacity drill', apps: ['hello'] }) });
+const used = artifact.files.reduce((sum, file) => sum + Buffer.from(file.data, 'base64').length, 0);
+artifact.files.push({ path: 'assets/capacity.bin', data: Buffer.alloc(MAX_UPLOAD - used, 97).toString('base64') });
+const hash = createHash('sha256');
+for (const file of [...artifact.files].sort((a, b) => a.path < b.path ? -1 : 1)) {
+  const bytes = Buffer.from(file.data, 'base64'); hash.update(JSON.stringify([file.path, bytes.length])); hash.update(bytes);
+}
+artifact.digest = hash.digest('hex');
+const payload = JSON.stringify(artifact);
+const releases = await Promise.all([1, 2].map(() => client.api('/v1/deployments', { method: 'POST', headers: { Authorization: `Bearer ${credential.token}` }, body: payload })));
+assert.equal((await client.api('/v1/admin')).quota.retainedArtifactBytes, state.quota.retainedArtifactBytes + 2 * MAX_UPLOAD);
+for (const release of releases) await client.decide(release, 'reject');
+const fresh = await client.api('/v1/admin');
+await client.api(`/v1/credentials/${credential.id}/revoke`, { method: 'POST', headers: { 'X-Fogd-CSRF': fresh.csrf }, body: '{}' });
+const peak = await compose(['exec', '-T', 'controller', 'cat', '/sys/fs/cgroup/memory.peak'], client.env, true);
+console.log(JSON.stringify({ artifactBytes: MAX_UPLOAD, simultaneousUploads: 2, controllerPeakMiB: Math.round(Number(peak.trim()) / 1024 / 1024) }));
+console.log('PASS: two maximum-size admitted uploads, exact retained-byte accounting, rejection and revocation without controller restart');

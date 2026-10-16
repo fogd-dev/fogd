@@ -19,6 +19,7 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 7b. Application growth and logical transfer | R2 additions preserve D1 records; browser attachments and bounded restore with failure/retry; see the [transfer guide](../examples/guestbook/TRANSFER.md) |
 | 7c. Private configuration and native auth | Revision-pinned admin secret input, native Void account/session flow, two-app isolation, rotation, and restart checks; see the [accounts guide](../examples/accounts/README.md) |
 | 8a. Stopped installation recovery | Fresh-volume restore with exact images, full replica logs, private configuration, interrupted approval retry, and continued writes; see the [recovery guide](recovery.md) |
+| 8b1. Scoped access and admission limits | Named app-scoped deploy credentials, revocation, retained artifact/pending/upload limits, and recovery evidence; see the [access guide](deploy-access.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
@@ -196,3 +197,24 @@ address pool because earlier stopped test projects retained their networks. Rest
 failed before starting a target. Removing only those old test containers/networks
 while retaining volumes and snapshots allowed a fresh-target rerun. No system
 network configuration or unrelated Docker workload was changed.
+
+## M8b1 access and capacity evidence
+
+Real CLI/Docker checks passed for two scoped teammates, separate approvals,
+cross-app and cross-status refusals, admin isolation, one-time token issuance,
+revocation, and controller restart. A fresh-volume restore retained a valid
+credential, a revoked credential, disabled legacy access, and a full artifact quota.
+Both recovered apps remained controlled by their existing approval records.
+
+The upload drill admitted two concurrent 32 MiB artifacts, counted them exactly,
+and completed rejection/revocation without a controller restart. Cgroup memory peak
+was 376 MiB under the default 512 MiB limit. Unit tests cover revocation ordered
+before queued submission, concurrent admission, scope/privacy, malformed limits,
+restart accounting, and a third upload refused while two bodies are held open.
+
+Credential hashes live in the controller volume and never appear in admin/status
+projections. Logical artifact quotas exclude app data, metadata, private revision
+history, and transient activation copies. Orphans count conservatively; pruning is
+not automatic. One bootstrap admin and optional legacy local access remain. The next
+slice qualifies HTTPS and explicit shared-mode policy; remote hosting is not yet
+claimed. See [review amendments](reviews/m8b-response.md).

@@ -4,7 +4,8 @@ import { randomBytes } from 'node:crypto';
 import { manifest, MAX_UPLOAD } from '@fogd/runtime/manifest';
 import { adminDeployment, adminState } from './admin-view.mjs';
 import { checkMutation, secretRequest } from './admin-secrets.mjs';
-import { deploymentStatus } from './deployment-status.mjs';
+import { deploymentHandler } from './deployment-http.mjs';
+import { credentialRequest } from './admin-credentials.mjs';
 
 const revision = (d, controller) => (d.requiredSecrets || []).length ? d.secretRevision || controller.secrets.index[d.app]?.revision || null : null;
 const html = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -19,22 +20,8 @@ async function body(request, limit = MAX_UPLOAD * 1.4) {
   try { return JSON.parse(Buffer.concat(parts).toString()); }
   catch { throw new Error('Invalid JSON body'); }
 }
-async function deploymentRequest(request, url, controller, deployToken, send) {
-  const submitting = url.pathname === '/v1/deployments' && request.method === 'POST';
-  const match = request.method === 'GET' && /^\/v1\/deployments\/([a-f0-9-]{36})$/.exec(url.pathname);
-  if (!submitting && !match) return false;
-  if (!equal(request.headers.authorization, `Bearer ${deployToken}`)) {
-    send(401, { error: 'Unauthorized' });
-  } else if (submitting) {
-    send(201, await controller.submit(await body(request), 'team-token'));
-  } else {
-    const release = controller.state.deployments[match[1]];
-    if (release?.submitter !== 'team-token') send(404, { error: 'Deployment not found' });
-    else send(200, deploymentStatus(release));
-  }
-  return true;
-}
-export function server(controller, credentials) {
+export function server(controller, credentials, { maxUploads = 2 } = {}) {
+  const deploymentRequest = deploymentHandler(controller, credentials.deploy, body, maxUploads);
   const csrf = randomBytes(32).toString('hex');
   const basic = `Basic ${Buffer.from(`${credentials.user}:${credentials.password}`).toString('base64')}`;
   return createServer({ requestTimeout: 300000, maxHeaderSize: 16384 }, async (request, response) => {
@@ -48,12 +35,13 @@ export function server(controller, credentials) {
         if (!equal(request.headers.authorization, `Bearer ${credentials.gateway}`)) return send(401, { error: 'Unauthorized' });
         return send(200, controller.route(url.searchParams.get('host') || ''));
       }
-      if (await deploymentRequest(request, url, controller, credentials.deploy, send)) return;
+      if (await deploymentRequest(request, url, send)) return;
       if (!equal(request.headers.authorization, basic)) {
         response.setHeader('WWW-Authenticate', 'Basic realm="fogd admin", charset="UTF-8"');
         return send(401, { error: 'Admin authentication required' });
       }
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
+      if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await secretRequest(request, url, controller, csrf, body, send)) return;
       const match = /^\/v1\/deployments\/([a-f0-9-]{36})\/(approve|reject|artifact)$/.exec(url.pathname);
       if (match && match[2] === 'artifact' && request.method === 'GET') {
