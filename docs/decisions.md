@@ -217,3 +217,61 @@ Success qualifies agent execution of the documented workflow, not human usabilit
 or a fresh operating-system installation. Human feedback remains optional. A
 smaller model can still infer steps a human would miss, so successful automation
 must not be described as proof of an intuitive manual workflow.
+
+## ADR 011: reserve approved additive R2 declarations
+
+**Context.** A deployed Void app needs to add attachments while keeping existing
+messages. Freezing every declaration prevents that update. Publication can fail
+or a controller can restart after an approval has started applying changes.
+
+**Options.** Keep all declarations frozen; allow arbitrary changes and attempt
+rollback; or permit only R2 additions with a persistent reservation floor.
+
+**Decision.** Permit new R2 bindings while preserving every existing binding name
+and bucket identity. D1, Durable Objects, and script identities remain unchanged.
+Persist approved declarations before migration/publication. Validate later releases
+against this floor, including after failure or rejection. Show additions relative
+to the active release. Binding order does not change identity. Reject unsupported
+nested storage settings and derived names exceeding celld's 64-character limit
+before accepting the artifact. Applied SQL hashes remain immutable.
+
+**Consequences.** Developers can add file storage without abandoning D1 records.
+An approved failed addition cannot be removed by a replacement release. Operators
+must retain it while correcting the failure. A stale request's approval is refused;
+it stays pending until explicitly rejected or superseded. R2 reservation is fogd
+metadata: celld creates the slot-scoped `r2/{bucket_name}/` namespace lazily on
+writes. There is no bucket-provisioning transaction or automatic retirement.
+This extends the approval controller described in ADR 006.
+
+## ADR 012: qualify a bounded guestbook logical transfer
+
+**Context.** M7b needs evidence that application data can move. General backups
+require coordinating more writers and runtime metadata than the guestbook uses.
+D1 and R2 do not share a transaction.
+
+**Options.** Defer all transfer until M8; implement generic physical backup now;
+or qualify one bounded logical profile with an explicit maintenance window.
+
+**Decision.** Transfer messages and referenced attachment bytes through native
+Void middleware, keeping schema knowledge with the fixture. Version the profile
+as `fogd-guestbook-v1`; cap each table at 100 rows, each object at 64 KiB, total
+objects at 1 MiB, and compact JSON at 2 MiB. Validate IDs, references, sizes,
+canonical base64, and SHA-256 before writes. Destination SQL and R2 must be empty.
+Claim a snapshot digest in SQL, put objects under stable UUID keys, then commit
+all rows and completion together with D1 batch. A pending receipt permits only
+an identical retry, checking any existing object's bytes before reuse.
+
+Stop the local workerd service and gracefully stop/start both participating fleets.
+Check both replicas' active versions and health before transfer. Require exclusive
+operator access with no concurrent deployment approvals. This fixture has no
+Durable Objects, schedules, queues, or external writers. Keep ingress stopped on
+failure. The `/__fogd/` middleware requires a maintenance header that ingress strips
+and uses a path ingress blocks. The operator reaches it through the private fleet.
+
+**Consequences.** The transfer excludes unreferenced R2 objects and runtime logs.
+It supports this versioned application schema, not arbitrary SQL or cross-version
+migration. All apps on the stack lose public ingress during transfer. An operator
+must inspect failures and explicitly resume ingress or retry. Content-addressed
+keys were considered; stable UUID keys plus digest checks preserve attachment
+identity without introducing deduplication. Filecoin and Cloudflare-hosted migration
+remain outside this qualification. M8 still owns installation backup/recovery.

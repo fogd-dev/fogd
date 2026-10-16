@@ -124,3 +124,13 @@ its assigned fleet. The original proposal and both independent reviews are prese
 Run `node scripts/platform-smoke.mjs` against a fresh stack to exercise the complete
 flow, including intentionally failed SQL and subsequent recovery. Unit tests inject
 activation failures and controller metadata loss without modifying running fleets.
+
+## Resource additions
+
+The controller permits R2 additions while keeping existing bucket identities,
+D1 declarations, and Durable Object declarations fixed. Approval records the full
+resource reservation before migrations/publication. Failed or rejected approved
+additions remain reserved; a corrected release must retain them. Admin details
+show additions relative to the active release. Stale incompatible approvals fail
+without silently rejecting their pending request. See ADR 011 in
+[decisions.md](decisions.md) and the [growth fixture](../examples/guestbook/TRANSFER.md).

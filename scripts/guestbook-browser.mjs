@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { stackRoot } from '../packages/cli/src/local.mjs';
 process.env.PLAYWRIGHT_BROWSERS_PATH ||= join(stackRoot, '.fogd/browsers');
 const { chromium, expect } = await import('@playwright/test');
-export { expect };
+export { chromium, expect };
 
 async function readSummary(page) {
   await expect(async () => {

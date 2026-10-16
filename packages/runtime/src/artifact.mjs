@@ -25,6 +25,13 @@ const identifier = value => {
 const keys = (object, allowed) => {
   for (const key of Object.keys(object)) if (!allowed.includes(key)) throw new Error(`Unsupported nested config: ${key}`);
 };
+function validateStorage(input, app) {
+  for (const b of input.r2_buckets || []) keys(b, ['binding', 'bucket_name', 'preview_bucket_name']);
+  for (const b of input.d1_databases || []) keys(b, ['binding', 'database_name', 'database_id', 'preview_database_id', 'migrations_dir']);
+  for (const binding of [...(input.d1_databases || []), ...(input.r2_buckets || [])]) {
+    if (`${app}-${binding.binding.toLowerCase()}`.length > 64) throw new Error('Derived resource name exceeds celld limit of 64 characters; shorten the app or binding name');
+  }
+}
 export function translateConfig(input, app) {
   appName(app);
   for (const [key, value] of Object.entries(input)) {
@@ -46,6 +53,7 @@ export function translateConfig(input, app) {
     if (seen.has(name.toLowerCase())) throw new Error(`Duplicate binding: ${name}`);
     seen.add(name.toLowerCase());
   }
+  validateStorage(input, app);
   if (input.durable_objects) keys(input.durable_objects, ['bindings']);
   for (const b of input.durable_objects?.bindings || []) {
     if (b.script_name) throw new Error('Cross-script Durable Objects are not supported');

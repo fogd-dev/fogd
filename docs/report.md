@@ -16,11 +16,12 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 5. Platform design | Claude and Gemini independently reviewed the selected custom approval gate; original proposals and responses are preserved in `reviews/` |
 | 6. Platform | Two apps, exact subdomain routing, Basic-authenticated admin UI/CLI, immutable-digest approval, rejection, failure/retry, and runtime resource limits |
 | 7a. Native full-stack qualification | Guestbook pages, form actions, typed client/API, split client assets, two approved releases and additive SQL; see the [fixture guide](../examples/guestbook/README.md) |
+| 7b. Application growth and logical transfer | R2 additions preserve D1 records; browser attachments and bounded restore with failure/retry; see the [transfer guide](../examples/guestbook/TRANSFER.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
 rejection, artifact-path rejection, D1/R2/DO writes, isolated SQL activation failure,
-corrected resubmission, and controller/workerd restart persistence. Seventeen unit tests cover
+corrected resubmission, and controller/workerd restart persistence. Unit tests cover
 interrupted activation, migration reconciliation, controller metadata loss, auth,
 artifact validation, ownership conflicts, and ingress behavior. The sample production builds pass. The final implementation also passed the approval smoke on fresh
 Docker volumes after review fixes.
@@ -44,6 +45,14 @@ A fresh smaller agent independently completed the documented automated workflow
 from a clean checkout with new credentials and volumes, without author hints.
 The [onboarding record](onboarding.md) closes the revised M7a reproducibility gate.
 Human usability and manual admin-UI onboarding remain unverified and optional.
+
+M7b's local growth smoke passed with an approved R2 addition, retained D1 messages,
+browser upload/download, and logical transfer to a second app. A SQL trigger forced
+restore to fail after object writes; no message/attachment rows committed, and an
+identical retry completed without duplicates. Corrupt/different snapshots were
+refused, a new message was saved after restore, and controller/workerd restart
+preserved the records. Base and attachment fixtures also built with networking
+disabled. See the [M7b review response](reviews/m7b-response.md).
 
 ## Runtime boundary and corrections to the initial assumptions
 
@@ -75,8 +84,9 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   backups. Lost controller metadata quarantines occupied slots; restore it explicitly.
 - Only the adapter's validated configuration subset is accepted: string variables,
   one D1 database per app, R2, local SQL-backed Durable Objects, and static assets.
-  Resource declarations are frozen on first approval; adding bindings needs a future
-  explicit resource-change operation.
+  Existing resource identities remain fixed. R2 additions are supported and stay
+  reserved after approved failures; D1/DO additions and resource retirement remain
+  unsupported.
   Unsupported AI, WfP, Hyperdrive, queues/workflows, cron, cross-app service bindings,
   auth-managed migrations, and other nonempty declarations fail rather than disappear.
 - R2 multipart handles are process-local upstream. Examples exercise ordinary puts
@@ -111,6 +121,11 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
    individual identities and raw diagnostics remain separate concerns.
 9. Upload only runtime worker modules and enforce secret-file asset exclusions;
    omit local preview secrets and worker source maps.
+10. Use fresh-agent onboarding as the reproducibility gate without waiting for humans.
+11. Reserve approved additive R2 identities, even after failure; show changes against
+    the active release.
+12. Qualify one bounded logical guestbook transfer during an explicit maintenance
+    window, with digest-based retries and atomic SQL completion.
 
 The [feature table](features.md) compares the implemented platform with its runtimes,
 Void, and hosted Cloudflare. Read [decisions.md](decisions.md) for context, alternatives, and reasons, and

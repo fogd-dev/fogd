@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { receiveArtifact } from '@fogd/runtime/manifest';
 import { readJson, saveJson } from './store.mjs';
+import { resourceChanges } from './resources.mjs';
 
 export class Controller {
   constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20 }) {
@@ -55,12 +56,13 @@ export class Controller {
     return this.slots.find(slot => !this.occupied.has(slot.id) && !Object.values(this.state.apps).some(a => a.slot === slot.id));
   }
   compatible(release, app) {
-    if (!app) return;
+    if (!app) return resourceChanges(null, release.resources);
     if (app.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
-    if (!isDeepStrictEqual(app.resources, release.resources)) throw new Error('Resource identities changed');
+    resourceChanges(app.resources, release.resources);
     for (const old of app.migrations || []) {
       if (!release.migrations.some(m => isDeepStrictEqual(m, old))) throw new Error(`Applied migration changed: ${old.name}`);
     }
+    return resourceChanges(this.state.deployments[app.active]?.resources, release.resources);
   }
   submit(body, submitter) {
     return this.exclusive(async () => {
@@ -69,8 +71,8 @@ export class Controller {
       try {
         const release = await receiveArtifact(body, dir);
         if (!this.available(release.app)) throw new Error('No available app slots');
-        this.compatible(release, this.state.apps[release.app]);
-        const request = { id, ...release, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
+        const changes = this.compatible(release, this.state.apps[release.app]);
+        const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
         this.state.deployments[id] = request;
         await this.save(); return request;
       } catch (error) { await rm(dir, { recursive: true, force: true }); throw error; }
@@ -106,6 +108,7 @@ export class Controller {
       let app = this.state.apps[request.app];
       if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
+      this.compatible(request, app);
       await this.backend.claim(slot, request.app);
       this.occupied.add(slot.id);
       if (!app) {
@@ -113,7 +116,7 @@ export class Controller {
         this.state.apps[request.app] = app; await this.save();
       }
       await this.reconcile(app, slot);
-      this.compatible(request, app);
+      request.resourceChanges = this.compatible(request, app);
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
       request.status = 'activating'; request.error = null; app.route = 'paused';
       const step = async value => { request.step = value; await this.save(); };
@@ -124,6 +127,7 @@ export class Controller {
         await this.backend.ready(slot, request.version);
       };
       try {
+        app.resources = structuredClone(request.resources);
         await step('approved');
         if (!app.active) await publish();
         app.uncertain = id; await step('checking-migration-ledger');

@@ -32,10 +32,10 @@ async function setup(t) {
   };
   const controller = new Controller({ dir: join(root, 'state'), slots, backend }); await controller.init();
   let sequence = 0;
-  const artifact = async (app = 'hello', sql = ['CREATE TABLE test (id TEXT);']) => {
+  const artifact = async (app = 'hello', sql = ['CREATE TABLE test (id TEXT);'], resources = {}) => {
     const dir = join(root, `project-${sequence++}`); await mkdir(join(dir, 'dist/ssr'), { recursive: true }); await mkdir(join(dir, 'db/migrations'), { recursive: true });
     await writeFile(join(dir, 'dist/ssr/index.js'), 'export default {fetch(){return new Response("ok")}}');
-    await writeFile(join(dir, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', d1_databases: [{ binding: 'DB' }] }));
+    await writeFile(join(dir, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', d1_databases: [{ binding: 'DB' }], ...resources }));
     for (const [index, content] of sql.entries()) await writeFile(join(dir, 'db/migrations', `000${index + 1}_init.sql`), content);
     const outputDir = join(dir, 'artifact'); const release = await stageArtifact({ projectDir: dir, outputDir, app });
     return manifest(outputDir, release);
@@ -202,4 +202,53 @@ test('duplicate owner markers quarantine both slots without overwriting app hist
   assert.equal(restarted.state.apps.hello.active, original.active);
   assert.deepEqual(restarted.state.apps.hello.migrations, original.migrations);
   assert.equal(restarted.available('different'), undefined);
+});
+
+
+test('R2 additions reserve identities before effects and survive failed activation', async t => {
+  const { controller: c, artifact, backend, publishes } = await setup(t);
+  const base = await artifact();
+  const initial = await c.submit(base, 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const before = structuredClone(c.state.apps.hello.resources);
+  const grown = await artifact('hello', undefined, { r2_buckets: [{ binding: 'STORAGE' }] });
+  const rejected = await c.submit(grown, 'team');
+  assert.deepEqual(rejected.resourceChanges.r2Added, [{ binding: 'STORAGE', bucket_name: 'hello-storage' }]);
+  await c.mutate(rejected.id, rejected.digest, 'reject');
+  assert.deepEqual(c.state.apps.hello.resources, before);
+  const stale = await c.submit(base, 'team');
+  const addition = await c.submit(grown, 'team');
+  const ready = backend.ready;
+  backend.ready = async () => {
+    const disk = JSON.parse(await readFile(join(c.dir, 'state.json'), 'utf8'));
+    assert.deepEqual(disk.apps.hello.resources, addition.resources);
+    throw Error('Replica failed after publication');
+  };
+  await c.mutate(addition.id, addition.digest, 'approve');
+  assert.equal(addition.status, 'failed'); assert.equal(c.route('hello.localhost').state, 'paused');
+  const count = publishes();
+  const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
+  await assert.rejects(restarted.submit(base, 'team'), /Resource identities changed/);
+  await assert.rejects(restarted.mutate(stale.id, stale.digest, 'approve'), /Resource identities changed/);
+  assert.equal(publishes(), count);
+  backend.ready = ready;
+  await restarted.mutate(addition.id, addition.digest, 'approve');
+  assert.equal(restarted.route('hello.localhost').state, 'active');
+  assert.equal(restarted.state.deployments[addition.id].resourceChanges.r2Added.length, 1);
+  assert.deepEqual(restarted.state.apps.hello.resources.d1, before.d1);
+  assert.deepEqual(restarted.state.apps.hello.resources.durable, before.durable);
+  assert.deepEqual(restarted.state.apps.hello.resources.r2, addition.resources.r2);
+});
+
+test('failed additive migration retains reservations through rejection and corrected submission', async t => {
+  const { controller: c, artifact } = await setup(t);
+  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const resources = { r2_buckets: [{ binding: 'STORAGE' }] };
+  const failed = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'BAD SQL'], resources), 'team');
+  await c.mutate(failed.id, failed.digest, 'approve');
+  assert.equal(failed.status, 'failed'); assert.equal(failed.step, 'migrating');
+  await c.mutate(failed.id, failed.digest, 'reject');
+  await assert.rejects(c.submit(await artifact(), 'team'), /Resource identities changed/);
+  const corrected = await c.submit(await artifact('hello', ['CREATE TABLE test (id TEXT);', 'CREATE TABLE attachments (id TEXT);'], resources), 'team');
+  assert.equal(corrected.resourceChanges.r2Added.length, 1);
+  await c.mutate(corrected.id, corrected.digest, 'approve'); assert.equal(corrected.status, 'active');
 });

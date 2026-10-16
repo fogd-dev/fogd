@@ -72,7 +72,10 @@ docker run --rm --network none fogd-verify:local
 ```
 
 Dependency installation during image construction needs network access. The run
-performs type-checking, normal Void/Vite build, fogd's build, and artifact staging.
+performs type-checking, normal Void/Vite build, fogd's build, and artifact staging
+for both the base guestbook and its attachment update.
 It retains both build outputs inside the container, prints their differences, and
 refuses to run when a non-loopback network interface is present. No deployment to
 Cloudflare is performed. See [artifact mapping](../../docs/build-output.md).
+
+For R2 additions and bounded logical data transfer, follow [TRANSFER.md](TRANSFER.md).

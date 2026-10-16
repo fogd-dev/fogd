@@ -125,7 +125,9 @@ pnpm exec fogd admin reject <deployment-id> <sha256>
 Approval pauses the app, runs migrations, publishes through celld, and verifies both
 replica versions before routing resumes. Failures remain paused with a visible step
 and error. Reapprove the same digest to retry, or submit a correction. Applied SQL
-hashes and resource declarations are immutable, including binding additions in v0.
+hashes and existing resource identities are immutable. R2 bindings can be added;
+approved additions stay reserved even after activation failure or rejection. D1
+and Durable Object declarations remain fixed.
 A successful activation supersedes older submissions; resubmit an old artifact if
 you deliberately want its code again. There is no automatic schema rollback.
 
@@ -165,3 +167,19 @@ passed from a clean checkout without author hints. Hosted execution remains
 unverified; human usability feedback is optional. Existing examples can be redeployed from
 source; keep volumes only when you need their data. No separate always-running test
 stack is required.
+
+## M7b: add attachments and transfer application data
+
+The [guestbook transfer guide](examples/guestbook/TRANSFER.md) demonstrates an R2
+addition to an existing app, retained D1 messages, browser upload/download, and a
+bounded logical export/restore into a second app. On a fresh disposable stack:
+
+```sh
+node scripts/growth-smoke.mjs
+```
+
+This test temporarily stops public ingress for all apps, injects a restore failure,
+and verifies an identical retry, post-restore writes, and restart persistence.
+The profile covers this guestbook's messages and referenced attachments. General
+installation backups remain M8 work. See [M7b](docs/m7b.md) and the
+[roadmap](docs/roadmap.md) for the exact boundary.

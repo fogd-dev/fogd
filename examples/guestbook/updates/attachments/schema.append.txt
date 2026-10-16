@@ -1,0 +1,14 @@
+
+export const attachments = sqliteTable('attachments', {
+  id: text('id').primaryKey(),
+  messageId: integer('message_id').notNull().references(() => messages.id),
+  name: text('name').notNull(),
+  size: integer('size').notNull(),
+  sha256: text('sha256').notNull(),
+});
+
+export const transferState = sqliteTable('transfer_state', {
+  id: text('id').primaryKey(),
+  digest: text('digest').notNull(),
+  status: text('status').notNull(),
+});

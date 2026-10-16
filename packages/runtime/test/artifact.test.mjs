@@ -70,3 +70,10 @@ test('refuses split modules and symlinked build files before publication', async
   await symlink('/etc/passwd', join(root, 'dist/ssr/secret'));
   await assert.rejects(stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' }), /Symlinks/);
 });
+
+test('rejects unusable resource names and unsupported nested settings before reservation', () => {
+  for (const key of ['r2_buckets', 'd1_databases']) {
+    assert.throws(() => translateConfig({ [key]: [{ binding: 'STORAGE' }] }, 'a'.repeat(63)), /64 characters/);
+    assert.throws(() => translateConfig({ [key]: [{ binding: 'STORAGE', jurisdiction: 'eu' }] }, 'hello'), /Unsupported/);
+  }
+});

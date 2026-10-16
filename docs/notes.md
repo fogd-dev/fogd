@@ -164,3 +164,25 @@ Void output and one in fogd output; both retained `nodejs_als`, D1 `DB`, and the
 same client asset configuration. These counts describe this fixture and pinned
 build, not a size or determinism guarantee. The verifier now also stages the fogd
 artifact while offline. Full findings and responses are in `reviews/m7-response.md`.
+
+## M7b qualification, 2026-10-16
+
+The first live growth run retained the guestbook's messages and passed attachment
+upload/download, then failed with 404 at the private export endpoint. Gemini's
+source review identified Void's exclusion of underscore-prefixed route directories.
+Moving the endpoints into native middleware resolved it. Middleware returns HTTP
+responses explicitly; plain objects are only converted by `defineHandler`.
+
+The next run passed the logical roundtrip, invalid-checksum rejection, injected SQL
+failure after R2 writes, identical retry, and post-restore writes. The original
+platform smoke also passed after resource validation changed. The transfer command
+was exercised twice with the same snapshot file. Final qualification includes a
+101-row export refusal with a bounded-profile error and byte-for-byte attachment
+reads after restart. Tests used disposable `fogd-m7b` volumes; prior installations
+were stopped. No other Docker project's state was changed.
+
+Gemini's specification review returned findings but reported an interrupted stream.
+Its later implementation review completed successfully, as did both Claude reviews.
+Original review outputs and accepted/deferred findings are under `docs/reviews/`.
+Offline verification covers both base and grown apps: type-check, normal Void build,
+fogd build, and staging with `--network none`. Hosted execution remains untested.

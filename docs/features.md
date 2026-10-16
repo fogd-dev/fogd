@@ -29,7 +29,7 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | HTTP Workers / Void server routes | Yes; hello, notebook, and guestbook tested | Yes | Yes | SDK + Vite build | Yes |
 | D1 database backend | Partial; one DB/app, primary sessions | Yes; primary-only sessions | Partial; client, no DB server | SDK / Drizzle | Yes |
 | SQL-backed Durable Objects | Yes; notebook tested | Yes | Yes; local storage | SDK | Yes |
-| R2 object storage | Partial; put/get tested, multipart not portable | Partial; multipart handles process-local | Partial; client needs backend | Storage SDK | Yes |
+| R2 object storage | Partial; approved additions and browser put/get tested, multipart not portable | Partial; multipart handles process-local | Partial; client needs backend | Storage SDK | Yes |
 | KV | No; adapter rejects it | Yes | Partial; client needs backend | SDK/config | Yes |
 | Queues | No; adapter rejects them | Yes | Partial; needs broker | SDK/config | Yes |
 | Workflows | No; adapter rejects them | Yes | Partial; needs execution backend | Config passthrough | Yes |
@@ -52,6 +52,10 @@ Cloudflare's dispatch product has its own
 Dynamic loading in a standalone runtime does not implement that contract. The
 [fogd adapter](../packages/runtime/src/artifact.mjs) is the authority for admitted
 configuration; unsupported nonempty declarations fail explicitly.
+
+The [guestbook transfer profile](../examples/guestbook/TRANSFER.md) qualifies bounded
+logical export/restore of messages and referenced attachment bytes. It requires a
+local maintenance window; installation backup and hosted migration remain unqualified.
 
 ## Deployment and operations
 

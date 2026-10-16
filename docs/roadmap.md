@@ -4,19 +4,20 @@
 an integrated platform for building, deploying, and running applications, with
 freedom to choose where they live. Milestones below advance reusable capabilities.
 The FilOz demo-hosting use case is a candidate first pilot, not the north star.
-Only M7a has entered implementation; later milestones remain proposals.
+M7a and M7b have entered implementation; later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b is the next implementation slice.
+and [implementation report](report.md). M7b is locally qualified; M7c is the next slice to specify.
 
 ## Current foundation
 
 The local prototype builds selected Void apps, requires approval of an immutable
 artifact, routes two apps, and tests a subset of D1/R2/Durable Object behavior and
 replica recovery. One native React browser/SDK workflow is qualified. Additional
-SDK/framework paths, shared remote operation, resource evolution, and backup/restore
-remain gaps. See [report.md](report.md) for exact evidence.
+SDK/framework paths, shared remote operation, broader resource evolution, and
+installation backup/restore remain gaps. M7b qualifies R2 additions and one bounded
+logical transfer profile. See [report.md](report.md) for exact evidence.
 Do not infer product support from the runtimes' feature lists.
 
 ## Milestones and acceptance gates
@@ -33,7 +34,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b is the next implementation slice. Later
+records the current qualification; M7b is locally qualified; M7c is the next slice to specify. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -72,11 +73,10 @@ platform resources before designing a custom scheduler or Kubernetes operator.
 
 ## What the next spec needs to resolve
 
-M7b needs a bounded resource-addition contract: which declarations may be added,
-how existing identities and records remain stable, and how approval handles partial
-failure. Select one logical export/restore profile and test its data roundtrip.
-Keep destructive changes and resource retirement outside this slice. M7c retains
-app authentication; M8/M9 retain shared remote operation.
+The [M7b contract](m7b.md) qualifies additive R2 declarations and the guestbook
+logical transfer profile. M7c needs a bounded secret-injection and native Void app
+authentication contract, including artifact privacy, provider choice, migrations,
+and failure behavior. M8/M9 retain shared remote operation.
 
 Fresh-agent onboarding measures whether the written workflow can be executed
 without author assistance. It does not establish human usability. Human feedback

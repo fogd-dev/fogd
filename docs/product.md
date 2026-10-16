@@ -101,8 +101,10 @@ safely; destructive changes require an explicit separate operation. A failed
 activation leaves a diagnosable, recoverable resource/deployment state. Test the
 transition from an app without storage to one with storage, retaining old records.
 
-Today: resource declarations are frozen. This is a product blocker for normal app
-iteration, independent of the number of bindings implemented by celld.
+Today: M7b qualifies adding R2 attachments to the deployed guestbook while
+retaining D1 records. Existing resource identities remain fixed; approved additions
+stay reserved after failures. D1/DO additions, renames, deletions, and retirement
+remain unsupported. See the [growth and transfer guide](../examples/guestbook/TRANSFER.md).
 
 ### U4: A failed update can be diagnosed and recovered
 

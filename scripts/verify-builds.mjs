@@ -4,15 +4,15 @@ import { networkInterfaces } from 'node:os';
 import { cp, mkdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { run, stackRoot } from '../packages/cli/src/local.mjs';
+import { prepareGrowth } from './prepare-growth.mjs';
 import { regularFiles, stageArtifact } from '../packages/runtime/src/artifact.mjs';
 
 assert.ok(Object.values(networkInterfaces()).flat().every(address => address.internal),
   'Run the verification container with --network none');
-const app = join(stackRoot, 'examples/guestbook');
 const results = join(stackRoot, '.fogd/target-builds');
 await mkdir(results, { recursive: true });
 
-async function snapshot(target) {
+async function snapshot(app, target) {
   const dir = join(results, target);
   await cp(join(app, 'dist'), dir, { recursive: true });
   const config = JSON.parse(await readFile(join(dir, 'ssr/wrangler.json'), 'utf8'));
@@ -21,13 +21,17 @@ async function snapshot(target) {
     assets: config.assets, d1: config.d1_databases?.map(db => db.binding), files };
 }
 
-await run('pnpm', ['--filter', '@fogd/example-guestbook', 'typecheck']);
-await run('pnpm', ['--filter', '@fogd/example-guestbook', 'build']);
-const managed = await snapshot('managed');
-await run(process.execPath, ['scripts/build-app.mjs', 'examples/guestbook']);
-const fogd = await snapshot('fogd');
-assert.equal(fogd.files.filter(file => /^ssr\/.*\.[cm]?js$/.test(file.path)).length, 1);
-const release = await stageArtifact({ projectDir: app, outputDir: join(results, 'staged'), app: 'guestbook' });
-console.log('Offline artifact staged:', release.digest);
-console.log('Offline target outputs (retained under .fogd/target-builds in the container):');
-console.log(JSON.stringify({ managed, fogd }, null, 2));
+async function verifyApp(app, label) {
+  await run('pnpm', ['run', 'typecheck'], { cwd: app });
+  await run('pnpm', ['run', 'build'], { cwd: app });
+  const managed = await snapshot(app, `${label}-managed`);
+  await run(process.execPath, ['scripts/build-app.mjs', app]);
+  const fogd = await snapshot(app, `${label}-fogd`);
+  assert.equal(fogd.files.filter(file => /^ssr\/.*\.[cm]?js$/.test(file.path)).length, 1);
+  const release = await stageArtifact({ projectDir: app, outputDir: join(results, `${label}-staged`), app: label });
+  console.log('Offline artifact staged:', release.digest);
+  console.log(JSON.stringify({ managed, fogd }, null, 2));
+}
+await verifyApp(join(stackRoot, 'examples/guestbook'), 'guestbook');
+const grown = await prepareGrowth(join(results, 'grown-source'));
+await verifyApp(grown, 'grown');
