@@ -1,0 +1,8 @@
+node_modules/
+.upstream/
+.fogd/
+.env
+.env.*
+!.env.example
+dist/
+*.log
