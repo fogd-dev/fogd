@@ -1,0 +1,6 @@
+.git
+.upstream
+.fogd
+**/node_modules
+**/dist
+.env

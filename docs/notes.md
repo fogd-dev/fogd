@@ -30,3 +30,18 @@ Created the public `fogd-dev/fogd` repository and pushed the preserved main hist
 Audited upstream revisions are recorded in compat.md. The published celld 0.6.2
 multi-architecture image pulled successfully on Docker arm64. The architecture
 proposal keeps the full app in celld to avoid inventing binding protocols.
+
+## Milestone 2 verification
+
+- `npx --no-install void init`: D1 demo, deployment setup skipped, SQL generated.
+- Local Vite build succeeded; initial multi-module output failed in celld because
+  its no-bundle path collects only the entry JavaScript. ADR 004 records the fix.
+- MinIO source Docker build succeeded. celld diagnose passed conditional create,
+  reject-create, update, reject-stale, and signed probes of both live peers.
+- Both replicas reported adoption of version `188014d5c6cdbcaf` through `/reload`.
+- `celld d1 migrations apply hello-db /artifact` applied the generated SQL.
+- `GET /api/posts` through workerd with the hello hostname returned `[]` (HTTP 200).
+- The slim Node runtime needed system CA certificates for workerd startup. They
+  are copied from celld's Debian image, without modifying the host.
+- Deployment now waits for bucket initialization; the first direct deploy raced
+  bucket creation and received NoSuchBucket before that dependency was added.

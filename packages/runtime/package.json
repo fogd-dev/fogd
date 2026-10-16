@@ -1,0 +1,10 @@
+{
+  "name": "@fogd/runtime",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1152.0",
+    "workerd": "1.20261016.1"
+  }
+}

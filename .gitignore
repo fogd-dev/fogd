@@ -6,3 +6,6 @@ node_modules/
 !.env.example
 dist/
 *.log
+.void/
+.wrangler/
+.void-wrangler.jsonc

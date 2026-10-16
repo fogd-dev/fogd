@@ -1,17 +1,19 @@
 {
-  "name": "@fogd/cli",
-  "version": "0.0.1",
-  "description": "self-hosted cloudflare: run void apps on workers + durable objects you own (wip)",
-  "license": "MIT",
-  "author": "SgtPooki",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fogd-dev/fogd.git"
+  "name": "fogd-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.16.1",
+  "engines": {
+    "node": ">=24.21.0"
   },
-  "bin": {
-    "fogd": "bin/fogd.js"
+  "scripts": {
+    "fogd": "node packages/cli/bin/fogd.js",
+    "check": "node scripts/check.mjs",
+    "test": "node --test packages/*/test/*.test.mjs",
+    "build": "pnpm check && pnpm --filter \"@fogd/example-*\" build"
   },
-  "files": [
-    "bin"
-  ]
+  "devDependencies": {
+    "void": "1.1.11",
+    "vite": "8.1.0"
+  }
 }

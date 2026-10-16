@@ -58,3 +58,21 @@ installation or global system change is needed.
 **Consequences.** The first build is slower and needs dependency downloads. The
 bucket remains a single local point of failure. celld's startup object-store
 conditional-write probe must pass before accepting this backend.
+
+## ADR 004: emit a single worker module for celld
+
+**Context.** Loading the original Vite chunks failed with `no stub for specifier
+./assets/env-*.js`. celld's `no_bundle` implementation collects one JavaScript
+entry and Wasm siblings, not additional JavaScript modules. Claude correctly
+warned against rebundling the Vite output, but its review did not catch this limit.
+
+**Options.** Patch celld's module collector; rebundle with esbuild; or configure
+Vite/Rolldown to emit one module. Leaving the default split output cannot load.
+
+**Decision.** The build adapter sets `codeSplitting: false` for Void's worker
+Vite environment, then uses upstream celld `no_bundle: true`.
+
+**Consequences.** The complete worker loads in both replicas and retains Void's
+binding behavior. Large apps lose worker-side lazy chunk loading. Client output
+can still split normally. A multi-module collector is an upstream enhancement,
+not an unlabeled fogd fork.
