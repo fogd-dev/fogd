@@ -186,3 +186,14 @@ Its later implementation review completed successfully, as did both Claude revie
 Original review outputs and accepted/deferred findings are under `docs/reviews/`.
 Offline verification covers both base and grown apps: type-check, normal Void build,
 fogd build, and staging with `--network none`. Hosted execution remains untested.
+
+### M9a local qualification capacity
+
+The first kind creation hit Docker's exhausted default network pool. Removed only
+stopped fogd TLS test containers/networks, retaining their volumes and snapshots;
+the isolated kind retry succeeded. A later fresh-run verification exhausted Docker
+disk while importing the runtime into a third kind cluster. It exited with ENOSPC.
+Deleted the earlier disposable m9a test cluster and the failed empty m9final cluster,
+keeping logs/evidence and the successful m9verify cluster. Those discarded clusters
+held only generated test data. No global Docker storage/network settings, unrelated
+workloads, or Compose recovery snapshots were modified. Retry uses a fresh name.

@@ -244,3 +244,34 @@ Certificate renewal remains operator-managed. Private network traffic remains HT
 end-user IP forwarding is absent, and shared mode does not qualify untrusted tenants.
 M9a starts with isolated local Kubernetes evidence; actual remote host/storage/network
 failure qualification is still open.
+
+
+## M9a Kubernetes evidence (experimental)
+
+An isolated kind v0.33.0 / Kubernetes v1.37.0 cluster ran the same accounts and
+notebook fixtures with native HTTPS, scoped CLI submission, and separate approval.
+The live drill passed D1/R2/DO writes, native account sessions, individual replica
+replacement, controller/gateway replacement, PVC identity retention, and image
+config-ID checks against the preloaded Docker images. Kubeconfig and private files
+remain inside ignored repo paths; no existing cluster context was modified.
+
+Stopping one kind worker also stopped its co-located controller and one replica of
+each fleet. All five sampled requests were unavailable during that 20-second
+observation. Starting the node again restored service and the same notebook data.
+This demonstrates the singleton controller availability dependency. It does not
+qualify host loss, a replaced disk, or a network partition. Local kind networking
+also lacks Compose's per-fleet separation.
+
+The [Kubernetes guide](kubernetes.md) describes the experimental manifests and
+reproduction. Kubernetes stopped recovery is [M9b](m9b.md); full M9 additionally
+requires actual remote host/storage/network evidence. Docker backup refuses a
+Kubernetes installation profile rather than silently snapshotting another stack.
+
+The committed setup runner passed from scratch on m9verify. After review fixes,
+m9final2 passed the stronger drill: replacement replicas served both apps while the
+alternate replicas were absent, before the gateway restarted. Stable per-replica
+Services preserve backend addresses across pod IP changes. Namespace creation is
+separate from normal workload manifests so their deletion retains PVCs. The final
+suite has 50 passing tests, passing builds and quality checks. Review amendments and
+local capacity failures are recorded in [the response](reviews/m9a-response.md) and
+[notes](notes.md). No Kubernetes recovery claim is included in M9a.

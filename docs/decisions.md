@@ -399,3 +399,28 @@ HTTP and workloads remain trusted. Certificate import rebuilds/recreates stopped
 containers, so upgrades require backups and preserved identities. A proxy advocate
 may prefer automated renewal; that can become a separate adapter once a deployment
 target needs it. Local HTTP remains available for loopback development.
+
+## ADR 018: qualify ordinary Kubernetes resources before a cluster operator
+
+**Context.** The same app deployment/approval contract needs an installation target
+beyond Compose. Local kind tools are available; authorized remote infrastructure and
+physical-host failure evidence are not. A portable package needs explicit storage
+ownership and recovery rather than a startup-only demonstration.
+
+**Options.** Wait for remote hardware; build a bespoke Kubernetes operator; package
+ordinary resources and qualify them locally first. An operator could automate
+reconciliation later but would introduce another state machine before the resource
+and recovery contract is established.
+
+**Decision.** Render ordinary StatefulSets, Services, PVCs, and separate private
+Secrets. Qualify them on isolated kind with repository-local kubeconfig. Bind celld
+identities to ordinals/disks, keep controller and bucket single-writer, and use
+OnDelete updates. M9a remains experimental until M9b stopped recovery and the
+separate remote infrastructure gate pass.
+
+**Consequences.** Operators can inspect resources without a custom controller, but
+must plan updates and storage recovery. Kubernetes network isolation is weaker than
+the Compose fleet networks on default kind; remote sharing requires enforced policy.
+The node observation showed downtime when the singleton controller's node stopped,
+even with surviving celld replicas. A multi-replica controller requires a separate
+metadata/concurrency design. No global availability follows from this packaging.

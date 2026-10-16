@@ -28,6 +28,9 @@ export function run(command, args, options = {}) {
     child.on('exit', code => code === 0 ? resolve(output) : reject(new Error(`${command} exited ${code}`)));
   });
 }
+export function requireDocker(env) {
+  if (env.FOGD_TOPOLOGY && env.FOGD_TOPOLOGY !== 'docker') throw new Error('This command supports Docker installations only; Kubernetes PVC recovery requires its own adapter');
+}
 export const compose = (args, env, capture = false) => run('docker', ['compose', '--env-file', devNull, '--project-directory', stackRoot, '-f', resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml')), ...args], { env, capture });
 export async function buildArtifact(projectDir, nameOverride) {
   const project = resolve(projectDir);

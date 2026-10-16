@@ -71,7 +71,7 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 
 | Feature | fogd v0 | celld standalone | workerd standalone | Void SDK / Platform | Cloudflare hosted |
 | --- | --- | --- | --- | --- | --- |
-| Run apps on your hardware without Cloudflare APIs | Yes; Docker | Yes; bucket required | Yes; supply services | SDK apps portable; Platform targets Cloudflare | No; managed service |
+| Run apps on your hardware without Cloudflare APIs | Yes; Docker; experimental local Kubernetes | Yes; bucket required | Yes; supply services | SDK apps portable; Platform targets Cloudflare | No; managed service |
 | Build/deploy a Void project | Yes; `fogd deploy` | Partial; consumes prepared bundle | Partial; needs generated config/services | Yes; `void deploy` | Runtime target; use a deployment tool |
 | Multiple apps and hostname routing | Yes; two reserved fleets | Partial; one live entrypoint/fleet | Multiple workers; supply routing/control plane | Platform dispatch | Yes; Workers/WfP |
 | Submitter deployment status | Yes; team token, bounded diagnostics | No control plane | No control plane | Platform deploy tracking | Not audited for this exact workflow |
@@ -116,3 +116,10 @@ admin/deploy ingress, scoped credentials, and certificate-inclusive stopped reco
 The local drill qualifies Void Secure sessions and upgrade from the six-volume HTTP
 installation. Certificate renewal, remote host failure, and hostile-tenant isolation
 remain outside that evidence; private Docker traffic remains HTTP.
+
+
+The [Kubernetes qualification](kubernetes.md) covers the same two-app approval flow,
+persistent data and sessions across pod replacement. A kind worker outage that
+removed the singleton controller caused downtime, followed by recovery of existing
+data when it returned. Kubernetes stopped recovery and actual remote-host failure
+remain open gates; Docker backup does not cover PVCs.

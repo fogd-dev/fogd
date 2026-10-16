@@ -4,10 +4,11 @@ import { checkInstalledTLS } from './tls.mjs';
 import { readSecretInput } from './secret-input.mjs';
 import { join } from 'node:path';
 import { manifest } from '@fogd/runtime/manifest';
-import { buildArtifact, configEnv, configPath, compose, stackRoot } from './local.mjs';
+import { buildArtifact, requireDocker, configEnv, configPath, compose, stackRoot } from './local.mjs';
 
 export async function up(shared = false) {
   const env = await prepareEnvironment(shared);
+  requireDocker(env);
   const policy = transportPolicy(env);
   if (policy.tls) await checkInstalledTLS(env);
   await compose(['up', '-d', '--build'], env);

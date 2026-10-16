@@ -1,0 +1,25 @@
+// Creates only a new, explicitly named local kind qualification cluster.
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import { randomBytes } from 'node:crypto';
+import { run, stackRoot } from '../packages/cli/src/local.mjs';
+const root = resolve(process.argv[2] || '.fogd/m9a');
+assert.ok(root.startsWith(join(stackRoot, '.fogd') + '/'));
+const name = root.split('/').at(-1); assert.match(name, /^m9[a-z0-9-]*$/);
+const cluster = `fogd-${name}`;
+const existing = await run('kind', ['get', 'clusters'], { capture: true });
+assert.ok(!existing.split('\n').includes(cluster), 'Refusing an existing cluster');
+await mkdir(root, { mode: 0o700 });
+const privateFile = async (name, text) => writeFile(join(root, name), text, { flag: 'wx', mode: 0o600 });
+const image = 'kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5';
+await privateFile('kind.json', JSON.stringify({ kind: 'Cluster', apiVersion: 'kind.x-k8s.io/v1alpha4', networking: { apiServerAddress: '127.0.0.1' }, nodes: [{ role: 'control-plane' }, { role: 'worker' }, { role: 'worker' }] }));
+const settings = { FOGD_PROFILE: 'shared', FOGD_TLS: '1', FOGD_DEPLOY_TOKEN: '', FOGD_ADMIN_USER: 'admin', FOGD_ADMIN_PASSWORD: randomBytes(32).toString('hex'), FOGD_GATEWAY_TOKEN: randomBytes(32).toString('hex'), FOGD_BUCKET_USER: 'fogd', FOGD_BUCKET_PASSWORD: randomBytes(32).toString('hex'), FOGD_BASE_DOMAIN: 'localhost', FOGD_KUBE_NAMESPACE: cluster, FOGD_KUBE_LOCAL_IMAGES: '1', FOGD_KUBE_RUNTIME_IMAGE: `fogd-runtime:${cluster}`, FOGD_KUBE_MINIO_IMAGE: `fogd-minio:${cluster}` };
+await privateFile('source.env', Object.entries(settings).map(([k, v]) => `${k}=${v}`).join('\n') + '\n');
+await run(process.execPath, ['scripts/local-certificate.mjs', join(root, 'certificate')]);
+for (const [file, tag] of [['runtime', settings.FOGD_KUBE_RUNTIME_IMAGE], ['minio', settings.FOGD_KUBE_MINIO_IMAGE]]) await run('docker', ['build', '-f', `docker/${file}.Dockerfile`, '-t', tag, '.']);
+await run('kind', ['create', 'cluster', '--name', cluster, '--image', image, '--config', join(root, 'kind.json'), '--kubeconfig', join(root, 'kubeconfig'), '--wait', '180s']);
+await run('kind', ['load', 'docker-image', '--name', cluster, settings.FOGD_KUBE_RUNTIME_IMAGE, settings.FOGD_KUBE_MINIO_IMAGE]);
+await run(process.execPath, ['packages/cli/bin/fogd.js', 'kube', 'render', join(root, 'installation'), '--cert', join(root, 'certificate/server.pem'), '--key', join(root, 'certificate/server.key')], { env: { ...process.env, ...settings, FOGD_ENV_FILE: join(root, 'source.env') } });
+await privateFile('cluster.json', JSON.stringify({ cluster, kindImage: image, createdAt: new Date().toISOString() }, null, 2));
+console.log(`Cluster ready. Run NODE_EXTRA_CA_CERTS=${join(root, 'certificate/ca.pem')} node scripts/kubernetes-smoke.mjs ${root} ${join(root, 'certificate/server.pem')}`);

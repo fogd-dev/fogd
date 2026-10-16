@@ -244,3 +244,16 @@ forwarding-header rejection, and fresh-volume recovery. The
 checks the same data and approval history after adopting HTTPS. This is a local
 shared-profile qualification; remote host/storage/network failure evidence belongs
 to M9.
+
+
+## M9a: experimental Kubernetes deployment
+
+The [Kubernetes guide](docs/kubernetes.md) creates an isolated local kind cluster,
+loads images without publication, and deploys accounts plus notebook using the
+existing HTTPS/scoped-credential approval flow. `fogd kube render` writes ordinary
+manifests and separate private Secrets; it does not modify a cluster.
+
+The live drill qualifies data and sessions across pod replacement. A worker outage
+that also removed the singleton controller caused downtime; existing data returned
+when the node restarted. Kubernetes backup/restore is M9b work, and remote host
+qualification remains open. Keep this experimental profile limited to disposable data.

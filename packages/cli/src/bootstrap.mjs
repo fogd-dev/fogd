@@ -1,9 +1,10 @@
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
-import { configEnv, configPath } from './local.mjs';
+import { requireDocker, configEnv, configPath } from './local.mjs';
 
 export async function prepareEnvironment(shared = false) {
   const env = await configEnv(), additions = [];
+  requireDocker(env);
   if (shared) {
     for (const [key, value] of Object.entries({ FOGD_PROFILE: 'shared', FOGD_TLS: '1', FOGD_DEPLOY_TOKEN: '' })) {
       if (env[key] !== value) additions.push(`${key}=${value}`);

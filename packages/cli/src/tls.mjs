@@ -2,12 +2,13 @@ import { devNull } from 'node:os';
 import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { validateKeypair } from '@fogd/runtime/transport';
-import { compose, stackRoot } from './local.mjs';
+import { requireDocker, compose, stackRoot } from './local.mjs';
 import { prepareEnvironment } from './bootstrap.mjs';
 import { docker, json, projectContainers } from './recovery/docker.mjs';
 import { composeResolved } from './recovery/bundle.mjs';
 
 async function installation(env) {
+  requireDocker(env);
   const file = resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
   const config = composeResolved(await json(['compose', '--env-file', devNull, '-f', file, 'config', '--format', 'json'], { env }));
   if (!config.volumes?.tls?.name) throw new Error('This installation needs the TLS-volume configuration before certificate import');
