@@ -41,9 +41,10 @@ export class Backend {
     return data.version;
   }
   async ready(slot, version) {
+    const deadline = Date.now() + 180000;
     for (const node of slot.nodes) {
-      let last;
-      for (let attempt = 0; attempt < 120; attempt++) {
+      let last = new Error('Replica readiness deadline exceeded');
+      while (Date.now() < deadline) {
         try {
           const reload = await fetch(`http://${node}:8081/reload`, { method: 'POST', signal: AbortSignal.timeout(5000) });
           if (!reload.ok || (await reload.json()).version !== version) throw new Error('Version not adopted');

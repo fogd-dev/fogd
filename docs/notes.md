@@ -96,3 +96,20 @@ restored the notebook without changing the checked-in sample migration history.
 Eleven unit tests passed, including partial migration failure and restart/ownership
 failure injection. Both sample production builds passed. No Cloudflare APIs, npm
 publication, host-global installation, or Docker socket mounts were used.
+
+## Fresh-checkout verification
+
+Commit `3b00571` was checked out into a separate detached worktree with no build
+outputs, `.env`, node_modules, or deployment state. `pnpm install --frozen-lockfile`
+and `fogd up` succeeded with Compose project `fogd-clean`, fresh bucket/controller/
+replica volumes, and alternate ports 8877/8878. Docker reused downloaded/base build
+layers, but no prior deployment state. `scripts/platform-smoke.mjs` passed in full,
+including both CLI builds and approvals, deliberately failed SQL, recovery, and
+controller/workerd restart. Runtime versions matched the original checkout:
+hello `188014d5c6cdbcaf`, notebook `1c2f1729170db2fa`.
+
+The original platform fleet also passed `scripts/recovery.mjs`: both replicas were
+force-stopped in turn, the survivor served acknowledged D1/R2/DO data, a new write
+was made after the first rejoin, both replicas rejoined, and workerd restarted.
+No missing-witness recovery errors appeared. The script defaults now target
+notebook's second platform slot and allow replica-service overrides.

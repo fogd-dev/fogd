@@ -23,8 +23,9 @@ corrected resubmission, and controller/workerd restart persistence. Unit tests c
 interrupted activation, migration reconciliation, and controller metadata loss.
 
 The initial direct runtime recovery test passed with both replicas force-stopped in
-turn, a write between rejoining/failing replicas, and a workerd restart. The platform
-recovery and clean-checkout checks are recorded in [notes](notes.md) when completed.
+turn, a write between rejoining/failing replicas, and a workerd restart. The same recovery check passed on the platform fleet. A separate clean checkout
+with fresh Docker volumes passed installation, startup, both CLI builds, and the
+complete approval smoke test; details are recorded in [notes](notes.md).
 Run `node scripts/platform-smoke.mjs` on a fresh stack and `node scripts/recovery.mjs`
 after approving notebook second. The README contains all six reproduction sections.
 
@@ -58,6 +59,8 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   backups. Lost controller metadata quarantines occupied slots; restore it explicitly.
 - Only the adapter's validated configuration subset is accepted: string variables,
   one D1 database per app, R2, local SQL-backed Durable Objects, and static assets.
+  Resource declarations are frozen on first approval; adding bindings needs a future
+  explicit resource-change operation.
   Unsupported AI, WfP, Hyperdrive, queues/workflows, cron, cross-app service bindings,
   auth-managed migrations, and other nonempty declarations fail rather than disappear.
 - R2 multipart handles are process-local upstream. Examples exercise ordinary puts
@@ -84,5 +87,6 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
    static workerd backend bindings. Pause before activation, verify both versions,
    reconcile migration ledgers, and require explicit retry after interruption.
 
-Read [decisions.md](decisions.md) for context, alternatives, and reasons, and
+The [feature table](features.md) compares the implemented platform with its runtimes,
+Void, and hosted Cloudflare. Read [decisions.md](decisions.md) for context, alternatives, and reasons, and
 [platform.md](platform.md) for the deployment state machine and operational scope.

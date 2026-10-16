@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import gateway from '../src/gateway.js';
+
+test('gateway blocks internal paths including encoded paths before forwarding', async () => {
+  let calls = 0;
+  const backend = { fetch() { calls++; return new Response('unexpected'); } };
+  for (const path of ['/__void/migrate', '/%5f%5fvoid/migrate', '/__void%2fmigrate', '/.well-known/celld/health', '/%2ewell-known/celld/health']) {
+    const result = await gateway.fetch(new Request('http://hello.localhost' + path), { APP_HOST: 'hello.localhost', NODE_A: backend, NODE_B: backend });
+    assert.equal(result.status, 404, path);
+  }
+  assert.equal(calls, 0);
+});
+
+test('gateway never retries a sent mutation and strips privileged headers', async () => {
+  let attempts = 0;
+  const backend = { async fetch(input) {
+    if (typeof input === 'string') return new Response('{}');
+    assert.equal(input.headers.has('x-void-secret'), false);
+    assert.equal(input.headers.has('x-fogd-token'), false);
+    assert.equal(input.headers.has('cf-access-authenticated-user-email'), false);
+    attempts++; throw Error('Response lost after committing');
+  } };
+  const result = await gateway.fetch(new Request('http://hello.localhost/write', { method: 'POST', body: 'write', headers: { 'x-void-secret': 'x', 'x-fogd-token': 'x', 'cf-access-authenticated-user-email': 'x' } }), { APP_HOST: 'hello.localhost', NODE_A: backend, NODE_B: backend });
+  assert.equal(result.status, 502); assert.equal(attempts, 1);
+});

@@ -5,7 +5,8 @@ with D1, R2, and Durable Objects; MinIO stores fleet state. Teammates submit bui
 with `fogd deploy`, and an admin approves the exact artifact before it runs.
 
 This local Docker prototype supports two apps with two celld replicas each. It is
-for trusted, reviewed application code. Read [the report](docs/report.md) for tested
+for trusted, reviewed application code. Compare fogd, celld, workerd, Void, and hosted
+Cloudflare in the [feature table](docs/features.md). Read [the report](docs/report.md) for tested
 behavior, limitations, and the decisions behind it.
 
 ## Start from a clean checkout
@@ -117,7 +118,9 @@ pnpm exec fogd admin reject <deployment-id> <sha256>
 Approval pauses the app, runs migrations, publishes through celld, and verifies both
 replica versions before routing resumes. Failures remain paused with a visible step
 and error. Reapprove the same digest to retry, or submit a correction. Applied SQL
-hashes and resource identities are immutable. There is no automatic schema rollback.
+hashes and resource declarations are immutable, including binding additions in v0.
+A successful activation supersedes older submissions; resubmit an old artifact if
+you deliberately want its code again. There is no automatic schema rollback.
 
 Run the end-to-end acceptance script on a **fresh stack** (before manually approving
 apps). It submits both examples, rejects a deployment, verifies auth and digest

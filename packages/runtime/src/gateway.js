@@ -15,7 +15,9 @@ export default {
         if (!pair.every(Boolean)) throw new Error('Unknown slot');
       } catch { return new Response('Routing unavailable', { status: 503 }); }
     } else if (url.hostname !== env.APP_HOST) return new Response('Unknown app', { status: 404 });
-    if (/^\/__(?:void|fogd)(?:\/|$)/.test(url.pathname) || url.pathname.startsWith('/.well-known/celld/')) {
+    let path;
+    try { path = decodeURIComponent(url.pathname); } catch { return new Response('Invalid path', { status: 400 }); }
+    if (/^\/__(?:void|fogd)(?:\/|$)/.test(path) || path.startsWith('/.well-known/celld/')) {
       return new Response('Not found', { status: 404 });
     }
     const headers = new Headers(request.headers);

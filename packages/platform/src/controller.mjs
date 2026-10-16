@@ -10,6 +10,7 @@ export class Controller {
   constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20 }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
     this.queue = Promise.resolve();
+    this.occupied = new Set();
   }
   exclusive(task) {
     const result = this.queue.then(task);
@@ -27,16 +28,23 @@ export class Controller {
     for (const slot of this.slots) {
       const owner = await this.backend.owner(slot);
       if (owner) {
+        this.occupied.add(slot.id);
         const app = this.state.apps[owner.app];
-        if (!app || app.slot !== slot.id) {
+        if (!app) {
           // Losing local metadata must never free or silently reactivate a used slot.
-          this.state.apps[owner.app] = { slot: slot.id, route: 'paused', quarantined: true };
+          this.state.apps[owner.app] = { slot: slot.id, route: 'paused', quarantined: true, reason: 'Bucket owner has no controller record; restore controller backup' };
+        } else if (app.slot !== slot.id) {
+          app.quarantined = true; app.route = 'paused';
+          app.reason = 'Multiple bucket slots claim this app; reconcile bucket and controller backups';
         }
       }
     }
     for (const [name, app] of Object.entries(this.state.apps)) {
       const slot = this.slots.find(s => s.id === app.slot);
-      if (!slot || (await this.backend.owner(slot))?.app !== name) { app.quarantined = true; app.route = 'paused'; }
+      if (!slot || (await this.backend.owner(slot))?.app !== name) {
+        app.quarantined = true; app.route = 'paused';
+        app.reason = 'Configured slot or bucket owner is missing/mismatched; restore matching bucket, config, and controller backups';
+      }
     }
     await this.save();
   }
@@ -44,11 +52,11 @@ export class Controller {
   artifact(id) { return join(this.dir, 'artifacts', id); }
   available(app) {
     if (this.state.apps[app]) return this.slots.find(s => s.id === this.state.apps[app].slot);
-    return this.slots.find(slot => !Object.values(this.state.apps).some(a => a.slot === slot.id));
+    return this.slots.find(slot => !this.occupied.has(slot.id) && !Object.values(this.state.apps).some(a => a.slot === slot.id));
   }
   compatible(release, app) {
     if (!app) return;
-    if (app.quarantined) throw new Error('Slot quarantined; restore controller metadata from backup');
+    if (app.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
     if (!isDeepStrictEqual(app.resources, release.resources)) throw new Error('Resource identities changed');
     for (const old of app.migrations || []) {
       if (!release.migrations.some(m => isDeepStrictEqual(m, old))) throw new Error(`Applied migration changed: ${old.name}`);
@@ -73,6 +81,9 @@ export class Controller {
     const attempt = this.state.deployments[app.uncertain];
     if (!attempt || await artifactDigest(this.artifact(attempt.id)) !== attempt.digest) throw new Error('Cannot reconcile migration attempt: restore its original artifact');
     const applied = await this.backend.applied(slot, this.artifact(attempt.id), attempt.resources);
+    for (const old of app.migrations || []) {
+      if (!applied.some(row => row.database === old.database && row.name === old.name)) throw new Error(`Ledger lost applied migration: ${old.name}`);
+    }
     const known = [...(app.migrations || []), ...attempt.migrations];
     app.migrations = applied.map(row => {
       const migration = known.find(m => m.database === row.database && m.name === row.name);
@@ -93,9 +104,10 @@ export class Controller {
       const slot = this.available(request.app);
       if (!slot) throw new Error('No available app slots');
       let app = this.state.apps[request.app];
-      if (app?.quarantined) throw new Error('Slot quarantined; restore controller metadata');
+      if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
       await this.backend.claim(slot, request.app);
+      this.occupied.add(slot.id);
       if (!app) {
         app = { slot: slot.id, resources: request.resources, migrations: [], active: null, route: 'paused', uncertain: null };
         this.state.apps[request.app] = app; await this.save();
@@ -114,11 +126,16 @@ export class Controller {
       try {
         await step('approved');
         if (!app.active) await publish();
+        app.uncertain = id; await step('checking-migration-ledger');
+        await this.reconcile(app, slot);
         app.uncertain = id; await step('migrating');
         await this.backend.migrate(slot, this.artifact(id), request.resources);
         await this.reconcile(app, slot);
         if (app.active) await publish();
         app.active = id; app.route = 'active';
+        for (const other of Object.values(this.state.deployments)) {
+          if (other.app === request.app && other.id !== id && ['pending', 'failed', 'active'].includes(other.status)) other.status = 'superseded';
+        }
         request.status = 'active'; await step('complete');
       } catch (error) {
         request.status = 'failed'; request.error = error.message; app.route = 'paused';

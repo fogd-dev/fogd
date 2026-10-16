@@ -1,5 +1,8 @@
 # Compatibility matrix
 
+For the product-level comparison including fogd and hosted Cloudflare, see the
+[feature table](features.md). This document supplies the deeper runtime source audit.
+
 This is a source audit, not an end-to-end compatibility certification. The matrix covers the SDK-generated bindings and the checked-in Void Platform workers at the pinned revisions below. Arbitrary Cloudflare configuration passed through `cloudflare` is outside this finite inventory; fogd must reject unsupported capabilities.
 
 **Yes** means the standalone runtime implements the capability. **Partial** means it needs a backend, has a material subset, or lacks distributed operation. **No** means it does not implement the feature. A workerd client binding is not a self-hosted backend.

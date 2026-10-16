@@ -123,3 +123,60 @@ test('HTTP separates submitter/admin/gateway rights and requires CSRF plus exact
   assert.equal(publishes(), 0);
   const result = await post(path, auth, { digest: d.digest }, { 'X-Fogd-CSRF': csrf }); assert.equal(result.status, 200); assert.equal((await result.json()).status, 'active');
 });
+
+test('bucket owner mismatch and changed stored bytes prevent activation', async t => {
+  const { controller: c, artifact, owners, publishes } = await setup(t);
+  const d = await c.submit(await artifact(), 'team');
+  owners['slot-1'] = { app: 'someone-else' };
+  await assert.rejects(c.mutate(d.id, d.digest, 'approve'), /owner mismatch/);
+  assert.equal(publishes(), 0);
+  delete owners['slot-1'];
+  await writeFile(join(c.artifact(d.id), 'worker/index.js'), 'changed');
+  await assert.rejects(c.mutate(d.id, d.digest, 'approve'), /digest mismatch/);
+  assert.equal(publishes(), 0);
+});
+
+test('concurrent approvals revalidate applied SQL and pause before side effects', async t => {
+  const { controller: c, artifact, backend } = await setup(t);
+  const first = await c.submit(await artifact('hello', ['first']), 'team');
+  const stale = await c.submit(await artifact('hello', ['changed']), 'team');
+  const publish = backend.publish;
+  backend.publish = async (...args) => {
+    assert.equal(c.route('hello.localhost').state, 'paused');
+    return publish(...args);
+  };
+  const results = await Promise.allSettled([c.mutate(first.id, first.digest, 'approve'), c.mutate(stale.id, stale.digest, 'approve')]);
+  assert.equal(results[0].status, 'fulfilled'); assert.equal(results[0].value.status, 'active');
+  assert.equal(results[1].status, 'rejected'); assert.match(results[1].reason.message, /not pending/);
+  assert.equal(stale.status, 'superseded');
+  assert.equal(c.state.apps.hello.active, first.id);
+});
+
+test('a regressed ledger cannot erase applied hashes or clear uncertain activation', async t => {
+  const { controller: c, artifact, backend } = await setup(t);
+  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const hashes = structuredClone(c.state.apps.hello.migrations);
+  const next = await c.submit(await artifact(), 'team');
+  backend.applied = async () => [];
+  let migrations = 0; backend.migrate = async () => { migrations++; };
+  await c.mutate(next.id, next.digest, 'approve');
+  assert.equal(next.status, 'failed'); assert.match(next.error, /Ledger lost applied migration/);
+  assert.equal(migrations, 0, 'Do not replay SQL against a regressed ledger');
+  assert.deepEqual(c.state.apps.hello.migrations, hashes);
+  assert.equal(c.state.apps.hello.uncertain, next.id);
+  assert.equal(c.route('hello.localhost').state, 'paused');
+  await assert.rejects(c.mutate(next.id, next.digest, 'approve'), /Ledger lost/);
+});
+
+test('duplicate owner markers quarantine both slots without overwriting app history', async t => {
+  const { controller: c, artifact, owners, backend } = await setup(t);
+  const initial = await c.submit(await artifact(), 'team'); await c.mutate(initial.id, initial.digest, 'approve');
+  const original = structuredClone(c.state.apps.hello);
+  owners['slot-2'] = { app: 'hello' };
+  const restarted = new Controller({ dir: c.dir, slots, backend }); await restarted.init();
+  assert.equal(restarted.state.apps.hello.quarantined, true);
+  assert.equal(restarted.state.apps.hello.slot, original.slot);
+  assert.equal(restarted.state.apps.hello.active, original.active);
+  assert.deepEqual(restarted.state.apps.hello.migrations, original.migrations);
+  assert.equal(restarted.available('different'), undefined);
+});

@@ -71,7 +71,9 @@ capabilities whose activation cannot be safely gated by this sequence. Authentic
 schema auto-migrations and importing existing Void migration ledgers remain gaps.
 
 Verify expected celld versions on both replicas and their health before recording
-the release active. The app hostname routes only an active release. During an
+the release active. The app hostname routes only an active release. Successful activation supersedes
+other requests for that app, including older active releases. Retrying a superseded
+request is rejected; deliberate code rollback requires a fresh submission. During an
 existing-app activation, pause the route (HTTP 503) to avoid serving mixed versions;
 there is no promise of zero downtime. If activation fails, keep the route paused and surface the step and error. The
 admin can retry the same digest. Reconcile the applied D1 ledger against the
