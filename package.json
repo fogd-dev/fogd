@@ -6,7 +6,7 @@
   "author": "SgtPooki",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SgtPooki/fogd.git"
+    "url": "git+https://github.com/fogd-dev/fogd.git"
   },
   "bin": {
     "fogd": "bin/fogd.js"
