@@ -53,4 +53,43 @@ docker compose logs --tail=30 celld-a celld-b workerd
 
 `docker compose down` preserves data volumes. Deleting volumes destroys local data.
 The bucket is one local point of failure; two celld replicas do not make it highly
-available. Remaining milestones are being implemented in order.
+available. The platform approval flow is being implemented next.
+
+## Milestone 3: D1, R2, Durable Objects, and recovery
+
+The notebook example stores entry metadata in D1, bodies in R2, and unique
+operation IDs in a Durable Object. It has two SQL migrations. Deploy it from
+its directory, then run the recovery check from the repository root:
+
+```sh
+cd examples/notebook
+pnpm exec fogd deploy
+cd ../..
+node scripts/recovery.mjs
+```
+
+The check writes an entry, repeats its operation ID, force-stops each celld
+container in turn, verifies the surviving replica serves the data, waits for
+rejoin, and restarts workerd. Replica IDs and log volumes must stay together.
+[ADR 005](docs/decisions.md) records the failure this requirement prevents.
+The example's three binding writes are idempotent, not a distributed transaction.
+
+## Milestone 4: CLI deployment
+
+`fogd up` builds and starts the local stack. `fogd deploy` runs in a Void app,
+builds with Vite, validates and stages an immutable artifact, deploys with celld,
+applies SQL migrations, and verifies both replica versions. App settings live in
+`fogd.json`; the examples supply their names. Without it, the CLI uses the package
+name. Use `--name app` to choose a different name before the first deployment.
+
+```sh
+pnpm exec fogd up
+cd examples/hello
+pnpm exec fogd deploy
+```
+
+Set `FOGD_HOME` to the checkout when invoking the CLI from an external project.
+The current direct local mode serves one app at a time, with separate persisted
+state per app. It rejects unsupported bindings, changed resource identities, and
+edits to previously deployed migrations. Keep schema changes backward-compatible;
+there is no automatic schema rollback. No npm publication is needed.

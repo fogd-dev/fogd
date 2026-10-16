@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "source": {},
+  "resolved": {
+    "durable_objects": {
+      "bindings": [
+        {
+          "name": "LEDGER",
+          "class_name": "LedgerDurableObject"
+        }
+      ]
+    },
+    "migrations": [
+      {
+        "tag": "void-durable-ledger-v1",
+        "new_sqlite_classes": [
+          "LedgerDurableObject"
+        ]
+      }
+    ]
+  },
+  "text": "{\n  \"durable_objects\": {\n    \"bindings\": [\n      {\n        \"name\": \"LEDGER\",\n        \"class_name\": \"LedgerDurableObject\"\n      }\n    ]\n  },\n  \"migrations\": [\n    {\n      \"tag\": \"void-durable-ledger-v1\",\n      \"new_sqlite_classes\": [\n        \"LedgerDurableObject\"\n      ]\n    }\n  ]\n}\n"
+}

@@ -85,7 +85,10 @@ export async function artifactDigest(dir) {
 export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 'dist/ssr', migrationsDir = 'db/migrations' }) {
   appName(app);
   const bundleDir = inside(projectDir, buildOutput);
-  await regularFiles(bundleDir);
+  const moduleFiles = await regularFiles(bundleDir);
+  if (moduleFiles.filter(path => /\.[cm]?js$/.test(path)).length !== 1) {
+    throw new Error("celld requires a single JavaScript module; build with fogd to disable worker code splitting");
+  }
   const input = JSON.parse(await readFile(join(bundleDir, 'wrangler.json'), 'utf8'));
   const config = translateConfig(input, app);
   // The entry remains in its original module directory so relative chunk imports survive.
@@ -98,6 +101,7 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
     await cp(assets, join(outputDir, 'assets'), { recursive: true });
   }
   if (config.d1_databases.length > 1) throw new Error('v0 supports one D1 database per app; multiple migration mappings need explicit support');
+  const migrations = [];
   for (const binding of config.d1_databases) {
     const source = inside(projectDir, migrationsDir);
     const entries = await readdir(source);
@@ -110,12 +114,14 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
       if (!match || BigInt(match[1]) <= previous) throw new Error(`Migration order must have increasing numeric prefixes: ${name}`);
       previous = BigInt(match[1]);
       if (!(await lstat(join(source, name))).isFile()) throw new Error(`Migration is not a regular file: ${name}`);
-      await cp(join(source, name), join(destination, name));
+      const sql = await readFile(join(source, name));
+      migrations.push({ database: binding.database_id, name, digest: createHash('sha256').update(sql).digest('hex') });
+      await writeFile(join(destination, name), sql);
     }
   }
   await writeFile(join(outputDir, 'wrangler.json'), JSON.stringify(config, null, 2));
   const digest = await artifactDigest(outputDir);
-  const release = { app, digest, resources: resourceIdentity(config) };
+  const release = { app, digest, resources: resourceIdentity(config), migrations };
   await writeFile(join(outputDir, 'fogd-release.json'), JSON.stringify(release, null, 2));
   return release;
 }

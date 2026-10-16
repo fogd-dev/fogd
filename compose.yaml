@@ -44,10 +44,16 @@ services:
     depends_on: [minio]
   celld-a:
     <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_NODE: ${FOGD_NODE_A_ID:-node-a}
     command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_A_ADVERTISE:-celld-a:8081}']
     volumes: [celld-a:/var/lib/celld]
   celld-b:
     <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_NODE: ${FOGD_NODE_B_ID:-node-b}
     command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_B_ADVERTISE:-celld-b:8081}']
     volumes: [celld-b:/var/lib/celld]
   workerd:
@@ -72,4 +78,6 @@ services:
 volumes:
   bucket:
   celld-a:
+    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-a
   celld-b:
+    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-b

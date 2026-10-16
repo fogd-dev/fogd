@@ -34,3 +34,11 @@ returned a print timeout after five minutes and no review. Neither empty result
 is treated as approval. The user requested longer timeouts and verifiable progress
 for future calls, and prefers Claude/Gemini (or Grok) over Codex. Future review
 runs use 15-minute limits and diagnostic/streaming output.
+
+## Recovery review follow-up
+
+[Claude's source-grounded recovery review](recovery-claude.md) confirms stable
+per-volume node names as the supported fix. The longer streaming run returned a
+review after inspecting the witness and target-authentication paths; its working
+state was visible through tool-call events throughout. Accepted its test additions:
+write again after A rejoins and reject witness-recovery errors in the run's logs.

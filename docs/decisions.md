@@ -76,3 +76,29 @@ Vite environment, then uses upstream celld `no_bundle: true`.
 binding behavior. Large apps lose worker-side lazy chunk loading. Client output
 can still split normally. A multi-module collector is an upstream enhancement,
 not an unlabeled fogd fork.
+
+## ADR 005: retain replica identity with its log volume
+
+**Context.** In the first sequential crash experiment, restarting replica A with
+celld's default random node ID made it unable to answer a later recovery request
+addressed to its old identity. Killing B then left B's old log without a reachable
+true witness, even though A still had the replicated fragments on disk. The
+restarted A rejected the seal request addressed to its old target identity. Retaining a volume alone
+was insufficient for this experiment.
+
+**Options.** Retain node IDs with the volumes; wait for and verify complete ensemble
+replacement before allowing another outage; or select upstream bucket-only durable
+acknowledgements. Random identities without an additional repair gate did not pass
+the sequential failure test. Bucket mode reduces reliance on live followers but
+changes write latency and does not repair an existing open fleet log.
+
+**Decision.** Configure a stable `CELLD_NODE` for each replica. Keep the IDs unique
+within their fleet and retain them with their volumes. Wait at least one lease
+lifetime before starting a replacement process with that identity. Use upstream
+configuration, without modifying celld.
+
+**Consequences.** Both replica-loss reads pass in the repeated experiment. The
+operator must not run two live processes with one identity or reuse an identity
+with an unrelated disk. The local experiment recovered the original data by
+restoring the original IDs; those machine-specific IDs remain only in ignored
+`.env`. A clean checkout uses the documented per-replica defaults.

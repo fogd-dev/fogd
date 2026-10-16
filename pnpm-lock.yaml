@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@fogd/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       vite:
         specifier: 8.1.0
         version: 8.1.0(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
@@ -24,7 +27,20 @@ importers:
         specifier: 1.1.11
         version: 1.1.11(@types/node@26.6.5)(arktype@2.2.8)(kysely@0.29.6)(valibot@1.5.0)(vite@8.1.0(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))(wrangler@4.151.1(@cloudflare/workers-types@5.20261016.1)(@types/node@26.6.5))(zod@4.6.7)
 
-  packages/cli: {}
+  examples/notebook:
+    devDependencies:
+      vite:
+        specifier: 8.1.0
+        version: 8.1.0(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+      void:
+        specifier: 1.1.11
+        version: 1.1.11(@types/node@26.6.5)(arktype@2.2.8)(kysely@0.29.6)(valibot@1.5.0)(vite@8.1.0(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))(wrangler@4.151.1(@cloudflare/workers-types@5.20261016.1)(@types/node@26.6.5))(zod@4.6.7)
+
+  packages/cli:
+    dependencies:
+      '@fogd/runtime':
+        specifier: workspace:*
+        version: link:../runtime
 
   packages/runtime:
     dependencies:

@@ -24,3 +24,38 @@ test('rejects paths outside the artifact/project and invalid app names', () => {
   assert.throws(() => translateConfig({}, '../app'));
   assert.equal(inside('/project', 'dist/ssr'), '/project/dist/ssr');
 });
+
+import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { stageArtifact, artifactDigest } from '../src/artifact.mjs';
+
+test('stages the exact application SQL list and produces a content digest', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'fogd-artifact-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await mkdir(join(root, 'dist/ssr'), { recursive: true });
+  await mkdir(join(root, 'db/migrations'), { recursive: true });
+  await writeFile(join(root, 'dist/ssr/index.js'), 'export default {fetch(){return new Response("ok")}}');
+  await writeFile(join(root, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', d1_databases: [{ binding: 'DB' }] }));
+  await writeFile(join(root, 'db/migrations/0001_init.sql'), 'CREATE TABLE entries(id TEXT PRIMARY KEY);');
+  await writeFile(join(root, 'db/migrations/seed.sql'), 'INSERT INTO entries VALUES ("seed");');
+  const release = await stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' });
+  assert.equal(release.migrations.length, 1);
+  assert.equal(release.migrations[0].name, '0001_init.sql');
+  assert.equal(release.digest, await artifactDigest(join(root, 'release')));
+  await writeFile(join(root, 'release/worker/index.js'), 'tampered');
+  assert.notEqual(release.digest, await artifactDigest(join(root, 'release')));
+  await assert.rejects(stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' }), /EEXIST/);
+});
+
+test('refuses split modules and symlinked build files before publication', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'fogd-artifact-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await mkdir(join(root, 'dist/ssr'), { recursive: true });
+  await writeFile(join(root, 'dist/ssr/index.js'), 'import "./chunk.js";');
+  await writeFile(join(root, 'dist/ssr/chunk.js'), 'export const n = 1;');
+  await assert.rejects(stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' }), /single JavaScript/);
+  await rm(join(root, 'dist/ssr/chunk.js'));
+  await symlink('/etc/passwd', join(root, 'dist/ssr/secret'));
+  await assert.rejects(stageArtifact({ projectDir: root, outputDir: join(root, 'release'), app: 'test' }), /Symlinks/);
+});

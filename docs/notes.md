@@ -45,3 +45,33 @@ proposal keeps the full app in celld to avoid inventing binding protocols.
   are copied from celld's Debian image, without modifying the host.
 - Deployment now waits for bucket initialization; the first direct deploy raced
   bucket creation and received NoSuchBucket before that dependency was added.
+
+## Milestone 3 recovery investigation
+
+The notebook uses a Drizzle D1 table, two SQL migrations, R2 object bodies, and a
+SQLite Durable Object ledger whose unique operation IDs make repeated PUTs
+idempotent. The writes across the three bindings are not one transaction.
+
+The first recovery run exposed an upstream identity boundary: after A restarted
+with a random ID, killing B blocked B's log recovery on the old A witness. The
+saved log is not evidence of successful failover. Restoring both original IDs
+against their original volumes recovered the existing entries without deleting
+bucket data. ADR 005 records the supported configuration used for the repeat test.
+
+Node's fetch ignored the Host override in the first test harness, so virtual-host
+checks now use node:http. The runtime was responding correctly to curl; that
+particular timeout was a harness bug, separate from the log-witness problem.
+
+The repeated recovery run with retained replica identities passed both forced
+container stops, both rejoins, and a workerd restart. It also rejected the public
+Void migration route with HTTP 404. The acknowledged notebook state included the
+R2 body and a Durable Object count of 3; a duplicate PUT did not increment it.
+
+## Milestone 4 verification
+
+`pnpm exec fogd deploy` ran successfully from both `examples/notebook` and
+`examples/hello`. The CLI built and staged each app, published through celld,
+verified both replica versions, and skipped already-applied SQL. The hello
+version was `188014d5c6cdbcaf`; notebook was `1c2f1729170db2fa`. Both sample apps'
+builds and the artifact validation tests pass. The direct mode is deliberately
+single-app; milestone 6 replaces the public default with the approval API.

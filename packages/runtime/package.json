@@ -6,5 +6,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1152.0",
     "workerd": "1.20261016.1"
+  },
+  "exports": {
+    "./artifact": "./src/artifact.mjs"
   }
 }

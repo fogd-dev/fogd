@@ -12,6 +12,11 @@
     "fogd": "bin/fogd.js"
   },
   "files": [
-    "bin"
-  ]
+    "bin",
+    "src"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@fogd/runtime": "workspace:*"
+  }
 }
