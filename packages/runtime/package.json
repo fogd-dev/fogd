@@ -8,6 +8,8 @@
     "workerd": "1.20261016.1"
   },
   "exports": {
-    "./artifact": "./src/artifact.mjs"
+    "./artifact": "./src/artifact.mjs",
+    "./manifest": "./src/manifest.mjs",
+    "./bucket": "./src/bucket.mjs"
   }
 }

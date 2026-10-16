@@ -1,5 +1,8 @@
 # Implementation notes
 
+These notes preserve experiment results and failed approaches. Reproduction steps
+for the current implementation live in the README.
+
 This log records experiments, source revisions, verification, and unresolved gaps.
 
 ## Initial environment
@@ -75,3 +78,21 @@ verified both replica versions, and skipped already-applied SQL. The hello
 version was `188014d5c6cdbcaf`; notebook was `1c2f1729170db2fa`. Both sample apps'
 builds and the artifact validation tests pass. The direct mode is deliberately
 single-app; milestone 6 replaces the public default with the approval API.
+
+## Platform implementation and live acceptance
+
+Claude and Gemini completed platform design reviews using valid CLI commands with
+15-minute limits and streaming logs. Both chose the custom approval gate. Their
+high-priority ownership, canonicalization, migration-reconciliation, and exact-digest
+findings were incorporated; the proposal and response remain in `docs/reviews/`.
+
+The platform smoke test passed against real Docker services: two CLI-built Void
+artifacts, no route before approval, rejection, wrong-digest rejection, forbidden
+submitter approval, malformed artifact rejection, both app hosts, D1/R2/DO writes,
+intentional SQL syntax failure, corrected submission, and controller/workerd restart.
+The invalid SQL was never recorded as applied; resubmitting the original artifact
+restored the notebook without changing the checked-in sample migration history.
+
+Eleven unit tests passed, including partial migration failure and restart/ownership
+failure injection. Both sample production builds passed. No Cloudflare APIs, npm
+publication, host-global installation, or Docker socket mounts were used.

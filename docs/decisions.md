@@ -102,3 +102,24 @@ operator must not run two live processes with one identity or reuse an identity
 with an unrelated disk. The local experiment recovered the original data by
 restoring the original IDs; those machine-specific IDs remain only in ignored
 `.env`. A clean checkout uses the documented per-replica defaults.
+
+## ADR 006: Gate immutable deployments in a small controller
+
+Context: Void Platform requires provisioning and dispatch services absent from this
+stack. Two teammates' apps need independent routing and admin-controlled activation.
+
+Options: adapt Void Platform; implement WfP dynamic dispatch; share one celld root
+router; use an approval controller and pre-provisioned app fleets.
+
+Choice: a Node controller stores pending artifacts, checks exact digests, and invokes
+fixed celld commands only after Basic-authenticated approval. Two fixed slots have
+two replicas each, private networks, and conditional ownership markers in the bucket.
+workerd resolves hostnames through an authenticated route endpoint with static backend
+bindings. No Docker socket, Postgres, or Cloudflare APIs are required.
+
+Why: Claude and Gemini independently preferred this reversible option. It preserves
+the tested runtime boundary and permits later replacement of the control plane.
+Activation deliberately pauses routing before migrations; a failed activation stays
+paused until explicit retry. Migration ledgers are reconciled after partial failures.
+Local bucket credentials are shared; trusted, reviewed code is required. See the
+[review response](reviews/platform-response.md) for accepted findings and tradeoffs.

@@ -1,7 +1,7 @@
 # Platform v0 design
 
 Use a small deployment approval controller with pre-provisioned celld fleets and
-workerd hostname routing. This proposal is awaiting milestone 5 peer review.
+workerd hostname routing. Claude and Gemini reviewed this choice; see the [review response](reviews/platform-response.md).
 
 ## Options and estimated effort
 
@@ -31,8 +31,9 @@ A slot is an operator-provisioned capacity unit. The controller assigns an app t
 one free slot on its first approval, then persists that assignment. Slots are not
 recycled automatically. The initial stack supports two apps. Operators add more
 slots through Compose and the fleet configuration; the controller does not create
-containers or promise elastic scheduling. Each app's prefix and resource names
-remain stable across releases. Each replica retains its node ID with its log volume.
+containers or promise elastic scheduling. Slots use fixed `slots/slot-1` and `slots/slot-2` bucket prefixes, configurable by
+the operator. Conditional `fogd-owner.json` markers reserve slots permanently for
+one app. Each app's resource names remain stable across releases. Each replica retains its node ID with its log volume.
 
 This costs four celld containers for two apps, matching ADR 002. A future homelab
 places one replica per slot on each machine and supplies peer addresses and an
@@ -51,18 +52,19 @@ persisting immutable pending files. It validates the generated celld config agai
 client-supplied claims are not authority. Rejected and pending code never reaches
 `celld deploy`. Admin routes use HTTP Basic authentication. The admin page lists
 app, digest, resources, and migrations, and offers approve/reject controls. Mutation
-requests require JSON, same-origin checks when an Origin is supplied, and a CSRF
-token obtained from the authenticated admin page. A CLI admin command can use the
+requests require JSON, same-origin checks when an Origin is supplied, an explicit digest, and a CSRF
+token obtained from the authenticated admin endpoint. Both browser and CLI mutations
+require this token. A CLI admin command can use the
 same endpoint with explicit Basic credentials.
 
 Approval serializes controller mutations and changes the request from pending to
 activating. It verifies stored bytes against the approved digest before invoking
 celld. The executable and arguments are fixed controller code, never submitted
-shell commands. Runtime credentials are present only in the controller and replicas,
+shell commands. Runtime credentials are present only in the controller, bucket initializer, and replicas,
 not in the CLI build process or uploaded artifact.
 
 For an existing app, preserve resource identities and existing migration hashes,
-then run backward-compatible migrations against the current deployment. For a new
+pause routing durably, then run migrations against the current deployment. For a new
 app, publish privately, wait for replicas, and migrate before public routing. v0
 rejects background consumers, cross-app service bindings, AI, Hyperdrive, and other
 capabilities whose activation cannot be safely gated by this sequence. Authentication
@@ -71,15 +73,19 @@ schema auto-migrations and importing existing Void migration ledgers remain gaps
 Verify expected celld versions on both replicas and their health before recording
 the release active. The app hostname routes only an active release. During an
 existing-app activation, pause the route (HTTP 503) to avoid serving mixed versions;
-there is no promise of zero downtime. If activation fails, keep the route paused
-and surface a failed request for operator recovery. Never claim that an old healthy
-replica proves a new release succeeded. Admin-approved resubmission can recover.
+there is no promise of zero downtime. If activation fails, keep the route paused and surface the step and error. The
+admin can retry the same digest. Reconcile the applied D1 ledger against the
+attempted artifact before accepting an activation: applied SQL hashes are immutable,
+but unapplied failed SQL can be corrected in a new submission. An unavailable ledger
+blocks activation. Never infer release adoption from an old healthy replica.
 
 On controller restart, reconcile any activating request to a failed/paused state.
 Never automatically replay migrations or approval. Pending requests remain pending,
 and successfully active routes reload from durable controller metadata. Controller
 metadata and bucket data require coordinated backups; losing the slot assignment
-must not silently assign an existing prefix to a different app.
+must not silently assign an existing prefix to a different app. At startup, bucket
+ownership without matching local metadata quarantines the slot. Restore the original
+controller volume from backup; there is no automatic state import or slot reset.
 
 ## Component view: routing and limits
 
@@ -107,5 +113,7 @@ Acceptance checks cover two distinct hostnames, no route before approval, reject
 requests never executing, exact-digest approval, credential separation, malformed
 artifact rejection, serialized conflicting approvals, failed activation, and
 controller restart persistence. Re-run the notebook's data and recovery checks on
-its assigned fleet. Keep the original review proposal and record accepted changes
-separately before ratifying this design.
+its assigned fleet. The original proposal and both independent reviews are preserved in `docs/reviews/`.
+Run `node scripts/platform-smoke.mjs` against a fresh stack to exercise the complete
+flow, including intentionally failed SQL and subsequent recovery. Unit tests inject
+activation failures and controller metadata loss without modifying running fleets.

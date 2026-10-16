@@ -5,6 +5,7 @@ import { request } from './http.mjs';
 const env = { ...process.env, FOGD_APP: process.env.FOGD_APP || 'notebook', FOGD_APP_HOST: process.env.FOGD_APP_HOST || 'notebook.localhost' };
 const origin = process.env.FOGD_URL || 'http://127.0.0.1:8787';
 const headers = { Host: env.FOGD_APP_HOST, 'Content-Type': 'application/json' };
+const replicas = [process.env.FOGD_REPLICA_A || 'slot-2-a', process.env.FOGD_REPLICA_B || 'slot-2-b'];
 const started = new Date().toISOString();
 const run = (args, capture = false) => new Promise((resolve, reject) => {
   const child = spawn('docker', ['compose', ...args], { env, stdio: capture ? ['ignore', 'pipe', 'pipe'] : 'inherit' });
@@ -45,12 +46,12 @@ async function verify() {
   for (const expected of expectedEntries) assert.deepEqual(after.entries.find(row => row.id === expected.id), expected);
 }
 try {
-  for (const replica of ['celld-a', 'celld-b']) {
+  for (const replica of replicas) {
     // A zero-grace stop SIGKILLs the container and leaves it stopped during verification.
     await run(['stop', '-t', '0', replica]);
     await eventually(verify, `Acknowledged D1/R2/DO data with ${replica} killed`);
     await run(['start', replica]);
-    const peer = replica === 'celld-a' ? 'celld-b' : 'celld-a';
+    const peer = replicas.find(value => value !== replica);
     await run(['exec', '-T', peer, 'node', '--input-type=module', '-e', `
       for (let n=0;n<180;n++) {
         try { const r=await fetch('http://${replica}:8080/.well-known/celld/health'); if(r.ok) process.exit(0); } catch {}
@@ -59,12 +60,12 @@ try {
       process.exit(1);
     `]);
     await eventually(verify, `${replica} rejoined`);
-    if (replica === "celld-a") {
+    if (replica === replicas[0]) {
       const extra = { ...entry, id: `${entry.id}-rejoin` };
       expectedEntries.push(extra); expectedCount++;
       assert.equal((await put(extra)).count, expectedCount);
     }
-    const logs = await run(["logs", "--since", started, "celld-a", "celld-b"], true);
+    const logs = await run(["logs", "--since", started, ...replicas], true);
     assert.ok(!logs.includes("no complete true witness"), "Recovery must retain an addressable log witness");
   }
   await run(['restart', 'workerd']);
@@ -73,5 +74,5 @@ try {
   assert.equal(internal.status, 404);
   console.log(JSON.stringify({ ok: true, entries: expectedEntries, count: expectedCount }));
 } finally {
-  await run(['start', 'celld-a', 'celld-b']);
+  await run(['start', ...replicas]);
 }

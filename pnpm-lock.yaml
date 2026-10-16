@@ -42,6 +42,15 @@ importers:
         specifier: workspace:*
         version: link:../runtime
 
+  packages/platform:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: 3.1152.0
+        version: 3.1152.0
+      '@fogd/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+
   packages/runtime:
     dependencies:
       '@aws-sdk/client-s3':

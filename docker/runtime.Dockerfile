@@ -7,7 +7,9 @@ COPY --from=celld /usr/local/bin/celld /usr/local/bin/celld
 COPY --from=celld /etc/ssl/certs /etc/ssl/certs
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/runtime/package.json packages/runtime/package.json
-RUN pnpm install --filter @fogd/runtime --prod --frozen-lockfile
+COPY packages/platform/package.json packages/platform/package.json
+RUN pnpm install --filter @fogd/runtime --filter @fogd/platform --prod --frozen-lockfile
 COPY packages/runtime packages/runtime
+COPY packages/platform packages/platform
 COPY docker/celld-supervisor.sh /usr/local/bin/celld-supervisor
 CMD ["node", "packages/runtime/src/serve.mjs"]

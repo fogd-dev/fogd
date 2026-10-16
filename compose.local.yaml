@@ -1,0 +1,83 @@
+name: ${COMPOSE_PROJECT_NAME:-fogd}
+x-bucket-env: &bucket-env
+  S3_ENDPOINT: ${FOGD_BUCKET_ENDPOINT:-http://minio:9000}
+  AWS_REGION: ${FOGD_BUCKET_REGION:-us-east-1}
+  AWS_ACCESS_KEY_ID: ${FOGD_BUCKET_USER:-fogd-local}
+  AWS_SECRET_ACCESS_KEY: ${FOGD_BUCKET_PASSWORD:-fogd-local-development-only}
+  FOGD_BUCKET: ${FOGD_BUCKET:-fogd}
+  CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/apps/${FOGD_APP:-hello}
+x-runtime: &runtime
+  image: fogd-runtime:local
+  build:
+    context: .
+    dockerfile: docker/runtime.Dockerfile
+x-celld: &celld
+  <<: *runtime
+  entrypoint: [celld-supervisor]
+  restart: unless-stopped
+  stop_grace_period: 45s
+  mem_limit: ${FOGD_CELLD_MEMORY:-512m}
+  cpus: ${FOGD_CELLD_CPUS:-1}
+  environment: &celld-env
+    <<: *bucket-env
+    CELLD_WATCH: /var/lib/celld/state
+    CELLD_V8_HEAP_LIMIT_MB: ${FOGD_CELLD_HEAP_MB:-128}
+    CELLD_MAX_RESIDENT_CELLS: ${FOGD_MAX_RESIDENT_CELLS:-100}
+  depends_on:
+    bucket-init:
+      condition: service_completed_successfully
+services:
+  minio:
+    image: fogd-minio:local
+    build:
+      context: .
+      dockerfile: docker/minio.Dockerfile
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${FOGD_BUCKET_USER:-fogd-local}
+      MINIO_ROOT_PASSWORD: ${FOGD_BUCKET_PASSWORD:-fogd-local-development-only}
+    volumes: [bucket:/data]
+  bucket-init:
+    <<: *runtime
+    command: [node, packages/runtime/src/init-bucket.mjs]
+    environment: *bucket-env
+    depends_on: [minio]
+  celld-a:
+    <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_NODE: ${FOGD_NODE_A_ID:-node-a}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_A_ADVERTISE:-celld-a:8081}']
+    volumes: [celld-a:/var/lib/celld]
+  celld-b:
+    <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_NODE: ${FOGD_NODE_B_ID:-node-b}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_B_ADVERTISE:-celld-b:8081}']
+    volumes: [celld-b:/var/lib/celld]
+  workerd:
+    <<: *runtime
+    restart: unless-stopped
+    ports: ['${FOGD_BIND_ADDRESS:-127.0.0.1}:${FOGD_HTTP_PORT:-8787}:8080']
+    environment:
+      FOGD_APP_HOST: ${FOGD_APP_HOST:-hello.localhost}
+      FOGD_NODE_A: ${FOGD_NODE_A:-celld-a:8080}
+      FOGD_NODE_B: ${FOGD_NODE_B:-celld-b:8080}
+    mem_limit: 256m
+    cpus: 1
+  deployer:
+    <<: *runtime
+    profiles: [tools]
+    depends_on:
+      bucket-init:
+        condition: service_completed_successfully
+    entrypoint: [celld]
+    environment: *bucket-env
+    volumes: ['${FOGD_ARTIFACT_DIR:-./.fogd/artifact}:/artifact:ro']
+volumes:
+  bucket:
+  celld-a:
+    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-a
+  celld-b:
+    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-b

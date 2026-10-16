@@ -57,7 +57,7 @@ handles cannot survive node changes, so v0 examples use ordinary object puts/get
    resource identity changes. Exclude `seed.sql` and preserve migration order.
 3. Record an immutable content digest. Platform v0 requires an admin to approve
    that exact artifact before any celld publication, migration, or background work.
-4. Serialize publication for an app. For an existing app, apply backward-compatible
+4. Serialize publication and pause routing durably. For an existing app, apply
    SQL against its current D1 before publishing the new worker. For a new app,
    bootstrap its worker privately, apply SQL, then enable routing. Background
    consumers are excluded from the initial deployment adapter until this sequence
@@ -88,4 +88,4 @@ The local stack uses HTTP on loopback. Homelab deployment needs ingress TLS and 
 encrypted private peer network; workerd can terminate TLS with supplied certificates,
 but fogd v0 does not provision certificates or DNS. Void Platform's Postgres, OAuth,
 analytics, billing, and Cloudflare resource provisioning are not required by this
-architecture. The smaller platform choice is reviewed at milestone 5.
+architecture. The implemented approval controller is described in [platform.md](platform.md).

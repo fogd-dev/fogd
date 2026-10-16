@@ -16,6 +16,13 @@ export function inside(root, path) {
   if (rel === '..' || rel.startsWith('../') || isAbsolute(rel)) throw new Error(`Path escapes project: ${path}`);
   return result;
 }
+const identifier = value => {
+  if (typeof value !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(value)) throw new Error(`Invalid binding/class identifier: ${value}`);
+  return value;
+};
+const keys = (object, allowed) => {
+  for (const key of Object.keys(object)) if (!allowed.includes(key)) throw new Error(`Unsupported nested config: ${key}`);
+};
 export function translateConfig(input, app) {
   appName(app);
   for (const [key, value] of Object.entries(input)) {
@@ -31,10 +38,27 @@ export function translateConfig(input, app) {
   for (const rule of input.rules || []) {
     if (rule.type !== 'ESModule') throw new Error(`Unsupported prebuilt module rule: ${rule.type}`);
   }
+  const seen = new Set();
+  for (const name of [...Object.keys(input.vars || {}), ...(input.d1_databases || []).map(b => b.binding), ...(input.r2_buckets || []).map(b => b.binding), ...(input.durable_objects?.bindings || []).map(b => b.name), ...(input.assets?.binding ? [input.assets.binding] : [])]) {
+    identifier(name);
+    if (seen.has(name.toLowerCase())) throw new Error(`Duplicate binding: ${name}`);
+    seen.add(name.toLowerCase());
+  }
+  if (input.durable_objects) keys(input.durable_objects, ['bindings']);
+  for (const b of input.durable_objects?.bindings || []) {
+    if (b.script_name) throw new Error('Cross-script Durable Objects are not supported');
+    keys(b, ['name', 'class_name']); identifier(b.class_name);
+  }
+  for (const m of input.migrations || []) {
+    keys(m, ['tag', 'new_sqlite_classes']);
+    if (typeof m.tag !== 'string' || !m.tag) throw new Error('Invalid DO migration tag');
+    for (const name of m.new_sqlite_classes || []) identifier(name);
+  }
+  if (input.assets) keys(input.assets, ['directory', 'binding', 'html_handling', 'not_found_handling', 'run_worker_first']);
   const result = {
     name: app,
     main: 'worker/index.js',
-    compatibility_date: input.compatibility_date,
+    ...(input.compatibility_date ? { compatibility_date: input.compatibility_date } : {}),
     compatibility_flags: input.compatibility_flags || [],
     no_bundle: true,
     vars: input.vars || {},
@@ -62,7 +86,7 @@ export function resourceIdentity(config) {
     durable: config.durable_objects,
   };
 }
-async function regularFiles(root, prefix = '') {
+export async function regularFiles(root, prefix = '') {
   const files = [];
   for (const entry of await readdir(join(root, prefix), { withFileTypes: true })) {
     const path = join(prefix, entry.name);

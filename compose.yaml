@@ -5,7 +5,8 @@ x-bucket-env: &bucket-env
   AWS_ACCESS_KEY_ID: ${FOGD_BUCKET_USER:-fogd-local}
   AWS_SECRET_ACCESS_KEY: ${FOGD_BUCKET_PASSWORD:-fogd-local-development-only}
   FOGD_BUCKET: ${FOGD_BUCKET:-fogd}
-  CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/apps/${FOGD_APP:-hello}
+x-slots-env: &slots-env
+  FOGD_SLOTS: '[{"id":"slot-1","prefix":"${FOGD_SLOT_1_PREFIX:-slots/slot-1}","nodes":["${FOGD_SLOT_1_A_HOST:-slot-1-a}","${FOGD_SLOT_1_B_HOST:-slot-1-b}"]},{"id":"slot-2","prefix":"${FOGD_SLOT_2_PREFIX:-slots/slot-2}","nodes":["${FOGD_SLOT_2_A_HOST:-slot-2-a}","${FOGD_SLOT_2_B_HOST:-slot-2-b}"]}]'
 x-runtime: &runtime
   image: fogd-runtime:local
   build:
@@ -18,14 +19,16 @@ x-celld: &celld
   stop_grace_period: 45s
   mem_limit: ${FOGD_CELLD_MEMORY:-512m}
   cpus: ${FOGD_CELLD_CPUS:-1}
-  environment: &celld-env
-    <<: *bucket-env
-    CELLD_WATCH: /var/lib/celld/state
-    CELLD_V8_HEAP_LIMIT_MB: ${FOGD_CELLD_HEAP_MB:-128}
-    CELLD_MAX_RESIDENT_CELLS: ${FOGD_MAX_RESIDENT_CELLS:-100}
   depends_on:
     bucket-init:
       condition: service_completed_successfully
+x-celld-env: &celld-env
+  <<: *bucket-env
+  CELLD_WATCH: /var/lib/celld/state
+  CELLD_V8_HEAP_LIMIT_MB: ${FOGD_CELLD_HEAP_MB:-128}
+  CELLD_MAX_RESIDENT_CELLS: ${FOGD_MAX_RESIDENT_CELLS:-100}
+  CELLD_MAX_REQUEST_BODY_BYTES: ${FOGD_MAX_REQUEST_BODY_BYTES:-16777216}
+  CELLD_MAX_REQUESTS: ${FOGD_MAX_REQUESTS:-128}
 services:
   minio:
     image: fogd-minio:local
@@ -36,48 +39,91 @@ services:
     environment:
       MINIO_ROOT_USER: ${FOGD_BUCKET_USER:-fogd-local}
       MINIO_ROOT_PASSWORD: ${FOGD_BUCKET_PASSWORD:-fogd-local-development-only}
+    mem_limit: ${FOGD_MINIO_MEMORY:-768m}
+    cpus: ${FOGD_MINIO_CPUS:-2}
     volumes: [bucket:/data]
+    networks: [control, fleet-1, fleet-2]
   bucket-init:
     <<: *runtime
     command: [node, packages/runtime/src/init-bucket.mjs]
     environment: *bucket-env
     depends_on: [minio]
-  celld-a:
+    networks: [control]
+  slot-1-a:
     <<: *celld
     environment:
       <<: *celld-env
-      CELLD_NODE: ${FOGD_NODE_A_ID:-node-a}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_A_ADVERTISE:-celld-a:8081}']
-    volumes: [celld-a:/var/lib/celld]
-  celld-b:
+      CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_1_PREFIX:-slots/slot-1}
+      CELLD_NODE: ${FOGD_SLOT_1_A_ID:-slot-1-a}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_A_HOST:-slot-1-a}:8081']
+    volumes: [slot-1-a:/var/lib/celld]
+    networks: [fleet-1]
+  slot-1-b:
     <<: *celld
     environment:
       <<: *celld-env
-      CELLD_NODE: ${FOGD_NODE_B_ID:-node-b}
-    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_NODE_B_ADVERTISE:-celld-b:8081}']
-    volumes: [celld-b:/var/lib/celld]
+      CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_1_PREFIX:-slots/slot-1}
+      CELLD_NODE: ${FOGD_SLOT_1_B_ID:-slot-1-b}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_1_B_HOST:-slot-1-b}:8081']
+    volumes: [slot-1-b:/var/lib/celld]
+    networks: [fleet-1]
+  slot-2-a:
+    <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_2_PREFIX:-slots/slot-2}
+      CELLD_NODE: ${FOGD_SLOT_2_A_ID:-slot-2-a}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_A_HOST:-slot-2-a}:8081']
+    volumes: [slot-2-a:/var/lib/celld]
+    networks: [fleet-2]
+  slot-2-b:
+    <<: *celld
+    environment:
+      <<: *celld-env
+      CELLD_BUCKET: s3://${FOGD_BUCKET:-fogd}/${FOGD_SLOT_2_PREFIX:-slots/slot-2}
+      CELLD_NODE: ${FOGD_SLOT_2_B_ID:-slot-2-b}
+    command: [--listen, '0.0.0.0:8080', --internal-listen, '0.0.0.0:8081', --advertise, '${FOGD_SLOT_2_B_HOST:-slot-2-b}:8081']
+    volumes: [slot-2-b:/var/lib/celld]
+    networks: [fleet-2]
+  controller:
+    <<: *runtime
+    command: [node, packages/platform/src/main.mjs]
+    restart: unless-stopped
+    ports: ['${FOGD_BIND_ADDRESS:-127.0.0.1}:${FOGD_ADMIN_PORT:-8788}:8082']
+    environment:
+      <<: [*bucket-env, *slots-env]
+      FOGD_ADMIN_USER: ${FOGD_ADMIN_USER:-admin}
+      FOGD_ADMIN_PASSWORD: ${FOGD_ADMIN_PASSWORD:?Run fogd up to initialize credentials}
+      FOGD_DEPLOY_TOKEN: ${FOGD_DEPLOY_TOKEN:?Run fogd up to initialize credentials}
+      FOGD_GATEWAY_TOKEN: ${FOGD_GATEWAY_TOKEN:?Run fogd up to initialize credentials}
+      FOGD_BASE_DOMAIN: ${FOGD_BASE_DOMAIN:-localhost}
+      FOGD_MAX_PENDING: ${FOGD_MAX_PENDING:-20}
+    volumes: [controller:/var/lib/fogd]
+    networks: [control, fleet-1, fleet-2]
+    mem_limit: 512m
+    cpus: 1
+    depends_on:
+      bucket-init:
+        condition: service_completed_successfully
   workerd:
     <<: *runtime
     restart: unless-stopped
     ports: ['${FOGD_BIND_ADDRESS:-127.0.0.1}:${FOGD_HTTP_PORT:-8787}:8080']
     environment:
-      FOGD_APP_HOST: ${FOGD_APP_HOST:-hello.localhost}
-      FOGD_NODE_A: ${FOGD_NODE_A:-celld-a:8080}
-      FOGD_NODE_B: ${FOGD_NODE_B:-celld-b:8080}
+      <<: *slots-env
+      FOGD_CONTROLLER: ${FOGD_CONTROLLER:-controller:8082}
+      FOGD_GATEWAY_TOKEN: ${FOGD_GATEWAY_TOKEN:?Run fogd up to initialize credentials}
+    networks: [control, fleet-1, fleet-2]
     mem_limit: 256m
     cpus: 1
-  deployer:
-    <<: *runtime
-    profiles: [tools]
-    depends_on:
-      bucket-init:
-        condition: service_completed_successfully
-    entrypoint: [celld]
-    environment: *bucket-env
-    volumes: ['${FOGD_ARTIFACT_DIR:-./.fogd/artifact}:/artifact:ro']
+networks:
+  control:
+  fleet-1:
+  fleet-2:
 volumes:
   bucket:
-  celld-a:
-    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-a
-  celld-b:
-    name: ${COMPOSE_PROJECT_NAME:-fogd}-${FOGD_APP:-hello}-b
+  controller:
+  slot-1-a:
+  slot-1-b:
+  slot-2-a:
+  slot-2-b:
