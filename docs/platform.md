@@ -70,6 +70,11 @@ rejects background consumers, cross-app service bindings, AI, Hyperdrive, and ot
 capabilities whose activation cannot be safely gated by this sequence. Authentication
 schema auto-migrations and importing existing Void migration ledgers remain gaps.
 
+Pausing HTTP routing does not drain requests already in flight or stop existing
+Durable Object alarms. Use backward-compatible SQL changes. A consistent backup
+or incompatible migration requires a separate quiescence/checkpoint protocol;
+the route pause alone does not provide one.
+
 Verify expected celld versions on both replicas and their health before recording
 the release active. The app hostname routes only an active release. Successful activation supersedes
 other requests for that app, including older active releases. Retrying a superseded

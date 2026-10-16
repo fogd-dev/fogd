@@ -9,6 +9,12 @@ for trusted, reviewed application code. Compare fogd, celld, workerd, Void, and 
 Cloudflare in the [feature table](docs/features.md). Read [the report](docs/report.md) for tested
 behavior, limitations, and the decisions behind it.
 
+Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
+[roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).
+They include optional Filecoin storage and recovery as future work. See the
+[Claude/Gemini vision review response](docs/reviews/vision-response.md) for the review
+record and subsequent user input. These are proposals, not supported features.
+
 ## Start from a clean checkout
 
 Requirements: Docker with Compose, Node.js 24.21 or newer, and pnpm 10.16.1.

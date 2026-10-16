@@ -70,6 +70,8 @@ conservative lease-expiry delay are now the default. See ADR 005 and its source 
   and gets. Streaming, WebSockets, asset-heavy applications, and remote two-host
   deployment have not been qualified by these tests.
 - Approval pauses routing. Schema changes and deployment are not one transaction;
+  in-flight requests and existing Durable Object alarms are not quiesced. Use
+  backward-compatible SQL. A route pause alone does not make a backup consistent;
   there is no automatic rollback. Applied migration hashes are immutable. A failed,
   unapplied migration may be corrected after authoritative ledger reconciliation.
 - Basic auth is appropriate for this loopback HTTP demo. Public use requires TLS,
