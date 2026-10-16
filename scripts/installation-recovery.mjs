@@ -1,0 +1,74 @@
+import assert from 'node:assert/strict';
+import { randomBytes } from 'node:crypto';
+import { join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { platformClient } from './platform-client.mjs';
+import { accountsBrowser } from './accounts-browser.mjs';
+import { expect } from './guestbook-browser.mjs';
+import { compose, stackRoot, run } from '../packages/cli/src/local.mjs';
+
+const client = await platformClient();
+assert.ok(!client.env.FOGD_COMPOSE_FILE, 'Recovery drill requires the default local Compose file');
+client.env.FOGD_GATEWAY_TOKEN += '$HOME${X}';
+const source = client.env.COMPOSE_PROJECT_NAME;
+assert.ok(source && source.includes('m8'), 'Use an explicitly named disposable M8 source project');
+const target = `${source}-restore`;
+const bundle = join(stackRoot, '.fogd', `${source}-backup`);
+const output = join(stackRoot, '.fogd', `${target}-config`);
+const cli = join(stackRoot, 'packages/cli/bin/fogd.js');
+await compose(['up', '-d', '--no-build'], client.env);
+await expect.poll(async () => { try { return Object.keys((await client.api('/v1/admin')).apps).length; } catch { return -1; } }, { timeout: 90000 }).toBe(0);
+const accountRelease = await client.submit(join(stackRoot, 'examples/accounts'), 'accounts');
+const { csrf } = await client.api('/v1/admin');
+const secret = await client.api('/v1/apps/accounts/secrets', { method: 'PUT', headers: { 'X-Fogd-CSRF': csrf }, body: JSON.stringify({ BETTER_AUTH_SECRET: randomBytes(32).toString('hex') }) });
+async function approve(release, revision) {
+  const { csrf } = await client.api('/v1/admin');
+  return client.api(`/v1/deployments/${release.id}/approve`, { method: 'POST', headers: { 'X-Fogd-CSRF': csrf }, body: JSON.stringify({ digest: release.digest, secretRevision: revision }) });
+}
+assert.equal((await approve(accountRelease, secret.revision)).status, 'active');
+const notebook = await client.submit(join(stackRoot, 'examples/notebook'), 'notebook');
+assert.equal((await approve(notebook)).status, 'active');
+const entry = { id: `backup-${Date.now()}`, title: 'Before snapshot', body: 'D1/R2/DO survive fresh volumes' };
+const write = value => client.appRequest('notebook', '/api/entries', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(value) });
+assert.equal((await write(entry)).status, 200);
+const before = await (await client.appRequest('notebook', '/api/entries')).json();
+const email = `recovery-${Date.now()}@example.test`;
+const account = await accountsBrowser(client.browserURL('accounts'), email, 'Recovery test password');
+try {
+  await account.enroll();
+  const pending = await client.submit(join(stackRoot, 'examples/accounts'), 'accounts');
+  const state = await client.api('/v1/admin');
+  const approval = approve(pending, secret.revision).catch(() => null);
+  await expect.poll(async () => (await client.api('/v1/admin')).deployments[pending.id].status, { timeout: 10000, intervals: [20] }).toBe('activating');
+  await compose(['stop', '-t', '0', 'controller'], client.env);
+  await approval;
+  await compose(['stop', '-t', '0', 'slot-2-a', 'slot-2-b'], client.env);
+  await run(process.execPath, [cli, 'backup', bundle], { env: client.env });
+  await run(process.execPath, [cli, 'restore', bundle, '--project', target, '--output', output], { env: client.env });
+  // Restored config is self-contained. Ignore the checkout's original project name.
+  const restoredEnv = { ...client.env, COMPOSE_PROJECT_NAME: target, FOGD_COMPOSE_FILE: join(output, 'compose.json') };
+  await compose(['up', '-d', '--pull', 'never'], restoredEnv);
+  await expect.poll(async () => { try { return (await client.appRequest('notebook', '/api/entries')).status; } catch { return 0; } }, { timeout: 120000 }).toBe(200);
+  const restored = await client.api('/v1/admin');
+  assert.equal(restored.apps.accounts.quarantined, undefined);
+  assert.equal(restored.apps.notebook.quarantined, undefined);
+  assert.deepEqual(restored.deployments[notebook.id], state.deployments[notebook.id]);
+  assert.equal(restored.deployments[pending.id].status, 'failed');
+  assert.equal(restored.deployments[pending.id].secretRevision, secret.revision);
+  assert.deepEqual(restored.secrets, state.secrets);
+  assert.deepEqual(await (await client.appRequest('notebook', '/api/entries')).json(), before);
+  assert.equal((await approve(pending, secret.revision)).status, 'active');
+  await account.ready('Session active');
+  await account.signOut(); await account.signIn(); await account.signedIn();
+  const next = { ...entry, id: entry.id + '-restored', title: 'After restore' };
+  const after = await (await write(next)).json();
+  assert.equal(after.count, before.count + 1);
+  const rows = await (await client.appRequest('notebook', '/api/entries')).json();
+  assert.deepEqual(rows.entries.find(row => row.id === entry.id), entry);
+  assert.deepEqual(rows.entries.find(row => row.id === next.id), next);
+  await assert.rejects(run(process.execPath, [cli, 'restore', bundle, '--project', target, '--output', output + '-retry'], { env: client.env }), /exited/);
+  const snapshot = JSON.parse(await readFile(join(bundle, 'manifest.json'), 'utf8'));
+  const receipt = JSON.parse(await readFile(join(output, 'restored.json'), 'utf8'));
+  console.log(JSON.stringify({ source, target, snapshotMs: snapshot.durationMs, restoreMs: receipt.durationMs, stoppedAt: snapshot.stoppedAt, exits: snapshot.exits }));
+  console.log('PASS: fresh-volume D1/R2/DO recovery, native account/session and secret recovery, approval history and interrupted approval retry, forced replica-stop recovery, subsequent writes, occupied-target refusal');
+} finally { await account.browser.close(); }

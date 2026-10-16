@@ -1,9 +1,17 @@
 #!/usr/bin/env node
+import { backup } from '../src/recovery/backup.mjs';
+import { restore } from '../src/recovery/restore.mjs';
 import { up, deploy, admin, status } from '../src/platform.mjs';
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  if (command === 'up') await up();
+  if (command === 'backup') {
+    if (args.length !== 1) throw new Error('Usage: fogd backup DIRECTORY');
+    await backup(args[0]);
+  } else if (command === 'restore') {
+    if (args.length !== 5 || args[1] !== '--project' || args[3] !== '--output') throw new Error('Usage: fogd restore DIRECTORY --project NAME --output DIRECTORY');
+    await restore(args[0], args[2], args[4]);
+  } else if (command === 'up') await up();
   else if (command === 'deploy') {
     const nameIndex = args.indexOf('--name');
     const name = nameIndex === -1 ? undefined : args[nameIndex + 1];
@@ -18,6 +26,6 @@ try {
     await admin(...args);
   }
   else if (!command || command === '--help' || command === 'help') {
-    console.log('fogd up                    Start the local Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using the team deploy token\nfogd admin list            List submissions and secret revision names\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
+    console.log('fogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd up                    Start the local Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using the team deploy token\nfogd admin list            List submissions and secret revision names\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }

@@ -325,3 +325,29 @@ parameter is reduced. Ordinary offline Void builds pass, while hosted execution
 remains untested. Internal auth-migration routes stay blocked; fogd applies the
 checked-in generated SQL. Provider breadth and production auth operations remain
 outside this milestone.
+
+## ADR 015: recover a stopped installation as one unit
+
+**Context.** A bucket-only copy can omit acknowledged writes held in celld replica
+logs. Controller ownership, migration evidence, secret revisions, and node identities
+also determine whether recovered data can be served safely.
+
+**Options.** Defer recovery; copy the bucket alone; coordinate a live distributed
+snapshot; or stop the installation and preserve every required component together.
+Live snapshots would reduce downtime but need a runtime-level writer/checkpoint
+protocol that fogd has not qualified.
+
+**Decision.** Provide an explicit stopped backup and fresh-volume restore for the
+local two-slot topology. Inventory actual container configuration and managed
+volumes, stop every writer, archive all volumes and exact images, and complete the
+manifest last. Verify corruption before restore effects and extracted contents
+before writing the restore receipt. Restore keeps app, node, and credential identities
+but assigns new physical volumes/networks. Image IDs prevent accidental upgrades.
+The operator explicitly starts the recovered installation at the original origin.
+
+**Consequences.** Operators accept whole-installation downtime and private snapshots
+containing plaintext credentials. Recovery requires all replica logs, not merely
+replaceable empty nodes. Snapshot and restore failures leave resources stopped;
+partial targets cannot be reused automatically. Same-origin source/clone concurrency,
+external storage, cross-version upgrades, scheduling, and retention are unqualified.
+The approach is reversible and testable now; M8b still owns shared-operation policy.

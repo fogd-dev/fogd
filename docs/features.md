@@ -59,7 +59,7 @@ configuration; unsupported nonempty declarations fail explicitly.
 
 The [guestbook transfer profile](../examples/guestbook/TRANSFER.md) qualifies bounded
 logical export/restore of messages and referenced attachment bytes. It requires a
-local maintenance window; installation backup and hosted migration remain unqualified.
+local maintenance window; installation recovery is covered separately by the [stopped backup guide](recovery.md); hosted migration remains unqualified.
 
 ## Deployment and operations
 
@@ -79,6 +79,7 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | Private app configuration | Partial; admin revisions pinned to approval, plaintext runtime bucket | Text bindings in deployment objects | Text bindings in config | Environment schema / Platform secrets | Not audited here |
 | User/project roles and OAuth login | Partial; shared team token + admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |
+| Installation backup/restore | Partial; stopped local stack, exact images, fresh-volume recovery tested | Requires bucket and all node logs/identities | External orchestration required | Operator responsibility | Not audited here |
 | Whole-stack high availability | No; bucket/controller single points of failure | Depends on bucket/fleet topology | External orchestration required | Depends on hosting/services | Managed platform; outside this test scope |
 | Resource limits | Partial; containers, heap, cells, body size, uploads | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
 | Automatic schema rollback | No | No fogd rollback mechanism | No deployment migration runner | Not audited | Not audited |

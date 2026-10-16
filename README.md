@@ -206,3 +206,15 @@ fixture guide covers manual deployment and failed configuration. A labeled passw
 adapter fills celld's missing Node scrypt primitive. Secrets stay out of submitted
 artifacts, but celld's bucket stores injected values in plaintext. This remains a
 trusted local qualification; installation recovery and shared hosting are M8 work.
+
+## M8a: recover the complete installation
+
+`fogd backup DIRECTORY` stops the local stack and captures its bucket, controller,
+secret revisions, every replica disk, configuration, and exact images. `fogd restore`
+verifies the snapshot and restores only to a new, stopped Docker project. Follow the
+[recovery guide](docs/recovery.md) for the start command and private-storage requirements.
+
+The [recovery drill](scripts/installation-recovery.mjs) restores accounts and notebook
+after an interrupted approval and forced replica stops, then checks sessions,
+D1/R2/Durable Object data, approval retry, and new writes. This qualifies local
+same-version replacement; shared-operation controls remain M8b work.

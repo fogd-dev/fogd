@@ -26,7 +26,7 @@ export function run(command, args, options = {}) {
     child.on('exit', code => code === 0 ? resolve(output) : reject(new Error(`${command} exited ${code}`)));
   });
 }
-export const compose = (args, env, capture = false) => run('docker', ['compose', '--project-directory', stackRoot, '-f', join(stackRoot, 'compose.yaml'), ...args], { env, capture });
+export const compose = (args, env, capture = false) => run('docker', ['compose', '--project-directory', stackRoot, '-f', resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml')), ...args], { env, capture });
 export async function buildArtifact(projectDir, nameOverride) {
   const project = resolve(projectDir);
   const settings = await readJson(join(project, 'fogd.json'), {});

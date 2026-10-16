@@ -18,6 +18,7 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 7a. Native full-stack qualification | Guestbook pages, form actions, typed client/API, split client assets, two approved releases and additive SQL; see the [fixture guide](../examples/guestbook/README.md) |
 | 7b. Application growth and logical transfer | R2 additions preserve D1 records; browser attachments and bounded restore with failure/retry; see the [transfer guide](../examples/guestbook/TRANSFER.md) |
 | 7c. Private configuration and native auth | Revision-pinned admin secret input, native Void account/session flow, two-app isolation, rotation, and restart checks; see the [accounts guide](../examples/accounts/README.md) |
+| 8a. Stopped installation recovery | Fresh-volume restore with exact images, full replica logs, private configuration, interrupted approval retry, and continued writes; see the [recovery guide](recovery.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
@@ -166,3 +167,32 @@ The final accounts smoke passes on fresh rebuilt Docker volumes with both
 and invalid configuration, pinned retries, browser account/session behavior,
 cross-app cookie refusal, control-plane separation, ordinary updates, rotation,
 and restart persistence. Review evidence is retained for both Claude and Gemini.
+
+## M8a recovery evidence
+
+Two complete local restore drills passed. The clean-stop run took 27.3 seconds to
+snapshot and 10.2 seconds to restore. The forced-stop run took 26.8 seconds and
+10.7 seconds, excluding subsequent startup/health waits. These are observations on
+this development machine, not capacity or recovery-time guarantees.
+
+The forced-stop snapshot recorded exit 137 for the controller and both notebook
+replicas. After restore onto fresh volumes, the accounts approval returned failed
+with its original secret revision; explicit retry succeeded. Existing account
+sessions, fresh password login, notebook D1 rows, R2 bytes, and Durable Object counts
+survived. New writes and approvals succeeded. The literal-dollar gateway credential
+survived configuration serialization. Occupied-target refusal, checksum corruption,
+incomplete manifests, and configuration drift have regression coverage.
+
+Every archive is checked before target creation and compared against restored volume
+contents before the completion receipt. Backups contain plaintext credentials and
+require private storage. No writes after a source resumes are included in its prior
+snapshot. Cross-version upgrades, concurrent source/clone serving, and shared remote
+operation remain unqualified. Claude reviewed the design; Gemini's attempt hit its
+provider quota without a verdict. See [review amendments](reviews/m8a-response.md).
+
+The final post-review crash drill also passed: snapshot 26.6 seconds, restore 10.4
+seconds, excluding startup waits. One preceding run exhausted Docker's network
+address pool because earlier stopped test projects retained their networks. Restore
+failed before starting a target. Removing only those old test containers/networks
+while retaining volumes and snapshots allowed a fresh-target rerun. No system
+network configuration or unrelated Docker workload was changed.
