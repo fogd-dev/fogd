@@ -255,5 +255,15 @@ manifests and separate private Secrets; it does not modify a cluster.
 
 The live drill qualifies data and sessions across pod replacement. A worker outage
 that also removed the singleton controller caused downtime; existing data returned
-when the node restarted. Kubernetes backup/restore is M9b work, and remote host
-qualification remains open. Keep this experimental profile limited to disposable data.
+when the node restarted. Stopped Kubernetes recovery is available through M9b; remote
+host qualification remains open. Keep this experimental profile limited to disposable data.
+
+
+## M9b: stopped Kubernetes recovery
+
+`fogd kube backup` captures the generated local kind installation after stopping all
+writers. `fogd kube restore` restores it to fresh claims in a new namespace, leaving
+writers stopped until ordered startup. Both commands require an explicit kubeconfig
+and context. Follow the [recovery guide](docs/kubernetes-recovery.md) for commands
+and the account/session, data, approval, and failure drills. Snapshots contain private
+keys and application data. Remote clusters and live backups remain unsupported.

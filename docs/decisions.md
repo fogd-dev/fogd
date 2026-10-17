@@ -424,3 +424,27 @@ the Compose fleet networks on default kind; remote sharing requires enforced pol
 The node observation showed downtime when the singleton controller's node stopped,
 even with surviving celld replicas. A multi-replica controller requires a separate
 metadata/concurrency design. No global availability follows from this packaging.
+
+
+## ADR 019: stopped recovery for the declared Kubernetes topology
+
+**Context.** Kubernetes packaging needs a recovery procedure for controller metadata,
+bucket objects, and every celld replica log and identity. Keeping only Docker recovery
+would leave the second deployment target without a tested fresh-storage restore.
+
+**Options.** Defer recovery; depend on CSI snapshots; or stop the installation and
+archive its exact claim inventory. CSI snapshots can reduce downtime on supporting
+storage, but the local-path fixture provides no coordinated snapshot primitive.
+
+**Decision.** Add a separate Kubernetes adapter with an explicit context, generated
+workload contract, image identity verification, and fresh-namespace restoration.
+Stop every writer before read-only archive helpers run. Record observed terminal
+outcomes separately from archive completion. Restore helpers bind empty claims to
+selected nodes before stopped StatefulSets are created.
+
+**Consequences.** Operators get a repeatable local recovery path with downtime and
+private snapshot custody costs. An unreachable node prevents completion. Operators
+must recover it and restart a partial source before another attempt. A CSI advocate
+would reasonably object to copying every byte; a later storage adapter can supply
+that optimization once it has equivalent coordination and fresh-volume evidence.
+The current format does not promise remote-cluster or arbitrary-storage support.

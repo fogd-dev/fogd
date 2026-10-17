@@ -4,11 +4,12 @@
 an integrated platform for building, deploying, and running applications, with
 freedom to choose where they live. Milestones below advance reusable capabilities.
 The FilOz demo-hosting use case is a candidate first pilot, not the north star.
-M7a–M7c, M8a, and M8b1 are locally qualified; later milestones remain proposals.
+M7a–M7c and M8 are locally qualified; M9 has experimental local Kubernetes evidence.
+Later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a has experimental local Kubernetes evidence; M9b recovery is next.
+and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting is next.
 
 ## Current foundation
 
@@ -34,7 +35,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a has experimental local Kubernetes evidence; M9b recovery is next. Later
+records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting is next. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -79,7 +80,9 @@ private configuration and one native Void auth flow. The [M8a recovery contract]
 M8b1 qualifies scoped credentials and admission limits. [M8b2](m8b2.md) qualifies
 HTTPS, explicit shared-mode policy, and recovery/upgrade evidence with those controls.
 The [M9a Kubernetes contract](m9a.md) has local kind deployment/pod-replacement evidence.
-Next is [M9b stopped Kubernetes recovery](m9b.md); remote-host qualification remains open. Preserve secret revisions, controller metadata,
+[M9b stopped Kubernetes recovery](m9b.md) has fresh-claim restore evidence; remote-host qualification remains open.
+Next is [M10a capacity reporting](m10a.md), followed by retirement/reuse and measured
+capacity in separate slices. Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.
 

@@ -275,3 +275,30 @@ separate from normal workload manifests so their deletion retains PVCs. The fina
 suite has 50 passing tests, passing builds and quality checks. Review amendments and
 local capacity failures are recorded in [the response](reviews/m9a-response.md) and
 [notes](notes.md). No Kubernetes recovery claim is included in M9a.
+
+
+## M9b stopped Kubernetes recovery
+
+The experimental adapter restores the local two-slot kind installation onto six
+fresh claims in a new namespace. Two full drills passed: the reviewed run took
+about 101 seconds to capture and 96 seconds to restore, excluding application
+startup. It preserved D1/R2/DO records, native account sessions and login, private
+secret revisions, scoped deploy credentials, approval history, and a pending
+approval. Approval and new writes worked after startup. The source remained stopped
+until explicitly restarted.
+
+The reviewed snapshot recorded clean exit code 0 for all six stateful containers.
+The stateless gateway wrapper exited 1; that outcome is retained in stop.json.
+Unknown or nonzero stateful exits warn that upstream crash recovery may be needed.
+A completed archive does not imply a clean shutdown or a live recovery guarantee.
+
+Validation refuses occupied namespaces, corrupted files, unexpected writers, image
+identity conflicts, and nonempty restore claims. It verifies archive tag/config
+metadata before loading images and checks helper placement and received bytes.
+No recovery operation deletes a namespace or claim or force-removes a pod. Only
+manifest.json marks a complete snapshot; failed attempts remain for inspection.
+
+This qualification covers local kind and its local-path storage only. Physical host
+loss, remote network policy, alternate storage, large volumes, automatic resumption,
+and capture of an already-stopped source remain open. See the [operator guide](kubernetes-recovery.md)
+and [review response](reviews/m9b-response.md).

@@ -25,8 +25,9 @@ export async function kubernetesClient(directory) {
   assert.match(topology.namespace, /^[a-z0-9-]+$/);
   const env = { ...process.env, ...parseEnv(await readFile(join(installation, 'installation.env'), 'utf8')), FOGD_ENV_FILE: join(installation, 'installation.env') };
   const kube = (args, capture = false) => kubectl(['-n', topology.namespace, ...args], capture);
-  function forward(service, localPort, remotePort) {
-    const child = spawn('kubectl', [...base, '-n', topology.namespace, 'port-forward', '--address', '127.0.0.1', `service/${service}`, `${localPort}:${remotePort}`], { stdio: ['ignore', 'ignore', 'inherit'] });
+  function forward(service, localPort, remotePort, namespace = topology.namespace) {
+    assert.ok(namespace === cluster || namespace.startsWith(cluster + '-'));
+    const child = spawn('kubectl', [...base, '-n', namespace, 'port-forward', '--address', '127.0.0.1', `service/${service}`, `${localPort}:${remotePort}`], { stdio: ['ignore', 'ignore', 'inherit'] });
     child.on('error', error => console.error(`Port forward failed: ${error.message}`));
     return child;
   }

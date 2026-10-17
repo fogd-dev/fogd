@@ -121,5 +121,6 @@ remain outside that evidence; private Docker traffic remains HTTP.
 The [Kubernetes qualification](kubernetes.md) covers the same two-app approval flow,
 persistent data and sessions across pod replacement. A kind worker outage that
 removed the singleton controller caused downtime, followed by recovery of existing
-data when it returned. Kubernetes stopped recovery and actual remote-host failure
-remain open gates; Docker backup does not cover PVCs.
+data when it returned. The [stopped Kubernetes adapter](kubernetes-recovery.md) restores
+the local kind fixture into fresh PVCs; actual remote-host failure remains an open
+gate. Docker backup does not cover PVCs.

@@ -197,3 +197,25 @@ Deleted the earlier disposable m9a test cluster and the failed empty m9final clu
 keeping logs/evidence and the successful m9verify cluster. Those discarded clusters
 held only generated test data. No global Docker storage/network settings, unrelated
 workloads, or Compose recovery snapshots were modified. Retry uses a fresh name.
+
+
+## M9b qualification interruptions
+
+Two reviewed negative-drill attempts timed out while the Mac repeatedly slept on
+battery. Claude's read-only diagnosis correlated host power logs with celld lease
+self-fencing on both workers and control-plane timeouts after wake. The source
+remained partly stopped; no force deletion or completion manifest was used to hide
+that failure. A temporary caffeinate process holds the machine awake during the
+repeat; no persistent power settings changed. The first final code-review request
+also timed out without a verdict and was retried rather than counted as approval.
+
+Docker storage reached 94% during successive disposable kind fixtures. Removing
+only the older fogd verification cluster freed space to 81% used. Its evidence was
+retained, as were the current recovery claims and earlier backup artifacts.
+Unrelated containers were not modified.
+
+The awake negative rerun reached its last isolation check but lacked
+NODE_EXTRA_CA_CERTS in the invocation, so HTTPS requests failed trust validation.
+The next complete rerun supplied the documented CA, passed every negative check and
+namespace isolation, and left all source pods Ready. This was a test invocation
+error, not a change to transport validation. No certificate checking was bypassed.

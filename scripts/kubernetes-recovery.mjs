@@ -1,0 +1,67 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { X509Certificate, createHash } from 'node:crypto';
+import { kubernetesClient } from './kubernetes-client.mjs';
+import { platformClient } from './platform-client.mjs';
+import { accountsBrowser } from './accounts-browser.mjs';
+import { expect } from './guestbook-browser.mjs';
+import { run, stackRoot } from '../packages/cli/src/local.mjs';
+import { connection } from '../packages/cli/src/kubernetes/recovery/connection.mjs';
+import { startInstallation } from './kubernetes-recovery-helpers.mjs';
+
+const cluster = await kubernetesClient(process.argv[2] || '.fogd/m9final2');
+const conn = await connection(join(cluster.root, 'kubeconfig'), `kind-${cluster.cluster}`);
+const suffix = process.argv[3] ? `-${process.argv[3]}` : '';
+assert.match(suffix, /^(?:-[a-z0-9-]+)?$/);
+const target = `${cluster.cluster}-restored${suffix}`, bundle = join(cluster.root, `snapshot${suffix}`), output = join(cluster.root, `restored${suffix}`);
+const cli = join(stackRoot, 'packages/cli/bin/fogd.js');
+const options = ['--kubeconfig', conn.kubeconfig, '--context', conn.context];
+const env = { ...cluster.env, FOGD_SERVER: 'https://127.0.0.1:8788', FOGD_URL: 'https://127.0.0.1:8787' };
+let forwards = [cluster.forward('controller', 8788, 8082), cluster.forward('workerd', 8787, 8080)];
+const disconnect = () => { for (const child of forwards) child.kill('SIGTERM'); };
+let client = await platformClient(env), account;
+async function ready() { await expect.poll(async () => { try { return !!(await client.api('/v1/admin')); } catch { return false; } }, { timeout: 90000 }).toBe(true); }
+
+try {
+  await ready();
+  const token = JSON.parse(await run(process.execPath, [cli, 'admin', 'issue-token', 'Recovery fixture', 'accounts,notebook'], { env, capture: true }));
+  client = await platformClient({ ...env, FOGD_DEPLOY_TOKEN: token.token });
+  const before = await client.api('/v1/admin');
+  assert.deepEqual(Object.keys(before.apps).sort(), ['accounts', 'notebook']);
+  const rows = await (await client.appRequest('notebook', '/api/entries')).json();
+  const cert = new X509Certificate(await readFile(join(cluster.root, 'certificate/server.pem')));
+  const pin = createHash('sha256').update(cert.publicKey.export({ type: 'spki', format: 'der' })).digest('base64');
+  account = await accountsBrowser(client.browserURL('accounts'), `kube-recovery-${Date.now()}@example.test`, 'Recovery account password', { args: [`--ignore-certificate-errors-spki-list=${pin}`] });
+  await account.enroll();
+  const pending = await client.submit(join(stackRoot, 'examples/accounts'), 'accounts');
+  const state = await client.api('/v1/admin');
+  disconnect();
+  await run(process.execPath, [cli, 'kube', 'backup', cluster.installation, bundle, ...options]);
+  await run(process.execPath, [cli, 'kube', 'restore', bundle, '--namespace', target, '--output', output, ...options]);
+  assert.equal((await conn.json(['-n', target, 'get', 'pods'])).items.length, 0, 'Restore must leave writers stopped');
+  const desired = JSON.parse(await readFile(join(output, 'manifests.json'), 'utf8'));
+  await startInstallation(conn, target, desired);
+  forwards = [cluster.forward('controller', 8788, 8082, target), cluster.forward('workerd', 8787, 8080, target)];
+  await ready();
+  const after = await client.api('/v1/admin');
+  assert.deepEqual(after.deployments, state.deployments); assert.deepEqual(after.secrets, state.secrets);
+  assert.deepEqual(await (await client.appRequest('notebook', '/api/entries')).json(), rows);
+  await account.ready('Session active'); await account.signOut(); await account.signIn(); await account.signedIn();
+  const status = JSON.parse(await run(process.execPath, [cli, 'status', pending.id], { env: client.env, capture: true }));
+  assert.equal(status.status, 'pending');
+  const approved = JSON.parse(await run(process.execPath, [cli, 'admin', 'approve', pending.id, pending.digest, state.secrets.accounts.revision], { env, capture: true }));
+  assert.equal(approved.status, 'active');
+  const next = { id: `restored-${Date.now()}`, title: 'Restored Kubernetes', body: 'Fresh PVC writes' };
+  assert.equal((await client.appRequest('notebook', '/api/entries', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) })).status, 200);
+  const written = await (await client.appRequest('notebook', '/api/entries')).json();
+  assert.equal(written.count, rows.count + 1); assert.deepEqual(written.entries.find(e => e.id === next.id), next);
+  const versions = async () => (await conn.json(['-n', target, 'get', 'statefulsets,services,secrets,pvc'])).items.map(r => ({ kind: r.kind, name: r.metadata.name, uid: r.metadata.uid, version: r.metadata.resourceVersion }));
+  const beforeRefusal = await versions();
+  await assert.rejects(run(process.execPath, [cli, 'kube', 'restore', bundle, '--namespace', target, '--output', output + '-refused', ...options]), /exited/);
+  assert.deepEqual(await versions(), beforeRefusal, 'Occupied-target refusal must not mutate existing resources');
+  const snapshot = JSON.parse(await readFile(join(bundle, 'manifest.json'), 'utf8'));
+  const receipt = JSON.parse(await readFile(join(output, 'restored.json'), 'utf8'));
+  console.log(JSON.stringify({ snapshotMs: snapshot.durationMs, restoreMs: receipt.durationMs, source: snapshot.namespace, target }));
+  console.log('PASS: complete stopped Kubernetes recovery, fresh PVCs, native sessions/secrets/scoped tokens, approval history and pending approval, subsequent writes, occupied target refusal');
+} finally { disconnect(); await account?.browser.close(); }

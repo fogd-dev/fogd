@@ -5,7 +5,8 @@ import { manifests, secrets } from '../src/kubernetes/render.mjs';
 import { memoryQuantity } from '../src/kubernetes/workloads.mjs';
 import { requireDocker } from '../src/local.mjs';
 
-const settings = { namespace: 'fogd-test', images: { runtime: 'runtime:loaded', minio: 'minio:loaded' }, pullPolicy: 'Never', keypair: { cert: 'test-cert', key: 'test-private-key' }, slots: [1, 2].map(n => ({ id: `slot-${n}`, prefix: `slots/slot-${n}`, nodes: [0, 1].map(i => `slot-${n}-${i}`) })), env: { FOGD_ADMIN_USER: 'admin', FOGD_ADMIN_PASSWORD: 'private-admin', FOGD_GATEWAY_TOKEN: 'private-gateway', FOGD_BUCKET_USER: 'bucket', FOGD_BUCKET_PASSWORD: 'private-bucket' } };
+import { settings } from './fixtures/kubernetes.mjs';
+
 test('Kubernetes output keeps secrets separate and limits public access to explicit Services', () => {
   const output = manifests(settings), serialized = JSON.stringify(output);
   for (const value of ['private-admin', 'private-gateway', 'private-bucket', 'test-private-key']) assert.ok(!serialized.includes(value));
