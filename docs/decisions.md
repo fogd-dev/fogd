@@ -448,3 +448,50 @@ must recover it and restart a partial source before another attempt. A CSI advoc
 would reasonably object to copying every byte; a later storage adapter can supply
 that optimization once it has equivalent coordination and fresh-volume evidence.
 The current format does not promise remote-cluster or arbitrary-storage support.
+
+## ADR 020: report admission capacity from controller observations
+
+**Context.** An administrator needs to distinguish full app slots, pending limits,
+and retained artifact bytes. Admission already uses controller assignments, observed
+bucket ownership, pending statuses, and decoded artifact accounting. Rejection does
+not delete historical artifacts or free an app slot.
+
+**Options.** Keep opaque refusal messages; query bucket and filesystem state on each
+admin request; or expose the accounting already used for admission. Live inventory
+would be fresher but would couple the admin page to bucket availability and still
+would not reserve future capacity.
+
+**Decision.** Report the same in-memory predicates as admission. Retain cached
+bucket-owner names separately from controller assignments so duplicate ownership
+stays visible. Label that observation and the byte-accounting exclusions. Share the
+pending-status filter between admission and reporting.
+
+**Consequences.** Admins can explain current refusal without a storage round trip.
+External bucket edits are not visible until restart or a claim. An operator seeking
+live utilization still needs a later measurement slice; this report does not estimate
+CPU, memory, app data, disk space, or cost. It does not free any retained resource.
+
+## ADR 021: retire through an offline fresh-installation transform
+
+**Context.** Reusing a fleet requires preventing old code, logs, object identities,
+and deploy authority from reaching its replacement. Route pausing does not stop
+background execution. Existing stopped recovery already copies a complete installation
+onto fresh volumes and refuses partial-target reuse.
+
+**Options.** Keep slots permanent; add online retirement plus an in-place journal;
+or transform a stopped snapshot into a fresh installation. In-place retirement can
+avoid copying the unaffected app, but needs crash-safe coordination across controller
+metadata, configuration, and two replica volumes that the platform does not have.
+
+**Decision.** Use the offline fresh-installation path for the first Docker adapter.
+Retain data and history, replace the retired fleet's namespace and replica identities,
+and keep a permanent app-name tombstone. Require an exact active digest and a runtime
+that understands retirement. The source stays stopped; a partial target is never
+reused. The [review response](reviews/m10b-response.md) defines the amended contract.
+
+**Consequences.** Operators pay whole-installation downtime and temporary duplicate
+storage, including a copy of the unaffected app. That cost is acceptable for the
+current two-fleet fixture and must be measured during qualification. Operators who
+need low-downtime retirement will need a later lifecycle protocol. This design does
+not erase old data, reclaim artifact bytes, permit same-name reuse, or establish
+hostile-tenant isolation.
