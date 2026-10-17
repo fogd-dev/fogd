@@ -1,3 +1,5 @@
+import { capacity } from './capacity.mjs';
+
 // celld versions hash the materialized config, including private vars. Keep them
 // in controller storage for readiness/recovery, not in API inspection responses.
 export function adminDeployment(request) {
@@ -6,5 +8,5 @@ export function adminDeployment(request) {
   return visible;
 }
 export function adminState(controller) {
-  return { ...controller.state, deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
+  return { ...controller.state, capacity: capacity(controller), deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
 }

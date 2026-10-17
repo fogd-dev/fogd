@@ -1,3 +1,4 @@
+import { pendingDeployments } from './capacity.mjs';
 import { Credentials } from './credentials.mjs';
 import { ArtifactQuota, positiveLimit, uploadBytes } from './quota.mjs';
 import { mkdir, rm } from 'node:fs/promises';
@@ -20,6 +21,7 @@ export class Controller {
     this.secrets = new Secrets(dir);
     this.queue = Promise.resolve();
     this.occupied = new Set();
+    this.bucketOwners = new Map();
   }
   exclusive(task) {
     const result = this.queue.then(task);
@@ -41,6 +43,7 @@ export class Controller {
       const owner = await this.backend.owner(slot);
       if (owner) {
         this.occupied.add(slot.id);
+        this.bucketOwners.set(slot.id, owner.app);
         const app = this.state.apps[owner.app];
         if (!app) {
           // Losing local metadata must never free or silently reactivate a used slot.
@@ -78,10 +81,10 @@ export class Controller {
   submit(body, submitter) {
     return this.exclusive(async () => {
       if (submitter !== 'team-token') this.credentials.requireScope(submitter, body.app);
-      const pending = Object.values(this.state.deployments).filter(d => d.submitter === submitter && ['pending', 'failed'].includes(d.status));
+      const pending = pendingDeployments(this).filter(d => d.submitter === submitter);
       if (submitter !== 'team-token' && pending.length >= this.maxPendingPerCredential) throw new Error('Credential pending deployment limit reached');
       const bytes = uploadBytes(body); this.quota.admit(bytes);
-      if (Object.values(this.state.deployments).filter(d => ['pending', 'failed'].includes(d.status)).length >= this.maxPending) throw new Error('Pending deployment limit reached');
+      if (pendingDeployments(this).length >= this.maxPending) throw new Error('Pending deployment limit reached');
       const id = randomUUID(), dir = this.artifact(id);
       try {
         const release = await receiveArtifact(body, dir);
@@ -147,6 +150,7 @@ export class Controller {
     try {
       await this.backend.claim(slot, request.app);
       this.occupied.add(slot.id);
+      this.bucketOwners.set(slot.id, request.app);
       if (!app) {
         app = { slot: slot.id, resources: request.resources, migrations: [], active: null, route: 'paused', uncertain: null, privateConfiguration: Boolean(selected.revision) };
         this.state.apps[request.app] = app; await this.save();

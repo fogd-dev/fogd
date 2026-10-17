@@ -21,3 +21,11 @@ Use existing HTTP authentication tests plus a small CLI invocation against the t
 HTTP server to compare output; no cluster or extra live fixture is needed for this
 read-only command. Slot retirement, resource measurement, and deletion remain later
 slices.
+
+## Implementation review
+
+Claude's [code review](m10a-code-claude.md) approved the implementation with no
+blockers. Accepted its test suggestions: assert report counts at actual global and
+per-credential refusal boundaries, cover ownership reconstruction through the real
+controller after metadata loss, and resolve the CLI entrypoint relative to the test
+module so the test does not depend on the shell's working directory.

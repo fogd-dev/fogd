@@ -124,3 +124,6 @@ removed the singleton controller caused downtime, followed by recovery of existi
 data when it returned. The [stopped Kubernetes adapter](kubernetes-recovery.md) restores
 the local kind fixture into fresh PVCs; actual remote-host failure remains an open
 gate. Docker backup does not cover PVCs.
+
+The [capacity report](capacity.md) exposes admin-only slot occupancy, pending limits,
+and retained artifact bytes. It does not free resources or measure runtime cost.

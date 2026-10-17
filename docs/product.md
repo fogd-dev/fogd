@@ -190,8 +190,10 @@ credentials and resources are scoped to the intended app; retention/export/delet
 are explicit; slot reuse cannot inherit another app's data or authority. An approved
 resource-intensive app cannot silently exhaust unrelated app capacity.
 
-Today: two permanent slots and coarse limits exist. Automated placement, safe slot
-reclamation, scoped storage credentials, and lifetime artifact quotas do not.
+Today: two permanent slots, scoped deploy credentials, admission limits, and an
+admin capacity report exist. Retained artifact quotas include historical releases.
+Automated placement, safe slot reclamation, scoped runtime storage credentials,
+and measured runtime density remain open.
 
 ### U10: A developer brings an existing Workers application
 

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { capacity } from '../src/capacity.mjs';
 import { Controller } from '../src/controller.mjs';
 import { server } from '../src/http.mjs';
 import { stageArtifact } from '@fogd/runtime/artifact';
@@ -101,6 +102,9 @@ test('lost controller metadata quarantines bucket owners and prevents slot reass
   assert.equal(fresh.route('hello.localhost').state, 'paused');
   assert.equal(fresh.state.apps.hello.quarantined, true);
   assert.equal(fresh.available('different').id, 'slot-2');
+  const report = capacity(fresh);
+  assert.equal(report.slots.available, 1);
+  assert.deepEqual(report.slots.items[0], { id: 'slot-1', bucketOwner: 'hello', occupied: true, assignments: [{ app: 'hello', route: 'paused', quarantined: true }] });
   await assert.rejects(fresh.submit(await artifact(), 'team-token'), /quarantined/);
 });
 
@@ -204,6 +208,10 @@ test('duplicate owner markers quarantine both slots without overwriting app hist
   assert.equal(restarted.state.apps.hello.active, original.active);
   assert.deepEqual(restarted.state.apps.hello.migrations, original.migrations);
   assert.equal(restarted.available('different'), undefined);
+  const report = capacity(restarted);
+  assert.equal(report.slots.available, 0);
+  assert.deepEqual(report.slots.items.map(s => s.bucketOwner), ['hello', 'hello']);
+  assert.equal(report.slots.items[1].assignments.length, 0);
 });
 
 
@@ -377,6 +385,8 @@ test('serialized revocation and quota admission refuse queued writes without sto
   const results = await Promise.allSettled([c.submit(body, b.id), c.submit(body, b.id)]);
   assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
   assert.match(results.find(r => r.status === 'rejected').reason.message, /pending/);
+  assert.equal(capacity(c).submissions.pending, 1);
+  assert.deepEqual(capacity(c).submissions.byCredential, [{ id: b.id, pending: 1, limit: 1 }]);
   const first = results.find(r => r.status === 'fulfilled').value;
   await c.mutate(first.id, first.digest, 'reject');
   const retained = c.quota.used;
@@ -385,7 +395,13 @@ test('serialized revocation and quota admission refuse queued writes without sto
   const { readdir } = await import('node:fs/promises');
   assert.deepEqual(await readdir(join(c.dir, 'artifacts')), [first.id]);
   assert.equal(restarted.quota.used, retained);
+  assert.equal(capacity(restarted).artifacts.retainedArtifactBytes, retained);
+  assert.equal(capacity(restarted).submissions.pending, 0);
   assert.equal((await Promise.all([c.submit(body, 'team-token'), c.submit(body, 'team-token')])).length, 2, 'Legacy token retains the global pending limit');
+  c.maxPending = 2;
+  await assert.rejects(c.submit(body, 'team-token'), /Pending deployment limit/);
+  assert.equal(capacity(c).submissions.pending, 2);
+  assert.equal(capacity(c).submissions.limit, 2);
 });
 
 test('concurrent upload cap refuses excess bodies while admitted uploads complete', async t => {

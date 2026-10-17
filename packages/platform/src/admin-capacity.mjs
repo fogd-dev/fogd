@@ -1,0 +1,7 @@
+import { capacity } from './capacity.mjs';
+
+export function capacityHTML(controller, html) {
+  const report = capacity(controller);
+  const rows = report.slots.items.map(slot => `<tr><td>${html(slot.id)}</td><td>${slot.occupied ? 'Occupied' : 'Available'}</td><td>${html(slot.bucketOwner || 'Unobserved')}</td><td>${html(slot.assignments.map(a => `${a.app}: ${a.route}${a.quarantined ? ' (quarantined)' : ''}`).join(', ') || 'None')}</td></tr>`).join('');
+  return `<section aria-label="Installation capacity"><h2>Installation capacity</h2><p>${report.slots.available} of ${report.slots.configured} app slots available. ${report.submissions.pending} of ${report.submissions.limit} pending submissions used (includes failed attempts).</p><p>Retained artifacts: ${report.artifacts.retainedArtifactBytes} of ${report.artifacts.maxArtifactBytes} bytes. Rejected and superseded releases still consume storage. This excludes app data and filesystem allocation.</p><p>Each scoped credential allows ${report.submissions.perCredentialLimit} pending submissions. The legacy team token only has the global pending limit. See <code>fogd admin capacity</code> for counts by credential.</p><table><thead><tr><th>Slot</th><th>Admission</th><th>Cached bucket owner</th><th>Controller assignments</th></tr></thead><tbody>${rows}</tbody></table><p>${html(report.observation)} Approval rechecks all limits. Paused and quarantined apps retain their slots; retirement is not supported yet.</p></section>`;
+}

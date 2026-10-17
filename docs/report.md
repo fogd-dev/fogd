@@ -302,3 +302,20 @@ This qualification covers local kind and its local-path storage only. Physical h
 loss, remote network policy, alternate storage, large volumes, automatic resumption,
 and capture of an already-stopped source remain open. See the [operator guide](kubernetes-recovery.md)
 and [review response](reviews/m9b-response.md).
+
+## M10a capacity reporting
+
+The admin API, page, and `fogd admin capacity` expose slot occupancy, pending limits,
+and retained artifact accounting. Cached bucket owners remain visible separately
+from controller assignments, including duplicate claims. Paused or quarantined apps
+retain their slots. Rejected and superseded artifacts retain their byte cost.
+
+Controller and HTTP tests compare CLI/API output, deny deploy-only access, escape
+page labels, retain duplicate ownership, and verify accounting after restart. The
+report is read-only and makes no live bucket reads. It measures admission accounting,
+not app data, free disk, CPU, memory, or cost. See the [capacity guide](capacity.md).
+Retirement/reuse and runtime density remain open M10 work.
+
+The final suite passed 64 tests, example builds, and the code-quality gate. Claude
+approved the design and implementation; [review amendments](reviews/m10a-response.md)
+record the additional admission-boundary and ownership-reconstruction checks.

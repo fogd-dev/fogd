@@ -40,6 +40,9 @@ export async function admin(action, id, digest, secretRevision) {
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD');
   const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
   const state = await api(env, '/v1/admin', { headers });
+  if (action === 'capacity') {
+    showCapacity(state, [id, digest, secretRevision]); return;
+  }
   if (action === 'list') {
     console.log(JSON.stringify({ deployments: Object.values(state.deployments), secrets: state.secrets, credentials: state.credentials, quota: state.quota }, null, 2)); return;
   }
@@ -69,4 +72,10 @@ async function manageSecrets(env, headers, csrf, id, digest, revision) {
   const values = await readSecretInput();
   const result = await api(env, `/v1/apps/${encodeURIComponent(id)}/secrets`, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(values) });
   console.log(JSON.stringify(result, null, 2));
+}
+
+function showCapacity(state, extra) {
+  if (extra.some(value => value !== undefined)) throw new Error('Usage: fogd admin capacity');
+  if (!state.capacity) throw new Error('Server does not support capacity reporting; upgrade the controller');
+  console.log(JSON.stringify(state.capacity, null, 2));
 }

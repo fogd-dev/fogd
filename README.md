@@ -267,3 +267,11 @@ writers stopped until ordered startup. Both commands require an explicit kubecon
 and context. Follow the [recovery guide](docs/kubernetes-recovery.md) for commands
 and the account/session, data, approval, and failure drills. Snapshots contain private
 keys and application data. Remote clusters and live backups remain unsupported.
+
+## M10a: capacity reporting
+
+`fogd admin capacity` reports available app slots, pending limits, and retained
+artifact bytes. The admin page shows the same installation totals. Follow the
+[capacity guide](docs/capacity.md) to interpret ownership conflicts and limits.
+`pnpm test` checks the API, CLI, page, and admission accounting. App retirement,
+slot reuse, and measured runtime density remain later M10 slices.
