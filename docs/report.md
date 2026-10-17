@@ -5,6 +5,12 @@ apps. workerd handles hostname routing. Each complete app and its stateful bindi
 run in a separate two-replica celld fleet. A teammate submits an immutable build;
 an admin reviews and approves its exact digest. No Cloudflare account or API is used.
 
+Current status: Docker deploy/approval, private configuration, TLS, stopped recovery,
+capacity reporting, and offline retirement are locally qualified. Kubernetes deployment
+and stopped recovery have experimental local-kind evidence. Remote infrastructure,
+measured capacity expansion, background/live applications, and broader portability
+remain open roadmap work.
+
 ## What works
 
 | Milestone | Result and reproduction |
@@ -21,6 +27,9 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 | 8a. Stopped installation recovery | Fresh-volume restore with exact images, full replica logs, private configuration, interrupted approval retry, and continued writes; see the [recovery guide](recovery.md) |
 | 8b2. HTTPS shared profile | Native TLS, Secure Void sessions, private routing listener, certificate recovery, and six-volume installation upgrade; see the [shared installation guide](shared-installation.md) |
 | 8b1. Scoped access and admission limits | Named app-scoped deploy credentials, revocation, retained artifact/pending/upload limits, and recovery evidence; see the [access guide](deploy-access.md) |
+| 9a–9b. Experimental Kubernetes | Local kind deploy, replica replacement, and fresh-PVC stopped recovery; see the [Kubernetes guide](kubernetes.md) and [recovery guide](kubernetes-recovery.md) |
+| 10a. Capacity reporting | Admin API/page/CLI report admission limits and retained ownership; see the [capacity guide](capacity.md) |
+| 10b. Docker retirement | Fresh-installation transformation retains the other app, retires one name, and frees a fleet without inheriting old state; see the [retirement guide](retirement.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
 verified no route before approval, rejection, submitter/admin separation, wrong-digest
@@ -314,8 +323,46 @@ Controller and HTTP tests compare CLI/API output, deny deploy-only access, escap
 page labels, retain duplicate ownership, and verify accounting after restart. The
 report is read-only and makes no live bucket reads. It measures admission accounting,
 not app data, free disk, CPU, memory, or cost. See the [capacity guide](capacity.md).
-Retirement/reuse and runtime density remain open M10 work.
+M10b qualifies retirement/reuse below. Runtime density and capacity expansion remain open.
 
 The final suite passed 64 tests, example builds, and the code-quality gate. Claude
 approved the design and implementation; [review amendments](reviews/m10a-response.md)
 record the additional admission-boundary and ownership-reconstruction checks.
+
+
+## M10b Docker retirement evidence
+
+The full local TLS drill retained accounts and its native session while retiring
+notebook. The old hostname returned 404; stale approvals, secrets changes, and scoped
+deploy authority could not reactivate it or submit a differently named replacement.
+The old bucket prefix retained objects, while the replacement prefix had zero objects
+before workers started. Replacement then showed empty D1 rows and Durable Object
+state and successfully wrote and retrieved new D1/R2/DO data.
+
+The final fixture captured its stopped snapshot in about 26 seconds and restored
+with retirement in about 11 seconds, excluding admission preflight and subsequent
+startup. All target volumes were fresh. The unaffected fleet kept its runtime
+identities, private configuration, data, and login. No old app data, artifacts,
+secrets, source volumes, or snapshots were deleted.
+
+Retirement supports active or paused apps with a known active deployment and no
+quarantine or unresolved migration. It refuses older runtime images that cannot
+enforce permanent name tombstones. Multi-app tokens retain their other scopes;
+operators revoke obsolete tokens separately. Ordinary backup restore can resurrect
+prior app access and credentials, so the source must stay stopped. Publication of
+the final Compose file and completion receipt follows restoration and validation.
+
+This is a Docker-only maintenance workflow with whole-installation copying and
+retained recovery material. It does not qualify erasure, artifact pruning, same-name
+reuse, Kubernetes retirement, hostile tenants, or additional concurrent fleet capacity.
+The [review response](reviews/m10b-response.md) records the design and implementation
+reviews; [notes](notes.md) record fixture failures and their corrections.
+
+The negative drill interrupted after the controller archive copy. No final Compose
+file or completion receipt existed, every partial target container remained stopped,
+and the same target was refused on retry. A fresh target completed successfully.
+An older runtime bundle was refused before target container creation. Ordinary
+restore recovered notebook's original D1/R2/DO record, then the test returned to the
+retired installation with accounts and replacement available side by side. The full
+workspace suite passed 70 tests, example builds, and quality checks; Claude's final
+review found no blocker.

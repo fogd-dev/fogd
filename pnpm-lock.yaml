@@ -118,6 +118,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@fogd/platform':
+        specifier: workspace:*
+        version: link:../platform
       '@fogd/runtime':
         specifier: workspace:*
         version: link:../runtime

@@ -43,6 +43,10 @@ test('corrupt or incomplete bundles are rejected before Docker restoration', asy
   assert.equal((await verifyBundle(dir)).manifest.format, manifest.format);
   await writeFile(join(dir, 'bucket.tar'), 'corrupt');
   await assert.rejects(verifyBundle(dir), /checksum mismatch/);
+  await writeFile(join(dir, 'bucket.tar'), 'archive');
+  await writeFile(join(dir, 'slot-2-a.tar'), 'corrupt skipped replica');
+  const { retire } = await import('../src/recovery/retire.mjs');
+  await assert.rejects(retire(dir, 'notebook', 'a'.repeat(64), 'fresh', join(dir, 'unused')), /checksum mismatch: slot-2-a/);
   delete manifest.files['slot-2-b.tar'];
   await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
   await assert.rejects(verifyBundle(dir), /Incomplete/);

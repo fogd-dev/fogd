@@ -192,8 +192,9 @@ resource-intensive app cannot silently exhaust unrelated app capacity.
 
 Today: two permanent slots, scoped deploy credentials, admission limits, and an
 admin capacity report exist. Retained artifact quotas include historical releases.
-Automated placement, safe slot reclamation, scoped runtime storage credentials,
-and measured runtime density remain open.
+Docker retirement releases a fleet through a stopped snapshot and fresh installation,
+with a permanently retired app name and retained old data. Automated placement,
+scoped runtime storage credentials, capacity expansion, and measured density remain open.
 
 ### U10: A developer brings an existing Workers application
 

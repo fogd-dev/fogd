@@ -273,5 +273,16 @@ keys and application data. Remote clusters and live backups remain unsupported.
 `fogd admin capacity` reports available app slots, pending limits, and retained
 artifact bytes. The admin page shows the same installation totals. Follow the
 [capacity guide](docs/capacity.md) to interpret ownership conflicts and limits.
-`pnpm test` checks the API, CLI, page, and admission accounting. App retirement,
-slot reuse, and measured runtime density remain later M10 slices.
+`pnpm test` checks the API, CLI, page, and admission accounting. M10b adds retirement
+and slot reuse; measured runtime density and capacity expansion remain later work.
+
+
+## M10b: retire an app into a fresh installation
+
+`fogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR` restores a
+stopped Docker snapshot while permanently retiring one app name. Its fleet receives
+fresh replica identities and an empty storage namespace for a different app. The
+other app retains its data and sessions; old data and history remain recovery material.
+Follow the [retirement guide](docs/retirement.md) for commands and failure drills.
+This requires maintenance downtime and a runtime that supports retirement. Kubernetes
+retirement, same-name reuse, erasure, and artifact pruning are not supported.

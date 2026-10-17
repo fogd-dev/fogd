@@ -3,5 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "dependencies": { "@fogd/runtime": "workspace:*", "@aws-sdk/client-s3": "3.1152.0" }
+  "dependencies": {
+    "@fogd/runtime": "workspace:*",
+    "@aws-sdk/client-s3": "3.1152.0"
+  },
+  "exports": {
+    "./retirement": "./src/retirement.mjs"
+  }
 }

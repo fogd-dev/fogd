@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { retirementCommand } from '../src/recovery/retire.mjs';
 import { kubernetesCommand } from '../src/kubernetes/commands.mjs';
 import { importTLS } from '../src/tls.mjs';
 import { backup } from '../src/recovery/backup.mjs';
@@ -7,7 +8,9 @@ import { up, deploy, admin, status } from '../src/platform.mjs';
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  if (command === 'kube') {
+  if (command === 'retire') {
+    await retirementCommand(args);
+  } else if (command === 'kube') {
     await kubernetesCommand(args);
   } else if (command === 'backup') {
     if (args.length !== 1) throw new Error('Usage: fogd backup DIRECTORY');
@@ -36,6 +39,6 @@ try {
     await admin(...args);
   }
   else if (!command || command === '--help' || command === 'help') {
-    console.log('fogd kube render DIR --cert CERT --key KEY  Write experimental Kubernetes manifests\nfogd kube backup INSTALLATION BUNDLE --kubeconfig FILE --context NAME\nfogd kube restore BUNDLE --namespace NAME --output DIR --kubeconfig FILE --context NAME\nfogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY   Install a certificate while stopped\nfogd up [--shared]         Start the local or TLS/scoped Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin capacity        Inspect slot, pending, and artifact limits\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
+    console.log('fogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR\n                           Retire into a fresh stopped Docker installation\nfogd kube render DIR --cert CERT --key KEY  Write experimental Kubernetes manifests\nfogd kube backup INSTALLATION BUNDLE --kubeconfig FILE --context NAME\nfogd kube restore BUNDLE --namespace NAME --output DIR --kubeconfig FILE --context NAME\nfogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY   Install a certificate while stopped\nfogd up [--shared]         Start the local or TLS/scoped Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin capacity        Inspect slot, pending, and artifact limits\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }

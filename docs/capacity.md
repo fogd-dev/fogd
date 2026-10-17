@@ -18,7 +18,8 @@ The report separates three limits:
 
 A scoped credential also has a pending limit. The legacy local team token only has
 the global pending limit. Zero pending submissions can coexist with a full artifact
-quota. The current platform has no artifact-pruning or slot-retirement command.
+quota. The [stopped retirement workflow](retirement.md) releases a fleet in a fresh
+installation while retaining old data and history. It does not prune artifacts.
 Do not manually remove ownership records to manufacture capacity.
 
 Slot rows show cached bucket ownership separately from controller assignments.

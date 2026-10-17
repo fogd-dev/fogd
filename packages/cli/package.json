@@ -17,6 +17,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@fogd/runtime": "workspace:*"
+    "@fogd/runtime": "workspace:*",
+    "@fogd/platform": "workspace:*"
   }
 }

@@ -1,4 +1,6 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rename, open } from 'node:fs/promises';
+import { restoreVolumes, volumeHelper } from './volumes.mjs';
+import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson } from './bundle.mjs';
@@ -16,25 +18,47 @@ export async function restore(directory, project, output) {
   projectName(project);
   const dir = resolve(directory), destination = resolve(output);
   const { manifest, config } = await verifyBundle(dir);
+  return restoreInstallation({ manifest, config, dir }, project, destination);
+}
+export async function restoreInstallation({ manifest, config, dir }, project, destination, retirement = null) {
   const volumes = volumeNames(config);
   if (project === manifest.sourceProject) throw new Error('Restore requires a different project from its source');
-  const target = restoredConfig(config, project, manifest.images);
+  const target = restoredConfig(retirement?.config || config, project, manifest.images);
   await requireFresh(project, target);
   await mkdir(destination, { mode: 0o700 });
-  const started = Date.now(), file = join(destination, 'compose.json');
+  const started = Date.now(), file = join(destination, 'compose.pending.json');
   await docker(['image', 'load'], { input: join(dir, 'images.tar') });
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
   if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
+  if (retirement) await requireRetirementRuntime(manifest.images.controller);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
-  for (const name of volumes) {
-    await docker(['run', '-i', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--cap-add', 'CHOWN', '--cap-add', 'FOWNER', '--cap-add', 'FSETID', '--cap-add', 'DAC_OVERRIDE', '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${target.volumes[name].name},dst=/data`, manifest.images.controller, 'sh', '-c', 'tar --numeric-owner -C /data -xpf - && sync -f /data'], { input: join(dir, `${name}.tar`) });
+  await restoreVolumes(dir, target, volumes, manifest.images.controller, retirement?.skipped);
+  if (retirement) {
+    await writeRetirement(target, manifest.images.controller, retirement.state);
+    await writeJson(join(destination, 'retirement.json'), retirement.evidence);
+    await stopped(manifest.sourceProject, volumes.map(name => config.volumes[name].name));
   }
-  for (const name of volumes) {
-    await docker(['run', '-i', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--cap-add', 'DAC_OVERRIDE', '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${target.volumes[name].name},dst=/data,readonly`, manifest.images.controller, 'tar', '--numeric-owner', '-C', '/data', '--compare', '-pf', '-'], { input: join(dir, `${name}.tar`) });
-  }
-  await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started });
-  console.log(`Restore complete, still stopped. Start with: docker compose -f ${file} -p ${project} up -d --pull never`);
+  await stopped(project, volumes.map(name => target.volumes[name].name));
+  await rename(file, join(destination, 'compose.json'));
+  const parent = await open(destination, 'r');
+  try { await parent.sync(); } finally { await parent.close(); }
+  await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: retirement?.evidence.id || null });
+  console.warn('Restoring an older snapshot can resurrect application access, deploy credentials, and secret revisions. Keep the source stopped.');
+  console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
+}
+
+async function requireRetirementRuntime(image) {
+  let capability;
+  try { capability = await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', "import {retirementCapability} from './packages/platform/src/retirement.mjs'; console.log(retirementCapability)"]); }
+  catch { throw new Error('Snapshot runtime does not support retirement; upgrade the source and take a new snapshot'); }
+  if (capability.trim() !== retirementCapability) throw new Error('Snapshot retirement capability differs from the CLI');
+}
+async function writeRetirement(target, image, state) {
+  const code = "import {saveJson} from './packages/platform/src/store.mjs'; let input=''; for await(const part of process.stdin) input+=part; await saveJson('/data/state.json', JSON.parse(input));";
+  await volumeHelper(image, target.volumes.controller.name, ['node', '--input-type=module', '-e', code], { readonly: false, inputText: JSON.stringify(state) });
+  const output = await volumeHelper(image, target.volumes.controller.name, ['cat', '/data/state.json']);
+  if (JSON.stringify(JSON.parse(output)) !== JSON.stringify(state)) throw new Error('Retirement metadata verification failed');
 }

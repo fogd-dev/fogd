@@ -45,7 +45,10 @@ pnpm exec fogd restore .fogd/snapshot-01 --project fogd-restored --output .fogd/
 docker compose -f .fogd/restored-01/compose.json -p fogd-restored up -d --pull never
 ```
 
-Only run the start command after restore reports success and writes `restored.json`.
+Only run the start command after restore reports success and both compose.json and
+restored.json exist. A failed restore may retain compose.pending.json and stopped resources for inspection;
+do not start partial containers manually. Restoring an older snapshot can resurrect
+apps, credentials, and secret revisions from that boundary. Keep its source stopped.
 The output directory and Docker project must be new. Restore refuses existing
 containers, volumes, or networks rather than overwriting them. It verifies all
 archives before creation, loads the recorded images, restores stopped volumes,

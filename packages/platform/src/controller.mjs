@@ -1,3 +1,4 @@
+import { assertLiveName, validateRetirementState } from './retirement.mjs';
 import { pendingDeployments } from './capacity.mjs';
 import { Credentials } from './credentials.mjs';
 import { ArtifactQuota, positiveLimit, uploadBytes } from './quota.mjs';
@@ -36,6 +37,7 @@ export class Controller {
     this.state = await readJson(join(this.dir, 'state.json'), { apps: {}, deployments: {} });
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
+    validateRetirementState(this.state, this.slots);
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
@@ -45,6 +47,7 @@ export class Controller {
         this.occupied.add(slot.id);
         this.bucketOwners.set(slot.id, owner.app);
         const app = this.state.apps[owner.app];
+        if (app?.retirement) throw new Error('Retired app owns a configured fleet; restore matching configuration and metadata');
         if (!app) {
           // Losing local metadata must never free or silently reactivate a used slot.
           this.state.apps[owner.app] = { slot: slot.id, route: 'paused', quarantined: true, reason: 'Bucket owner has no controller record; restore controller backup' };
@@ -55,6 +58,7 @@ export class Controller {
       }
     }
     for (const [name, app] of Object.entries(this.state.apps)) {
+      if (app.retirement) continue;
       const slot = this.slots.find(s => s.id === app.slot);
       if (!slot || (await this.backend.owner(slot))?.app !== name) {
         app.quarantined = true; app.route = 'paused';
@@ -66,6 +70,7 @@ export class Controller {
   save() { return saveJson(join(this.dir, 'state.json'), this.state); }
   artifact(id) { return join(this.dir, 'artifacts', id); }
   available(app) {
+    assertLiveName(this.state, app);
     if (this.state.apps[app]) return this.slots.find(s => s.id === this.state.apps[app].slot);
     return this.slots.find(slot => !this.occupied.has(slot.id) && !Object.values(this.state.apps).some(a => a.slot === slot.id));
   }
@@ -119,13 +124,17 @@ export class Controller {
     });
     app.uncertain = null; await this.save();
   }
-  issueCredential(name, apps) { return this.exclusive(() => this.credentials.issue(name, apps)); }
+  issueCredential(name, apps) { return this.exclusive(() => {
+    if (Array.isArray(apps)) apps.forEach(app => assertLiveName(this.state, app));
+    return this.credentials.issue(name, apps);
+  }); }
   revokeCredential(id) { return this.exclusive(() => this.credentials.revoke(id)); }
-  replaceSecrets(app, values) { return this.exclusive(() => this.secrets.replace(app, values)); }
+  replaceSecrets(app, values) { return this.exclusive(() => { assertLiveName(this.state, app); return this.secrets.replace(app, values); }); }
   mutate(id, digest, action, secretRevision) {
     return this.exclusive(async () => {
       const request = this.state.deployments[id];
       if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
+      assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
       if (action === 'reject') {
         if (this.state.apps[request.app]?.uncertain === id) throw new Error('Reconcile the failed activation before rejecting its artifact');
@@ -208,7 +217,7 @@ export class Controller {
   }
   route(host) {
     const entry = Object.entries(this.state.apps).find(([name]) => `${name}.${this.baseDomain}` === host.toLowerCase());
-    if (!entry) return { state: 'unknown' };
+    if (!entry || entry[1].retirement) return { state: 'unknown' };
     const app = entry[1];
     return { state: app.route, slot: app.slot };
   }

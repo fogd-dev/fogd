@@ -445,3 +445,39 @@ test('private routing listener exposes no public administration and public liste
   assert.deepEqual(await (await get(internal, '/internal/route?host=hello.localhost', 'Bearer gateway')).json(), { state: 'unknown' });
   assert.equal((await get(internal, '/v1/admin', `Basic ${Buffer.from('admin:password').toString('base64')}`)).status, 404);
 });
+
+test('retired names cannot regain routes, deployments, secrets or authority after restart', async t => {
+  const { retireState } = await import('../src/retirement.mjs');
+  const { controller: c, artifact, backend, owners } = await setup(t);
+  const token = await c.issueCredential('Original builder', ['hello']);
+  const body = await artifact();
+  const release = await c.submit(body, token.id); await c.mutate(release.id, release.digest, 'approve');
+  const pending = await c.submit(body, token.id);
+  const next = retireState(c.state, 'hello', release.digest, { previous: { slot: 'slot-1', prefix: 'one', nodes: ['a', 'b'] }, replacement: { prefix: 'new-generation', nodes: ['new-a', 'new-b'] } });
+  await writeFile(join(c.dir, 'state.json'), JSON.stringify(next));
+  delete owners['slot-1'];
+  const replacementSlots = structuredClone(slots); replacementSlots[0].prefix = 'new-generation';
+  const retired = new Controller({ dir: c.dir, slots: replacementSlots, backend }); await retired.init();
+  assert.deepEqual(retired.route('hello.localhost'), { state: 'unknown' });
+  assert.equal(retired.available('replacement').id, 'slot-1');
+  assert.equal(capacity(retired).slots.available, 2);
+  for (const submitter of [token.id, 'team-token']) await assert.rejects(retired.submit(body, submitter), /permanently retired/);
+  for (const action of ['approve', 'reject']) await assert.rejects(retired.mutate(pending.id, pending.digest, action), /permanently retired/);
+  await assert.rejects(retired.replaceSecrets('hello', { PRIVATE: 'new' }), /permanently retired/);
+  await assert.rejects(retired.issueCredential('New authority', ['hello']), /permanently retired/);
+  await assert.rejects(retired.submit(await artifact('replacement'), token.id), /scope/);
+  const mismatched = new Controller({ dir: c.dir, slots, backend });
+  await assert.rejects(mismatched.init(), /overlaps retired/);
+  const http = server(retired, { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' });
+  await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => http.close(resolve)));
+  const origin = `http://127.0.0.1:${http.address().port}`;
+  const authorization = `Basic ${Buffer.from('admin:password').toString('base64')}`;
+  const state = await (await fetch(origin + '/v1/admin', { headers: { authorization } })).json();
+  const headers = { authorization, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf };
+  for (const [path, method, body] of [[`/v1/deployments/${pending.id}/approve`, 'POST', { digest: pending.digest }], ['/v1/apps/hello/secrets', 'PUT', { PRIVATE: 'blocked' }]]) {
+    const response = await fetch(origin + path, { method, headers, body: JSON.stringify(body) });
+    assert.equal(response.status, 400); assert.match((await response.json()).error, /permanently retired/);
+  }
+
+});

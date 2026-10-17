@@ -9,7 +9,7 @@ Later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting is qualified; M10b retirement is next.
+and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; measured capacity is next.
 
 ## Current foundation
 
@@ -35,7 +35,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting is qualified; M10b retirement is next. Later
+records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; measured capacity is next. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -82,8 +82,9 @@ HTTPS, explicit shared-mode policy, and recovery/upgrade evidence with those con
 The [M9a Kubernetes contract](m9a.md) has local kind deployment/pod-replacement evidence.
 [M9b stopped Kubernetes recovery](m9b.md) has fresh-claim restore evidence; remote-host qualification remains open.
 [M10a capacity reporting](m10a.md) is qualified through controller, HTTP, and CLI
-tests. Next is [M10b retirement](m10b.md); measured runtime capacity remains a
-separate slice. Preserve secret revisions, controller metadata,
+tests. [M10b retirement](retirement.md) qualifies the offline fresh-installation path.
+Next, measure runtime capacity and shared overhead before adding another fleet.
+M10 is not complete until capacity expansion and operating-cost evidence are qualified. Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.
 

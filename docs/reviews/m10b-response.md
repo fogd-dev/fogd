@@ -51,3 +51,33 @@ may revoke obsolete tokens separately. Hosted migration, Kubernetes retirement,
 background-job draining, same-name reuse, and storage credential isolation remain
 outside the first qualification. Preserve the original acceptance goals using safe
 refusal rather than journal resumption for interruptions.
+
+## Implementation review amendments
+
+Claude's [code review](m10b-code-claude.md) found no isolation or correctness blocker.
+Accept its refusal-set correction: a paused app may retire when it still has a known
+active deployment, no quarantine, no uncertain migration, and no activating request.
+This permits retiring a broken but reconciled redeployment without first making it
+serve again. Never-activated and ambiguous apps still fail closed.
+
+Mark the former active deployment retired as well as pending and failed proposals;
+the tombstone retains its digest and deployment ID, and history remains available.
+Update the capacity page to point to the stopped workflow. Added checks cover
+historical prefix overlap, malformed tombstones, real HTTP approval/secrets refusal,
+and corruption in a replica archive that retirement would otherwise skip extracting.
+
+## Final qualification
+
+Claude's [final review](m10b-final-claude.md) found no blocker. Clarified that fault
+injection pauses after the controller archive copy, and that old-image refusal can
+leave loaded images and a private output directory without creating target containers.
+The 70-test count covers the entire workspace, not just the platform package.
+
+The fresh fogd-m10b4 drill passed with a certificate covering all fixture names.
+It preserved native accounts sessions/login, retained old prefix objects, proved an
+empty replacement prefix before startup, and then verified empty and newly written
+D1/R2/DO state under the replacement name. The negative drill passed interruption
+without a final config/receipt, occupied-target retry refusal, fresh-target retry,
+old-runtime refusal before container creation, and ordinary full-volume restoration.
+That ordinary restore recovered notebook's old data, demonstrating the documented
+resurrection boundary, before the test returned to the retired installation.

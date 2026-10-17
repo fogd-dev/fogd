@@ -127,3 +127,8 @@ gate. Docker backup does not cover PVCs.
 
 The [capacity report](capacity.md) exposes admin-only slot occupancy, pending limits,
 and retained artifact bytes. It does not free resources or measure runtime cost.
+
+The [Docker retirement workflow](retirement.md) frees one fleet in a fresh installation
+while retaining the old data, secrets, and approval history. It permanently blocks
+the retired app name and gives its replacement a new namespace and replica identities.
+It does not provide deletion, same-name reuse, or Kubernetes retirement.

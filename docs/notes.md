@@ -219,3 +219,36 @@ NODE_EXTRA_CA_CERTS in the invocation, so HTTPS requests failed trust validation
 The next complete rerun supplied the documented CA, passed every negative check and
 namespace isolation, and left all source pods Ready. This was a test invocation
 error, not a change to transport validation. No certificate checking was bypassed.
+
+## M10b fixture corrections
+
+The first live retirement test passed a scoped deploy token into the operator's
+Compose environment. Backup correctly refused configuration drift before stopping
+anything. The drill now keeps operator configuration separate from teammate deploy
+credentials.
+
+Docker exhausted its predefined network address pools after many retained test
+projects. Removed only stopped fogd M7/M8 fixture containers and their Compose
+networks, retaining volumes and backups. No daemon configuration or unrelated
+containers changed.
+
+A second target restored successfully and served accounts, but the browser check
+started after controller readiness without waiting for the app. Its first navigation
+could remain on a temporary unavailable page while retrying only a button click.
+The drill now checks the original session before backup and waits for the restored
+app's HTTP 200 before opening the session page. A fresh run supplies the final
+qualification; the failed attempt is not counted as a passing session check.
+
+The third retirement run preserved native sessions and approved the replacement,
+but its reused certificate lacked replacement.localhost. TLS correctly rejected the
+request. The fixture now checks required certificate names before mutations, and a
+new certificate signed by the existing local test CA covers all three app names.
+Certificate validation remains enabled. Old stopped M10 attempts had containers and
+networks removed to keep fixture address pools available; their volumes and snapshots
+remain retained.
+
+The final fogd-m10b4 run passed complete retirement with the corrected certificate
+and readiness checks. The subsequent negative drill also passed interruption,
+fresh-target retry, old-runtime refusal, and ordinary restore regression. Its temporary
+Docker wrapper existed only under .fogd and only the test child used that PATH.
+No global executable or daemon setting was modified.
