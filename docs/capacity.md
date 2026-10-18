@@ -39,3 +39,9 @@ editing a count alone does not expand the installation.
 limits, retained bytes after restart, API authentication, escaped page output, and
 CLI/API agreement. These are controller and HTTP tests with temporary storage. They
 do not measure runtime density or establish remote operational capacity.
+
+## Observe runtime resources
+
+Use the [Docker measurement guide](capacity-measurement.md) for warm memory/CPU
+observations and bounded stateful reads. These reports are separate from admission
+accounting and do not expand the installation.

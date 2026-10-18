@@ -495,3 +495,29 @@ current two-fleet fixture and must be measured during qualification. Operators w
 need low-downtime retirement will need a later lifecycle protocol. This design does
 not erase old data, reclaim artifact bytes, permit same-name reuse, or establish
 hostile-tenant isolation.
+
+## ADR 022: measure warm runtime overhead before expanding fleet count
+
+**Context.** Two fixed fleets limit concurrent applications. Admission accounting
+explains that limit but says nothing about memory or CPU. Each additional app
+currently requires two celld processes and persistent replica volumes. Recovery
+also assumes two fleets in several independent inventories.
+
+**Options.** Enable a third fleet immediately; measure the current installation
+first; or redesign shared-fleet tenancy before adding capacity. Immediate expansion
+provides another app slot sooner but risks an incomplete backup inventory. Shared
+fleets may reduce overhead but change resource isolation and ownership.
+
+**Decision.** Capture repeatable warm idle and bounded stateful read observations,
+then generalize recovery inventory while keeping two fleets, then qualify a third
+fleet. Keep measurements as repository tools until the observation contract is
+stable. Record observed usage separately from configured ceilings and describe
+Docker Desktop results as exploratory VM evidence. The
+[review response](reviews/m10c-response.md) records the amended sequence.
+
+**Consequences.** Operators get inspectable measurements without installing a
+monitoring service. Expansion takes longer and still needs cold-start, per-app
+load comparison, full restore, and retirement qualification. A density-focused
+operator may prefer shared fleets; this slice does not rule that design out.
+Short read workloads do not estimate write-heavy demand, disk growth, monthly
+cost, maximum safe density, or production availability.

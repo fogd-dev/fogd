@@ -286,3 +286,11 @@ other app retains its data and sessions; old data and history remain recovery ma
 Follow the [retirement guide](docs/retirement.md) for commands and failure drills.
 This requires maintenance downtime and a runtime that supports retirement. Kubernetes
 retirement, same-name reuse, erasure, and artifact pruning are not supported.
+
+## M10c: observe runtime capacity
+
+The [measurement guide](docs/capacity-measurement.md) provides explicit-project
+Docker metrics and a bounded read workload with verified TLS. Reports separate
+shared overhead, app fleets, and configured ceilings. Three concurrent apps remain
+unqualified; recovery inventory generalization and fleet expansion follow these
+measurements.

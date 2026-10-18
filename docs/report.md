@@ -8,7 +8,7 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 Current status: Docker deploy/approval, private configuration, TLS, stopped recovery,
 capacity reporting, and offline retirement are locally qualified. Kubernetes deployment
 and stopped recovery have experimental local-kind evidence. Remote infrastructure,
-measured capacity expansion, background/live applications, and broader portability
+capacity expansion, background/live applications, and broader portability
 remain open roadmap work.
 
 ## What works
@@ -29,6 +29,7 @@ remain open roadmap work.
 | 8b1. Scoped access and admission limits | Named app-scoped deploy credentials, revocation, retained artifact/pending/upload limits, and recovery evidence; see the [access guide](deploy-access.md) |
 | 9a–9b. Experimental Kubernetes | Local kind deploy, replica replacement, and fresh-PVC stopped recovery; see the [Kubernetes guide](kubernetes.md) and [recovery guide](kubernetes-recovery.md) |
 | 10a. Capacity reporting | Admin API/page/CLI report admission limits and retained ownership; see the [capacity guide](capacity.md) |
+| 10c, measurement slice | Warm Docker metrics and bounded stateful reads; see the [measurement guide](capacity-measurement.md). Three-fleet expansion remains open |
 | 10b. Docker retirement | Fresh-installation transformation retains the other app, retires one name, and frees a fleet without inheriting old state; see the [retirement guide](retirement.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
@@ -366,3 +367,37 @@ restore recovered notebook's original D1/R2/DO record, then the test returned to
 retired installation with accounts and replacement available side by side. The full
 workspace suite passed 70 tests, example builds, and quality checks; Claude's final
 review found no blocker.
+
+## M10c warm capacity baseline
+
+The [measurement tools](capacity-measurement.md) captured the existing two-app
+Docker installation on 2026-10-18. The [recorded reports](evidence/m10c-two-fleet-capacity.json)
+include samples, image identities, configured ceilings, and workload history.
+The Docker Desktop VM had 10 CPUs, about 15.6 GiB RAM, and nine other running
+containers. Host builds/tests and reviewer processes also ran during observation.
+This is exploratory evidence on a shared machine.
+
+| Window | Whole-stack observed memory | Mean sampled CPU, 100% = one core |
+| --- | --- | --- |
+| Warm idle, six samples | 730–747 MiB | 2.96% |
+| Stateful reads, twelve samples | 754–855 MiB | 19.22% |
+| After reads and app health probes, six samples | 852–869 MiB | 3.00% |
+
+Four paced clients completed 4,304 HTTPS reads in 120 seconds with zero errors:
+35.9 requests/second, 17.5 ms p95 and 31.7 ms p99 response latency. The fixed
+one-entry endpoint reads D1, R2, and a Durable Object. The other app received no
+load workload. Both app routes responded afterward, and the fixture still had one
+entry and one recorded ID. Memory remained above the earlier warm window; these
+samples do not establish the cause or a steady-state maximum.
+
+Both Claude reviews completed: [design](reviews/m10c-design-claude.md),
+[measurement code](reviews/m10c-measurement-claude.md), and
+[accepted changes](reviews/m10c-response.md). Measurement/parser and HTTP fixture
+tests cover invalid observations, replaced containers, failed reads, TLS policy,
+and output-file conflicts. The workspace tests, example builds, and quality gate
+pass. Runtime code and deployment configuration are unchanged by this slice.
+
+Next, generalize recovery inventory while retaining two fleets, then qualify three
+concurrent apps with per-app load comparison, stopped restore, and retirement.
+Cold-start costs, write-heavy workloads, sustained growth, disk costs, remote-host
+operation, and maximum safe density remain unmeasured. M10 is still in progress.

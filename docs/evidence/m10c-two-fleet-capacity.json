@@ -1,0 +1,1633 @@
+{
+  "warmIdle": {
+    "project": "fogd-m10b4-retired",
+    "engine": {
+      "cpus": 10,
+      "memoryBytes": 16749006848,
+      "version": "28.3.0",
+      "operatingSystem": "Docker Desktop",
+      "cgroupVersion": "2"
+    },
+    "vmMemoryAtStart": "MemTotal:       16356452 kB\nMemAvailable:   10899568 kB\nSwapTotal:       1048572 kB\nSwapFree:         970776 kB",
+    "unrelatedRunningContainers": 9,
+    "requestedIntervalMs": 5000,
+    "containers": [
+      {
+        "id": "a53aeb8a26c3638b419754e8c6b77f7d3e070b9c253f95d07e179b06871326fa",
+        "service": "slot-1-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.083290712Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "0f1d11d781dd20c51791987e81f34f57cd45b8b3c5e6c87ae7e8eca7b282a471",
+        "service": "slot-2-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08063742Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "c1000c091a714ef0ec0ea2ef9308fe9efa775de2449d3b8dc82c84d6c3bcd5de",
+        "service": "controller",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.084252962Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "6ca0c2dab97c495568cf8e0c7a5374e126f4d129b5715819291e70beb0f3082c",
+        "service": "slot-2-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08038367Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "a9e654c664977ba0b6e07ff6816e9b4e0943d6e0182183b9c6591ba0ea4164a9",
+        "service": "slot-1-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08123192Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "b9ed920130ecfffe1b504dd9d1699913382684cbebbe6e4ffb00e92cc5719d0e",
+        "service": "workerd",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:23.345677086Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 268435456,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "955f2034ac2727e1ff2ede573ded21b00a0ef236078e66b2a0372afc3774bcc5",
+        "service": "minio",
+        "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "startedAt": "2026-10-17T18:02:23.344081419Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 805306368,
+        "cpuLimit": 2,
+        "group": "shared"
+      }
+    ],
+    "samples": [
+      {
+        "startedAt": "2026-10-18T13:44:01.483Z",
+        "finishedAt": "2026-10-18T13:44:04.044Z",
+        "elapsedMs": 2561.6975420000003,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.48
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 87430266.88,
+            "cpuPercent": 0.48
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 71754055.68,
+            "cpuPercent": 0.79
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.49
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363226726.4,
+            "cpuPercent": 1.02
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:44:09.163Z",
+        "finishedAt": "2026-10-18T13:44:11.740Z",
+        "elapsedMs": 10257.281667,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.4
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 87430266.88,
+            "cpuPercent": 0.65
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 71754055.68,
+            "cpuPercent": 0.46
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.5
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0.01
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363331584,
+            "cpuPercent": 0.77
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:44:16.826Z",
+        "finishedAt": "2026-10-18T13:44:19.397Z",
+        "elapsedMs": 17914.144167,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.53
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 85647687.68,
+            "cpuPercent": 0.65
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 61058580.48,
+            "cpuPercent": 0.54
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.73
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0.02
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363331584,
+            "cpuPercent": 0.38
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:44:24.482Z",
+        "finishedAt": "2026-10-18T13:44:27.074Z",
+        "elapsedMs": 25590.994,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.45
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 85249228.8,
+            "cpuPercent": 0.96
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 56727961.6,
+            "cpuPercent": 0.48
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.82
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363436441.6,
+            "cpuPercent": 0.24
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:44:32.169Z",
+        "finishedAt": "2026-10-18T13:44:34.754Z",
+        "elapsedMs": 33271.797125,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.87
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 85196800,
+            "cpuPercent": 0.46
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0.02
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 56727961.6,
+            "cpuPercent": 0.52
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.63
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363436441.6,
+            "cpuPercent": 0.99
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:44:39.843Z",
+        "finishedAt": "2026-10-18T13:44:42.400Z",
+        "elapsedMs": 40917.605666999996,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.51
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 85175828.48,
+            "cpuPercent": 0.67
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34529607.68,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 56686018.56,
+            "cpuPercent": 0.52
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.51
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 106745036.8,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363541299.2,
+            "cpuPercent": 0.19
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "slot-1": {
+        "memoryMinBytes": 118960947.2,
+        "memoryMaxBytes": 118971432.96,
+        "cpuMeanPercent": 1.1533333333333333,
+        "cpuMaxPercent": 1.5
+      },
+      "slot-2": {
+        "memoryMinBytes": 141861847.04000002,
+        "memoryMaxBytes": 159184322.56,
+        "cpuMeanPercent": 1.1966666666666665,
+        "cpuMaxPercent": 1.44
+      },
+      "shared": {
+        "memoryMinBytes": 504501370.88,
+        "memoryMaxBytes": 504815943.67999995,
+        "cpuMeanPercent": 0.6066666666666667,
+        "cpuMaxPercent": 1.02
+      },
+      "total": {
+        "memoryMinBytes": 765596794.8800001,
+        "memoryMaxBytes": 782761984,
+        "cpuMeanPercent": 2.956666666666667,
+        "cpuMaxPercent": 3.49
+      }
+    },
+    "caveats": [
+      "Docker CLI memory usage excludes some cache on Linux; this is not RSS or peak allocation.",
+      "CPU percentages are sampled and can exceed 100% across cores.",
+      "Memory ceilings are not reservations. Shared-host observations are not production sizing.",
+      "Image/container identities are retained; credentials and full inspection output are excluded."
+    ]
+  },
+  "loaded": {
+    "project": "fogd-m10b4-retired",
+    "engine": {
+      "cpus": 10,
+      "memoryBytes": 16749006848,
+      "version": "28.3.0",
+      "operatingSystem": "Docker Desktop",
+      "cgroupVersion": "2"
+    },
+    "vmMemoryAtStart": "MemTotal:       16356452 kB\nMemAvailable:   10936308 kB\nSwapTotal:       1048572 kB\nSwapFree:         970776 kB",
+    "unrelatedRunningContainers": 9,
+    "requestedIntervalMs": 5000,
+    "containers": [
+      {
+        "id": "a53aeb8a26c3638b419754e8c6b77f7d3e070b9c253f95d07e179b06871326fa",
+        "service": "slot-1-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.083290712Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "0f1d11d781dd20c51791987e81f34f57cd45b8b3c5e6c87ae7e8eca7b282a471",
+        "service": "slot-2-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08063742Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "c1000c091a714ef0ec0ea2ef9308fe9efa775de2449d3b8dc82c84d6c3bcd5de",
+        "service": "controller",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.084252962Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "6ca0c2dab97c495568cf8e0c7a5374e126f4d129b5715819291e70beb0f3082c",
+        "service": "slot-2-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08038367Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "a9e654c664977ba0b6e07ff6816e9b4e0943d6e0182183b9c6591ba0ea4164a9",
+        "service": "slot-1-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08123192Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "b9ed920130ecfffe1b504dd9d1699913382684cbebbe6e4ffb00e92cc5719d0e",
+        "service": "workerd",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:23.345677086Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 268435456,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "955f2034ac2727e1ff2ede573ded21b00a0ef236078e66b2a0372afc3774bcc5",
+        "service": "minio",
+        "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "startedAt": "2026-10-17T18:02:23.344081419Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 805306368,
+        "cpuLimit": 2,
+        "group": "shared"
+      }
+    ],
+    "samples": [
+      {
+        "startedAt": "2026-10-18T13:45:22.079Z",
+        "finishedAt": "2026-10-18T13:45:24.709Z",
+        "elapsedMs": 2629.23675,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.56
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 94843699.2,
+            "cpuPercent": 5.85
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35347496.96,
+            "cpuPercent": 1.03
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 68367155.2,
+            "cpuPercent": 3.79
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.66
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 109156761.6,
+            "cpuPercent": 5.21
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363751014.4,
+            "cpuPercent": 4.39
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:45:29.711Z",
+        "finishedAt": "2026-10-18T13:45:32.357Z",
+        "elapsedMs": 10277.517624999999,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.35
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 98534686.72,
+            "cpuPercent": 5.25
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35357982.72,
+            "cpuPercent": 0.72
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 74459381.76,
+            "cpuPercent": 3.84
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.34
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 113141350.4,
+            "cpuPercent": 3.52
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363751014.4,
+            "cpuPercent": 2.63
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:45:37.358Z",
+        "finishedAt": "2026-10-18T13:45:39.983Z",
+        "elapsedMs": 17903.528959,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.41
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 101921587.2,
+            "cpuPercent": 4.65
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35357982.72,
+            "cpuPercent": 0.79
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 78674657.28,
+            "cpuPercent": 4.46
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.32
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 117440512,
+            "cpuPercent": 3.48
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 363855872,
+            "cpuPercent": 2.31
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:45:44.984Z",
+        "finishedAt": "2026-10-18T13:45:47.632Z",
+        "elapsedMs": 25553.007375,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.38
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102739476.48,
+            "cpuPercent": 5.34
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35357982.72,
+            "cpuPercent": 0.96
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 81988157.44,
+            "cpuPercent": 3.23
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.36
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 122473676.8,
+            "cpuPercent": 3.99
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 336802611.2,
+            "cpuPercent": 2.43
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:45:52.632Z",
+        "finishedAt": "2026-10-18T13:45:55.377Z",
+        "elapsedMs": 33298.010749999994,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.34
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 103127449.6,
+            "cpuPercent": 6.14
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35357982.72,
+            "cpuPercent": 1.23
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 84022394.88,
+            "cpuPercent": 3.83
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.37
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 128660275.2,
+            "cpuPercent": 4.44
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 336802611.2,
+            "cpuPercent": 2.95
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:00.378Z",
+        "finishedAt": "2026-10-18T13:46:03.007Z",
+        "elapsedMs": 40927.34525,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.32
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102477332.48,
+            "cpuPercent": 5.83
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35357982.72,
+            "cpuPercent": 1.15
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 86276833.28,
+            "cpuPercent": 4.82
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.33
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 132644864,
+            "cpuPercent": 4.59
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 336907468.8,
+            "cpuPercent": 3.08
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:08.008Z",
+        "finishedAt": "2026-10-18T13:46:10.630Z",
+        "elapsedMs": 48550.961083999995,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.32
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 103798538.24,
+            "cpuPercent": 5.94
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 1.09
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 88457871.36,
+            "cpuPercent": 4.34
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.34
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 136419737.6,
+            "cpuPercent": 5.07
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 336907468.8,
+            "cpuPercent": 2.61
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:15.631Z",
+        "finishedAt": "2026-10-18T13:46:18.282Z",
+        "elapsedMs": 56203.024166999996,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68671242.24,
+            "cpuPercent": 0.37
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 107898470.4,
+            "cpuPercent": 5.7
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 0.83
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 88835358.72,
+            "cpuPercent": 7.87
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.37
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 141138329.6,
+            "cpuPercent": 3.85
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 337012326.4,
+            "cpuPercent": 2.62
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:23.283Z",
+        "finishedAt": "2026-10-18T13:46:25.955Z",
+        "elapsedMs": 63875.586292,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.35
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 103945338.88,
+            "cpuPercent": 6.3
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 1.04
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 85133885.44,
+            "cpuPercent": 4.6
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.36
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 145122918.4,
+            "cpuPercent": 5.38
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 337222041.6,
+            "cpuPercent": 3.29
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:30.959Z",
+        "finishedAt": "2026-10-18T13:46:33.612Z",
+        "elapsedMs": 71532.130167,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.4
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 105801318.4,
+            "cpuPercent": 6.13
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 0.79
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 90229964.8,
+            "cpuPercent": 3.79
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.46
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 151833804.8,
+            "cpuPercent": 3.76
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 337222041.6,
+            "cpuPercent": 2.85
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:38.613Z",
+        "finishedAt": "2026-10-18T13:46:41.271Z",
+        "elapsedMs": 79191.505959,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.3
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 109681049.6,
+            "cpuPercent": 4.95
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 0.94
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 94382325.76,
+            "cpuPercent": 4.27
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.51
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 156866969.6,
+            "cpuPercent": 3.71
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 345296076.8,
+            "cpuPercent": 2.34
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:46:46.272Z",
+        "finishedAt": "2026-10-18T13:46:48.912Z",
+        "elapsedMs": 86832.783084,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68660756.48,
+            "cpuPercent": 0.38
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 115553075.2,
+            "cpuPercent": 8.89
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 35368468.48,
+            "cpuPercent": 0.97
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 96909393.92,
+            "cpuPercent": 4.23
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 50300190.72,
+            "cpuPercent": 0.34
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 161166131.2,
+            "cpuPercent": 4.17
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 368155033.6,
+            "cpuPercent": 3.11
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "slot-1": {
+        "memoryMinBytes": 118960947.2,
+        "memoryMaxBytes": 118971432.96,
+        "cpuMeanPercent": 0.7700000000000001,
+        "cpuMaxPercent": 1.2200000000000002
+      },
+      "slot-2": {
+        "memoryMinBytes": 163210854.4,
+        "memoryMaxBytes": 212462469.12,
+        "cpuMeanPercent": 10.336666666666668,
+        "cpuMaxPercent": 13.57
+      },
+      "shared": {
+        "memoryMinBytes": 494634270.71999997,
+        "memoryMaxBytes": 564689633.28,
+        "cpuMeanPercent": 8.110000000000001,
+        "cpuMaxPercent": 10.629999999999999
+      },
+      "total": {
+        "memoryMinBytes": 790427074.5600001,
+        "memoryMaxBytes": 896113049.5999999,
+        "cpuMeanPercent": 19.21666666666667,
+        "cpuMaxPercent": 22.090000000000003
+      }
+    },
+    "caveats": [
+      "Docker CLI memory usage excludes some cache on Linux; this is not RSS or peak allocation.",
+      "CPU percentages are sampled and can exceed 100% across cores.",
+      "Memory ceilings are not reservations. Shared-host observations are not production sizing.",
+      "Image/container identities are retained; credentials and full inspection output are excluded."
+    ]
+  },
+  "afterLoad": {
+    "project": "fogd-m10b4-retired",
+    "engine": {
+      "cpus": 10,
+      "memoryBytes": 16749006848,
+      "version": "28.3.0",
+      "operatingSystem": "Docker Desktop",
+      "cgroupVersion": "2"
+    },
+    "vmMemoryAtStart": "MemTotal:       16356452 kB\nMemAvailable:   10790264 kB\nSwapTotal:       1048572 kB\nSwapFree:         970776 kB",
+    "unrelatedRunningContainers": 9,
+    "requestedIntervalMs": 5000,
+    "containers": [
+      {
+        "id": "a53aeb8a26c3638b419754e8c6b77f7d3e070b9c253f95d07e179b06871326fa",
+        "service": "slot-1-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.083290712Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "0f1d11d781dd20c51791987e81f34f57cd45b8b3c5e6c87ae7e8eca7b282a471",
+        "service": "slot-2-b",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08063742Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "c1000c091a714ef0ec0ea2ef9308fe9efa775de2449d3b8dc82c84d6c3bcd5de",
+        "service": "controller",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.084252962Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "6ca0c2dab97c495568cf8e0c7a5374e126f4d129b5715819291e70beb0f3082c",
+        "service": "slot-2-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08038367Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-2"
+      },
+      {
+        "id": "a9e654c664977ba0b6e07ff6816e9b4e0943d6e0182183b9c6591ba0ea4164a9",
+        "service": "slot-1-a",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:25.08123192Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 536870912,
+        "cpuLimit": 1,
+        "group": "slot-1"
+      },
+      {
+        "id": "b9ed920130ecfffe1b504dd9d1699913382684cbebbe6e4ffb00e92cc5719d0e",
+        "service": "workerd",
+        "image": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+        "startedAt": "2026-10-17T18:02:23.345677086Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 268435456,
+        "cpuLimit": 1,
+        "group": "shared"
+      },
+      {
+        "id": "955f2034ac2727e1ff2ede573ded21b00a0ef236078e66b2a0372afc3774bcc5",
+        "service": "minio",
+        "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "startedAt": "2026-10-17T18:02:23.344081419Z",
+        "running": true,
+        "paused": false,
+        "restarting": false,
+        "restarts": 0,
+        "memoryLimitBytes": 805306368,
+        "cpuLimit": 2,
+        "group": "shared"
+      }
+    ],
+    "samples": [
+      {
+        "startedAt": "2026-10-18T13:47:52.977Z",
+        "finishedAt": "2026-10-18T13:47:55.642Z",
+        "elapsedMs": 2664.8353340000003,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.47
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 108842188.8,
+            "cpuPercent": 0.55
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 86549463.04,
+            "cpuPercent": 0.49
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 67916267.52,
+            "cpuPercent": 0.45
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367211315.2,
+            "cpuPercent": 0.69
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:48:00.645Z",
+        "finishedAt": "2026-10-18T13:48:03.325Z",
+        "elapsedMs": 10347.6335,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.42
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102613647.36,
+            "cpuPercent": 0.56
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 80310435.84,
+            "cpuPercent": 0.49
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 64130908.16,
+            "cpuPercent": 0.43
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367211315.2,
+            "cpuPercent": 0.37
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:48:08.325Z",
+        "finishedAt": "2026-10-18T13:48:10.988Z",
+        "elapsedMs": 18011.453292,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.31
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102613647.36,
+            "cpuPercent": 0.48
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 80310435.84,
+            "cpuPercent": 2.32
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 61750640.64,
+            "cpuPercent": 0.8
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367316172.8,
+            "cpuPercent": 0.54
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:48:15.990Z",
+        "finishedAt": "2026-10-18T13:48:18.698Z",
+        "elapsedMs": 25721.486,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.56
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102571704.32,
+            "cpuPercent": 0.57
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 80278978.56,
+            "cpuPercent": 0.44
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 61750640.64,
+            "cpuPercent": 0.5
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367316172.8,
+            "cpuPercent": 1.02
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:48:23.699Z",
+        "finishedAt": "2026-10-18T13:48:26.365Z",
+        "elapsedMs": 33387.9115,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.66
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102571704.32,
+            "cpuPercent": 0.5
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 80268492.8,
+            "cpuPercent": 0.6
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 61750640.64,
+            "cpuPercent": 0.84
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367316172.8,
+            "cpuPercent": 0.92
+          }
+        ]
+      },
+      {
+        "startedAt": "2026-10-18T13:48:31.366Z",
+        "finishedAt": "2026-10-18T13:48:34.048Z",
+        "elapsedMs": 41070.907834000005,
+        "containers": [
+          {
+            "service": "slot-1-b",
+            "group": "slot-1",
+            "memoryBytes": 68681728,
+            "cpuPercent": 0.54
+          },
+          {
+            "service": "slot-2-b",
+            "group": "slot-2",
+            "memoryBytes": 102571704.32,
+            "cpuPercent": 0.37
+          },
+          {
+            "service": "controller",
+            "group": "shared",
+            "memoryBytes": 34613493.76,
+            "cpuPercent": 0
+          },
+          {
+            "service": "slot-2-a",
+            "group": "slot-2",
+            "memoryBytes": 80268492.8,
+            "cpuPercent": 0.54
+          },
+          {
+            "service": "slot-1-a",
+            "group": "slot-1",
+            "memoryBytes": 61750640.64,
+            "cpuPercent": 0.39
+          },
+          {
+            "service": "workerd",
+            "group": "shared",
+            "memoryBytes": 177838489.6,
+            "cpuPercent": 0
+          },
+          {
+            "service": "minio",
+            "group": "shared",
+            "memoryBytes": 367421030.4,
+            "cpuPercent": 0.19
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "slot-1": {
+        "memoryMinBytes": 130432368.64,
+        "memoryMaxBytes": 136597995.51999998,
+        "cpuMeanPercent": 1.0616666666666665,
+        "cpuMaxPercent": 1.5
+      },
+      "slot-2": {
+        "memoryMinBytes": 182840197.12,
+        "memoryMaxBytes": 195391651.84,
+        "cpuMeanPercent": 1.3183333333333334,
+        "cpuMaxPercent": 2.8
+      },
+      "shared": {
+        "memoryMinBytes": 579663298.56,
+        "memoryMaxBytes": 579873013.76,
+        "cpuMeanPercent": 0.6216666666666667,
+        "cpuMaxPercent": 1.02
+      },
+      "total": {
+        "memoryMinBytes": 893040721.9200001,
+        "memoryMaxBytes": 911652945.9200001,
+        "cpuMeanPercent": 3.001666666666667,
+        "cpuMaxPercent": 4.45
+      }
+    },
+    "caveats": [
+      "Docker CLI memory usage excludes some cache on Linux; this is not RSS or peak allocation.",
+      "CPU percentages are sampled and can exceed 100% across cores.",
+      "Memory ceilings are not reservations. Shared-host observations are not production sizing.",
+      "Image/container identities are retained; credentials and full inspection output are excluded."
+    ]
+  },
+  "requests": {
+    "url": "https://replacement.localhost:8787/api/entries",
+    "method": "GET",
+    "startedAt": "2026-10-18T13:45:20.626Z",
+    "finishedAt": "2026-10-18T13:47:20.665Z",
+    "elapsedMs": 120032.662625,
+    "concurrency": 4,
+    "delayPerWorkerMs": 100,
+    "requests": 4304,
+    "errors": 0,
+    "statuses": {
+      "200": 4304
+    },
+    "responseBytes": 434704,
+    "requestsPerSecond": 35.856906827488615,
+    "latencyMs": {
+      "p50": 8.711083000001963,
+      "p95": 17.527792000000773,
+      "p99": 31.730667000010726,
+      "max": 72.330917
+    },
+    "caveat": "Closed-loop paced read workload, not saturation or capacity limit. Latency includes response body consumption and failed requests. Operator must choose a read-only endpoint."
+  },
+  "context": {
+    "date": "2026-10-18",
+    "apps": [
+      "accounts",
+      "replacement"
+    ],
+    "loadedApp": "replacement",
+    "endpoint": "GET /api/entries, one D1 row + R2 body + DO count",
+    "history": "Existing installation after retirement/recovery drills; an initial 120-second read run preceded warmIdle. Not cold-start evidence. A fixture correctness GET and accounts landing-page health GET occurred between the loaded metrics window and afterLoad; the latter can warm the accounts fleet.",
+    "background": "Nine other Docker containers (six unrelated services and three kind nodes) were left running. Repository tests/build and reviewer processes also ran on the host during collection.",
+    "interpretation": "Exploratory warm baseline, not maximum density, a controlled cross-fleet comparison, disk cost, or availability qualification."
+  }
+}
