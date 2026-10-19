@@ -3,7 +3,8 @@ import { readFile, open, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { services, volumes, volumeNames } from './docker.mjs';
+import { validateFleetStorage, validateNetworks, validateMounts } from './layout-validation.mjs';
+import { recoveryLayout } from './layout.mjs';
 
 export async function fingerprint(path) {
   const info = await stat(path);
@@ -25,13 +26,17 @@ export async function readJson(path) {
   catch { throw new Error('Unreadable backup JSON; no configuration values are displayed'); }
 }
 export function validateTopology(config) {
-  if (!isDeepStrictEqual(Object.keys(config.services || {}).sort(), services) || !isDeepStrictEqual(Object.keys(config.volumes || {}).sort(), volumeNames(config))) throw new Error('Backup supports only the local two-slot Compose topology');
+  const { services, fleets, replicas, volumes } = recoveryLayout(config);
+  if (!isDeepStrictEqual(Object.keys(config.services || {}).sort(), services) || !isDeepStrictEqual(Object.keys(config.volumes || {}).sort(), volumes)) throw new Error('Backup supports only the local two-slot Compose topology');
   if (config.services.controller.environment.S3_ENDPOINT !== 'http://minio:9000') throw new Error('External bucket backup is unsupported');
   for (const service of Object.values(config.services)) {
     for (const mount of service.volumes || []) {
-      if (mount.type !== 'volume' || !volumeNames(config).includes(mount.source)) throw new Error('Only managed named volumes can be backed up');
+      if (mount.type !== 'volume' || !volumes.includes(mount.source)) throw new Error('Only managed named volumes can be backed up');
     }
   }
+  validateFleetStorage(config, fleets);
+  validateNetworks(config, fleets);
+  validateMounts(config, replicas);
   if (Object.values(config.volumes).some(v => v.external) || Object.values(config.networks).some(n => n.external)) throw new Error('External Docker resources are unsupported');
 }
 export function restoredConfig(config, project, images) {
@@ -48,14 +53,14 @@ export const composeResolved = value => typeof value === 'string' ? value.replac
 export const composeLiteral = value => typeof value === 'string' ? value.replaceAll('$', () => '$$') : Array.isArray(value) ? value.map(composeLiteral) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([k, v]) => [k, composeLiteral(v)])) : value;
 export async function verifyBundle(dir) {
   const manifest = await readJson(join(dir, 'manifest.json'));
-  const names = Object.hasOwn(manifest.files || {}, 'tls.tar') ? [...volumes, 'tls'] : volumes;
-  const expected = ['compose.json', 'images.tar', ...names.map(name => `${name}.tar`)].sort();
-  if (manifest.format !== 'fogd-stopped-v1' || !isDeepStrictEqual(Object.keys(manifest.files || {}).sort(), expected)) throw new Error('Incomplete or unsupported backup manifest');
-  for (const name of expected) {
+  if (manifest.format !== 'fogd-stopped-v1' || !manifest.files?.['compose.json']) throw new Error('Incomplete or unsupported backup manifest');
+  if (!isDeepStrictEqual(await fingerprint(join(dir, 'compose.json')), manifest.files['compose.json'])) throw new Error('Backup checksum mismatch: compose.json');
+  const config = await readJson(join(dir, 'compose.json')); validateTopology(config);
+  const { archives, services } = recoveryLayout(config);
+  if (!isDeepStrictEqual(Object.keys(manifest.files).sort(), archives)) throw new Error('Incomplete backup volume inventory does not match configuration');
+  for (const name of archives.filter(name => name !== 'compose.json')) {
     if (!isDeepStrictEqual(await fingerprint(join(dir, name)), manifest.files[name])) throw new Error(`Backup checksum mismatch: ${name}`);
   }
-  const config = await readJson(join(dir, 'compose.json')); validateTopology(config);
-  if (!isDeepStrictEqual(volumeNames(config), names)) throw new Error('Backup volume inventory does not match configuration');
   if (!isDeepStrictEqual(Object.keys(manifest.images || {}).sort(), services) || Object.values(manifest.images).some(image => !/^sha256:[a-f0-9]{64}$/.test(image))) throw new Error('Invalid backup image identities');
   return { manifest, config };
 }

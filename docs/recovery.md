@@ -106,3 +106,19 @@ It checks data and session recovery, explicit approval retry, subsequent writes,
 and refusal to restore over occupied resources. It prints measured snapshot and
 restore durations. The restored drill stack remains running for inspection; the
 source remains stopped. See [the report](report.md) for observed results and limits.
+
+## Validated local layout
+
+Recovery derives its inventory from matching controller and gateway fleet
+declarations. It currently accepts two ordered local fleets with distinct node
+identities, disjoint bucket prefixes, expected volume mappings, and matching
+network membership. Custom service addresses, extra writers/networks, crossed
+replica volumes, and additional fleets are refused. Configuration checksums are
+verified before a bundle configuration determines its required archives.
+
+In particular, `FOGD_SLOT_N_A_HOST`/`FOGD_SLOT_N_B_HOST` overrides that change the
+local service addresses are not accepted by recovery. Prefix segments accept
+letters, digits, underscores, and hyphens separated by `/`; prefixes cannot
+contain each other. Distinct nonempty `_ID` overrides remain supported. These
+checks tighten the older backup preflight; do not treat arbitrary Compose
+customization as a qualified recoverable installation.

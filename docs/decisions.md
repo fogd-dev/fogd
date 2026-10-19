@@ -521,3 +521,28 @@ load comparison, full restore, and retirement qualification. A density-focused
 operator may prefer shared fleets; this slice does not rule that design out.
 Short read workloads do not estimate write-heavy demand, disk growth, monthly
 cost, maximum safe density, or production availability.
+
+## ADR 023: derive recovery inventories from one validated local layout
+
+**Context.** Recovery previously maintained separate fixed lists of services,
+volumes, archives, and retirement replicas. Expanding one list without the others
+could omit state or make a captured installation impossible to restore.
+
+**Options.** Extend each list independently; derive inventories from arbitrary
+Compose services; or derive them from a validated fogd fleet layout. Arbitrary
+Compose discovery would accept additional writers and storage relationships that
+fogd has not qualified.
+
+**Decision.** Derive all recovery inventories from matching controller/gateway
+slot declarations, then check replica storage, volume mappings, and network
+membership against that layout. Verify the configuration checksum before deriving
+a bundle's archive inventory. Keep the existing bundle format and two-fleet gate
+until three-fleet recovery and retirement qualification passes.
+
+**Consequences.** Recovery fails early on inconsistent storage relationships and
+has one place to extend fleet inventory. The qualified layout requires ordered
+local service addresses, distinct node identities, and disjoint storage prefixes.
+Custom addresses, additional services/networks, and crossed mounts are refused;
+this is not a general Compose backup utility. Existing qualified snapshots remain
+readable, including optional TLS storage. The three-fleet gate remains separate
+from the inventory derivation.

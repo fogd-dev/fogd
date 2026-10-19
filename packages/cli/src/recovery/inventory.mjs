@@ -1,5 +1,6 @@
+import { serviceNames, volumeNames } from './layout.mjs';
 import { isDeepStrictEqual } from 'node:util';
-import { json, projectContainers, services, volumeNames } from './docker.mjs';
+import { json, projectContainers } from './docker.mjs';
 
 export function checkContainer(service, container, image) {
   const actual = Object.fromEntries(container.Config.Env.map(entry => { const i = entry.indexOf('='); return [entry.slice(0, i), entry.slice(i + 1)]; }));
@@ -12,7 +13,7 @@ export function checkContainer(service, container, image) {
 }
 export async function inventory(config) {
   const containers = await projectContainers(config.name);
-  const images = {};
+  const images = {}, services = serviceNames(config);
   for (const name of services) {
     const found = containers.filter(c => c.Config.Labels['com.docker.compose.service'] === name);
     if (found.length !== 1) throw new Error(`Expected exactly one ${name} container; run fogd up first`);

@@ -291,6 +291,6 @@ retirement, same-name reuse, erasure, and artifact pruning are not supported.
 
 The [measurement guide](docs/capacity-measurement.md) provides explicit-project
 Docker metrics and a bounded read workload with verified TLS. Reports separate
-shared overhead, app fleets, and configured ceilings. Three concurrent apps remain
-unqualified; recovery inventory generalization and fleet expansion follow these
-measurements.
+shared overhead, app fleets, and configured ceilings. Recovery inventory generalization is verified at two fleets. Three concurrent
+apps remain unqualified; fleet expansion follows these measurements and recovery
+checks.

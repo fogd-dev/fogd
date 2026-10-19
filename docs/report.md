@@ -397,7 +397,23 @@ tests cover invalid observations, replaced containers, failed reads, TLS policy,
 and output-file conflicts. The workspace tests, example builds, and quality gate
 pass. Runtime code and deployment configuration are unchanged by this slice.
 
-Next, generalize recovery inventory while retaining two fleets, then qualify three
+With recovery inventory generalized at two fleets, next qualify three
 concurrent apps with per-app load comparison, stopped restore, and retirement.
 Cold-start costs, write-heavy workloads, sustained growth, disk costs, remote-host
 operation, and maximum safe density remain unmeasured. M10 is still in progress.
+
+### Recovery inventory foundation
+
+The two-fleet recovery foundation passed on 2026-10-19. Backup, bundle verification,
+restore, image inventory, and retirement use one derived layout. Storage bindings,
+node identities, mounts, and network membership must agree with it. Configuration
+checksums are verified before deriving a bundle's archive set. The existing bundle
+format remains supported; custom host/prefix overrides now have explicit limits in
+the [recovery guide](recovery.md).
+
+Both retained M8b2 TLS and M10b snapshots verified. A fresh backup/restore drill
+preserved the accounts route and the replacement app's exact D1/R2/DO fixture;
+the original installation remained stopped. Backup took 29.1 seconds and restore
+13.8 seconds, excluding startup. The [Claude review](reviews/m10c-layout-claude.md)
+found no blockers; accepted test and documentation improvements are recorded in
+the [response](reviews/m10c-response.md). Expansion to three fleets is next.

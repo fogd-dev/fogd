@@ -7,9 +7,7 @@ export async function json(args, options) {
   catch { throw new Error(`Docker ${args[0]} returned unreadable JSON`); }
 }
 export const composeArgs = (file, project) => ['compose', '--env-file', devNull, '-f', file, '-p', project];
-export const services = ['bucket-init', 'controller', 'minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'workerd'];
-export const volumes = ['bucket', 'controller', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'];
-export const volumeNames = config => Object.hasOwn(config.volumes || {}, 'tls') ? [...volumes, 'tls'] : [...volumes];
+export { volumeNames } from './layout.mjs';
 export function projectName(name) {
   if (!/^[a-z0-9][a-z0-9_-]{0,62}$/.test(name || '')) throw new Error('Expected a Docker project name (lowercase letters, digits, hyphens, underscores)');
   return name;

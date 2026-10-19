@@ -63,3 +63,30 @@ window and controller meminfo read, sanitize invalid URL diagnostics, and explai
 that endpoint paths are retained. Tests also cover replaced containers, changed
 start times, and malformed memory fields. Workload history remains in the recorded
 experiment description rather than a new free-form CLI label.
+
+## Recovery inventory implementation
+
+The next slice retains exactly two fleets while deriving service, replica, volume,
+archive, image, and retirement inventories from one layout. Bundle verification
+checks `compose.json` before parsing it and deriving the required archive set.
+Validation checks local replica addresses, disjoint storage prefixes, distinct
+node identities, local bucket bindings, expected volume mappings, and fleet
+network membership. Shutdown still stops gateway/controller, every replica, then
+the bucket and initializer. Kubernetes configuration and recovery are unchanged.
+
+The existing stopped bundle format and optional TLS archive remain supported.
+Additional fleets remain refused until expansion qualification passes. ADR 023
+records the intentionally limited local layout and the cost of refusing custom
+Compose topologies rather than guessing which additional writers need capture.
+
+[Claude's layout review](m10c-layout-claude.md) approved the slice without blockers.
+Accepted findings add explicit error matchers to negative tests and an assertion
+that retirement output passes recovery validation. Layout derivation is hoisted
+out of mount loops and reused during backup. The recovery guide explicitly records
+stricter host/prefix overrides; node identity overrides remain supported.
+
+On 2026-10-19, both retained M8b2 TLS and M10b snapshots verified under the new
+code. A new stopped backup of the retired installation completed in 29.1 seconds;
+fresh-volume restore completed in 13.8 seconds, excluding startup. Both app routes
+served afterward, and the one-entry D1/R2/DO response matched byte for byte. The
+source stayed stopped. Three fleets remain unqualified.

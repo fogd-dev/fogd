@@ -1,19 +1,19 @@
 import { randomUUID } from 'node:crypto';
-import { isDeepStrictEqual } from 'node:util';
+import { fleetLayout } from './layout.mjs';
 import { retirementApp, retireState, overlap, validateRetirementState } from '@fogd/platform/retirement';
 
 export function planRetirement(config, state, app, digest, { id = randomUUID(), at = new Date().toISOString(), snapshot } = {}) {
   const assigned = retirementApp(state, app, digest);
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error('Invalid retirement generation');
-  const slots = parseSlots(config.services.controller.environment.FOGD_SLOTS);
+  const fleets = fleetLayout(config);
+  const slots = fleets.map(({ replicas, ...slot }) => slot);
   validateRetirementState(state, slots);
-  if (!isDeepStrictEqual(slots, parseSlots(config.services.workerd.environment.FOGD_SLOTS))) throw new Error('Gateway/controller slot configuration differs');
   const slot = slots.find(s => s.id === assigned.slot);
-  if (!slot || !/^slot-[12]$/.test(slot.id)) throw new Error('Retirement requires a configured local fleet');
+  if (!slot) throw new Error('Retirement requires a configured local fleet');
   const prefix = `retirement-generations/${id}`;
   const existing = [...slots.map(s => s.prefix), ...Object.values(state.apps).filter(a => a.retirement).map(a => a.retirement.previous.prefix)];
   if (existing.some(old => overlap(old, prefix))) throw new Error('Replacement prefix overlaps retained storage');
-  const next = structuredClone(config), services = ['a', 'b'].map(letter => `${slot.id}-${letter}`);
+  const next = structuredClone(config), services = fleets.find(f => f.id === slot.id).replicas;
   const previous = { slot: slot.id, prefix: slot.prefix, nodes: services.map(name => config.services[name].environment.CELLD_NODE) };
   for (const name of services) {
     const env = next.services[name].environment;
@@ -25,8 +25,4 @@ export function planRetirement(config, state, app, digest, { id = randomUUID(), 
   for (const name of ['controller', 'workerd']) next.services[name].environment.FOGD_SLOTS = JSON.stringify(slots);
   const evidence = { id, at, app, digest, snapshot, previous, replacement: { prefix, nodes: services.map(name => next.services[name].environment.CELLD_NODE) } };
   return { config: next, state: retireState(state, app, digest, evidence), skipped: services, evidence };
-}
-
-function parseSlots(input) {
-  try { return JSON.parse(input); } catch { throw new Error('Unreadable private slot configuration'); }
 }
