@@ -405,3 +405,13 @@ pause intent before replicas are ready. Recovery now retries that pending pause,
 records a new review, and requires explicit acknowledgment of it. The final
 qualification uses the documented all-services startup command. Source bundles,
 intermediate failed targets, and private records remain under `.fogd` for inspection.
+
+
+### Queued retirement fixture address exhaustion
+
+The first fresh retirement target exhausted Docker's predefined address pools before
+container creation. Retained the failed private output and complete source snapshot.
+Removed the unused stopped `fogd-m11a-recovery-qualified` containers/networks with
+Compose down, preserving its volumes. A fresh `fogd-m11a-retirement-retry` target
+then restored successfully. The old source remains stopped. Unrelated containers
+and system Docker configuration were not changed.

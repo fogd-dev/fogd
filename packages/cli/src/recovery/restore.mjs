@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
 import { restoredQueueState } from './queue-restore.mjs';
+import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 
 async function requireFresh(project, config) {
@@ -37,8 +38,7 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   await docker(['image', 'load'], { input: join(dir, 'images.tar') });
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
   if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
-  if (change?.kind === 'retirement') await requireRetirementRuntime(manifest.images.controller);
-  if (queueState) await requireQueueRecoveryRuntime(manifest.images.controller);
+  await requireStateRuntime(manifest.images.controller, queueState, change);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
@@ -46,7 +46,6 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   await restoreVolumes(dir, target, volumes, manifest.images.controller, change?.skipped);
   if (queueState) await writeRetirement(target, manifest.images.controller, queueState);
   if (change) {
-    if (change.kind === 'retirement') await writeRetirement(target, manifest.images.controller, change.state);
     await writeJson(join(destination, `${change.kind}.json`), change.evidence);
     await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   }
@@ -59,19 +58,23 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
 }
 
-async function requireQueueRecoveryRuntime(image) {
+export function requiredCapabilities(state, change) {
+  const required = [];
+  if (change?.kind === 'retirement') required.push(['retirement', 'retirementCapability', retirementCapability]);
+  if (state?.requirements?.includes(queueRecoveryCapability)) required.push(['queue-snapshot', 'queueRecoveryCapability', queueRecoveryCapability]);
+  if (state?.requirements?.includes(queueRetirementCapability)) required.push(['queue-retirement', 'queueRetirementCapability', queueRetirementCapability]);
+  return required;
+}
+async function requireStateRuntime(image, state, change) {
+  const required = requiredCapabilities(state, change);
+  if (!required.length) return;
+  const code = `const required = ${JSON.stringify(required)}; for (const [file, key, expected] of required) { const module = await import('./packages/platform/src/' + file + '.mjs'); if(module[key] !== expected) throw new Error('Capability mismatch'); } console.log('supported');`;
   let capability;
-  try { capability = await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', "import {queueRecoveryCapability} from './packages/platform/src/queue-snapshot.mjs'; console.log(queueRecoveryCapability)"]); }
-  catch { throw new Error('Snapshot runtime does not support queue recovery; upgrade the source and take a new snapshot'); }
-  if (capability.trim() !== queueRecoveryCapability) throw new Error('Snapshot queue recovery capability differs from the CLI');
+  try { capability = await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', code]); }
+  catch { throw new Error('Snapshot runtime does not support required recovery capabilities; upgrade the source and take a new snapshot'); }
+  if (capability.trim() !== 'supported') throw new Error('Snapshot recovery capability differs from the CLI');
 }
 
-async function requireRetirementRuntime(image) {
-  let capability;
-  try { capability = await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', "import {retirementCapability} from './packages/platform/src/retirement.mjs'; console.log(retirementCapability)"]); }
-  catch { throw new Error('Snapshot runtime does not support retirement; upgrade the source and take a new snapshot'); }
-  if (capability.trim() !== retirementCapability) throw new Error('Snapshot retirement capability differs from the CLI');
-}
 async function writeRetirement(target, image, state) {
   const code = "import {saveJson} from './packages/platform/src/store.mjs'; let input=''; for await(const part of process.stdin) input+=part; await saveJson('/data/state.json', JSON.parse(input));";
   await volumeHelper(image, target.volumes.controller.name, ['node', '--input-type=module', '-e', code], { readonly: false, inputText: JSON.stringify(state) });

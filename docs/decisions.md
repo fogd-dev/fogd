@@ -856,3 +856,32 @@ require their supported contract. Operators remain responsible for application-l
 reconciliation and idempotency. This supersedes ADR 032 only for the qualified
 ordinary Docker path; Kubernetes and transformations remain refused. Public queue
 admission and retirement/isolation acceptance remain separate gates.
+
+
+## ADR 034: retire queued apps into fresh fleet identities
+
+Context: ordinary Docker recovery now accounts for queued work. Retirement must
+prevent the removed app's queue from running again in its replacement fleet while
+preserving recovery controls for surviving apps.
+
+Options: retain the blanket refusal; purge queue records in place; or reuse the
+stopped-installation retirement protocol with explicit queue audit and fresh fleet
+identities. Purging would destroy recovery evidence and depend on queue internals.
+
+Decision: require `--stop-queued-work`, the exact active artifact digest, and a
+qualified unexpired stopped snapshot. Retain the target's delivery, preparation,
+and acknowledged recovery history privately under its retirement record. Remove
+operational queue fields and require a permanent queue-retirement capability.
+The replacement receives a disjoint bucket prefix, new node identities, and empty
+replica logs. Validate evidence against the source before transforming it; apply
+pending recovery receipts only to surviving apps and write the final state once.
+Admin inspection exposes an allowlisted audit summary. Backup accounts for valid
+retired history without trying to pause it again.
+
+Consequences: retirement intentionally stops pending target work in the replacement
+installation; it does not erase the old bucket prefix or immutable snapshots.
+Starting an older installation can still resurrect that work. Snapshot expiry is
+checked before restore creation, not frozen during image loading or startup.
+Surviving apps retain the ordinary recovery acknowledgment and separate resume.
+Aged target snapshots, Kubernetes, and expansion remain outside this qualified
+path. Public queue admission remains closed pending the full deployment acceptance.

@@ -85,3 +85,47 @@ interrupts a private child process after the controller archive copy, verifies s
 fresh-target retry, and checks ordinary restore before returning to the retired
 installation. It can also take an older complete Docker bundle as an argument to
 check runtime-capability refusal. It retains all fixture volumes and snapshots.
+
+
+## Queued app retirement
+
+Public queue admission remains closed. Privately qualified queued installations
+can use the same stopped snapshot workflow with `--stop-queued-work` when retiring
+a queued app. This flag explicitly accepts that its pending work will not execute
+in the replacement fleet. It is refused for a non-queued target.
+
+Every live queued app must have completed activation, reconciled migrations, an
+acknowledged prior recovery, and a matching unexpired snapshot receipt. Backup
+prepares and confirms operator pause. An expired target snapshot is refused even
+when the operator intends to stop its work. Upgrade the source runtime before
+backup: the CLI checks the snapshot image's queue-retirement capability before
+creating target containers.
+
+```sh
+pnpm exec fogd retire .fogd/before-retirement \
+  --app imports --digest ACTIVE_ARTIFACT_SHA256 --stop-queued-work \
+  --project fogd-after-retirement --output .fogd/after-retirement
+```
+
+The target's old queue state becomes private audit history. It has no operational
+delivery journal or recovery gate. Its retained bucket prefix is never assigned to
+the replacement fleet. Surviving queued apps receive pending recovery receipts and
+paused HTTP routes; follow the [recovery guide](queue-recovery.md) to inspect,
+acknowledge, and separately resume each one. A non-queued target requires no flag,
+but queued survivors still receive these gates.
+
+Later backups exclude valid retired queues from live preparation. Their history
+and capability remain in controller metadata, so older controllers refuse it.
+Kubernetes and expansion still refuse all queue history, including retired apps.
+Retirement preserves recovery material; it is neither data deletion nor a guarantee
+that an old installation cannot restart pending work.
+
+The private probes are `scripts/queue-retirement.mjs`,
+`scripts/queue-probe/retirement-isolation.mjs`, and
+`scripts/queue-probe/retirement-survivor.mjs`. They require a disposable M11 Docker
+fixture with an activated canonical `imports` app and one unused fleet. The first
+stages a second app privately, snapshots, and retires `imports`. Select the resulting
+Compose file and project in a private operator environment for the next two probes.
+They inspect a fresh queue/database, run replacement work, compare retained object
+identities, exercise survivor recovery, and take another snapshot. They deliberately
+bypass public artifact admission and do not establish hostile-tenant isolation.

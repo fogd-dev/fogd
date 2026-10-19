@@ -1,0 +1,81 @@
+{
+  "qualification": "private Docker queued retirement and replacement, partial acceptance",
+  "image": "sha256:251c050e6788e1541c3486c90c77c46c84b7f502a08e581023937dc4936cd077",
+  "retiredPendingCount": 1,
+  "sourceApps": [
+    "imports",
+    "survivor"
+  ],
+  "isolation": {
+    "oldPrefix": "slots/slot-1",
+    "retainedObjectCount": 47,
+    "unchangedAfterReplacement": true,
+    "initialQueue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": true,
+      "stored": 0
+    },
+    "replacementJob": {
+      "id": "replacement-1792437188851",
+      "input_hash": "2a320559781b8c8c869c7f811c84e2c63d34ec0fd016a14640aa44cbacfe5df0",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 19:13:08",
+      "results": [
+        {
+          "job_id": "replacement-1792437188851",
+          "position": 0,
+          "label": "NEW"
+        },
+        {
+          "job_id": "replacement-1792437188851",
+          "position": 1,
+          "label": "FLEET"
+        }
+      ]
+    },
+    "survivorStillPending": true
+  },
+  "survivor": {
+    "job": {
+      "id": "survivor-1792437219072",
+      "input_hash": "69ee7ad8b3981ca402051b172747be468f9dede5f93e563c1c767e8806ba595a",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 19:13:39",
+      "results": [
+        {
+          "job_id": "survivor-1792437219072",
+          "position": 0,
+          "label": "SURVIVING"
+        },
+        {
+          "job_id": "survivor-1792437219072",
+          "position": 1,
+          "label": "APPLICATION"
+        }
+      ]
+    },
+    "recovery": {
+      "preparedApps": [
+        "replacement",
+        "survivor"
+      ]
+    },
+    "retiredExcluded": true
+  },
+  "limits": [
+    "Retained object identity comparison begins after restored startup",
+    "Zero-live tombstone restore is unit-tested, not yet live-qualified",
+    "Public queue admission remains closed"
+  ],
+  "oldQueueRecoveryImageRefusedBeforeContainers": true
+}

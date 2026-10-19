@@ -23,6 +23,7 @@ test('retirement preserves history and the other app while permanently removing 
   assert.throws(() => retireState(next, 'notebook', digest, evidence), /permanently retired/);
 });
 test('retirement refuses ambiguous or unmatched active state before transforming anything', () => {
+  assert.throws(() => retirementApp(fixture(), 'notebook', digest, { stopQueuedWork: true }), /requires a queued app/);
   assert.throws(() => retirementApp(fixture(), 'missing', digest), /existing activated/);
   assert.throws(() => retirementApp(fixture(), 'notebook', 'b'.repeat(64)), /digest mismatch/);
   for (const patch of [{ quarantined: true }, { uncertain: 'failed' }, { route: 'unknown' }, { active: null }]) {

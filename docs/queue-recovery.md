@@ -1,8 +1,8 @@
 # Recover a Docker installation with queued work
 
 Docker backup and restore support the privately qualified single-queue app profile.
-Public `fogd deploy` still rejects queue declarations. Kubernetes, expansion, and
-retirement continue to refuse queued installations. This guide describes the
+Public `fogd deploy` still rejects queue declarations. Kubernetes and expansion continue to refuse queued installations.
+Docker retirement has an explicit [stopped-work protocol](retirement.md#queued-app-retirement). This guide describes the
 recovery protocol; it does not open queue admission.
 
 ## Back up

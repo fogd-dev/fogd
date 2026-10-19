@@ -185,7 +185,7 @@ test('invalid hold ownership is diagnosed before runtime commands', async t => {
 test('unavailable queue recovery leaves another app routable and does not retire the queued app', async t => {
   const { retirementApp } = await import('../src/retirement.mjs');
   const f = await fixture(t), r = await f.request(); await approve(f.c, r);
-  assert.throws(() => retirementApp(f.c.state, 'imports', r.digest), /retirement is not qualified/);
+  assert.throws(() => retirementApp(f.c.state, 'imports', r.digest), /stop-queued-work/);
   const next = await f.request(); f.fail('resume'); await approve(f.c, next);
   f.c.state.apps.other = { slot: 'two', active: 'other', route: 'active', resources: { script: 'other', d1: [], r2: [], durable: {} }, migrations: [] };
   await f.c.save(); f.fail('pause');

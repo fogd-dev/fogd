@@ -318,3 +318,10 @@ full public approval acceptance remain pending. fogd still rejects queue declara
 
 Docker queue recovery has a [private-artifact qualification](docs/queue-recovery.md)
 with persisted pause, retention checks, and explicit acknowledgment before resume.
+
+
+Queued Docker retirement has [partial local qualification](docs/retirement.md#queued-app-retirement):
+an explicit stop-work flag retains old queue history while a fresh fleet runs a
+replacement app. Surviving apps retain recovery acknowledgment and resume controls.
+Public queue admission stays closed until the remaining retirement and deployment
+acceptance checks pass. See the [evidence and limits](docs/evidence/m11a-queue-retirement.json).

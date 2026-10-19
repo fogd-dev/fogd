@@ -6,6 +6,9 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { queueRetentionContract, queueExpiry } from '@fogd/platform/queue-snapshot';
 import { queueSnapshotEvidence, prepareQueueBackup } from '../src/recovery/queue-backup.mjs';
+import { retireState, validateRetirementState } from '@fogd/platform/retirement';
+import { queueBackupApps } from '../src/recovery/queue-backup.mjs';
+import { assertQueueFreeRecovery } from '../src/recovery/queue-safety.mjs';
 import { restoredQueueState } from '../src/recovery/queue-restore.mjs';
 import { execute } from '../src/recovery/execute.mjs';
 import { fingerprint } from '../src/recovery/bundle.mjs';
@@ -80,4 +83,91 @@ test('real CLI refuses an expired checksummed queue bundle before contacting Doc
   const target = join(dir, 'target');
   await assert.rejects(promisify(execFile)(process.execPath, [fileURLToPath(new URL('../bin/fogd.js', import.meta.url)), 'restore', dir, '--project', 'fresh', '--output', target], { env: { ...process.env, DOCKER_HOST: 'unix:///nonexistent-fogd-recovery-test.sock' } }), error => error.stderr.includes('snapshot is expired'));
   await assert.rejects(access(target), /ENOENT/);
+});
+
+function retireFixture(state) {
+  const app = state.apps.imports;
+  app.resources.queues = { producers: [{ queue: 'jobs' }], consumers: [{ queue: 'jobs' }] };
+  Object.assign(app.delivery, { schema: 1, observedAt: new Date().toISOString() });
+  const evidence = { previous: { slot: 'one', prefix: 'old/imports' }, replacement: { prefix: 'fresh/imports' }, snapshot: { sha256: 'b'.repeat(64) } };
+  return { evidence, digest: state.deployments[app.active].digest };
+}
+
+test('queued retirement retains immutable audit, excludes historical queues, and refuses operational revival', () => {
+  const { state } = source(), { evidence, digest } = retireFixture(state);
+  const before = structuredClone(state);
+  assert.throws(() => retireState(state, 'imports', digest, evidence), /stop-queued-work/);
+  const retired = retireState(state, 'imports', digest, evidence, { stopQueuedWork: true });
+  assert.deepEqual(state, before);
+  validateRetirementState(retired, [{ prefix: 'fresh/imports' }]);
+  assert.deepEqual(queueBackupApps(retired), []);
+  assert.equal(queueSnapshotEvidence(retired, {}), null);
+  assert.throws(() => assertQueueFreeRecovery(retired), /not qualified|unsupported/);
+  for (const field of ['delivery', 'queueBootstrap', 'queueSnapshot', 'queueRecovery', 'deliveryRecoveryError']) {
+    const tampered = structuredClone(retired); tampered.apps.imports[field] = {};
+    assert.throws(() => queueBackupApps(tampered), /operational/);
+  }
+  const missing = structuredClone(retired); delete missing.apps.imports.retirement.queue;
+  assert.throws(() => queueBackupApps(missing), /audit/);
+  const revived = structuredClone(retired); revived.deployments[state.apps.imports.active].status = 'active';
+  assert.throws(() => queueBackupApps(revived), /retired approval/);
+});
+
+test('retirement restore preserves the tombstone and gates only surviving queues', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'fogd-retired-queue-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const { state, expected } = source(), { evidence, digest } = retireFixture(state);
+  const other = source();
+  state.apps.survivor = other.state.apps.imports;
+  const active = other.state.deployments[other.state.apps.imports.active]; active.app = 'survivor';
+  state.deployments[active.id] = active; expected.survivor = other.receipt.id;
+  const manifest = { queueRecovery: queueSnapshotEvidence(state, expected) };
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+  await writeFile(join(dir, 'state.json'), JSON.stringify(state));
+  await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
+  const change = { kind: 'retirement', state: retireState(state, 'imports', digest, evidence, { stopQueuedWork: true }) };
+  const restored = await restoredQueueState(dir, manifest, change);
+  assert.deepEqual(restored.apps.imports, change.state.apps.imports);
+  assert.equal(restored.apps.survivor.queueRecovery.status, 'pending');
+  assert.equal(restored.apps.survivor.route, 'paused');
+  assert.equal(change.state.apps.survivor.queueRecovery, undefined);
+  assert.equal(restored.apps.imports.delivery, undefined);
+});
+
+test('ordinary restore of only retired queues preserves audit without new recovery evidence', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'fogd-retired-only-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const { state } = source(), { evidence, digest } = retireFixture(state);
+  const retired = retireState(state, 'imports', digest, evidence, { stopQueuedWork: true });
+  await writeFile(join(dir, 'state.json'), JSON.stringify(retired));
+  await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
+  assert.deepEqual(await restoredQueueState(dir, {}, null), retired);
+  await assert.rejects(restoredQueueState(dir, { queueRecovery: { schema: 1, apps: {} } }, null), /Unexpected/);
+  const missing = structuredClone(retired); missing.requirements = missing.requirements.filter(v => v !== 'fogd-queue-retirement-v1');
+  assert.throws(() => queueBackupApps(missing), /capability/);
+});
+
+test('non-queue retirement with queued survivors requires recovery but no queued retirement capability', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'fogd-retire-static-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const { state, expected } = source();
+  state.apps.static = { active: 'static', slot: 'two', route: 'active' };
+  state.deployments.static = { id: 'static', app: 'static', status: 'active', digest: 'd'.repeat(64) };
+  const manifest = { queueRecovery: queueSnapshotEvidence(state, expected) };
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+  await writeFile(join(dir, 'state.json'), JSON.stringify(state));
+  await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
+  const next = retireState(state, 'static', 'd'.repeat(64), { previous: { slot: 'two', prefix: 'old/static' }, replacement: { prefix: 'fresh/static' } });
+  const restored = await restoredQueueState(dir, manifest, { kind: 'retirement', state: next });
+  assert.equal(restored.apps.imports.queueRecovery.status, 'pending');
+  assert.equal(restored.apps.static.route, 'retired');
+  assert.ok(!restored.requirements.includes('fogd-queue-retirement-v1'));
+});
+
+test('runtime capability probes cover zero-live retired history without requiring new modules on old images', async () => {
+  const { requiredCapabilities } = await import('../src/recovery/restore.mjs');
+  assert.deepEqual(requiredCapabilities(null, null), []);
+  assert.deepEqual(requiredCapabilities({}, { kind: 'retirement' }).map(v => v[0]), ['retirement']);
+  assert.deepEqual(requiredCapabilities({ requirements: ['fogd-queue-retirement-v1'] }, null).map(v => v[0]), ['queue-retirement']);
+  assert.deepEqual(requiredCapabilities({ requirements: ['fogd-queue-recovery-v1'] }, null).map(v => v[0]), ['queue-snapshot']);
 });

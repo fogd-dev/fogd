@@ -14,6 +14,11 @@ export function adminState(controller) {
 function adminApp(app) {
   const visible = { ...app };
   delete visible.queueSnapshot;
+  if (app.retirement?.queue) {
+    const { stopQueuedWork, prepared } = app.retirement.queue;
+    visible.retirement = { ...app.retirement, queue: { stopQueuedWork, queue: prepared.queue,
+      snapshot: { id: prepared.id, at: prepared.at, backlogCount: prepared.observation.backlogCount } } };
+  }
   if (app.queueRecovery) {
     const { id, status, diagnosis, checkError, checkedAt, acknowledgedAt } = app.queueRecovery;
     visible.queueRecovery = { id, status, diagnosis, checkError, checkedAt, acknowledgedAt };

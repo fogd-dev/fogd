@@ -164,3 +164,13 @@ test('recovery retries unconfirmed startup pause after replicas become available
   await operateDelivery(c, 'imports', 'acknowledge-recovery', { ...input, review: recoveryReview(app.queueRecovery) });
   assert.equal(app.queueRecovery.status, 'acknowledged'); assert.equal(f.paused(), true);
 });
+
+test('retired queue inspection exposes an allowlisted audit without private runtime generations', async t => {
+  const { retireState } = await import('../src/retirement.mjs');
+  const f = await prepared(t), app = f.c.state.apps.imports;
+  const evidence = { previous: { slot: app.slot, prefix: 'old/imports' }, replacement: { prefix: 'new/imports' }, snapshot: { sha256: 'c'.repeat(64) } };
+  f.c.state = retireState(f.c.state, 'imports', f.input.digest, evidence, { stopQueuedWork: true });
+  const audit = adminState(f.c).apps.imports.retirement.queue;
+  assert.deepEqual(audit, { stopQueuedWork: true, queue: f.receipt.queue, snapshot: { id: f.receipt.id, at: f.receipt.at, backlogCount: 1 } });
+  assert.ok(!JSON.stringify(audit).includes(f.receipt.version));
+});

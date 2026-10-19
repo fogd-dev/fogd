@@ -634,3 +634,24 @@ The [two-review response](reviews/m11a-repair-response.md) records the startup g
 pre-intent metadata rollback, and retry limitations. Public queue admission remains
 closed pending stopped recovery/retention, retirement/isolation, and full deployment
 acceptance.
+
+
+## M11a queued retirement checkpoint
+
+Docker retirement now accepts the privately qualified queued app profile with an
+explicit `--stop-queued-work` flag and an unexpired stopped snapshot. The target's
+queue becomes retained audit history. Surviving apps receive recovery receipts;
+only explicit acknowledgment restores HTTP access, and delivery still needs resume.
+The generated state is validated before target creation and written once.
+
+The [local evidence](evidence/m11a-queue-retirement.json) records retirement with
+pending work, an empty replacement queue/database, successful replacement work,
+47 unchanged retained prefix objects after replacement traffic, and successful
+survivor recovery. A subsequent backup includes only the two live queued apps.
+The [review response](reviews/m11a-queue-retirement-response.md) records both Claude
+reviews and their fixes. ADR 034 explains the permanent audit and capability.
+
+This is partial retirement acceptance: a live restore containing only retired queues
+and a prefix comparison beginning at the source remain next. Public queue admission,
+Kubernetes queue recovery, and queued expansion remain closed. Retention still runs
+on wall-clock time, and starting older installations can resurrect retired work.

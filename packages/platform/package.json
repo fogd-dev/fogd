@@ -9,6 +9,7 @@
   },
   "exports": {
     "./retirement": "./src/retirement.mjs",
-    "./queue-snapshot": "./src/queue-snapshot.mjs"
+    "./queue-snapshot": "./src/queue-snapshot.mjs",
+    "./queue-retirement": "./src/queue-retirement.mjs"
   }
 }
