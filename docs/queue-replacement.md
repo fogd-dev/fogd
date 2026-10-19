@@ -1,8 +1,8 @@
 # Queue replacement approvals
 
 An administrator can approve a corrected artifact while retaining the failed
-activation's queue hold and migration evidence. Public queue upload admission
-remains closed; this recovery path is qualified with privately staged artifacts.
+activation's queue hold and migration evidence. Queue upload admission
+defaults off; this recovery path is qualified with privately staged artifacts.
 
 For an existing qualification app, inspect both requests with `fogd admin list`,
 review their artifacts, then approve the exact replacement:

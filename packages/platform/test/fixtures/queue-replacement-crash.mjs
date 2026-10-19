@@ -8,7 +8,7 @@ const crash = () => process.kill(process.pid, 'SIGKILL');
 const backend = queueBackend(dir, event => {
   if (event === 'pause' && point === 'effect' && JSON.parse(readFileSync(join(dir, 'state.json'))).apps.imports.delivery.hold === candidate) crash();
 });
-const c = new Controller({ dir, slots: [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }], backend,
+const c = new Controller({ queueApps: true, dir, slots: [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }], backend,
   async persist(path, state) {
     const transfer = state.deployments?.[candidate]?.step === 'transferring-delivery-hold' && state.apps.imports.delivery.hold === candidate;
     if (transfer && point === 'before') crash();

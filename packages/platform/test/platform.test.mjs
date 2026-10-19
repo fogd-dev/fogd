@@ -785,3 +785,68 @@ test('a quarantined unclaimed reservation can be rejected after its artifact is 
   assert.equal(recovered.state.deployments[request.id].status, 'rejected');
   assert.equal(recovered.available('other').id, 'slot-1');
 });
+
+
+const queuedResources = { queues: { producers: [{ binding: 'JOBS', queue: 'jobs' }], consumers: [{ queue: 'jobs', max_batch_size: 1, max_batch_timeout: 1, max_retries: 1, retry_delay: 1 }] } };
+test('queue submission and approval require installation opt-in before authority or runtime effects', async t => {
+  const f = await setup(t);
+  const artifact = await f.artifact('hello', [], queuedResources);
+  await assert.rejects(f.controller.submit(artifact, 'team-token'), /not enabled/);
+  assert.deepEqual(Object.keys(f.controller.state.deployments), []);
+  assert.ok(!f.controller.state.requirements?.includes('fogd-queue-activation-v1'));
+  f.controller.queueApps = true;
+  const request = await f.controller.submit(artifact, 'team-token');
+  assert.equal(request.resources.queues.producers[0].queue, 'hello-jobs');
+  assert.deepEqual(f.owners, {}); assert.equal(f.publishes(), 0);
+  f.controller.queueApps = false;
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /not enabled/);
+  assert.equal(request.step, 'submitted'); assert.equal(Object.hasOwn(request, 'secretRevision'), false);
+  await f.controller.mutate(request.id, request.digest, 'reject');
+  assert.equal(request.status, 'rejected');
+});
+
+test('rejected queued claim release survives ambiguous persistence and remains artifact-only history', async t => {
+  const { artifactOnlyQueueRequest } = await import('../src/queue-history.mjs');
+  for (const committed of [false, true]) {
+    let armed = false;
+    const f = await setup(t, { queueApps: true, persist: async (path, state) => {
+      if (armed && Object.values(state.deployments || {}).some(d => d.claimRelease)) {
+        if (committed) await saveJson(path, state);
+        throw Error('release write failed');
+      }
+      await saveJson(path, state);
+    } });
+    f.backend.claim = async () => { throw Error('unreachable'); };
+    const request = await f.controller.submit(await f.artifact('hello', [], queuedResources), 'team-token');
+    assert.equal(artifactOnlyQueueRequest(f.controller.state, request), true);
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /unreachable/);
+    assert.equal(artifactOnlyQueueRequest(f.controller.state, request), false);
+    armed = true;
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'reject'), /restart/);
+    const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+    const persisted = recovered.state.deployments[request.id];
+    assert.equal(Boolean(persisted.claimRelease), committed);
+    assert.equal(artifactOnlyQueueRequest(recovered.state, persisted), committed);
+    if (!committed) await recovered.mutate(request.id, request.digest, 'reject');
+    assert.equal(artifactOnlyQueueRequest(recovered.state, persisted), true);
+    assert.equal(persisted.claimRelease.prefix, 'one');
+  }
+});
+
+test('non-queue approvals cannot strand inert queued history under the same app name', async t => {
+  const { artifactOnlyQueueRequest } = await import('../src/queue-history.mjs');
+  for (const previous of ['superseded', 'rejected', 'released']) {
+    const f = await setup(t, { queueApps: true });
+    const queued = await f.controller.submit(await f.artifact('hello', [], queuedResources), 'team-token');
+    if (previous === 'released') {
+      const claim = f.backend.claim; f.backend.claim = async () => { throw Error('unreachable'); };
+      await assert.rejects(f.controller.mutate(queued.id, queued.digest, 'approve'), /unreachable/);
+      f.backend.claim = claim;
+    }
+    if (previous !== 'superseded') await f.controller.mutate(queued.id, queued.digest, 'reject');
+    const ordinary = await f.controller.submit(await f.artifact('hello'), 'team-token');
+    await f.controller.mutate(ordinary.id, ordinary.digest, 'approve');
+    assert.equal(ordinary.status, 'active');
+    assert.equal(artifactOnlyQueueRequest(f.controller.state, queued), true);
+  }
+});

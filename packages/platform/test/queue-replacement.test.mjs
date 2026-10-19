@@ -155,7 +155,7 @@ test('SIGKILL around replacement transfer retains one approved hold owner and ne
     const child = spawnSync(process.execPath, [fileURLToPath(new URL('./fixtures/queue-replacement-crash.mjs', import.meta.url)), f.c.dir, next.id, old.id, old.digest, point], { encoding: 'utf8', timeout: 15000 });
     assert.equal(child.signal, 'SIGKILL', child.stderr);
     const runtime = await readJson(join(f.c.dir, 'queue-runtime.json'));
-    const c = new Controller({ dir: f.c.dir, slots, backend: queueBackend(f.c.dir) }); await c.init();
+    const c = new Controller({ queueApps: true, dir: f.c.dir, slots, backend: queueBackend(f.c.dir) }); await c.init();
     assert.equal(c.state.apps.imports.delivery.hold, point === 'before' ? old.id : next.id);
     assert.equal(c.state.deployments[next.id].status, point === 'before' ? 'pending' : 'failed');
     assert.equal((await readJson(join(f.c.dir, 'queue-runtime.json'))).paused, true);

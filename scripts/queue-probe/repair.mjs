@@ -14,7 +14,7 @@ const slot = JSON.parse(process.env.FOGD_SLOTS).find(slot => slot.id === slotId)
 assert.ok(slot); const backend = new Backend();
 assert.equal(await backend.owner(slot), null); assert.equal(await backend.hasDeployment(slot), false);
 const dir = join(process.env.FOGD_DATA_DIR || '/var/lib/fogd', `repair-${randomUUID()}`);
-const c = new Controller({ dir, slots: [slot], backend }); await c.init();
+const c = new Controller({ queueApps: true, dir, slots: [slot], backend }); await c.init();
 const password = randomUUID(), http = server(c, { user: 'probe', password, gateway: randomUUID(), deploy: randomUUID() });
 await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
 const origin = `http://127.0.0.1:${http.address().port}`, headers = { authorization: `Basic ${Buffer.from(`probe:${password}`).toString('base64')}` };

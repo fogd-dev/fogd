@@ -436,3 +436,30 @@ retired app against its original stopped source and checked all target container
 Its first attempt incorrectly passed already-inspected container objects back to
 Docker inspect; the corrected attempt passed. This was a harness error after hashing,
 not a recovery or storage failure.
+
+
+### Normal queue upload qualification
+
+The first public-path harness assumed a never-deployed fleet had no objects at all.
+celld initialized wake-format metadata while idle. Changed the assertion to require
+no app ownership and no deploy objects, then resumed the single existing pending
+request with its scoped credential identity. Pending-only backup/restore and exact
+approval succeeded; the derived Void queue processed success, retry, terminal failure,
+and explicit retry without duplicate result rows. The fixture remains opted in and
+operator-paused; repository defaults remain off.
+
+
+The public failed-claim drill deliberately stopped only the disposable bucket service
+before approval, restored it in a finally block, and rejected the verified unclaimed
+reservation through the normal admin API. Subsequent backup succeeded. Empty second-
+fleet replicas exited 143 during shutdown, without OOM; manifest exits preserve this
+crash-recovery requirement. The source remains stopped with a complete snapshot for
+the next restore qualification.
+
+
+The current-image history drill combines all inert same-name transitions: a prior
+released claim, a rejected unapproved queue upload, and a pending queue upload later
+superseded by a non-queue approval. It also stops one replica, kills the controller
+while a new queued approval holds delivery, restarts with admission disabled, and
+retries the pinned approval. All pass and the final backup is complete. Independent
+Docker inspection confirms admission was 0 in the actual controller container.

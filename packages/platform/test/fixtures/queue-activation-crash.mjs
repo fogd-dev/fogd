@@ -4,7 +4,7 @@ import { queueBackend } from './queue-backend.mjs';
 const [dir, id, point] = process.argv.slice(2);
 const crash = () => process.kill(process.pid, 'SIGKILL');
 const backend = queueBackend(dir, event => { if (point === `effect:${event}`) crash(); });
-const c = new Controller({ dir, slots: [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }], backend,
+const c = new Controller({ queueApps: true, dir, slots: [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }], backend,
   async persist(path, value) {
     await saveJson(path, value);
     const request = value.deployments?.[id];

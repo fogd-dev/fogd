@@ -22,9 +22,11 @@ export class Controller {
   #storageFailed = false;
   #storageCause;
   #reportStorageFailure;
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now }) {
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
     this.clock = clock;
+    if (typeof queueApps !== 'boolean') throw new Error('Queue admission setting must be boolean');
+    this.queueApps = queueApps;
     this.#persist = persist;
     this.#reportStorageFailure = reportStorageFailure;
     this.maxPending = positiveLimit(maxPending, 'Pending deployment limit');
@@ -96,6 +98,11 @@ export class Controller {
     }
     return resourceChanges(this.state.deployments[app.active]?.resources, release.resources);
   }
+  assertQueueAdmission(request, action = 'submit') {
+    if (action === 'reject') return;
+    if (action === 'approve' && request.status === 'failed' && Object.hasOwn(request, 'secretRevision')) return;
+    if (request.resources?.queues && !this.queueApps) throw new Error('Queue applications are not enabled on this installation');
+  }
   submit(body, submitter) {
     return this.exclusive(async () => {
       if (submitter !== 'team-token') this.credentials.requireScope(submitter, body.app);
@@ -106,6 +113,7 @@ export class Controller {
       const id = randomUUID(), dir = this.artifact(id);
       try {
         const release = await receiveArtifact(body, dir);
+        this.assertQueueAdmission(release);
         if (!this.available(release.app)) throw new Error('No available app slots');
         const changes = this.compatible(release, this.state.apps[release.app]);
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
@@ -152,6 +160,7 @@ export class Controller {
       assertClaimRequest(this.state, request);
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
+      this.assertQueueAdmission(request, action);
       if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
       const previous = replacementFor(this, request, replaces);
       assertQueueDecision(this.state.apps[request.app], request, action, Boolean(previous));

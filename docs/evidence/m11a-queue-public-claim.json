@@ -1,0 +1,67 @@
+{
+  "project": "fogd-m11a-public-1792438511400",
+  "image": "sha256:32972ab422e9e5d0b206dcfa7ff2115070d6911aa9a6c994c57b9243160fbc28",
+  "app": "imports-claim",
+  "deployment": {
+    "id": "a3a6c5c6-2751-426b-88b4-9aeb9ca4f825",
+    "digest": "3c74b4b1f0daa55a4f9ff6f0d1e15182eae58994b6703c1082cbb88e1f89736d"
+  },
+  "claimRelease": {
+    "schema": 1,
+    "deployment": "a3a6c5c6-2751-426b-88b4-9aeb9ca4f825",
+    "digest": "3c74b4b1f0daa55a4f9ff6f0d1e15182eae58994b6703c1082cbb88e1f89736d",
+    "slot": "slot-2",
+    "prefix": "retirement-generations/e8bed14a-f229-4a2f-b028-976c4f5b55ba",
+    "at": "2026-10-19T19:43:14.586Z"
+  },
+  "backupSucceeded": true,
+  "preparedApps": [
+    "imports-public"
+  ],
+  "snapshotExits": [
+    {
+      "service": "slot-2-b",
+      "exitCode": 143,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-1-b",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-2-a",
+      "exitCode": 143,
+      "oomKilled": false
+    },
+    {
+      "service": "controller",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-1-a",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "bucket-init",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "minio",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "workerd",
+      "exitCode": 1,
+      "oomKilled": false
+    }
+  ],
+  "limits": [
+    "Snapshot restore is still pending; two unused-fleet replicas exited 143",
+    "Live image predates later admission-history edge-case fixes, which have separate regression tests"
+  ]
+}

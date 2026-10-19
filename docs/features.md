@@ -31,7 +31,7 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | SQL-backed Durable Objects | Yes; notebook tested | Yes | Yes; local storage | SDK | Yes |
 | R2 object storage | Partial; approved additions and browser put/get tested, multipart not portable | Partial; multipart handles process-local | Partial; client needs backend | Storage SDK | Yes |
 | KV | No; adapter rejects it | Yes | Partial; client needs backend | SDK/config | Yes |
-| Queues | No; adapter rejects them | Yes | Partial; needs broker | SDK/config | Yes |
+| Queues | Partial; [Docker opt-in](queue-admission.md), default off | Yes | Partial; needs broker | SDK/config | Yes |
 | Workflows | No; adapter rejects them | Yes | Partial; needs execution backend | Config passthrough | Yes |
 | Cron scheduling | No; adapter rejects it | Yes; fleet scheduler | Partial; external scheduler | SDK/config | Yes |
 | Static assets | Partial; native React pages, CSS and split client JS tested | Yes | Partial; configure asset service | Vite / Platform routing | Yes |

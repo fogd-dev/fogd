@@ -99,8 +99,10 @@ qualifies original migration reconciliation and atomic hold transfer. The [Docke
 persisted pause, and explicit recovery acknowledgment with private artifacts.
 Queued Docker retirement now has [isolation evidence](evidence/m11a-queue-retirement.json)
 and [source-preservation/zero-live restore evidence](evidence/m11a-queue-retirement-complete.json).
-Next: canonical admission, backup accounting for never-approved queue artifacts, and the full
-public approval/gateway application acceptance flow. The native Void imports fixture
+The [admission foundation](queue-admission.md) now has normal scoped CLI upload,
+pending-only backup/restore, exact approval, and derived-name dispatch evidence.
+Next: additive update/overlap, queued recovery and retirement of canonical artifacts,
+and browser acceptance before default enablement. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be

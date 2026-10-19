@@ -9,7 +9,7 @@ export function secretNames(names) {
 export function deploymentMetadata(value, config) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => key !== 'requiredSecrets')) throw new Error('Invalid deployment metadata');
   const requiredSecrets = secretNames(value.requiredSecrets);
-  const taken = new Set([...Object.keys(config.vars || {}), ...(config.d1_databases || []).map(b => b.binding), ...(config.r2_buckets || []).map(b => b.binding), ...(config.durable_objects?.bindings || []).map(b => b.name), config.assets?.binding].filter(Boolean).map(name => name.toLowerCase()));
+  const taken = new Set([...Object.keys(config.vars || {}), ...(config.d1_databases || []).map(b => b.binding), ...(config.r2_buckets || []).map(b => b.binding), ...(config.durable_objects?.bindings || []).map(b => b.name), ...(config.queues?.producers || []).map(b => b.binding), config.assets?.binding].filter(Boolean).map(name => name.toLowerCase()));
   if (requiredSecrets.some(name => taken.has(name.toLowerCase()))) throw new Error('Secret name conflicts with a variable or resource binding');
   return { requiredSecrets };
 }

@@ -313,8 +313,9 @@ A built-controller Docker probe also covers real bootstrap, migration, and lost-
 recovery. [Admin delivery controls](docs/delivery-controls.md) provide recorded status,
 refresh, pause, and exact-approval resume through the CLI and browser.
 [Replacement approvals](docs/queue-replacement.md) recover from faulty unapplied
-migrations while preserving the hold and applied hashes. Retirement/isolation and
-full public approval acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+migrations while preserving the hold and applied hashes. Full application acceptance
+remains pending. Queue admission now has an [experimental Docker opt-in](docs/queue-admission.md)
+and remains off by default. See the [design and review response](docs/reviews/m11a-response.md).
 
 Docker queue recovery has a [private-artifact qualification](docs/queue-recovery.md)
 with persisted pause, retention checks, and explicit acknowledgment before resume.
@@ -325,5 +326,6 @@ an explicit stop-work flag retains old queue history while a fresh fleet runs a
 replacement app. Surviving apps retain recovery acknowledgment and resume controls.
 The [completion drill](docs/evidence/m11a-queue-retirement-complete.json) compares retained
 objects with the source and restores an installation containing only retired queues.
-Public queue admission stays closed until canonical admission and the complete
-deployment acceptance checks pass.
+The [normal CLI checkpoint](docs/queue-admission.md) now covers scoped upload,
+pending-only backup/restore, exact approval, derived-name dispatch, and application
+retry. Default admission stays off until the remaining acceptance checks pass.

@@ -2,7 +2,7 @@ import { Delivery, initialDelivery, validateDelivery } from './delivery.mjs';
 
 export const queueCapability = 'fogd-queue-activation-v1';
 
-// Admission remains closed. These checks also protect internally staged probes.
+// Admission defaults off. These checks also protect internally staged probes.
 export function activationQueue(resources) {
   const queues = resources.queues;
   if (!queues) return null;

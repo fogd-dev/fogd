@@ -12,7 +12,8 @@ if (!Array.isArray(slots) || !slots.length || new Set(slots.map(s => s.id)).size
 for (const slot of slots) {
   if (!/^[a-z0-9-]+$/.test(slot.id) || !/^[a-z0-9/-]+$/.test(slot.prefix) || slot.prefix.split('/').some(p => !p || p === '..') || slot.nodes.length !== 2 || slot.nodes.some(n => !/^[a-z0-9.-]+$/.test(n))) throw new Error('Invalid fleet configuration');
 }
-const controller = new Controller({ dir: process.env.FOGD_DATA_DIR || '/var/lib/fogd', slots, backend: new Backend(), baseDomain: process.env.FOGD_BASE_DOMAIN || 'localhost', maxPending: process.env.FOGD_MAX_PENDING ?? 20, maxPendingPerCredential: process.env.FOGD_MAX_PENDING_PER_CREDENTIAL ?? 5, maxArtifactBytes: process.env.FOGD_MAX_ARTIFACT_BYTES ?? 268435456 });
+if (!['0', '1'].includes(process.env.FOGD_QUEUE_APPS || '0')) throw new Error('FOGD_QUEUE_APPS must be 0 or 1');
+const controller = new Controller({ queueApps: process.env.FOGD_QUEUE_APPS === '1', dir: process.env.FOGD_DATA_DIR || '/var/lib/fogd', slots, backend: new Backend(), baseDomain: process.env.FOGD_BASE_DOMAIN || 'localhost', maxPending: process.env.FOGD_MAX_PENDING ?? 20, maxPendingPerCredential: process.env.FOGD_MAX_PENDING_PER_CREDENTIAL ?? 5, maxArtifactBytes: process.env.FOGD_MAX_ARTIFACT_BYTES ?? 268435456 });
 await controller.init();
 const http = server(controller, credentials, { maxUploads: process.env.FOGD_MAX_UPLOADS ?? 2, tls });
 http.listen(Number(process.env.FOGD_CONTROL_PORT || 8082), process.env.FOGD_CONTROL_BIND || '0.0.0.0', () => console.log('fogd approval controller ready'));

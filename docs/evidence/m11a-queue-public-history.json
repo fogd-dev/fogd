@@ -1,0 +1,61 @@
+{
+  "image": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+  "project": "fogd-m11a-public-1792438511400",
+  "admissionSetting": "0",
+  "supersededUnapproved": "f22b327b-3feb-4845-91e4-ca32e28221c9",
+  "rejectedUnapproved": "e419de70-8d6a-4c62-88d2-fc2629ad7d2c",
+  "nonQueueApproval": "515ff237-e601-4365-83df-5520dc45870f",
+  "retriedPinnedApproval": "6f69256d-e1ec-4683-93b8-3fa253409ca7",
+  "approvedRetryWithAdmissionOff": true,
+  "backupAfterNameReuse": true,
+  "preparedApps": [
+    "imports-public"
+  ],
+  "exits": [
+    {
+      "service": "controller",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-2-a",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-2-b",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-1-a",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "slot-1-b",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "workerd",
+      "exitCode": 1,
+      "oomKilled": false
+    },
+    {
+      "service": "bucket-init",
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    {
+      "service": "minio",
+      "exitCode": 0,
+      "oomKilled": false
+    }
+  ],
+  "containerAdmissionSettingVerified": "FOGD_QUEUE_APPS=0",
+  "limits": [
+    "Snapshot restore and full canonical update/recovery/retirement/browser acceptance remain pending",
+    "Controller SIGKILL and a stopped replica are deliberate disposable-fixture fault injections"
+  ]
+}

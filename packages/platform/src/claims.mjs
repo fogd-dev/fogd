@@ -72,6 +72,7 @@ export async function rejectUnclaimed(c, request) {
   await c.backend.assertUnclaimed(slot);
   // The caller persists reservation removal and rejection together. No bucket
   // objects are deleted, and an ambiguous local write trips the shared latch.
+  request.claimRelease = { schema: 1, deployment: request.id, digest: request.digest, slot: slot.id, prefix: slot.prefix, at: new Date(c.clock()).toISOString() };
   delete c.state.apps[request.app];
   c.occupied.delete(slot.id); c.bucketOwners.delete(slot.id);
 }

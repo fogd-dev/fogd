@@ -5,7 +5,7 @@ import { Backend } from '/app/packages/platform/src/backend.mjs';
 import { deliveryFor } from '/app/packages/platform/src/queue-activation.mjs';
 import { stageRequest } from './controller-artifact.mjs';
 const [sourceName, name] = process.argv.slice(2);
-const controller = new Controller({ dir: process.env.FOGD_DATA_DIR || '/var/lib/fogd', slots: JSON.parse(process.env.FOGD_SLOTS), backend: new Backend() });
+const controller = new Controller({ queueApps: true, dir: process.env.FOGD_DATA_DIR || '/var/lib/fogd', slots: JSON.parse(process.env.FOGD_SLOTS), backend: new Backend() });
 await controller.init();
 assert.equal(controller.state.apps[name], undefined);
 const source = controller.state.apps[sourceName]; assert.ok(source);

@@ -123,7 +123,7 @@ test('controller SIGKILL preserves activation holds for first deployment and upd
       assert.equal(child.signal, 'SIGKILL', child.stderr);
       const runtimePath = join(f.c.dir, 'queue-runtime.json');
       const before = await readJson(runtimePath);
-      const c = new Controller({ dir: f.c.dir, slots, backend }); await c.init();
+      const c = new Controller({ queueApps: true, dir: f.c.dir, slots, backend }); await c.init();
       const after = await readJson(runtimePath);
       assert.equal(c.state.deployments[r.id].status, 'failed');
       assert.equal(c.route('imports.localhost').state, 'paused');
@@ -190,9 +190,20 @@ test('unavailable queue recovery leaves another app routable and does not retire
   f.c.state.apps.other = { slot: 'two', active: 'other', route: 'active', resources: { script: 'other', d1: [], r2: [], durable: {} }, migrations: [] };
   await f.c.save(); f.fail('pause');
   const backend = { ...f.backend, owner: slot => slot.id === 'two' ? Promise.resolve({ app: 'other' }) : f.backend.owner(slot) };
-  const c = new Controller({ dir: f.c.dir, slots: [...slots, { id: 'two', prefix: 'two', nodes: ['c', 'd'] }], backend });
+  const c = new Controller({ queueApps: true, dir: f.c.dir, slots: [...slots, { id: 'two', prefix: 'two', nodes: ['c', 'd'] }], backend });
   await c.init();
   assert.equal(c.route('other.localhost').state, 'active');
   assert.equal(c.route('imports.localhost').state, 'paused');
   assert.equal(c.state.apps.imports.delivery.observed, 'unknown');
+});
+
+test('disabling new queue admission preserves exact previously approved activation retries', async t => {
+  const f = await fixture(t), request = await f.request(); f.fail('publish');
+  await f.c.mutate(request.id, request.digest, 'approve'); assert.equal(request.status, 'failed');
+  const restarted = new Controller({ dir: f.c.dir, slots, backend: f.backend, queueApps: false }); await restarted.init();
+  const retry = restarted.state.deployments[request.id];
+  await restarted.mutate(retry.id, retry.digest, 'approve');
+  assert.equal(retry.status, 'active'); assert.equal(restarted.state.apps.imports.delivery.hold, null);
+  const next = await f.request(restarted);
+  await assert.rejects(restarted.mutate(next.id, next.digest, 'approve'), /not enabled/);
 });

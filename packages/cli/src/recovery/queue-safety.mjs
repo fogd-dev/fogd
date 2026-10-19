@@ -1,3 +1,4 @@
+import { artifactOnlyQueueRequest, hasQueueLifecycle } from '@fogd/platform/queue-history';
 import { snapshotState } from './snapshot-state.mjs';
 
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -12,11 +13,13 @@ export function assertQueueFreeRecovery(state) {
   }
   const apps = Object.values(state.apps), deployments = Object.values(state.deployments);
   if ([...apps, ...deployments].some(value => !record(value))) throw new Error('Cannot establish recovery support from controller metadata');
-  if (state.requirements?.includes('fogd-queue-activation-v1') ||
-      apps.some(app => Object.hasOwn(app, 'delivery') || Object.hasOwn(app, 'queueBootstrap') || hasQueueResources(app)) || deployments.some(hasQueueResources)) {
+  const declared = deployments.filter(hasQueueResources);
+  const artifactOnly = declared.length > 0 && declared.every(request => artifactOnlyQueueRequest(state, request));
+  if ((state.requirements?.includes('fogd-queue-activation-v1') && !artifactOnly) ||
+      apps.some(hasQueueLifecycle) || (declared.length > 0 && !artifactOnly)) {
     throw new Error('Queued installation recovery is not qualified: pause does not freeze message retention. Keep source data and partial archives; restore and transformations are unsupported. See docs/queue-recovery.md');
   }
-  if (state.requirements?.some(value => !['fogd-retirement-v1', 'fogd-claim-intent-v1'].includes(value))) throw new Error('Controller metadata requires an unsupported recovery capability');
+  if (state.requirements?.some(value => !['fogd-retirement-v1', 'fogd-claim-intent-v1', ...(artifactOnly ? ['fogd-queue-activation-v1'] : [])].includes(value))) throw new Error('Controller metadata requires an unsupported recovery capability');
 }
 
 export async function assertSnapshotQueueFree(directory, archive = 'controller.tar') {

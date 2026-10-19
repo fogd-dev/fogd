@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { translateConfig, inside } from '../src/artifact.mjs';
 
 test('rejects requested unsupported bindings instead of silently dropping them', () => {
-  for (const key of ['ai', 'dispatch_namespaces', 'hyperdrive', 'queues', 'services', 'triggers']) {
+  for (const key of ['ai', 'dispatch_namespaces', 'hyperdrive', 'services', 'triggers']) {
     assert.throws(() => translateConfig({ [key]: { binding: 'secret' } }, 'hello'), /Unsupported/);
   }
   assert.throws(() => translateConfig({ compatibility_flags: ['future_flag'] }, 'hello'), /flag/);
@@ -76,4 +76,11 @@ test('rejects unusable resource names and unsupported nested settings before res
     assert.throws(() => translateConfig({ [key]: [{ binding: 'STORAGE' }] }, 'a'.repeat(63)), /64 characters/);
     assert.throws(() => translateConfig({ [key]: [{ binding: 'STORAGE', jurisdiction: 'eu' }] }, 'hello'), /Unsupported/);
   }
+});
+
+
+test('queue bindings participate in the shared binding namespace', () => {
+  const queues = { producers: [{ binding: 'JOBS', queue: 'jobs' }], consumers: [{ queue: 'jobs', max_batch_size: 1, max_batch_timeout: 1, max_retries: 1, retry_delay: 1 }] };
+  assert.throws(() => translateConfig({ queues, vars: { jobs: 'collision' } }, 'demo'), /Duplicate binding/);
+  assert.throws(() => translateConfig({ queues, d1_databases: [{ binding: 'JOBS' }] }, 'demo'), /Duplicate binding/);
 });

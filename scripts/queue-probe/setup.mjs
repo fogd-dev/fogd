@@ -11,7 +11,7 @@ assert.ok(directory); assert.match(project || '', /^fogd-m11[a-z0-9-]*$/);
 assert.equal((await projectContainers(project)).length, 0, 'Use a fresh project');
 for (const kind of ['volume', 'network']) assert.equal((await docker([kind, 'ls', '-q', '--filter', `label=com.docker.compose.project=${project}`])).trim(), '', 'Use fresh resources');
 const output = resolve(directory); await mkdir(output, { mode: 0o700 });
-const settings = { COMPOSE_PROJECT_NAME: project, FOGD_PROFILE: 'local', FOGD_TLS: '0', FOGD_TOPOLOGY: 'docker', FOGD_BIND_ADDRESS: '127.0.0.1', FOGD_BASE_DOMAIN: 'localhost', FOGD_HTTP_PORT: process.env.FOGD_PROBE_HTTP_PORT || '8899', FOGD_ADMIN_PORT: process.env.FOGD_PROBE_ADMIN_PORT || '8900', FOGD_ADMIN_USER: 'admin', FOGD_BUCKET_USER: project };
+const settings = { COMPOSE_PROJECT_NAME: project, FOGD_PROFILE: 'local', FOGD_TLS: '0', FOGD_TOPOLOGY: 'docker', FOGD_QUEUE_APPS: '1', FOGD_BIND_ADDRESS: '127.0.0.1', FOGD_BASE_DOMAIN: 'localhost', FOGD_HTTP_PORT: process.env.FOGD_PROBE_HTTP_PORT || '8899', FOGD_ADMIN_PORT: process.env.FOGD_PROBE_ADMIN_PORT || '8900', FOGD_ADMIN_USER: 'admin', FOGD_BUCKET_USER: project };
 for (const port of [settings.FOGD_HTTP_PORT, settings.FOGD_ADMIN_PORT]) assert.ok(/^\d+$/.test(port) && Number(port) >= 1 && Number(port) <= 65535, 'Use valid probe ports');
 assert.notEqual(settings.FOGD_HTTP_PORT, settings.FOGD_ADMIN_PORT);
 for (const key of ['FOGD_ADMIN_PASSWORD', 'FOGD_DEPLOY_TOKEN', 'FOGD_GATEWAY_TOKEN', 'FOGD_BUCKET_PASSWORD']) settings[key] = randomBytes(32).toString('hex');

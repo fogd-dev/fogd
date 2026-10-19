@@ -885,3 +885,34 @@ checked before restore creation, not frozen during image loading or startup.
 Surviving apps retain the ordinary recovery acknowledgment and separate resume.
 Aged target snapshots, Kubernetes, and expansion remain outside this qualified
 path. Public queue admission remains closed pending the full deployment acceptance.
+
+
+## ADR 035: distinguish queue artifacts from approved runtime state
+
+Context: public queue uploads would permanently disable backup under the previous
+blanket capability guard, even if no administrator ever approved them. A rejected
+failed claim also loses its app reservation, so rejection alone cannot prove safety.
+
+Options: postpone the queue capability until approval, delete rejected artifacts,
+or retain history and classify it through durable lifecycle evidence. Delaying the
+capability weakens downgrade detection; deletion loses approval audit material.
+
+Decision: keep the permanent capability. Treat a well-formed pending, rejected, or superseded
+submission as artifact-only only before the approval step and secret-revision pin,
+with no app referencing its approval ID. For rejected pristine claims, atomically record the exact
+approval and released fleet after backend ownership/publication checks. Share this
+rule between Docker backup and queue-free transformation/recovery guards. Unknown,
+failed, held, or uncertain lifecycle state still refuses recovery.
+
+Use a controller opt-in for the initial queue profile, off by default and absent
+from Kubernetes rendering. Validate a single same-app producer/consumer pair and
+four explicit policy values equal to 1. Canonical names preserve an existing app-
+prefix or add it, so uploaded artifacts validate unchanged. Void's generated suffix
+resolver preserves the logical handler name. Existing non-queue identities do not
+acquire an empty queues field.
+
+Consequences: ordinary pending uploads no longer remove recovery options. Legacy
+rejections without release evidence remain refused. Turning off admission does not
+pause already-approved work or prohibit exact retries of pinned failed approvals. Wider policies and default enablement require their
+own evidence; the initial normal CLI checkpoint does not replace the remaining
+update, recovery, retirement, and browser acceptance.

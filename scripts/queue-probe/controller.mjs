@@ -13,7 +13,7 @@ assert.ok(slot); const backend = new Backend();
 assert.equal(await backend.owner(slot), null, 'Probe requires an unclaimed fleet');
 assert.equal(await backend.hasDeployment(slot), false, 'Probe requires a never-deployed fleet');
 const dir = join(process.env.FOGD_DATA_DIR || '/var/lib/fogd', `qualification-${randomUUID()}`);
-const create = () => new Controller({ dir, slots: [slot], backend });
+const create = () => new Controller({ queueApps: true, dir, slots: [slot], backend });
 let controller = create(); await controller.init();
 const initial = await stage();
 assert.equal(await backend.hasDeployment(slot), false, 'Staging must not publish');

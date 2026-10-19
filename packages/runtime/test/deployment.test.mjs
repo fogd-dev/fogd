@@ -7,7 +7,7 @@ test('secret declarations preserve only validated non-conflicting names', () => 
   for (const names of [['TOKEN', 'TOKEN'], ['VITE_TOKEN'], ['vite_token'], ['fogd_token'], ['TOKEN', 'token'], ['__VOID_PROXY_TOKEN'], ['FOGD_ADMIN_PASSWORD'], ['bad-name'], [12], 'TOKEN']) {
     assert.throws(() => buildMetadata({ secrets: { required: names } }));
   }
-  for (const config of [{ vars: { TOKEN: 'plaintext' } }, { r2_buckets: [{ binding: 'TOKEN' }] }, { assets: { binding: 'TOKEN' } }]) {
+  for (const config of [{ vars: { TOKEN: 'plaintext' } }, { r2_buckets: [{ binding: 'TOKEN' }] }, { assets: { binding: 'TOKEN' } }, { queues: { producers: [{ binding: 'TOKEN' }] } }]) {
     assert.throws(() => deploymentMetadata({ requiredSecrets: ['TOKEN'] }, config), /conflicts/);
   }
   assert.throws(() => buildMetadata({ secrets: { required: [], values: { TOKEN: 'private' } } }), /Unsupported/);

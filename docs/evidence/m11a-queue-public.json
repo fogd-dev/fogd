@@ -1,0 +1,134 @@
+{
+  "image": "sha256:32972ab422e9e5d0b206dcfa7ff2115070d6911aa9a6c994c57b9243160fbc28",
+  "app": "imports-public",
+  "project": "fogd-m11a-public-1792438511400",
+  "credentialScope": [
+    "imports-public"
+  ],
+  "pendingSnapshotWithoutQueueRecovery": true,
+  "unapprovedDeploymentObjects": 0,
+  "wrongDigestRefused": true,
+  "jobs": [
+    {
+      "id": "public-normal-1792438542265",
+      "input_hash": "248698c7ed6bd043af698618a906079841e333ff3617985d83a033b16a0d5663",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 19:35:42",
+      "results": [
+        {
+          "job_id": "public-normal-1792438542265",
+          "position": 0,
+          "label": "TYPED"
+        },
+        {
+          "job_id": "public-normal-1792438542265",
+          "position": 1,
+          "label": "QUEUE"
+        }
+      ]
+    },
+    {
+      "id": "public-retry-once-1792438542323",
+      "input_hash": "248698c7ed6bd043af698618a906079841e333ff3617985d83a033b16a0d5663",
+      "mode": "retry-once",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 2,
+      "error": null,
+      "created_at": "2026-10-19 19:35:42",
+      "results": [
+        {
+          "job_id": "public-retry-once-1792438542323",
+          "position": 0,
+          "label": "TYPED"
+        },
+        {
+          "job_id": "public-retry-once-1792438542323",
+          "position": 1,
+          "label": "QUEUE"
+        }
+      ]
+    },
+    {
+      "id": "public-fail-1792438544263",
+      "input_hash": "248698c7ed6bd043af698618a906079841e333ff3617985d83a033b16a0d5663",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 3,
+      "error": null,
+      "created_at": "2026-10-19 19:35:44",
+      "results": [
+        {
+          "job_id": "public-fail-1792438544263",
+          "position": 0,
+          "label": "TYPED"
+        },
+        {
+          "job_id": "public-fail-1792438544263",
+          "position": 1,
+          "label": "QUEUE"
+        }
+      ]
+    }
+  ],
+  "deployment": {
+    "id": "fb49a0d0-8580-41cd-b2ea-697c1ab663be",
+    "app": "imports-public",
+    "digest": "46745df14ac7db2d976b6f21c7154e3e672cf87ce7bbc546105ff85834b92221",
+    "resources": {
+      "script": "imports-public",
+      "queues": {
+        "producers": [
+          {
+            "binding": "QUEUE_IMPORTS",
+            "queue": "imports-public-imports"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "imports-public-imports",
+            "max_batch_size": 1,
+            "max_batch_timeout": 1,
+            "max_retries": 1,
+            "retry_delay": 1
+          }
+        ]
+      },
+      "d1": [
+        {
+          "binding": "DB",
+          "database_name": "imports-public-db",
+          "database_id": "imports-public-db",
+          "migrations_dir": "migrations/DB"
+        }
+      ],
+      "r2": [
+        {
+          "binding": "STORAGE",
+          "bucket_name": "imports-public-storage"
+        }
+      ],
+      "durable": {
+        "bindings": []
+      }
+    },
+    "submitter": "b9d4f588-1739-4819-bdce-04a1af5784ab"
+  },
+  "physicalQueue": "imports-public-imports",
+  "finalDelivery": {
+    "desired": "paused",
+    "observed": "paused",
+    "operation": null,
+    "effective": "paused"
+  },
+  "limits": [
+    "Explicit Docker opt-in; admission defaults off",
+    "Update, queued recovery/retirement and browser acceptance through canonical artifacts remain pending",
+    "No claim of exactly once external effects"
+  ]
+}

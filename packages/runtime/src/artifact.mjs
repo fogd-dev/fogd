@@ -1,3 +1,4 @@
+import { translateQueues } from './queues.mjs';
 import { readdir, readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -5,7 +6,7 @@ import { buildMetadata } from './deployment.mjs';
 import { stageAssets } from './assets.mjs';
 import { copyFiles } from './files.mjs';
 
-const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle', 'secrets']);
+const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle', 'secrets', 'queues']);
 const generated = new Set(['$schema', 'configPath', 'userConfigPath', 'topLevelName', 'definedEnvironments', 'jsx_factory', 'jsx_fragment', 'exports', 'upload_source_maps', 'python_modules', 'dev', 'rules', 'observability', 'version_metadata', 'build']);
 const flags = new Set(['nodejs_als', 'nodejs_compat', 'js_rpc', 'fetcher_no_get_put_delete', 'delete_all_deletes_alarm', 'websocket_standard_binary_type']);
 const empty = value => value == null || value === false || value === '' || (typeof value === 'object' && Object.values(value).every(empty));
@@ -49,12 +50,8 @@ export function translateConfig(input, app) {
   for (const rule of input.rules || []) {
     if (rule.type !== 'ESModule') throw new Error(`Unsupported prebuilt module rule: ${rule.type}`);
   }
-  const seen = new Set();
-  for (const name of [...Object.keys(input.vars || {}), ...(input.d1_databases || []).map(b => b.binding), ...(input.r2_buckets || []).map(b => b.binding), ...(input.durable_objects?.bindings || []).map(b => b.name), ...(input.assets?.binding ? [input.assets.binding] : [])]) {
-    identifier(name);
-    if (seen.has(name.toLowerCase())) throw new Error(`Duplicate binding: ${name}`);
-    seen.add(name.toLowerCase());
-  }
+  const queues = translateQueues(input.queues, app);
+  validateBindings(input, queues);
   validateStorage(input, app);
   if (input.durable_objects) keys(input.durable_objects, ['bindings']);
   for (const b of input.durable_objects?.bindings || []) {
@@ -69,6 +66,7 @@ export function translateConfig(input, app) {
   if (input.assets) keys(input.assets, ['directory', 'binding', 'html_handling', 'not_found_handling', 'run_worker_first']);
   const result = {
     name: app,
+    ...(queues ? { queues } : {}),
     main: 'worker/index.js',
     ...(input.compatibility_date ? { compatibility_date: input.compatibility_date } : {}),
     compatibility_flags: input.compatibility_flags || [],
@@ -93,6 +91,7 @@ export function translateConfig(input, app) {
 export function resourceIdentity(config) {
   return {
     script: config.name,
+    ...(config.queues ? { queues: config.queues } : {}),
     d1: config.d1_databases,
     r2: config.r2_buckets,
     durable: config.durable_objects,
@@ -167,4 +166,13 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
   const release = { app, digest, ...metadata, resources: resourceIdentity(config), migrations };
   await writeFile(join(outputDir, 'fogd-release.json'), JSON.stringify(release, null, 2));
   return release;
+}
+
+function validateBindings(input, queues) {
+  const seen = new Set();
+  for (const name of [...Object.keys(input.vars || {}), ...(input.d1_databases || []).map(b => b.binding), ...(input.r2_buckets || []).map(b => b.binding), ...(input.durable_objects?.bindings || []).map(b => b.name), ...(input.assets?.binding ? [input.assets.binding] : []), ...(queues?.producers || []).map(b => b.binding)]) {
+    identifier(name);
+    if (seen.has(name.toLowerCase())) throw new Error(`Duplicate binding: ${name}`);
+    seen.add(name.toLowerCase());
+  }
 }

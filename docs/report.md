@@ -13,7 +13,8 @@ remain open roadmap work.
 
 Queued Docker backup/restore has [private-artifact recovery qualification](queue-recovery.md),
 including replica-first pause, retention checks, and explicit acknowledgment/resume.
-Queued Kubernetes recovery and transformations remain refused; public queue admission stays closed.
+Activated or retired queued history still prevents Kubernetes recovery and expansion.
+Queue admission now has an [experimental Docker opt-in](queue-admission.md), off by default.
 
 ## What works
 
@@ -677,3 +678,40 @@ and bucket-init had exited successfully. Comparisons cover the observation perio
 not a four-day retention wake. The [review response](reviews/m11a-queue-retirement-complete-response.md)
 records these limits. The next [admission design response](reviews/m11a-queue-admission-response.md)
 also covers disabled-environment refusal and recovery of rejected pristine claims.
+
+
+## M11a canonical admission foundation
+
+The normal build/upload path validates one producer/consumer pair, derives a stable
+app-prefixed name, and retains queues in resource identity. It rejects unsupported
+policy and binding/secret collisions. New queue submissions and approvals require
+an explicit controller opt-in; ordinary Docker defaults and Kubernetes remain off.
+Never-approved artifacts can be backed up without queue preparation. A rejected
+pristine claim requires its atomically persisted release receipt before backup can
+classify it as artifact-only history.
+
+The [public-path checkpoint](evidence/m11a-queue-public.json) uses an ordinary scoped
+CLI deployment of examples/imports, without private staging. It proves no app ownership
+or deployment before approval, pending-only backup/restore, exact approval, Void
+physical-name dispatch, failures and explicit retry without duplicate business rows.
+Idle celld wake-format objects are runtime metadata; the preapproval check inspects
+app ownership and deployment objects rather than requiring an entirely empty prefix.
+Remaining integrated acceptance: additive updates and overlap, queued recovery and
+retirement of canonical artifacts, browser behavior, and default enablement.
+
+
+The [failed-claim Docker drill](evidence/m11a-queue-public-claim.json) also passes:
+normal scoped upload, bucket outage before claim, verified rejection, and successful
+backup with only the active canonical queue prepared. Two unused-fleet replicas exited
+143, so the bundle explicitly requires crash recovery. Restoring that bundle remains
+next work. Regression tests also cover disabling admission during an already-approved
+failure and inert queue history after a non-queue app reuses the same name.
+
+
+The [current-image history regression](evidence/m11a-queue-public-history.json) closes
+the review's two Docker gaps. A controller SIGKILL during approval leaves a pinned
+failed request; it retries successfully with FOGD_QUEUE_APPS=0. A non-queue approval
+under a previously queued app name leaves superseded, rejected, and released queue
+history recoverable. Backup succeeds and prepares only the actual live queue.
+All 261 tests, builds, and quality checks pass. The [two-review response](reviews/m11a-queue-admission-code-response.md)
+records the fixes and remaining full application acceptance work.

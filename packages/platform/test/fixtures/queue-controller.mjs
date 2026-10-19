@@ -9,7 +9,7 @@ import { requireQueueCapability } from '../../src/queue-activation.mjs';
 import { saveJson } from '../../src/store.mjs';
 
 export const slots = [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }];
-export const queues = { producers: [{ binding: 'QUEUE', queue: 'jobs' }], consumers: [{ queue: 'jobs', max_retries: 1 }] };
+export const queues = { producers: [{ binding: 'QUEUE', queue: 'jobs' }], consumers: [{ queue: 'jobs', max_batch_size: 1, max_batch_timeout: 1, max_retries: 1, retry_delay: 1 }] };
 
 export async function fixture(t) {
   const dir = await mkdtemp(join(tmpdir(), 'fogd-queue-activation-'));
@@ -37,9 +37,9 @@ export async function fixture(t) {
     await saveJson(path, value);
     if (fail === 'after') throw Error('lost write response');
   };
-  const create = () => new Controller({ dir, slots, backend, persist, reportStorageFailure: () => {} });
+  const create = () => new Controller({ queueApps: true, dir, slots, backend, persist, reportStorageFailure: () => {} });
   const c = create(); await c.init();
-  // Private fixture: queue artifact admission intentionally remains closed.
+  // Private fixture bypasses artifact validation; admission defaults off elsewhere.
   async function request(controller = c) {
     const id = randomUUID(), artifact = controller.artifact(id);
     await mkdir(join(artifact, 'worker'), { recursive: true });

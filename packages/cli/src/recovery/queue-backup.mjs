@@ -1,3 +1,4 @@
+import { artifactOnlyQueueRequest, hasQueueLifecycle } from '@fogd/platform/queue-history';
 import { validateRetiredQueue, queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { isDeepStrictEqual } from 'node:util';
 import { snapshotTarget, matchingSnapshot, assertSnapshotAge, queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
@@ -9,9 +10,10 @@ export function queueBackupApps(state) {
   if (!requirements.includes('fogd-queue-activation-v1')) { assertQueueFreeRecovery(state); return []; }
   if (requirements.some(value => !['fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, 'fogd-retirement-v1', 'fogd-claim-intent-v1'].includes(value))) throw new Error('Unsupported snapshot capability');
   const retired = Object.keys(state.apps).filter(name => validateRetiredQueue(state, name, state.apps[name]));
-  const names = Object.keys(state.apps).filter(name => !state.apps[name].retirement && (state.apps[name].resources?.queues || state.apps[name].delivery));
+  const names = Object.keys(state.apps).filter(name => !state.apps[name].retirement && hasQueueLifecycle(state.apps[name]));
+  const artifacts = Object.values(state.deployments).filter(request => artifactOnlyQueueRequest(state, request));
   const accounted = [...names, ...retired];
-  if (!accounted.length || Object.values(state.deployments).some(value => value.resources?.queues && (!accounted.includes(value.app) || (retired.includes(value.app) && !['retired', 'superseded', 'rejected'].includes(value.status))))) throw new Error('Queued installation recovery requires an activated app for every queue declaration');
+  if ((!accounted.length && !artifacts.length) || Object.values(state.deployments).some(value => value.resources?.queues && !artifacts.includes(value) && (!accounted.includes(value.app) || (retired.includes(value.app) && !['retired', 'superseded', 'rejected'].includes(value.status))))) throw new Error('Queued installation recovery requires an activated app for every queue declaration');
   for (const name of names) {
     const { app } = snapshotTarget(state, name);
     if (app.queueRecovery && app.queueRecovery.status !== 'acknowledged') throw new Error('Acknowledge existing queue recovery before backup');

@@ -59,3 +59,9 @@ test('Docker memory units and configured admission limits survive Kubernetes ren
     assert.equal(service.spec.clusterIP, undefined);
   }
 });
+
+test('Kubernetes rendering never enables the Docker-only queue admission opt-in', () => {
+  const selected = structuredClone(settings); selected.env.FOGD_QUEUE_APPS = '1';
+  const controller = manifests(selected).items.find(r => r.kind === 'StatefulSet' && r.metadata.name === 'controller');
+  assert.equal(controller.spec.template.spec.containers[0].env.some(e => e.name === 'FOGD_QUEUE_APPS' && e.value === '1'), false);
+});
