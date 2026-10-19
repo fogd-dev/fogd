@@ -1,0 +1,27 @@
+diff --git a/crates/celld/js/harness.js b/crates/celld/js/harness.js
+index 074ea11..b5f55b2 100644
+--- a/crates/celld/js/harness.js
++++ b/crates/celld/js/harness.js
+@@ -2817,6 +2817,10 @@ class DurableObjectState {
+     if (ws._peer) ws._peer._hibernatable = true;
+     ws._tags = Array.from(tags, String);
+     __ws_accept(ws._id, this._scope, JSON.stringify(ws._tags));
++    // An attachment serialized before accept had no registry entry yet.
++    // Persist its original clone bytes rather than re-cloning a mutated value.
++    if (ws._attachmentSc !== undefined)
++      __ws_attachment_set(ws._id, ws._attachmentSc);
+     __sockets.set(ws._id, ws);
+   }
+   _socket(id) {
+@@ -10659,8 +10663,10 @@ globalThis.WebSocket = class WebSocket extends EventTarget {
+   serializeAttachment(value) {
+     // Structured clone, not JSON: Cloudflare accepts anything cloneable
+     // here, so a Date must come back a Date and a Map a Map.
++    const bytes = __sc_encode(value);
+     this._attachment = value;
+-    __ws_attachment_set(this._id, __sc_encode(value));
++    this._attachmentSc = bytes;
++    __ws_attachment_set(this._id, bytes);
+   }
+   deserializeAttachment() { return this._attachment; }
+   _dispatchMessage(data) {

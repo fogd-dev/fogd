@@ -1,4 +1,5 @@
-FROM ghcr.io/denoland/celld:0.6.2@sha256:b85983dcf410bcf710bbc30f400d8654123cb2b541ca4d84d7e299009a6ee97a AS celld
+ARG CELLD_IMAGE=ghcr.io/denoland/celld:0.6.2@sha256:b85983dcf410bcf710bbc30f400d8654123cb2b541ca4d84d7e299009a6ee97a
+FROM ${CELLD_IMAGE} AS celld
 FROM node:26.2.0-bookworm-slim
 WORKDIR /app
 RUN npm install --prefix /opt/pnpm pnpm@10.16.1

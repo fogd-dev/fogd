@@ -1,0 +1,470 @@
+{
+  "source": {
+    "repository": "https://github.com/denoland/celld",
+    "commit": "90b43017241f81189453d326d05948f388b34652",
+    "patch": "patches/celld-0.6.2-preaccept-attachment.patch",
+    "patchSha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd",
+    "profile": "lab",
+    "binarySha256": "f13a589d769b12e261e1dcf14ebf701b2f3a514cd4e7df675d8bc2d63407862c",
+    "runtimeImage": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+  },
+  "fixture": {
+    "project": "fogd-m11b-live",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+    }
+  },
+  "checks": {
+    "workspaceTests": 278,
+    "sourceMethodTestsPatched": {
+      "pass": 4,
+      "fail": 0
+    },
+    "sourceMethodTestsUnpatched": {
+      "pass": 1,
+      "fail": 3
+    },
+    "upstreamCargoTest": {
+      "exit": 0,
+      "tests": 0
+    },
+    "upstreamClippy": {
+      "exit": 0
+    },
+    "offlineVoidAndFogdBuilds": "passed"
+  },
+  "negativeControls": {
+    "plain": {
+      "room": "update-c7efa89d-d156-471a-8734-1b5f5b3aacf6",
+      "transport": {
+        "count": 2,
+        "closes": [
+          {
+            "code": 1011,
+            "at": 1792444504890
+          }
+        ]
+      },
+      "recoveredAck": {
+        "type": "ack",
+        "opId": "pending-efe914e1-3daa-471f-a237-79d44e42a850",
+        "revision": 2,
+        "release": "v2"
+      }
+    },
+    "afterIdle": {
+      "room": "update-bf61d92f-7376-4287-9a04-b3c82fc4f6e7",
+      "transport": {
+        "count": 2,
+        "closes": [
+          {
+            "code": 1011,
+            "at": 1792445327856
+          }
+        ]
+      },
+      "recoveredAck": {
+        "type": "ack",
+        "opId": "pending-dd711d5c-12db-45cb-87b7-4183f34f2667",
+        "revision": 2,
+        "release": "v2"
+      }
+    },
+    "runtimeImages": {
+      "slot-2-a": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+      "slot-2-b": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817"
+    }
+  },
+  "updateAfterIdle": {
+    "room": "update-251ef41d-c553-4cd0-8784-0fa789bf3c40",
+    "old": {
+      "id": "32a328cd-fb7a-4b02-bec5-2e2518d1befd",
+      "digest": "02455e8de8da59856e0dc532369c1cf07eb6108f43cfd1539babd8de62f70375"
+    },
+    "update": {
+      "id": "5eee05a0-1794-47e5-98bb-5f0424707d47",
+      "digest": "bf98134b7034f37f834f0b22013e5adbf8c510f3345700b25ba5867de80c4bcd"
+    },
+    "firstAck": {
+      "type": "ack",
+      "opId": "0cca6909-a6f3-413b-b4ab-2491782fe0da",
+      "revision": 1,
+      "release": "v1"
+    },
+    "ack": {
+      "type": "ack",
+      "opId": "pending-2187340b-2d4a-47bb-a22e-02ec5787a370",
+      "revision": 2,
+      "release": "v2"
+    },
+    "transport": {
+      "count": 1,
+      "closes": []
+    },
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 2,
+      "release": "v2",
+      "items": [
+        {
+          "id": "33b7f673-e1a8-4284-9454-45971f2f63a5",
+          "text": "Before compatible update",
+          "checked": false
+        },
+        {
+          "id": "item-01d776ab-fa3b-498c-a2e6-b38fd1934415",
+          "text": "Saved v1 edit handled by v2",
+          "checked": false
+        }
+      ]
+    },
+    "errors": [],
+    "idleEvidence": {
+      "cell": {
+        "host": "slot-2-b",
+        "id": "ChecklistWs:f50ff2a418f6f1456f916de27fa85e6c80cb09dfc37ccaf6c460fc20c2b93fab"
+      },
+      "activeAt": 1792445065180,
+      "evictedAt": 1792445072255
+    },
+    "scope": "Scoped CLI submission and exact approval replace v1 with v2 while one original native socket and loaded v1 browser settle a v1 pending record; route-pause behavior remains an open separate gate"
+  },
+  "idle": {
+    "room": "idle-91a43a4d-bc66-4c88-8bae-ee614cb9cdf3",
+    "ordinary": {
+      "room": "ordinary-2d652e26-7a1d-49f8-967d-3a06309a734d",
+      "observationMs": 30196,
+      "sockets": 1,
+      "closes": 0,
+      "revision": 1
+    },
+    "appliedIdleSeconds": {
+      "slot-2-a": "5",
+      "slot-2-b": "5"
+    },
+    "idleSeconds": 5,
+    "owner": {
+      "host": "slot-2-a",
+      "id": "ChecklistWs:ff6b3b293f7bf49e52992180db9d81aa51aa1de9b1ee2f27da47d5a9b872e7f9"
+    },
+    "restoredOwner": "slot-2-a",
+    "moved": false,
+    "idleAt": 1792445057411,
+    "evictionObservedAt": 1792445063539,
+    "acknowledgmentObservedAt": 1792445063573,
+    "evicted": [
+      {
+        "host": "slot-2-a",
+        "residents": [],
+        "phases": {
+          "dormant": 1,
+          "inactive": 14
+        }
+      },
+      {
+        "host": "slot-2-b",
+        "residents": [],
+        "phases": {
+          "inactive": 16
+        }
+      }
+    ],
+    "restored": [
+      {
+        "host": "slot-2-a",
+        "residents": [
+          "ChecklistWs:ff6b3b293f7bf49e52992180db9d81aa51aa1de9b1ee2f27da47d5a9b872e7f9"
+        ]
+      },
+      {
+        "host": "slot-2-b",
+        "residents": []
+      }
+    ],
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 2,
+      "release": "v1",
+      "items": [
+        {
+          "id": "e286126a-b48d-45ce-822e-21c31f8e2b67",
+          "text": "Before idle eviction",
+          "checked": true
+        }
+      ]
+    },
+    "socketObservation": {
+      "count": 1,
+      "closes": []
+    },
+    "scope": "Ordinary policy holds one socket for 30 seconds; explicit five-second idle eviction restores native Void attachment on one preserved socket; no unbounded-idle or room-move claim"
+  },
+  "processLoss": {
+    "owner": {
+      "host": "slot-2-b",
+      "id": "ChecklistWs:1fa6ccf74542acef41d18651453c1491d174c294b8ca144b3f0068d992056714"
+    },
+    "failures": [
+      {
+        "target": "slot-2-b",
+        "killAt": 1792445119870,
+        "acknowledgmentObservedAt": 1792445131184,
+        "elapsedMs": 11314,
+        "revision": 2,
+        "runningAtAcknowledgment": false,
+        "transport": {
+          "firstClose": {
+            "code": 1006,
+            "reason": "",
+            "at": 1792445119963
+          },
+          "opened": [
+            {
+              "at": 1792445130364
+            }
+          ],
+          "firstSnapshot": {
+            "at": 1792445130364
+          }
+        },
+        "survivor": {
+          "host": "slot-2-a",
+          "roomResident": true,
+          "roomPublished": true
+        }
+      },
+      {
+        "target": "workerd",
+        "killAt": 1792445148001,
+        "acknowledgmentObservedAt": 1792445149191,
+        "elapsedMs": 1190,
+        "revision": 3,
+        "runningAtAcknowledgment": true,
+        "transport": {
+          "firstClose": {
+            "code": 1006,
+            "reason": "",
+            "at": 1792445148092
+          },
+          "opened": [
+            {
+              "at": 1792445149131
+            }
+          ],
+          "firstSnapshot": {
+            "at": 1792445149131
+          }
+        },
+        "survivor": null
+      }
+    ],
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 3,
+      "release": "v2",
+      "items": [
+        {
+          "id": "11483548-a47c-4a43-b819-ea4a27408de3",
+          "text": "After slot-2-b loss",
+          "checked": false
+        },
+        {
+          "id": "b77ff772-8a42-4414-bfed-c2b3a159c906",
+          "text": "Acknowledged before process loss",
+          "checked": false
+        },
+        {
+          "id": "c34efd99-9037-4b49-bab1-ad9e76392b5c",
+          "text": "After workerd loss",
+          "checked": false
+        }
+      ]
+    }
+  },
+  "ingressLoss": {
+    "owner": {
+      "host": "slot-2-b",
+      "id": "ChecklistWs:3407bfd7e9654758ece645becde46361be3ebd7bb33fe73ced7006248d64b8a8"
+    },
+    "ingress": "slot-2-a",
+    "killAt": 1792445152922,
+    "acknowledgedAt": 1792445154217,
+    "directOwner": {
+      "opens": 1,
+      "closes": [],
+      "messages": [
+        {
+          "type": "snapshot",
+          "revision": 1,
+          "release": "v2",
+          "items": [
+            {
+              "id": "e5ad17dc-f227-4fd3-95cb-9f23ef3bca73",
+              "text": "Before ingress loss",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "type": "snapshot",
+          "revision": 2,
+          "release": "v2",
+          "items": [
+            {
+              "id": "38de3693-56b4-43b3-ad51-c71347c11048",
+              "text": "After ingress loss",
+              "checked": false
+            },
+            {
+              "id": "e5ad17dc-f227-4fd3-95cb-9f23ef3bca73",
+              "text": "Before ingress loss",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "type": "rejected",
+          "opId": "control-probe",
+          "reason": "invalid-operation",
+          "release": "v2"
+        }
+      ]
+    },
+    "ownerStillRunning": true,
+    "ingressStillStopped": true,
+    "events": [
+      {
+        "event": "open",
+        "socket": 1,
+        "at": 1792445150204
+      },
+      {
+        "event": "snapshot",
+        "socket": 1,
+        "at": 1792445150205,
+        "revision": 0
+      },
+      {
+        "event": "snapshot",
+        "socket": 1,
+        "at": 1792445150300,
+        "revision": 1
+      },
+      {
+        "event": "close",
+        "socket": 1,
+        "at": 1792445150673,
+        "code": 1006
+      },
+      {
+        "event": "open",
+        "socket": 2,
+        "at": 1792445151685
+      },
+      {
+        "event": "snapshot",
+        "socket": 2,
+        "at": 1792445151685,
+        "revision": 1
+      },
+      {
+        "event": "close",
+        "socket": 2,
+        "at": 1792445153017,
+        "code": 1006
+      },
+      {
+        "event": "open",
+        "socket": 3,
+        "at": 1792445154042
+      },
+      {
+        "event": "snapshot",
+        "socket": 3,
+        "at": 1792445154042,
+        "revision": 1
+      },
+      {
+        "event": "snapshot",
+        "socket": 3,
+        "at": 1792445154171,
+        "revision": 2
+      }
+    ],
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 2,
+      "release": "v2",
+      "items": [
+        {
+          "id": "38de3693-56b4-43b3-ad51-c71347c11048",
+          "text": "After ingress loss",
+          "checked": false
+        },
+        {
+          "id": "e5ad17dc-f227-4fd3-95cb-9f23ef3bca73",
+          "text": "Before ingress loss",
+          "checked": false
+        }
+      ]
+    }
+  },
+  "browser": {
+    "project": "fogd-m11b-live",
+    "room": "ui-327e52e9-2fa5-46f7-ae3c-215776bcdeb2",
+    "finalSnapshot": {
+      "type": "snapshot",
+      "revision": 5,
+      "release": "v2",
+      "items": [
+        {
+          "id": "364a1b7e-7b5c-4922-95ab-965d6995ebe9",
+          "text": "Unknown outcome",
+          "checked": false
+        },
+        {
+          "id": "a89ba1c2-7e25-4576-a0e7-41c604a22a81",
+          "text": "Closing window",
+          "checked": false
+        },
+        {
+          "id": "c5c72d06-232d-4e8c-bc06-23339e7cbba7",
+          "text": "Shared browser item",
+          "checked": true
+        },
+        {
+          "id": "restored-item",
+          "text": "Accepted restored state",
+          "checked": false
+        }
+      ]
+    },
+    "rollbackGate": {
+      "injectedBrowserWatermark": 100,
+      "beforeAcceptance": 4,
+      "afterAcceptance": 5
+    },
+    "droppedOperation": "9f61adcb-450c-4ef2-a309-9708e5c71d8e",
+    "retainedPendingBeforeReload": [
+      {
+        "opId": "9f61adcb-450c-4ef2-a309-9708e5c71d8e",
+        "operation": {
+          "kind": "add",
+          "itemId": "364a1b7e-7b5c-4922-95ab-965d6995ebe9",
+          "text": "Unknown outcome"
+        },
+        "order": 1792445174986
+      }
+    ],
+    "rejectionSettled": true,
+    "closingState": 2,
+    "earlyFrames": [],
+    "errors": [],
+    "transport": "Real workerd/celld; writer proxy delays first snapshots, suppresses one acknowledgment and closes; watcher connects directly",
+    "scope": "Browser persistence, two users, reload/unknown-outcome replay; node failures, updates, SSE and recovery remain separate"
+  },
+  "scope": "Explicit local patched celld image, unchanged native Void app; default upstream still fails preserved-socket updates. Route-pause/new-upgrade, SSE, actual ownership move and stopped recovery remain open."
+}

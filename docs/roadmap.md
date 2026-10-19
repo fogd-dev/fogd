@@ -111,8 +111,10 @@ now covers persistent pending work and lost acknowledgments using an explicit
 [Void client patch](patches/void-websocket-send.md). Owner and gateway process-loss
 checks pass. Explicit idle eviction also preserves the socket and usable room parameters; it does
 not prove attachment reconstruction in a fresh isolate. Non-owning ingress failure passes with a direct-owner control socket.
-Next: preserved-socket updates, SSE and stopped recovery. The first update probe
-found missing room attachments after handler replacement; investigation remains open. The [M11a acceptance audit](m11a-acceptance.md)
+An explicit [celld patch candidate](patches/celld-preaccept-attachment.md) now passes
+preserved-socket updates after idle eviction. Upstream 0.6.2 remains the default and
+fails that gate. Next: route pause/new upgrades, SSE, ownership moves and stopped
+recovery; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Remaining live-session qualification and scheduled/workflow lifecycle
 remain open M11 work. The native Void imports fixture

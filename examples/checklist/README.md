@@ -156,3 +156,35 @@ FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
 Remove any `ingress-compose.json` left in that run's private output directory after
 restoration; it contains credentials. The direct-owner control process has a
 two-minute deadline. Its normal cleanup removes its private state file.
+
+## Compatible updates on the patched runtime
+
+The [celld candidate](../../docs/patches/celld-preaccept-attachment.md) is required
+for this gate; pinned upstream celld closes the old socket with 1011 when the first
+message reaches the replacement handler. Use the disposable M11b fixture with the
+candidate image. Reset the base v1 app, then run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node scripts/live-board.mjs .fogd/checklist-update-base
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node scripts/live-update.mjs .fogd/checklist-update
+```
+
+The v2 overlay changes only the release marker. The probe submits it through a
+scoped credential and approves the exact digest. A v1-format pending record stays
+in local storage across approval; the already-loaded v1 client flushes it on the
+original socket and receives a v2 acknowledgment. The room guard remains enabled.
+To combine observed idle eviction with handler replacement, reset v1 again with a
+fresh output directory and replace the second command with:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  FOGD_LIVE_SLOT=slot-2 FOGD_LIVE_APP=checklist FOGD_LIVE_UPDATE_AFTER_IDLE=1 \
+  node scripts/live-idle.mjs .fogd/checklist-idle-update
+```
+
+The combined probe checks the five-second setting in the running containers and
+observes the new room leave residency before approval. It restores the original
+idle configuration afterwards. Use fresh output directories for every run.
+Route-pause behavior, SSE, ownership moves and stopped restore remain separate gates.

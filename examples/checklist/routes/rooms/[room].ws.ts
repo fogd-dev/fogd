@@ -2,8 +2,9 @@ import { z } from 'zod';
 import { defineRoom } from 'void/ws';
 import { ServerMessage } from '../../lib/wire.mjs';
 import { Board } from '../../lib/board.mjs';
+import { release } from '../../lib/release.mjs';
 
-const wire = (message: unknown) => ServerMessage.parse({ ...(message as Record<string, unknown>), release: 'v1' });
+const wire = (message: unknown) => ServerMessage.parse({ ...(message as Record<string, unknown>), release });
 
 const validRoom = (room: string) => typeof room === 'string' && /^[a-z0-9-]{1,64}$/.test(room);
 

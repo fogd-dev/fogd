@@ -1012,3 +1012,32 @@ offline. Porting the example must carry the patch until an equivalent upstream A
 is available. See the [patch note](patches/void-websocket-send.md). Browser rollback
 shows the lower snapshot and requires explicit acceptance before replay; storage
 failure or malformed saved operations never silently drops pending work.
+
+## ADR 040: retain pre-accept attachments in celld
+
+Context: native Void serializes its connection attachment before accepting the
+socket. celld 0.6.2 only persists those bytes after a registry entry exists, so a
+compatible deployment preserves the transport but loses room parameters in the
+new isolate. The unchanged app reproduces close 1011; a diagnostic post-accept
+rewrite preserves the original socket. Idle eviction alone did not expose this
+because the original JS socket could remain in its pool isolate.
+
+Options: keep upstream unchanged and require reconnect, add a post-accept rewrite
+to each app or Void, or patch celld's serialization/accept seam. Reconnection is
+already supported but fails the reviewed preserved-socket requirement. An SDK hook
+avoids a runtime build but requires application behavior to compensate for the
+runtime ordering difference.
+
+Decision: maintain a small, labelled celld upstream candidate that retains the
+original encoded bytes and flushes them on acceptance. Expose an explicit local
+image choice for testing it; keep the default upstream image unchanged while the
+remaining M11b gates are open. The [source review](reviews/m11b-preaccept-patch-claude.md)
+accepts this mechanism, subject to runtime qualification.
+
+Consequences: native Void app code stays unchanged. Operators choosing the candidate
+must build and retain a patched image and its provenance, which is more work than
+using the upstream binary. Failed clone attempts preserve the earlier attachment;
+pre-accept snapshots become visible through the registry. The patch retains an
+extra byte copy and does not fix attachment-size or deserialize-copy semantics.
+The [build note](patches/celld-preaccept-attachment.md) records the exact source and
+scope. No package or image is published and no upstream submission is implied.

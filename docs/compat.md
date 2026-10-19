@@ -93,3 +93,9 @@ The fixture declares BETTER_AUTH_SECRET explicitly. celld's `deploy.rs` converts
 vars to plaintext bindings, so protecting bucket storage remains an operator duty.
 This bounded qualification does not imply every Void auth provider or SDK feature
 works. See [ADR 013–014](decisions.md) and the [review response](reviews/m7c-response.md).
+
+The M11b native Void update probe finds a pre-accept attachment gap in celld 0.6.2:
+handler replacement keeps the socket but loses room parameters, forcing reconnect.
+An explicit [celld patch candidate](patches/celld-preaccept-attachment.md) addresses
+the serialization ordering. Ordinary idle eviction can retain the original JS
+socket and does not alone prove attachment reconstruction in a fresh isolate.

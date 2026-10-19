@@ -8,10 +8,12 @@ x-bucket-env: &bucket-env
 x-slots-env: &slots-env
   FOGD_SLOTS: '[{"id":"slot-1","prefix":"${FOGD_SLOT_1_PREFIX:-slots/slot-1}","nodes":["${FOGD_SLOT_1_A_HOST:-slot-1-a}","${FOGD_SLOT_1_B_HOST:-slot-1-b}"]},{"id":"slot-2","prefix":"${FOGD_SLOT_2_PREFIX:-slots/slot-2}","nodes":["${FOGD_SLOT_2_A_HOST:-slot-2-a}","${FOGD_SLOT_2_B_HOST:-slot-2-b}"]}]'
 x-runtime: &runtime
-  image: fogd-runtime:local
+  image: ${FOGD_RUNTIME_IMAGE:-fogd-runtime:local}
   build:
     context: .
     dockerfile: docker/runtime.Dockerfile
+    args:
+      CELLD_IMAGE: ${FOGD_CELLD_IMAGE:-ghcr.io/denoland/celld:0.6.2@sha256:b85983dcf410bcf710bbc30f400d8654123cb2b541ca4d84d7e299009a6ee97a}
 x-celld: &celld
   <<: *runtime
   entrypoint: [celld-supervisor]

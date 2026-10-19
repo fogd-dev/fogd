@@ -5,16 +5,19 @@ import { writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { chromium, expect } from './guestbook-browser.mjs';
 import { context } from './queue-probe/context.mjs';
+import { run, stackRoot } from '../packages/cli/src/local.mjs';
 import { execute } from '../packages/cli/src/recovery/execute.mjs';
 import { composeArgs } from '../packages/cli/src/recovery/docker.mjs';
-const probe = await context('slot-1', process.argv[2]);
+const probe = await context(process.env.FOGD_LIVE_SLOT || 'slot-1', process.argv[2]);
+const app = process.env.FOGD_LIVE_APP || 'live-probe';
+assert.ok(['live-probe', 'checklist'].includes(app));
 assert.match(probe.config.name, /^fogd-m11b[a-z0-9-]*$/);
 const config = structuredClone(probe.config);
 for (const host of probe.slot.nodes) config.services[host].environment.CELLD_IDLE_EVICT_S = '5';
 const file = join(probe.output, 'idle-compose.json');
 await writeFile(file, JSON.stringify(config), { mode: 0o600, flag: 'wx' });
 const states = async () => JSON.parse(await probe.node(`console.log(JSON.stringify(await Promise.all(${JSON.stringify(probe.slot.nodes)}.map(async host => ({host,state:await (await fetch('http://'+host+':8081/state')).json()})))))`));
-const browser = await chromium.launch({ args: ['--host-resolver-rules=MAP live-probe.localhost 127.0.0.1'] });
+const browser = await chromium.launch({ args: [`--host-resolver-rules=MAP ${app}.localhost 127.0.0.1`] });
 let changed = false;
 try {
   await healthy();
@@ -36,7 +39,7 @@ try {
       constructor(...args) { super(...args); window.sockets.push(this); this.addEventListener('close', e => window.closes.push({ code: e.code, at: Date.now() })); }
     };
   });
-  await page.goto(`http://live-probe.localhost:${probe.env.FOGD_HTTP_PORT}/?room=${room}`);
+  await page.goto(`http://${app}.localhost:${probe.env.FOGD_HTTP_PORT}/?room=${room}`);
   const status = page.getByRole('status');
   await expect(status).toHaveText('Connected · Revision 0 · 0 pending');
   await page.getByLabel('New item').fill('Before idle eviction');
@@ -66,6 +69,11 @@ try {
   const snapshot = await page.evaluate(async room => (await fetch(`/rooms/${room}`)).json(), room);
   assert.equal(snapshot.revision, 2); assert.equal(snapshot.items.length, 1); assert.equal(snapshot.items[0].checked, true);
   await probe.save('idle', { room, ordinary, appliedIdleSeconds, idleSeconds: 5, owner, restoredOwner: restoredOwners[0].host, moved: restoredOwners[0].host !== owner.host, idleAt, evictionObservedAt, acknowledgmentObservedAt, evicted: evicted.map(s => ({host:s.host,residents:s.state.residents,phases:s.state.phases})), restored: restored.map(s => ({host:s.host,residents:s.state.residents})), snapshot, socketObservation, scope: 'Ordinary policy holds one socket for 30 seconds; explicit five-second idle eviction restores native Void attachment on one preserved socket; no unbounded-idle or room-move claim' });
+  if (process.env.FOGD_LIVE_UPDATE_AFTER_IDLE === '1') {
+    assert.equal(probe.slot.id, 'slot-2'); assert.equal(app, 'checklist');
+    const log = await run(process.execPath, [join(stackRoot, 'scripts/live-update.mjs'), join(probe.output, 'update')], { env: { ...probe.env, FOGD_COMPOSE_FILE: file, FOGD_LIVE_IDLE_UPDATE: '1' }, capture: true });
+    await writeFile(join(probe.output, 'update.log'), log, { mode: 0o600 });
+  }
   console.log('PASS: native Void socket and room attachment survive observed celld idle eviction');
 } finally {
   await rm(file, { force: true });
@@ -82,7 +90,7 @@ async function observeOrdinary() {
   let sockets = 0, closes = 0;
   page.on('websocket', socket => { sockets++; socket.on('close', () => closes++); });
   try {
-    await page.goto(`http://live-probe.localhost:${probe.env.FOGD_HTTP_PORT}/?room=${room}`);
+    await page.goto(`http://${app}.localhost:${probe.env.FOGD_HTTP_PORT}/?room=${room}`);
     await expect(page.getByRole('status')).toHaveText('Connected · Revision 0 · 0 pending');
     const start = Date.now();
     await expect.poll(() => Date.now() - start, { timeout: 35000, intervals: [1000] }).toBeGreaterThanOrEqual(30000);

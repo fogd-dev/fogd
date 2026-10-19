@@ -345,4 +345,6 @@ workerd. Its [explicit Void client patch](docs/patches/void-websocket-send.md) p
 pre-snapshot buffering. [Owner and gateway process-loss checks](docs/evidence/m11b-process-failure.json)
 preserve acknowledged edits. [Idle eviction](docs/evidence/m11b-idle.json) preserves
 the native socket and room behavior. [Non-owning ingress loss](docs/evidence/m11b-ingress.json)
-also preserves the board and reconnects. Updates, SSE and stopped recovery remain open.
+also preserves the board and reconnects. An [explicit celld patch](docs/patches/celld-preaccept-attachment.md)
+qualifies preserved-socket updates, including after idle eviction; upstream 0.6.2
+still fails that gate. Route pause, SSE, ownership moves and stopped recovery remain open.

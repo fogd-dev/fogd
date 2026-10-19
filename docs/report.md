@@ -14,7 +14,13 @@ remain open roadmap work.
 Queued Docker backup/restore has [private-artifact recovery qualification](queue-recovery.md),
 including replica-first pause, retention checks, and explicit acknowledgment/resume.
 Activated or retired queued history still prevents Kubernetes recovery and expansion.
-Queue admission now has an [experimental Docker opt-in](queue-admission.md), off by default.
+Bounded queue apps have a [supported Docker opt-in](queue-admission.md), off by default.
+
+Native checklist reconciliation, node failures and idle eviction are qualified
+locally. Preserved-socket updates require the explicit [celld patch candidate](patches/celld-preaccept-attachment.md);
+the [qualification record](evidence/m11b-patched-runtime.json) includes both negative
+controls and runtime provenance. Route pause, SSE, actual room moves and stopped
+recovery for live sessions remain open.
 
 ## What works
 
@@ -918,3 +924,28 @@ with 1011, and the browser reconnects before recovering the edit. Reconnection d
 not meet the preserved-socket acceptance requirement. The runtime attachment/reload
 path is under investigation; the requirement remains open. No runtime workaround
 or compatibility claim is included in this checkpoint.
+
+## M11b pre-accept attachment patch and preserved-socket updates
+
+The [patched-runtime qualification](evidence/m11b-patched-runtime.json) passes a
+compatible handler update on the original native Void socket, including after
+observed idle eviction. The v1 browser retains a pending record across exact
+approval and receives a v2 acknowledgment without reconnecting. Matching unpatched
+runs fail with close 1011 and reconnect. Owner/gateway failure, non-owning ingress
+with a live owner control, and browser reconciliation pass on the patched binary.
+
+The defect is celld's attach-before-accept ordering: Void serializes its connection
+before acceptance, but celld 0.6.2 has no registry entry to receive the bytes yet.
+The [upstream candidate](patches/celld-preaccept-attachment.md) retains the encoded
+clone and writes it after acceptance. No app post-accept workaround is retained.
+The [review response](reviews/m11b-update-response.md) records the diagnostic,
+negative controls and evidence limits. All 278 workspace tests, four source-method
+regressions, typechecking and offline builds pass. The upstream test stage and
+Clippy pass, but the published source tree contains zero Rust tests.
+
+The default remains upstream celld. Docker operators can explicitly build and
+select the candidate with a separate runtime-image tag; the patch has not been
+published or submitted upstream. The tested build profile is `lab`. This qualifies
+the stated functional behavior, not release performance or Kubernetes deployment.
+Route-pause/new-upgrade behavior, SSE, actual room moves and stopped recovery remain
+open, as does celld's rejection of Void's echoed close code 1001. M11b is incomplete.
