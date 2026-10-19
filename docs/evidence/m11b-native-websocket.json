@@ -1,0 +1,18 @@
+{
+  "scope": "Minimal native Void WebSocket roundtrip through ordinary CLI approval and workerd; no durable-state/failure qualification",
+  "project": "fogd-m11b-live",
+  "release": {
+    "id": "a13452ff-5801-45eb-a8e7-65c118baff52",
+    "digest": "0fcffaa6688dea83625055b1f7cbb9d623f38599a1bc9715f7d1b419ced34f2e"
+  },
+  "events": [
+    {
+      "type": "ready",
+      "room": "test"
+    },
+    {
+      "type": "ready",
+      "room": "test"
+    }
+  ]
+}

@@ -332,3 +332,12 @@ retry. The same guide includes duplicate pending-work recovery and direct gatewa
 browser checks. Canonical CLI artifacts also pass additive update with handler
 overlap and retirement/replacement checks. The [acceptance audit](docs/m11a-acceptance.md) closes the bounded Docker slice.
 Default admission stays off by policy because queues constrain expansion/recovery.
+
+
+## M11b in progress: live sessions
+
+The [reviewed plan](docs/m11b.md) covers durable operations, browser reconciliation,
+preserved WebSockets across updates, and separate SSE acceptance. Its minimal native
+Void room already passes a workerd WebSocket roundtrip without a shim. The guide
+includes fresh-fixture reproduction; full collaboration and failure behavior remain
+under implementation.

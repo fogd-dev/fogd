@@ -791,3 +791,23 @@ Queues are now documented as supported opt-in for the qualified local Docker
 profile. The default remains 0 by deliberate policy, not unfinished acceptance.
 M11's live-session and scheduled/workflow slices, M12 broader portability, and
 remote-host qualification remain open. This closes M11a only.
+
+
+## M11b reviewed plan and native transport probe
+
+The [M11b plan](m11b.md) preserves native Void WebSocket rooms and separately qualifies
+SSE. Its review found four corrections: terminal operation rejection, preserved
+WebSockets across code updates, explicit eviction evidence, and an authoritative
+snapshot source independent of SSE delivery. The plan incorporates all four.
+
+A minimal `defineRoom` route built and staged without a shim, then passed scoped
+CLI upload, exact approval, an HTTP request, and typed WebSocket messages through
+workerd in Chromium. [Transport evidence](evidence/m11b-native-websocket.json) records
+the immutable artifact. The repeatable probe lives in scripts/live-native.mjs.
+This is not yet a durable collaboration app; persistence, reconnect, updates, idle
+behavior, failure, SSE and recovery remain open acceptance items.
+
+The completed M11a populated-retirement stack was removed without deleting its
+volumes to release Docker network address pools for the new isolated fixture.
+Example builds, syntax checks and quality gates pass. No runtime adapter change
+or upstream patch was required for this initial transport probe.

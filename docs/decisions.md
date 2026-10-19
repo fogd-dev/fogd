@@ -941,3 +941,29 @@ Consequences: documentation must present the supported profile and its limits ne
 to the flag. Broader policies, topology changes, and managed execution require their
 own evidence; the acceptance audit preserves the distinctions between private
 runtime and ordinary CLI qualification. Continue the remaining M11/M12 work.
+
+## ADR 037: native Void sessions with application-owned reconciliation
+
+Context: U8 needs durable acknowledged edits and recovery of live browser state.
+Void offers typed WebSocket rooms and separate SSE topic streams. The latter do
+not retain application events; reconnect alone cannot recover missed state.
+
+Options: create a fogd realtime abstraction, use only one transport as a substitute
+for the other, or preserve native Void APIs with a bounded application protocol.
+
+Choice: native `defineRoom` checklist with atomic SQLite state/receipts, durable
+browser pending operations, terminal rejections, and snapshots. Test `void/live`
+SSE independently as best-effort revision hints with catch-up from room storage.
+Keep both in M11b acceptance. The [review response](reviews/m11b-design-response.md)
+adds preserved-socket updates, explicit eviction, and owner/ingress failure tests.
+
+Why: this advances the integrated developer experience without inventing a platform
+protocol or confusing transport reconnection with durable acknowledgment. The basic
+room builds, stages, deploys and exchanges messages through workerd without a shim.
+That transport evidence is not proof of the proposed durable-session behavior.
+
+Consequences: keep v1/v2 wire formats and socket attachments compatible; typed
+rejections must settle pending operations. Explicitly show rollback after a lower
+revision rather than silently ignoring the server. Internal SSE cleanup alarms do
+not qualify general scheduled app effects. Implement and test the full reviewed
+plan before changing feature support claims.
