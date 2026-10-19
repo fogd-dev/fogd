@@ -8,35 +8,43 @@ import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { receiveArtifact } from '@fogd/runtime/manifest';
-import { readJson, saveJson } from './store.mjs';
+import { readJson, saveJson, storageFailureDiagnostic } from './store.mjs';
 import { Secrets } from './secrets.mjs';
 import { resourceChanges } from './resources.mjs';
 
 export class Controller {
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024 }) {
+  #persist;
+  #storageFailed = false;
+  #storageCause;
+  #reportStorageFailure;
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic) }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
+    this.#persist = persist;
+    this.#reportStorageFailure = reportStorageFailure;
     this.maxPending = positiveLimit(maxPending, 'Pending deployment limit');
     this.maxPendingPerCredential = positiveLimit(maxPendingPerCredential, 'Per-credential pending limit');
     this.quota = new ArtifactQuota(maxArtifactBytes);
-    this.credentials = new Credentials(dir);
-    this.secrets = new Secrets(dir);
+    const persistMetadata = (path, value) => this.#saveMetadata(path, value);
+    this.credentials = new Credentials(dir, persistMetadata);
+    this.secrets = new Secrets(dir, persistMetadata);
     this.queue = Promise.resolve();
     this.occupied = new Set();
     this.bucketOwners = new Map();
   }
   exclusive(task) {
-    const result = this.queue.then(task);
+    const result = this.queue.then(() => { this.assertStorage(); return task(); });
     this.queue = result.catch(() => {});
     return result;
   }
   async init() {
+    this.assertStorage();
     await this.secrets.init();
     await this.credentials.init();
     await mkdir(join(this.dir, 'artifacts'), { recursive: true });
-    await this.quota.init(join(this.dir, 'artifacts'));
     this.state = await readJson(join(this.dir, 'state.json'), { apps: {}, deployments: {} });
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
+    await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     validateRetirementState(this.state, this.slots);
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
@@ -67,7 +75,25 @@ export class Controller {
     }
     await this.save();
   }
-  save() { return saveJson(join(this.dir, 'state.json'), this.state); }
+  assertStorage() {
+    if (this.#storageFailed) {
+      const error = new Error('Controller metadata write failed; restart to reload durable state before retrying', { cause: this.#storageCause });
+      error.code = 'CONTROLLER_STORAGE_UNCERTAIN';
+      throw error;
+    }
+  }
+  save() { return this.#saveMetadata(join(this.dir, 'state.json'), this.state); }
+  async #saveMetadata(path, value) {
+    this.assertStorage();
+    try { await this.#persist(path, value); }
+    catch (error) {
+      this.#storageFailed = true; this.#storageCause = error;
+      // Diagnostic failures must not mask the reload requirement. Never log
+      // arbitrary messages, paths, or values from the failed metadata write.
+      try { this.#reportStorageFailure(storageFailureDiagnostic(error)); } catch {}
+      this.assertStorage();
+    }
+  }
   artifact(id) { return join(this.dir, 'artifacts', id); }
   available(app) {
     assertLiveName(this.state, app);
@@ -98,10 +124,11 @@ export class Controller {
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
         this.state.deployments[id] = request;
         await this.save(); this.quota.used += bytes; return request;
-      } catch (error) { delete this.state.deployments[id]; await rm(dir, { recursive: true, force: true }); throw error; }
+      } catch (error) { this.assertStorage(); delete this.state.deployments[id]; await rm(dir, { recursive: true, force: true }); throw error; }
     });
   }
   async reconcile(app, slot) {
+    this.assertStorage();
     try { await this.reconcileLedger(app, slot); }
     catch (error) {
       if (app.privateConfiguration) throw new Error('Private migration reconciliation failed; runtime diagnostics are withheld');
@@ -168,6 +195,7 @@ export class Controller {
       request.resourceChanges = this.compatible(request, app);
       if (await artifactDigest(this.artifact(request.id)) !== request.digest) throw new Error('Stored artifact digest mismatch');
     } catch (error) {
+      this.assertStorage();
       request.status = 'failed';
       request.error = selected.revision || app?.privateConfiguration ? 'Private activation preparation failed; runtime diagnostics are withheld' : error.message;
       await this.save();
@@ -209,16 +237,20 @@ export class Controller {
       }
       request.status = 'active'; await step('complete');
     } catch (error) {
+      this.assertStorage();
       request.status = 'failed'; request.error = app.privateConfiguration ? 'Private activation failed; secret values and runtime diagnostics are withheld. Check the recorded step and retry explicitly.' : error.message; app.route = 'paused';
       try { await this.reconcile(app, slot); } catch (reconcileError) { request.error += app.privateConfiguration ? '; migration reconciliation pending' : `; migration reconciliation pending: ${reconcileError.message}`; }
       await this.save();
-    } finally { await this.secrets.cleanup(id); }
+    } finally {
+      try { await this.secrets.cleanup(id); }
+      catch (error) { this.assertStorage(); throw error; }
+    }
     return request;
   }
   route(host) {
     const entry = Object.entries(this.state.apps).find(([name]) => `${name}.${this.baseDomain}` === host.toLowerCase());
     if (!entry || entry[1].retirement) return { state: 'unknown' };
     const app = entry[1];
-    return { state: app.route, slot: app.slot };
+    return { state: this.#storageFailed ? 'paused' : app.route, slot: app.slot };
   }
 }

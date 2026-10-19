@@ -122,3 +122,48 @@ letters, digits, underscores, and hyphens separated by `/`; prefixes cannot
 contain each other. Distinct nonempty `_ID` overrides remain supported. These
 checks tighten the older backup preflight; do not treat arbitrary Compose
 customization as a qualified recoverable installation.
+
+## Recover from a controller metadata write failure
+
+A failed deployment-state, credential, or secret-metadata write may already have
+committed its rename. The controller
+therefore stops further mutations until a fresh process reloads durable state.
+Authenticated admin and deploy APIs return 503 with a restart instruction; internal
+routing reports existing apps paused. Authentication still applies. Artifacts remain
+on disk because a possibly committed submission may reference them.
+
+Restore backing-storage availability, then restart the controller using the same
+installation configuration and volume. Do not delete `state.json`, artifacts, or
+ownership records to bypass the failure. Re-open the admin view and inspect the
+reloaded deployment status. An interrupted activation requires explicit approval
+retry; an activation whose final write committed may already be active. A submission
+whose write did not commit can leave an unreferenced artifact, which still counts
+toward disk use. After reload, `fogd admin capacity` reports those entries in
+`unreferencedArtifactIds`, and the admin page shows their count. This path does not
+automatically collect files; review them during stopped maintenance. An app whose
+first bucket claim succeeded but whose app record never committed remains
+quarantined. Use [Restore to fresh storage](#restore-to-fresh-storage) with a matching
+pre-failure snapshot. If no such snapshot exists, leave the slot quarantined; this
+path does not yet reconstruct an uncommitted first app record.
+
+Stopping controller writes and new HTTP routes does not stop existing handlers,
+Durable Object alarms, or other background work. It is not a drain. If the storage
+fault affects the wider installation, use the complete stopped recovery procedure
+with matching bucket, replica, and controller state.
+
+Tests inject failures before a migration-intent write and after a submission write
+has completed, using the real metadata writer. They verify artifact preservation,
+blocked queued mutations, no further error-path migration effects, API unavailability,
+and successful explicit retry for recorded apps after a fresh controller loads the
+saved state. Credential-revocation and secret-index ambiguity use the same guard.
+The underlying persistence error remains attached as the exception cause for
+in-process diagnosis. The controller also logs one errno/syscall diagnostic when
+the guard activates, without the arbitrary error message or filesystem path. HTTP
+responses omit private diagnostics. Cleanup failures cannot mask the reload error.
+These tests
+do not establish behavior under a real disk-full incident or power loss.
+
+After a failed credential issuance, review the reloaded credential list and revoke
+its record before issuing a replacement token. The original token may never have
+reached the caller. Unreferenced secret revisions and temporary files can also
+remain in protected controller storage; this procedure does not collect them.

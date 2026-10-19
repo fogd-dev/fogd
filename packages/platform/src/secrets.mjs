@@ -6,7 +6,8 @@ import { secretNames } from '@fogd/runtime/deployment';
 import { readJson, saveJson } from './store.mjs';
 
 export class Secrets {
-  constructor(dir) { this.dir = join(dir, 'secrets'); this.execution = join(dir, 'execution'); }
+  #persist;
+  constructor(dir, persist = saveJson) { this.#persist = persist; this.dir = join(dir, 'secrets'); this.execution = join(dir, 'execution'); }
   async init() {
     await mkdir(this.dir, { recursive: true, mode: 0o700 });
     await chmod(this.dir, 0o700);
@@ -21,9 +22,9 @@ export class Secrets {
     const names = secretNames(Object.keys(values));
     if (Object.values(values).some(value => typeof value !== 'string' || !value.length || Buffer.byteLength(value) > 8192) || Buffer.byteLength(JSON.stringify(values)) > 32768) throw new Error('Secret values must be nonempty strings, at most 8 KiB each and 32 KiB total');
     const revision = randomUUID();
-    await saveJson(join(this.dir, `${revision}.json`), { app, values });
+    await this.#persist(join(this.dir, `${revision}.json`), { app, values });
     const next = Object.assign(Object.create(null), this.index, { [app]: { revision, names } });
-    await saveJson(join(this.dir, 'index.json'), next);
+    await this.#persist(join(this.dir, 'index.json'), next);
     this.index = next;
     return { app, revision, names };
   }

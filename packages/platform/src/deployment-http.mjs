@@ -11,8 +11,9 @@ export function deploymentHandler(controller, deployToken, body, maxUploads = 2)
     if (!submitting && !match) return false;
     const identity = controller.credentials.authenticate(request.headers.authorization);
     const submitter = identity?.id || (deployToken && equal(request.headers.authorization, `Bearer ${deployToken}`) ? 'team-token' : null);
-    if (!submitter) send(401, { error: 'Unauthorized' });
-    else if (submitting) {
+    if (!submitter) { send(401, { error: 'Unauthorized' }); return true; }
+    controller.assertStorage();
+    if (submitting) {
       if (uploads >= maximum) send(429, { error: 'Upload capacity reached; retry later' });
       else {
         uploads++;

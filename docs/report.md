@@ -546,3 +546,18 @@ and queue admission remain pending; this is not full activation recovery.
 The [review response](reviews/m11a-delivery-response.md) records the hold-release
 fix and conservative recovery choice. All 109 tests, example builds, syntax, and
 quality checks pass.
+
+Controller metadata write failures now stop further mutations until restart.
+Possibly referenced artifacts survive an ambiguous submission write, and activation
+error handling cannot continue migration reconciliation after a failed progress
+write. Authenticated APIs return 503 while internal routes report paused. Tests use
+real state files with injected pre-write and post-write failures and verify explicit
+retry from a fresh controller instance. This fixes the persistence boundary needed
+for delivery integration; queue approval and bootstrap integration remain pending.
+See [ADR 027](decisions.md#adr-027-stop-controller-mutations-after-uncertain-metadata-persistence)
+and the [recovery procedure](recovery.md#recover-from-a-controller-metadata-write-failure).
+Credential and secret-metadata writes share the same guard. Reload reports
+unreferenced artifact entries; first claims without a committed app record remain
+quarantined. All 119 tests, example builds, and quality checks pass.
+The [review response](reviews/m11a-controller-storage-response.md) records the
+shared credential/secret guard, operator diagnostics, and remaining first-claim gap.

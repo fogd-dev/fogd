@@ -6,11 +6,12 @@ import { tmpdir } from 'node:os';
 import { capacity } from '../src/capacity.mjs';
 import { Controller } from '../src/controller.mjs';
 import { server } from '../src/http.mjs';
+import { saveJson } from '../src/store.mjs';
 import { stageArtifact } from '@fogd/runtime/artifact';
 import { manifest } from '@fogd/runtime/manifest';
 
 const slots = [{ id: 'slot-1', prefix: 'one', nodes: ['a', 'b'] }, { id: 'slot-2', prefix: 'two', nodes: ['c', 'd'] }];
-async function setup(t) {
+async function setup(t, options = {}) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-platform-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const owners = {}, applied = {}; let publishes = 0;
@@ -32,7 +33,7 @@ async function setup(t) {
     },
     applied: async slot => applied[slot.id] || [],
   };
-  const controller = new Controller({ dir: join(root, 'state'), slots, backend }); await controller.init();
+  const controller = new Controller({ dir: join(root, 'state'), slots, backend, reportStorageFailure: () => {}, ...options }); await controller.init();
   let sequence = 0;
   const artifact = async (app = 'hello', sql = ['CREATE TABLE test (id TEXT);'], resources = {}) => {
     const dir = join(root, `project-${sequence++}`); await mkdir(join(dir, 'dist/ssr'), { recursive: true }); await mkdir(join(dir, 'db/migrations'), { recursive: true });
@@ -480,4 +481,168 @@ test('retired names cannot regain routes, deployments, secrets or authority afte
     assert.equal(response.status, 400); assert.match((await response.json()).error, /permanently retired/);
   }
 
+});
+
+test('an ambiguously committed submission preserves its artifact and stops queued writes until a fresh controller loads disk', async t => {
+  let armed = false;
+  const f = await setup(t, { persist: async (path, state) => { await saveJson(path, state); if (armed) throw Error('directory fsync failed'); } });
+  const body = await f.artifact(); armed = true;
+  const failed = f.controller.submit(body, 'team-token');
+  const queued = f.controller.issueCredential('must-not-issue', ['hello']);
+  const outcomes = await Promise.allSettled([failed, queued]);
+  for (const result of outcomes) { assert.equal(result.status, 'rejected'); assert.equal(result.reason.code, 'CONTROLLER_STORAGE_UNCERTAIN'); }
+  const saved = JSON.parse(await readFile(join(f.root, 'state/state.json'), 'utf8'));
+  const request = Object.values(saved.deployments)[0];
+  assert.equal(request.status, 'pending');
+  await readFile(join(f.controller.artifact(request.id), 'wrangler.json'));
+  await assert.rejects(f.controller.save(), /restart/);
+  await assert.rejects(f.controller.init(), /restart/);
+  const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+  await recovered.init();
+  await recovered.mutate(request.id, request.digest, 'approve');
+  assert.equal(recovered.route('hello.localhost').state, 'active');
+});
+
+test('a failed migration-intent write stops error-path reconciliation and further activation effects', async t => {
+  let armed = false, applied = 0, migrated = 0;
+  const f = await setup(t, { persist: async (path, state) => {
+    if (armed && Object.values(state.deployments).some(d => d.step === 'migrating')) throw Error('disk full');
+    await saveJson(path, state);
+  } });
+  const readApplied = f.backend.applied, migrate = f.backend.migrate;
+  f.backend.applied = async (...args) => { applied++; return readApplied(...args); };
+  f.backend.migrate = async (...args) => { migrated++; return migrate(...args); };
+  const request = await f.controller.submit(await f.artifact(), 'team-token'); armed = true;
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN');
+  assert.equal(applied, 1); assert.equal(migrated, 0); assert.equal(f.publishes(), 1);
+  assert.equal(f.controller.route('hello.localhost').state, 'paused');
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /restart/);
+  assert.equal(applied, 1); assert.equal(migrated, 0); assert.equal(f.publishes(), 1);
+  const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+  await recovered.init();
+  assert.equal(recovered.state.deployments[request.id].status, 'failed');
+  await recovered.mutate(request.id, request.digest, 'approve');
+  assert.equal(recovered.route('hello.localhost').state, 'active');
+});
+
+test('storage failure makes existing routes unavailable without claiming to drain their runtime', async t => {
+  let armed = false;
+  const f = await setup(t, { persist: async (path, state) => { if (armed) throw Error('disk full'); await saveJson(path, state); } });
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await f.controller.mutate(request.id, request.digest, 'approve');
+  assert.equal(f.controller.route('hello.localhost').state, 'active');
+  armed = true;
+  await assert.rejects(f.controller.save(), /restart/);
+  assert.equal(f.controller.route('hello.localhost').state, 'paused');
+  assert.equal(f.controller.route('unknown.localhost').state, 'unknown');
+  assert.equal(f.controller.state.apps.hello.route, 'active');
+});
+
+test('authenticated control-plane reads report unavailable after a metadata failure while gateway routes pause', async t => {
+  let armed = false;
+  const f = await setup(t, { persist: async (path, state) => { if (armed) throw Error('private disk diagnostic'); await saveJson(path, state); } });
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await f.controller.mutate(request.id, request.digest, 'approve');
+  const credentials = { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' };
+  const publicServer = server(f.controller, credentials), internal = server(f.controller, credentials, { role: 'internal' });
+  for (const listener of [publicServer, internal]) { await new Promise(resolve => listener.listen(0, '127.0.0.1', resolve)); t.after(() => new Promise(resolve => listener.close(resolve))); }
+  const origin = `http://127.0.0.1:${publicServer.address().port}`, internalOrigin = `http://127.0.0.1:${internal.address().port}`;
+  armed = true; await assert.rejects(f.controller.save(), /restart/);
+  for (const [path, authorization] of [['/v1/admin', `Basic ${Buffer.from('admin:password').toString('base64')}`], [`/v1/deployments/${request.id}`, 'Bearer deploy']]) {
+    const response = await fetch(origin + path, { headers: { authorization } });
+    assert.equal(response.status, 503);
+    const output = await response.text(); assert.match(output, /restart/); assert.ok(!output.includes('private disk'));
+  }
+  assert.equal((await fetch(origin + '/v1/admin')).status, 401);
+  assert.equal((await fetch(origin + `/v1/deployments/${request.id}`)).status, 401);
+  const routed = await fetch(internalOrigin + '/internal/route?host=hello.localhost', { headers: { authorization: 'Bearer gateway' } });
+  assert.equal(routed.status, 200); assert.equal((await routed.json()).state, 'paused');
+});
+
+test('a pre-write submission failure retains and reports unreferenced artifact bytes after reload', async t => {
+  let armed = false;
+  const f = await setup(t, { persist: async (path, state) => { if (armed) throw Error('disk full'); await saveJson(path, state); } });
+  armed = true;
+  await assert.rejects(f.controller.submit(await f.artifact(), 'team-token'), /restart/);
+  const id = Object.keys(f.controller.state.deployments)[0];
+  const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+  await recovered.init();
+  assert.equal(Object.keys(recovered.state.deployments).length, 0);
+  const report = capacity(recovered);
+  assert.deepEqual(report.artifacts.unreferencedArtifactIds, [id]);
+  assert.ok(report.artifacts.retainedArtifactBytes > 0);
+  await readFile(join(recovered.artifact(id), 'wrangler.json'));
+});
+
+test('an ambiguously committed credential revocation blocks access until disk reload establishes revocation', async t => {
+  let armed = false;
+  const cause = Object.assign(Error('private credential persistence failure'), { code: 'EIO' });
+  const f = await setup(t, { persist: async (path, value) => { await saveJson(path, value); if (armed && path.endsWith('credentials.json')) throw cause; } });
+  const credential = await f.controller.issueCredential('demo', ['hello']);
+  armed = true;
+  await assert.rejects(f.controller.revokeCredential(credential.id), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN' && e.cause === cause);
+  await assert.rejects(f.controller.submit(await f.artifact(), credential.id), /restart/);
+  const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+  await recovered.init();
+  assert.equal(recovered.credentials.authenticate(`Bearer ${credential.token}`), null);
+  await assert.rejects(recovered.submit(await f.artifact(), credential.id), /revoked/);
+});
+
+test('an ambiguously committed secret index preserves its immutable revision for reload', async t => {
+  let armed = false;
+  const f = await setup(t, { persist: async (path, value) => { await saveJson(path, value); if (armed && path.endsWith('secrets/index.json')) throw Error('index sync failed'); } });
+  await f.controller.replaceSecrets('hello', { KEY: 'old-fixture-value' }); armed = true;
+  await assert.rejects(f.controller.replaceSecrets('hello', { KEY: 'new-fixture-value' }), /restart/);
+  const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+  await recovered.init();
+  const revision = recovered.secrets.describe().hello.revision;
+  const selected = await recovered.secrets.select({ app: 'hello', requiredSecrets: ['KEY'] }, revision);
+  assert.equal(selected.values.KEY, 'new-fixture-value');
+});
+
+test('a cleanup error cannot mask a metadata failure that requires reload', async t => {
+  let armed = false;
+  const cause = Error('metadata failed');
+  const f = await setup(t, { persist: async (path, state) => {
+    if (armed && Object.values(state.deployments || {}).some(d => d.step === 'approved')) throw cause;
+    await saveJson(path, state);
+  } });
+  const request = await f.controller.submit(await f.artifact(), 'team-token'); armed = true;
+  f.controller.secrets.cleanup = async () => { throw Error('cleanup failed'); };
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN' && e.cause === cause);
+});
+
+test('first-claim write ambiguity either preserves a retryable app or quarantines the unrecorded owner', async t => {
+  for (const committed of [false, true]) {
+    let armed = false;
+    const f = await setup(t, { persist: async (path, state) => {
+      if (armed && state.apps?.hello) { if (committed) await saveJson(path, state); throw Error('app record failed'); }
+      await saveJson(path, state);
+    } });
+    const request = await f.controller.submit(await f.artifact(), 'team-token'); armed = true;
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /restart/);
+    assert.equal(f.owners['slot-1'].app, 'hello'); assert.equal(f.publishes(), 0);
+    const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
+    await recovered.init();
+    assert.equal(recovered.route('hello.localhost').state, 'paused');
+    if (committed) {
+      await recovered.mutate(request.id, request.digest, 'approve');
+      assert.equal(recovered.route('hello.localhost').state, 'active');
+    } else {
+      assert.equal(recovered.state.apps.hello.quarantined, true);
+      await assert.rejects(recovered.mutate(request.id, request.digest, 'approve'), /quarantined/);
+    }
+  }
+});
+
+test('the storage latch emits one bounded diagnostic without exposing paths or masking the cause', async t => {
+  let armed = false; const reports = [];
+  const cause = Object.assign(Error('private message'), { code: 'EIO', syscall: 'fsync', path: '/private/metadata' });
+  const f = await setup(t, {
+    persist: async (path, value) => { if (armed) throw cause; await saveJson(path, value); },
+    reportStorageFailure: diagnostic => { reports.push(diagnostic); throw Error('logger failed'); },
+  });
+  armed = true;
+  for (let attempt = 0; attempt < 2; attempt++) await assert.rejects(f.controller.save(), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN' && e.cause === cause);
+  assert.deepEqual(reports, [{ code: 'EIO', syscall: 'fsync' }]);
 });

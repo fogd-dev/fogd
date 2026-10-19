@@ -660,3 +660,27 @@ runtime effect. The cost is an extra pause/readiness cycle after an uncertain
 activation resume. Existing handlers may still run; this does not create a drain.
 No automatic runtime action occurs during journal reload. The implementation is
 internal until controller approval, bootstrap, recovery, and retirement integrate it.
+
+## ADR 027: stop controller mutations after uncertain metadata persistence
+
+Context: `saveJson` can rename a state file before directory sync fails. Treating
+that failure as an ordinary rejected submission can delete an artifact the saved
+state references. Activation error recovery can also query or mutate the migration
+ledger after its progress write failed. Delivery journals will share this controller
+persistence boundary.
+
+Options: retry or roll back in memory and continue, or stop controller mutations
+until a fresh instance reloads disk. Choose the latter. A private failure flag blocks
+queued mutations, further state writes, and activation error-path reconciliation.
+Preserve artifacts and report unreferenced entries after reload rather than deleting
+possibly referenced data. Retain the exception cause and emit one errno/syscall diagnostic without arbitrary
+messages, paths, or metadata values. Return
+503 to authenticated control-plane clients and pause
+new routes while the instance cannot establish durable state.
+
+Why: the process cannot infer whether the failed write committed. Continuing from
+its in-memory view risks overwriting valid state or executing effects without a
+persisted intent. Restart after restoring storage availability establishes the
+actual saved state; interrupted activation still requires explicit retry. The cost
+is controller-wide unavailability on a metadata write failure. Existing background
+work is not stopped by this guard, and no drain is claimed.

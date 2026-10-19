@@ -44,6 +44,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         response.setHeader('WWW-Authenticate', 'Basic realm="fogd admin", charset="UTF-8"');
         return send(401, { error: 'Admin authentication required' });
       }
+      controller.assertStorage();
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await secretRequest(request, url, controller, csrf, body, send)) return;
@@ -65,6 +66,6 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1><p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
       }
       send(404, { error: 'Not found' });
-    } catch (error) { send(400, { error: error.message }); }
+    } catch (error) { send(error.code === 'CONTROLLER_STORAGE_UNCERTAIN' ? 503 : 400, { error: error.message }); }
   });
 }
