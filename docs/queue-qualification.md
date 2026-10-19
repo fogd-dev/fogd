@@ -123,6 +123,33 @@ publish routes through the gateway, approve releases, or establish that controll
 restarts preserve activation progress. Private evidence includes runtime state;
 only selected synthetic observations belong in committed evidence.
 
+## Resume generation gate
+
+After the native probes, run the internal platform primitive against that fleet:
+
+```sh
+node scripts/queue-generation.mjs slot-1 .fogd/queue-generation
+```
+
+It rejects an unapproved runtime version while preserving pause, resumes a resident
+queue, then restarts both replicas and requires an observed cold queue before
+resuming again. `info` materializes the named queue before generation inspection.
+Both replicas must report the approved version, and exactly the named queue cell must
+exist on its replica's current generation. Missing, duplicate, stale, or additional
+queue observations block resume. Successful mutation requires a separate status
+read from the same runtime cell. This confirms reported pause state, not actual
+delivery. Mutation or confirmation failure throws `QUEUE_OUTCOME_UNKNOWN` without
+silently retrying; pre-mutation validation failures block the command.
+
+This primitive assumes one consumed queue per app fleet and serialized publication
+by the controller. It is not an atomic fence against a separate operator running
+`celld deploy`, and it is not a drain: compatible old handlers may still run.
+Runtime diagnostics and the queue identity hash are pinned-version interfaces.
+Unit tests cover stale-generation rejection; the live probe observes approved
+generations and does not force a stale-generation runtime cell. The controller must persist
+intent and activation progress before calling it; that integration remains pending.
+The probe leaves delivery paused and records [selected evidence](evidence/m11a-queue-generation.json).
+
 ## What remains unqualified
 
 These probes do not establish controller activation recovery, queue addition/removal,

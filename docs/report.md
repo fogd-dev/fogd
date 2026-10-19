@@ -525,3 +525,12 @@ remain unqualified. These are direct-runtime probes; fogd queue admission remain
 disabled. [Claude review and response](reviews/m11a-native-response.md) document
 the corrected crash proof and stronger assertions. The imports fixture also passes TypeScript checking, and all 88 workspace
 tests and example builds pass.
+
+The internal [queue resume gate](queue-qualification.md#resume-generation-gate)
+now validates the approved version on both replicas and current-generation queue
+ownership before resume, with separate post-mutation confirmation. Live resident
+and cold-queue probes pass; an unapproved version stays paused. This does not yet
+persist controller delivery intent or enable queue admission. The
+[review response](reviews/m11a-generation-response.md) records exact-cell matching
+and explicit unknown mutation outcomes. The workspace now
+passes 95 tests and all example builds.

@@ -626,3 +626,13 @@ remove messages; an empty queue must never be reported as proof of job success.
 No drain, exactly-once external effects, bounded `waitUntil` lifetime, or managed
 Cloudflare execution is promised. Cron, Workflows, and broader queue transitions
 remain later M11 work. See the [review response](reviews/m11a-response.md).
+
+Implementation note for ADR 025: before resume, the backend materializes the named
+queue with `info` and checks its exact cell identity on the approved runtime
+version. Options were inferring identity from a single resident queue or deriving
+the pinned upstream address. Choose the address: eviction between status and
+inspection must not allow another resident queue to satisfy the gate. Follow
+celld's `engine_api.rs` namespace/HMAC scheme without changing it; qualify the
+recorded address and live cold/resident behavior when updating the runtime.
+Mutation or confirmation failures report an unknown outcome, not a paused state.
+See the [review response](reviews/m11a-generation-response.md).

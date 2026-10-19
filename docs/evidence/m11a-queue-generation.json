@@ -1,0 +1,61 @@
+{
+  "scope": "Internal named-queue resume gate; stale-generation rejection is unit-tested, not injected live; no controller activation or admission claim",
+  "context": {
+    "project": "fogd-m11a-native",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26",
+      "slot-2-b": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26"
+    }
+  },
+  "resident": {
+    "version": "d591b6ed0c500702",
+    "status": {
+      "paused": true,
+      "stored": 0,
+      "backlogCount": 0,
+      "backlogBytes": 0,
+      "oldestMessageTimestamp": null
+    }
+  },
+  "coldBefore": [
+    {
+      "host": "slot-2-a",
+      "version": "d591b6ed0c500702",
+      "generation": 1,
+      "queueCells": {}
+    },
+    {
+      "host": "slot-2-b",
+      "version": "d591b6ed0c500702",
+      "generation": 1,
+      "queueCells": {}
+    }
+  ],
+  "coldResumed": {
+    "replicas": [
+      {
+        "host": "slot-2-a",
+        "version": "d591b6ed0c500702",
+        "generation": 1,
+        "queueCells": {
+          "__Queue:d463c89028a13df148b7c70bcd22af22f372e287302315af0317983de634274b": 1
+        }
+      },
+      {
+        "host": "slot-2-b",
+        "version": "d591b6ed0c500702",
+        "generation": 1,
+        "queueCells": {}
+      }
+    ],
+    "status": {
+      "paused": false,
+      "stored": 0,
+      "backlogCount": 0,
+      "backlogBytes": 0,
+      "oldestMessageTimestamp": null
+    }
+  }
+}

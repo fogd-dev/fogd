@@ -1,10 +1,18 @@
 import { spawn } from 'node:child_process';
 import { GetObjectCommand, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { bucketClient } from '@fogd/runtime/bucket';
+import { QueueRuntime } from './queue-runtime.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export class Backend {
-  constructor(env = process.env) { this.env = env; this.s3 = bucketClient(env); }
+  constructor(env = process.env) { this.env = env; this.s3 = bucketClient(env);
+    this.queues = new QueueRuntime({ run: (slot, args) => this.run(slot, args), inspect: node => this.deployment(node) });
+  }
+  async deployment(node) {
+    const response = await fetch(`http://${node}:8081/state`, { signal: AbortSignal.timeout(5000) });
+    if (!response.ok) throw new Error('Runtime deployment inspection failed');
+    return (await response.json()).deployment;
+  }
   async owner(slot) {
     try {
       const object = await this.s3.send(new GetObjectCommand({ Bucket: this.env.FOGD_BUCKET, Key: `${slot.prefix}/fogd-owner.json` }));
