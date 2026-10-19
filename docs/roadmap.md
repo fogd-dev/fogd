@@ -87,9 +87,10 @@ The [M10c expansion guide](expansion.md) qualifies three Docker fleets, fresh
 rendering, stopped expansion, full restore, and middle-fleet retirement/reuse. The
 [measurement guide](capacity-measurement.md) records paired two/three-fleet reads
 and local operating costs. M10 is complete within this bounded Docker scope.
-Next, define M11's first background-execution slice: activation, retries,
-idempotency, draining, and stopped recovery must be explicit before enabling a
-binding. Live collaboration is a separate slice with reconnect/reconciliation.
+The [M11a queue proposal](m11a.md), [review amendments](reviews/m11a-response.md),
+and [initial probe](m11a-probe.md) now define the next investigation. Activation,
+retries, idempotency, handler overlap/draining, and stopped recovery must be
+qualified before enabling the binding. Live collaboration is a separate slice with reconnect/reconciliation.
 Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.
