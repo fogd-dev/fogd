@@ -1,7 +1,7 @@
 import { parseArgs } from 'node:util';
 import { join, resolve } from 'node:path';
 import { verifyBundle, fingerprint } from './bundle.mjs';
-import { execute } from './execute.mjs';
+import { snapshotState } from './snapshot-state.mjs';
 import { stopped, projectName, volumeNames } from './docker.mjs';
 import { restoreInstallation } from './restore.mjs';
 import { planRetirement } from './retirement-plan.mjs';
@@ -11,9 +11,7 @@ export async function retire(directory, app, digest, project, output) {
   const dir = resolve(directory), destination = resolve(output);
   const bundle = await verifyBundle(dir);
   projectName(bundle.manifest.sourceProject);
-  let state;
-  try { state = JSON.parse(await execute('tar', ['-xOf', join(dir, 'controller.tar'), './state.json'])); }
-  catch { throw new Error('Cannot read controller state from the stopped snapshot'); }
+  const state = await snapshotState(dir);
   const plan = planRetirement(bundle.config, state, app, digest, { snapshot: await fingerprint(join(dir, 'manifest.json')) });
   await stopped(bundle.manifest.sourceProject, volumeNames(bundle.config).map(name => bundle.config.volumes[name].name));
   await restoreInstallation({ ...bundle, dir }, project, destination, plan);

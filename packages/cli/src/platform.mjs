@@ -1,3 +1,5 @@
+import { resolvedCompose } from './compose/config.mjs';
+import { checkFleetSelection } from './compose/selection.mjs';
 import { transportPolicy } from '@fogd/runtime/transport';
 import { prepareEnvironment } from './bootstrap.mjs';
 import { checkInstalledTLS } from './tls.mjs';
@@ -9,8 +11,10 @@ import { buildArtifact, requireDocker, configEnv, configPath, compose, stackRoot
 export async function up(shared = false) {
   const env = await prepareEnvironment(shared);
   requireDocker(env);
+  const config = await resolvedCompose(env);
+  await checkFleetSelection(config);
   const policy = transportPolicy(env);
-  if (policy.tls) await checkInstalledTLS(env);
+  if (policy.tls) await checkInstalledTLS(env, config);
   await compose(['up', '-d', '--build'], env);
   console.log(`Stack started. Admin: ${origin(env)} (user ${env.FOGD_ADMIN_USER || 'admin'}, password in ${configPath()}).\nRun fogd deploy in a Void app; an admin must approve its digest.`);
 }

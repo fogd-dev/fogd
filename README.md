@@ -4,7 +4,8 @@ Run Void apps on hardware you own. workerd routes requests; celld runs each app
 with D1, R2, and Durable Objects; MinIO stores fleet state. Teammates submit builds
 with `fogd deploy`, and an admin approves the exact artifact before it runs.
 
-This local Docker prototype supports two apps with two celld replicas each. It is
+This local Docker prototype supports two apps by default, or three with a rendered
+installation, with two celld replicas each. It is
 for trusted, reviewed application code. Compare fogd, celld, workerd, Void, and hosted
 Cloudflare in the [feature table](docs/features.md). Read [the report](docs/report.md) for tested
 behavior, limitations, and the decisions behind it.
@@ -282,15 +283,20 @@ and slot reuse; measured runtime density and capacity expansion remain later wor
 `fogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR` restores a
 stopped Docker snapshot while permanently retiring one app name. Its fleet receives
 fresh replica identities and an empty storage namespace for a different app. The
-other app retains its data and sessions; old data and history remain recovery material.
+other apps retain their data and sessions; old data and history remain recovery material.
 Follow the [retirement guide](docs/retirement.md) for commands and failure drills.
 This requires maintenance downtime and a runtime that supports retirement. Kubernetes
 retirement, same-name reuse, erasure, and artifact pruning are not supported.
 
-## M10c: observe runtime capacity
+## M10c: run three apps and measure capacity
 
-The [measurement guide](docs/capacity-measurement.md) provides explicit-project
-Docker metrics and a bounded read workload with verified TLS. Reports separate
-shared overhead, app fleets, and configured ceilings. Recovery inventory generalization is verified at two fleets. Three concurrent
-apps remain unqualified; fleet expansion follows these measurements and recovery
-checks.
+`fogd docker render DIRECTORY --fleets 3` prepares a fresh three-fleet installation.
+`fogd expand BUNDLE --fleets 3 --project NEW --output DIR` expands a stopped
+snapshot onto fresh resources, preserving existing apps and adding empty capacity.
+Follow the [expansion guide](docs/expansion.md) for configuration and reproduction.
+Three-app approvals, isolated D1/R2/DO data, restart, full recovery, and middle-fleet
+retirement/reuse are qualified locally. Kubernetes remains at two fleets.
+
+The [measurement guide](docs/capacity-measurement.md) records paired two/three-fleet
+observations with the same paced workload per existing app. These are shared-VM
+measurements, not a maximum app density or production sizing recommendation.

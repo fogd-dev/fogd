@@ -1,7 +1,8 @@
+import { interruptAfterControllerRestore } from './recovery-fault.mjs';
 import assert from 'node:assert/strict';
-import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
+import { readFile, access } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { spawn, execFile } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { configEnv, compose, stackRoot, run } from '../packages/cli/src/local.mjs';
 import { projectContainers } from '../packages/cli/src/recovery/docker.mjs';
@@ -19,30 +20,7 @@ const state = JSON.parse((await exec('tar', ['-xOf', join(bundle, 'controller.ta
 const digest = state.deployments[state.apps.notebook.active].digest;
 const args = ['retire', bundle, '--app', 'notebook', '--digest', digest, '--project', target, '--output', output];
 assert.ok((await projectContainers(source)).every(c => !c.State.Running));
-const shim = join(stackRoot, '.fogd', `${source}-fault-injection${suffix}`); await mkdir(shim, { mode: 0o700 });
-const marker = join(shim, 'controller-archive-copied');
-const realDocker = (await exec('which', ['docker'])).stdout.trim();
-// This wrapper pauses only after Docker has restored the controller archive. It
-// neither edits data nor changes system PATH; only the test child receives it.
-await writeFile(join(shim, 'docker'), `#!/usr/bin/env python3
-import os,sys,subprocess,time,pathlib
-args=sys.argv[1:]
-match=args[:1]==['run'] and any('src=${target}_controller,' in a for a in args) and 'tar --numeric-owner -C /data -xpf - && sync -f /data' in args
-if not match: os.execv(${JSON.stringify(realDocker)},[${JSON.stringify(realDocker)},*args])
-result=subprocess.run([${JSON.stringify(realDocker)},*args])
-if result.returncode: sys.exit(result.returncode)
-pathlib.Path(${JSON.stringify(marker)}).write_text('copied')
-while True: time.sleep(1)
-`, { mode: 0o700 });
-const child = spawn(process.execPath, [cli, ...args], { env: { ...env, PATH: `${shim}:${env.PATH}` }, detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
-let diagnostics = '', ended = false;
-child.stdout.on('data', data => { diagnostics = (diagnostics + data).slice(-4000); });
-child.stderr.on('data', data => { diagnostics = (diagnostics + data).slice(-4000); });
-const closed = new Promise((resolve, reject) => { child.on('error', reject); child.on('close', code => { ended = true; resolve(code); }); });
-try {
-  await expect.poll(async () => { if (ended) throw new Error(`Retirement exited before injection: ${diagnostics}`); try { await access(marker); return true; } catch { return false; } }, { timeout: 180000 }).toBe(true);
-} finally { if (!ended) process.kill(-child.pid, 'SIGTERM'); }
-assert.notEqual(await closed, 0);
+await interruptAfterControllerRestore({ cli, args, env, project: target, shim: join(stackRoot, '.fogd', `${source}-fault-injection${suffix}`) });
 for (const file of ['compose.json', 'restored.json']) await assert.rejects(access(join(output, file)));
 assert.ok((await projectContainers(target)).every(c => !c.State.Running));
 await assert.rejects(exec(process.execPath, [cli, ...args], { env, timeout: 900000 }), error => /already has containers/.test(error.stderr));

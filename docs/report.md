@@ -29,7 +29,7 @@ remain open roadmap work.
 | 8b1. Scoped access and admission limits | Named app-scoped deploy credentials, revocation, retained artifact/pending/upload limits, and recovery evidence; see the [access guide](deploy-access.md) |
 | 9a–9b. Experimental Kubernetes | Local kind deploy, replica replacement, and fresh-PVC stopped recovery; see the [Kubernetes guide](kubernetes.md) and [recovery guide](kubernetes-recovery.md) |
 | 10a. Capacity reporting | Admin API/page/CLI report admission limits and retained ownership; see the [capacity guide](capacity.md) |
-| 10c, measurement slice | Warm Docker metrics and bounded stateful reads; see the [measurement guide](capacity-measurement.md). Three-fleet expansion remains open |
+| 10c, measurement slice | Warm Docker metrics and bounded stateful reads; see the [measurement guide](capacity-measurement.md). Three-fleet expansion and paired observations are qualified locally |
 | 10b. Docker retirement | Fresh-installation transformation retains the other app, retires one name, and frees a fleet without inheriting old state; see the [retirement guide](retirement.md) |
 
 The live Docker acceptance test passed for hello and notebook side by side. It
@@ -397,10 +397,10 @@ tests cover invalid observations, replaced containers, failed reads, TLS policy,
 and output-file conflicts. The workspace tests, example builds, and quality gate
 pass. Runtime code and deployment configuration are unchanged by this slice.
 
-With recovery inventory generalized at two fleets, next qualify three
-concurrent apps with per-app load comparison, stopped restore, and retirement.
+The subsequent three-fleet qualification below adds per-app load comparison,
+stopped restore, and retirement.
 Cold-start costs, write-heavy workloads, sustained growth, disk costs, remote-host
-operation, and maximum safe density remain unmeasured. M10 is still in progress.
+operation, and maximum safe density remain unmeasured.
 
 ### Recovery inventory foundation
 
@@ -416,4 +416,76 @@ preserved the accounts route and the replacement app's exact D1/R2/DO fixture;
 the original installation remained stopped. Backup took 29.1 seconds and restore
 13.8 seconds, excluding startup. The [Claude review](reviews/m10c-layout-claude.md)
 found no blockers; accepted test and documentation improvements are recorded in
-the [response](reviews/m10c-response.md). Expansion to three fleets is next.
+the [response](reviews/m10c-response.md). The subsequent expansion qualification follows below.
+
+## M10c three-fleet expansion
+
+On 2026-10-19 the Docker qualification passed for both a fresh rendered three-fleet
+installation and expansion of a stopped two-fleet snapshot. The renderer preserves
+environment substitutions, requires an explicit project name, and gives separate
+projects separate physical volumes and networks. Two-fleet rendering matches the
+source Compose definition. The [operator guide](expansion.md) documents commands,
+maintenance downtime, credentials, and the unsupported shrink/upgrade paths.
+
+The expansion preserved existing replica identities, controller metadata, scoped
+credentials, secret revisions, and every archived source-volume file. A third scoped app was approved
+and wrote isolated D1/R2/Durable Object data. A canonical fourth app submission was
+refused for exhausted capacity. Gateway and replica restarts preserved data. Full
+three-fleet backup/restore preserved all apps and a native Void session. Retirement
+of the middle fleet preserved both surviving apps and allowed a different app name
+to use empty capacity; retired data remains retained. Source and ordinary recovery
+copies remained stopped during that recovery/retirement drill. The later paired
+measurement intentionally restarted the two source fixtures one at a time; they
+are disposable copies, not current recovery points after those runs.
+
+Fault injection stopped expansion after copying controller metadata. No completed
+configuration or receipt appeared. Reusing that partial target was refused; a fresh
+project succeeded. Running-source and occupied-target refusals also passed. These
+are stopped local installation transitions, not online scaling or remote failover.
+
+The fresh-install drill separately submitted `alpha`, `beta`, and `gamma` with
+independent scoped credentials, checked that pending releases had no route, approved
+each, applied migrations, and verified isolated D1/R2/DO writes across all three.
+A Docker network-pool exhaustion interrupted initial resource creation; removing
+only stopped negative-fixture containers/networks freed space. Their volumes were
+retained, and the fresh installation then passed. No unrelated workload or system
+network configuration was changed.
+
+| Operation | Observed duration, excluding startup |
+| --- | --- |
+| Two-fleet source backup | 28.3 seconds |
+| Expansion restore onto three fleets | 14.4 seconds |
+| Three-fleet backup | 28.6 seconds |
+| Ordinary three-fleet restore | 14.4 seconds |
+| Three-fleet middle-app retirement restore | 14.9 seconds |
+
+The three-fleet snapshot included 11 files: configuration, image archive, bucket,
+controller, TLS, and six replica archives. Its image archive was about 744 MiB;
+bucket and controller archives about 5.46 and 3.99 MiB. These tiny fixtures do not
+predict larger-data recovery time. Source volumes, target volumes, and snapshots
+coexist and must all fit on disk. Paired read workloads and resource observations
+are recorded in the [measurement guide](capacity-measurement.md) and its linked
+raw reports. All workload HTTP responses were successful, and the original active
+installation's three routes were checked after the measurement restored it.
+
+The first expansion drill stopped at a test-harness CA path error: child builds
+changed directory and could not resolve a relative trust path. The continuation
+then correctly rejected a renamed, noncanonical fourth-app artifact. The harness
+now uses absolute CA paths and builds a real fourth app; the subsequent capacity,
+restart, and occupied-target checks passed. These continuations are recorded as
+separate evidence, not a claim that the initial command passed uninterrupted.
+
+M10 now covers admission reporting, stopped retirement, bounded Docker expansion,
+and measured local operating costs. Kubernetes remains at two fleets. Automatic
+scaling, density guarantees, erasure, artifact pruning, expanded-installation image
+upgrade automation, and remote-host recovery remain open. M11 next addresses
+background and collaborative application behavior in separately reviewed slices;
+M12 broadens portability. No hosted Cloudflare execution has been performed.
+
+After the [final Claude review](reviews/m10c-expansion-final-claude.md), the checked-in
+expansion drill passed end to end on a fresh target. It used the credential issued
+before expansion to submit the third app afterward. Specific running-source and
+occupied-target errors are now asserted. Source comparison establishes that every
+archived file is unchanged; it does not prove that no additional files exist.
+The [review response](reviews/m10c-expansion-response.md) records all accepted
+changes. Final checks passed: 83 tests, all example builds, syntax, and quality gates.

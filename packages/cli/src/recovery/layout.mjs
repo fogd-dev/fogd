@@ -8,8 +8,7 @@ export function fleetLayout(config) {
   const slots = parseSlots(config.services?.controller?.environment?.FOGD_SLOTS);
   const routed = parseSlots(config.services?.workerd?.environment?.FOGD_SLOTS);
   if (!isDeepStrictEqual(slots, routed)) throw new Error('Gateway/controller slot configuration differs');
-  // Keep the qualification boundary explicit until the three-fleet recovery drill passes.
-  if (!Array.isArray(slots) || slots.length !== 2) throw new Error('Recovery currently requires two local fleets');
+  if (!Array.isArray(slots) || ![2, 3].includes(slots.length)) throw new Error('Recovery requires two or three local fleets');
   const fleets = slots.map((slot, index) => {
     const id = `slot-${index + 1}`, replicas = ['a', 'b'].map(letter => `${id}-${letter}`);
     if (slot?.id !== id || !isDeepStrictEqual(slot.nodes, replicas)) throw new Error('Recovery requires ordered local fleet addresses');

@@ -546,3 +546,31 @@ Custom addresses, additional services/networks, and crossed mounts are refused;
 this is not a general Compose backup utility. Existing qualified snapshots remain
 readable, including optional TLS storage. The three-fleet gate remains separate
 from the inventory derivation.
+
+## ADR 024: expand through fresh restore and derive templates with Compose
+
+**Context.** More concurrent apps require additional replica pairs, private networks,
+volumes, and routing bindings. A resize must preserve deployed apps and their state.
+Recovered installations use private image-pinned configurations; fresh installations
+need templates that continue to resolve environment settings.
+
+**Options.** Add profile-dependent service and slot definitions; replace the YAML
+with a JavaScript generator; or ask Compose for its unresolved source template and
+add a fleet from that replica definition. For existing installations, mutate the
+live project or reuse fresh stopped restoration with an expansion plan.
+
+**Decision.** Keep `compose.yaml` as the source and use `--no-interpolate` output for
+rendering. Clear Compose's derived resource names and require an explicit project
+identity so separate installations do not share volumes/networks accidentally.
+Expand a two-fleet stopped snapshot into a fresh three-fleet target. Copy existing
+state unchanged, assign a new namespace and identities, and use only snapshot images.
+The [review amendments](reviews/m10c-expansion-response.md) record this choice and
+the discarded full-generator prototype.
+
+**Consequences.** Operators can preserve two apps while adding capacity, with a
+buildable template available for fresh installations. They pay downtime and duplicate
+storage during expansion. There is no online resize, shrink, automatic scaling, or
+automated image-upgrade path from a recovered configuration to a buildable template.
+Operators seeking rolling expansion will need a later lifecycle protocol. Rendered
+templates and resolved recovery files remain distinct artifacts with different
+credential and image behavior.

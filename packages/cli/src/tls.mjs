@@ -1,16 +1,16 @@
-import { devNull } from 'node:os';
+import { resolvedCompose } from './compose/config.mjs';
+import { checkFleetSelection } from './compose/selection.mjs';
 import { readFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { validateKeypair } from '@fogd/runtime/transport';
-import { requireDocker, compose, stackRoot } from './local.mjs';
+import { requireDocker, compose } from './local.mjs';
 import { prepareEnvironment } from './bootstrap.mjs';
 import { docker, json, projectContainers } from './recovery/docker.mjs';
-import { composeResolved } from './recovery/bundle.mjs';
 
 async function installation(env) {
   requireDocker(env);
-  const file = resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
-  const config = composeResolved(await json(['compose', '--env-file', devNull, '-f', file, 'config', '--format', 'json'], { env }));
+  const config = await resolvedCompose(env);
+  await checkFleetSelection(config);
   if (!config.volumes?.tls?.name) throw new Error('This installation needs the TLS-volume configuration before certificate import');
   return config;
 }
@@ -27,8 +27,8 @@ export async function importTLS(certPath, keyPath) {
   console.log(result.trim());
   console.log('Certificate installed. Start with fogd up --shared to require TLS and scoped deployment credentials.');
 }
-export async function checkInstalledTLS(env) {
-  const config = await installation(env);
+export async function checkInstalledTLS(env, config = null) {
+  config ||= await installation(env);
   await json(['volume', 'inspect', config.volumes.tls.name]);
   const args = helper(config, true); args.splice(args.length - 1, 0, '--env', 'FOGD_TLS=1');
   await docker([...args, 'node', '--input-type=module', '-e', "import {loadTLS} from './packages/runtime/src/transport.mjs'; await loadTLS(process.env);"]);

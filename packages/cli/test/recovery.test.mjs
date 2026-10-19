@@ -6,24 +6,8 @@ import { join } from 'node:path';
 import { fingerprint, verifyBundle, readJson, restoredConfig, composeLiteral, composeResolved, validateTopology } from '../src/recovery/bundle.mjs';
 import { projectName } from '../src/recovery/docker.mjs';
 
-const replicas = ['slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'];
-const services = ['bucket-init', 'controller', 'minio', ...replicas, 'workerd'];
-const volumes = ['bucket', 'controller', ...replicas];
-const slots = [1, 2].map(n => ({ id: `slot-${n}`, prefix: `slots/slot-${n}`, nodes: [`slot-${n}-a`, `slot-${n}-b`] }));
-function config() {
-  const shared = { control: {}, 'fleet-1': {}, 'fleet-2': {} };
-  const result = { name: 'original', services: Object.fromEntries(services.map(name => [name, { image: 'mutable:tag', build: '.', environment: { FOGD_BUCKET: 'fogd', FOGD_SLOTS: JSON.stringify(slots), S3_ENDPOINT: 'http://minio:9000', TOKEN: 'literal$VALUE${HOME}' }, networks: shared }])), volumes: Object.fromEntries(volumes.map(name => [name, { name: `original_${name}` }])), networks: Object.fromEntries(Object.keys(shared).map(name => [name, { name: `original_${name}` }])) };
-  result.services['bucket-init'].networks = { control: {} };
-  for (const name of replicas) {
-    const slot = name.slice(0, -2);
-    Object.assign(result.services[name].environment, { CELLD_NODE: name, CELLD_BUCKET: `s3://fogd/slots/${slot}` });
-    result.services[name].networks = { [`fleet-${slot.slice(5)}`]: {} };
-    result.services[name].volumes = [{ type: 'volume', source: name, target: '/var/lib/celld' }];
-  }
-  result.services.controller.volumes = [{ type: 'volume', source: 'controller', target: '/var/lib/fogd' }];
-  result.services.minio.volumes = [{ type: 'volume', source: 'bucket', target: '/data' }];
-  return result;
-}
+import { config, services, volumes, slots } from './fixtures/recovery-layout.mjs';
+
 test('restore changes resource names and pins images without changing private configuration', () => {
   const source = config();
   const images = Object.fromEntries(services.map(name => [name, 'sha256:' + 'a'.repeat(64)]));
@@ -112,15 +96,15 @@ test('derived recovery layout rejects crossed fleet storage, writers, and unqual
     [c => { c.services['slot-2-a'].volumes[0].source = 'slot-1-a'; }, /volume mapping/],
     [c => { c.services['slot-2-a'].networks = { 'fleet-1': {} }; }, /network membership/],
     [c => { c.services['bucket-init'].environment.S3_ENDPOINT = 'http://outside:9000'; }, /Bucket initializer/],
-    [c => { c.services.extra = {}; }, /two-slot/],
-    [c => { c.volumes.extra = {}; }, /two-slot/],
+    [c => { c.services.extra = {}; }, /two- or three-fleet/],
+    [c => { c.volumes.extra = {}; }, /two- or three-fleet/],
     [c => { c.networks.extra = {}; }, /Unexpected recovery networks/],
   ];
   for (const [mutate, message] of cases) { const value = config(); mutate(value); assert.throws(() => validateTopology(value), { name: 'Error', message }); }
-  for (const changed of [slots.slice(0, 1), [...slots, { id: 'slot-3', prefix: 'slots/slot-3', nodes: ['slot-3-a', 'slot-3-b'] }], [{ ...slots[0], nodes: slots[1].nodes }, slots[1]], [slots[0], { ...slots[1], prefix: slots[0].prefix + '/nested' }]]) {
+  for (const changed of [slots.slice(0, 1), [...slots, ...slots], [{ ...slots[0], nodes: slots[1].nodes }, slots[1]], [slots[0], { ...slots[1], prefix: slots[0].prefix + '/nested' }]]) {
     const value = config();
     for (const name of ['controller', 'workerd']) value.services[name].environment.FOGD_SLOTS = JSON.stringify(changed);
-    assert.throws(() => validateTopology(value), error => error.constructor === Error && /two local fleets|ordered local fleet addresses|prefixes overlap/.test(error.message));
+    assert.throws(() => validateTopology(value), error => error.constructor === Error && /two or three local fleets|ordered local fleet addresses|prefixes overlap/.test(error.message));
   }
 });
 
@@ -141,4 +125,12 @@ test('retirement output remains a valid recoverable layout', async () => {
   const plan = planRetirement(config(), state, 'notebook', digest);
   validateTopology(plan.config);
   assert.deepEqual(plan.skipped, ['slot-2-a', 'slot-2-b']);
+});
+
+test('restore requires an image identity for exactly every target service', () => {
+  const source = config(), images = Object.fromEntries(services.map(name => [name, 'sha256:' + 'a'.repeat(64)]));
+  delete images['slot-2-a'];
+  assert.throws(() => restoredConfig(source, 'target', images), /Image inventory/);
+  images['slot-2-a'] = 'sha256:' + 'a'.repeat(64); images.extra = images.controller;
+  assert.throws(() => restoredConfig(source, 'target', images), /Image inventory/);
 });

@@ -27,7 +27,7 @@ export async function readJson(path) {
 }
 export function validateTopology(config) {
   const { services, fleets, replicas, volumes } = recoveryLayout(config);
-  if (!isDeepStrictEqual(Object.keys(config.services || {}).sort(), services) || !isDeepStrictEqual(Object.keys(config.volumes || {}).sort(), volumes)) throw new Error('Backup supports only the local two-slot Compose topology');
+  if (!isDeepStrictEqual(Object.keys(config.services || {}).sort(), services) || !isDeepStrictEqual(Object.keys(config.volumes || {}).sort(), volumes)) throw new Error('Backup supports only the local two- or three-fleet Compose topology');
   if (config.services.controller.environment.S3_ENDPOINT !== 'http://minio:9000') throw new Error('External bucket backup is unsupported');
   for (const service of Object.values(config.services)) {
     for (const mount of service.volumes || []) {
@@ -40,6 +40,7 @@ export function validateTopology(config) {
   if (Object.values(config.volumes).some(v => v.external) || Object.values(config.networks).some(n => n.external)) throw new Error('External Docker resources are unsupported');
 }
 export function restoredConfig(config, project, images) {
+  if (!isDeepStrictEqual(Object.keys(config.services).sort(), Object.keys(images).sort())) throw new Error('Image inventory does not match target services');
   const result = structuredClone(config); result.name = project;
   for (const [name, service] of Object.entries(result.services)) {
     delete service.build; service.image = images[name]; service.pull_policy = 'never';

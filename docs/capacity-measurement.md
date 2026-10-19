@@ -77,7 +77,7 @@ unrelated per-container peaks. Configured ceilings are not reservations.
 
 The default two-fleet installation has 3584 MiB of memory ceilings and 8 CPU cores
 of ceilings across its seven long-running containers. Four celld replicas account
-for 2048 MiB and 4 cores. An additional identical fleet would add 1024 MiB and 2
+for 2048 MiB and 4 cores. The third fleet adds 1024 MiB and 2
 cores of ceilings, plus two persistent volumes. Observed spare memory does not
 establish safe workload density. Budget disk for live data, replica logs, artifacts,
 backups, and simultaneous source/target volumes during fresh recovery.
@@ -85,5 +85,51 @@ backups, and simultaneous source/target volumes during fresh recovery.
 Docker Desktop measurements describe its VM. Other containers, host activity,
 swap, resident cells, request mix, and data size affect results. Swap information
 is a point-in-time VM observation, not a per-app attribution or a thrashing test.
-See [M10c](m10c.md) and its [review amendments](reviews/m10c-response.md) for remaining
-cold-start, fleet expansion, and recovery qualification work.
+See [expansion](expansion.md) for qualified three-fleet operation and recovery.
+First-request cold-start latency, write-heavy workloads, and maximum safe density
+remain unmeasured.
+
+## Paired two/three-fleet observations
+
+The [2026-10-19 reports](evidence/m10c-paired-capacity.json) cover sequential
+restarts of the two-fleet source and its three-fleet expansion. Each app received
+four paced clients for 120 seconds, with 100 ms delay after each response. The
+accounts app served its home page; each notebook app read one D1/R2/DO entry.
+All sampled load windows fall inside every app's request window. There were zero
+HTTP errors. The third app adds load; existing per-app client settings stay fixed.
+
+| Window | Two fleets: observed memory / mean sampled CPU | Three fleets: observed memory / mean sampled CPU |
+| --- | --- | --- |
+| Restarted idle, six samples | 310–320 MiB / 2.36% | 340–350 MiB / 4.29% |
+| Reads, twelve samples | 372–679 MiB / 37.63% | 435–830 MiB / 72.38% |
+| Warm idle after reads, six samples | 596–672 MiB / 3.33% | 708–782 MiB / 4.96% |
+
+CPU 100% is one core. These are sampled Docker totals; the report also separates
+shared services and each app fleet. Default configured memory ceilings increase
+from 3584 to 4608 MiB, CPU ceilings from 8 to 10 cores, and running containers from
+seven to nine. Two replica volumes are added. Observed usage is much lower than
+those ceilings for this small read workload; it does not establish headroom for
+arbitrary apps.
+
+At two fleets the accounts/notebook p95 latencies were 15.7/17.3 ms. At three fleets
+they were 35.4/54.2 ms; inspect the report for the added app and all percentiles.
+The VM had 10 CPUs, about 15.6 GiB RAM, and nine unrelated running containers.
+The phases ran sequentially with slightly different account history. No heavy
+fogd build/test work was deliberately run during the pair, but the host and VM
+were shared. Do not attribute the difference solely to adding a fleet. Restarted
+idle follows readiness probes and is not a first-request cold-start measurement.
+
+To reproduce on disposable qualified fixtures, select the current installation's
+environment, project, and Compose file; set an absolute `NODE_EXTRA_CA_CERTS` path.
+Then run:
+
+```sh
+node scripts/capacity-comparison.mjs TWO_FLEET_COMPOSE THREE_FLEET_COMPOSE OUTPUT_DIR
+```
+
+The script stops the selected current installation, runs each source in turn, and
+restarts the original in `finally`. Fixtures must contain `accounts` and
+`replacement`, plus `third` in the expanded source. They share the selected
+operator credentials and certificate. Keep source and expanded installations
+stopped outside their phase. Check original app readiness afterward; Compose
+startup alone does not establish it.

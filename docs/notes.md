@@ -252,3 +252,45 @@ and readiness checks. The subsequent negative drill also passed interruption,
 fresh-target retry, old-runtime refusal, and ordinary restore regression. Its temporary
 Docker wrapper existed only under .fogd and only the test child used that PATH.
 No global executable or daemon setting was modified.
+
+## M10c expansion qualification environment notes (2026-10-19)
+
+The first expansion drill completed source backup, fresh expansion, all-source-volume
+tar comparison, and existing app/authority checks. Third-app submission then failed
+because NODE_EXTRA_CA_CERTS was relative while the CLI child runs inside the example
+directory. The drill now normalizes that path; the continuation used an absolute CA
+path and resumed from verified completed expansion receipts, without reusing a partial
+restore or pretending the first invocation passed end to end.
+
+The third app then deployed and stored isolated data. The initial fourth-app capacity
+probe changed the app name on the third app's artifact, which correctly failed
+canonical configuration validation. It now builds a real fourth-app artifact and
+asserts the specific capacity error. A subsequent continuation passed capacity refusal
+and gateway/replica restart. These were fixture errors, not successful capacity tests.
+
+Removed only stopped containers and networks for old M10b interrupted/retry/ordinary
+fixtures and the completed M10c ordinary restore fixture to free Docker network pools.
+All their volumes, output configurations, and snapshots remain. Unrelated buzz services
+and the kind cluster were left untouched. Logs are in `.fogd/m10c-network-cleanup.log`
+and `.fogd/m10c-recovery-network-cleanup.log`.
+
+### M10c fresh rendering and paired observations
+
+Paired two/three-fleet paced reads passed with zero HTTP errors. The original
+retired three-fleet installation was restarted and all three routes checked.
+Fresh rendering then hit Docker's exhausted default address pool before TLS import.
+Removed only stopped `fogd-m10c-expand-negative-interrupted` and
+`fogd-m10c-expand-negative-retry` containers/networks, retaining their volumes and
+evidence; retry succeeded. Fresh scoped alpha/beta/gamma deployment, approval,
+migrations, and isolated D1/R2/DO state passed. No global prune or system network
+change was used. Detailed logs remain in the private `.fogd/` evidence directory.
+
+The final Claude review requested a complete rerun of the checked-in expansion
+drill and precise refusal matching. Both now pass in
+`.fogd/m10c-expansion-full-rerun.log`, targeting `fogd-m10c-full-expanded`.
+The pre-expansion token successfully submitted the third app after restoration.
+Removed only the stopped fresh-three-app fixture containers/networks for address
+space before that rerun; its volumes remain retained. The source archive check
+compares archived entries, not the absence of extra files. Updated the PASS wording
+accordingly. The paired measurements intentionally restarted disposable source
+copies sequentially; those copies are no longer pristine snapshot contents.

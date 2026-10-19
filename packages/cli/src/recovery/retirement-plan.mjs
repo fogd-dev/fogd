@@ -24,5 +24,5 @@ export function planRetirement(config, state, app, digest, { id = randomUUID(), 
   slot.prefix = prefix;
   for (const name of ['controller', 'workerd']) next.services[name].environment.FOGD_SLOTS = JSON.stringify(slots);
   const evidence = { id, at, app, digest, snapshot, previous, replacement: { prefix, nodes: services.map(name => next.services[name].environment.CELLD_NODE) } };
-  return { config: next, state: retireState(state, app, digest, evidence), skipped: services, evidence };
+  return { kind: 'retirement', config: next, state: retireState(state, app, digest, evidence), skipped: services, evidence };
 }

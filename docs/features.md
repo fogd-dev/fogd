@@ -4,7 +4,7 @@ fogd combines runtimes into a deployment platform. celld and workerd are runtime
 Void supplies an SDK, CLI, and Platform; hosted Cloudflare supplies managed services.
 A capability in a runtime does not mean fogd's deployment adapter exposes it.
 
-Last verified: **2026-10-16**. Upstream revisions and file-level evidence are in
+Upstream last verified: **2026-10-16**. fogd Docker expansion verified: **2026-10-19**. Upstream revisions and file-level evidence are in
 [compat.md](compat.md). fogd status refers to this repository's v0 implementation,
 not planned features. Hosted Cloudflare status comes from current official docs;
 this project has not deployed there or called its APIs.
@@ -73,13 +73,13 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | --- | --- | --- | --- | --- | --- |
 | Run apps on your hardware without Cloudflare APIs | Yes; Docker; experimental local Kubernetes | Yes; bucket required | Yes; supply services | SDK apps portable; Platform targets Cloudflare | No; managed service |
 | Build/deploy a Void project | Yes; `fogd deploy` | Partial; consumes prepared bundle | Partial; needs generated config/services | Yes; `void deploy` | Runtime target; use a deployment tool |
-| Multiple apps and hostname routing | Yes; two reserved fleets | Partial; one live entrypoint/fleet | Multiple workers; supply routing/control plane | Platform dispatch | Yes; Workers/WfP |
+| Multiple apps and hostname routing | Yes; two or three reserved Docker fleets; two on Kubernetes | Partial; one live entrypoint/fleet | Multiple workers; supply routing/control plane | Platform dispatch | Yes; Workers/WfP |
 | Submitter deployment status | Yes; team token, bounded diagnostics | No control plane | No control plane | Platform deploy tracking | Not audited for this exact workflow |
 | Exact-artifact approval before publication | Yes; separate submit/admin credentials | No control plane | No control plane | OAuth publish approval exists; scope differs | Not audited for this exact workflow |
 | Private app configuration | Partial; admin revisions pinned to approval, plaintext runtime bucket | Text bindings in deployment objects | Text bindings in config | Environment schema / Platform secrets | Not audited here |
 | User/project roles and OAuth login | Partial; scoped/revocable deploy credentials + bootstrap admin Basic auth | No control plane | No control plane | Yes; Platform roles/OAuth | Not audited here |
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |
-| Installation backup/restore | Partial; stopped local stack, exact images, fresh-volume recovery tested | Requires bucket and all node logs/identities | External orchestration required | Operator responsibility | Not audited here |
+| Installation backup/restore | Partial; stopped local stack, exact images, two/three-fleet Docker recovery tested | Requires bucket and all node logs/identities | External orchestration required | Operator responsibility | Not audited here |
 | Whole-stack high availability | No; bucket/controller single points of failure | Depends on bucket/fleet topology | External orchestration required | Depends on hosting/services | Managed platform; outside this test scope |
 | Resource limits | Partial; containers, heap, cells, body size, retained artifacts, pending requests, concurrent uploads | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
 | Automatic schema rollback | No | No fogd rollback mechanism | No deployment migration runner | Not audited | Not audited |

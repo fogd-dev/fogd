@@ -132,9 +132,10 @@ failure domains; reboot one host under acknowledged writes; reconnect clients;
 verify recorded data and deployment identity after rejoin. Explicitly test controller
 and bucket outage behavior. Two worker hosts alone are not a whole-stack HA claim.
 
-Today: Docker container failures on one machine are tested. Kubernetes deployment,
-two-host topology, and host/network failure are not. Availability targets need user agreement before
-choosing bucket placement or an ingress/controller redundancy design.
+Today: Docker container failures and experimental Kubernetes deployment/recovery
+on local kind are tested. Actual two-host topology and host/network failure remain
+unqualified. Availability requirements must precede bucket placement or an
+ingress/controller redundancy design.
 
 ### U6: The operator restores after data or host loss
 
@@ -149,8 +150,10 @@ mismatched or incomplete restore. Keep an independent copy outside the failed ho
 First establish a tested stopped/quiesced backup procedure; do not assume copying
 live volumes or only the bucket produces a consistent recovery point.
 
-Today: replica restart/rejoin is tested; destruction and replacement of disks are
-not. Stable replica identities and witness logs make this distinction material.
+Today: stopped Docker snapshots restore onto fresh volumes, and experimental local
+Kubernetes snapshots restore onto fresh claims. Replica restart/rejoin is also
+tested. Actual host/disk loss and independent offsite recovery remain unqualified.
+Stable replica identities and witness logs must travel with the bucket snapshot.
 
 ### U7: A user uploads something that takes time to process
 

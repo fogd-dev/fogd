@@ -45,3 +45,6 @@ do not measure runtime density or establish remote operational capacity.
 Use the [Docker measurement guide](capacity-measurement.md) for warm memory/CPU
 observations and bounded stateful reads. These reports are separate from admission
 accounting and do not expand the installation.
+
+For a third app, use [fresh rendering or stopped expansion](expansion.md).
+The qualified Docker layouts have two or three fleets; Kubernetes remains at two.

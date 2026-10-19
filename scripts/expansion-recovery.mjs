@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import { readFile, access } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { createHash, X509Certificate } from 'node:crypto';
+import { platformClient } from './platform-client.mjs';
+import { accountsBrowser } from './accounts-browser.mjs';
+import { expect } from './guestbook-browser.mjs';
+import { compose, stackRoot, run } from '../packages/cli/src/local.mjs';
+import { projectContainers } from '../packages/cli/src/recovery/docker.mjs';
+import { verifyBundle } from '../packages/cli/src/recovery/bundle.mjs';
+
+const client = await platformClient(), operator = client.env;
+if (operator.NODE_EXTRA_CA_CERTS) operator.NODE_EXTRA_CA_CERTS = resolve(operator.NODE_EXTRA_CA_CERTS);
+const stem = process.argv[2], cert = new X509Certificate(await readFile(resolve(process.argv[3])));
+assert.match(stem || '', /^fogd-m10[a-z0-9-]*$/);
+assert.match(operator.COMPOSE_PROJECT_NAME || '', /^fogd-m10[a-z0-9-]*$/);
+for (const name of ['accounts', 'replacement', 'third', 'fourth']) assert.ok(cert.checkHost(`${name}.${operator.FOGD_BASE_DOMAIN || 'localhost'}`));
+const cli = join(stackRoot, 'packages/cli/bin/fogd.js');
+const bundle = join(stackRoot, '.fogd', `${stem}-snapshot`), restored = `${stem}-restored`, retired = `${stem}-retired`;
+const restoredDir = join(stackRoot, '.fogd', `${restored}-config`), retiredDir = join(stackRoot, '.fogd', `${retired}-config`);
+for (const path of [bundle, restoredDir, retiredDir]) await assert.rejects(access(path), { code: 'ENOENT' });
+const before = await client.api('/v1/admin');
+assert.equal(before.apps.replacement.slot, 'slot-2');
+assert.equal(before.capacity.slots.configured, 3); assert.equal(before.capacity.slots.available, 0);
+const replacement = await data(client, 'replacement'), third = await data(client, 'third');
+assert.equal(replacement.count, 1); assert.equal(third.count, 1);
+const active = before.deployments[before.apps.replacement.active];
+const pin = createHash('sha256').update(cert.publicKey.export({ type: 'spki', format: 'der' })).digest('base64');
+const account = await accountsBrowser(client.browserURL('accounts'), `expansion-recovery-${Date.now()}@example.test`, 'Expansion recovery fixture password', { args: [`--ignore-certificate-errors-spki-list=${pin}`] });
+try {
+  await account.enroll(); await account.ready('Session active');
+  await run(process.execPath, [cli, 'backup', bundle], { env: operator });
+  const snapshot = await verifyBundle(bundle);
+  assert.equal(Object.keys(snapshot.manifest.images).length, 10);
+  assert.equal(Object.keys(snapshot.manifest.files).length, 11);
+  await run(process.execPath, [cli, 'restore', bundle, '--project', restored, '--output', restoredDir], { env: operator });
+  const restoredEnv = { ...operator, COMPOSE_PROJECT_NAME: restored, FOGD_COMPOSE_FILE: join(restoredDir, 'compose.json') };
+  await run(process.execPath, [cli, 'up', '--shared'], { env: restoredEnv });
+  const restoredClient = await platformClient(restoredEnv); await ready(restoredClient, true);
+  assert.deepEqual(await data(restoredClient, 'replacement'), replacement);
+  assert.deepEqual(await data(restoredClient, 'third'), third);
+  await account.ready('Session active');
+  const recovered = await restoredClient.api('/v1/admin');
+  assert.deepEqual(recovered.apps, before.apps); assert.deepEqual(recovered.secrets, before.secrets);
+  console.log('PASS: complete three-fleet backup/restore preserves both notebook fixtures and native account session');
+  await compose(['stop', 'workerd', 'controller'], restoredEnv);
+  await compose(['stop', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'slot-3-a', 'slot-3-b'], restoredEnv);
+  await compose(['stop', 'minio', 'bucket-init'], restoredEnv);
+  await run(process.execPath, [cli, 'retire', bundle, '--app', 'replacement', '--digest', active.digest, '--project', retired, '--output', retiredDir], { env: operator });
+  const retiredEnv = { ...operator, COMPOSE_PROJECT_NAME: retired, FOGD_COMPOSE_FILE: join(retiredDir, 'compose.json') };
+  await run(process.execPath, [cli, 'up', '--shared'], { env: retiredEnv });
+  const retiredClient = await platformClient(retiredEnv); await ready(retiredClient);
+  assert.equal((await retiredClient.appRequest('replacement', '/api/entries')).status, 404);
+  assert.deepEqual(await data(retiredClient, 'third'), third);
+  await account.ready('Session active'); await account.signOut(); await account.signIn(); await account.signedIn();
+  const state = await retiredClient.api('/v1/admin');
+  assert.equal(state.capacity.slots.available, 1);
+  assert.equal(state.apps.replacement.route, 'retired');
+  assert.deepEqual(state.apps.accounts, before.apps.accounts); assert.deepEqual(state.apps.third, before.apps.third);
+  const issued = await retiredClient.api('/v1/credentials', { method: 'POST', headers: { 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ name: 'Replacement after expansion', apps: ['fourth'] }) });
+  const builder = await platformClient({ ...retiredEnv, FOGD_DEPLOY_TOKEN: issued.token });
+  const fourth = await builder.submit(join(stackRoot, 'examples/notebook'), 'fourth');
+  assert.equal((await retiredClient.decide(fourth)).status, 'active');
+  assert.deepEqual(await data(retiredClient, 'fourth'), { entries: [], count: 0 });
+  const entry = { id: 'fourth-only', title: 'Reused middle fleet', body: 'New fourth-app R2 bytes' };
+  assert.equal((await retiredClient.appRequest('fourth', '/api/entries', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) })).status, 200);
+  assert.deepEqual(await data(retiredClient, 'fourth'), { entries: [entry], count: 1 });
+  assert.deepEqual(await data(retiredClient, 'third'), third);
+  assert.equal((await retiredClient.api('/v1/admin')).capacity.slots.available, 0);
+  for (const source of [operator.COMPOSE_PROJECT_NAME, restored]) assert.ok((await projectContainers(source)).every(c => !c.State.Running));
+  console.log('PASS: middle-fleet retirement preserves both survivors and native auth; replacement starts with empty D1/R2/DO state and accepts isolated writes');
+} finally { await account.browser.close(); }
+async function data(current, app) { const response = await current.appRequest(app, '/api/entries'); assert.equal(response.status, 200); return response.json(); }
+async function ready(current, includeReplacement = false) {
+  for (const [app, path] of [['accounts', '/'], ['third', '/api/entries'], ...(includeReplacement ? [['replacement', '/api/entries']] : [])]) await expect.poll(async () => { try { return (await current.appRequest(app, path)).status; } catch { return 0; } }, { timeout: 120000 }).toBe(200);
+}

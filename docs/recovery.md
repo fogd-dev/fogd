@@ -110,10 +110,10 @@ source remains stopped. See [the report](report.md) for observed results and lim
 ## Validated local layout
 
 Recovery derives its inventory from matching controller and gateway fleet
-declarations. It currently accepts two ordered local fleets with distinct node
+declarations. It currently accepts two or three ordered local fleets with distinct node
 identities, disjoint bucket prefixes, expected volume mappings, and matching
 network membership. Custom service addresses, extra writers/networks, crossed
-replica volumes, and additional fleets are refused. Configuration checksums are
+replica volumes, and other fleet counts are refused. Configuration checksums are
 verified before a bundle configuration determines its required archives.
 
 In particular, `FOGD_SLOT_N_A_HOST`/`FOGD_SLOT_N_B_HOST` overrides that change the

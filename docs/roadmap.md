@@ -9,12 +9,12 @@ Later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c has warm Docker measurement evidence; recovery inventory is generalized at two fleets; three-fleet qualification is next.
+and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11 background and collaborative applications is next.
 
 ## Current foundation
 
 The local prototype builds selected Void apps, requires approval of an immutable
-artifact, routes two apps, and tests a subset of D1/R2/Durable Object behavior and
+artifact, routes up to three apps on qualified Docker layouts, and tests a subset of D1/R2/Durable Object behavior and
 replica recovery. Native React browser/SDK workflows and a bounded email/password auth flow are qualified. Additional
 SDK/framework paths, shared remote operation, broader resource evolution, and
 shared-operation recovery policy remain gaps. M8a qualifies stopped local backup/restore. M7b qualifies R2 additions and one bounded
@@ -35,7 +35,7 @@ Do not infer product support from the runtimes' feature lists.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c has warm Docker measurement evidence; recovery inventory is generalized at two fleets; three-fleet qualification is next. Later
+records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11 background and collaborative applications is next. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -83,10 +83,14 @@ The [M9a Kubernetes contract](m9a.md) has local kind deployment/pod-replacement 
 [M9b stopped Kubernetes recovery](m9b.md) has fresh-claim restore evidence; remote-host qualification remains open.
 [M10a capacity reporting](m10a.md) is qualified through controller, HTTP, and CLI
 tests. [M10b retirement](retirement.md) qualifies the offline fresh-installation path.
-The [M10c measurement guide](capacity-measurement.md) records warm Docker observations.
-Recovery inventory generalization passed at two fleets. Next, qualify three fleets with
-per-app load comparison, stopped recovery, and retirement.
-M10 is not complete until capacity expansion and operating-cost evidence are qualified. Preserve secret revisions, controller metadata,
+The [M10c expansion guide](expansion.md) qualifies three Docker fleets, fresh
+rendering, stopped expansion, full restore, and middle-fleet retirement/reuse. The
+[measurement guide](capacity-measurement.md) records paired two/three-fleet reads
+and local operating costs. M10 is complete within this bounded Docker scope.
+Next, define M11's first background-execution slice: activation, retries,
+idempotency, draining, and stopped recovery must be explicit before enabling a
+binding. Live collaboration is a separate slice with reconnect/reconciliation.
+Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.
 

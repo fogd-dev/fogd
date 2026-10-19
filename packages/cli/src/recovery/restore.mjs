@@ -3,7 +3,7 @@ import { restoreVolumes, volumeHelper } from './volumes.mjs';
 import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
-import { verifyBundle, restoredConfig, composeLiteral, writeJson } from './bundle.mjs';
+import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
 
 async function requireFresh(project, config) {
   if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
@@ -20,32 +20,36 @@ export async function restore(directory, project, output) {
   const { manifest, config } = await verifyBundle(dir);
   return restoreInstallation({ manifest, config, dir }, project, destination);
 }
-export async function restoreInstallation({ manifest, config, dir }, project, destination, retirement = null) {
-  const volumes = volumeNames(config);
+export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
+  const sourceVolumes = volumeNames(config), images = change?.images || manifest.images;
+  if (change && !['retirement', 'expansion'].includes(change.kind)) throw new Error('Unknown installation transformation');
+  if (Object.values(images).some(id => !Object.values(manifest.images).includes(id))) throw new Error('Transformation may only use snapshot images');
   if (project === manifest.sourceProject) throw new Error('Restore requires a different project from its source');
-  const target = restoredConfig(retirement?.config || config, project, manifest.images);
+  const target = restoredConfig(change?.config || config, project, images);
+  validateTopology(target);
+  const volumes = volumeNames(target);
   await requireFresh(project, target);
   await mkdir(destination, { mode: 0o700 });
   const started = Date.now(), file = join(destination, 'compose.pending.json');
   await docker(['image', 'load'], { input: join(dir, 'images.tar') });
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
   if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
-  if (retirement) await requireRetirementRuntime(manifest.images.controller);
+  if (change?.kind === 'retirement') await requireRetirementRuntime(manifest.images.controller);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
-  await restoreVolumes(dir, target, volumes, manifest.images.controller, retirement?.skipped);
-  if (retirement) {
-    await writeRetirement(target, manifest.images.controller, retirement.state);
-    await writeJson(join(destination, 'retirement.json'), retirement.evidence);
-    await stopped(manifest.sourceProject, volumes.map(name => config.volumes[name].name));
+  await restoreVolumes(dir, target, volumes, manifest.images.controller, change?.skipped);
+  if (change) {
+    if (change.kind === 'retirement') await writeRetirement(target, manifest.images.controller, change.state);
+    await writeJson(join(destination, `${change.kind}.json`), change.evidence);
+    await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   }
   await stopped(project, volumes.map(name => target.volumes[name].name));
   await rename(file, join(destination, 'compose.json'));
   const parent = await open(destination, 'r');
   try { await parent.sync(); } finally { await parent.close(); }
-  await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: retirement?.evidence.id || null });
+  await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: change?.kind === 'retirement' ? change.evidence.id : null, expansion: change?.kind === 'expansion' ? change.evidence.id : null });
   console.warn('Restoring an older snapshot can resurrect application access, deploy credentials, and secret revisions. Keep the source stopped.');
   console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
 }
