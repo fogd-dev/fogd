@@ -967,3 +967,22 @@ rejections must settle pending operations. Explicitly show rollback after a lowe
 revision rather than silently ignoring the server. Internal SSE cleanup alarms do
 not qualify general scheduled app effects. Implement and test the full reviewed
 plan before changing feature support claims.
+
+## ADR 038: reserve semantic refusal receipts in the checklist fixture
+
+Context: the native checklist protocol must settle pending operations consistently.
+An unrecorded unknown-item refusal could become an edit if the same ID is retried
+after another user creates the item, including retries from a second browser tab.
+
+Options: describe rejection as terminal only for its recipient, or retain the
+semantic refusal under the operation ID alongside successful receipts.
+
+Choice: retain refusal receipts with the current revision and a reason, without
+changing board state. Accepted and refused operations share the 1,000-receipt bound.
+Receipt lookup precedes capacity and validation. At capacity, new operations remain
+refused because this fixture never deletes receipts. Invalid operation IDs are not
+reserved and must be rejected by the browser before entering durable pending storage.
+
+Why: this preserves the reviewed retry contract across concurrent tabs and changing
+state. The nullable reason column is additive for earlier accepted-receipt records.
+SQLite and real-runtime tests remain separate evidence; the browser layer is next.

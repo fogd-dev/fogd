@@ -1,0 +1,72 @@
+{
+  "project": "fogd-m11b-live",
+  "releases": [
+    {
+      "app": "live-probe",
+      "id": "aa63c761-34ac-481c-a389-818f658b8d8f",
+      "digest": "3d2c50fd4a28575f09c855878e3544ac1ce4455a0eb971c528427670f3ee6e77"
+    },
+    {
+      "app": "checklist",
+      "id": "e5d1c094-79b5-40f4-b0ba-385e0a76dbdf",
+      "digest": "ab31e043ba43fe833681e25aa98274be2b1b0df882d450eb23b45676a149a689"
+    }
+  ],
+  "room": "board-f028b048-b677-4369-9ae9-ffa2fe7ed7de",
+  "snapshot": {
+    "type": "snapshot",
+    "revision": 4,
+    "release": "v1",
+    "items": [
+      {
+        "id": "closing-item",
+        "text": "Sender disconnected",
+        "checked": false
+      },
+      {
+        "id": "first",
+        "text": "Shared checklist",
+        "checked": true
+      }
+    ]
+  },
+  "isolated": {
+    "type": "snapshot",
+    "revision": 0,
+    "release": "v1",
+    "items": []
+  },
+  "concurrentReceipts": [
+    {
+      "type": "ack",
+      "opId": "set-a",
+      "revision": 3,
+      "release": "v1"
+    },
+    {
+      "type": "ack",
+      "opId": "set-b",
+      "revision": 2,
+      "release": "v1"
+    }
+  ],
+  "firstMessages": [
+    {
+      "type": "snapshot",
+      "revision": 0,
+      "release": "v1",
+      "items": []
+    },
+    {
+      "type": "snapshot",
+      "revision": 0,
+      "release": "v1",
+      "items": []
+    }
+  ],
+  "senderDisconnectPeerRevision": 4,
+  "crossOriginUpgrade": "refused",
+  "invalidRoomStatus": 400,
+  "socketsStayedOpenAfterRejection": true,
+  "scope": "Real celld SQL transactions and native WebSockets; browser durable outbox and failure recovery not yet implemented"
+}

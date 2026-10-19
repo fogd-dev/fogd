@@ -811,3 +811,22 @@ The completed M11a populated-retirement stack was removed without deleting its
 volumes to release Docker network address pools for the new isolated fixture.
 Example builds, syntax checks and quality gates pass. No runtime adapter change
 or upstream patch was required for this initial transport probe.
+
+
+## M11b checklist server protocol
+
+[examples/checklist](../examples/checklist/README.md) now implements a native room
+with synchronous SQLite transactions, revisions, accepted/refused operation receipts,
+and full snapshots. Seven real-SQLite tests cover rollback, replay after later edits,
+conflicts, invalid input, capacity, durable rejection and additive receipt schema.
+
+The [reviewed Docker probe](evidence/m11b-board-protocol.json) deploys two apps through
+the normal scoped CLI. Through workerd and Chromium it verifies initial snapshots,
+concurrent unique revisions, duplicates, conflicts, semantic rejections without
+closing sockets, sender-disconnect peer notification, invalid-room refusal,
+cross-origin refusal, and separate app/room state. No runtime adapter shim is used.
+The [review response](reviews/m11b-board-response.md) records the fixes and remaining
+upstream broadcast limitation.
+
+This is a server protocol checkpoint. Browser persistence/reconciliation, failure
+and update qualification, SSE, idle eviction, and stopped recovery remain M11b work.

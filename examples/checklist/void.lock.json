@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "source": {},
+  "resolved": {
+    "durable_objects": {
+      "bindings": [
+        {
+          "name": "ChecklistWs",
+          "class_name": "ChecklistWs"
+        }
+      ]
+    },
+    "migrations": [
+      {
+        "tag": "void-ws-v1",
+        "new_sqlite_classes": [
+          "ChecklistWs"
+        ]
+      }
+    ]
+  },
+  "text": "{\n  \"durable_objects\": {\n    \"bindings\": [\n      {\n        \"name\": \"ChecklistWs\",\n        \"class_name\": \"ChecklistWs\"\n      }\n    ]\n  },\n  \"migrations\": [\n    {\n      \"tag\": \"void-ws-v1\",\n      \"new_sqlite_classes\": [\n        \"ChecklistWs\"\n      ]\n    }\n  ]\n}\n"
+}

@@ -339,5 +339,6 @@ Default admission stays off by policy because queues constrain expansion/recover
 The [reviewed plan](docs/m11b.md) covers durable operations, browser reconciliation,
 preserved WebSockets across updates, and separate SSE acceptance. Its minimal native
 Void room already passes a workerd WebSocket roundtrip without a shim. The guide
-includes fresh-fixture reproduction; full collaboration and failure behavior remain
-under implementation.
+includes fresh-fixture reproduction. The [checklist server](examples/checklist/README.md)
+now passes durable receipt and concurrent-edit checks through workerd; browser
+reconciliation and full failure behavior remain under implementation.
