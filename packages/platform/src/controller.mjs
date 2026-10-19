@@ -1,3 +1,4 @@
+import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
 import { activateRelease } from './activation.mjs';
 import { assertQueueDecision, interruptQueueActivation, recoverQueueHolds, requireQueueCapability, validateQueueState } from './queue-activation.mjs';
 import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
@@ -140,14 +141,16 @@ export class Controller {
   }); }
   revokeCredential(id) { return this.exclusive(() => this.credentials.revoke(id)); }
   replaceSecrets(app, values) { return this.exclusive(() => { assertLiveName(this.state, app); return this.secrets.replace(app, values); }); }
-  mutate(id, digest, action, secretRevision) {
+  mutate(id, digest, action, secretRevision, replaces) {
     return this.exclusive(async () => {
       const request = this.state.deployments[id];
       if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
       assertClaimRequest(this.state, request);
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
-      assertQueueDecision(this.state.apps[request.app], request, action);
+      if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
+      const previous = replacementFor(this, request, replaces);
+      assertQueueDecision(this.state.apps[request.app], request, action, Boolean(previous));
       if (action === 'reject') {
         await rejectUnclaimed(this, request);
         if (this.state.apps[request.app]?.uncertain === id) throw new Error('Reconcile the failed activation before rejecting its artifact');
@@ -161,6 +164,7 @@ export class Controller {
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
       this.compatible(request, app);
       const selected = await this.secrets.select(request, secretRevision);
+      if (previous) await replaceQueueApproval(this, request, previous, app, slot, selected);
       return this.prepareActivation(request, app, slot, selected);
     });
   }

@@ -11,7 +11,7 @@ await requireEmptyFleet(probe);
 const stage = await stageNative(join(probe.output, 'app'));
 const project = await upload(probe, stage.output, 'controller-app');
 const runner = join(probe.output, 'runner'); await mkdir(runner);
-await cp(new URL('./queue-probe/controller.mjs', import.meta.url), join(runner, 'controller.mjs'));
+for (const file of ['controller.mjs', 'controller-artifact.mjs']) await cp(new URL(`./queue-probe/${file}`, import.meta.url), join(runner, file));
 const remote = await upload(probe, runner, 'controller-runner');
 const result = JSON.parse((await probe.compose(['exec', '-T', 'controller', 'node', `${remote}/controller.mjs`, project, slot])).trim());
 await probe.save('controller', result);

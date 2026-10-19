@@ -1,12 +1,11 @@
+import { stageRequest } from './controller-artifact.mjs';
 // Run only inside a disposable probe container with a never-deployed fleet.
 import assert from 'node:assert/strict';
-import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { randomUUID, createHash } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { Controller } from '/app/packages/platform/src/controller.mjs';
 import { Backend } from '/app/packages/platform/src/backend.mjs';
-import { deliveryFor, requireQueueCapability } from '/app/packages/platform/src/queue-activation.mjs';
-import { artifactDigest, resourceIdentity } from '/app/packages/runtime/src/artifact.mjs';
+import { deliveryFor } from '/app/packages/platform/src/queue-activation.mjs';
 
 const [source, slotId] = process.argv.slice(2);
 const slot = JSON.parse(process.env.FOGD_SLOTS).find(slot => slot.id === slotId);
@@ -48,19 +47,7 @@ assert.equal(state.delivery.desired, 'paused'); assert.equal(state.delivery.hold
 console.log(JSON.stringify({ dir, slot: slot.id, first, update: { version: update.version, step: update.step }, delivery: state.delivery, bootstrap: state.queueBootstrap, lostResumeRecovered: true }));
 
 async function stage(update = false) {
-  const id = randomUUID(), artifact = controller.artifact(id);
-  await mkdir(artifact);
-  for (const path of ['worker', 'migrations', 'wrangler.json']) await cp(join(source, path), join(artifact, path), { recursive: true });
-  const config = JSON.parse(await readFile(join(artifact, 'wrangler.json'), 'utf8'));
-  if (update) {
-    config.vars = { ...config.vars, FOGD_PROBE_REVISION: '2' };
-    await writeFile(join(artifact, 'wrangler.json'), JSON.stringify(config));
-  }
-  const migrations = [];
-  for (const db of config.d1_databases) for (const name of (await readdir(join(artifact, db.migrations_dir))).sort()) {
-    migrations.push({ database: db.database_id, name, digest: createHash('sha256').update(await readFile(join(artifact, db.migrations_dir, name))).digest('hex') });
-  }
-  const request = { id, app: config.name, digest: await artifactDigest(artifact), resources: { ...resourceIdentity(config), queues: config.queues }, migrations, requiredSecrets: [], status: 'pending', step: 'submitted' };
-  requireQueueCapability(controller.state, request.resources);
-  controller.state.deployments[id] = request; await controller.save(); return request;
+  return stageRequest(controller, source, async (_artifact, config) => {
+    if (update) config.vars = { ...config.vars, FOGD_PROBE_REVISION: '2' };
+  });
 }

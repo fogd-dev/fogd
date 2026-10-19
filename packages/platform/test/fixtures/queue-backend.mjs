@@ -20,7 +20,7 @@ export function queueBackend(dir, after = () => {}) {
     },
     async ready(_, version) { assert.equal((await readJson(path)).version, version); await effect('ready'); },
     async migrate() { assert.equal((await readJson(path)).paused, true); await effect('migrate'); },
-    async applied() { assert.equal((await readJson(path)).paused, true); await effect('ledger'); return []; },
+    async applied() { assert.equal((await readJson(path)).paused, true); await effect('ledger'); return readJson(join(dir, 'applied.json'), []); },
     queues: {
       async pause() { await effect('pause', { paused: true }); return { paused: true }; },
       async resume(_, _name, version) { assert.equal((await readJson(path)).version, version); await effect('resume', { paused: false }); return { paused: false }; },

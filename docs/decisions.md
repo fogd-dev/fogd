@@ -763,3 +763,39 @@ It is not silently converted into pause: published consumers have already receiv
 artifact approval, and pause remains the explicit way to establish that control.
 Operator pause persists through successful activation. No drain or instantaneous
 termination of already running work is promised.
+
+## ADR 031: reconcile the original migration before transferring a queue hold
+
+Context: ADR 029 initially allowed only the held artifact to retry. A permanently
+invalid migration therefore prevented recovery through a corrected artifact.
+Overwriting its uncertain pointer before reading the ledger would lose evidence
+needed to decide which SQL can change.
+
+Options: require manual metadata repair; let ordinary approval replace any hold;
+or require explicit predecessor approval identity and a reconciled transfer. Manual
+repair puts correctness on operators. Implicit replacement can authorize a different
+predecessor after a stale page or concurrent action.
+
+Decision: bind replacement to both artifacts' IDs and digests under the controller
+lock. Validate candidate secret selection, establish the original hold's pause,
+reconcile the original attempt, and enforce its applied migration hashes before
+transfer. Persist the new hold owner and candidate approval/secret revision together
+before the transfer pause command. Preserve operator intent, bootstrap phase, and
+last completed runtime version. This supersedes ADR 029's original-artifact-only
+retry restriction.
+
+Retain the existing producer-only bootstrap path for an incomplete first bootstrap.
+It excludes secret vars and cannot replay over app code once publication began.
+Retain matching repair-tuple retries after transfer failure so an operator can retry
+a lost response without guessing ownership. Completed approvals still require status
+inspection rather than repeated mutation.
+
+Consequences: administrators must review two artifact identities and preserve both
+artifacts until reconciliation succeeds. Applied SQL cannot change; unapplied files
+may be corrected under the pinned runtime's per-file transaction semantics. Old
+artifacts remain retained after rejection. Conflicting hold/uncertain metadata fails
+startup with identifying diagnostics; ordinary runtime availability failures remain
+isolated to their app. No new state capability is needed: an older queue-capable
+controller safely retries the atomically approved candidate under its existing hold,
+while ignoring the predecessor audit field. Backup/retention and full public queue
+admission remain separate gates.

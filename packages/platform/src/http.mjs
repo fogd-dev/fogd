@@ -60,12 +60,12 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         try { checkMutation(request, csrf); }
         catch (error) { return send(403, { error: error.message }); }
         const input = await body(request);
-        return send(200, adminDeployment(await controller.mutate(match[1], input.digest, match[2], input.secretRevision)));
+        return send(200, adminDeployment(await controller.mutate(match[1], input.digest, match[2], input.secretRevision, input.replaces)));
       }
       if (request.method === 'GET' && url.pathname === '/') {
         const apps = Object.entries(controller.state.apps).map(([name, app]) => `<p><strong>${html(name)}</strong>: ${html(app.route)} (${html(app.slot)}) ${html(app.reason || '')}</p>`).join('');
-        const rows = Object.values(controller.state.deployments).reverse().map(d => `<article><h2>${html(d.app)} — ${html(d.status)}</h2><p>Submitted by ${html(d.submitter)} at ${html(d.submittedAt)}</p><code>${html(d.digest)}</code><p>Secret revision: ${html(revision(d, controller) || 'none')}${d.secretRevision ? ' (pinned for retry)' : ''}</p><p>${html(d.step)} ${html(d.error || '')}</p><details><summary>Resources and migrations</summary><pre>${html(JSON.stringify({ requiredSecrets: d.requiredSecrets || [], secretRevision: revision(d, controller), resourceChanges: d.resourceChanges, resources: d.resources, migrations: d.migrations }, null, 2))}</pre></details><p><a href="/v1/deployments/${d.id}/artifact">Review full artifact manifest</a></p>${['pending', 'failed'].includes(d.status) ? ['approve', 'reject'].map(action => `<button data-id="${d.id}" data-digest="${d.digest}" data-action="${action}" data-secret-revision="${html(revision(d, controller) || '')}">${action === 'approve' && d.status === 'failed' ? 'Retry approval' : action}</button>`).join(' ') : ''}</article>`).join('');
-        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1><p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
+        const rows = Object.values(controller.state.deployments).reverse().map(d => `<article><h2>${html(d.app)} — ${html(d.status)}</h2><p>Submitted by ${html(d.submitter)} at ${html(d.submittedAt)}</p><code>${html(d.digest)}</code><p>Secret revision: ${html(revision(d, controller) || 'none')}${d.secretRevision ? ' (pinned for retry)' : ''}</p><p>${html(d.step)} ${html(d.error || '')}</p><details><summary>Resources and migrations</summary><pre>${html(JSON.stringify({ requiredSecrets: d.requiredSecrets || [], secretRevision: revision(d, controller), resourceChanges: d.resourceChanges, resources: d.resources, migrations: d.migrations }, null, 2))}</pre></details><p><a href="/v1/deployments/${d.id}/artifact">Review full artifact manifest</a></p>${approvalButtons(controller, d, html)}</article>`).join('');
+        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1><p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null,...(b.dataset.replaces?{replaces:{deployment:b.dataset.replaces,digest:b.dataset.replacesDigest}}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
       }
       send(404, { error: 'Not found' });
     } catch (error) { send(errorStatus(error), { error: error.message }); }
@@ -77,4 +77,24 @@ function errorStatus(error) {
   if (error.code === 'CONTROLLER_STORAGE_UNCERTAIN') return 503;
   if (error.code === 'QUEUE_OPERATION_UNCONFIRMED') return 502;
   return 400;
+}
+
+
+function approvalButtons(controller, request, html) {
+  if (!['pending', 'failed'].includes(request.status)) return '';
+  const held = controller.state.deployments[controller.state.apps[request.app]?.delivery?.hold];
+  const replacing = held && held.id !== request.id && held.status === 'failed';
+  const conflict = replacing && differentPredecessor(request.replaces, held);
+  const explanation = conflict ? '<p>This request records a different predecessor. Resubmit the artifact to request another approval.</p>' : replacing ? `<p>Replacement approval preserves the queue hold and applied migrations. Replaces ${html(held.id)} with digest <code>${html(held.digest)}</code>.</p>` : '';
+  const actions = [...(conflict ? [] : ['approve']), ...(held?.id === request.id ? [] : ['reject'])];
+  return explanation + actions.map(action => {
+    const replacement = replacing && action === 'approve' ? ` data-replaces="${html(held.id)}" data-replaces-digest="${html(held.digest)}"` : '';
+    const label = action === 'approve' ? (replacing ? 'Approve replacement' : request.status === 'failed' ? 'Retry approval' : 'approve') : 'reject';
+    return `<button data-id="${request.id}" data-digest="${request.digest}" data-action="${action}" data-secret-revision="${html(revision(request, controller) || '')}"${replacement}>${label}</button>`;
+  }).join(' ');
+}
+
+
+function differentPredecessor(replaces, held) {
+  return replaces && (replaces.deployment !== held.id || replaces.digest !== held.digest);
 }

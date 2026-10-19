@@ -311,5 +311,7 @@ The [activation coordinator](docs/queue-activation.md) integrates bootstrap, pau
 migrations, publication, and restart recovery, with controller process-kill tests.
 A built-controller Docker probe also covers real bootstrap, migration, and lost-resume
 recovery. [Admin delivery controls](docs/delivery-controls.md) provide recorded status,
-refresh, pause, and exact-approval resume through the CLI and browser. Corrected-artifact
-recovery and public approval/recovery acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+refresh, pause, and exact-approval resume through the CLI and browser.
+[Replacement approvals](docs/queue-replacement.md) recover from faulty unapplied
+migrations while preserving the hold and applied hashes. Public approval, stopped
+recovery/retention, and retirement/isolation acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).

@@ -31,6 +31,7 @@ export function validateQueueState(state) {
 
 function validateAppQueue(state, name, app) {
   validateDelivery(app.delivery);
+  if (app.uncertain && app.uncertain !== app.delivery.hold) throw new Error(`Uncertain migration ${app.uncertain} conflicts with delivery hold ${app.delivery.hold} for ${name}`);
   const owner = state.deployments[app.delivery.hold];
   if (app.delivery.hold && (!owner || owner.app !== name || !['failed', 'activating'].includes(owner.status))) throw new Error('Invalid queue activation hold owner');
   if (activationQueue(app.resources) !== app.delivery.queue) throw new Error('Queue delivery identity mismatch');
@@ -41,6 +42,7 @@ function validateAppQueue(state, name, app) {
 
 export function interruptQueueActivation(app, request) {
   if (!app?.delivery) return;
+  if (app.delivery.hold && app.delivery.hold !== request.id) throw new Error(`Interrupted activation conflicts with another delivery hold: ${request.id} / ${app.delivery.hold}`);
   app.route = 'paused';
   // Resume may have committed before the final active pointer was saved.
   app.delivery = { ...app.delivery, hold: request.id, observed: 'unknown', observedAt: null, operation: 'pause' };
@@ -66,13 +68,13 @@ export async function recoverQueueHolds(controller) {
   }
 }
 
-export function assertQueueDecision(app, request, action) {
+export function assertQueueDecision(app, request, action, replacement = false) {
   if (!app?.delivery?.hold) return;
   if (action === 'reject') {
     if (app.delivery.hold === request.id) throw new Error('Retry the held queue activation before rejecting its artifact');
     return;
   }
-  if (app.delivery.hold !== request.id) throw new Error('Retry the held queue activation before approving another deployment');
+  if (app.delivery.hold !== request.id && !replacement) throw new Error('Retry the held queue activation before approving another deployment');
 }
 
 export async function prepareQueue(controller, request, app, slot, execution, step) {

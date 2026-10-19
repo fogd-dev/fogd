@@ -64,12 +64,11 @@ Metadata write failure stops further controller effects through the shared stora
 failure guard. Recovery requires a fresh controller to load the actual durable
 state. The guard cannot undo an already committed runtime effect.
 
-A held activation currently permits retry of its original approved artifact only.
-Rejection of that held artifact and replacement approval are refused. Administrators
-can still reject other pending submissions to free admission capacity. This means an invalid migration can
-leave the app requiring repair beyond this interface. A reviewed transfer to a
-corrected artifact is an admission prerequisite; silently abandoning its hold is
-not a recovery mechanism.
+A held activation permits original-artifact retry or an explicit
+[replacement approval](queue-replacement.md). Replacement reconciles the original
+attempt's migration evidence before atomically transferring the hold and pinning the
+candidate approval. Applied SQL cannot change. Other pending submissions remain
+rejectable to free admission capacity; rejecting the current hold owner is refused.
 
 ## Evidence and limits
 
@@ -95,6 +94,6 @@ Void app then processes an import after explicit probe resume. This bypasses pub
 artifact admission and does not exercise the approval HTTP API or gateway.
 
 [Authenticated operator controls](delivery-controls.md) are qualified separately.
-Still pending are corrected-artifact recovery, stopped recovery with delivery holds and
+Still pending are stopped recovery with delivery holds and
 retention-age checks, retirement isolation, and queued-app acceptance through the
 public approval and routing interfaces.

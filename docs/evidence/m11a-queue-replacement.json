@@ -1,0 +1,71 @@
+{
+  "dir": "/var/lib/fogd/repair-6499af5e-63bd-45db-a102-55612c0556d8",
+  "slot": "slot-1",
+  "original": {
+    "id": "587d49ec-c877-40f7-801b-e6131e72aa75",
+    "digest": "b47eefffc63c25132763fd43c575a86bbfb1256f0219f26958e4a76d1252ad92",
+    "step": "migrating"
+  },
+  "corrected": {
+    "id": "ea956299-8842-466d-8c53-f7a799ec23cf",
+    "digest": "67fe5a394a4d1101785cf123e9a77e274df5cdd718384381c6a8accdb82e9199",
+    "replaces": {
+      "deployment": "587d49ec-c877-40f7-801b-e6131e72aa75",
+      "digest": "b47eefffc63c25132763fd43c575a86bbfb1256f0219f26958e4a76d1252ad92"
+    },
+    "status": "active"
+  },
+  "migrations": [
+    {
+      "database": "imports-repair-db",
+      "name": "0001_imports.sql",
+      "digest": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680"
+    },
+    {
+      "database": "imports-repair-db",
+      "name": "0002_audit.sql",
+      "digest": "c835e3743e578ee024283714d55399be2332d0add64da66a5990cb1c481f4e84"
+    },
+    {
+      "database": "imports-repair-db",
+      "name": "0003_repair.sql",
+      "digest": "97b972dd15586da178b50d34d171616b13fa1b55d710c36862861e9481aa0204"
+    }
+  ],
+  "auditRows": [
+    {
+      "marker": "corrected"
+    }
+  ],
+  "firstInsertRolledBack": true,
+  "appliedSqlChangeRejected": true,
+  "queue": {
+    "paused": true,
+    "stored": 0,
+    "backlogCount": 0,
+    "backlogBytes": 0,
+    "oldestMessageTimestamp": null
+  },
+  "controllerImage": "sha256:bf2652ff0595054a6dbb18cb5caa0db2811465f742db898a32e810f618adb960",
+  "scope": "Real celld/D1 and HTTP replacement approval after private artifact staging; public queue upload remains closed",
+  "project": "fogd-m11a-repair-final",
+  "runtimeImages": {
+    "slot-1-a": "sha256:bf2652ff0595054a6dbb18cb5caa0db2811465f742db898a32e810f618adb960",
+    "slot-1-b": "sha256:bf2652ff0595054a6dbb18cb5caa0db2811465f742db898a32e810f618adb960"
+  },
+  "browser": {
+    "transport": "real browser and HTTP controller with runtime stand-in",
+    "replacementApprovalSubmittedBothIdentities": true,
+    "status": "active"
+  },
+  "sourceSha256": {
+    "packages/platform/src/queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+    "packages/platform/src/queue-activation.mjs": "4abb1cbebd184de1ad2df02eafb69db7bfad5773ceacfac6e8e5da779b296ae9",
+    "packages/platform/src/activation.mjs": "758134ff335acdd5db8f5bb6fb0516bf0af60abc546571e4a6ece6a4958e1194",
+    "packages/platform/src/controller.mjs": "0ffaf8d6765913dda59b69cda6a1d5fb1e3c02351033b4a03b3e881458574a4b",
+    "packages/platform/src/http.mjs": "8e212326e2f7b2471f69d33c2226aace26cd79c50f734fcc5c02ed57081b6f58",
+    "scripts/queue-probe/repair.mjs": "df99576c5cfa9fcdc5773ce14181dbabe8e364f3847b86330c7dcfd627f34958",
+    "scripts/queue-probe/controller-artifact.mjs": "a670b139d09073ccc42f1a7ddddc912c932c6bba7d3d129a7d7309109081667d",
+    "scripts/queue-repair-browser.mjs": "71b7c4b0987c6d6c9e9ed1739c379959e9b963dd51c29fa9cab57d2f6f991b00"
+  }
+}

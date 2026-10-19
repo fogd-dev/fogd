@@ -366,3 +366,27 @@ Claude identified weak race-test timing and CLI resume selecting the active ID
 implicitly. The test now waits for entry into the controller lock; CLI resume takes
 both ID and digest. Runtime errors return bounded 502 responses, and private version
 hashes are excluded from delivery and general admin views. Queue admission stays closed.
+
+
+## M11a corrected-artifact recovery (2026-10-19)
+
+The first live repair probe passed on unused slot 2 of `fogd-m11a-controller-v2`.
+After review follow-ups, parked that stack without deleting volumes and built
+`fogd-m11a-repair-final` from final source on ports 8891/8892. Its private two-fleet
+config is `.fogd/m11a-repair-final-fixture/probe.env`. Slot 1 passed the final probe;
+slot 2 remains unused. Evidence is `.fogd/m11a-repair-live-final`, with selected JSON
+committed. The repaired app is `imports-repair`, its queue is paused, and its private
+controller directory is recorded in the evidence. The main HTTP controller does not
+own those privately staged records; a restart can quarantine that fleet as expected.
+
+The live probe's third migration inserts a row and then uses invalid SQL. The row
+rolls back, while the first two files remain applied. A candidate changing an applied
+file is rejected. The corrected third file then activates through the actual HTTP
+approval handler, leaving one `corrected` audit row. Source inspection confirmed the
+per-file transaction in pinned celld `storage.rs:3108` before the runtime probe.
+
+The separate browser proof uses the real HTTP controller with a runtime stand-in.
+Its first attempt tried to read a response body after the page reloaded, which CDP
+no longer retained. The probe now captures the posted request and checks controller
+state plus the rendered active card; it passes without changing product behavior.
+Evidence is `.fogd/m11a-repair-browser-final`.

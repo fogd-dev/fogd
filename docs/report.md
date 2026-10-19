@@ -611,3 +611,22 @@ The [Claude review response](reviews/m11a-admin-delivery-response.md) records ex
 CLI approval binding and the strengthened serialization test. Corrected-artifact
 hold transfer, stopped recovery/retention, retirement/isolation, and public approval
 acceptance remain before queue admission.
+
+
+[Queue replacement approvals](queue-replacement.md) recover from an invalid unapplied
+migration without discarding the original attempt's ledger evidence. Preflight confirms
+pause, reconciles the original artifact, and rejects changes to applied SQL. One
+atomic state write then transfers the hold with the candidate approval and selected
+secret revision. Operator pause and the last completed runtime version survive the
+transfer. CLI and browser controls bind both approvals' IDs and digests.
+
+All 218 tests pass, including ambiguous persistence, secret rotation, and real
+process SIGKILL during reconciliation and hold transfer with runtime stand-ins.
+Builds and quality checks pass. The [live D1 evidence](evidence/m11a-queue-replacement.json)
+confirms a write followed by invalid SQL rolls back its entire file, earlier files
+retain their hashes, and corrected SQL activates through explicit HTTP replacement
+approval. A separate browser check verifies the button posts both identities.
+The [two-review response](reviews/m11a-repair-response.md) records the startup guards,
+pre-intent metadata rollback, and retry limitations. Public queue admission remains
+closed pending stopped recovery/retention, retirement/isolation, and full deployment
+acceptance.

@@ -1,64 +1,17 @@
-import { requireQueueCapability } from '../src/queue-activation.mjs';
+import { fixture, slots, queues } from './fixtures/queue-controller.mjs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { queueBackend } from './fixtures/queue-backend.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { artifactDigest } from '@fogd/runtime/artifact';
 import { Controller } from '../src/controller.mjs';
 import { Backend } from '../src/backend.mjs';
-import { readJson, saveJson } from '../src/store.mjs';
+import { readJson } from '../src/store.mjs';
 import { resourceChanges } from '../src/resources.mjs';
 
-const slots = [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }];
-const queues = { producers: [{ binding: 'QUEUE', queue: 'jobs' }], consumers: [{ queue: 'jobs', max_retries: 1 }] };
-
-async function fixture(t) {
-  const dir = await mkdtemp(join(tmpdir(), 'fogd-queue-activation-'));
-  t.after(() => rm(dir, { recursive: true, force: true }));
-  const events = []; let owner = null, version = null, paused = false, failure = null;
-  const effect = name => { events.push(name); if (failure === name) { failure = null; throw Error(`Lost ${name} response`); } };
-  const backend = {
-    owner: async () => owner,
-    hasDeployment: async () => Boolean(version),
-    claim: async (_, app) => { owner = { app }; },
-    bootstrap: async () => { version = 'bootstrap'; effect('bootstrap'); return version; },
-    ready: async (_, expected) => { assert.equal(version, expected); effect('ready'); },
-    publish: async () => { assert.equal(paused, true); version = 'application'; effect('publish'); return version; },
-    migrate: async () => { assert.equal(paused, true); effect('migrate'); },
-    applied: async () => { assert.equal(paused, true); effect('ledger'); return []; },
-    queues: {
-      pause: async () => { assert.ok(version); paused = true; effect('pause'); return { paused }; },
-      resume: async (_, queue, expected) => { assert.equal(queue, 'jobs'); assert.equal(version, expected); paused = false; effect('resume'); return { paused }; },
-    },
-  };
-  let writeFailure = null;
-  const persist = async (path, value) => {
-    const fail = writeFailure?.(value);
-    if (fail === 'before') throw Error('disk unavailable');
-    await saveJson(path, value);
-    if (fail === 'after') throw Error('lost write response');
-  };
-  const create = () => new Controller({ dir, slots, backend, persist, reportStorageFailure: () => {} });
-  const c = create(); await c.init();
-  // Private fixture: queue artifact admission intentionally remains closed.
-  async function request(controller = c) {
-    const id = randomUUID(), artifact = controller.artifact(id);
-    await mkdir(join(artifact, 'worker'), { recursive: true });
-    await writeFile(join(artifact, 'worker/index.js'), 'export default {}');
-    const config = { name: 'imports', main: 'worker/index.js', queues, d1_databases: [] };
-    await writeFile(join(artifact, 'wrangler.json'), JSON.stringify(config));
-    const value = { id, app: 'imports', digest: await artifactDigest(artifact), resources: { script: 'imports', d1: [], r2: [], durable: { bindings: [] }, queues }, migrations: [], requiredSecrets: [], status: 'pending', step: 'submitted' };
-    requireQueueCapability(controller.state, value.resources);
-    controller.state.deployments[id] = value; await controller.save(); return value;
-  }
-  return { c, create, request, events, backend, paused: () => paused,
-    fail: name => { failure = name; }, failWrite: callback => { writeFailure = callback; } };
-}
 const approve = (c, r) => c.mutate(r.id, r.digest, 'approve');
 
 test('queue activation bootstraps, pauses, migrates, publishes, checks readiness, then resumes', async t => {

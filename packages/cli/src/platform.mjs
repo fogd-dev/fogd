@@ -56,10 +56,10 @@ export async function admin(action, id, digest, secretRevision) {
   await decideDeployment(env, headers, state, action, id, digest, secretRevision);
 }
 
-async function decideDeployment(env, headers, state, action, id, digest, secretRevision) {
+async function decideDeployment(env, headers, state, action, id, digest, secretRevision, replaces) {
   if (!['approve', 'reject'].includes(action) || !id || !digest) throw new Error('Usage: fogd admin list | approve|reject <id> <digest>');
   if (action === 'approve' && state.deployments[id]?.requiredSecrets?.length && !secretRevision) throw new Error('Approval requires an explicit secret revision: fogd admin approve ID SHA SECRET_REVISION (see fogd admin list)');
-  const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest, secretRevision: secretRevision || null }) });
+  const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest, secretRevision: secretRevision || null, ...(replaces ? { replaces } : {}) }) });
   console.log(JSON.stringify(result, null, 2));
   if (result.status === 'failed') throw new Error('Activation failed; inspect the error above and explicitly approve again to retry');
 }
@@ -100,4 +100,11 @@ export async function adminDelivery(app, action = 'status', deployment, digest) 
   const options = action === 'status' ? { headers } : { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest }) };
   const result = await api(env, action === 'status' ? path : `${path}/${action}`, options);
   console.log(JSON.stringify(result, null, 2));
+}
+
+
+export async function adminRepair(id, digest, heldId, heldDigest, secretRevision) {
+  if (!id || !digest || !heldId || !heldDigest) throw new Error('Usage: fogd admin repair NEW_ID NEW_SHA HELD_ID HELD_SHA [REV]');
+  const { env, headers, state } = await adminSession();
+  await decideDeployment(env, headers, state, 'approve', id, digest, secretRevision, { deployment: heldId, digest: heldDigest });
 }

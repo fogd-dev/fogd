@@ -94,8 +94,8 @@ and [delivery journal](delivery-journal.md) are integrated into the
 [activation coordinator](queue-activation.md), with private-artifact controller tests
 and process-kill recovery evidence. A built-controller Docker probe also covers the
 combined lifecycle with private artifacts. [Authenticated delivery controls](delivery-controls.md)
-are qualified through HTTP, CLI, and browser checks. Next: corrected-artifact hold
-transfer, stopped recovery
+are qualified through HTTP, CLI, and browser checks. [Corrected-artifact recovery](queue-replacement.md)
+qualifies original migration reconciliation and atomic hold transfer. Next: stopped recovery
 with retention-age policy, and retirement/isolation acceptance before queue admission. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,

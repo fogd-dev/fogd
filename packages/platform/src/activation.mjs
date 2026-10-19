@@ -12,6 +12,7 @@ async function publish(controller, request, slot, execution, step) {
 }
 
 async function migrate(controller, request, app, slot, execution, step) {
+  if (app.uncertain && app.uncertain !== request.id) throw new Error('Reconcile the original migration attempt before starting another');
   app.uncertain = request.id; await step('checking-migration-ledger');
   await controller.reconcile(app, slot);
   app.uncertain = request.id; await step('migrating');
