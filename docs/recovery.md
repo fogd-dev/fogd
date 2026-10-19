@@ -1,8 +1,8 @@
 # Back up and restore a local fogd installation
 
-Privately staged queue apps use the [queued recovery protocol](queue-recovery.md):
+Queue apps use the [queued recovery protocol](queue-recovery.md):
 backup pauses delivery and restore requires explicit recovery acknowledgment.
-Public queue admission remains closed.
+The [bounded Docker queue profile](queue-admission.md) requires explicit opt-in.
 
 Use `fogd backup` to stop the supported Docker stack and capture its complete state.
 Use `fogd restore` to recover that snapshot onto fresh volumes with the same images.

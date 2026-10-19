@@ -916,3 +916,28 @@ rejections without release evidence remain refused. Turning off admission does n
 pause already-approved work or prohibit exact retries of pinned failed approvals. Wider policies and default enablement require their
 own evidence; the initial normal CLI checkpoint does not replace the remaining
 update, recovery, retirement, and browser acceptance.
+
+
+## ADR 036: keep qualified Docker queues as an operator opt-in
+
+Context: the bounded queue profile now passes its application acceptance audit,
+including canonical updates/recovery/retirement, populated-neighbor preservation,
+and offline builds for both targets. Enabling it has installation-level consequences.
+
+Options: enable admission by default, retain an indefinite experimental gate, or
+qualify the profile while keeping a deliberate operator opt-in.
+
+Choice: supported local Docker opt-in with FOGD_QUEUE_APPS=0 by default. Accept the
+[Claude audit recommendation](reviews/m11a-acceptance-claude.md) after closing its two
+missing checks. Kubernetes queues remain unsupported. This closes M11a, not all M11.
+
+Why: activated or retired queue history prevents expansion and Kubernetes recovery;
+turning admission off does not stop previously approved work. Retention continues
+while paused, and updates permit compatible old-handler overlap. Operators should
+choose those consequences explicitly. Default-off is policy rather than a claim
+that the tested bounded profile remains unavailable.
+
+Consequences: documentation must present the supported profile and its limits next
+to the flag. Broader policies, topology changes, and managed execution require their
+own evidence; the acceptance audit preserves the distinctions between private
+runtime and ordinary CLI qualification. Continue the remaining M11/M12 work.

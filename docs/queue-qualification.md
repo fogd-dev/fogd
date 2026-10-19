@@ -4,7 +4,8 @@ These scripts test the pinned celld runtime directly. They do not enable queues 
 fogd or establish approval support. The native probes below separately exercise
 Void queues and additive D1 migration overlap. See the
 [M11a proposal](m11a.md) and [review amendments](reviews/m11a-response.md) for the
-remaining product contract.
+product contract. The later [admission guide](queue-admission.md) records ordinary
+CLI qualification and the current Docker opt-in.
 
 ## Prepare a disposable installation
 
@@ -147,7 +148,8 @@ by the controller. It is not an atomic fence against a separate operator running
 Runtime diagnostics and the queue identity hash are pinned-version interfaces.
 Unit tests cover stale-generation rejection; the live probe observes approved
 generations and does not force a stale-generation runtime cell. The controller must persist
-intent and activation progress before calling it; that integration remains pending.
+intent and activation progress before calling it; the later
+[activation coordinator](queue-activation.md) implements that integration.
 The probe leaves delivery paused and records [selected evidence](evidence/m11a-queue-generation.json).
 
 ## What remains unqualified
@@ -156,8 +158,8 @@ These probes do not establish controller activation recovery, queue addition/rem
 long-age retention recovery, retirement, or safety of arbitrary handler side effects.
 In particular, `waitUntil` disproves using queue emptiness alone as a drain. A fixed
 observation window cannot prove that no possible later effect exists. The
-[probe record](m11a-probe.md) distinguishes runtime findings from the still-rejected
-fogd application feature.
+[probe record](m11a-probe.md) distinguishes these initial runtime findings from the
+later [application admission work](queue-admission.md).
 
 ## Built-controller activation probe
 

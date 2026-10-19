@@ -1,7 +1,8 @@
 # Recover a Docker installation with queued work
 
-Docker backup and restore support the privately qualified single-queue app profile.
-Queue admission has an [experimental Docker opt-in](queue-admission.md) and defaults off. Kubernetes and expansion refuse activated or retired queue history; never-approved
+Docker backup and restore support the bounded single-queue app profile, with both
+private-runtime and ordinary CLI pending-work recovery evidence.
+Queue admission has a [supported Docker opt-in](queue-admission.md) and defaults off. Kubernetes and expansion refuse activated or retired queue history; never-approved
 artifact-only history does not disable recovery.
 Docker retirement has an explicit [stopped-work protocol](retirement.md#queued-app-retirement). This guide describes the
 recovery protocol; it does not open queue admission.

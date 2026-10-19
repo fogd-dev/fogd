@@ -4,10 +4,14 @@ A native Void app accepts up to 20 labels, retains their input in R2, queues wor
 and records uppercase results in D1. The job URL lets a user return later. Explicit
 retry replays retained input after delivery loss; completed imports are a no-op.
 
-This is an M11a qualification app. **`fogd deploy` still rejects queues.** Use the
-[direct-runtime qualification guide](../../docs/queue-qualification.md#native-void-imports)
-to run it on a disposable celld fleet. The HTTP page is served by that fleet; these
-probes do not qualify public gateway routing or the approval lifecycle for queues.
+This is an M11a qualification app. Docker operators can enable the bounded queue
+profile with `FOGD_QUEUE_APPS=1`, then submit this app with `fogd deploy` and approve
+the exact artifact. See the [queue admission guide](../../docs/queue-admission.md)
+for requirements and qualification steps. Ordinary CLI deployment, workerd routing,
+browser reload/retry, pending-work recovery, and additive updates have passing
+local evidence. Admission remains off by default; Kubernetes queues are unsupported.
+The [direct-runtime guide](../../docs/queue-qualification.md#native-void-imports)
+records the earlier lower-level probes separately.
 
 ```sh
 pnpm --filter @fogd/example-imports typecheck

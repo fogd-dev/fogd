@@ -1,7 +1,8 @@
 # M11a initial queue activation probe
 
 This exploratory local probe informs [the proposal](m11a.md). It does not qualify
-queue support in fogd; admission still rejects queues. The fixture uses the pinned
+queue support in fogd; admission rejected queues at the time of this probe.
+See [queue admission](queue-admission.md) for the later Docker opt-in and acceptance evidence. The fixture uses the pinned
 celld 0.6.2 runtime in an isolated Docker project, with its own bucket, volumes,
 credentials, and ports. The current approved example installation is separate.
 

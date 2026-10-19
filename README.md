@@ -301,7 +301,7 @@ The [measurement guide](docs/capacity-measurement.md) records paired two/three-f
 observations with the same paced workload per existing app. These are shared-VM
 measurements, not a maximum app density or production sizing recommendation.
 
-## M11a in progress: queued work
+## M11a: opt-in queued work
 
 The [queue qualification guide](docs/queue-qualification.md) reproduces runtime
 probes for publication gating, overlapping releases, delayed effects, exhausted
@@ -313,8 +313,8 @@ A built-controller Docker probe also covers real bootstrap, migration, and lost-
 recovery. [Admin delivery controls](docs/delivery-controls.md) provide recorded status,
 refresh, pause, and exact-approval resume through the CLI and browser.
 [Replacement approvals](docs/queue-replacement.md) recover from faulty unapplied
-migrations while preserving the hold and applied hashes. Full application acceptance
-remains pending. Queue admission now has an [experimental Docker opt-in](docs/queue-admission.md)
+migrations while preserving the hold and applied hashes. Queue admission has a
+[supported Docker opt-in](docs/queue-admission.md)
 and remains off by default. See the [design and review response](docs/reviews/m11a-response.md).
 
 Docker queue recovery has a [private-artifact qualification](docs/queue-recovery.md)
@@ -330,5 +330,5 @@ The [normal CLI checkpoint](docs/queue-admission.md) now covers scoped upload,
 pending-only backup/restore, exact approval, derived-name dispatch, and application
 retry. The same guide includes duplicate pending-work recovery and direct gateway
 browser checks. Canonical CLI artifacts also pass additive update with handler
-overlap and retirement/replacement checks. Default admission stays off pending the
-final acceptance audit and policy review.
+overlap and retirement/replacement checks. The [acceptance audit](docs/m11a-acceptance.md) closes the bounded Docker slice.
+Default admission stays off by policy because queues constrain expansion/recovery.

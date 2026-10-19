@@ -1,9 +1,10 @@
 # Queue activation coordinator
 
 The controller integrates queue bootstrap, delivery holds, migrations, and app
-publication. Queue upload admission remains closed while the Docker, operator,
-backup/restore, retention, and retirement acceptance gates are pending. The tests
-stage queue artifacts privately; they do not enable `fogd deploy` for queued apps.
+publication. The [bounded Docker admission profile](queue-admission.md) allows
+ordinary queued uploads with an explicit operator opt-in; it defaults off. The
+coordinator tests described here stage artifacts privately. Public CLI acceptance
+evidence is tracked separately in the admission guide.
 
 ## First activation and updates
 
@@ -36,7 +37,8 @@ bootstrap code, even if the first activation never acquired an active pointer.
 
 A missing journal permits bootstrap only on an unpublished fleet with no active
 pointer. This rejects a stale metadata snapshot paired with a newer deployment.
-Queue app retirement is refused until its recovery and isolation contract is qualified.
+Queued retirement uses the [stopped-work protocol](retirement.md#queued-app-retirement)
+with a complete snapshot and explicit acknowledgment of stopped queued work.
 
 The permanent `fogd-queue-activation-v1` requirement prevents supported older
 controllers from accepting this state. As with other capability markers, binaries
@@ -94,6 +96,6 @@ Void app then processes an import after explicit probe resume. This bypasses pub
 artifact admission and does not exercise the approval HTTP API or gateway.
 
 [Authenticated operator controls](delivery-controls.md) are qualified separately.
-Still pending are stopped recovery with delivery holds and
-retention-age checks, retirement isolation, and queued-app acceptance through the
-public approval and routing interfaces.
+Later [acceptance evidence](m11a-acceptance.md) covers stopped recovery, retirement
+isolation, and canonical approval/routing. Retention limits and old-handler overlap
+remain explicit contract boundaries.

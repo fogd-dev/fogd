@@ -1,9 +1,9 @@
 # Control queue delivery
 
 Administrators can inspect recorded delivery state, refresh an observation, pause,
-and resume through the CLI or approval page. Queue artifact admission remains closed;
-these controls are qualified against privately staged queue apps while the remaining
-recovery and approval gates are completed.
+and resume through the CLI or approval page. The [bounded Docker queue profile](queue-admission.md)
+requires explicit opt-in for new uploads and approvals. These controls also apply
+to already approved queue apps when new admission is turned off.
 
 Use the installation's admin credentials. Deploy credentials cannot operate queues.
 

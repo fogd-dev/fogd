@@ -12,7 +12,8 @@ import { execute } from '../packages/cli/src/recovery/execute.mjs';
 import { backup } from '../packages/cli/src/recovery/backup.mjs';
 import { composeArgs } from '../packages/cli/src/recovery/docker.mjs';
 
-const [output, target] = process.argv.slice(2);
+const [output, target, seed] = process.argv.slice(2);
+assert.ok(seed === undefined || seed === '--seed-neighbor');
 assert.match(target || '', /^fogd-m11[a-z0-9-]*$/);
 const probe = await context('slot-1', output, { queueName: 'imports-public-imports' });
 assert.notEqual(target, probe.config.name);
@@ -26,6 +27,13 @@ const state = await admin(), active = state.deployments[state.apps[app].active];
 assert.equal(state.apps[app].slot, probe.slot.id);
 assert.equal(state.apps[neighbor].route, 'active');
 assert.ok(!state.apps[neighbor].resources?.queues); assert.notEqual(state.apps[neighbor].slot, probe.slot.id);
+if (seed) {
+  const title = `retirement-sentinel-${randomUUID()}`;
+  const code = `import {readFile} from 'node:fs/promises';import {Backend} from './packages/platform/src/backend.mjs';const state=JSON.parse(await readFile('/var/lib/fogd/state.json'));const app=state.apps[${JSON.stringify(neighbor)}];const release=state.deployments[app.active];const slot=JSON.parse(process.env.FOGD_SLOTS).find(s=>s.id===app.slot);await new Backend().run(slot,['d1','execute',release.resources.d1[0].database_name,'--command',${JSON.stringify(`INSERT INTO posts (title, body) VALUES ('${title}', 'Retirement preservation sentinel');`)},'/var/lib/fogd/artifacts/'+release.id,'--json']);`;
+  await probe.node(code);
+  const rows = await (await gateway(neighbor, '/api/posts')).json();
+  assert.ok(rows.some(row => row.title === title));
+}
 const priorNeighbor = await gateway(neighbor, '/api/posts'); assert.equal(priorNeighbor.status, 200);
 const neighborRows = await priorNeighbor.json(); assert.ok(neighborRows.length > 0);
 await cli(['admin', 'delivery', app, 'pause']);
@@ -64,10 +72,11 @@ const added = Object.values((await admin()).deployments).filter(r => !Object.has
 await cli(['admin', 'approve', added[0].id, added[0].digest]);
 assert.equal((await admin()).apps[replacement].slot, probe.slot.id);
 const served = await gateway(replacement, '/api/posts'); assert.equal(served.status, 200);
+const replacementRows = await served.json(); assert.deepEqual(replacementRows, []);
 assert.equal((await gateway(app, '/api/imports')).status, 404);
 const finalFingerprints = await prefixFingerprints(compose, probe.slot.prefix, true);
 assert.deepEqual(finalFingerprints, fingerprints);
 const retainedPrefixDigest = createHash('sha256').update(JSON.stringify(finalFingerprints)).digest('hex');
 assert.deepEqual(await (await gateway(neighbor, '/api/posts')).json(), neighborRows);
-await probe.save('retirement', { source: probe.config.name, target, app, active: { id: active.id, digest: active.digest }, pendingJob: id, retainedPrefix: probe.slot.prefix, retainedObjects: fingerprints.length, retainedPrefixDigest, replacementPrefix, retirement: retired.retirement, neighbor: { app: neighbor, rows: neighborRows }, replacement: { app: replacement, id: added[0].id, digest: added[0].digest, rows: await served.json() } });
+await probe.save('retirement', { source: probe.config.name, target, app, active: { id: active.id, digest: active.digest }, pendingJob: id, retainedPrefix: probe.slot.prefix, retainedObjects: fingerprints.length, retainedPrefixDigest, replacementPrefix, retirement: retired.retirement, neighbor: { app: neighbor, rows: neighborRows }, replacement: { app: replacement, id: added[0].id, digest: added[0].digest, rows: replacementRows } });
 console.log('PASS: canonical queued retirement preserves retained bytes and neighboring app; ordinary approved replacement uses the released fleet');

@@ -103,13 +103,14 @@ The [admission foundation](queue-admission.md) now has normal scoped CLI upload,
 pending-only backup/restore, exact approval, and derived-name dispatch evidence.
 Canonical artifacts now pass duplicate pending-work recovery and direct gateway
 browser acceptance, additive update with old/new handler overlap, and retirement
-with retained-prefix verification and ordinary replacement approval. Next: audit
-M11a acceptance evidence, rerun canonical retirement with a populated neighbor,
-and review the default admission decision. The native Void imports fixture
+with retained-prefix verification and ordinary replacement approval. Next: specify
+the live-session reconnect/reconciliation slice. The [M11a acceptance audit](m11a-acceptance.md)
+closes bounded Docker queues as supported opt-in; default admission stays off by
+policy. Live-session reconnect/reconciliation and scheduled/workflow lifecycle
+remain unimplemented M11 work. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
-killed consumers exhaust delivery. Activation,
-retries, idempotency, handler overlap/draining, and stopped recovery must be
-qualified before enabling the binding. Live collaboration is a separate slice with reconnect/reconciliation.
+killed consumers exhaust delivery. The qualified queue contract permits compatible
+handler overlap, not draining. Live collaboration remains a separate slice.
 Preserve secret revisions, controller metadata,
 bucket state, and every replica identity/log together. M9 retains the second
 deployment environment.

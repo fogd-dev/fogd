@@ -89,7 +89,7 @@ check runtime-capability refusal. It retains all fixture volumes and snapshots.
 
 ## Queued app retirement
 
-Public queue admission remains closed. Privately qualified queued installations
+Installations using the [bounded Docker queue profile](queue-admission.md)
 can use the same stopped snapshot workflow with `--stop-queued-work` when retiring
 a queued app. This flag explicitly accepts that its pending work will not execute
 in the replacement fleet. It is refused for a non-queued target.

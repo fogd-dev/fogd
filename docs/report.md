@@ -748,7 +748,7 @@ The [canonical retirement drill](evidence/m11a-queue-public-retirement.json) ret
 one pending message, compared every old-prefix object's bytes before and after
 retirement and replacement approval, and verified the retired route returns 404.
 The neighboring hello app retained its empty response, which proves availability
-but not preservation of nonempty data. A populated-neighbor rerun remains open.
+but not preservation of nonempty data. The populated rerun below closes that gap.
 A new scoped CLI deployment
 and exact approval ran a replacement hello app in the released fleet. This is the
 local two-fleet canonical path; earlier three-fleet isolation evidence remains
@@ -756,3 +756,38 @@ separate. Source volumes and private recovery material remain retained.
 
 All 261 tests and example builds pass. Queue admission remains opt-in pending the
 final M11a acceptance audit and policy review.
+
+
+## M11a populated-neighbor retirement rerun
+
+The [strengthened retirement drill](evidence/m11a-queue-public-populated.json) inserts
+a unique post into the neighboring hello app through a private fixture D1 command,
+verifies it over HTTP, and then runs the complete backup/retirement/replacement
+sequence. The post survives unchanged, the replacement app has an empty database,
+and all retired-prefix byte hashes still match. Both apps occupy different fleets;
+the released fleet receives a new retirement-generation prefix. This closes the
+empty-neighbor evidence gap without changing the historical first-run record.
+
+The prior target was stopped and removed without deleting volumes before restarting
+the source for this rerun. An initial resume attempted before runtime readiness
+returned an unknown outcome; the explicit retry succeeded, and the queue drained
+before the new test began. No source and restored copies ran together.
+
+Operator guides and the imports example now consistently describe the Docker
+opt-in instead of the earlier blanket refusal. Full tests and example builds pass;
+the default admission policy remains unchanged pending the acceptance audit.
+
+
+## M11a bounded closeout
+
+The [acceptance audit](m11a-acceptance.md) maps every queue-slice requirement to its
+evidence and states the lower-level probe limits. The populated-neighbor and offline
+second-target gaps are closed. `docker run --rm --network none fogd-verify:m11a`
+passes typechecking and both-target builds for guestbook, grown, accounts, and imports;
+the imports queue declarations match and canonical staging succeeds. No hosted
+Cloudflare execution was attempted.
+
+Queues are now documented as supported opt-in for the qualified local Docker
+profile. The default remains 0 by deliberate policy, not unfinished acceptance.
+M11's live-session and scheduled/workflow slices, M12 broader portability, and
+remote-host qualification remain open. This closes M11a only.

@@ -18,7 +18,7 @@ async function snapshot(app, target) {
   const config = JSON.parse(await readFile(join(dir, 'ssr/wrangler.json'), 'utf8'));
   const files = await Promise.all((await regularFiles(dir)).map(async path => ({ path, bytes: (await stat(join(dir, path))).size })));
   return { target, main: config.main, flags: config.compatibility_flags,
-    assets: config.assets, d1: config.d1_databases?.map(db => db.binding), files };
+    assets: config.assets, queues: config.queues, d1: config.d1_databases?.map(db => db.binding), files };
 }
 
 async function verifyApp(app, label) {
@@ -30,6 +30,11 @@ async function verifyApp(app, label) {
   assert.equal(fogd.files.filter(file => /^ssr\/.*\.[cm]?js$/.test(file.path)).length, 1);
   const release = await stageArtifact({ projectDir: app, outputDir: join(results, `${label}-staged`), app: label });
   assert.deepEqual(release.requiredSecrets, label === 'accounts' ? ['BETTER_AUTH_SECRET'] : []);
+  if (label === 'imports') {
+    assert.deepEqual(managed.queues, fogd.queues);
+    assert.equal(managed.queues.producers[0].binding, 'QUEUE_IMPORTS');
+    assert.equal(release.resources.queues.producers[0].queue, 'imports-imports');
+  }
   console.log('Offline artifact staged:', release.digest);
   console.log(JSON.stringify({ managed, fogd }, null, 2));
 }
@@ -38,3 +43,5 @@ const grown = await prepareGrowth(join(results, 'grown-source'));
 await verifyApp(grown, 'grown');
 
 await verifyApp(join(stackRoot, 'examples/accounts'), 'accounts');
+
+await verifyApp(join(stackRoot, 'examples/imports'), 'imports');

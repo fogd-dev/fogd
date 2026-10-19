@@ -1,0 +1,66 @@
+{
+  "source": "fogd-m11a-public-recovery",
+  "target": "fogd-m11a-public-populated",
+  "app": "imports-public",
+  "active": {
+    "id": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "digest": "90003156554861234e6e48de5387de21b329919612af51ca0cf89b1c279acf02"
+  },
+  "pendingJob": "retire-16c2334b-1ae0-488e-8abb-cf81bdbf3b41",
+  "retainedPrefix": "retirement-generations/3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+  "retainedObjects": 42,
+  "retainedPrefixDigest": "f94c5f89f974fadbb79534b442564ab5610505ec823ed77536298756df142da9",
+  "replacementPrefix": "retirement-generations/7e915300-df4f-4f8f-8d47-924c19020ad6",
+  "retirement": {
+    "id": "7e915300-df4f-4f8f-8d47-924c19020ad6",
+    "at": "2026-10-19T20:04:13.701Z",
+    "app": "imports-public",
+    "digest": "90003156554861234e6e48de5387de21b329919612af51ca0cf89b1c279acf02",
+    "snapshot": {
+      "bytes": 3906,
+      "sha256": "7ee34575727a7f7036c45f2767a84150d6af90f3895f4b2ddf459ce202f51327"
+    },
+    "previous": {
+      "slot": "slot-1",
+      "prefix": "retirement-generations/3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+      "nodes": [
+        "slot-1-a-3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+        "slot-1-b-3f39cb21-cc03-4e42-b99c-cfb72f90516f"
+      ]
+    },
+    "replacement": {
+      "prefix": "retirement-generations/7e915300-df4f-4f8f-8d47-924c19020ad6",
+      "nodes": [
+        "slot-1-a-7e915300-df4f-4f8f-8d47-924c19020ad6",
+        "slot-1-b-7e915300-df4f-4f8f-8d47-924c19020ad6"
+      ]
+    },
+    "deployment": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "queue": {
+      "stopQueuedWork": true,
+      "queue": "imports-public-imports",
+      "snapshot": {
+        "id": "61de7983-f524-44bc-b2d0-9026628fd1d4",
+        "at": 1792440224142,
+        "backlogCount": 1
+      }
+    }
+  },
+  "neighbor": {
+    "app": "imports-claim",
+    "rows": [
+      {
+        "id": 1,
+        "title": "retirement-sentinel-1ff4efd9-ed92-433e-994b-03b828bceb03",
+        "body": "Retirement preservation sentinel",
+        "createdAt": "2026-10-19 20:03:43"
+      }
+    ]
+  },
+  "replacement": {
+    "app": "imports-next",
+    "id": "13a70e76-1752-4c96-b79c-c83e6e9adcef",
+    "digest": "b75be072ad4c72a4f0bcf1c13c5244551da3e6fa7f323c281ad374938f5b0829",
+    "rows": []
+  }
+}

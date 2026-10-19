@@ -1,0 +1,157 @@
+{
+  "command": "docker run --rm --network none fogd-verify:m11a",
+  "image": "sha256:e0f68f9a649fceafe8b2e43949710c32749238e90d4605df598ee6639f6854fb",
+  "network": "none; verifier asserts only internal interfaces",
+  "apps": [
+    "guestbook",
+    "grown",
+    "accounts",
+    "imports"
+  ],
+  "imports": {
+    "managed": {
+      "target": "imports-managed",
+      "main": "index.js",
+      "flags": [
+        "nodejs_als"
+      ],
+      "queues": {
+        "producers": [
+          {
+            "queue": "imports",
+            "binding": "QUEUE_IMPORTS"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "imports",
+            "max_batch_size": 1,
+            "max_batch_timeout": 1,
+            "max_retries": 1,
+            "retry_delay": 1
+          }
+        ]
+      },
+      "d1": [
+        "DB"
+      ],
+      "files": [
+        {
+          "path": "ssr/.vite/manifest.json",
+          "bytes": 1639
+        },
+        {
+          "path": "ssr/assets/env-qHyTs46P.js",
+          "bytes": 4680
+        },
+        {
+          "path": "ssr/assets/env-qHyTs46P.js.map",
+          "bytes": 8028
+        },
+        {
+          "path": "ssr/assets/handler-BZ1t7-Rv-CKZNyvOY.js",
+          "bytes": 5563
+        },
+        {
+          "path": "ssr/assets/handler-BZ1t7-Rv-CKZNyvOY.js.map",
+          "bytes": 12868
+        },
+        {
+          "path": "ssr/assets/handler-CMptPYoW.js",
+          "bytes": 41
+        },
+        {
+          "path": "ssr/assets/imports-BAJq4tnF.js",
+          "bytes": 2232
+        },
+        {
+          "path": "ssr/assets/imports-BAJq4tnF.js.map",
+          "bytes": 3779
+        },
+        {
+          "path": "ssr/assets/imports-DyHBqSKM.js",
+          "bytes": 150138
+        },
+        {
+          "path": "ssr/assets/imports-DyHBqSKM.js.map",
+          "bytes": 282337
+        },
+        {
+          "path": "ssr/assets/input-CJQ-WEeE.js",
+          "bytes": 2270
+        },
+        {
+          "path": "ssr/assets/input-CJQ-WEeE.js.map",
+          "bytes": 3872
+        },
+        {
+          "path": "ssr/assets/routes-rnrIyh22.js",
+          "bytes": 3198
+        },
+        {
+          "path": "ssr/assets/routes-rnrIyh22.js.map",
+          "bytes": 3337
+        },
+        {
+          "path": "ssr/index.js",
+          "bytes": 127359
+        },
+        {
+          "path": "ssr/index.js.map",
+          "bytes": 312253
+        },
+        {
+          "path": "ssr/wrangler.json",
+          "bytes": 1550
+        }
+      ]
+    },
+    "fogd": {
+      "target": "imports-fogd",
+      "main": "index.js",
+      "flags": [
+        "nodejs_als"
+      ],
+      "queues": {
+        "producers": [
+          {
+            "queue": "imports",
+            "binding": "QUEUE_IMPORTS"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "imports",
+            "max_batch_size": 1,
+            "max_batch_timeout": 1,
+            "max_retries": 1,
+            "retry_delay": 1
+          }
+        ]
+      },
+      "d1": [
+        "DB"
+      ],
+      "files": [
+        {
+          "path": "ssr/.vite/manifest.json",
+          "bytes": 228
+        },
+        {
+          "path": "ssr/index.js",
+          "bytes": 311079
+        },
+        {
+          "path": "ssr/index.js.map",
+          "bytes": 641021
+        },
+        {
+          "path": "ssr/wrangler.json",
+          "bytes": 1550
+        }
+      ]
+    }
+  },
+  "importsArtifactDigest": "6b8786e59d09a8b5685ffd160a60dc5f1059f9df2be01f7edf060053674c1d2b",
+  "scope": "Typecheck, ordinary Void managed-target build, fogd build and canonical staging; no hosted deployment or execution"
+}

@@ -1,10 +1,12 @@
-# Experimental queue admission
+# Supported opt-in Docker queues
 
 The normal build/upload path now accepts a bounded Void queue profile. Controller
-admission remains **off by default** pending the final acceptance audit and default
-policy review. Integrated update, recovery, retirement, and browser drills now pass. Docker qualification can opt in with
+admission remains **off by default by policy**. The [M11a acceptance audit](m11a-acceptance.md)
+qualifies the bounded local Docker profile, including both-target offline builds. Docker qualification can opt in with
 `FOGD_QUEUE_APPS=1` in its private operator environment before starting the stack.
-Kubernetes rendering does not forward that setting, and its controller refuses
+Activating a queued app permanently excludes Docker expansion and Kubernetes
+recovery for that installation, including after retirement. Kubernetes rendering
+does not forward that setting, and its controller refuses
 new queued submissions and approvals.
 
 This setting controls new uploads and approvals. Turning it off does not pause
@@ -81,7 +83,7 @@ If upload succeeded but the harness stopped before backup, `--submitted` reuses 
 single pending request and verifies its credential scope instead of uploading again.
 
 Canonical artifacts now pass additive updates with in-flight compatibility and
-retirement. The final acceptance audit and default policy review remain. The wider queue policy range and Kubernetes activation remain separate
+retirement. The acceptance audit retains opt-in as an operator policy choice. The wider queue policy range and Kubernetes activation remain separate
 qualification work.
 
 
@@ -125,9 +127,11 @@ The probe fails if v1 finishes too early to establish overlap. It leaves deliver
 paused; it does not roll back the additive migration.
 
 Populate the neighboring hello app with at least one post, then run
-`scripts/queue-public-retirement.mjs NEW_OUTPUT NEW_PROJECT`. The first recorded
-run had an empty neighbor response, so it qualifies availability only; the stricter
-populated-neighbor rerun remains open. It enqueues
+`scripts/queue-public-retirement.mjs NEW_OUTPUT NEW_PROJECT`. Alternatively append
+`--seed-neighbor` to insert a unique test post through the fixture's private D1
+operator command before verifying it through HTTP. This is test setup, not an app
+write API. The [populated rerun](evidence/m11a-queue-public-populated.json) passes
+all strengthened assertions; the earlier empty-neighbor run remains historical evidence. It enqueues
 pending work, snapshots, fingerprints the stopped app's bucket prefix, and runs
 `fogd retire` with the exact digest and explicit stop-work flag. It retains source
 volumes, verifies the old prefix's bytes, checks the neighboring hello app, and
