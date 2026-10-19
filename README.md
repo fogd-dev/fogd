@@ -340,5 +340,6 @@ The [reviewed plan](docs/m11b.md) covers durable operations, browser reconciliat
 preserved WebSockets across updates, and separate SSE acceptance. Its minimal native
 Void room already passes a workerd WebSocket roundtrip without a shim. The guide
 includes fresh-fixture reproduction. The [checklist server](examples/checklist/README.md)
-now passes durable receipt and concurrent-edit checks through workerd; browser
-reconciliation and full failure behavior remain under implementation.
+now has a UI, persistent pending edits, and tested lost-ack reconciliation through
+workerd. Its [explicit Void client patch](docs/patches/void-websocket-send.md) prevents
+pre-snapshot buffering. Physical failure, update, SSE and recovery gates remain open.

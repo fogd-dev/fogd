@@ -106,8 +106,10 @@ browser acceptance, additive update with old/new handler overlap, and retirement
 with retained-prefix verification and ordinary replacement approval. The reviewed
 [M11b live-session plan](m11b.md) now has a passing minimal native WebSocket
 transport probe and [checklist server protocol](../examples/checklist/README.md),
-including real-runtime transaction/receipt checks. Next: browser pending storage
-and reconciliation, then the specified failure/update/SSE scenarios. The [M11a acceptance audit](m11a-acceptance.md)
+including real-runtime transaction/receipt checks. [Browser reconciliation](evidence/m11b-browser.json)
+now covers persistent pending work and lost acknowledgments using an explicit
+[Void client patch](patches/void-websocket-send.md). Next: physical node failures,
+preserved-socket updates, idle eviction, SSE and stopped recovery. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Live-session reconnect/reconciliation and scheduled/workflow lifecycle
 remain unimplemented M11 work. The native Void imports fixture

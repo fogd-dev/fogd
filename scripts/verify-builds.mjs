@@ -45,3 +45,5 @@ await verifyApp(grown, 'grown');
 await verifyApp(join(stackRoot, 'examples/accounts'), 'accounts');
 
 await verifyApp(join(stackRoot, 'examples/imports'), 'imports');
+
+await verifyApp(join(stackRoot, 'examples/checklist'), 'checklist');

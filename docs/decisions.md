@@ -986,3 +986,29 @@ reserved and must be rejected by the browser before entering durable pending sto
 Why: this preserves the reviewed retry contract across concurrent tabs and changing
 state. The nullable reason column is additive for earlier accepted-receipt records.
 SQLite and real-runtime tests remain separate evidence; the browser layer is next.
+
+## ADR 039: add a version-pinned no-buffer Void client send
+
+Context: Void 1.1.11 `send` buffers when the native socket is not OPEN, including
+the CLOSING-before-close-event window. That buffer flushes before the next `open`
+event, bypassing the checklist's snapshot/rollback gate. Observed connection events
+alone cannot close this race.
+
+Options: read a private socket field, replace the typed Void client, move mutations
+to another transport, or add a minimal no-buffer method as an upstream candidate.
+
+Choice: the explicit `sendIfOpen(event): boolean` package patch, preserving existing
+send behavior. False or a send exception leaves the app's pending operation intact.
+True is not delivery; a durable server receipt is still required. The follow-up
+[review](reviews/m11b-no-buffer-claude.md) approves this reversible API extension.
+
+Why: it preserves native Void typing and reconnect behavior without coupling app
+code to private internals or weakening the reviewed gate. The native-client and
+browser closing-window tests prove no SDK-buffered operation precedes the snapshot.
+
+Consequences: this remains an unsubmitted, version-pinned upstream candidate. Both
+Docker builds carry the patch before frozen installation; both-target builds pass
+offline. Porting the example must carry the patch until an equivalent upstream API
+is available. See the [patch note](patches/void-websocket-send.md). Browser rollback
+shows the lower snapshot and requires explicit acceptance before replay; storage
+failure or malformed saved operations never silently drops pending work.

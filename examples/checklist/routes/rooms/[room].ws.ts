@@ -1,12 +1,8 @@
 import { z } from 'zod';
 import { defineRoom } from 'void/ws';
+import { ServerMessage } from '../../lib/wire.mjs';
 import { Board } from '../../lib/board.mjs';
 
-const ServerMessage = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('snapshot'), revision: z.number(), release: z.string(), items: z.array(z.object({ id: z.string(), text: z.string(), checked: z.boolean() })) }),
-  z.object({ type: z.literal('ack'), opId: z.string(), revision: z.number(), release: z.string() }),
-  z.object({ type: z.literal('rejected'), opId: z.string(), reason: z.string(), release: z.string() }),
-]);
 const wire = (message: unknown) => ServerMessage.parse({ ...(message as Record<string, unknown>), release: 'v1' });
 
 const validRoom = (room: string) => /^[a-z0-9-]{1,64}$/.test(room);

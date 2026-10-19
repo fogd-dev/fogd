@@ -1,0 +1,29 @@
+diff --git a/dist/runtime/ws.mjs b/dist/runtime/ws.mjs
+index 683853f44c8e88ea38c5f22083f0ebdc630fefa8..05b3eec708be9070f42c8aa4fe7b13400966d8bb 100644
+--- a/dist/runtime/ws.mjs
++++ b/dist/runtime/ws.mjs
+@@ -72,6 +72,11 @@ var VoidSocket = class {
+ 			setTimeout(() => this.connect(), delay);
+ 		});
+ 	}
++	sendIfOpen(event) {
++		if (this.socket?.readyState !== 1) return false;
++		this.socket.send(JSON.stringify(event));
++		return true;
++	}
+ 	send(event) {
+ 		if (this.socket?.readyState === 1) {
+ 			this.socket.send(JSON.stringify(event));
+diff --git a/dist/ws-CsBNxv86.d.mts b/dist/ws-CsBNxv86.d.mts
+index e7619d98a1ebbcdaf0fc82c9fc4d6ebac92eec20..068b9a2cd0043808debf8fb77df41a27d7b91478 100644
+--- a/dist/ws-CsBNxv86.d.mts
++++ b/dist/ws-CsBNxv86.d.mts
+@@ -128,6 +128,8 @@ declare class VoidSocket<P extends keyof WebSocketRouteMap & string> {
+   constructor(url: string, options: ConnectCommonOptions);
+   private emit;
+   private connect;
++  /** Sends without SDK buffering; false means the socket was not open. Delivery still requires an application acknowledgment. */
++  sendIfOpen(event: ClientEventOf<P>): boolean;
+   send(event: ClientEventOf<P>): void;
+   close(code?: number, reason?: string): void;
+   on<K extends keyof ListenerMap<ServerEventOf<P>>>(type: K, handler: ListenerMap<ServerEventOf<P>>[K]): () => void;

@@ -6,6 +6,7 @@ ENV PATH="/opt/pnpm/node_modules/.bin:/app/packages/runtime/node_modules/.bin:${
 COPY --from=celld /usr/local/bin/celld /usr/local/bin/celld
 COPY --from=celld /etc/ssl/certs /etc/ssl/certs
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches patches
 COPY packages/runtime/package.json packages/runtime/package.json
 COPY packages/platform/package.json packages/platform/package.json
 RUN pnpm install --filter @fogd/runtime --filter @fogd/platform --prod --frozen-lockfile

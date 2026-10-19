@@ -1,0 +1,54 @@
+{
+  "project": "fogd-m11b-live",
+  "room": "ui-34ca252c-b64a-4bf4-a010-753b049a9b72",
+  "finalSnapshot": {
+    "type": "snapshot",
+    "revision": 5,
+    "release": "v1",
+    "items": [
+      {
+        "id": "22529a78-10e2-453e-9534-a41c9f911777",
+        "text": "Closing window",
+        "checked": false
+      },
+      {
+        "id": "8de02a49-ffba-4c50-bd7d-1d0fafe712f9",
+        "text": "Shared browser item",
+        "checked": true
+      },
+      {
+        "id": "f3d384eb-555c-48fc-a94f-e0d0b4a7155c",
+        "text": "Unknown outcome",
+        "checked": false
+      },
+      {
+        "id": "restored-item",
+        "text": "Accepted restored state",
+        "checked": false
+      }
+    ]
+  },
+  "rollbackGate": {
+    "injectedBrowserWatermark": 100,
+    "beforeAcceptance": 4,
+    "afterAcceptance": 5
+  },
+  "droppedOperation": "15ee68e7-60cd-469d-aeb8-ab24135cc591",
+  "retainedPendingBeforeReload": [
+    {
+      "opId": "15ee68e7-60cd-469d-aeb8-ab24135cc591",
+      "operation": {
+        "kind": "add",
+        "itemId": "f3d384eb-555c-48fc-a94f-e0d0b4a7155c",
+        "text": "Unknown outcome"
+      },
+      "order": 1792442297832
+    }
+  ],
+  "rejectionSettled": true,
+  "closingState": 2,
+  "earlyFrames": [],
+  "errors": [],
+  "transport": "Real workerd/celld; writer proxy delays first snapshots, suppresses one acknowledgment and closes; watcher connects directly",
+  "scope": "Browser persistence, two users, reload/unknown-outcome replay; node failures, updates, SSE and recovery remain separate"
+}

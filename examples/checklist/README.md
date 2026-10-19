@@ -1,9 +1,11 @@
-# Shared checklist: server protocol checkpoint
+# Shared checklist
 
 This native Void room is the first implementation of [M11b](../../docs/m11b.md).
-It currently exposes WebSocket and HTTP state at `/rooms/:room`; a browser UI,
-persistent pending operations, reconnect handling, SSE and failure recovery are
-still under implementation. Do not treat this checkpoint as a finished app.
+Open `/?room=shared` in two browsers after deployment. The native Void UI retains
+pending edits in browser storage, waits for a snapshot before replaying them, and
+settles server receipts or rejections. WebSocket and HTTP state live at `/rooms/:room`.
+Node failure, preserved-socket updates, SSE, idle eviction, and physical recovery
+remain under qualification.
 
 The anonymous fixture accepts same-origin browser WebSockets. It has no membership
 or application authentication; use a disposable local stack. Room names are 1–64
@@ -52,7 +54,10 @@ The upstream broadcast can still abort if another closing peer throws; that limi
 will be addressed in reconnect/SSE acceptance, not hidden by a fogd shim. `GET` on the
 same path returns that snapshot. Broadcast delivery is not durable; a reconnecting
 client must reconcile from the snapshot and retry unknown outcomes with the same
-IDs. The browser implementation of that protocol is the next step.
+IDs. The browser implements that protocol using the native Void client and an explicit
+[send-without-buffering patch](../../docs/patches/void-websocket-send.md). Carry the
+patch when building this source outside the workspace; unpatched Void 1.1.11 does
+not provide `sendIfOpen`. Both-target offline builds use the patch.
 
 For the current disposable M11b fixture, run
 `FOGD_ENV_FILE=... node scripts/live-board.mjs NEW_OUTPUT`. It updates `live-probe`
@@ -61,3 +66,24 @@ The probe checks duplicate/conflicting IDs, concurrent edits, typed refusal, and
 separate app/room storage through Chromium and workerd. Its real-runtime evidence
 is separate from the SQLite unit tests, which inject a receipt-write failure and
 verify rollback of both the item and revision.
+
+
+## Browser behavior and reproduction
+
+A loaded page can retain offline edits; opening a new page still requires the server.
+Pending operations use individual keys scoped by room and origin, so two tabs do
+not overwrite a shared array. Saved items change only after an authoritative server
+snapshot. The status reports connection state, revision and pending count.
+
+On a lower fresh server revision, the page displays the restored board and stops
+writes. After reviewing it, explicitly choose **Accept restored state and retry
+pending edits** to reset this browser's watermark and resend its retained operations.
+This does not restore previously acknowledged edits absent from an older snapshot.
+Malformed local data or storage failures stop writes without silently dropping work.
+
+With the UI deployed on the disposable M11b fixture, run
+`FOGD_ENV_FILE=... node scripts/live-browser.mjs NEW_OUTPUT`. It uses a real workerd
+connection, a writer-side WebSocket proxy to delay initial snapshots/drop one ack,
+and a second directly connected browser. It checks the CLOSING window, reload with
+an unknown outcome, rejection settlement, and explicit rollback acceptance. The
+rollback case injects a higher browser watermark; physical restore is a later test.

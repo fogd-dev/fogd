@@ -830,3 +830,27 @@ upstream broadcast limitation.
 
 This is a server protocol checkpoint. Browser persistence/reconciliation, failure
 and update qualification, SSE, idle eviction, and stopped recovery remain M11b work.
+
+
+## M11b browser reconciliation and SDK patch
+
+The [checklist UI](../examples/checklist/README.md) now persists individual pending
+operations before sending, waits for the first snapshot of a connection, retries
+unknown outcomes with the same IDs, and settles terminal rejection. Lower restored
+state is visible but blocks writes until explicit acceptance. Shared-tab watermark
+and key-deletion races have focused tests.
+
+Review exposed Void 1.1.11's pre-open buffering race. The [upstream-candidate patch](patches/void-websocket-send.md)
+adds `sendIfOpen` without changing existing `send`. It is version-pinned and required
+by this example; moving the source must carry that patch. Both Docker builds install
+with the frozen patched lockfile. [Offline build evidence](evidence/m11b-offline-builds.json)
+covers the checklist and earlier examples with no network or hosted execution.
+
+The [browser evidence](evidence/m11b-browser.json) records two users converging,
+closing-window submission, no operation before a delayed initial snapshot,
+lost-ack persistence/reload without an extra mutation, typed rejection settlement,
+and explicit acceptance of an injected higher browser watermark. The watcher uses
+a direct workerd connection; only the writer is proxied for fault injection.
+This is not physical restored-state evidence. All 278 tests, typechecking, builds,
+and quality checks pass. Node failures, update/hibernation, SSE and stopped recovery
+remain open M11b work.

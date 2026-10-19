@@ -1,0 +1,203 @@
+{
+  "command": "docker run --rm --network none fogd-verify:m11b-ui",
+  "image": "sha256:1f6ce8494d448399e14d5710c4a161276807a3d693737e1b1bc9acc0b7b26147",
+  "patch": "patches/void@1.1.11.patch",
+  "apps": [
+    "guestbook",
+    "grown",
+    "accounts",
+    "imports",
+    "checklist"
+  ],
+  "checklist": {
+    "managed": {
+      "target": "checklist-managed",
+      "main": "index.js",
+      "flags": [
+        "nodejs_als"
+      ],
+      "assets": {
+        "binding": "ASSETS",
+        "not_found_handling": "none",
+        "run_worker_first": [
+          "/**"
+        ],
+        "directory": "../client"
+      },
+      "queues": {
+        "producers": [],
+        "consumers": []
+      },
+      "d1": [],
+      "files": [
+        {
+          "path": "client/.assetsignore",
+          "bytes": 24
+        },
+        {
+          "path": "client/.vite/manifest.json",
+          "bytes": 900
+        },
+        {
+          "path": "client/assets/pages-Darsg-Jn.css",
+          "bytes": 968
+        },
+        {
+          "path": "client/assets/pages-__4K8Swp.js",
+          "bytes": 98791
+        },
+        {
+          "path": "client/assets/pages-client-gdm-fOd9.js",
+          "bytes": 239051
+        },
+        {
+          "path": "client/assets/route-url-BjGv_KKY-ByX1Eq-k.js",
+          "bytes": 9000
+        },
+        {
+          "path": "ssr/.vite/manifest.json",
+          "bytes": 1816
+        },
+        {
+          "path": "ssr/assets/handler-BZ1t7-Rv-BxY8U59S.js",
+          "bytes": 5555
+        },
+        {
+          "path": "ssr/assets/handler-BZ1t7-Rv-BxY8U59S.js.map",
+          "bytes": 12895
+        },
+        {
+          "path": "ssr/assets/index.server-C707Rl_w.js",
+          "bytes": 408
+        },
+        {
+          "path": "ssr/assets/index.server-C707Rl_w.js.map",
+          "bytes": 694
+        },
+        {
+          "path": "ssr/assets/input-DeNPoAtq.js",
+          "bytes": 178293
+        },
+        {
+          "path": "ssr/assets/input-DeNPoAtq.js.map",
+          "bytes": 515132
+        },
+        {
+          "path": "ssr/assets/pages-CSTnZ0Ej.js",
+          "bytes": 12012
+        },
+        {
+          "path": "ssr/assets/pages-CSTnZ0Ej.js.map",
+          "bytes": 19159
+        },
+        {
+          "path": "ssr/assets/pages-Darsg-Jn.css",
+          "bytes": 968
+        },
+        {
+          "path": "ssr/assets/react-dom-yDvcmg42.js",
+          "bytes": 59996
+        },
+        {
+          "path": "ssr/assets/react-dom-yDvcmg42.js.map",
+          "bytes": 134063
+        },
+        {
+          "path": "ssr/assets/route-url-BjGv_KKY-DpAk0gVz.js",
+          "bytes": 19357
+        },
+        {
+          "path": "ssr/assets/route-url-BjGv_KKY-DpAk0gVz.js.map",
+          "bytes": 31303
+        },
+        {
+          "path": "ssr/index.js",
+          "bytes": 614882
+        },
+        {
+          "path": "ssr/index.js.map",
+          "bytes": 1086700
+        },
+        {
+          "path": "ssr/pages-client.js",
+          "bytes": 558032
+        },
+        {
+          "path": "ssr/pages-client.js.map",
+          "bytes": 966054
+        },
+        {
+          "path": "ssr/wrangler.json",
+          "bytes": 1491
+        }
+      ]
+    },
+    "fogd": {
+      "target": "checklist-fogd",
+      "main": "index.js",
+      "flags": [
+        "nodejs_als"
+      ],
+      "assets": {
+        "binding": "ASSETS",
+        "not_found_handling": "none",
+        "run_worker_first": [
+          "/**"
+        ],
+        "directory": "../client"
+      },
+      "queues": {
+        "producers": [],
+        "consumers": []
+      },
+      "d1": [],
+      "files": [
+        {
+          "path": "client/.assetsignore",
+          "bytes": 24
+        },
+        {
+          "path": "client/.vite/manifest.json",
+          "bytes": 900
+        },
+        {
+          "path": "client/assets/pages-Darsg-Jn.css",
+          "bytes": 968
+        },
+        {
+          "path": "client/assets/pages-__4K8Swp.js",
+          "bytes": 98791
+        },
+        {
+          "path": "client/assets/pages-client-gdm-fOd9.js",
+          "bytes": 239051
+        },
+        {
+          "path": "client/assets/route-url-BjGv_KKY-ByX1Eq-k.js",
+          "bytes": 9000
+        },
+        {
+          "path": "ssr/.vite/manifest.json",
+          "bytes": 282
+        },
+        {
+          "path": "ssr/assets/index-Darsg-Jn.css",
+          "bytes": 968
+        },
+        {
+          "path": "ssr/index.js",
+          "bytes": 856918
+        },
+        {
+          "path": "ssr/index.js.map",
+          "bytes": 1872170
+        },
+        {
+          "path": "ssr/wrangler.json",
+          "bytes": 1491
+        }
+      ]
+    }
+  },
+  "scope": "Typecheck and managed/fogd builds plus canonical staging, with the explicit SDK patch; no hosted execution"
+}
