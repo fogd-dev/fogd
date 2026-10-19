@@ -512,3 +512,38 @@ upstream methods with modelled storage and transport, not celld scheduling. The
 native happy path does not refute it. The second Claude review selects pending registration state with monotonic revisions
 and stale-completion guards. SSE remains unqualified until the race and deployment
 cancellation checks pass.
+
+
+## M11b publication fault placement
+
+The first real pause drill passed edits and an explicit observer reload, but Claude
+found that its connection object lived on the paused topic node. That result is
+superseded by a separated-placement drill: a temporary native subscriber creates
+the topic on the other node before the fresh browser connects through the board
+owner. The revised run passes with one observer open event, no errors, delayed
+hints after resume, and no reload. Source-derived cell ids are corroborated by
+runtime residency; the board id is an independent positive control. The pause
+watchdog bounds this as a stall test, leaving ownership changes to a separate drill.
+
+
+Claude's follow-up found the paused topic node was also a board log follower.
+Runtime logs show the gray-follower backstop evicting it and acknowledgments falling
+back to bucket durability. The drill now requires fresh open log ensembles with
+both peers before fault injection and after recovery, records replication events,
+and checks gateway routing after cleanup. This is a combined publication and
+replication stall. In one run, the publication timeout log preceded the browser's
+acknowledgment; calling the native send hook is not evidence that an output-gated
+reply has reached the browser. Revision hints remain nonauthoritative.
+
+
+The stricter ensemble-recovery drill exceeded its initial 3333 milliseconds pause watchdog and
+failed; cleanup restored both ensembles and gateway routing. Its final budget is
+4000 milliseconds at the default 10000 milliseconds lease, below the minimum remaining lease after a
+normal one-third-lifetime renewal. A subsequent run passed. Watchdog expiry is a
+failed test, never an accepted observation; the private failed run remains evidence.
+
+
+The next review rejected the lease-shape guard: a degraded in-memory log can retain
+an open persisted lease. The drill now verifies later reopened epochs for every
+observed degradation, together with fresh lease epochs and peer membership. Four
+regression tests distinguish actual recovery from unchanged persisted metadata.

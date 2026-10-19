@@ -1,0 +1,15 @@
+# SSE qualification review brief
+
+Review planned real SSE publication-failure drill and uncommitted scripts/live-sse-isolation.mjs. Read-only, no Docker mutations or private env reads. Context docs/m11b.md item6, examples/checklist/routes/rooms/[room].ws.ts, lib/hint.mjs, lib/live-observer.mjs, scripts/live-route-pause.mjs and live-ingress.mjs. Native source .upstream/void/packages/void/src/runtime/live-names.ts, celld .upstream/celld/crates/celld/engine_api.rs:433-550 for deterministic DO ID derivation, runtime serve.mjs for gateway backend config.
+
+Isolation passed .fogd/m11b-sse-isolation/isolation.json: two approved apps same stream/topic/room name, both actual native SSE observers, interleaved distinguishable revisions A3 B2, exact own hint sequences and own board text, no errors/reconnect, 2s quiet observation. No hostile tenant security claim.
+
+Publication stall plan:
+1 create fresh board via native writer socket, no mutations yet (avoids creating live topic). Identify unique new ChecklistWs owner from runtime state.
+2 temporarily route both gateway slot backend bindings to the OTHER node and recreate only workerd; writer reconnects through it to existing board. Open native SSE watcher: connection and topic should be created on other node. Compute expected topic ID from actual active artifact script name + Void live names + celld namespace/HMAC algorithm; assert actual residency/published state, rather than inferring owner from gateway routing.
+3 temporarily route both gateway slot bindings to board owner and recreate workerd again, wait writer/watch reconnect. Require board owner unchanged and topic owned by other node. These setup reconnects precede fault. Canonical compose/controller fleet config never modified; override private/remove in finally.
+4 Docker PAUSE topic node, leave board owner/gateway running. Native writer through workerd submits two durable edits. Require acks/snapshots; inspect owner log for Checklist hint timed-out or failed. Record timings and frozen state so not pretending modelled failure. Second edit checks publication doesn't hold up future ops. Do NOT claim a tight latency SLA: follower replication may delay durable ack. If pausing follower prevents board commits, record actual gap and switch to targeted network/cell mechanism after review; don't count invalid test as pass.
+5 Unpause, require health; observer may reconnect explicitly (native retry or visible reload if control failure) and authoritative snapshot restores both edits; then new edit produces fresh hint. Verify topology restored and no container paused in finally, even assertion failure. No product fault-injection flags, no Cloudflare APIs.
+
+Concern: topic placement may follow board/actor ownership instead of ingress; assert exact runtime IDs or stop that experiment. Derivation is private test-only, source referenced, not fogd public routing. Is fault meaningful? Any false pass, unsafe cleanup, simpler upstream mechanism? Provide direct review; distinguish blocker from evidence limitation.
+

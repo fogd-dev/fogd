@@ -1094,3 +1094,31 @@ resolve ambiguous remote outcomes: after a control error, clients must resubscri
 or unsubscribe. Concurrent raw requests for the same id use most-recently-started
 semantics; a failing winner can leave that id unsubscribed. The
 [patch note](patches/void-live-registration.md) describes regeneration and evidence.
+
+
+## ADR 043: isolate publication stalls from observer transport loss
+
+**Context.** A topic-node pause can freeze an observer's connection on the same
+node. Reloading afterward proves snapshot recovery but hides a stuck subscription.
+The SSE acceptance check needs to distinguish publication from transport failure.
+
+**Options.** Keep the combined-failure test; add a product-only fault switch;
+or place the board and connection separately from the topic using native control
+requests. The combined test is simpler but cannot establish that distinction.
+A fault switch would be deterministic but creates test behavior in deployed code.
+
+**Decision.** Use a temporary native subscriber to create the topic on the other
+node, then connect a fresh observer through the board owner's gateway ingress.
+Corroborate derived object ids with runtime residency before pausing the topic node.
+Require committed edits, a revision-specific timeout diagnostic, unchanged observer
+transport, and recovery without reload. Bound the pause below the lease lifetime
+and invalidate any run whose safety watchdog fires.
+
+**Consequences.** The diagnostic script depends on pinned Void/celld identity rules
+and needs a disposable fixture. Operators incur a gateway restart for placement.
+The result covers stalled publication and late delivery, not cancellation, permanent
+loss, or ownership movement. The app logs the revision when publication times out;
+its durable operation path remains unchanged. On two nodes the topic host is also
+a log follower, so the pause exercises replication degradation too. Record that
+transition and require both log ensembles to recover before leaving the fixture.
+This cannot establish latency independent of replication.

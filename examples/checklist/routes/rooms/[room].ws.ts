@@ -41,7 +41,7 @@ export default defineRoom({
       // No waitUntil is exposed by native room hooks. Cancellation may lose a hint;
       // never hold this handler (or the next edit) open waiting for publication.
       void publishHint(() => live.withEnv(ctx.env).publish(ctx.params.room, { revision: result.revision })).then(outcome => {
-        if (outcome !== 'published') console.warn(`Checklist hint ${outcome}`);
+        if (outcome !== 'published') console.warn(`Checklist hint ${outcome} revision=${result.revision}`);
       });
     }
   },

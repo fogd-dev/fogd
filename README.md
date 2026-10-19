@@ -351,5 +351,6 @@ still fails that gate. [Route-pause checks](docs/evidence/m11b-route-pause.json)
 new connections are refused during approval while an established socket commits
 an edit. An [experimental SSE observer](examples/checklist/README.md#experimental-sse-observer)
 passes hints, reconnect snapshots and deployment replacement with an explicit
-[Void registration patch](docs/patches/void-live-registration.md). Publication-failure
-and cross-app SSE isolation checks remain open. Ownership moves and stopped recovery also remain open.
+[Void registration patch](docs/patches/void-live-registration.md). [Publication-stall and cross-app isolation checks](docs/evidence/m11b-sse-failure.json)
+also pass. Ownership moves and stopped board/receipt recovery remain open; M11b
+is still in progress.

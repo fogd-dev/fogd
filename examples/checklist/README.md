@@ -225,7 +225,7 @@ gateway restart with a missed edit, and a finite idle observation.
 This is not a fully qualified live-update feature yet. The
 [version-pinned registration patch](../../docs/patches/void-live-registration.md)
 fixes the confirmed race, and a deployment cancellation/reconnection check passes.
-Real publication-failure and cross-app SSE isolation checks remain open. No sign-in is provided, and anonymous readers can
+A [bounded publication-stall and cross-app isolation drill](../../docs/evidence/m11b-sse-failure.json) also passes. Room moves and stopped recovery remain open M11b checks. No sign-in is provided, and anonymous readers can
 consume the topic's subscription capacity. Publishing is best effort and never
 changes an operation's durable result.
 
@@ -244,7 +244,7 @@ FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" FOGD_LIVE_SSE_IDLE_SECONDS=30 \
 
 The browser probe restarts this fixture's gateway, affecting both example apps.
 Recorded initial evidence uses the opt-in celld image; the setup command uses the
-normal default runtime. Neither qualifies the open SSE gates. Stop clients before
+normal default runtime. Use the pinned candidate and additional drills below to reproduce the recorded lifecycle evidence. Stop clients before
 restoring a snapshot. A lower revision after reconnect requires explicit reload;
 restoring under an uninterrupted observer is outside this example's contract.
 
@@ -278,3 +278,35 @@ through the ordinary CLI, and observes SSE error/reopen, a v2 snapshot after
 registration, and a later revision hint. It also runs the preserved-WebSocket
 update check. The finite result does not promise a cancellation latency. Restore
 the fixture's original setting and run `fogd up` after this dedicated drill.
+
+
+### SSE publication stall and app isolation
+
+On the disposable SSE fixture with both apps approved, run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-sse-isolation.mjs .fogd/sse-isolation
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-sse-failure.mjs .fogd/sse-publication
+```
+
+Use the pinned candidate described above and a lease TTL of at least nine seconds.
+The fault drill creates a temporary native subscriber to place the topic on the
+other replica, then pins this fixture's gateway ingress to the board owner. A new
+browser observer keeps its connection on the board node. The other replica pauses
+briefly while two edits commit and a revision-specific publication timeout is
+logged. This node is also the board log follower; pausing it can evict that follower
+and switch acknowledgments to bucket durability. The probe checks both ensembles
+before the pause and waits for a newer reopened epoch after each degradation,
+confirmed in the fresh lease with peer membership, after resume and during cleanup. Late
+hints repair the same observer without reload. This
+covers a stall; the timeout does not cancel the underlying publish or guarantee
+later delivery. Cross-app checks use identical room/topic names and interleaved
+edits, with both snapshots and notification payloads checked.
+
+The probe restores the canonical gateway configuration and unpauses the node in
+`finally`. A watchdog invalidates the test if the pause reaches its safety budget.
+Force-killing the probe can bypass cleanup: run `docker compose -f <fixture-compose>
+-p <fixture-project> unpause slot-2-a slot-2-b`, then `fogd up` with the fixture's
+`FOGD_ENV_FILE` to restore ingress. Do not run this drill on a shared stack.

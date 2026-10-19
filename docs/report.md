@@ -1017,3 +1017,21 @@ and cross-app isolation checks; ownership moves and stopped board/receipt recove
 also remain open. Control errors leave membership uncertain and require explicit
 resubscription or unsubscribe. At full topics, serialized registrations can increase
 reconnect latency. No package was published and no upstream acceptance is implied.
+
+
+## M11b publication stalls and cross-app SSE isolation
+
+The [fault evidence](evidence/m11b-sse-failure.json) records two acknowledged edits
+while the notification topic node is paused. The observer connection stays on the
+board node and receives no hints during the pause. A revision-specific timeout
+confirms the real runtime publication stall. Late hints reconcile the same browser
+connection after resume, with no reload or manual refresh. The paused node is also the board log follower: runtime logs show follower eviction
+and bucket-backed acknowledgments during the stall. Each degradation must have a later reopened epoch containing the peer before
+the drill exits; checking the lease shape alone cannot detect degraded replication. The timeout
+does not cancel publication; this is not a delivery or latency guarantee.
+
+Two approved apps with identical room, stream and topic names also pass interleaved
+notification and snapshot isolation checks. These are anonymous local fixtures, not
+hostile-tenant security tests. M11b still needs actual room ownership movement and
+stopped board/receipt restoration. The [example guide](../examples/checklist/README.md)
+contains reproduction and interrupted-drill cleanup instructions.

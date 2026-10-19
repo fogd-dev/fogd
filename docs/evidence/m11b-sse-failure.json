@@ -1,0 +1,458 @@
+{
+  "scope": "Bounded local Docker combined SSE publication/log-follower stall and cross-app isolation qualification; same patched runtime as m11b-sse-patched.json",
+  "prerequisiteEvidence": "m11b-sse-patched.json",
+  "publication": {
+    "room": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+    "script": "checklist",
+    "ensemblesBefore": [
+      {
+        "host": "slot-2-a",
+        "expiresMs": 1792449395069,
+        "log": {
+          "state": "open",
+          "epoch": 6,
+          "ensemble": [
+            "slot-2-b"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      },
+      {
+        "host": "slot-2-b",
+        "expiresMs": 1792449394640,
+        "log": {
+          "state": "open",
+          "epoch": 2,
+          "ensemble": [
+            "slot-2-a"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      }
+    ],
+    "ensemblesAfter": [
+      {
+        "host": "slot-2-a",
+        "expiresMs": 1792449398397,
+        "log": {
+          "state": "open",
+          "epoch": 7,
+          "ensemble": [
+            "slot-2-b"
+          ],
+          "tiered": 0,
+          "active": false,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      },
+      {
+        "host": "slot-2-b",
+        "expiresMs": 1792449398371,
+        "log": {
+          "state": "open",
+          "epoch": 2,
+          "ensemble": [
+            "slot-2-a"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      }
+    ],
+    "replicationEvents": [
+      "slot-2-a-1  | 2026-10-19T22:36:27.388670Z  WARN celld::node_log: gray follower evicted event=\"log_evict_verdict\" member=\"slot-2-b\" rule=\"backstop\" outstanding_ms=1698 samples=0 threshold_ms=0 suspect_ms=0 backstop_ms=1500 budget_ms=25",
+      "slot-2-a-1  | 2026-10-19T22:36:27.388718Z  WARN celld::node_log: log ensemble degraded; acks ride the bucket epoch=6 why=\"gray follower slot-2-b evicted\"",
+      "slot-2-a-1  | 2026-10-19T22:36:28.399551Z  INFO celld::node_log: log ensemble open; fleet acks enabled epoch=7 members={\"slot-2-b\"}"
+    ],
+    "board": {
+      "host": "slot-2-a",
+      "id": "ChecklistWs:51735d129ca6003002c3edcbe2531d26f3acda2699b3f498e165563cab27aef3"
+    },
+    "topic": "VoidLiveStreamDurableObject:b3895d8ff0adbd7afce4b833a66ffceab06f2f41e44ece0f1b497cac54feaeed",
+    "topicOwner": "slot-2-b",
+    "connection": "VoidLiveStreamDurableObject:c062130c7b44fd39d5416a411f6771e7ca0d88335246e31a43abf128e34db4ac",
+    "warm": {
+      "host": "slot-2-b",
+      "connectionId": "deb07a19-0227-489e-911f-55a32544b3f6"
+    },
+    "ttlMs": 10000,
+    "pauseBudgetMs": 4000,
+    "eventsBefore": [
+      {
+        "type": "open",
+        "at": 1792449384369
+      },
+      {
+        "type": "message",
+        "at": 1792449384656,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 1
+          }
+        }
+      }
+    ],
+    "recoveryEvents": [
+      {
+        "type": "open",
+        "at": 1792449384369
+      },
+      {
+        "type": "message",
+        "at": 1792449384656,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 1
+          }
+        }
+      },
+      {
+        "type": "message",
+        "at": 1792449388387,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 2
+          }
+        }
+      },
+      {
+        "type": "message",
+        "at": 1792449388388,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 3
+          }
+        }
+      }
+    ],
+    "baseline": {
+      "sentAt": 1792449384641,
+      "acknowledgedAt": 1792449384666,
+      "receipt": {
+        "type": "ack",
+        "opId": "07267c2c-307c-4e54-baad-4695a0f0a914",
+        "revision": 1,
+        "release": "v1"
+      }
+    },
+    "pausedAt": 1792449385448,
+    "first": {
+      "sentAt": 1792449385688,
+      "acknowledgedAt": 1792449386654,
+      "receipt": {
+        "type": "ack",
+        "opId": "002a0576-c92d-42ac-92e5-01d701c054d9",
+        "revision": 2,
+        "release": "v1"
+      }
+    },
+    "second": {
+      "sentAt": 1792449387024,
+      "acknowledgedAt": 1792449387413,
+      "receipt": {
+        "type": "ack",
+        "opId": "ff5096ed-3238-4aad-b92c-703deb5e960d",
+        "revision": 3,
+        "release": "v1"
+      }
+    },
+    "unpausedAt": 1792449388384,
+    "after": {
+      "sentAt": 1792449389171,
+      "acknowledgedAt": 1792449389186,
+      "receipt": {
+        "type": "ack",
+        "opId": "74cb76a8-1247-4a4f-afd8-a192b23c8645",
+        "revision": 4,
+        "release": "v1"
+      }
+    },
+    "outcomes": [
+      "slot-2-a-1  | 2026-10-19T22:36:26.690305Z  INFO cell_console: WARN Checklist hint timed-out revision=2",
+      "slot-2-a-1  | 2026-10-19T22:36:28.030092Z  INFO cell_console: WARN Checklist hint timed-out revision=3"
+    ],
+    "during": {
+      "type": "snapshot",
+      "revision": 3,
+      "release": "v1",
+      "items": [
+        {
+          "id": "08ef7d82-6948-4ffd-b905-dbd36e65a26e",
+          "text": "Another edit while notifications stall",
+          "checked": false
+        },
+        {
+          "id": "297eef4e-4bc0-4b67-b4d2-99b050fe2ce1",
+          "text": "Committed while notifications stall",
+          "checked": false
+        },
+        {
+          "id": "c769b3c2-e497-4179-9314-81a4369d831b",
+          "text": "Before stalled publication",
+          "checked": false
+        }
+      ]
+    },
+    "recovered": "\u25cb Another edit while notifications stall\n\u25cb Committed while notifications stall\n\u25cb Before stalled publication",
+    "events": [
+      {
+        "type": "open",
+        "at": 1792449384369
+      },
+      {
+        "type": "message",
+        "at": 1792449384656,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 1
+          }
+        }
+      },
+      {
+        "type": "message",
+        "at": 1792449388387,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 2
+          }
+        }
+      },
+      {
+        "type": "message",
+        "at": 1792449388388,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 3
+          }
+        }
+      },
+      {
+        "type": "message",
+        "at": 1792449389192,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "publish-61fd3b7f-edbf-4a17-bc8e-80451ad5c42f",
+          "data": {
+            "revision": 4
+          }
+        }
+      }
+    ],
+    "transportBefore": {
+      "count": 2,
+      "closes": [
+        {
+          "at": 1792449382923,
+          "code": 1006
+        }
+      ]
+    },
+    "scope": "Real topic-node Docker pause; native durable writes through owner-pinned workerd ingress; runtime publication diagnostic; topic node is also the board log follower, so pause also tests replication degradation and bucket-backed acknowledgment; restored ensembles checked before exit; same observer connection receives late hints after unpause; no reload or manual refresh; not a latency guarantee"
+  },
+  "placement": {
+    "residencyBefore": [
+      {
+        "host": "slot-2-a",
+        "relevantResidents": [
+          "ChecklistWs:51735d129ca6003002c3edcbe2531d26f3acda2699b3f498e165563cab27aef3",
+          "VoidLiveStreamDurableObject:c062130c7b44fd39d5416a411f6771e7ca0d88335246e31a43abf128e34db4ac"
+        ]
+      },
+      {
+        "host": "slot-2-b",
+        "relevantResidents": [
+          "VoidLiveStreamDurableObject:b3895d8ff0adbd7afce4b833a66ffceab06f2f41e44ece0f1b497cac54feaeed"
+        ]
+      }
+    ],
+    "residencyAfter": [
+      {
+        "host": "slot-2-a",
+        "relevantResidents": [
+          "ChecklistWs:51735d129ca6003002c3edcbe2531d26f3acda2699b3f498e165563cab27aef3",
+          "VoidLiveStreamDurableObject:c062130c7b44fd39d5416a411f6771e7ca0d88335246e31a43abf128e34db4ac"
+        ]
+      },
+      {
+        "host": "slot-2-b",
+        "relevantResidents": [
+          "VoidLiveStreamDurableObject:b3895d8ff0adbd7afce4b833a66ffceab06f2f41e44ece0f1b497cac54feaeed"
+        ]
+      }
+    ]
+  },
+  "isolation": {
+    "room": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+    "results": [
+      {
+        "app": "checklist",
+        "events": [
+          {
+            "type": "open",
+            "at": 1792448986975
+          },
+          {
+            "type": "message",
+            "at": 1792448988095,
+            "data": {
+              "subscriptionId": "board",
+              "topic": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+              "data": {
+                "revision": 1
+              }
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792448988358,
+            "data": {
+              "subscriptionId": "board",
+              "topic": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+              "data": {
+                "revision": 2
+              }
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792448988477,
+            "data": {
+              "subscriptionId": "board",
+              "topic": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+              "data": {
+                "revision": 3
+              }
+            }
+          }
+        ],
+        "snapshot": {
+          "type": "snapshot",
+          "revision": 3,
+          "release": "v1",
+          "items": [
+            {
+              "id": "48c0b152-630d-4d3b-8bf3-c96a997f6a80",
+              "text": "Checklist third item",
+              "checked": false
+            },
+            {
+              "id": "570b4f73-3124-4f41-98d7-4d5f7a7804da",
+              "text": "Checklist second item",
+              "checked": false
+            },
+            {
+              "id": "5dde0f0b-651c-4d89-ae08-ebe7ea83fae5",
+              "text": "Checklist private-to-app item",
+              "checked": false
+            }
+          ]
+        }
+      },
+      {
+        "app": "live-probe",
+        "events": [
+          {
+            "type": "open",
+            "at": 1792448987729
+          },
+          {
+            "type": "message",
+            "at": 1792448988203,
+            "data": {
+              "subscriptionId": "board",
+              "topic": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+              "data": {
+                "revision": 1
+              }
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792448988286,
+            "data": {
+              "subscriptionId": "board",
+              "topic": "isolation-9fad8264-da7c-4ac9-b3d1-a3cfaf41c99f",
+              "data": {
+                "revision": 2
+              }
+            }
+          }
+        ],
+        "snapshot": {
+          "type": "snapshot",
+          "revision": 2,
+          "release": "v1",
+          "items": [
+            {
+              "id": "94524a5b-02f7-431f-9e09-d28ec2342745",
+              "text": "Live-probe first item",
+              "checked": false
+            },
+            {
+              "id": "a90ff3b1-c1f1-4794-8b2f-b2be214a5ccc",
+              "text": "Live-probe second item",
+              "checked": false
+            }
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "quietStartedAt": 1792448988502,
+    "finishedAt": 1792448990529,
+    "scope": "Two approved apps through hostname routing; same stream/topic/room names, interleaved edits and two-second quiet observation; no hostile-tenant security claim"
+  },
+  "remaining": [
+    "actual room ownership movement",
+    "stopped checklist/receipt recovery"
+  ],
+  "limitations": [
+    "Topic-node pause exercises publication timeout, not a thrown transport rejection.",
+    "Timed-out publication is not cancelled: late delivery repaired this observer. Lost hints still require a subsequent hint or successful resubscription/snapshot.",
+    "Pause is shorter than the lease budget; this does not qualify ownership movement, permanent publisher loss, or latency.",
+    "Two approved anonymous demo apps, not hostile tenant isolation.",
+    "The topic host is also the board log follower; gray-follower eviction and bucket-backed acknowledgments are part of this combined fault. Each degradation requires a later reopened epoch on that host, confirmed in a fresh lease with peer membership, before injection and after recovery."
+  ],
+  "validation": {
+    "workspaceTests": 302,
+    "syntax": "pass",
+    "offlineBuilds": "all five verification apps: ordinary Void build, fogd build, artifact staging; network none",
+    "runtimeEvidence": "m11b-sse-patched.json",
+    "separatedPauseRuns": "Earlier successful runs and a failed 3333ms watchdog run retained privately; final run checks reopened log epochs with a 4000ms budget and includes cleanup verification."
+  },
+  "releases": [
+    {
+      "app": "live-probe",
+      "id": "f7ac9b93-abea-43e8-bc29-d8fe9e94ca3f",
+      "digest": "fb23bc4543707cbb2e7bae0708bde87eecf3e7eca341df3cae754c48bfc13805"
+    },
+    {
+      "app": "checklist",
+      "id": "17c242e4-99e9-4f57-ab68-d0e26a712b34",
+      "digest": "839741b7e257d4dfc739b537c5af60f410e4b35b6d59cb6dbde56a90922465f0"
+    }
+  ]
+}
