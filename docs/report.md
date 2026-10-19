@@ -876,3 +876,24 @@ survivor takeover and explicit timing events; the [response](reviews/m11b-failur
 records the assertions added before this passing run. The probe and syntax/quality
 checks pass. Non-owning ingress loss, idle eviction, compatible updates, SSE and
 stopped backup/restore remain open.
+
+## M11b native socket idle eviction
+
+The [idle probe](evidence/m11b-idle.json) verifies a 30-second ordinary-policy
+observation and an explicit five-second eviction configuration. Both replicas
+report the configured value. The room leaves their resident sets about 5.2 seconds
+after the last active-state observation; the prior owner reports a dormant cell.
+The same WebSocket then carries a checked-item operation, advancing the durable
+board from revision one to two without reconnecting. The room returns on the same
+owner, so this run makes no claim about an ownership move.
+
+The checklist message handler requires room parameters restored from Void's socket
+attachment. Missing parameters fail before a mutation. This makes the post-eviction
+acknowledgment evidence of attachment restoration as well as storage preservation.
+The [source review](reviews/m11b-idle-source-claude.md) confirms that celld's resident
+list describes in-memory cells and that idle eviction is disabled when unset.
+
+All 278 tests and offline builds pass. The physical probe passes, with the original
+replica configuration restored during cleanup. The [review response](reviews/m11b-idle-response.md)
+records readiness and evidence improvements. Non-owning ingress loss, compatible
+updates, SSE, room-move behavior and stopped recovery remain open.

@@ -343,5 +343,6 @@ includes fresh-fixture reproduction. The [checklist server](examples/checklist/R
 now has a UI, persistent pending edits, and tested lost-ack reconciliation through
 workerd. Its [explicit Void client patch](docs/patches/void-websocket-send.md) prevents
 pre-snapshot buffering. [Owner and gateway process-loss checks](docs/evidence/m11b-process-failure.json)
-preserve acknowledged edits. Non-owning ingress loss, idle eviction, updates, SSE
-and stopped recovery remain open.
+preserve acknowledged edits. [Idle eviction](docs/evidence/m11b-idle.json) preserves
+the native socket and restores its room attachment. Non-owning ingress loss, updates,
+SSE and stopped recovery remain open.

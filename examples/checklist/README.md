@@ -106,3 +106,25 @@ close codes and time from kill initiation through the new acknowledgment. These
 measurements include client retry and lease recovery, not a latency guarantee.
 Non-owning ingress failure, forced idle eviction and stopped restore are separate
 checks.
+
+## Idle eviction verification
+
+On the same disposable fixture, deploy this example as `live-probe` on slot-1,
+then run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node scripts/live-idle.mjs .fogd/checklist-idle
+```
+
+Keep other clients off the fixture. The probe observes a connected room for
+30 seconds under the ordinary idle policy, then temporarily recreates only slot-1
+with `CELLD_IDLE_EVICT_S=5`. It requires the new room to leave both nodes' resident
+sets before applying another edit over the original socket. The message handler
+requires room parameters restored from Void's socket attachment. The second edit
+must advance the revision once and retain the first item.
+
+Cleanup restores the original replica configuration and waits for celld health.
+The private output contains a Compose file with credentials; keep it local. This
+finite observation does not establish an unlimited idle lifetime or behavior when
+room ownership moves to another node.

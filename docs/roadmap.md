@@ -109,8 +109,9 @@ transport probe and [checklist server protocol](../examples/checklist/README.md)
 including real-runtime transaction/receipt checks. [Browser reconciliation](evidence/m11b-browser.json)
 now covers persistent pending work and lost acknowledgments using an explicit
 [Void client patch](patches/void-websocket-send.md). Owner and gateway process-loss
-checks pass. Next: non-owning ingress failure, preserved-socket updates, idle eviction,
-SSE and stopped recovery. The [M11a acceptance audit](m11a-acceptance.md)
+checks pass. Explicit idle eviction also preserves the socket and restores its room
+attachment. Next: non-owning ingress failure, preserved-socket updates, SSE and
+stopped recovery. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Remaining live-session qualification and scheduled/workflow lifecycle
 remain open M11 work. The native Void imports fixture

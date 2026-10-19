@@ -5,7 +5,7 @@ import { Board } from '../../lib/board.mjs';
 
 const wire = (message: unknown) => ServerMessage.parse({ ...(message as Record<string, unknown>), release: 'v1' });
 
-const validRoom = (room: string) => /^[a-z0-9-]{1,64}$/.test(room);
+const validRoom = (room: string) => typeof room === 'string' && /^[a-z0-9-]{1,64}$/.test(room);
 
 export default defineRoom({
   name: 'checklist',
@@ -23,6 +23,8 @@ export default defineRoom({
   },
   async onConnect(ctx) { await ctx.connection.send(wire(new Board(ctx.storage).snapshot())); },
   async onMessage(ctx, event) {
+    // Native Void restores route parameters from the socket attachment.
+    if (!validRoom(ctx.params.room)) throw new Error('Missing checklist room attachment');
     const board = new Board(ctx.storage);
     const result = board.apply(event.opId, event.operation);
     const snapshot = result.type === 'ack' ? wire(board.snapshot()) : null;

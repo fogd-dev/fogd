@@ -1,0 +1,76 @@
+{
+  "room": "idle-0e177023-832e-4855-85e5-3ecd5a8e449b",
+  "ordinary": {
+    "room": "ordinary-a900cd0a-7d9b-4244-a22d-0133041d54a9",
+    "observationMs": 30126,
+    "sockets": 1,
+    "closes": 0,
+    "revision": 1
+  },
+  "appliedIdleSeconds": {
+    "slot-1-a": "5",
+    "slot-1-b": "5"
+  },
+  "idleSeconds": 5,
+  "owner": {
+    "host": "slot-1-a",
+    "id": "ChecklistWs:57b6b014ade5b9d1d3305798fdc7b2b7ddb6e67ee22f09b4a80d3c8fb19eedcf"
+  },
+  "restoredOwner": "slot-1-a",
+  "moved": false,
+  "idleAt": 1792443353903,
+  "evictionObservedAt": 1792443359053,
+  "acknowledgmentObservedAt": 1792443359093,
+  "evicted": [
+    {
+      "host": "slot-1-a",
+      "residents": [],
+      "phases": {
+        "dormant": 1
+      }
+    },
+    {
+      "host": "slot-1-b",
+      "residents": [],
+      "phases": {}
+    }
+  ],
+  "restored": [
+    {
+      "host": "slot-1-a",
+      "residents": [
+        "ChecklistWs:57b6b014ade5b9d1d3305798fdc7b2b7ddb6e67ee22f09b4a80d3c8fb19eedcf"
+      ]
+    },
+    {
+      "host": "slot-1-b",
+      "residents": []
+    }
+  ],
+  "snapshot": {
+    "type": "snapshot",
+    "revision": 2,
+    "release": "v1",
+    "items": [
+      {
+        "id": "43c5be14-adba-4770-9e96-771e84f70ce8",
+        "text": "Before idle eviction",
+        "checked": true
+      }
+    ]
+  },
+  "socketObservation": {
+    "count": 1,
+    "closes": []
+  },
+  "scope": "Explicit five-second idle eviction with native Void attachment restoration on one preserved socket; no unbounded-idle or room-move claim",
+  "fixture": {
+    "project": "fogd-m11b-live",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+      "slot-1-b": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817"
+    }
+  }
+}
