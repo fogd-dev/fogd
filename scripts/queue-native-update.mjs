@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { cp, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { stackRoot } from '../packages/cli/src/local.mjs';
+import { context, deploy, upload } from './queue-probe/context.mjs';
+import { stageNative } from './queue-probe/native.mjs';
+import { expect } from './guestbook-browser.mjs';
+
+const [slot, output] = process.argv.slice(2);
+const probe = await context(slot, output, { queueName: 'imports' });
+const source = join(stackRoot, 'examples/imports'), project = join(probe.output, 'project');
+await mkdir(project);
+for (const name of ['package.json', 'vite.config.ts', 'void.config.ts', 'tsconfig.json', 'fogd.json', 'routes', 'lib', 'queues', 'db']) await cp(join(source, name), join(project, name), { recursive: true });
+await cp(join(source, 'updates/v2'), project, { recursive: true, force: true });
+const v2 = await stageNative(join(probe.output, 'app'), project);
+const uploaded = await upload(probe, v2.output, 'native-v2');
+await probe.queue('resume');
+await post({ id: 'held-native', text: 'mango', delayMs: 12000 });
+await expect.poll(async () => (await job('held-native')).attempts, { timeout: 120000 }).toBe(1);
+await probe.queue('pause');
+await post({ id: 'pending-native', text: 'guava' });
+await probe.cli(['d1', 'migrations', 'apply', v2.config.d1_databases[0].database_name, uploaded]);
+const release = await deploy(probe, v2.output, 'native-v2');
+const observed = await probe.queue('info'), state = await probe.state();
+const residents = state.flatMap(node => Object.entries(node.deployment.cells).filter(([cell]) => cell.startsWith('__Queue:')).map(([, generation]) => ({ generation, current: node.deployment.generation, version: node.deployment.version })));
+assert.equal(residents.length, 1); assert.equal(residents[0].generation, residents[0].current); assert.equal(residents[0].version, release.version);
+assert.equal(observed.paused, true); assert.equal((await job('held-native')).status, 'accepted');
+await probe.save('migrated-before-resume', { held: await job('held-native'), pending: await job('pending-native'), state });
+await probe.queue('resume');
+await expect.poll(async () => (await job('pending-native')).status, { timeout: 120000 }).toBe('complete');
+assert.equal((await job('held-native')).status, 'accepted', 'v2 must complete while v1 is still in flight');
+await expect.poll(async () => (await job('held-native')).status, { timeout: 120000 }).toBe('complete');
+const held = await job('held-native'), pending = await job('pending-native');
+assert.deepEqual(held.results.map(r => r.processor), ['v1']); assert.deepEqual(pending.results.map(r => r.processor), ['v2']);
+assert.equal(held.attempts, 1); assert.equal(pending.attempts, 1);
+await expect.poll(async () => (await probe.queue('info')).stored, { timeout: 120000 }).toBe(0);
+await probe.save('completed', { held, pending }); await probe.queue('pause');
+console.log('PASS: native Void v1 handler writes through an additive D1 migration while v2 completes pending work; no duplicate result rows');
+async function post(body) { const r = await probe.http('/api/imports', { method: 'POST', body: JSON.stringify(body) }); assert.equal(r.status, 202, r.body); }
+async function job(id) { const r = await probe.http(`/api/imports?id=${id}`); assert.equal(r.status, 200, r.body); return JSON.parse(r.body); }

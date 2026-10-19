@@ -511,6 +511,17 @@ application input/job records, and explicit reconciliation, without a runtime fo
 [recovery](evidence/m11a-queue-recovery.json) evidence retain phase observations.
 The [Claude review](reviews/m11a-probes-claude.md) and
 [response](reviews/m11a-response.md) distinguish observations from remaining gates.
-This is direct Worker runtime evidence. Native Void queues, D1 migration overlap,
-controller activation failure, retention-age recovery policy, and queue retirement
-remain unqualified. fogd queue admission remains disabled.
+The [native imports evidence](evidence/m11a-native-imports.json) adds Void typed
+producer/consumer code generation, R2 retained input, and D1 results. Initial D1
+migration succeeds under a producer-only bootstrap before application publication.
+An old v1 handler and a new v2 handler complete against an additive migration.
+Killing both replicas during each allowed attempt exhausts delivery without a
+failure row; explicit reconciliation completes the retained job once. A browser
+probe preserves the job URL and results across reloads, including paused delivery
+and a verified retry. It uses a test transport to the private runtime.
+
+Controller activation failure, retention-age recovery policy, and queue retirement
+remain unqualified. These are direct-runtime probes; fogd queue admission remains
+disabled. [Claude review and response](reviews/m11a-native-response.md) document
+the corrected crash proof and stronger assertions. The imports fixture also passes TypeScript checking, and all 88 workspace
+tests and example builds pass.

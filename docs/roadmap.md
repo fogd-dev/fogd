@@ -89,7 +89,9 @@ rendering, stopped expansion, full restore, and middle-fleet retirement/reuse. T
 and local operating costs. M10 is complete within this bounded Docker scope.
 The [M11a queue proposal](m11a.md), [review amendments](reviews/m11a-response.md),
 and [repeatable runtime qualification](queue-qualification.md) now define the next
-implementation slice: a native Void import app and controller delivery lifecycle. Activation,
+implementation slice: controller delivery lifecycle. The native Void imports fixture
+qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
+killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be
 qualified before enabling the binding. Live collaboration is a separate slice with reconnect/reconciliation.
 Preserve secret revisions, controller metadata,

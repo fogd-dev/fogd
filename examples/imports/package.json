@@ -1,0 +1,15 @@
+{
+  "name": "@fogd/example-imports",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "void prepare && tsc --noEmit"
+  },
+  "devDependencies": {
+    "void": "1.1.11",
+    "vite": "8.1.0",
+    "typescript": "^7.0.2"
+  }
+}

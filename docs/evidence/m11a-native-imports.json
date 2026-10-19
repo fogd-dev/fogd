@@ -1,0 +1,207 @@
+{
+  "scope": "Direct celld native Void imports; fogd queue admission remains disabled",
+  "context": {
+    "project": "fogd-m11a-native",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26",
+      "slot-2-b": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26"
+    }
+  },
+  "initial": {
+    "first": {
+      "id": "first",
+      "input_hash": "e22559226f2a9d1bc76ca2adf0b08155312a4176e497a33764502014654b09b3",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 16:20:29",
+      "results": [
+        {
+          "job_id": "first",
+          "position": 0,
+          "label": "APPLE"
+        },
+        {
+          "job_id": "first",
+          "position": 1,
+          "label": "PEAR"
+        }
+      ]
+    },
+    "transient": {
+      "id": "transient",
+      "input_hash": "0467255695084cc12ffe0c55105907f74a9c189314b9fe87b878eb6fee787b99",
+      "mode": "retry-once",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 2,
+      "error": null,
+      "created_at": "2026-10-19 16:20:34",
+      "results": [
+        {
+          "job_id": "transient",
+          "position": 0,
+          "label": "PLUM"
+        }
+      ]
+    },
+    "retried": {
+      "id": "poison",
+      "input_hash": "efbaa8cbfffc1af3afcf8082a3732e4d5111104ae3f6ef8b2545975e50497505",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 3,
+      "error": null,
+      "created_at": "2026-10-19 16:20:36",
+      "results": [
+        {
+          "job_id": "poison",
+          "position": 0,
+          "label": "LIME"
+        }
+      ]
+    }
+  },
+  "bootstrap": {
+    "applicationStatus": 503,
+    "queue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": true,
+      "stored": 0
+    }
+  },
+  "overlap": {
+    "held": {
+      "id": "held-native",
+      "input_hash": "6815f3c300383519de8e437497e2c3e97852fe8d717a5419d5aafb00cb43c494",
+      "mode": "normal",
+      "delay_ms": 12000,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 16:20:41",
+      "results": [
+        {
+          "job_id": "held-native",
+          "position": 0,
+          "label": "MANGO",
+          "processor": "v1"
+        }
+      ]
+    },
+    "pending": {
+      "id": "pending-native",
+      "input_hash": "0e27150cb1fc10c8366e5924160b7d3c36bc045edf614989b5134136bd719188",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 16:20:41",
+      "results": [
+        {
+          "job_id": "pending-native",
+          "position": 0,
+          "label": "GUAVA",
+          "processor": "v2"
+        }
+      ]
+    }
+  },
+  "control": {
+    "id": "unkilled-native",
+    "input_hash": "bd5b837200ac9febd116df9a2d1d0e3a01597e2dffd386ea91a12c6e94242029",
+    "mode": "normal",
+    "delay_ms": 12000,
+    "status": "complete",
+    "attempts": 1,
+    "error": null,
+    "created_at": "2026-10-19 16:20:55",
+    "results": [
+      {
+        "job_id": "unkilled-native",
+        "position": 0,
+        "label": "CONTROL MANGO",
+        "processor": "v2"
+      }
+    ]
+  },
+  "kills": [
+    {
+      "attempt": 1,
+      "observedAt": 1792426868342,
+      "stoppedAt": 1792426868585,
+      "delayMs": 12000
+    },
+    {
+      "attempt": 2,
+      "observedAt": 1792426906364,
+      "stoppedAt": 1792426906585,
+      "delayMs": 12000
+    }
+  ],
+  "exhausted": {
+    "job": {
+      "id": "killed-native",
+      "input_hash": "704875bff49044eb3fa98f3a07dd7abb114af3e6813a02caa945b16b6ad5b3d9",
+      "mode": "normal",
+      "delay_ms": 12000,
+      "status": "accepted",
+      "attempts": 2,
+      "error": null,
+      "created_at": "2026-10-19 16:21:08",
+      "results": []
+    },
+    "queue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": false,
+      "stored": 0
+    }
+  },
+  "reconciled": {
+    "job": {
+      "id": "killed-native",
+      "input_hash": "704875bff49044eb3fa98f3a07dd7abb114af3e6813a02caa945b16b6ad5b3d9",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 3,
+      "error": null,
+      "created_at": "2026-10-19 16:21:08",
+      "results": [
+        {
+          "job_id": "killed-native",
+          "position": 0,
+          "label": "RETAINED MANGO",
+          "processor": "v2"
+        }
+      ]
+    },
+    "queue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": true,
+      "stored": 0
+    }
+  },
+  "browser": {
+    "transport": "Playwright forwards to private celld HTTP via controller; no gateway routing",
+    "savedJob": "79ed604a-d0c9-4fd9-a584-86f4dfbab15f",
+    "results": [
+      "BROWSER APPLE",
+      "BROWSER PEAR"
+    ],
+    "attempts": 2,
+    "errors": []
+  }
+}

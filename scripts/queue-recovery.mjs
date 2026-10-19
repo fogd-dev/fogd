@@ -32,7 +32,7 @@ await run(process.execPath, [cli, 'backup', bundle], { env: source.env });
 await run(process.execPath, [cli, 'restore', bundle, '--project', target, '--output', restoredDir], { env: source.env });
 const env = { ...source.env, COMPOSE_PROJECT_NAME: target, FOGD_COMPOSE_FILE: join(restoredDir, 'compose.json') };
 await run(process.execPath, [cli, 'up'], { env });
-const restored = await context(slotId, join(output, 'after'), env);
+const restored = await context(slotId, join(output, 'after'), { env });
 await expect.poll(async () => { try { return (await restored.queue('info')).paused; } catch { return false; } }, { timeout: 120000 }).toBe(true);
 for (const slot of restored.slots) assert.equal((await restored.queue('info', slot)).paused, true);
 await setTimeout(Math.max(3000, leaseExpiresAt + 1000 - Number(await restored.node('console.log(Date.now())'))));

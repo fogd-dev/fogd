@@ -1,7 +1,8 @@
 # Probe queued-work lifecycle behavior
 
 These scripts test the pinned celld runtime directly. They do not enable queues in
-fogd or establish Void queue, migration, or approval support. See the
+fogd or establish approval support. The native probes below separately exercise
+Void queues and additive D1 migration overlap. See the
 [M11a proposal](m11a.md) and [review amendments](reviews/m11a-response.md) for the
 remaining product contract.
 
@@ -80,11 +81,53 @@ networks can exhaust Docker's address pool; remove only known stopped disposable
 containers/networks if needed, preserving their volumes and evidence. No global
 prune or host-network configuration change is required.
 
+## Native Void imports
+
+Use another fresh installation from the setup above. Do not reuse a fleet already
+occupied by the raw Worker probe. Run these in order with distinct output paths:
+
+```sh
+node scripts/queue-native.mjs slot-1 .fogd/native-initial
+node scripts/queue-native-update.mjs slot-1 .fogd/native-update
+node scripts/queue-native-crash.mjs slot-1 .fogd/native-crash
+node scripts/queue-native-browser.mjs slot-1 .fogd/native-browser
+```
+
+The [imports example](../examples/imports/README.md) uses native Void queue code
+generation, a typed producer, R2 input, and D1 job/result records. The initial probe
+publishes a producer-only bootstrap with D1 bindings, pauses delivery, and applies
+the first migration before publishing application code. It checks persistent pause,
+idempotent submission, transient retry, and explicit retry after exhaustion.
+
+The update probe stages an additive D1 migration while a v1 handler is held,
+publishes v2 with delivery paused, and confirms the queue belongs to the current
+generation before resuming. The pending v2 job must complete while v1 is still
+running. Their result rows identify which version wrote them.
+
+The crash probe kills both selected replicas during each of the two allowed
+attempts, using a delay below the handler budget and an un-killed control that
+must complete. After the queue exhausts delivery, the durable job must remain unfinished
+with no result. Explicit reconciliation must read retained input and complete one
+result; retrying the completed job must do nothing. This deliberately interrupts
+both nodes and can take several minutes while leases expire. Every probe leaves
+delivery paused on success; a failed probe requires inspecting its phase before
+retrying, since IDs and evidence paths are intentionally not reusable.
+
+The browser probe submits through the page, reloads the saved job URL while paused,
+and verifies retained results after processing and another reload. Playwright
+forwards HTTP requests to the real private celld endpoint through the controller.
+This checks the page against the actual backend, not public gateway routing.
+
+These probes bypass fogd artifact admission and call celld directly. They do not
+publish routes through the gateway, approve releases, or establish that controller
+restarts preserve activation progress. Private evidence includes runtime state;
+only selected synthetic observations belong in committed evidence.
+
 ## What remains unqualified
 
-These probes do not establish controller activation recovery, D1 migration ordering,
-queue addition/removal, native Void queues, long-age retention recovery, retirement,
-or safety of arbitrary handler side effects. In particular, `waitUntil` disproves
-using queue emptiness alone as a drain. A fixed observation window cannot prove
-that no possible later effect exists. The [probe record](m11a-probe.md) distinguishes
-runtime findings from the still-rejected fogd application feature.
+These probes do not establish controller activation recovery, queue addition/removal,
+long-age retention recovery, retirement, or safety of arbitrary handler side effects.
+In particular, `waitUntil` disproves using queue emptiness alone as a drain. A fixed
+observation window cannot prove that no possible later effect exists. The
+[probe record](m11a-probe.md) distinguishes runtime findings from the still-rejected
+fogd application feature.
