@@ -799,3 +799,29 @@ isolated to their app. No new state capability is needed: an older queue-capable
 controller safely retries the atomically approved candidate under its existing hold,
 while ignoring the predecessor audit field. Backup/retention and full public queue
 admission remain separate gates.
+
+## ADR 032: refuse unqualified queued installation recovery
+
+Context: stopped installation recovery predates queue activation. It can copy and
+restart privately staged queue state without preserving pause or checking message
+age. celld's retention sweeps continue while paused. Metrics can omit expired
+records, so a successful raw restore does not establish preservation.
+
+Options: retain the existing commands with a warning; reject queued installation
+recovery until its protocol is qualified; or implement a startup deadline and
+pause coordination immediately. Warnings retain an easy experimental path but
+leave operators with a misleading successful recovery. An immediate deadline
+needs a release protocol so future healthy replica restarts do not fail forever.
+
+Decision: refuse queued recovery from stopped controller metadata, including its
+permanent queue capability. Apply the same boundary to Docker transformations and
+Kubernetes restore. Refuse known queue history before stopping; recheck archived metadata after
+stopping all writers and before issuing a success manifest. Require the canonical controller data path so the
+check cannot read unrelated root metadata.
+
+Consequences: private queue experiments temporarily lose the supported snapshot
+workflow; even pending-only queue history triggers refusal. A queue submission racing the initial check can leave the installation stopped
+with incomplete output, so operators must inspect a post-stop refusal before
+restarting. Supported non-queue recovery continues. Full queue recovery
+remains the next acceptance gate; this guard does not complete it or enable queue
+admission. Direct runtime mutation remains outside the managed contract.

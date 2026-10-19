@@ -4,6 +4,7 @@ import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
+import { assertSnapshotQueueFree } from './queue-safety.mjs';
 
 async function requireFresh(project, config) {
   if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
@@ -21,6 +22,7 @@ export async function restore(directory, project, output) {
   return restoreInstallation({ manifest, config, dir }, project, destination);
 }
 export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
+  await assertSnapshotQueueFree(dir);
   const sourceVolumes = volumeNames(config), images = change?.images || manifest.images;
   if (change && !['retirement', 'expansion'].includes(change.kind)) throw new Error('Unknown installation transformation');
   if (Object.values(images).some(id => !Object.values(manifest.images).includes(id))) throw new Error('Transformation may only use snapshot images');

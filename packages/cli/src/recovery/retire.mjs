@@ -5,6 +5,7 @@ import { snapshotState } from './snapshot-state.mjs';
 import { stopped, projectName, volumeNames } from './docker.mjs';
 import { restoreInstallation } from './restore.mjs';
 import { planRetirement } from './retirement-plan.mjs';
+import { assertQueueFreeRecovery } from './queue-safety.mjs';
 
 export async function retire(directory, app, digest, project, output) {
   projectName(project);
@@ -12,6 +13,7 @@ export async function retire(directory, app, digest, project, output) {
   const bundle = await verifyBundle(dir);
   projectName(bundle.manifest.sourceProject);
   const state = await snapshotState(dir);
+  assertQueueFreeRecovery(state);
   const plan = planRetirement(bundle.config, state, app, digest, { snapshot: await fingerprint(join(dir, 'manifest.json')) });
   await stopped(bundle.manifest.sourceProject, volumeNames(bundle.config).map(name => bundle.config.volumes[name].name));
   await restoreInstallation({ ...bundle, dir }, project, destination, plan);

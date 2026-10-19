@@ -91,6 +91,7 @@ test('derived recovery layout rejects crossed fleet storage, writers, and unqual
   assert.deepEqual(recoveryLayout(config()).services, services);
   assert.deepEqual(recoveryLayout(config()).volumes, volumes);
   const cases = [
+    [c => { c.services.controller.environment.FOGD_DATA_DIR = '/var/lib/fogd/nested'; }, /canonical controller data path/],
     [c => { c.services['slot-2-a'].environment.CELLD_BUCKET = 's3://fogd/slots/slot-1'; }, /Replica storage/],
     [c => { c.services['slot-2-a'].environment.CELLD_NODE = 'slot-1-a'; }, /Replica identities/],
     [c => { c.services['slot-2-a'].volumes[0].source = 'slot-1-a'; }, /volume mapping/],

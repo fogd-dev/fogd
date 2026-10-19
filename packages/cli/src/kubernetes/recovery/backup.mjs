@@ -7,11 +7,14 @@ import { observeStops, uncertainStops } from './stop-evidence.mjs';
 import { verifyImageArchive } from './image-archive.mjs';
 import { inventory } from './inventory.mjs';
 import { stop, withHelper, archiveClaim, noPods } from './pods.mjs';
+import { assertSnapshotQueueFree, assertQueueFreeMetadata } from '../../recovery/queue-safety.mjs';
+import { controllerClaim } from './contract.mjs';
 
 export async function kubeBackup(installation, directory, kubeconfig, context) {
   const conn = await connection(kubeconfig, context);
   const data = await inventory(conn, resolve(installation));
   const namespace = data.topology.namespace, dir = resolve(directory);
+  assertQueueFreeMetadata(await conn.command(['-n', namespace, 'exec', 'controller-0', '--', 'cat', '/var/lib/fogd/state.json']));
   await mkdir(dir, { mode: 0o700 });
   const started = Date.now();
   await writeJson(join(dir, 'started.json'), { namespace, startedAt: new Date().toISOString(), images: data.images });
@@ -28,12 +31,14 @@ export async function kubeBackup(installation, directory, kubeconfig, context) {
   await writeJson(join(dir, 'secrets.json'), data.secrets);
   await writeJson(join(dir, 'topology.json'), data.topology);
   const files = {};
-  for (const claim of data.pvc) {
+  const ordered = [...data.pvc.filter(c => c.metadata.name === controllerClaim), ...data.pvc.filter(c => c.metadata.name !== controllerClaim)];
+  for (const claim of ordered) {
     const name = claim.metadata.name;
     console.log(`Archiving ${name}`);
     await withHelper(conn, namespace, name, data.placement[name], data.topology.images.runtime, true, async exec => {
       files[`${name}.tar`] = await archiveClaim(exec, join(dir, `${name}.tar`));
     });
+    if (name === controllerClaim) await assertSnapshotQueueFree(dir, `${controllerClaim}.tar`);
   }
   await noPods(conn, namespace);
   await execute('docker', ['image', 'save', ...Object.keys(data.images)], { output: join(dir, 'images.tar') });

@@ -315,3 +315,5 @@ refresh, pause, and exact-approval resume through the CLI and browser.
 [Replacement approvals](docs/queue-replacement.md) recover from faulty unapplied
 migrations while preserving the hold and applied hashes. Public approval, stopped
 recovery/retention, and retirement/isolation acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+
+Queue experiments remain outside supported recovery: see the [queue recovery boundary](docs/queue-recovery.md).

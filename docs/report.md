@@ -11,6 +11,9 @@ and stopped recovery have experimental local-kind evidence. Remote infrastructur
 capacity expansion, background/live applications, and broader portability
 remain open roadmap work.
 
+Queued installation backup/restore and transformations are [explicitly refused](queue-recovery.md)
+until delivery and retention handling qualify. Public queue admission remains closed.
+
 ## What works
 
 | Milestone | Result and reproduction |

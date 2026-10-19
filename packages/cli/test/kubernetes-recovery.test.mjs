@@ -63,6 +63,12 @@ test('snapshot corruption fails before any Kubernetes target access', async t =>
   assert.equal((await verifyKubeBundle(dir)).manifest.namespace, settings.namespace);
   await writeFile(join(dir, 'data-minio-0.tar'), 'corrupt');
   await assert.rejects(kubeRestore(dir, 'fresh', join(dir, 'output'), '/does-not-exist', 'invalid'), /checksum mismatch/);
+  await writeFile(join(dir, 'data-minio-0.tar'), 'archive');
+  await writeFile(join(dir, 'state.json'), JSON.stringify({ apps: {}, deployments: {}, requirements: ['fogd-queue-activation-v1'] }));
+  await execute('tar', ['-cf', join(dir, 'data-controller-0.tar'), '-C', dir, './state.json']);
+  files['data-controller-0.tar'] = await fingerprint(join(dir, 'data-controller-0.tar'));
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify({ ...data.manifest, files }));
+  await assert.rejects(kubeRestore(dir, 'fresh', join(dir, 'output'), '/does-not-exist', 'invalid'), /Queued installation recovery/);
 });
 test('private command streams wait for full output and withhold failing diagnostics', async t => {
   const dir = await mkdtemp(join(tmpdir(), 'fogd-stream-')); t.after(() => rm(dir, { recursive: true, force: true }));
@@ -113,6 +119,11 @@ test('private command execution has a bounded timeout', async () => {
 });
 
 test('restore shape forbids privileged pods and initializers that can write durable claims', () => {
+  for (const field of ['containers', 'initContainers']) {
+    const hiddenEnv = manifests(settings);
+    hiddenEnv.items.find(r => r.kind === 'StatefulSet' && r.metadata.name === 'controller').spec.template.spec[field][0].envFrom = [{ secretRef: { name: 'fogd-private' } }];
+    assert.throws(() => validateShape(hiddenEnv, settings), /explicit container environment/);
+  }
   const privileged = manifests(settings);
   privileged.items.find(r => r.kind === 'StatefulSet').spec.template.spec.containers[0].securityContext.privileged = true;
   assert.throws(() => validateShape(privileged, settings), /Privileged/);

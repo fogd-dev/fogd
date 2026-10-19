@@ -23,6 +23,8 @@ export function validateNetworks(config, fleets) {
   }
 }
 export function validateMounts(config, replicas) {
+  const dataDir = config.services.controller.environment.FOGD_DATA_DIR;
+  if (dataDir !== undefined && dataDir !== '/var/lib/fogd') throw new Error('Recovery requires the canonical controller data path /var/lib/fogd');
   const expected = { minio: [['bucket', '/data']], controller: [['controller', '/var/lib/fogd']], workerd: [], 'bucket-init': [] };
   for (const name of replicas) expected[name] = [[name, '/var/lib/celld']];
   if (Object.hasOwn(config.volumes, 'tls')) for (const name of ['controller', 'workerd']) expected[name].push(['tls', '/var/lib/fogd-tls']);

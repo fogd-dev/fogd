@@ -8,6 +8,8 @@ import { verifyKubeBundle, restoredObjects, placementFor } from './bundle.mjs';
 import { verifyStorage } from './storage.mjs';
 import { restoreImages } from './images.mjs';
 import { withHelper, restoreClaim, noPods } from './pods.mjs';
+import { assertSnapshotQueueFree } from '../../recovery/queue-safety.mjs';
+import { controllerClaim } from './contract.mjs';
 
 async function configuration(dir, objects) {
   await writeJson(join(dir, 'manifests.json'), objects.desired);
@@ -25,6 +27,7 @@ async function configuration(dir, objects) {
 export async function kubeRestore(directory, namespace, output, kubeconfig, context) {
   const source = resolve(directory), dir = resolve(output);
   const bundle = await verifyKubeBundle(source);
+  await assertSnapshotQueueFree(source, `${controllerClaim}.tar`);
   await verifyImageArchive(join(source, 'images.tar'), bundle.manifest.images);
   namespaceName(namespace);
   if (bundle.stop.uncertain.length) console.warn(`Snapshot requires crash-recovery consideration for: ${bundle.stop.uncertain.join(', ')}`);

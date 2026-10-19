@@ -1,0 +1,26 @@
+[
+  {
+    "label": "Docker M8a",
+    "archive": {
+      "bytes": 9144320,
+      "sha256": "746a3b21c20fa51f3ef64045831ca326fb2905faab613bde260e6a970a26a35c"
+    },
+    "queueRecoveryGuard": "passed"
+  },
+  {
+    "label": "Docker M10c",
+    "archive": {
+      "bytes": 3880960,
+      "sha256": "987ef254981ccc339150045041d78f68c103120c5a4d84a4c155ddc3b63941be"
+    },
+    "queueRecoveryGuard": "passed"
+  },
+  {
+    "label": "Kubernetes M9b",
+    "archive": {
+      "bytes": 9154560,
+      "sha256": "aec8ec61d8be43e96bcb880d70af6fa58e70bfd82d7f38cf78cd7f848a3f8244"
+    },
+    "queueRecoveryGuard": "passed"
+  }
+]

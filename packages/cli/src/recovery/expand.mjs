@@ -5,12 +5,14 @@ import { snapshotState } from './snapshot-state.mjs';
 import { stopped, projectName, volumeNames } from './docker.mjs';
 import { restoreInstallation } from './restore.mjs';
 import { planExpansion } from './expansion-plan.mjs';
+import { assertQueueFreeRecovery } from './queue-safety.mjs';
 
 export async function expand(directory, project, output) {
   projectName(project);
   const dir = resolve(directory), destination = resolve(output), bundle = await verifyBundle(dir);
   projectName(bundle.manifest.sourceProject);
   const state = await snapshotState(dir);
+  assertQueueFreeRecovery(state);
   const plan = planExpansion(bundle.config, state, bundle.manifest.images, { snapshot: await fingerprint(join(dir, 'manifest.json')) });
   await stopped(bundle.manifest.sourceProject, volumeNames(bundle.config).map(name => bundle.config.volumes[name].name));
   await restoreInstallation({ ...bundle, dir }, project, destination, plan);

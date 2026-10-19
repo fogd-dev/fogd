@@ -1,5 +1,9 @@
 # Recover a stopped local Kubernetes installation
 
+Queued installations are refused pending [queue recovery qualification](queue-recovery.md).
+Known queue history refuses before stopping. A queue submission racing that check
+can leave the source stopped with partial output and no success manifest.
+
 This adapter covers fogd's experimental two-slot local kind topology with local-path
 PVCs. It does not cover a remote cluster, external bucket, live backup, or arbitrary
 StorageClass. Use the [Kubernetes setup guide](kubernetes.md) to create the fixture.

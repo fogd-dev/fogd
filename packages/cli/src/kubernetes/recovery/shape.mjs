@@ -50,6 +50,7 @@ function validateService(service, topology) {
 function validatePod(name, pod, topology) {
   if (pod.hostNetwork || pod.hostPID || pod.hostIPC || pod.automountServiceAccountToken !== false) throw new Error('Unsupported host or API access');
   const containers = [...pod.containers, ...(pod.initContainers || [])];
+  if (containers.some(c => c.envFrom !== undefined)) throw new Error('Recovery requires explicit container environment entries');
   if (containers.some(c => c.securityContext?.privileged)) throw new Error('Privileged recovery workloads are unsupported');
   const initializers = pod.initContainers || [];
   const expected = name === 'controller' || name.startsWith('slot-') ? 1 : 0;
