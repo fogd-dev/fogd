@@ -655,3 +655,25 @@ This is partial retirement acceptance: a live restore containing only retired qu
 and a prefix comparison beginning at the source remain next. Public queue admission,
 Kubernetes queue recovery, and queued expansion remain closed. Retention still runs
 on wall-clock time, and starting older installations can resurrect retired work.
+
+
+### Queued retirement acceptance completed locally
+
+The [completion drill](evidence/m11a-queue-retirement-complete.json) closes the two
+remaining retirement checks above. Each of the two remaining apps had a non-empty backlog
+when retired. Every retained object's SHA-256 hash matched between the stopped source
+and restored installation. A subsequent backup with no live queued apps omitted queue
+recovery preparation and restored successfully: the controller ran, all three retired
+routes returned 404, and the retained prefixes still matched.
+
+The harness now waits for application readiness before submission and approved replica
+generations before acknowledgment. Earlier attempts exposed those missing waits;
+they did not change the recovery protocol. Public admission remains closed. The next
+slice must also ensure that never-approved queued uploads do not disable backup.
+
+A separate read-only inspection compared the first retired app's 47 objects with its
+retained stopped source as well. Every running target service had zero restarts,
+and bucket-init had exited successfully. Comparisons cover the observation period,
+not a four-day retention wake. The [review response](reviews/m11a-queue-retirement-complete-response.md)
+records these limits. The next [admission design response](reviews/m11a-queue-admission-response.md)
+also covers disabled-environment refusal and recovery of rejected pristine claims.

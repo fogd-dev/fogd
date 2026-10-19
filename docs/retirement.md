@@ -129,3 +129,34 @@ Compose file and project in a private operator environment for the next two prob
 They inspect a fresh queue/database, run replacement work, compare retained object
 identities, exercise survivor recovery, and take another snapshot. They deliberately
 bypass public artifact admission and do not establish hostile-tenant isolation.
+
+
+The completion probe, `scripts/queue-probe/retirement-complete.mjs OUTPUT`, starts
+from the stopped isolation fixture. It retires the remaining two apps, comparing
+SHA-256 hashes of every retained object before retirement and after restored startup.
+Source observations run only the bucket service, with all app writers stopped.
+It then backs up the installation with no live queued apps and performs an ordinary
+restore. The controller starts, retired routes remain unavailable, and retained
+object hashes still match. [Completion evidence](evidence/m11a-queue-retirement-complete.json)
+records the image, counts, and observations.
+
+Select the stopped fixture's private operator environment and run:
+
+```sh
+FOGD_ENV_FILE=/path/to/retirement-fixture.env \
+  node scripts/queue-probe/retirement-complete.mjs .fogd/retirement-complete
+```
+
+The probe retains source volumes and snapshots but removes stopped fixture containers
+and networks between restores. If interrupted after a successful retirement, select
+the generated installation and supply the prior progress.json as the second argument
+to continue into a new output directory. It rechecks retained object hashes before
+continuing. It waits for approved replica generations before recovery acknowledgment.
+
+
+The completion probe updates the disposable fixture's runtime image pins in place.
+Its source comparisons cover the two apps retired during that run. The optional
+`scripts/queue-probe/retirement-final-inspection.mjs SOURCE_COMPOSE TARGET_COMPOSE PREFIX OUTPUT`
+compares an earlier retained stopped source with the final target. It starts only the
+source bucket for reads, then stops it, and checks every target service's running,
+exit, and restart state. Neither probe waits through the four-day retention interval.

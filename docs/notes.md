@@ -415,3 +415,24 @@ Removed the unused stopped `fogd-m11a-recovery-qualified` containers/networks wi
 Compose down, preserving its volumes. A fresh `fogd-m11a-retirement-retry` target
 then restored successfully. The old source remains stopped. Unrelated containers
 and system Docker configuration were not changed.
+
+
+### Queued retirement completion harness readiness
+
+The first completion attempt submitted immediately after controller readiness and
+received 503 while replicas restarted. The second passed source-prefix comparison
+but attempted survivor acknowledgment before its approved generation was ready.
+Added distinct HTTP readiness and generation checks. Resumed from recorded progress
+only after comparing the retained source-prefix hashes again. The resumed run retired
+the last app and completed zero-live backup/restore. Source snapshots and volumes
+remain retained; the fixture releases its own stopped containers/networks between
+fresh targets to avoid exhausting Docker's address pool.
+
+
+The replacement fingerprint algorithm did not change between the initial and resumed
+completion runs; only readiness/resume handling changed. It subsequently moved into
+prefix-fingerprints.mjs unchanged. Final read-only inspection compared the first
+retired app against its original stopped source and checked all target containers.
+Its first attempt incorrectly passed already-inspected container objects back to
+Docker inspect; the corrected attempt passed. This was a harness error after hashing,
+not a recovery or storage failure.

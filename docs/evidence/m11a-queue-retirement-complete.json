@@ -1,0 +1,100 @@
+{
+  "qualification": "local Docker queued retirement source preservation and zero-live restore",
+  "image": "sha256:bd1bab9613d02dff377191c92d49c4e0a64a066b65ef76dfdca8a9a8f25e9a08",
+  "retirements": [
+    {
+      "app": "replacement",
+      "jobId": "retirement-replacement-1792437517726",
+      "prefix": "retirement-generations/dca4d00d-3965-4bfe-a028-14892446b209",
+      "objectCount": 27,
+      "sortedObjectRecordsSha256": "b95cca297b19843c53ac0d12b51652f5dfcc1eab1f33b6fe3436e62032cf5b93",
+      "sourceRestoredBytesMatch": true,
+      "snapshotBacklog": 1
+    },
+    {
+      "app": "survivor",
+      "jobId": "retirement-survivor-1792437611389",
+      "prefix": "slots/slot-2",
+      "objectCount": 27,
+      "sortedObjectRecordsSha256": "e4b67f2f2e209d8bb81c0b7f02199b8e388118d10659177bad21a634bd3bce79",
+      "sourceRestoredBytesMatch": true,
+      "snapshotBacklog": 1
+    }
+  ],
+  "zeroLive": {
+    "project": "fogd-m11a-retired-only-1792437666551",
+    "manifestHasQueueRecovery": false,
+    "retiredApps": [
+      "imports",
+      "replacement",
+      "survivor"
+    ],
+    "controllerReady": true,
+    "preservedPrefixes": true,
+    "containerStates": [
+      {
+        "service": "slot-2-a",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "slot-1-a",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "slot-2-b",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "controller",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "slot-1-b",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "bucket-init",
+        "running": false,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "minio",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      },
+      {
+        "service": "workerd",
+        "running": true,
+        "exitCode": 0,
+        "restartCount": 0
+      }
+    ]
+  },
+  "limits": [
+    "Trusted application code and exclusive operator; not hostile-tenant isolation",
+    "No queue purge or retention freeze; older installations can resurrect retired work",
+    "Public queue deployment acceptance remains pending",
+    "Hash observations cover restored startup and final inspection; no four-day wake-time observation was performed"
+  ],
+  "firstRetiredApp": {
+    "app": "imports",
+    "sourceProject": "fogd-m11a-recovery-complete",
+    "prefix": "slots/slot-1",
+    "objectCount": 47,
+    "sortedObjectRecordsSha256": "c412c8e0d1456b4fac8ebaecca19049a4cf648c668f22b71c718b4c7951a9122",
+    "stoppedSourceMatchesFinalRestoredBytes": true
+  },
+  "fingerprintFormat": "SHA-256 of compact JSON.stringify of records sorted by key; each record contains key, size, and SHA-256 of full object bytes"
+}

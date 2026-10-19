@@ -97,9 +97,9 @@ combined lifecycle with private artifacts. [Authenticated delivery controls](del
 are qualified through HTTP, CLI, and browser checks. [Corrected-artifact recovery](queue-replacement.md)
 qualifies original migration reconciliation and atomic hold transfer. The [Docker queue recovery protocol](queue-recovery.md) qualifies retention checks,
 persisted pause, and explicit recovery acknowledgment with private artifacts.
-Queued Docker retirement now has [partial live evidence](evidence/m11a-queue-retirement.json):
-replacement isolation, survivor recovery, and another backup. Next: zero-live
-tombstone restore and source-prefix comparison, then canonical admission and the full
+Queued Docker retirement now has [isolation evidence](evidence/m11a-queue-retirement.json)
+and [source-preservation/zero-live restore evidence](evidence/m11a-queue-retirement-complete.json).
+Next: canonical admission, backup accounting for never-approved queue artifacts, and the full
 public approval/gateway application acceptance flow. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,

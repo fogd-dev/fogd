@@ -320,8 +320,10 @@ Docker queue recovery has a [private-artifact qualification](docs/queue-recovery
 with persisted pause, retention checks, and explicit acknowledgment before resume.
 
 
-Queued Docker retirement has [partial local qualification](docs/retirement.md#queued-app-retirement):
+Queued Docker retirement has [local qualification](docs/retirement.md#queued-app-retirement):
 an explicit stop-work flag retains old queue history while a fresh fleet runs a
 replacement app. Surviving apps retain recovery acknowledgment and resume controls.
-Public queue admission stays closed until the remaining retirement and deployment
-acceptance checks pass. See the [evidence and limits](docs/evidence/m11a-queue-retirement.json).
+The [completion drill](docs/evidence/m11a-queue-retirement-complete.json) compares retained
+objects with the source and restores an installation containing only retired queues.
+Public queue admission stays closed until canonical admission and the complete
+deployment acceptance checks pass.

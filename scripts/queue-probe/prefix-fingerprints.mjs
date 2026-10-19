@@ -1,0 +1,6 @@
+// Read-only byte fingerprints for retained bucket prefixes.
+export async function prefixFingerprints(compose, prefix, running) {
+  const code = `import {createHash} from 'node:crypto';import {createRequire} from 'node:module';import {bucketClient} from './packages/runtime/src/bucket.mjs';const require=createRequire('/app/packages/platform/src/backend.mjs');const {ListObjectsV2Command,GetObjectCommand}=require('@aws-sdk/client-s3');const client=bucketClient(),Bucket=process.env.FOGD_BUCKET;let token;const objects=[];do{const r=await client.send(new ListObjectsV2Command({Bucket,Prefix:${JSON.stringify(prefix + '/')},ContinuationToken:token}));for(const o of r.Contents||[]){const value=await client.send(new GetObjectCommand({Bucket,Key:o.Key}));objects.push({key:o.Key,size:o.Size,sha256:createHash('sha256').update(await value.Body.transformToByteArray()).digest('hex')});}token=r.NextContinuationToken;}while(token);console.log(JSON.stringify(objects.sort((a,b)=>a.key.localeCompare(b.key))));`;
+  const args = running ? ['exec', '-T', 'controller'] : ['run', '--rm', '--no-deps', '-T', 'controller'];
+  return JSON.parse(await compose([...args, 'node', '--input-type=module', '-e', code]));
+}
