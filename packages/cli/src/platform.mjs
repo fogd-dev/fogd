@@ -40,22 +40,23 @@ export async function status(id) {
   console.log(JSON.stringify(result, null, 2));
 }
 export async function admin(action, id, digest, secretRevision) {
-  const env = await configEnv();
-  if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD');
-  const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
-  const state = await api(env, '/v1/admin', { headers });
+  const { env, headers, state } = await adminSession();
   if (action === 'capacity') {
     showCapacity(state, [id, digest, secretRevision]); return;
   }
   if (action === 'list') {
     console.log(JSON.stringify({ deployments: Object.values(state.deployments), secrets: state.secrets, credentials: state.credentials, quota: state.quota }, null, 2)); return;
   }
-  if (action === 'issue-token' || action === 'revoke-token') {
+  if (['issue-token', 'revoke-token'].includes(action)) {
     await manageCredential(env, headers, state.csrf, action, id, digest, secretRevision); return;
   }
   if (action === 'secrets') {
     await manageSecrets(env, headers, state.csrf, id, digest, secretRevision); return;
   }
+  await decideDeployment(env, headers, state, action, id, digest, secretRevision);
+}
+
+async function decideDeployment(env, headers, state, action, id, digest, secretRevision) {
   if (!['approve', 'reject'].includes(action) || !id || !digest) throw new Error('Usage: fogd admin list | approve|reject <id> <digest>');
   if (action === 'approve' && state.deployments[id]?.requiredSecrets?.length && !secretRevision) throw new Error('Approval requires an explicit secret revision: fogd admin approve ID SHA SECRET_REVISION (see fogd admin list)');
   const result = await api(env, `/v1/deployments/${id}/${action}`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ digest, secretRevision: secretRevision || null }) });
@@ -82,4 +83,21 @@ function showCapacity(state, extra) {
   if (extra.some(value => value !== undefined)) throw new Error('Usage: fogd admin capacity');
   if (!state.capacity) throw new Error('Server does not support capacity reporting; upgrade the controller');
   console.log(JSON.stringify(state.capacity, null, 2));
+}
+
+async function adminSession() {
+  const env = await configEnv();
+  if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD');
+  const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
+  return { env, headers, state: await api(env, '/v1/admin', { headers }) };
+}
+
+export async function adminDelivery(app, action = 'status', deployment, digest) {
+  if (!app || !['status', 'observe', 'pause', 'resume'].includes(action)) throw new Error('Usage: fogd admin delivery APP [status|observe|pause|resume ID SHA]');
+  if (action === 'resume' ? !deployment || !/^[a-f0-9]{64}$/.test(digest || '') : deployment !== undefined || digest !== undefined) throw new Error('Resume requires the inspected deployment ID and digest; other delivery actions take no extra arguments');
+  const { env, headers, state } = await adminSession();
+  const path = `/v1/apps/${encodeURIComponent(app)}/delivery`;
+  const options = action === 'status' ? { headers } : { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest }) };
+  const result = await api(env, action === 'status' ? path : `${path}/${action}`, options);
+  console.log(JSON.stringify(result, null, 2));
 }

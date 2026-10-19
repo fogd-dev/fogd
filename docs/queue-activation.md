@@ -94,6 +94,7 @@ lost resume response, restart pause, explicit retry, and a paused update. The na
 Void app then processes an import after explicit probe resume. This bypasses public
 artifact admission and does not exercise the approval HTTP API or gateway.
 
-Still pending are authenticated operator controls, stopped recovery with delivery holds and
+[Authenticated operator controls](delivery-controls.md) are qualified separately.
+Still pending are corrected-artifact recovery, stopped recovery with delivery holds and
 retention-age checks, retirement isolation, and queued-app acceptance through the
 public approval and routing interfaces.

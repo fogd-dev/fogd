@@ -593,3 +593,21 @@ approval or the gateway. Public queue admission remains closed. Operator control
 corrected-artifact recovery, stopped backup/restore with retention policy, and
 retirement/isolation remain gates. All 185 tests pass. The follow-up recovery policy
 keeps other apps routable when one queue pause cannot be confirmed.
+
+
+[Admin delivery controls](delivery-controls.md) expose recorded status, explicit
+refresh, pause, and resume through authenticated HTTP, CLI, and browser interfaces.
+Resume requires the inspected deployment ID and digest, then rechecks runtime
+generation. Admin views omit private runtime hashes. Unknown runtime outcomes return
+502 and preserve journal intent; storage uncertainty returns 503. The page explains
+that operator pause persists across approvals and hides controls for unavailable
+fleets. All 195 tests pass, along with builds and quality checks.
+
+The [selected live evidence](evidence/m11a-admin-delivery.json) records real celld
+resume/observe/pause through the admin endpoint and browser buttons, with forbidden
+credentials, missing CSRF, and wrong-digest refusals. The fixture was privately
+staged before testing these controls; this does not qualify public queue upload.
+The [Claude review response](reviews/m11a-admin-delivery-response.md) records explicit
+CLI approval binding and the strengthened serialization test. Corrected-artifact
+hold transfer, stopped recovery/retention, retirement/isolation, and public approval
+acceptance remain before queue admission.

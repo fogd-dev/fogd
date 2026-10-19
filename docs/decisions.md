@@ -736,3 +736,30 @@ restriction avoids an unreviewed hold transfer but must be resolved before publi
 admission. Tests use private artifacts and a persistent runtime stand-in. A combined Docker
 probe also exercises the built coordinator with real celld, bypassing public admission.
 Public approval and the remaining operator/recovery gates are still required.
+
+## ADR 030: bind delivery resume to an inspected approval
+
+Context: runtime version hashes may incorporate secrets, a queue status command can
+instantiate cells, and the same artifact can be approved again with different secret
+revisions. Administrators need controls that preserve activation holds and identify
+what they authorize without exposing private runtime hashes.
+
+Options: offer raw celld commands; automatically inspect the runtime on GET and
+resume whatever is active; or expose serialized admin operations with an explicit
+approval identity. Raw commands bypass the controller journal, and automatic resume
+selection cannot distinguish an inspected approval from a newer secret revision.
+
+Decision: GET reads recorded state. Explicit POST observes, pauses, or resumes under
+the existing admin authentication and CSRF rules. Resume requires both deployment ID
+and artifact digest, then verifies the private runtime generation internally. CLI
+operators supply both identifiers; browser controls bind them when rendered. Strip
+runtime hashes from app journals and bootstrap metadata in API views.
+
+Consequences: administrators must distinguish recorded observations from current
+runtime state and retain two identifiers for resume. Unknown outcomes remain visible
+in the journal and return 502; storage uncertainty returns 503. An explicit observe
+can materialize a queue cell, but never changes delivery intent or releases a hold.
+It is not silently converted into pause: published consumers have already received
+artifact approval, and pause remains the explicit way to establish that control.
+Operator pause persists through successful activation. No drain or instantaneous
+termination of already running work is promised.

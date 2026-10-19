@@ -310,5 +310,6 @@ with D1 migration overlap and recovery after killed consumers exhaust delivery.
 The [activation coordinator](docs/queue-activation.md) integrates bootstrap, pause,
 migrations, publication, and restart recovery, with controller process-kill tests.
 A built-controller Docker probe also covers real bootstrap, migration, and lost-resume
-recovery. Public approval/recovery acceptance and operator controls remain pending. fogd still
-rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+recovery. [Admin delivery controls](docs/delivery-controls.md) provide recorded status,
+refresh, pause, and exact-approval resume through the CLI and browser. Corrected-artifact
+recovery and public approval/recovery acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).

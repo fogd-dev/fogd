@@ -1,0 +1,82 @@
+{
+  "initial": {
+    "app": "imports",
+    "schema": 1,
+    "queue": "imports",
+    "desired": "paused",
+    "hold": null,
+    "observed": "paused",
+    "observedAt": "2026-10-19T17:43:15.025Z",
+    "operation": null,
+    "effective": "paused",
+    "bootstrap": "application",
+    "recoveryError": null,
+    "active": {
+      "deployment": "b657fa28-c104-410b-bacd-9be530adf705",
+      "digest": "1484b60a7ad63bcdffbe83a867c7eeb71a06dc4533b302741d3bfb7ab511c55a"
+    },
+    "operationAllowed": true,
+    "resumeAllowed": true
+  },
+  "observed": {
+    "app": "imports",
+    "schema": 1,
+    "queue": "imports",
+    "desired": "running",
+    "hold": null,
+    "observed": "running",
+    "observedAt": "2026-10-19T17:46:24.371Z",
+    "operation": null,
+    "effective": "running",
+    "bootstrap": "application",
+    "recoveryError": null,
+    "active": {
+      "deployment": "b657fa28-c104-410b-bacd-9be530adf705",
+      "digest": "1484b60a7ad63bcdffbe83a867c7eeb71a06dc4533b302741d3bfb7ab511c55a"
+    },
+    "operationAllowed": true,
+    "resumeAllowed": true
+  },
+  "final": {
+    "app": "imports",
+    "schema": 1,
+    "queue": "imports",
+    "desired": "paused",
+    "hold": null,
+    "observed": "paused",
+    "observedAt": "2026-10-19T17:46:24.415Z",
+    "operation": null,
+    "effective": "paused",
+    "bootstrap": "application",
+    "recoveryError": null,
+    "active": {
+      "deployment": "b657fa28-c104-410b-bacd-9be530adf705",
+      "digest": "1484b60a7ad63bcdffbe83a867c7eeb71a06dc4533b302741d3bfb7ab511c55a"
+    },
+    "operationAllowed": true,
+    "resumeAllowed": true
+  },
+  "authorizationChecks": [
+    "deploy token rejected",
+    "missing CSRF rejected",
+    "wrong active digest rejected"
+  ],
+  "controllerImage": "sha256:9e7b44b61cc4d633e1694ed2ec6ad05fe5fb42b546611fc3383899c6c8cc92ff",
+  "scope": "Admin HTTP and browser controls against real celld for a privately staged app; public queue artifact admission remains closed",
+  "browser": {
+    "actions": [
+      "resume",
+      "observe",
+      "pause"
+    ],
+    "realRuntimePaused": true
+  },
+  "sourceSha256": {
+    "packages/platform/src/admin-delivery.mjs": "29360af0742c87401f2f3eb0234c96e647bc58ccd9e90068e4d3932a5a6666f0",
+    "packages/platform/src/admin-view.mjs": "935b9fb85e3aa9d56bbfff6f84980e03bd7ffb5c3cf78108f308947d780939b6",
+    "packages/platform/src/http.mjs": "134d27730f48ab6169b452a4422d5755f37fb6b1fc3c5738f9728b8ea6b85b6b",
+    "packages/cli/src/platform.mjs": "af27a8602c12cebd00337a75b17ef112556b89997658f8f9563d2ec97ad04c60",
+    "scripts/queue-admin.mjs": "f158b9718d0bdc408bea9fea7b9b179c117ff7022dff650719b218d037ecbd52",
+    "scripts/queue-admin-browser.mjs": "2bef33f1c30c8b9b1bca76e79b2c78cf30971f30520a9fb77f2840b834e6711b"
+  }
+}

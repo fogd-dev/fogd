@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import { context } from './queue-probe/context.mjs';
+import { expect } from './guestbook-browser.mjs';
+
+const [slot, output] = process.argv.slice(2);
+const probe = await context(slot, output, { queueName: 'imports' });
+const origin = `http://127.0.0.1:${probe.env.FOGD_ADMIN_PORT}`;
+const headers = { authorization: `Basic ${Buffer.from(`${probe.env.FOGD_ADMIN_USER}:${probe.env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
+const path = '/v1/apps/imports/delivery';
+await expect.poll(async () => { try { return (await fetch(origin + path, { headers })).status; } catch { return 0; } }, { timeout: 30000 }).toBe(200);
+const initial = await (await fetch(origin + path, { headers })).json();
+assert.equal(initial.desired, 'paused'); assert.equal(initial.observed, 'paused');
+assert.equal(initial.resumeAllowed, true); assert.ok(initial.active);
+const { csrf } = await (await fetch(origin + '/v1/admin', { headers })).json();
+const post = (action, body = {}, extra = {}) => fetch(origin + path + '/' + action, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf, ...extra }, body: JSON.stringify(body) });
+assert.equal((await post('resume', initial.active, { authorization: `Bearer ${probe.env.FOGD_DEPLOY_TOKEN}` })).status, 401);
+assert.equal((await post('resume', initial.active, { 'X-Fogd-CSRF': '' })).status, 403);
+assert.equal((await post('resume', { ...initial.active, digest: '0'.repeat(64) })).status, 400);
+assert.equal((await probe.queue('info')).paused, true);
+const resumed = await post('resume', initial.active); assert.equal(resumed.status, 200, await resumed.clone().text());
+assert.equal((await probe.queue('info')).paused, false);
+const observed = await (await post('observe')).json(); assert.equal(observed.observed, 'running');
+const paused = await post('pause'); assert.equal(paused.status, 200, await paused.clone().text());
+const final = await paused.json(); assert.equal(final.desired, 'paused'); assert.equal(final.observed, 'paused');
+assert.equal((await probe.queue('info')).paused, true);
+for (const value of [initial, observed, final]) assert.equal(Object.hasOwn(value, 'version'), false);
+await probe.save('admin', { initial, observed, final, authorizationChecks: ['deploy token rejected', 'missing CSRF rejected', 'wrong active digest rejected'], controllerImage: probe.config.services.controller.image });
+console.log('PASS: authenticated admin observe/pause/resume drives real celld; unauthorized and stale-digest requests do not resume; queue left paused');

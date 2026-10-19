@@ -346,3 +346,23 @@ distinct version. Parked `fogd-m11a-activation`, again retaining volumes, and bu
 probe with distinct versions; `.fogd/m11a-controller-versioned` and the selected
 committed evidence record this run. Its queue is paused and slot 2 is unused.
 The fixture env/config is `.fogd/m11a-controller-v2-fixture/probe.env`.
+
+
+## M11a admin delivery controls (2026-10-19)
+
+Rebuilt the controller image in `fogd-m11a-controller-v2` and pointed its data root
+at the private qualification directory recorded by the preceding activation probe.
+The main HTTP controller now owns that seeded app's metadata. The previous Compose
+config is retained as `.fogd/m11a-controller-v2-fixture/compose-before-admin.json`.
+This is test-fixture wiring, not an app adoption workflow or public admission path.
+
+Admin HTTP and browser probes passed with the reviewed image. Evidence is in
+`.fogd/m11a-admin-live-final` and `.fogd/m11a-admin-browser-reviewed`; selected JSON
+is committed. Delivery is paused. The first browser attempt used Playwright's global
+cache default and found no executable; reusing the repo's existing browser helper
+selected `.fogd/browsers` and passed without a global install.
+
+Claude identified weak race-test timing and CLI resume selecting the active ID
+implicitly. The test now waits for entry into the controller lock; CLI resume takes
+both ID and digest. Runtime errors return bounded 502 responses, and private version
+hashes are excluded from delivery and general admin views. Queue admission stays closed.
