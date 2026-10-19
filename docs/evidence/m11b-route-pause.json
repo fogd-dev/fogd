@@ -1,0 +1,294 @@
+{
+  "context": {
+    "project": "fogd-m11b-live",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+    }
+  },
+  "result": {
+    "room": "update-eb973f41-9af5-4f6d-b85c-274881d33aea",
+    "old": {
+      "id": "1d751595-c273-4384-b545-09ea6d1372cc",
+      "digest": "02455e8de8da59856e0dc532369c1cf07eb6108f43cfd1539babd8de62f70375"
+    },
+    "update": {
+      "id": "0ee66f49-1f14-4d48-b997-a3a22261fe56",
+      "digest": "302d91c75714286e45594572685e2bad71ad5de2321c3dc6daef04b2462ba85b"
+    },
+    "firstAck": {
+      "type": "ack",
+      "opId": "bf6dc29a-eb47-48fc-a3a3-a2137d3fa6f1",
+      "revision": 1,
+      "release": "v1"
+    },
+    "ack": {
+      "type": "ack",
+      "opId": "pending-2bd4bfd8-8dab-4bef-8774-e50440c05990",
+      "revision": 3,
+      "release": "v2"
+    },
+    "transport": {
+      "count": 1,
+      "closes": []
+    },
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 3,
+      "release": "v2",
+      "items": [
+        {
+          "id": "34cea8dd-0605-4b00-8a4b-2b10fbb854d1",
+          "text": "Before compatible update",
+          "checked": true
+        },
+        {
+          "id": "item-cd721ec6-469e-4537-a870-8891ef67c98c",
+          "text": "Saved v1 edit handled by v2",
+          "checked": false
+        }
+      ]
+    },
+    "errors": [],
+    "idleEvidence": null,
+    "pauseEvidence": {
+      "owner": {
+        "host": "slot-2-a",
+        "id": "ChecklistWs:7cb6483e1f92994c4a0bf778ab6b246bf8ba27d496b25cc2c5ed8ba4f900502f"
+      },
+      "residency": [
+        {
+          "host": "slot-2-a",
+          "residents": [
+            "ChecklistWs:2341d5109dc35a78085dcf9ec645693165cc580e02bac256afd07cb3f42ceca0",
+            "ChecklistWs:37d44c326a70f767258c7b4931d6ec5d991970deef6a27ba9becf6cb01b1ab38",
+            "ChecklistWs:4b598b1c59c0213df66bebf4c70d4a39ca2443781c1c62955270e945e891d892",
+            "ChecklistWs:7cb6483e1f92994c4a0bf778ab6b246bf8ba27d496b25cc2c5ed8ba4f900502f",
+            "ChecklistWs:a14607272ef299062d0516d23f1362769fbaf38bc28e2f7d276333e6d5e46e78",
+            "ChecklistWs:a310438312f5d57936c48254b3562d8260ebe84e1654caa9835837715063024c",
+            "ChecklistWs:bcce673f963ce256851822136986d3b4ee8f46aa3790fd451447876728525063",
+            "ChecklistWs:f76ed48bbc12d9d39065748e91b3994cd4f37a2882459b8bcb3201b10fa346c9"
+          ],
+          "published": [
+            "ChecklistWs:2341d5109dc35a78085dcf9ec645693165cc580e02bac256afd07cb3f42ceca0",
+            "ChecklistWs:37d44c326a70f767258c7b4931d6ec5d991970deef6a27ba9becf6cb01b1ab38",
+            "ChecklistWs:4b598b1c59c0213df66bebf4c70d4a39ca2443781c1c62955270e945e891d892",
+            "ChecklistWs:7cb6483e1f92994c4a0bf778ab6b246bf8ba27d496b25cc2c5ed8ba4f900502f",
+            "ChecklistWs:a14607272ef299062d0516d23f1362769fbaf38bc28e2f7d276333e6d5e46e78",
+            "ChecklistWs:a310438312f5d57936c48254b3562d8260ebe84e1654caa9835837715063024c",
+            "ChecklistWs:bcce673f963ce256851822136986d3b4ee8f46aa3790fd451447876728525063",
+            "ChecklistWs:f76ed48bbc12d9d39065748e91b3994cd4f37a2882459b8bcb3201b10fa346c9"
+          ]
+        },
+        {
+          "host": "slot-2-b",
+          "residents": [],
+          "published": []
+        }
+      ],
+      "frozenReplica": "slot-2-b",
+      "setup": {
+        "count": 2,
+        "closes": [
+          {
+            "code": 1006,
+            "at": 1792446214055
+          }
+        ]
+      },
+      "heldAt": 1792446217073,
+      "checkedAt": 1792446219535,
+      "beforeStep": "waiting-for-replicas",
+      "afterStep": "waiting-for-replicas",
+      "http": {
+        "status": 503,
+        "body": "App activation paused"
+      },
+      "upgradeResponse": {
+        "status": 503,
+        "body": "App activation paused"
+      },
+      "upgrade": "refused",
+      "ack": {
+        "type": "ack",
+        "opId": "during-route-pause",
+        "revision": 2,
+        "release": "v2"
+      },
+      "ownerDeployment": {
+        "cells": {
+          "ChecklistWs:2341d5109dc35a78085dcf9ec645693165cc580e02bac256afd07cb3f42ceca0": 9,
+          "ChecklistWs:37d44c326a70f767258c7b4931d6ec5d991970deef6a27ba9becf6cb01b1ab38": 9,
+          "ChecklistWs:4b598b1c59c0213df66bebf4c70d4a39ca2443781c1c62955270e945e891d892": 9,
+          "ChecklistWs:7cb6483e1f92994c4a0bf778ab6b246bf8ba27d496b25cc2c5ed8ba4f900502f": 9,
+          "ChecklistWs:a14607272ef299062d0516d23f1362769fbaf38bc28e2f7d276333e6d5e46e78": 9,
+          "ChecklistWs:a310438312f5d57936c48254b3562d8260ebe84e1654caa9835837715063024c": 9,
+          "ChecklistWs:bcce673f963ce256851822136986d3b4ee8f46aa3790fd451447876728525063": 9,
+          "ChecklistWs:f76ed48bbc12d9d39065748e91b3994cd4f37a2882459b8bcb3201b10fa346c9": 9
+        },
+        "draining": [
+          {
+            "generation": 7,
+            "isolates": {
+              "cells": {
+                "checklist": {
+                  "cells": 0,
+                  "external_bytes": 696133,
+                  "freed": 0,
+                  "heap_bytes": 6598656,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 1,
+                  "turns": 0
+                }
+              },
+              "services": {
+                "checklist": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "stateless": {
+                "cells": 0,
+                "external_bytes": 0,
+                "freed": 1,
+                "heap_bytes": 0,
+                "live": 0,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "version": "0b4d813ec592f1ef"
+          },
+          {
+            "generation": 8,
+            "isolates": {
+              "cells": {
+                "checklist": {
+                  "cells": 0,
+                  "external_bytes": 695441,
+                  "freed": 0,
+                  "heap_bytes": 6434816,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 1,
+                  "turns": 0
+                }
+              },
+              "services": {
+                "checklist": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "stateless": {
+                "cells": 0,
+                "external_bytes": 0,
+                "freed": 1,
+                "heap_bytes": 0,
+                "live": 0,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "version": "6b3a108d4c343959"
+          }
+        ],
+        "generation": 9,
+        "isolates": {
+          "cells": {
+            "checklist": {
+              "cells": 8,
+              "external_bytes": 692903,
+              "freed": 0,
+              "heap_bytes": 5910528,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "checklist": {
+              "cells": 0,
+              "external_bytes": 692427,
+              "freed": 0,
+              "heap_bytes": 4780032,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 692427,
+            "freed": 0,
+            "heap_bytes": 4780032,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/checklist/6e930931928551b1",
+        "swapping": 0,
+        "version": "6e930931928551b1"
+      },
+      "controllerNodeOrder": [
+        "slot-2-a",
+        "slot-2-b"
+      ],
+      "pendingReleasedAt": 1792446219688,
+      "reopened": {
+        "type": "snapshot",
+        "revision": 3,
+        "release": "v2",
+        "items": [
+          {
+            "id": "34cea8dd-0605-4b00-8a4b-2b10fbb854d1",
+            "text": "Before compatible update",
+            "checked": true
+          },
+          {
+            "id": "item-cd721ec6-469e-4537-a870-8891ef67c98c",
+            "text": "Saved v1 edit handled by v2",
+            "checked": false
+          }
+        ]
+      }
+    },
+    "scope": "Scoped CLI submission and exact approval replace v1 with v2 while one original native socket and loaded v1 browser settle a v1 pending record; route-pause evidence is recorded only when explicitly enabled"
+  },
+  "limitations": [
+    "Opt-in patched celld runtime; not qualification of stock celld updates.",
+    "Gateway intentionally restarted before activation; setup reconnect is recorded separately.",
+    "Non-owner frozen briefly to hold actual replica readiness; not a lease failover or ownership move test.",
+    "No D1 migration; route pause does not drain established sockets."
+  ]
+}

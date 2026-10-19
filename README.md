@@ -347,4 +347,6 @@ preserve acknowledged edits. [Idle eviction](docs/evidence/m11b-idle.json) prese
 the native socket and room behavior. [Non-owning ingress loss](docs/evidence/m11b-ingress.json)
 also preserves the board and reconnects. An [explicit celld patch](docs/patches/celld-preaccept-attachment.md)
 qualifies preserved-socket updates, including after idle eviction; upstream 0.6.2
-still fails that gate. Route pause, SSE, ownership moves and stopped recovery remain open.
+still fails that gate. [Route-pause checks](docs/evidence/m11b-route-pause.json) confirm
+new connections are refused during approval while an established socket commits
+an edit. SSE, ownership moves and stopped recovery remain open.

@@ -949,3 +949,21 @@ published or submitted upstream. The tested build profile is `lab`. This qualifi
 the stated functional behavior, not release performance or Kubernetes deployment.
 Route-pause/new-upgrade behavior, SSE, actual room moves and stopped recovery remain
 open, as does celld's rejection of Void's echoed close code 1001. M11b is incomplete.
+
+
+## M11b routing pause during compatible activation
+
+The [route-pause evidence](evidence/m11b-route-pause.json) qualifies new-connection
+refusal and established-socket writes during actual approval on the opt-in patched
+runtime. The probe freezes only the non-owning replica to hold replica readiness.
+During that interval HTTP returns 503, a fresh WebSocket is refused, and the existing
+socket receives a v2 acknowledgment at revision 2. After approval, the loaded v1
+client settles its retained pending operation at revision 3 without reconnecting;
+a fresh socket receives the same final snapshot. The gateway setup restart happens
+before activation and its reconnect is recorded separately.
+
+This confirms that pausing routing does not stop established clients from writing.
+The fixture has no D1 migration; incompatible schema changes remain outside this
+contract. SSE, ownership moves and stopped recovery remain open. The initial probe
+hit a Playwright page-creation error after pausing; cleanup unfroze the replica and
+completed approval, and corrected runs passed.

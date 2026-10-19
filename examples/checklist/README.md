@@ -187,4 +187,29 @@ FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
 The combined probe checks the five-second setting in the running containers and
 observes the new room leave residency before approval. It restores the original
 idle configuration afterwards. Use fresh output directories for every run.
-Route-pause behavior, SSE, ownership moves and stopped restore remain separate gates.
+SSE, ownership moves and stopped restore remain separate gates.
+
+## Route pause during approval
+
+On the same candidate runtime, reset v1 with `live-board.mjs`, then run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  FOGD_LIVE_ROUTE_PAUSE=1 \
+  node scripts/live-update.mjs .fogd/checklist-route-pause
+```
+
+The probe restarts workerd before activation to select the room owner as ingress;
+that setup reconnect is recorded separately. It briefly freezes the non-owning
+replica with Docker pause, holding the real approval at replica readiness. New HTTP
+requests return 503 and new WebSockets are refused, while the existing socket
+commits an edit. After unfreezing the replica, approval completes, the saved v1 edit
+receives a v2 acknowledgment, and a fresh socket receives the final snapshot.
+
+Routing pause is not a write barrier. This fixture has no D1 migration and does not
+qualify incompatible schema changes. Do not combine this mode with the idle mode.
+Normal cleanup unfreezes the replica and restores workerd. If forcibly interrupted,
+run `docker unpause` on the paused container in this disposable fixture, inspect
+the approval status, and run `fogd up` with the fixture environment before retrying.
+Remove any private `route-pause-compose.json` left in the output directory after
+restoration; it contains credentials.

@@ -113,7 +113,8 @@ checks pass. Explicit idle eviction also preserves the socket and usable room pa
 not prove attachment reconstruction in a fresh isolate. Non-owning ingress failure passes with a direct-owner control socket.
 An explicit [celld patch candidate](patches/celld-preaccept-attachment.md) now passes
 preserved-socket updates after idle eviction. Upstream 0.6.2 remains the default and
-fails that gate. Next: route pause/new upgrades, SSE, ownership moves and stopped
+fails that gate. Route pause/new upgrades also pass on the candidate: existing
+sockets keep writing while new connections are refused. Next: SSE, ownership moves and stopped
 recovery; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Remaining live-session qualification and scheduled/workflow lifecycle
