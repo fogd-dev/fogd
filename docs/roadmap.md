@@ -108,11 +108,12 @@ with retained-prefix verification and ordinary replacement approval. The reviewe
 transport probe and [checklist server protocol](../examples/checklist/README.md),
 including real-runtime transaction/receipt checks. [Browser reconciliation](evidence/m11b-browser.json)
 now covers persistent pending work and lost acknowledgments using an explicit
-[Void client patch](patches/void-websocket-send.md). Next: physical node failures,
-preserved-socket updates, idle eviction, SSE and stopped recovery. The [M11a acceptance audit](m11a-acceptance.md)
+[Void client patch](patches/void-websocket-send.md). Owner and gateway process-loss
+checks pass. Next: non-owning ingress failure, preserved-socket updates, idle eviction,
+SSE and stopped recovery. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
-policy. Live-session reconnect/reconciliation and scheduled/workflow lifecycle
-remain unimplemented M11 work. The native Void imports fixture
+policy. Remaining live-session qualification and scheduled/workflow lifecycle
+remain open M11 work. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. The qualified queue contract permits compatible
 handler overlap, not draining. Live collaboration remains a separate slice.

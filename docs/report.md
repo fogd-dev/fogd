@@ -854,3 +854,25 @@ a direct workerd connection; only the writer is proxied for fault injection.
 This is not physical restored-state evidence. All 278 tests, typechecking, builds,
 and quality checks pass. Node failures, update/hibernation, SSE and stopped recovery
 remain open M11b work.
+
+## M11b owner and gateway process loss
+
+The [physical failure probe](evidence/m11b-process-failure.json) preserves an
+acknowledged checklist edit after killing its owning celld process. The survivor
+reports the same cell as resident and published, and acknowledges a second edit
+while Docker inspection confirms the original owner is still stopped. After the
+owner restarts, a separate workerd kill/restart produces another close/reconnect
+and a third acknowledged edit. The final board has exactly three items at revision
+three.
+
+In this run, the first authoritative snapshot arrived about 10.5 seconds after
+owner kill initiation and 1.1 seconds after workerd kill initiation. New edits were
+acknowledged after 11.4 and 1.3 seconds respectively. Both legs observed close code
+1006. These are single-run timings including retry/recovery, not availability
+bounds. The owner leg's ingress node is unknown and may be the owner itself.
+
+Claude's [review](reviews/m11b-failure-claude.md) required stronger evidence of
+survivor takeover and explicit timing events; the [response](reviews/m11b-failure-response.md)
+records the assertions added before this passing run. The probe and syntax/quality
+checks pass. Non-owning ingress loss, idle eviction, compatible updates, SSE and
+stopped backup/restore remain open.

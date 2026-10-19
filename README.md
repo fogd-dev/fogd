@@ -342,4 +342,6 @@ Void room already passes a workerd WebSocket roundtrip without a shim. The guide
 includes fresh-fixture reproduction. The [checklist server](examples/checklist/README.md)
 now has a UI, persistent pending edits, and tested lost-ack reconciliation through
 workerd. Its [explicit Void client patch](docs/patches/void-websocket-send.md) prevents
-pre-snapshot buffering. Physical failure, update, SSE and recovery gates remain open.
+pre-snapshot buffering. [Owner and gateway process-loss checks](docs/evidence/m11b-process-failure.json)
+preserve acknowledged edits. Non-owning ingress loss, idle eviction, updates, SSE
+and stopped recovery remain open.

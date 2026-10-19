@@ -1,0 +1,275 @@
+{
+  "room": "failure-bb56d87d-7ab1-4e76-9930-2bf2ba3b1615",
+  "owner": {
+    "host": "slot-2-b",
+    "id": "ChecklistWs:8a0905f8213581cc9c9a62d3340fac668cb8616551b3b5abbcfeac7ed0df4f24"
+  },
+  "workerdImage": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+  "ownerBeforeKill": [
+    {
+      "host": "slot-2-a",
+      "residents": [
+        "ChecklistWs:830622d6343be16052880f87a60773da2b86ba81e1e72a1a3f3127fab61e1eab",
+        "ChecklistWs:b1936ab868ea21db4563288c6731c08c6342140bb3e3875bba21b5ce0cba70f0"
+      ],
+      "published": [
+        "ChecklistWs:830622d6343be16052880f87a60773da2b86ba81e1e72a1a3f3127fab61e1eab",
+        "ChecklistWs:b1936ab868ea21db4563288c6731c08c6342140bb3e3875bba21b5ce0cba70f0"
+      ]
+    },
+    {
+      "host": "slot-2-b",
+      "residents": [
+        "ChecklistWs:8a0905f8213581cc9c9a62d3340fac668cb8616551b3b5abbcfeac7ed0df4f24"
+      ],
+      "published": [
+        "ChecklistWs:8a0905f8213581cc9c9a62d3340fac668cb8616551b3b5abbcfeac7ed0df4f24"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "target": "slot-2-b",
+      "killAt": 1792442799154,
+      "acknowledgmentObservedAt": 1792442810550,
+      "elapsedMs": 11396,
+      "revision": 2,
+      "runningAtAcknowledgment": false,
+      "survivor": {
+        "host": "slot-2-a",
+        "residents": [
+          "ChecklistWs:830622d6343be16052880f87a60773da2b86ba81e1e72a1a3f3127fab61e1eab",
+          "ChecklistWs:8a0905f8213581cc9c9a62d3340fac668cb8616551b3b5abbcfeac7ed0df4f24",
+          "ChecklistWs:b1936ab868ea21db4563288c6731c08c6342140bb3e3875bba21b5ce0cba70f0"
+        ],
+        "published": [
+          "ChecklistWs:830622d6343be16052880f87a60773da2b86ba81e1e72a1a3f3127fab61e1eab",
+          "ChecklistWs:8a0905f8213581cc9c9a62d3340fac668cb8616551b3b5abbcfeac7ed0df4f24",
+          "ChecklistWs:b1936ab868ea21db4563288c6731c08c6342140bb3e3875bba21b5ce0cba70f0"
+        ]
+      },
+      "transport": {
+        "firstClose": {
+          "code": 1006,
+          "reason": "",
+          "at": 1792442799260
+        },
+        "opened": [
+          {
+            "at": 1792442809638
+          }
+        ],
+        "firstSnapshot": {
+          "at": 1792442809638
+        }
+      }
+    },
+    {
+      "target": "workerd",
+      "killAt": 1792442827639,
+      "acknowledgmentObservedAt": 1792442828928,
+      "elapsedMs": 1289,
+      "revision": 3,
+      "runningAtAcknowledgment": true,
+      "survivor": null,
+      "transport": {
+        "firstClose": {
+          "code": 1006,
+          "reason": "",
+          "at": 1792442827739
+        },
+        "opened": [
+          {
+            "at": 1792442828785
+          }
+        ],
+        "firstSnapshot": {
+          "at": 1792442828786
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "event": "created",
+      "at": 1792442798742
+    },
+    {
+      "event": "closed",
+      "at": 1792442799261
+    },
+    {
+      "event": "created",
+      "at": 1792442800265
+    },
+    {
+      "event": "closed",
+      "at": 1792442800298
+    },
+    {
+      "event": "created",
+      "at": 1792442801297
+    },
+    {
+      "event": "closed",
+      "at": 1792442801334
+    },
+    {
+      "event": "created",
+      "at": 1792442802341
+    },
+    {
+      "event": "closed",
+      "at": 1792442802366
+    },
+    {
+      "event": "created",
+      "at": 1792442803366
+    },
+    {
+      "event": "closed",
+      "at": 1792442803401
+    },
+    {
+      "event": "created",
+      "at": 1792442804401
+    },
+    {
+      "event": "closed",
+      "at": 1792442804430
+    },
+    {
+      "event": "created",
+      "at": 1792442805432
+    },
+    {
+      "event": "closed",
+      "at": 1792442805483
+    },
+    {
+      "event": "created",
+      "at": 1792442806490
+    },
+    {
+      "event": "closed",
+      "at": 1792442806512
+    },
+    {
+      "event": "created",
+      "at": 1792442807516
+    },
+    {
+      "event": "closed",
+      "at": 1792442807553
+    },
+    {
+      "event": "created",
+      "at": 1792442808558
+    },
+    {
+      "event": "closed",
+      "at": 1792442808585
+    },
+    {
+      "event": "created",
+      "at": 1792442809588
+    },
+    {
+      "event": "closed",
+      "at": 1792442827740
+    },
+    {
+      "event": "created",
+      "at": 1792442828744
+    }
+  ],
+  "closeEvents": [
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442799260
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442800295
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442801333
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442802362
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442803398
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442804429
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442805481
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442806512
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442807550
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442808584
+    },
+    {
+      "code": 1006,
+      "reason": "",
+      "at": 1792442827739
+    }
+  ],
+  "snapshot": {
+    "type": "snapshot",
+    "revision": 3,
+    "release": "v1",
+    "items": [
+      {
+        "id": "25a10edc-715b-4625-b713-69e0f091ba12",
+        "text": "Acknowledged before process loss",
+        "checked": false
+      },
+      {
+        "id": "32f9cc45-ffd8-4218-8621-40d4a3111d30",
+        "text": "After slot-2-b loss",
+        "checked": false
+      },
+      {
+        "id": "5d29a3a7-cbe4-4800-9bff-06b1f6deee63",
+        "text": "After workerd loss",
+        "checked": false
+      }
+    ]
+  },
+  "scope": "Actual owning celld SIGKILL with survivor acknowledgment before owner restart; followed by workerd SIGKILL/restart; ingress node for the owner leg is unknown and may equal owner; separate non-owning ingress loss and idle eviction remain open",
+  "fixture": {
+    "project": "fogd-m11b-live",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+      "slot-2-b": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817"
+    }
+  }
+}

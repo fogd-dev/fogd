@@ -87,3 +87,22 @@ connection, a writer-side WebSocket proxy to delay initial snapshots/drop one ac
 and a second directly connected browser. It checks the CLOSING window, reload with
 an unknown outcome, rejection settlement, and explicit rollback acceptance. The
 rollback case injects a higher browser watermark; physical restore is a later test.
+
+## Process-loss verification
+
+With this example approved as `checklist` on slot-2 of the disposable M11b fixture,
+run the physical failure probe. Keep other clients off that fixture while it runs:
+it identifies the room owner from the single newly resident cell.
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node scripts/live-failure.mjs .fogd/checklist-process-failure
+```
+
+The probe kills the owning celld process, requires another acknowledged edit before
+restarting it, then kills and restarts workerd and requires another edit. Cleanup
+restarts the selected service even if an assertion fails. Evidence records browser
+close codes and time from kill initiation through the new acknowledgment. These
+measurements include client retry and lease recovery, not a latency guarantee.
+Non-owning ingress failure, forced idle eviction and stopped restore are separate
+checks.
