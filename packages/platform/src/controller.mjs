@@ -1,3 +1,4 @@
+import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
 import { assertLiveName, validateRetirementState } from './retirement.mjs';
 import { pendingDeployments } from './capacity.mjs';
 import { Credentials } from './credentials.mjs';
@@ -49,30 +50,7 @@ export class Controller {
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
-    for (const slot of this.slots) {
-      const owner = await this.backend.owner(slot);
-      if (owner) {
-        this.occupied.add(slot.id);
-        this.bucketOwners.set(slot.id, owner.app);
-        const app = this.state.apps[owner.app];
-        if (app?.retirement) throw new Error('Retired app owns a configured fleet; restore matching configuration and metadata');
-        if (!app) {
-          // Losing local metadata must never free or silently reactivate a used slot.
-          this.state.apps[owner.app] = { slot: slot.id, route: 'paused', quarantined: true, reason: 'Bucket owner has no controller record; restore controller backup' };
-        } else if (app.slot !== slot.id) {
-          app.quarantined = true; app.route = 'paused';
-          app.reason = 'Multiple bucket slots claim this app; reconcile bucket and controller backups';
-        }
-      }
-    }
-    for (const [name, app] of Object.entries(this.state.apps)) {
-      if (app.retirement) continue;
-      const slot = this.slots.find(s => s.id === app.slot);
-      if (!slot || (await this.backend.owner(slot))?.app !== name) {
-        app.quarantined = true; app.route = 'paused';
-        app.reason = 'Configured slot or bucket owner is missing/mismatched; restore matching bucket, config, and controller backups';
-      }
-    }
+    await inspectOwnership(this);
     await this.save();
   }
   assertStorage() {
@@ -161,9 +139,11 @@ export class Controller {
     return this.exclusive(async () => {
       const request = this.state.deployments[id];
       if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
+      assertClaimRequest(this.state, request);
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
       if (action === 'reject') {
+        await rejectUnclaimed(this, request);
         if (this.state.apps[request.app]?.uncertain === id) throw new Error('Reconcile the failed activation before rejecting its artifact');
         request.status = 'rejected'; await this.save(); return request;
       }
@@ -171,6 +151,7 @@ export class Controller {
       if (!slot) throw new Error('No available app slots');
       let app = this.state.apps[request.app];
       if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
+      if (app?.claim && app.claim.deployment !== id) throw new Error('Retry the original approved ownership claim before activating another deployment');
       if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
       this.compatible(request, app);
       const selected = await this.secrets.select(request, secretRevision);
@@ -181,16 +162,14 @@ export class Controller {
     // Pin the approval before any backend effect, including a first slot claim.
     request.secretRevision = selected.revision;
     request.status = 'activating'; request.step = 'preparing-activation'; request.error = null;
-    if (app) { app.privateConfiguration ||= Boolean(selected.revision); app.route = 'paused'; }
+    if (!app) app = reserveClaim(this.state, request, slot, Boolean(selected.revision));
+    app.privateConfiguration ||= Boolean(selected.revision); app.route = 'paused';
     await this.save();
     try {
-      await this.backend.claim(slot, request.app);
+      await this.backend.claim(slot, request.app, { unpublished: Boolean(app.claim) });
       this.occupied.add(slot.id);
       this.bucketOwners.set(slot.id, request.app);
-      if (!app) {
-        app = { slot: slot.id, resources: request.resources, migrations: [], active: null, route: 'paused', uncertain: null, privateConfiguration: Boolean(selected.revision) };
-        this.state.apps[request.app] = app; await this.save();
-      }
+      if (app.claim) { delete app.claim; await this.save(); }
       await this.reconcile(app, slot);
       request.resourceChanges = this.compatible(request, app);
       if (await artifactDigest(this.artifact(request.id)) !== request.digest) throw new Error('Stored artifact digest mismatch');

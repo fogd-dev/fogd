@@ -684,3 +684,28 @@ persisted intent. Restart after restoring storage availability establishes the
 actual saved state; interrupted activation still requires explicit retry. The cost
 is controller-wide unavailability on a metadata write failure. Existing background
 work is not stopped by this guard, and no drain is claimed.
+
+## ADR 028: persist ownership reservations before bucket claims
+
+Context: a first bucket claim could succeed before the controller saved its app
+record, leaving an owner with no evidence permitting retry. Queue bootstrap also
+needs a durable boundary before publishing any platform or app code.
+
+Options: reconstruct ownership from bucket state after failure, or persist the exact
+approved claim before its effect. Choose the latter. Reserve the app/slot with the
+approval ID, digest, and prefix, claim only an unpublished namespace, then persist
+confirmation before further effects. Startup verifies the reservation against the
+original artifact and configuration; retry remains an explicit approval action.
+
+Allow rejection to release a pristine reservation only after read-only checks find
+no owner and no deployment objects, with no other configured fleet owning the app.
+Persist local release and rejection together;
+retain the artifact and never delete ownership objects. Existing owners or mismatched
+configuration block release. This gives an administrator a way to abandon a claim
+that never reached the bucket without opening a path to reassign claimed data.
+
+Keep the state capability permanently recorded. This trades downgrade flexibility
+for an explicit supported-state boundary. M10b-era and later controllers enforce
+requirements; earlier binaries are not supported for this state. Full recovery uses
+matching images. No runtime fork or distributed ownership lock is introduced; the
+controller remains the sole publisher for its configured fleets.

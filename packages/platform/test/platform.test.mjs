@@ -17,7 +17,9 @@ async function setup(t, options = {}) {
   const owners = {}, applied = {}; let publishes = 0;
   const backend = {
     owner: async slot => owners[slot.id] || null,
-    claim: async (slot, app) => { if (owners[slot.id]?.app && owners[slot.id].app !== app) throw Error('Slot owner mismatch'); owners[slot.id] = { app }; },
+    hasDeployment: async () => false,
+    assertUnclaimed: async slot => { if (owners[slot.id]) throw Error('Fleet ownership exists'); if (await backend.hasDeployment(slot)) throw Error('Fleet contains deployment objects'); },
+    claim: async (slot, app, { unpublished = false } = {}) => { if (owners[slot.id]?.app && owners[slot.id].app !== app) throw Error('Slot owner mismatch'); if (unpublished && await backend.hasDeployment(slot)) throw Error('Unresolved claim contains a deployment'); owners[slot.id] = { app }; },
     publish: async () => { publishes++; return 'version'; },
     ready: async () => {},
     applicationReady: async () => {},
@@ -612,26 +614,26 @@ test('a cleanup error cannot mask a metadata failure that requires reload', asyn
   await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN' && e.cause === cause);
 });
 
-test('first-claim write ambiguity either preserves a retryable app or quarantines the unrecorded owner', async t => {
-  for (const committed of [false, true]) {
+test('ownership intent and confirmation write ambiguity recover by explicit approval without publishing early', async t => {
+  for (const phase of ['intent', 'confirmation']) for (const committed of [false, true]) {
     let armed = false;
     const f = await setup(t, { persist: async (path, state) => {
-      if (armed && state.apps?.hello) { if (committed) await saveJson(path, state); throw Error('app record failed'); }
+      const app = state.apps?.hello;
+      if (armed && app && (phase === 'intent' ? Boolean(app.claim) : !app.claim)) {
+        if (committed) await saveJson(path, state);
+        throw Error('app record failed');
+      }
       await saveJson(path, state);
     } });
     const request = await f.controller.submit(await f.artifact(), 'team-token'); armed = true;
     await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /restart/);
-    assert.equal(f.owners['slot-1'].app, 'hello'); assert.equal(f.publishes(), 0);
+    assert.equal(Boolean(f.owners['slot-1']), phase === 'confirmation'); assert.equal(f.publishes(), 0);
     const recovered = new Controller({ dir: join(f.root, 'state'), slots, backend: f.backend });
     await recovered.init();
-    assert.equal(recovered.route('hello.localhost').state, 'paused');
-    if (committed) {
-      await recovered.mutate(request.id, request.digest, 'approve');
-      assert.equal(recovered.route('hello.localhost').state, 'active');
-    } else {
-      assert.equal(recovered.state.apps.hello.quarantined, true);
-      await assert.rejects(recovered.mutate(request.id, request.digest, 'approve'), /quarantined/);
-    }
+    assert.notEqual(recovered.route('hello.localhost').state, 'active');
+    await recovered.mutate(request.id, request.digest, 'approve');
+    assert.equal(recovered.route('hello.localhost').state, 'active');
+    assert.equal(recovered.state.apps.hello.claim, undefined);
   }
 });
 
@@ -645,4 +647,141 @@ test('the storage latch emits one bounded diagnostic without exposing paths or m
   armed = true;
   for (let attempt = 0; attempt < 2; attempt++) await assert.rejects(f.controller.save(), e => e.code === 'CONTROLLER_STORAGE_UNCERTAIN' && e.cause === cause);
   assert.deepEqual(reports, [{ code: 'EIO', syscall: 'fsync' }]);
+});
+
+test('lost ownership response preserves the original approval and blocks replacement or rejection until retry', async t => {
+  const f = await setup(t), claim = f.backend.claim;
+  f.backend.claim = async (...args) => { await claim(...args); throw Error('lost claim response'); };
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /lost claim/);
+  assert.equal(f.controller.state.apps.hello.claim.deployment, request.id);
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'reject'), /ownership exists/);
+  const replacement = await f.controller.submit(await f.artifact(), 'team-token');
+  await assert.rejects(f.controller.mutate(replacement.id, replacement.digest, 'approve'), /original approved/);
+  assert.equal(f.publishes(), 0);
+  const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+  assert.equal(recovered.state.apps.hello.quarantined, undefined);
+  f.backend.claim = claim;
+  await recovered.mutate(request.id, request.digest, 'approve');
+  assert.equal(recovered.route('hello.localhost').state, 'active');
+});
+
+test('pending ownership recovery requires matching approval, artifact and fleet evidence', async t => {
+  for (const change of [
+    async f => { f.controller.state.apps.hello.claim.prefix = 'other'; },
+    async f => { f.controller.state.deployments[f.id].status = 'pending'; },
+    async f => { delete f.controller.state.deployments[f.id].secretRevision; },
+    async f => { f.controller.state.apps.hello.resources.r2.push({ binding: 'OTHER' }); },
+    async f => { await writeFile(join(f.controller.artifact(f.id), 'worker/index.js'), 'changed'); },
+    async f => { f.owners['slot-1'] = { app: 'other' }; },
+    async f => { f.controller.state.apps.hello.claim.digest = '0'.repeat(64); },
+    async f => { f.controller.state.apps.hello.claim.deployment = 'not-an-id'; },
+    async f => { f.controller.state.requirements = []; },
+    async f => { f.controller.state.apps.hello.active = f.id; },
+    async f => { f.controller.state.apps.hello.uncertain = f.id; },
+    async f => { f.controller.state.apps.hello.migrations.push({ name: 'unexpected' }); },
+    async f => { f.controller.state.deployments[f.id].step = 'publishing'; },
+    async f => { f.controller.state.deployments[f.id].app = 'other'; },
+    async f => { f.owners['slot-1'] = { app: 'hello' }; f.backend.hasDeployment = async () => true; },
+  ]) {
+    const f = await setup(t);
+    f.backend.claim = async () => { throw Error('unreachable'); };
+    const request = await f.controller.submit(await f.artifact(), 'team-token'); f.id = request.id;
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /unreachable/);
+    await change(f); await f.controller.save();
+    const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+    assert.equal(recovered.state.apps.hello.quarantined, true);
+    await assert.rejects(recovered.mutate(request.id, request.digest, 'approve'), /quarantined|Ownership approval app mismatch/);
+    assert.equal(f.publishes(), 0);
+  }
+});
+
+test('process kills around an ownership claim require explicit retry and preserve owner identity', async t => {
+  const { spawnSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const { readJson } = await import('../src/store.mjs');
+  const { claimBackend } = await import('./fixtures/claim-backend.mjs');
+  for (const point of ['intent', 'claimed', 'confirmed']) {
+    const f = await setup(t);
+    const request = await f.controller.submit(await f.artifact('hello', [], { d1_databases: [] }), 'team-token');
+    const child = spawnSync(process.execPath, [fileURLToPath(new URL('./fixtures/claim-crash.mjs', import.meta.url)), f.root, point], { encoding: 'utf8', timeout: 10000 });
+    assert.equal(child.signal, 'SIGKILL', child.stderr);
+    const backend = claimBackend(f.root), owner = await backend.owner(slots[0]);
+    assert.equal(Boolean(owner), point !== 'intent');
+    assert.equal(await readJson(join(f.root, 'published.json'), null), null);
+    const recovered = new Controller({ dir: f.controller.dir, slots, backend }); await recovered.init();
+    assert.equal(recovered.state.apps.hello.quarantined, undefined);
+    assert.equal(recovered.state.deployments[request.id].status, 'failed');
+    assert.equal(await readJson(join(f.root, 'published.json'), null), null);
+    await recovered.mutate(request.id, request.digest, 'approve');
+    assert.equal(recovered.route('hello.localhost').state, 'active');
+    if (owner) assert.deepEqual(await backend.owner(slots[0]), owner);
+  }
+});
+
+test('rejecting an unclaimed reservation frees its slot without removing audit artifacts', async t => {
+  const f = await setup(t), claim = f.backend.claim;
+  f.backend.claim = async () => { throw Error('no connection'); };
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /no connection/);
+  assert.equal(f.controller.route('hello.localhost').state, 'paused');
+  assert.equal(f.controller.available('other').id, 'slot-2');
+  assert.equal(capacity(f.controller).slots.occupied, 1);
+  const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+  await recovered.mutate(request.id, request.digest, 'reject');
+  assert.equal(recovered.available('other').id, 'slot-1');
+  assert.equal(recovered.route('hello.localhost').state, 'unknown');
+  assert.equal(recovered.state.deployments[request.id].status, 'rejected');
+  await readFile(join(recovered.artifact(request.id), 'wrangler.json'));
+  f.backend.claim = claim;
+});
+
+test('reservation rejection is atomic with its metadata write and never deletes the artifact', async t => {
+  for (const committed of [false, true]) {
+    let armed = false;
+    const f = await setup(t, { persist: async (path, state) => {
+      if (armed && Object.values(state.deployments || {}).some(d => d.status === 'rejected')) {
+        if (committed) await saveJson(path, state);
+        throw Error('rejection write failed');
+      }
+      await saveJson(path, state);
+    } });
+    f.backend.claim = async () => { throw Error('unreachable'); };
+    const request = await f.controller.submit(await f.artifact(), 'team-token');
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /unreachable/);
+    armed = true;
+    await assert.rejects(f.controller.mutate(request.id, request.digest, 'reject'), /restart/);
+    const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+    assert.equal(Boolean(recovered.state.apps.hello), !committed);
+    if (!committed) await recovered.mutate(request.id, request.digest, 'reject');
+    assert.equal(recovered.available('other').id, 'slot-1');
+    await readFile(join(recovered.artifact(request.id), 'wrangler.json'));
+  }
+});
+
+test('reservation release refuses an app owned by another fleet', async t => {
+  const f = await setup(t);
+  f.backend.claim = async () => { throw Error('unreachable'); };
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /unreachable/);
+  f.owners['slot-2'] = { app: 'hello' };
+  const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+  assert.equal(recovered.state.apps.hello.quarantined, true);
+  await assert.rejects(recovered.mutate(request.id, request.digest, 'reject'), /Another fleet owns/);
+  assert.equal(recovered.state.apps.hello.claim.deployment, request.id);
+  assert.equal(recovered.state.deployments[request.id].status, 'failed');
+});
+
+test('a quarantined unclaimed reservation can be rejected after its artifact is lost', async t => {
+  const f = await setup(t);
+  f.backend.claim = async () => { throw Error('unreachable'); };
+  const request = await f.controller.submit(await f.artifact(), 'team-token');
+  await assert.rejects(f.controller.mutate(request.id, request.digest, 'approve'), /unreachable/);
+  await rm(f.controller.artifact(request.id), { recursive: true });
+  const recovered = new Controller({ dir: f.controller.dir, slots, backend: f.backend }); await recovered.init();
+  assert.equal(recovered.state.apps.hello.quarantined, true);
+  await recovered.mutate(request.id, request.digest, 'reject');
+  assert.equal(recovered.state.apps.hello, undefined);
+  assert.equal(recovered.state.deployments[request.id].status, 'rejected');
+  assert.equal(recovered.available('other').id, 'slot-1');
 });

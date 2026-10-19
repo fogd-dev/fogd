@@ -19,17 +19,26 @@ export class Backend {
       return JSON.parse(await object.Body.transformToString());
     } catch (error) { if (error.$metadata?.httpStatusCode === 404) return null; throw error; }
   }
-  async claim(slot, app) {
+  async claim(slot, app, { unpublished = false } = {}) {
     const current = await this.owner(slot);
-    if (current) { if (current.app !== app) throw new Error('Slot owner mismatch'); return; }
-    const old = await this.s3.send(new ListObjectsV2Command({ Bucket: this.env.FOGD_BUCKET, Prefix: `${slot.prefix}/deploy/`, MaxKeys: 1 }));
-    if (old.KeyCount) throw new Error('Unowned slot contains a deployment; restore its ownership metadata');
+    if (current && current.app !== app) throw new Error('Slot owner mismatch');
+    if (current && !unpublished) return;
+    if (await this.hasDeployment(slot)) throw new Error('Unresolved ownership claim contains a deployment; restore matching ownership metadata');
+    if (current) return;
     try {
       await this.s3.send(new PutObjectCommand({ Bucket: this.env.FOGD_BUCKET, Key: `${slot.prefix}/fogd-owner.json`, Body: JSON.stringify({ app, assignedAt: new Date().toISOString() }), IfNoneMatch: '*' }));
     } catch (error) {
       if (error.$metadata?.httpStatusCode !== 412) throw error;
       if ((await this.owner(slot))?.app !== app) throw new Error('Slot owner mismatch');
     }
+  }
+  async hasDeployment(slot) {
+    const result = await this.s3.send(new ListObjectsV2Command({ Bucket: this.env.FOGD_BUCKET, Prefix: `${slot.prefix}/deploy/`, MaxKeys: 1 }));
+    return Boolean(result.KeyCount);
+  }
+  async assertUnclaimed(slot) {
+    if (await this.owner(slot)) throw new Error('Fleet ownership exists; retry the original claim before rejection');
+    if (await this.hasDeployment(slot)) throw new Error('Fleet contains deployment objects; restore matching ownership metadata');
   }
   run(slot, args) {
     return new Promise((resolve, reject) => {

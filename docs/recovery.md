@@ -140,11 +140,11 @@ retry; an activation whose final write committed may already be active. A submis
 whose write did not commit can leave an unreferenced artifact, which still counts
 toward disk use. After reload, `fogd admin capacity` reports those entries in
 `unreferencedArtifactIds`, and the admin page shows their count. This path does not
-automatically collect files; review them during stopped maintenance. An app whose
-first bucket claim succeeded but whose app record never committed remains
-quarantined. Use [Restore to fresh storage](#restore-to-fresh-storage) with a matching
-pre-failure snapshot. If no such snapshot exists, leave the slot quarantined; this
-path does not yet reconstruct an uncommitted first app record.
+automatically collect files; review them during stopped maintenance. New approvals [persist ownership reservations](ownership-claims.md) before claiming
+the bucket, allowing explicit retry after interruption. A verified unclaimed
+reservation can instead be rejected. Legacy owners without recorded intent remain
+quarantined: use [Restore to fresh storage](#restore-to-fresh-storage) with a matching
+pre-failure snapshot rather than manually reassigning their namespace.
 
 Stopping controller writes and new HTTP routes does not stop existing handlers,
 Durable Object alarms, or other background work. It is not a drain. If the storage

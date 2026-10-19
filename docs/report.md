@@ -561,3 +561,14 @@ unreferenced artifact entries; first claims without a committed app record remai
 quarantined. All 119 tests, example builds, and quality checks pass.
 The [review response](reviews/m11a-controller-storage-response.md) records the
 shared credential/secret guard, operator diagnostics, and remaining first-claim gap.
+
+[Recoverable ownership claims](ownership-claims.md) close the first-claim gap for
+new approvals. Intent precedes the bucket effect; confirmation precedes publication.
+Interrupted claims require explicit original approval retry, and unclaimed
+reservations can be rejected after checking for absent ownership and deployment
+objects. Real-file failure tests, subprocess SIGKILL tests, and a bounded MinIO
+backend probe cover these boundaries. Legacy owners without intent still quarantine.
+Queue bootstrap and delivery integration remain pending.
+All 131 tests, example builds, and quality checks pass. The
+[review response](reviews/m11a-claims-response.md) records the cross-fleet release
+fix, supported-state boundary, and delayed bucket-write limitation.

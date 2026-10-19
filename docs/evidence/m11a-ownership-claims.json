@@ -1,0 +1,26 @@
+{
+  "scope": "Real MinIO backend checks only; controller interruption uses separate fsynced-file subprocess tests; no power-loss or full Docker approval claim",
+  "context": {
+    "project": "fogd-m11a-native",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26",
+      "slot-2-b": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26"
+    }
+  },
+  "bucket": {
+    "prefix": "qualification/claims/6e73d0ed-545a-4b7f-b8b9-e9743a12bb12",
+    "ownerStable": true,
+    "foreignRejected": true,
+    "publishedRejected": true,
+    "unownedPublishedRejected": true,
+    "releaseGuard": true,
+    "conditionalCreateRejected": true,
+    "implementation": {
+      "backend.mjs": "7544d538f97bcc61ddaf3c12f2e57442424eb1d85ce85a72c34568a4e92c30c4",
+      "queue-runtime.mjs": "b9523b4e217df8fa107756658dbe73ab1a26b4d3cda659acbe54f4d1dbe23a14"
+    },
+    "scope": "Current backend source staged in an isolated controller directory; real MinIO requests, no app deployment"
+  }
+}
