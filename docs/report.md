@@ -992,3 +992,28 @@ quality gates, and ordinary Void plus fogd builds for all five verification apps
 pass. Builds run without network access using the existing verification image with
 the current checklist source mounted and copied into it. The source-level race
 reproducer intentionally fails on unpatched Void.
+
+## M11b Void live registration patch and update reconnection
+
+The [installed candidate](patches/void-live-registration.md) fixes the reproduced
+registration race and serializes topic registration across capacity checks.
+Twelve tests exercise the installed JavaScript, including real module import;
+unpatched source loses the subscriber row, and removing the registration queue
+admits two rows into one slot. The [evidence](evidence/m11b-sse-patched.json) records
+source/package hashes and the runtime image. The generator reproduces the installed
+file and rejects source or import drift.
+
+The browser update drill passes actual exact approval, SSE error/reopen, a successful
+subscription response, a later v2 snapshot, and the next edit's hint. The original
+WebSocket stays open across that same compatible deployment. Owner/gateway failure
+and idle eviction pass with the app's additional live objects; fault probes now
+identify the board class specifically. The five-second deployment maximum age is
+an observed fixture setting, not a cancellation-latency promise.
+
+All 298 workspace tests, the upstream 25-test live-server suite, upstream package
+typecheck and full lint pass. Offline ordinary Void and fogd builds pass for all
+five verification apps. SSE stays experimental pending real publication-failure
+and cross-app isolation checks; ownership moves and stopped board/receipt recovery
+also remain open. Control errors leave membership uncertain and require explicit
+resubscription or unsubscribe. At full topics, serialized registrations can increase
+reconnect latency. No package was published and no upstream acceptance is implied.

@@ -1,0 +1,407 @@
+{
+  "status": "Registration patch and update reconnection qualified; broader SSE acceptance incomplete",
+  "void": {
+    "version": "1.1.11",
+    "sourceCommit": "6ef71cfe1b3364e04fd0ec261f7f00bef6aeb99f",
+    "sourcePatchSha256": "db9e379348b26b0d8d085c45d51c6849b12414a8eeee864e31a3ed50c264c082",
+    "pnpmPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
+    "installedModule": "node_modules/.pnpm/void@1.1.11_patch_hash=cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024_60a8d312cdb8ea46620bc15a04645b7e/node_modules/void/dist/runtime/live-server.mjs",
+    "installedModuleSha256": "dff30460b58166de079d3fa3412fed57ed811a269452c9f0d530d837ee249eb3",
+    "generatorMatchesInstalled": true
+  },
+  "context": {
+    "project": "fogd-m11b-sse",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+    }
+  },
+  "validation": {
+    "workspaceTests": 298,
+    "installedSourceMethodTests": 12,
+    "upstreamLiveServerTests": 25,
+    "upstreamUnitExitCode": 0,
+    "upstreamPackageTypecheckExitCode": 0,
+    "upstreamFullLintExitCode": 0,
+    "syntax": "pass",
+    "quality": "pass",
+    "offlineBuilds": "All five verification apps; ordinary Void and fogd outputs; network none"
+  },
+  "negativeControls": {
+    "unpatchedRegistration": {
+      "accepted": true,
+      "rowsDuringRegister": 0,
+      "rowsAfter": 0,
+      "received": [],
+      "exitCode": 1
+    },
+    "withoutRegisterSerialization": {
+      "admitted": 2,
+      "topicCapacity": 1,
+      "exitCode": 1
+    }
+  },
+  "update": {
+    "room": "sse-update-2dd34cb6-928a-4519-b800-c9cdd2c28614",
+    "maxAgeSeconds": 5,
+    "activationStartedAt": 1792448209479,
+    "activationCompletedAt": 1792448214218,
+    "transport": {
+      "events": [
+        {
+          "type": "open",
+          "at": 1792448208723
+        },
+        {
+          "type": "message",
+          "at": 1792448209420,
+          "data": {
+            "subscriptionId": "board",
+            "topic": "sse-update-2dd34cb6-928a-4519-b800-c9cdd2c28614",
+            "data": {
+              "revision": 1
+            }
+          }
+        },
+        {
+          "type": "error",
+          "at": 1792448219360
+        },
+        {
+          "type": "open",
+          "at": 1792448220395
+        },
+        {
+          "type": "message",
+          "at": 1792448220512,
+          "data": {
+            "subscriptionId": "board",
+            "topic": "sse-update-2dd34cb6-928a-4519-b800-c9cdd2c28614",
+            "data": {
+              "revision": 2
+            }
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "at": 1792448208860,
+          "value": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "at": 1792448209426,
+          "value": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "51091c8d-cd44-4e67-8e98-8ca829bcdce8",
+                "text": "Survives handler replacement",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "at": 1792448220446,
+          "value": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v2",
+            "items": [
+              {
+                "id": "51091c8d-cd44-4e67-8e98-8ca829bcdce8",
+                "text": "Survives handler replacement",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "at": 1792448220518,
+          "value": {
+            "type": "snapshot",
+            "revision": 2,
+            "release": "v2",
+            "items": [
+              {
+                "id": "1b2e4645-c662-4cbe-919c-396f07a670d3",
+                "text": "After SSE resubscription",
+                "checked": false
+              },
+              {
+                "id": "51091c8d-cd44-4e67-8e98-8ca829bcdce8",
+                "text": "Survives handler replacement",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ],
+      "controls": [
+        {
+          "at": 1792448208852,
+          "result": {
+            "accepted": true,
+            "connectionId": "ff1058d1-f2b4-47f6-8be2-fef8de9f0937",
+            "results": [
+              {
+                "ok": true,
+                "kind": "subscribe",
+                "id": "board",
+                "topic": "sse-update-2dd34cb6-928a-4519-b800-c9cdd2c28614"
+              }
+            ]
+          }
+        },
+        {
+          "at": 1792448220436,
+          "result": {
+            "accepted": true,
+            "connectionId": "ff1058d1-f2b4-47f6-8be2-fef8de9f0937",
+            "results": [
+              {
+                "ok": true,
+                "kind": "subscribe",
+                "id": "board",
+                "topic": "sse-update-2dd34cb6-928a-4519-b800-c9cdd2c28614"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "errors": [],
+    "scope": "Real exact approval; SSE error/reopen and post-registration v2 snapshot followed by a new hint; no guaranteed cancellation latency"
+  },
+  "websocketUpdate": {
+    "room": "update-7d92754b-2cc1-4a08-a8cb-d83e38c554ae",
+    "old": {
+      "id": "faa4d16f-ca88-420e-b6d7-c9f75a3e90e7",
+      "digest": "6f1da3d3517a008a151901985739e779f727b5a8aa17434a35adb3d3f6e0c3c2"
+    },
+    "update": {
+      "id": "ff39a13e-9938-42df-a287-3d24bcf13d35",
+      "digest": "efec7413d3ff502668f175d34be096ee189f42de20b6ed496128ae21113e1937"
+    },
+    "firstAck": {
+      "type": "ack",
+      "opId": "33e83a63-87d1-48a0-828d-4e3f01f6e709",
+      "revision": 1,
+      "release": "v1"
+    },
+    "ack": {
+      "type": "ack",
+      "opId": "pending-c6923dc7-06e4-43c1-a726-5436b499c6c2",
+      "revision": 2,
+      "release": "v2"
+    },
+    "transport": {
+      "count": 1,
+      "closes": []
+    },
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 2,
+      "release": "v2",
+      "items": [
+        {
+          "id": "cfb9d857-be17-49a0-9bd6-8c4163f51c71",
+          "text": "Before compatible update",
+          "checked": false
+        },
+        {
+          "id": "item-97521450-d691-400d-b951-b0e253d3efc9",
+          "text": "Saved v1 edit handled by v2",
+          "checked": false
+        }
+      ]
+    },
+    "errors": [],
+    "idleEvidence": null,
+    "pauseEvidence": null,
+    "scope": "Scoped CLI submission and exact approval replace v1 with v2 while one native socket stays open across activation and the loaded v1 browser settles a v1 pending record; route-pause evidence is recorded only when explicitly enabled"
+  },
+  "ownerAndGatewayLoss": {
+    "room": "failure-bd368e25-1f0a-42b2-ae0a-bc656b312b39",
+    "owner": {
+      "host": "slot-2-b",
+      "id": "ChecklistWs:37ba0b14e511a27a825c3c66cedfd7bbd7fba28a04e91520d580a91cad4e8d9c"
+    },
+    "failures": [
+      {
+        "target": "slot-2-b",
+        "killAt": 1792447881547,
+        "acknowledgmentObservedAt": 1792447889851,
+        "elapsedMs": 8304,
+        "revision": 2,
+        "runningAtAcknowledgment": false,
+        "survivor": {
+          "host": "slot-2-a",
+          "residents": [
+            "ChecklistWs:37ba0b14e511a27a825c3c66cedfd7bbd7fba28a04e91520d580a91cad4e8d9c",
+            "VoidLiveStreamDurableObject:36c9a0f9cab1cd656c53bb041b3984196f78fd3b449877c21b2e8d8d2e8e3e79",
+            "VoidLiveStreamDurableObject:37cd487ac6b770bd13b85c6b9928021ec5785c145dd2d471516052e5e7b00605",
+            "VoidLiveStreamDurableObject:c22eb12d1e12ef8787d10caf60b738e010b62cb65818ef742aa98506d403acef"
+          ],
+          "published": [
+            "ChecklistWs:37ba0b14e511a27a825c3c66cedfd7bbd7fba28a04e91520d580a91cad4e8d9c",
+            "VoidLiveStreamDurableObject:36c9a0f9cab1cd656c53bb041b3984196f78fd3b449877c21b2e8d8d2e8e3e79",
+            "VoidLiveStreamDurableObject:37cd487ac6b770bd13b85c6b9928021ec5785c145dd2d471516052e5e7b00605",
+            "VoidLiveStreamDurableObject:c22eb12d1e12ef8787d10caf60b738e010b62cb65818ef742aa98506d403acef"
+          ]
+        },
+        "transport": {
+          "firstClose": {
+            "code": 1006,
+            "reason": "",
+            "at": 1792447881634
+          },
+          "opened": [
+            {
+              "at": 1792447888945
+            }
+          ],
+          "firstSnapshot": {
+            "at": 1792447888946
+          }
+        }
+      },
+      {
+        "target": "workerd",
+        "killAt": 1792447906659,
+        "acknowledgmentObservedAt": 1792447907883,
+        "elapsedMs": 1224,
+        "revision": 3,
+        "runningAtAcknowledgment": true,
+        "survivor": null,
+        "transport": {
+          "firstClose": {
+            "code": 1006,
+            "reason": "",
+            "at": 1792447906750
+          },
+          "opened": [
+            {
+              "at": 1792447907763
+            }
+          ],
+          "firstSnapshot": {
+            "at": 1792447907763
+          }
+        }
+      }
+    ],
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 3,
+      "release": "v2",
+      "items": [
+        {
+          "id": "6b856121-4097-4c9c-b94b-9d1cbbe3fda6",
+          "text": "Acknowledged before process loss",
+          "checked": false
+        },
+        {
+          "id": "7374f6f2-2fd0-4901-9b12-9bb2e56d6dad",
+          "text": "After slot-2-b loss",
+          "checked": false
+        },
+        {
+          "id": "c355ba46-7370-4d81-bf17-42e064d58ad9",
+          "text": "After workerd loss",
+          "checked": false
+        }
+      ]
+    }
+  },
+  "idle": {
+    "room": "idle-8c65c47d-19bf-43d3-aaba-f9503a68b99c",
+    "ordinary": {
+      "room": "ordinary-7240b3bd-25ba-40e5-9470-ca5dcadcc6f5",
+      "observationMs": 30185,
+      "sockets": 1,
+      "closes": 0,
+      "revision": 1
+    },
+    "appliedIdleSeconds": {
+      "slot-1-a": "5",
+      "slot-1-b": "5"
+    },
+    "idleSeconds": 5,
+    "owner": {
+      "host": "slot-1-b",
+      "id": "ChecklistWs:0dd0163cd1e195c3d444dbd4f8bea683daead043201701383f8363bb47e55e9d"
+    },
+    "restoredOwner": "slot-1-b",
+    "moved": false,
+    "idleAt": 1792448029321,
+    "evictionObservedAt": 1792448035434,
+    "acknowledgmentObservedAt": 1792448035478,
+    "evicted": [
+      {
+        "host": "slot-1-a",
+        "residents": [],
+        "phases": {}
+      },
+      {
+        "host": "slot-1-b",
+        "residents": [],
+        "phases": {
+          "dormant": 2
+        }
+      }
+    ],
+    "restored": [
+      {
+        "host": "slot-1-a",
+        "residents": []
+      },
+      {
+        "host": "slot-1-b",
+        "residents": [
+          "ChecklistWs:0dd0163cd1e195c3d444dbd4f8bea683daead043201701383f8363bb47e55e9d",
+          "VoidLiveStreamDurableObject:3a9d92dea3beb67b6abda417a78c8524c690341e9dcf8cc2ac302e57a111b5dd"
+        ]
+      }
+    ],
+    "snapshot": {
+      "type": "snapshot",
+      "revision": 2,
+      "release": "v1",
+      "items": [
+        {
+          "id": "276b25bf-7ae9-4f99-99fb-442d827710ce",
+          "text": "Before idle eviction",
+          "checked": true
+        }
+      ]
+    },
+    "socketObservation": {
+      "count": 1,
+      "closes": []
+    },
+    "scope": "Ordinary policy holds one socket for 30 seconds; explicit five-second idle eviction restores native Void attachment on one preserved socket; no unbounded-idle or room-move claim"
+  },
+  "remaining": [
+    "real runtime publication failure",
+    "cross-app SSE isolation",
+    "actual room ownership movement",
+    "stopped checklist/receipt recovery"
+  ],
+  "limitations": [
+    "Source-method regression harness models storage, streams and transport; not all celld scheduling interleavings.",
+    "A control error leaves server membership uncertain; explicit resubscribe or unsubscribe required.",
+    "Concurrent raw requests for one id use newest-started semantics.",
+    "Topic registration serialization increases queueing delay at full topics.",
+    "SSE cancellation observed with configured max age5; no latency guarantee."
+  ]
+}

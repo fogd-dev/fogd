@@ -14,7 +14,7 @@ export default function Watch({ room }: Props) {
     return () => session.close();
   }, [room]);
   return <main>
-    <p role="note">Experimental SSE observer: an upstream registration race can stop notifications. Reload for current state.</p>
+    <p role="note">Experimental SSE observer. Reload to resynchronize with the current board.</p>
     <p className="eyebrow">CHECKLIST OBSERVER</p><h1>Watch a shared board.</h1>
     <p>Room <strong>{room}</strong>. <a href={`/?room=${room}`}>Open the editor</a>.</p>
     <p role="status">{view.status} · Revision {view.revision}</p>

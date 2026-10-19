@@ -1,3 +1,556 @@
+diff --git a/dist/runtime/live-server.mjs b/dist/runtime/live-server.mjs
+index 6f3644a7d893dda6df31764af12cbacd280c9bce..19f586a6e538a6f5a2f471331c49bd6b89594b3d 100644
+--- a/dist/runtime/live-server.mjs
++++ b/dist/runtime/live-server.mjs
+@@ -1,15 +1,16 @@
+ import { n as eventStream } from "../sse-CMvCgjNk.mjs";
+ import { a as connectionInstanceName, c as topicInstanceName, o as internalUrl, s as topicDigest, t as __getLiveBindingName } from "../live-BcHoTDFe.mjs";
+-//#region src/runtime/live-server.ts
+ const GENERATION_KEY = "connection:generation";
+ const TOPIC_PRUNE_ALARM_DELAY_MS = 6e4;
+ const LIVE_FANOUT_CONCURRENCY = 6;
+ const textEncoder = new TextEncoder();
+-function createLiveDurableObject() {
++export function createLiveDurableObject() {
+ 	class VoidLiveStreamDurableObject {
+ 		state;
+ 		env;
+ 		connection = null;
++		nextSubscriptionRevision = 0;
++		registerChain = Promise.resolve();
+ 		publishChain = Promise.resolve();
+ 		constructor(state, env) {
+ 			this.state = state;
+@@ -17,14 +18,30 @@ function createLiveDurableObject() {
+ 		}
+ 		async fetch(request) {
+ 			const { pathname } = new URL(request.url);
+-			if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
+-			if (pathname === "/connect") return this.connect(await request.json());
+-			if (pathname === "/control") return this.control(await request.json());
+-			if (pathname === "/deliver") return this.deliver(await request.json());
+-			if (pathname === "/check") return this.check(await request.json());
+-			if (pathname === "/register") return this.register(await request.json());
+-			if (pathname === "/unregister") return this.unregister(await request.json());
+-			if (pathname === "/publish") return this.enqueuePublish(request);
++			if (request.method !== "POST") {
++				return new Response("Method Not Allowed", { status: 405 });
++			}
++			if (pathname === "/connect") {
++				return this.connect(await request.json());
++			}
++			if (pathname === "/control") {
++				return this.control(await request.json());
++			}
++			if (pathname === "/deliver") {
++				return this.deliver(await request.json());
++			}
++			if (pathname === "/check") {
++				return this.check(await request.json());
++			}
++			if (pathname === "/register") {
++				return this.enqueueRegister(request);
++			}
++			if (pathname === "/unregister") {
++				return this.unregister(await request.json());
++			}
++			if (pathname === "/publish") {
++				return this.enqueuePublish(request);
++			}
+ 			return new Response("Not Found", { status: 404 });
+ 		}
+ 		async alarm() {
+@@ -40,8 +57,13 @@ function createLiveDurableObject() {
+ 		async connect(message) {
+ 			const previous = this.connection;
+ 			if (previous) {
++				for (const subscription of previous.pending.values()) {
++					subscription.active = false;
++				}
+ 				const active = [...previous.subscriptions.values()].filter((sub) => sub.active);
+-				for (const subscription of previous.subscriptions.values()) subscription.active = false;
++				for (const subscription of previous.subscriptions.values()) {
++					subscription.active = false;
++				}
+ 				previous.abort.abort();
+ 				await Promise.all(active.map((sub) => this.unregisterTopic(message.streamId, message.connectionId, sub)));
+ 			}
+@@ -49,14 +71,18 @@ function createLiveDurableObject() {
+ 			await this.state.storage.put(GENERATION_KEY, generation);
+ 			const abort = new AbortController();
+ 			return eventStream(async (stream) => {
+-				const subscriptions = previous?.owner === message.owner ? previous.subscriptions : /* @__PURE__ */ new Map();
+-				for (const subscription of subscriptions.values()) subscription.active = false;
++				const subscriptions = previous?.owner === message.owner ? previous.subscriptions : new Map();
++				for (const subscription of subscriptions.values()) {
++					subscription.active = false;
++				}
++				const pending = new Map();
+ 				this.connection = {
+ 					stream,
+ 					abort,
+ 					owner: message.owner,
+ 					generation,
+ 					subscriptions,
++					pending,
+ 					writeChain: Promise.resolve(),
+ 					queued: 0,
+ 					limits: message.limits
+@@ -65,9 +91,16 @@ function createLiveDurableObject() {
+ 					await stream.comment("connected");
+ 					await stream.closed;
+ 				} finally {
++					for (const subscription of pending.values()) {
++						subscription.active = false;
++					}
+ 					const active = [...subscriptions.values()].filter((sub) => sub.active && sub.generation === generation);
+-					for (const sub of active) sub.active = false;
+-					if (this.connection?.generation === generation) this.connection = null;
++					for (const sub of active) {
++						sub.active = false;
++					}
++					if (this.connection?.generation === generation) {
++						this.connection = null;
++					}
+ 					await Promise.all(active.map((sub) => this.unregisterTopic(message.streamId, message.connectionId, sub)));
+ 				}
+ 			}, {
+@@ -80,50 +113,79 @@ function createLiveDurableObject() {
+ 		}
+ 		async control(message) {
+ 			const connection = this.connection;
+-			if (!connection) return controlBatchError("CONNECTION_NOT_FOUND", "live: connection is not open.", 404);
+-			if (connection.owner !== message.owner) return controlBatchError("OWNER_MISMATCH", "live: connection owner mismatch.", 403);
++			if (!connection) {
++				return controlBatchError("CONNECTION_NOT_FOUND", "live: connection is not open.", 404);
++			}
++			if (connection.owner !== message.owner) {
++				return controlBatchError("OWNER_MISMATCH", "live: connection owner mismatch.", 403);
++			}
+ 			const results = [];
+ 			for (const operation of message.operations) {
+ 				if (operation.kind === "unsubscribe") {
++					invalidatePending(connection, operation.id);
+ 					const existing = connection.subscriptions.get(operation.id);
++					connection.subscriptions.delete(operation.id);
+ 					if (existing) {
+ 						existing.active = false;
+-						await this.unregisterTopic(message.streamId, message.connectionId, existing);
+-						connection.subscriptions.delete(operation.id);
++						await this.unregisterTopic(message.streamId, message.connectionId, existing).catch(() => {});
+ 					}
+ 					results.push({
+ 						ok: true,
+ 						kind: "unsubscribe",
+ 						id: operation.id
+ 					});
+-					continue;
++				} else {
++					results.push(await this.subscribe(connection, message, operation));
+ 				}
+-				if (!connection.subscriptions.has(operation.id) && activeSubscriptionCount(connection) >= message.limits.maxSubscriptionsPerConnection) {
+-					results.push({
+-						ok: false,
+-						kind: "subscribe",
+-						id: operation.id,
+-						error: {
+-							code: "SUBSCRIPTION_LIMIT",
+-							message: "live: subscription limit reached."
+-						}
+-					});
+-					continue;
++			}
++			return Response.json({
++				accepted: true,
++				connectionId: message.connectionId,
++				results
++			});
++		}
++		async subscribe(connection, message, operation) {
++			const fail = (code, message) => ({
++				ok: false,
++				kind: "subscribe",
++				id: operation.id,
++				error: {
++					code,
++					message
++				}
++			});
++			const activeIds = activeSubscriptionIds(connection);
++			if (!activeIds.has(operation.id) && activeIds.size >= message.limits.maxSubscriptionsPerConnection) {
++				return fail("SUBSCRIPTION_LIMIT", "live: subscription limit reached.");
++			}
++			// Reserve before the first await: later control operations may overtake us.
++			invalidatePending(connection, operation.id);
++			const pending = {
++				id: operation.id,
++				topic: operation.topic,
++				topicKey: "",
++				generation: connection.generation,
++				revision: ++this.nextSubscriptionRevision,
++				active: true
++			};
++			connection.pending.set(pending.revision, pending);
++			let installed = false;
++			try {
++				pending.topicKey = await topicDigest(message.streamId, operation.topic);
++				if (!this.canInstall(connection, pending)) {
++					return fail("CONNECTION_CLOSED", "live: subscription superseded or connection closed.");
+ 				}
+-				const topicKey = await topicDigest(message.streamId, operation.topic);
+-				const existing = connection.subscriptions.get(operation.id);
+-				const revision = (existing?.revision ?? 0) + 1;
+ 				const row = {
+ 					streamId: message.streamId,
+-					topic: operation.topic,
+-					topicKey,
++					topic: pending.topic,
++					topicKey: pending.topicKey,
+ 					connectionId: message.connectionId,
+-					subscriptionId: operation.id,
+-					generation: connection.generation,
+-					revision,
++					subscriptionId: pending.id,
++					generation: pending.generation,
++					revision: pending.revision,
+ 					lastSeenAt: Date.now()
+ 				};
+-				const response = await this.topicStub(message.streamId, topicKey).fetch(internalUrl("/register"), {
++				const response = await this.topicStub(message.streamId, pending.topicKey).fetch(internalUrl("/register"), {
+ 					method: "POST",
+ 					body: JSON.stringify({
+ 						...row,
+@@ -131,48 +193,43 @@ function createLiveDurableObject() {
+ 					})
+ 				});
+ 				if (!response.ok) {
+-					results.push({
+-						ok: false,
+-						kind: "subscribe",
+-						id: operation.id,
+-						error: response.status === 409 ? {
+-							code: "TOPIC_FULL",
+-							message: "live: topic subscription limit reached."
+-						} : {
+-							code: "INTERNAL_ERROR",
+-							message: await response.text()
+-						}
+-					});
+-					continue;
++					return response.status === 409 ? fail("TOPIC_FULL", "live: topic subscription limit reached.") : fail("INTERNAL_ERROR", await response.text());
++				}
++				if (!this.canInstall(connection, pending)) {
++					return fail("CONNECTION_CLOSED", "live: subscription superseded or connection closed.");
+ 				}
++				const existing = connection.subscriptions.get(operation.id);
++				connection.subscriptions.set(operation.id, pending);
++				installed = true;
++				connection.pending.delete(pending.revision);
+ 				if (existing) {
+ 					existing.active = false;
+ 					await this.unregisterTopic(message.streamId, message.connectionId, existing).catch(() => {});
+ 				}
+-				connection.subscriptions.set(operation.id, {
+-					id: operation.id,
+-					topic: operation.topic,
+-					topicKey,
+-					generation: connection.generation,
+-					revision,
+-					active: true
+-				});
+-				results.push({
++				return {
+ 					ok: true,
+ 					kind: "subscribe",
+ 					id: operation.id,
+ 					topic: operation.topic
+-				});
++				};
++			} finally {
++				connection.pending.delete(pending.revision);
++				if (!installed) {
++					pending.active = false;
++					if (pending.topicKey) {
++						await this.unregisterTopic(message.streamId, message.connectionId, pending).catch(() => {});
++					}
++				}
+ 			}
+-			return Response.json({
+-				accepted: true,
+-				connectionId: message.connectionId,
+-				results
+-			});
++		}
++		canInstall(connection, pending) {
++			return this.connection === connection && !connection.abort.signal.aborted && pending.active && (connection.subscriptions.get(pending.id)?.revision ?? -1) < pending.revision;
+ 		}
+ 		async deliver(message) {
+ 			const connection = this.connection;
+-			if (!connection) return new Response("connection missing", { status: 410 });
++			if (!connection) {
++				return new Response("connection missing", { status: 410 });
++			}
+ 			let delivered = 0;
+ 			const stale = [];
+ 			for (const [index, row] of message.subscriptions.entries()) {
+@@ -182,18 +239,24 @@ function createLiveDurableObject() {
+ 				}
+ 				if (connection.queued >= connection.limits.maxQueuedEventsPerConnection) {
+ 					connection.abort.abort();
+-					if (this.connection === connection) this.connection = null;
++					if (this.connection === connection) {
++						this.connection = null;
++					}
+ 					return new Response("connection queue full", { status: 410 });
+ 				}
+ 				const event = liveEvent(row.subscriptionId, message);
+-				if (encodedLiveEventSize(event) > connection.limits.maxEncodedEventSize) return payloadTooLargeResponse(connection.limits.maxEncodedEventSize);
++				if (encodedLiveEventSize(event) > connection.limits.maxEncodedEventSize) {
++					return payloadTooLargeResponse(connection.limits.maxEncodedEventSize);
++				}
+ 				connection.queued++;
+ 				const activeConnection = connection;
+ 				connection.writeChain = connection.writeChain.catch(() => {}).then(() => connection.stream.send({
+ 					event: "message",
+ 					data: event
+ 				})).catch(() => {
+-					if (this.connection === activeConnection) this.connection = null;
++					if (this.connection === activeConnection) {
++						this.connection = null;
++					}
+ 					connection.abort.abort();
+ 				}).finally(() => {
+ 					connection.queued--;
+@@ -207,42 +270,76 @@ function createLiveDurableObject() {
+ 		}
+ 		check(message) {
+ 			const connection = this.connection;
+-			if (!connection) return new Response("connection missing", { status: 410 });
++			if (!connection) {
++				return new Response("connection missing", { status: 410 });
++			}
+ 			const stale = [];
+-			for (const [index, row] of message.subscriptions.entries()) if (isStaleSubscriber(row, connection)) stale.push(index);
++			for (const [index, row] of message.subscriptions.entries()) {
++				if (isStaleSubscriber(row, connection)) {
++					stale.push(index);
++				}
++			}
+ 			return Response.json({ stale });
+ 		}
++		enqueueRegister(request) {
++			// Capacity checks may call other objects. Keep registration mutations ordered
++			// across those awaits without blocking publication or stale-row cleanup.
++			const run = this.registerChain.then(async () => this.register(await request.json()));
++			this.registerChain = run.then(() => {}, () => {});
++			return run;
++		}
+ 		async register(row) {
+ 			const prefix = subscriberPrefix(row.streamId, row.topicKey);
+ 			const current = await this.state.storage.list({ prefix });
+-			const deletedKeys = /* @__PURE__ */ new Set();
++			const deletedKeys = new Set();
+ 			for (const [key, value] of current) {
++				if (value.connectionId === row.connectionId && (value.generation > row.generation || value.generation === row.generation && value.subscriptionId === row.subscriptionId && value.revision >= row.revision)) {
++					return Response.json({ ok: true });
++				}
+ 				if (value.connectionId === row.connectionId && value.generation < row.generation) {
+ 					deletedKeys.add(key);
+ 					continue;
+ 				}
+-				if (value.connectionId === row.connectionId && value.subscriptionId === row.subscriptionId) deletedKeys.add(key);
++				if (value.connectionId === row.connectionId && value.subscriptionId === row.subscriptionId) {
++					deletedKeys.add(key);
++				}
+ 			}
+ 			let activeRows = [...current].filter(([key]) => !deletedKeys.has(key));
+ 			if (activeRows.length >= row.limits.maxSubscriptionsPerTopic) {
+-				for (const key of await this.findStaleSubscriberKeys(activeRows, row.limits)) deletedKeys.add(key);
++				for (const key of await this.findStaleSubscriberKeys(activeRows, row.limits)) {
++					deletedKeys.add(key);
++				}
+ 				activeRows = activeRows.filter(([key]) => !deletedKeys.has(key));
+ 			}
+-			if (activeRows.length >= row.limits.maxSubscriptionsPerTopic) return new Response("topic full", { status: 409 });
+-			if (deletedKeys.size > 0) await this.state.storage.delete([...deletedKeys]);
++			if (activeRows.length >= row.limits.maxSubscriptionsPerTopic) {
++				return new Response("topic full", { status: 409 });
++			}
++			if (deletedKeys.size > 0) {
++				await this.state.storage.delete([...deletedKeys]);
++			}
+ 			await this.state.storage.put(subscriberKey(row), withoutLimits(row));
+ 			await this.schedulePruneAlarm();
+ 			return Response.json({ ok: true });
+ 		}
+ 		async unregister(row) {
+-			if (!row.streamId || !row.topicKey) return Response.json({ ok: true });
+-			const key = row.connectionId && row.subscriptionId && row.generation != null && row.revision != null ? subscriberKey(row) : void 0;
+-			if (key) await this.state.storage.delete(key);
++			if (!row.streamId || !row.topicKey) {
++				return Response.json({ ok: true });
++			}
++			const key = row.connectionId && row.subscriptionId && row.generation != null && row.revision != null ? subscriberKey(row) : undefined;
++			if (key) {
++				await this.state.storage.delete(key);
++			}
+ 			return Response.json({ ok: true });
+ 		}
+ 		async publish(message) {
+-			const grouped = groupByConnection(await this.state.storage.list({ prefix: subscriberPrefix(message.streamId, message.topicKey) }));
+-			for (const { row } of [...grouped.values()].flat()) if (encodedLiveEventSize(liveEvent(row.subscriptionId, message)) > message.limits.maxEncodedEventSize) return payloadTooLargeResponse(message.limits.maxEncodedEventSize);
++			const rows = await this.state.storage.list({ prefix: subscriberPrefix(message.streamId, message.topicKey) });
++			const grouped = groupByConnection(rows);
++			for (const { row } of [...grouped.values()].flat()) {
++				const event = liveEvent(row.subscriptionId, message);
++				if (encodedLiveEventSize(event) > message.limits.maxEncodedEventSize) {
++					return payloadTooLargeResponse(message.limits.maxEncodedEventSize);
++				}
++			}
+ 			const groups = [...grouped];
+ 			for (let offset = 0; offset < groups.length; offset += LIVE_FANOUT_CONCURRENCY) {
+ 				const batch = groups.slice(offset, offset + LIVE_FANOUT_CONCURRENCY);
+@@ -258,18 +355,28 @@ function createLiveDurableObject() {
+ 					})
+ 				}, message.limits.deliveryAttemptTimeoutMs)));
+ 				for (const [index, outcome] of responses.entries()) {
+-					if (outcome.status === "rejected") throw outcome.reason;
++					if (outcome.status === "rejected") {
++						throw outcome.reason;
++					}
+ 					const response = outcome.value;
+ 					const items = batch[index][1];
+-					if (!response) continue;
++					// A missed delivery does not prove the still-open SSE connection is gone.
++					if (!response) {
++						continue;
++					}
+ 					if (response.status === 410 || response.status === 404) {
+ 						await this.state.storage.delete(items.map((item) => item.key));
+ 						continue;
+ 					}
+-					if (response.status === 413) return response;
++					if (response.status === 413) {
++						return response;
++					}
+ 					if (response.ok) {
+-						const staleKeys = (await response.json().catch(() => null))?.stale.map((staleIndex) => items[staleIndex]?.key).filter((key) => typeof key === "string");
+-						if (staleKeys?.length) await this.state.storage.delete(staleKeys);
++						const result = await response.json().catch(() => null);
++						const staleKeys = result?.stale.map((staleIndex) => items[staleIndex]?.key).filter((key) => typeof key === "string");
++						if (staleKeys?.length) {
++							await this.state.storage.delete(staleKeys);
++						}
+ 					}
+ 				}
+ 			}
+@@ -278,8 +385,12 @@ function createLiveDurableObject() {
+ 		async pruneAllSubscribers() {
+ 			const rows = await this.state.storage.list({ prefix: "sub:" });
+ 			const staleKeys = await this.findStaleSubscriberKeys([...rows], { deliveryAttemptTimeoutMs: 1500 });
+-			if (staleKeys.length > 0) await this.state.storage.delete(staleKeys);
+-			if (rows.size > staleKeys.length) await this.schedulePruneAlarm();
++			if (staleKeys.length > 0) {
++				await this.state.storage.delete(staleKeys);
++			}
++			if (rows.size > staleKeys.length) {
++				await this.schedulePruneAlarm();
++			}
+ 		}
+ 		async findStaleSubscriberKeys(entries, limits) {
+ 			const grouped = groupByConnection(entries);
+@@ -292,10 +403,14 @@ function createLiveDurableObject() {
+ 					body: JSON.stringify({ subscriptions: items.map((item) => item.row) })
+ 				}, limits.deliveryAttemptTimeoutMs)));
+ 				for (const [index, outcome] of responses.entries()) {
+-					if (outcome.status === "rejected") throw outcome.reason;
++					if (outcome.status === "rejected") {
++						throw outcome.reason;
++					}
+ 					const response = outcome.value;
+ 					const items = batch[index][1];
+-					if (!response) continue;
++					if (!response) {
++						continue;
++					}
+ 					if (response.status === 410 || response.status === 404) {
+ 						staleKeys.push(...items.map((item) => item.key));
+ 						continue;
+@@ -304,7 +419,9 @@ function createLiveDurableObject() {
+ 						const result = await response.json().catch(() => null);
+ 						for (const staleIndex of result?.stale ?? []) {
+ 							const key = items[staleIndex]?.key;
+-							if (key) staleKeys.push(key);
++							if (key) {
++								staleKeys.push(key);
++							}
+ 						}
+ 					}
+ 				}
+@@ -348,13 +465,24 @@ function controlBatchError(code, message, status) {
+ 		}
+ 	}, { status });
+ }
+-function activeSubscriptionCount(connection) {
+-	let count = 0;
+-	for (const subscription of connection.subscriptions.values()) if (subscription.active) count++;
+-	return count;
++function invalidatePending(connection, id) {
++	for (const pending of connection.pending.values()) {
++		if (pending.id === id) {
++			pending.active = false;
++		}
++	}
++}
++function activeSubscriptionIds(connection) {
++	return new Set([...connection.subscriptions.values(), ...connection.pending.values()].filter((subscription) => subscription.active).map((subscription) => subscription.id));
+ }
+ function isStaleSubscriber(row, connection) {
+-	if (row.generation !== connection.generation) return true;
++	if (row.generation !== connection.generation) {
++		return true;
++	}
++	const pending = connection.pending.get(row.revision);
++	if (pending?.active && pending.id === row.subscriptionId && pending.topicKey === row.topicKey) {
++		return false;
++	}
+ 	const subscription = connection.subscriptions.get(row.subscriptionId);
+ 	return !subscription || !subscription.active || subscription.revision !== row.revision;
+ }
+@@ -362,13 +490,13 @@ function liveEvent(subscriptionId, message) {
+ 	return {
+ 		subscriptionId,
+ 		topic: message.topic,
+-		...message.type !== void 0 && { type: message.type },
+-		...message.eventId !== void 0 && { eventId: message.eventId },
++		...message.type !== undefined && { type: message.type },
++		...message.eventId !== undefined && { eventId: message.eventId },
+ 		data: message.data
+ 	};
+ }
+ function groupByConnection(entries) {
+-	const grouped = /* @__PURE__ */ new Map();
++	const grouped = new Map();
+ 	for (const [key, row] of entries) {
+ 		const list = grouped.get(row.connectionId) ?? [];
+ 		list.push({
+@@ -403,7 +531,9 @@ async function fetchWithTimeout(stub, input, init, timeoutMs) {
+ 	} catch {
+ 		return null;
+ 	} finally {
+-		if (timeout) clearTimeout(timeout);
++		if (timeout) {
++			clearTimeout(timeout);
++		}
+ 	}
+ }
+ function withoutLimits(row) {
+@@ -416,5 +546,3 @@ function subscriberPrefix(streamId, topicKey) {
+ function subscriberKey(row) {
+ 	return `${subscriberPrefix(row.streamId, row.topicKey)}${row.connectionId}:${row.subscriptionId}:${row.generation}:${row.revision}`;
+ }
+-//#endregion
+-export { createLiveDurableObject };
 diff --git a/dist/runtime/ws.mjs b/dist/runtime/ws.mjs
 index 683853f44c8e88ea38c5f22083f0ebdc630fefa8..05b3eec708be9070f42c8aa4fe7b13400966d8bb 100644
 --- a/dist/runtime/ws.mjs

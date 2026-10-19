@@ -1,3 +1,4 @@
+import { newChecklistRooms } from './live-room.mjs';
 // Physical owner and gateway loss through the native checklist browser client.
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -43,7 +44,7 @@ try {
   await page.getByRole('button', { name: 'Add item', exact: true }).click();
   await expect(status).toHaveText('Connected · Revision 1 · 0 pending');
   const observed = await states();
-  const candidates = observed.flatMap(s => s.state.residents.filter(id => !known.has(id)).map(id => ({ host: s.host, id })));
+  const candidates = newChecklistRooms(observed, known);
   assert.equal(candidates.length, 1, 'Exactly one new room must identify the owner; run without concurrent fixture traffic');
   const owner = candidates[0];
   assert.ok(observed.find(s => s.host === owner.host).state.published.includes(owner.id));

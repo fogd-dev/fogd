@@ -1,3 +1,4 @@
+import { newChecklistRooms } from './live-room.mjs';
 // An already-loaded v1 native client keeps its socket while approval replaces handlers.
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -48,7 +49,7 @@ try {
   await expect(status).toHaveText('Connected · Revision 1 · 0 pending');
   const firstAck = await page.evaluate(()=>window.messages.find(m=>m.type==='ack'));
   if(idleMode || pauseMode) {
-    const cells=(await runtimeStates()).flatMap(s=>s.state.residents.filter(id=>!known.has(id)).map(id=>({host:s.host,id})));
+    const cells=newChecklistRooms(await runtimeStates(), known);
     assert.equal(cells.length,1);
     if(pauseMode) pauseGate = await prepareRoutePause(probe, page, cells[0]);
     if(idleMode) idleEvidence={cell:cells[0],activeAt:Date.now()};

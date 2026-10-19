@@ -350,5 +350,6 @@ qualifies preserved-socket updates, including after idle eviction; upstream 0.6.
 still fails that gate. [Route-pause checks](docs/evidence/m11b-route-pause.json) confirm
 new connections are refused during approval while an established socket commits
 an edit. An [experimental SSE observer](examples/checklist/README.md#experimental-sse-observer)
-passes hints and reconnect snapshots; an upstream registration race still blocks
-SSE acceptance. Ownership moves and stopped recovery also remain open.
+passes hints, reconnect snapshots and deployment replacement with an explicit
+[Void registration patch](docs/patches/void-live-registration.md). Publication-failure
+and cross-app SSE isolation checks remain open. Ownership moves and stopped recovery also remain open.

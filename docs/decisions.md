@@ -1067,3 +1067,30 @@ missed state, without claiming replay. No awaited hint deadline holds up the nex
 room operation. This does not solve the separate upstream registration race found
 by review; SSE qualification stays open until that race is addressed. A lower
 snapshot after reconnect requires an explicit reload accepting restored state.
+
+## ADR 042: retain pending live registrations until their outcome is known
+
+**Context.** A source-level reproduction confirms that Void can delete a subscriber
+row during registration and then report success. Ordinary browser reconnect checks
+do not cover that interleaving. A concurrent topic-capacity test also admits two
+registrations into one slot when capacity checks wait on another object.
+
+**Options.** Poll snapshots to hide missed notifications; relax stale-row cleanup;
+install the new subscription optimistically; or track pending rows separately.
+Polling leaves the protocol error and changes the live API's operating cost.
+Relaxed cleanup retains abandoned rows. Optimistic replacement can destroy the
+previous subscription before a failed replacement is known.
+
+**Decision.** Apply a labelled, version-pinned pending-registration patch. Allocate
+monotonic revisions before the first await, count pending ids against limits, guard
+completion against supersession and connection changes, and serialize topic
+registration across outbound capacity checks. Keep strict cleanup for other rows.
+The same tests run against source and the installed artifact. The upstream source
+patch and generated package patch are both retained.
+
+**Consequences.** fogd maintains another explicit upstream candidate until an
+upstream release replaces it. The patch preserves native Void APIs, but cannot
+resolve ambiguous remote outcomes: after a control error, clients must resubscribe
+or unsubscribe. Concurrent raw requests for the same id use most-recently-started
+semantics; a failing winner can leave that id unsubscribed. The
+[patch note](patches/void-live-registration.md) describes regeneration and evidence.

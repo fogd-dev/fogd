@@ -1,21 +1,14 @@
 // Execute upstream methods with an in-memory storage/transport seam and delayed registration reply.
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { stripTypeScriptTypes } from 'node:module';
-const path = process.argv[2]; assert.ok(path, 'Supply upstream runtime/live-server.ts');
-const source = (await readFile(path, 'utf8')).replace(/^import[\s\S]*?from '[^']+';\n/gm, '')
-  .replace(/constructor\(\s*public readonly state: DurableObjectState,\s*public readonly env: LiveDurableObjectEnv,\s*\) \{\}/, 'constructor(state, env) { this.state=state; this.env=env; }');
-const stubs = `const topicDigest=async(_s,t)=>t,internalUrl=p=>'http://live'+p;
-const connectionInstanceName=(_s,c)=>c,topicInstanceName=(_s,t)=>t,__getLiveBindingName=()=> 'LIVE';
-const eventStream=()=>{throw Error('connect is outside this seam')};\n`;
-const js = stripTypeScriptTypes(stubs + source, { mode: 'strip', sourceMap: false });
-const { createLiveDurableObject } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'));
+import { loadSource } from './void-live-probe/harness.mjs';
+const path = process.argv[2]; assert.ok(path, 'Supply upstream runtime/live-server.ts or installed live-server.mjs');
+const createLiveDurableObject = await loadSource(path);
 const rows = new Map();
 const storage = { list: async ({prefix}) => new Map([...rows].filter(([k])=>k.startsWith(prefix))), put: async (k,v)=>rows.set(k,v), delete: async keys=>{for(const k of Array.isArray(keys)?keys:[keys])rows.delete(k);}, setAlarm: async()=>{} };
 const Class = createLiveDurableObject(), connection = new Class({storage},{}), topic = new Class({storage},{});
 const limits = {maxSubscriptionsPerConnection:8,maxSubscriptionsPerTopic:8,maxQueuedEventsPerConnection:8,maxEncodedEventSize:4096,deliveryAttemptTimeoutMs:1000};
 const received=[];
-connection.connection = {stream:{send:async event=>received.push(event)},abort:new AbortController(),owner:null,generation:1,subscriptions:new Map(),writeChain:Promise.resolve(),queued:0,limits};
+connection.connection = {stream:{send:async event=>received.push(event)},abort:new AbortController(),owner:null,generation:1,subscriptions:new Map(),pending:new Map(),writeChain:Promise.resolve(),queued:0,limits};
 let release, registered;
 const delayed = new Promise(resolve=>{release=resolve;}), inserted=new Promise(resolve=>{registered=resolve;});
 connection.topicStub=()=>({fetch:async(url,init)=>{

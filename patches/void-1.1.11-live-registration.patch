@@ -1,0 +1,305 @@
+diff --git a/packages/void/src/runtime/live-server.ts b/packages/void/src/runtime/live-server.ts
+index f42e4a1..db7a991 100644
+--- a/packages/void/src/runtime/live-server.ts
++++ b/packages/void/src/runtime/live-server.ts
+@@ -86,6 +86,7 @@ type ActiveConnection = {
+   owner: string | null;
+   generation: number;
+   subscriptions: Map<string, ActiveSubscription>;
++  pending: Map<number, ActiveSubscription>;
+   writeChain: Promise<void>;
+   queued: number;
+   limits: LiveLimits;
+@@ -108,6 +109,8 @@ const textEncoder = new TextEncoder();
+ export function createLiveDurableObject(): LiveDurableObjectClass {
+   class VoidLiveStreamDurableObject implements LiveDurableObjectInstance {
+     private connection: ActiveConnection | null = null;
++    private nextSubscriptionRevision = 0;
++    private registerChain: Promise<void> = Promise.resolve();
+     private publishChain: Promise<void> = Promise.resolve();
+ 
+     constructor(
+@@ -133,7 +136,7 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+         return this.check((await request.json()) as StaleCheckRequest);
+       }
+       if (pathname === '/register') {
+-        return this.register((await request.json()) as SubscriberRow & { limits: LiveLimits });
++        return this.enqueueRegister(request);
+       }
+       if (pathname === '/unregister') {
+         return this.unregister((await request.json()) as Partial<SubscriberRow>);
+@@ -164,6 +167,9 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+     private async connect(message: ConnectRequest): Promise<Response> {
+       const previous = this.connection;
+       if (previous) {
++        for (const subscription of previous.pending.values()) {
++          subscription.active = false;
++        }
+         const active = [...previous.subscriptions.values()].filter((sub) => sub.active);
+         for (const subscription of previous.subscriptions.values()) {
+           subscription.active = false;
+@@ -185,12 +191,14 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+           for (const subscription of subscriptions.values()) {
+             subscription.active = false;
+           }
++          const pending = new Map<number, ActiveSubscription>();
+           this.connection = {
+             stream,
+             abort,
+             owner: message.owner,
+             generation,
+             subscriptions,
++            pending,
+             writeChain: Promise.resolve(),
+             queued: 0,
+             limits: message.limits,
+@@ -199,6 +207,9 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+             await stream.comment('connected');
+             await stream.closed;
+           } finally {
++            for (const subscription of pending.values()) {
++              subscription.active = false;
++            }
+             const active = [...subscriptions.values()].filter(
+               (sub) => sub.active && sub.generation === generation,
+             );
+@@ -231,43 +242,74 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+       const results: Array<LiveControlOperationResult> = [];
+       for (const operation of message.operations) {
+         if (operation.kind === 'unsubscribe') {
++          invalidatePending(connection, operation.id);
+           const existing = connection.subscriptions.get(operation.id);
++          connection.subscriptions.delete(operation.id);
+           if (existing) {
+             existing.active = false;
+-            await this.unregisterTopic(message.streamId, message.connectionId, existing);
+-            connection.subscriptions.delete(operation.id);
++            await this.unregisterTopic(message.streamId, message.connectionId, existing).catch(
++              () => {},
++            );
+           }
+           results.push({ ok: true, kind: 'unsubscribe', id: operation.id });
+-          continue;
++        } else {
++          results.push(await this.subscribe(connection, message, operation));
+         }
++      }
+ 
+-        if (
+-          !connection.subscriptions.has(operation.id) &&
+-          activeSubscriptionCount(connection) >= message.limits.maxSubscriptionsPerConnection
+-        ) {
+-          results.push({
+-            ok: false,
+-            kind: 'subscribe',
+-            id: operation.id,
+-            error: { code: 'SUBSCRIPTION_LIMIT', message: 'live: subscription limit reached.' },
+-          });
+-          continue;
+-        }
++      return Response.json({
++        accepted: true,
++        connectionId: message.connectionId,
++        results,
++      } satisfies LiveControlResponse);
++    }
+ 
+-        const topicKey = await topicDigest(message.streamId, operation.topic);
+-        const existing = connection.subscriptions.get(operation.id);
+-        const revision = (existing?.revision ?? 0) + 1;
++    private async subscribe(
++      connection: ActiveConnection,
++      message: ControlRequest,
++      operation: Extract<LiveControlOperation, { kind: 'subscribe' }>,
++    ): Promise<LiveControlOperationResult> {
++      const fail = (code: LiveControlErrorCode, message: string): LiveControlOperationResult => ({
++        ok: false,
++        kind: 'subscribe',
++        id: operation.id,
++        error: { code, message },
++      });
++      const activeIds = activeSubscriptionIds(connection);
++      if (
++        !activeIds.has(operation.id) &&
++        activeIds.size >= message.limits.maxSubscriptionsPerConnection
++      ) {
++        return fail('SUBSCRIPTION_LIMIT', 'live: subscription limit reached.');
++      }
++      // Reserve before the first await: later control operations may overtake us.
++      invalidatePending(connection, operation.id);
++      const pending: ActiveSubscription = {
++        id: operation.id,
++        topic: operation.topic,
++        topicKey: '',
++        generation: connection.generation,
++        revision: ++this.nextSubscriptionRevision,
++        active: true,
++      };
++      connection.pending.set(pending.revision, pending);
++      let installed = false;
++      try {
++        pending.topicKey = await topicDigest(message.streamId, operation.topic);
++        if (!this.canInstall(connection, pending)) {
++          return fail('CONNECTION_CLOSED', 'live: subscription superseded or connection closed.');
++        }
+         const row: SubscriberRow = {
+           streamId: message.streamId,
+-          topic: operation.topic,
+-          topicKey,
++          topic: pending.topic,
++          topicKey: pending.topicKey,
+           connectionId: message.connectionId,
+-          subscriptionId: operation.id,
+-          generation: connection.generation,
+-          revision,
++          subscriptionId: pending.id,
++          generation: pending.generation,
++          revision: pending.revision,
+           lastSeenAt: Date.now(),
+         };
+-        const response = await this.topicStub(message.streamId, topicKey).fetch(
++        const response = await this.topicStub(message.streamId, pending.topicKey).fetch(
+           internalUrl('/register'),
+           {
+             method: 'POST',
+@@ -275,40 +317,44 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+           },
+         );
+         if (!response.ok) {
+-          results.push({
+-            ok: false,
+-            kind: 'subscribe',
+-            id: operation.id,
+-            error:
+-              response.status === 409
+-                ? { code: 'TOPIC_FULL', message: 'live: topic subscription limit reached.' }
+-                : { code: 'INTERNAL_ERROR', message: await response.text() },
+-          });
+-          continue;
++          return response.status === 409
++            ? fail('TOPIC_FULL', 'live: topic subscription limit reached.')
++            : fail('INTERNAL_ERROR', await response.text());
+         }
+-
++        if (!this.canInstall(connection, pending)) {
++          return fail('CONNECTION_CLOSED', 'live: subscription superseded or connection closed.');
++        }
++        const existing = connection.subscriptions.get(operation.id);
++        connection.subscriptions.set(operation.id, pending);
++        installed = true;
++        connection.pending.delete(pending.revision);
+         if (existing) {
+           existing.active = false;
+           await this.unregisterTopic(message.streamId, message.connectionId, existing).catch(
+             () => {},
+           );
+         }
+-        connection.subscriptions.set(operation.id, {
+-          id: operation.id,
+-          topic: operation.topic,
+-          topicKey,
+-          generation: connection.generation,
+-          revision,
+-          active: true,
+-        });
+-        results.push({ ok: true, kind: 'subscribe', id: operation.id, topic: operation.topic });
++        return { ok: true, kind: 'subscribe', id: operation.id, topic: operation.topic };
++      } finally {
++        connection.pending.delete(pending.revision);
++        if (!installed) {
++          pending.active = false;
++          if (pending.topicKey) {
++            await this.unregisterTopic(message.streamId, message.connectionId, pending).catch(
++              () => {},
++            );
++          }
++        }
+       }
++    }
+ 
+-      return Response.json({
+-        accepted: true,
+-        connectionId: message.connectionId,
+-        results,
+-      } satisfies LiveControlResponse);
++    private canInstall(connection: ActiveConnection, pending: ActiveSubscription): boolean {
++      return (
++        this.connection === connection &&
++        !connection.abort.signal.aborted &&
++        pending.active &&
++        (connection.subscriptions.get(pending.id)?.revision ?? -1) < pending.revision
++      );
+     }
+ 
+     private async deliver(message: DeliveryRequest): Promise<Response> {
+@@ -369,11 +415,33 @@ export function createLiveDurableObject(): LiveDurableObjectClass {
+       return Response.json({ stale } satisfies StaleCheckResponse);
+     }
+ 
++    private enqueueRegister(request: Request): Promise<Response> {
++      // Capacity checks may call other objects. Keep registration mutations ordered
++      // across those awaits without blocking publication or stale-row cleanup.
++      const run = this.registerChain.then(async () =>
++        this.register((await request.json()) as SubscriberRow & { limits: LiveLimits }),
++      );
++      this.registerChain = run.then(
++        () => {},
++        () => {},
++      );
++      return run;
++    }
++
+     private async register(row: SubscriberRow & { limits: LiveLimits }): Promise<Response> {
+       const prefix = subscriberPrefix(row.streamId, row.topicKey);
+       const current = await this.state.storage.list<SubscriberRow>({ prefix });
+       const deletedKeys = new Set<string>();
+       for (const [key, value] of current) {
++        if (
++          value.connectionId === row.connectionId &&
++          (value.generation > row.generation ||
++            (value.generation === row.generation &&
++              value.subscriptionId === row.subscriptionId &&
++              value.revision >= row.revision))
++        ) {
++          return Response.json({ ok: true });
++        }
+         if (value.connectionId === row.connectionId && value.generation < row.generation) {
+           deletedKeys.add(key);
+           continue;
+@@ -590,20 +658,30 @@ function controlBatchError(code: LiveControlErrorCode, message: string, status:
+   return Response.json({ accepted: false, error: { code, message } }, { status });
+ }
+ 
+-function activeSubscriptionCount(connection: ActiveConnection): number {
+-  let count = 0;
+-  for (const subscription of connection.subscriptions.values()) {
+-    if (subscription.active) {
+-      count++;
++function invalidatePending(connection: ActiveConnection, id: string): void {
++  for (const pending of connection.pending.values()) {
++    if (pending.id === id) {
++      pending.active = false;
+     }
+   }
+-  return count;
++}
++
++function activeSubscriptionIds(connection: ActiveConnection): Set<string> {
++  return new Set(
++    [...connection.subscriptions.values(), ...connection.pending.values()]
++      .filter((subscription) => subscription.active)
++      .map((subscription) => subscription.id),
++  );
+ }
+ 
+ function isStaleSubscriber(row: SubscriberRow, connection: ActiveConnection): boolean {
+   if (row.generation !== connection.generation) {
+     return true;
+   }
++  const pending = connection.pending.get(row.revision);
++  if (pending?.active && pending.id === row.subscriptionId && pending.topicKey === row.topicKey) {
++    return false;
++  }
+   const subscription = connection.subscriptions.get(row.subscriptionId);
+   return !subscription || !subscription.active || subscription.revision !== row.revision;
+ }

@@ -1,3 +1,4 @@
+import { newChecklistRooms } from './live-room.mjs';
 // Native Void socket preservation across actual local celld idle eviction.
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -46,7 +47,7 @@ try {
   await page.getByRole('button', { name: 'Add item', exact: true }).click();
   await expect(status).toHaveText('Connected · Revision 1 · 0 pending');
   const active = await states();
-  const candidates = active.flatMap(s => s.state.residents.filter(id => !known.has(id)).map(id => ({host:s.host,id})));
+  const candidates = newChecklistRooms(active, known);
   assert.equal(candidates.length, 1, 'Run on an otherwise idle fixture');
   const owner = candidates[0], idleAt = Date.now();
   let evicted;

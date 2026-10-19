@@ -114,8 +114,9 @@ not prove attachment reconstruction in a fresh isolate. Non-owning ingress failu
 An explicit [celld patch candidate](patches/celld-preaccept-attachment.md) now passes
 preserved-socket updates after idle eviction. Upstream 0.6.2 remains the default and
 fails that gate. Route pause/new upgrades also pass on the candidate: existing
-sockets keep writing while new connections are refused. The experimental SSE observer passes hints and reconnect snapshots, but a source-level
-registration race is confirmed. Next: its reviewed upstream patch and SSE cancellation,
+sockets keep writing while new connections are refused. The experimental SSE observer passes hints, reconnect snapshots and deployment
+cancellation with a version-pinned Void registration patch. Next: real SSE
+publication failure and cross-app isolation,
 ownership moves and stopped
 recovery; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

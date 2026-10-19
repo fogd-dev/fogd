@@ -222,10 +222,10 @@ or resubscription also fetches a snapshot. Missed notifications are not replayed
 The [initial evidence](../../docs/evidence/m11b-sse-initial.json) covers native hints,
 gateway restart with a missed edit, and a finite idle observation.
 
-This is not a qualified live-update feature yet. A confirmed upstream registration
-race can silently remove a subscription; reload the page for current state. The
-[reviewed patch direction](../../docs/reviews/m11b-sse-race-claude.md) and deployment
-cancellation tests remain open. No sign-in is provided, and anonymous readers can
+This is not a fully qualified live-update feature yet. The
+[version-pinned registration patch](../../docs/patches/void-live-registration.md)
+fixes the confirmed race, and a deployment cancellation/reconnection check passes.
+Real publication-failure and cross-app SSE isolation checks remain open. No sign-in is provided, and anonymous readers can
 consume the topic's subscription capacity. Publishing is best effort and never
 changes an operation's durable result.
 
@@ -255,6 +255,26 @@ node scripts/void-live-registration-regression.mjs \
   .upstream/void/packages/void/src/runtime/live-server.ts
 ```
 
-The assertion fails on the pinned unpatched source. The script uses actual server
+The assertion fails on the pinned unpatched source and passes with the candidate. The script uses actual server
 methods with in-memory storage and delayed transport, so it isolates the race
 without claiming a celld scheduling reproduction.
+
+
+### SSE across a compatible deployment
+
+Use the opt-in celld candidate required by the nested WebSocket update probe.
+In the disposable fixture's resolved Compose file, set
+`CELLD_DEPLOY_MAX_AGE_S` to `"5"` in both `slot-2-a` and `slot-2-b` environments,
+then run `fogd up` with that fixture environment to apply the setting. Reset v1
+with `live-board.mjs` and use a fresh output directory:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-sse-update.mjs .fogd/sse-update
+```
+
+The probe verifies the setting in both running containers, approves the v2 artifact
+through the ordinary CLI, and observes SSE error/reopen, a v2 snapshot after
+registration, and a later revision hint. It also runs the preserved-WebSocket
+update check. The finite result does not promise a cancellation latency. Restore
+the fixture's original setting and run `fogd up` after this dedicated drill.

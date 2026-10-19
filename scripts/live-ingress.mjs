@@ -1,3 +1,4 @@
+import { newChecklistRooms } from './live-room.mjs';
 // Select a non-owning ingress through workerd, then kill only that replica.
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -40,7 +41,7 @@ try {
   await page.getByRole('button', { name: 'Add item', exact: true }).click();
   await expect(status).toHaveText('Connected · Revision 1 · 0 pending');
   const active = await states();
-  const candidates = active.flatMap(s => s.state.residents.filter(id => !known.has(id)).map(id => ({host:s.host,id})));
+  const candidates = newChecklistRooms(active, known);
   assert.equal(candidates.length, 1, 'Use an otherwise idle fixture');
   const owner = candidates[0], ingress = probe.slot.nodes.find(host => host !== owner.host);
   const config = structuredClone(probe.config), slots = JSON.parse(config.services.workerd.environment.FOGD_SLOTS);
