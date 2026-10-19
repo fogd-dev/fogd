@@ -62,11 +62,12 @@ export class Backend {
   }
   async bootstrap(slot, artifact, resources) {
     const source = JSON.parse(await readFile(join(artifact, 'wrangler.json'), 'utf8'));
-    const dir = await mkdtemp(join(tmpdir(), 'fogd-queue-bootstrap-'));
+    const dir = await mkdtemp(join(tmpdir(), 'fogd-bootstrap-'));
     try {
       const config = { name: resources.script, main: 'index.js', no_bundle: true,
         ...(source.compatibility_date ? { compatibility_date: source.compatibility_date } : {}),
-        d1_databases: resources.d1, queues: { producers: resources.queues.producers } };
+        d1_databases: resources.d1,
+        ...(resources.queues ? { queues: { producers: resources.queues.producers } } : {}) };
       await writeFile(join(dir, 'wrangler.json'), JSON.stringify(config), { mode: 0o600 });
       await writeFile(join(dir, 'index.js'), "export default {fetch(){return new Response('Bootstrap',{status:503})}};\n", { mode: 0o600 });
       return await this.publish(slot, dir);

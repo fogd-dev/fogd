@@ -1174,3 +1174,44 @@ before returning to the source. Acknowledgments outside the snapshot are deliber
 lost in the second scenario. Revision-only comparison cannot detect divergent
 histories with equal or higher revisions; lineage detection remains outside this
 example's contract. Existing offline retirement behavior stays unchanged.
+
+
+## ADR 046: preserve native cron execution with durable dispatch controls
+
+**Context.** Native celld timers fire when an app is published, before fogd's first
+nonqueue migration completes. HTTP route pauses do not stop those timers. Fleet
+stops interrupt HTTP and live sessions and do not survive an ordinary Compose
+start as a durable scheduling policy. The native timer probe passes, but the
+reviewers identified retry-identity and recovery issues that need qualification.
+
+**Options.** Keep admission closed; admit native crons with full-fleet stop controls;
+add a small native cron control patch; or build a fogd scheduler and bridge. Closed
+admission preserves current guarantees but cannot deliver scheduled apps. Fleet
+stops preserve upstream code but burden operators and interrupt unrelated app
+functions. A second scheduler gives fogd direct control at the cost of another
+execution and portability contract. A native patch retains the existing scheduler
+but makes fogd responsible for maintaining and qualifying that patch.
+
+**Decision.** Use native Void scheduling and celld execution, with an explicitly
+labelled native control patch before admission. Generalize the app-free bootstrap
+for D1-only provisioning. Establish a durable cron hold before publishing user
+code, preserve it across adoption/restart, and release only after migrations and
+runtime readiness. Expose independent schedule pause/status/resume. Investigate
+and correct retry occurrence identity across eviction without adding a backlog of
+every missed tick. Use the authenticated reserved-runtime transport for controls;
+user routes must not gain access to them. No custom fogd scheduler or synthetic
+Void HTTP trigger is selected.
+
+**Consequences.** The patch creates a maintenance and upstreaming obligation. This
+is preferable to changing installation start semantics or requiring operators to
+stop HTTP and live sessions to control timers. Pause blocks future dispatch; it
+does not automatically cancel or drain in-flight work. Compatible migration and
+handler overlap remain explicit requirements. Qualified backups must capture a
+confirmed held schedule, and restore must verify that contract before starting
+replicas; setting a flag after boot is too late. Existing uncontrolled snapshots
+need refusal or a separately qualified offline conversion. Resume skips paused
+historical occurrences and arms the next future occurrence. Retry persistence
+must retain the original occurrence and failed expression identity, while keeping
+native retry limits and the next-occurrence policy. These are implementation and
+qualification obligations, not current support claims. Workflows and general DO
+alarm governance remain open. See the [review response](reviews/m11c-design-response.md).
