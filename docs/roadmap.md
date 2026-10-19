@@ -101,8 +101,9 @@ Queued Docker retirement now has [isolation evidence](evidence/m11a-queue-retire
 and [source-preservation/zero-live restore evidence](evidence/m11a-queue-retirement-complete.json).
 The [admission foundation](queue-admission.md) now has normal scoped CLI upload,
 pending-only backup/restore, exact approval, and derived-name dispatch evidence.
-Next: additive update/overlap, queued recovery and retirement of canonical artifacts,
-and browser acceptance before default enablement. The native Void imports fixture
+Canonical artifacts now pass duplicate pending-work recovery and direct gateway
+browser acceptance. Next: additive update/overlap and retirement of canonical
+artifacts before a reviewed decision on default enablement. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be

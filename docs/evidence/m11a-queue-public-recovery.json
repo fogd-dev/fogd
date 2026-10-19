@@ -1,0 +1,112 @@
+{
+  "source": "fogd-m11a-public-1792438511400",
+  "target": "fogd-m11a-public-recovery",
+  "app": "imports-public",
+  "queueName": "imports-public-imports",
+  "pendingDuplicateMessages": 2,
+  "snapshotReceipt": "dd007a34-504d-4e83-b5ff-9d41205a271c",
+  "startupMode": "all",
+  "reviewChanged": true,
+  "initialQueue": {
+    "backlogBytes": 122,
+    "backlogCount": 2,
+    "oldestMessageTimestamp": 1792439629231,
+    "paused": true,
+    "stored": 2
+  },
+  "recovery": {
+    "id": "d0e6aa3b-cb16-4ebb-a9fd-86447aa26c6d",
+    "review": "b371fd24c65ca6239270cf2f367c9cb8ddebd82ad928096cc741652a32d22698",
+    "status": "pending",
+    "diagnosis": null,
+    "checkError": null,
+    "checkedAt": 1792439706048,
+    "observation": {
+      "paused": true,
+      "stored": 2,
+      "backlogCount": 2,
+      "backlogBytes": 122,
+      "oldestMessageTimestamp": 1792439629231
+    },
+    "firstObservation": {
+      "at": 1792439706048,
+      "observed": {
+        "paused": true,
+        "stored": 2,
+        "backlogCount": 2,
+        "backlogBytes": 122,
+        "oldestMessageTimestamp": 1792439629231
+      }
+    }
+  },
+  "job": {
+    "id": "public-recovery-1502193b-8098-4280-8d95-362724285975",
+    "input_hash": "17f58aa37cd5261b1e76db53f98e088c996bbf7672969be04044a656f06f9c72",
+    "mode": "normal",
+    "delay_ms": 0,
+    "status": "complete",
+    "attempts": 1,
+    "error": null,
+    "created_at": "2026-10-19 19:53:49",
+    "results": [
+      {
+        "job_id": "public-recovery-1502193b-8098-4280-8d95-362724285975",
+        "position": 0,
+        "label": "DURABLE"
+      },
+      {
+        "job_id": "public-recovery-1502193b-8098-4280-8d95-362724285975",
+        "position": 1,
+        "label": "QUEUE"
+      }
+    ]
+  },
+  "finalDelivery": {
+    "app": "imports-public",
+    "schema": 1,
+    "queue": "imports-public-imports",
+    "desired": "paused",
+    "hold": null,
+    "observed": "paused",
+    "observedAt": "2026-10-19T19:55:07.514Z",
+    "operation": null,
+    "effective": "paused",
+    "bootstrap": "application",
+    "recoveryError": null,
+    "recovery": {
+      "id": "d0e6aa3b-cb16-4ebb-a9fd-86447aa26c6d",
+      "review": "b371fd24c65ca6239270cf2f367c9cb8ddebd82ad928096cc741652a32d22698",
+      "status": "acknowledged",
+      "diagnosis": null,
+      "checkError": null,
+      "checkedAt": 1792439706209,
+      "observation": {
+        "paused": true,
+        "stored": 2,
+        "backlogCount": 2,
+        "backlogBytes": 122,
+        "oldestMessageTimestamp": 1792439629231
+      },
+      "firstObservation": {
+        "at": 1792439706048,
+        "observed": {
+          "paused": true,
+          "stored": 2,
+          "backlogCount": 2,
+          "backlogBytes": 122,
+          "oldestMessageTimestamp": 1792439629231
+        }
+      }
+    },
+    "active": {
+      "deployment": "6f69256d-e1ec-4683-93b8-3fa253409ca7",
+      "digest": "3764cc5cd8cc6c909e82de145bc53b5ea7e69c58a9c31cdcb14fe360857f7624"
+    },
+    "operationAllowed": true,
+    "resumeAllowed": true
+  },
+  "activeDeployment": {
+    "deployment": "6f69256d-e1ec-4683-93b8-3fa253409ca7",
+    "digest": "3764cc5cd8cc6c909e82de145bc53b5ea7e69c58a9c31cdcb14fe360857f7624"
+  }
+}

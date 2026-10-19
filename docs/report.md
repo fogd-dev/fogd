@@ -696,8 +696,8 @@ or deployment before approval, pending-only backup/restore, exact approval, Void
 physical-name dispatch, failures and explicit retry without duplicate business rows.
 Idle celld wake-format objects are runtime metadata; the preapproval check inspects
 app ownership and deployment objects rather than requiring an entirely empty prefix.
-Remaining integrated acceptance: additive updates and overlap, queued recovery and
-retirement of canonical artifacts, browser behavior, and default enablement.
+Remaining integrated acceptance: additive updates and overlap, retirement of
+canonical artifacts, and a reviewed decision on default enablement.
 
 
 The [failed-claim Docker drill](evidence/m11a-queue-public-claim.json) also passes:
@@ -715,3 +715,21 @@ under a previously queued app name leaves superseded, rejected, and released que
 history recoverable. Backup succeeds and prepares only the actual live queue.
 All 261 tests, builds, and quality checks pass. The [two-review response](reviews/m11a-queue-admission-code-response.md)
 records the fixes and remaining full application acceptance work.
+
+
+## M11a canonical pending-work recovery and browser acceptance
+
+The [pending-work drill](evidence/m11a-queue-public-recovery.json) submitted the same
+job twice through workerd while the ordinarily deployed app was operator-paused.
+Both messages survived a complete stopped backup and fresh simultaneous startup.
+The restored app returned 503 until explicit recovery acknowledgment; acknowledgment
+preserved the pause. Explicit resume drained both messages, leaving exactly two
+unique result rows. This verifies the example's idempotent database writes, not a
+general guarantee about external effects. The recovery review changed after startup;
+the first acknowledgment was refused and the updated review was acknowledged.
+
+The [browser drill](evidence/m11a-queue-public-browser.json) used Chromium directly
+through the workerd virtual host, without intercepted requests. Submission, saved
+job URL, reload while paused, one retryable failure, completion, and reload of the
+two results passed with no browser errors. Delivery is paused again. All 261 tests
+and syntax checks passed; queue admission remains opt-in.

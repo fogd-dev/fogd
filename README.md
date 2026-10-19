@@ -328,4 +328,6 @@ The [completion drill](docs/evidence/m11a-queue-retirement-complete.json) compar
 objects with the source and restores an installation containing only retired queues.
 The [normal CLI checkpoint](docs/queue-admission.md) now covers scoped upload,
 pending-only backup/restore, exact approval, derived-name dispatch, and application
-retry. Default admission stays off until the remaining acceptance checks pass.
+retry. The same guide includes duplicate pending-work recovery and direct gateway
+browser checks; both pass for canonical CLI artifacts. Default admission stays off
+until the remaining acceptance checks pass.

@@ -81,8 +81,7 @@ If upload succeeded but the harness stopped before backup, `--submitted` reuses 
 single pending request and verifies its credential scope instead of uploading again.
 
 The remaining acceptance run must exercise additive updates, in-flight compatibility,
-queued recovery and retirement using these canonical artifacts, duplicate delivery, and browser reload
-and recovery. The wider queue policy range and Kubernetes activation remain separate
+and retirement using these canonical artifacts. The wider queue policy range and Kubernetes activation remain separate
 qualification work.
 
 
@@ -100,3 +99,19 @@ admission disabled and retries that pinned approval. It takes another full snaps
 and leaves the source stopped. [History evidence](evidence/m11a-queue-public-history.json)
 records the current image and successful backup. Use this only on the disposable
 qualification fixture.
+
+
+Continue that stopped history fixture with
+`scripts/queue-public-recovery.mjs OUTPUT NEW_PROJECT`, using a fresh project name
+starting with `fogd-m11`. The probe submits two messages for one job through workerd,
+snapshots the paused queue, removes only the source project's containers/network
+while retaining volumes, restores, and verifies acknowledgment plus explicit resume.
+It asserts both messages drain and only two result rows remain. The source must stay
+stopped after recovery; select `OUTPUT/restored/compose.json` and NEW_PROJECT for
+subsequent commands, retaining the same operator environment and ports.
+
+Then run `scripts/queue-public-browser.mjs slot-1 NEW_OUTPUT` against that restored
+fixture. Chromium connects directly to `imports-public.localhost` on the configured
+HTTP port. It checks submission, saved URL, reload, retry, and results through workerd.
+Both probes leave delivery paused. These scripts require the disposable canonical
+fixture with its existing `imports-public` approval, not an arbitrary installation.

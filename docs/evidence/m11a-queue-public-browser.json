@@ -1,0 +1,10 @@
+{
+  "transport": "Chromium direct HTTP through workerd virtual host; no request interception",
+  "savedJob": "a183ea83-013c-41d4-8ef7-8c40ecd50640",
+  "results": [
+    "BROWSER APPLE",
+    "BROWSER PEAR"
+  ],
+  "attempts": 2,
+  "errors": []
+}
