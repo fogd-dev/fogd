@@ -352,5 +352,6 @@ new connections are refused during approval while an established socket commits
 an edit. An [experimental SSE observer](examples/checklist/README.md#experimental-sse-observer)
 passes hints, reconnect snapshots and deployment replacement with an explicit
 [Void registration patch](docs/patches/void-live-registration.md). [Publication-stall and cross-app isolation checks](docs/evidence/m11b-sse-failure.json)
-also pass. Ownership moves and stopped board/receipt recovery remain open; M11b
-is still in progress.
+also pass. [Healthy ownership movement](docs/evidence/m11b-move.json) preserves
+boards and receipts through native reconnects. Stopped board/receipt recovery
+remains open; M11b is still in progress.

@@ -30,7 +30,7 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | D1 database backend | Partial; one DB/app, primary sessions | Yes; primary-only sessions | Partial; client, no DB server | SDK / Drizzle | Yes |
 | SQL-backed Durable Objects | Yes; notebook tested | Yes | Yes; local storage | SDK | Yes |
 | SSE observer | Partial; [registration patch](patches/void-live-registration.md) and update reconnect, publication stall and app isolation pass; broader M11b gates open | Native transport probe passes; lifecycle gates open | Streaming HTTP | `void/live`, transient hints | Yes; streaming HTTP |
-| Native WebSocket rooms | Partial; reconnect/failure tested; preserved updates need the [celld candidate](patches/celld-preaccept-attachment.md) | Partial; 0.6.2 loses pre-accept attachments on handler replacement | Yes; runtime WebSocket API | `defineRoom` / native client | Yes; Workers/DO |
+| Native WebSocket rooms | Partial; reconnect/failure and healthy room movement tested; preserved updates need the [celld candidate](patches/celld-preaccept-attachment.md) | Partial; 0.6.2 loses pre-accept attachments on handler replacement | Yes; runtime WebSocket API | `defineRoom` / native client | Yes; Workers/DO |
 | R2 object storage | Partial; approved additions and browser put/get tested, multipart not portable | Partial; multipart handles process-local | Partial; client needs backend | Storage SDK | Yes |
 | KV | No; adapter rejects it | Yes | Partial; client needs backend | SDK/config | Yes |
 | Queues | Partial; [Docker opt-in](queue-admission.md), default off | Yes | Partial; needs broker | SDK/config | Yes |

@@ -116,8 +116,9 @@ preserved-socket updates after idle eviction. Upstream 0.6.2 remains the default
 fails that gate. Route pause/new upgrades also pass on the candidate: existing
 sockets keep writing while new connections are refused. The experimental SSE observer passes hints, reconnect snapshots and deployment
 cancellation with a version-pinned Void registration patch. Real publication stalls and cross-app SSE isolation also pass in the
-[bounded fault drill](evidence/m11b-sse-failure.json). Next: ownership moves and stopped
-board/receipt recovery; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
+[bounded fault drill](evidence/m11b-sse-failure.json). Healthy hibernated-room
+[ownership movement](evidence/m11b-move.json) also passes with native reconnects.
+Next: stopped board/receipt recovery and the explicit lower-revision scenario; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Remaining live-session qualification and scheduled/workflow lifecycle
 remain open M11 work. The native Void imports fixture

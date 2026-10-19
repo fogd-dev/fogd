@@ -547,3 +547,14 @@ The next review rejected the lease-shape guard: a degraded in-memory log can ret
 an open persisted lease. The drill now verifies later reopened epochs for every
 observed degradation, together with fresh lease epochs and peer membership. Four
 regression tests distinguish actual recovery from unchanged persisted metadata.
+
+
+## M11b native ownership movement
+
+A weight-skewed, explicitly hibernating fleet moved all three tested boards from
+slot 1's first node to its second. The first drill checked one moved board; the
+reviewed drill checks all observed moved boards and persisted owner epochs, direct
+receiver snapshots, receipt replay, process generations and native balance counters.
+The donor's five transferred objects include notification topics. No room alarm or
+SSE observer keeps these boards active. A remaining room on the donor would be an
+unmoved observation, not a passing movement result.

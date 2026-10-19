@@ -310,3 +310,30 @@ The probe restores the canonical gateway configuration and unpauses the node in
 Force-killing the probe can bypass cleanup: run `docker compose -f <fixture-compose>
 -p <fixture-project> unpause slot-2-a slot-2-b`, then `fogd up` with the fixture's
 `FOGD_ENV_FILE` to restore ingress. Do not run this drill on a shared stack.
+
+
+### Healthy room ownership movement
+
+Use the disposable SSE fixture with both checklist apps approved and the opt-in
+celld candidate. From the repository root:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-move.mjs .fogd/live-move
+```
+
+This drill temporarily changes slot 1's idle policy, placement weights, and gateway
+selection. It creates three rooms while balancing is paused, confirms hibernation
+without socket closure, and resumes native balancing. Every observed moved board
+must reconnect, preserve its original operation receipt, and accept a new edit.
+Persisted ownership and receiver reads establish which node serves the board.
+
+The [recorded result](../../docs/evidence/m11b-move.json) has three moved boards,
+each with a 1012 close and native reconnect. The physical socket does not survive
+a move. No SSE observers attach during this drill, and the room defines no alarms.
+Notification topics count toward fleet balancing but are not checklist rooms.
+
+Cleanup resumes balancing and restores the canonical configuration. If the probe
+is forcibly killed, run `fogd up` with the fixture's `FOGD_ENV_FILE` to recreate
+replicas and restore gateway selection; recreation clears the native in-memory
+balance pause. Keep the fixture's bucket and replica volumes.

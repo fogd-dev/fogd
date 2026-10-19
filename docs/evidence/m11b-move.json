@@ -1,0 +1,1129 @@
+{
+  "script": "live-probe",
+  "beforeOwners": [
+    {
+      "room": "move-a7d52011-0ee3-4b6e-b1b8-831152110837",
+      "id": "ChecklistWs:450f6966991de7d27fe9938021f6a64b17cede72112af1913c726efbc8f69fdd",
+      "node": "slot-1-a",
+      "epoch": 1
+    },
+    {
+      "room": "move-7f3c66e5-539f-4d23-b3dc-17865265b3c7",
+      "id": "ChecklistWs:01e2de53e2c60929516d33018728235b52666eeae2cb5dfb2eeba3ec88b92511",
+      "node": "slot-1-a",
+      "epoch": 1
+    },
+    {
+      "room": "move-3dd275a6-e574-446e-bfc3-dece1272d9fa",
+      "id": "ChecklistWs:af01fead18d80522c27d68fbed40bdc4a4c389398afe4a829118e98ad46ca9f5",
+      "node": "slot-1-a",
+      "epoch": 1
+    }
+  ],
+  "movedOwners": [
+    {
+      "room": "move-a7d52011-0ee3-4b6e-b1b8-831152110837",
+      "id": "ChecklistWs:450f6966991de7d27fe9938021f6a64b17cede72112af1913c726efbc8f69fdd",
+      "node": "slot-1-b",
+      "epoch": 3
+    },
+    {
+      "room": "move-7f3c66e5-539f-4d23-b3dc-17865265b3c7",
+      "id": "ChecklistWs:01e2de53e2c60929516d33018728235b52666eeae2cb5dfb2eeba3ec88b92511",
+      "node": "slot-1-b",
+      "epoch": 3
+    },
+    {
+      "room": "move-3dd275a6-e574-446e-bfc3-dece1272d9fa",
+      "id": "ChecklistWs:af01fead18d80522c27d68fbed40bdc4a4c389398afe4a829118e98ad46ca9f5",
+      "node": "slot-1-b",
+      "epoch": 3
+    }
+  ],
+  "afterOwners": [
+    {
+      "room": "move-a7d52011-0ee3-4b6e-b1b8-831152110837",
+      "id": "ChecklistWs:450f6966991de7d27fe9938021f6a64b17cede72112af1913c726efbc8f69fdd",
+      "node": "slot-1-b",
+      "epoch": 3
+    },
+    {
+      "room": "move-7f3c66e5-539f-4d23-b3dc-17865265b3c7",
+      "id": "ChecklistWs:01e2de53e2c60929516d33018728235b52666eeae2cb5dfb2eeba3ec88b92511",
+      "node": "slot-1-b",
+      "epoch": 3
+    },
+    {
+      "room": "move-3dd275a6-e574-446e-bfc3-dece1272d9fa",
+      "id": "ChecklistWs:af01fead18d80522c27d68fbed40bdc4a4c389398afe4a829118e98ad46ca9f5",
+      "node": "slot-1-b",
+      "epoch": 3
+    }
+  ],
+  "resumedAt": 1792450002637,
+  "results": [
+    {
+      "room": "move-a7d52011-0ee3-4b6e-b1b8-831152110837",
+      "id": "ChecklistWs:450f6966991de7d27fe9938021f6a64b17cede72112af1913c726efbc8f69fdd",
+      "initial": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+            "text": "Preserved board 0",
+            "checked": false
+          }
+        ]
+      },
+      "afterReplay": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+            "text": "Preserved board 0",
+            "checked": false
+          }
+        ]
+      },
+      "duplicate": {
+        "type": "ack",
+        "opId": "462c0bb4-aa24-408e-9cbd-0777b62cd506",
+        "revision": 1,
+        "release": "v1"
+      },
+      "snapshot": {
+        "type": "snapshot",
+        "revision": 2,
+        "release": "v1",
+        "items": [
+          {
+            "id": "836d94ae-8857-4dcc-a65d-a955c5fac7dd",
+            "text": "After ownership move",
+            "checked": false
+          },
+          {
+            "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+            "text": "Preserved board 0",
+            "checked": false
+          }
+        ]
+      },
+      "reconnected": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449995353
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995353,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995449,
+          "message": {
+            "type": "ack",
+            "opId": "462c0bb4-aa24-408e-9cbd-0777b62cd506",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995450,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012702,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449995353
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995353,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995449,
+          "message": {
+            "type": "ack",
+            "opId": "462c0bb4-aa24-408e-9cbd-0777b62cd506",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995450,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012702,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014173,
+          "message": {
+            "type": "ack",
+            "opId": "462c0bb4-aa24-408e-9cbd-0777b62cd506",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014174,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014484,
+          "message": {
+            "type": "ack",
+            "opId": "9eead225-6fce-489c-b4e5-31511e2007e7",
+            "revision": 2,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014485,
+          "message": {
+            "type": "snapshot",
+            "revision": 2,
+            "release": "v1",
+            "items": [
+              {
+                "id": "836d94ae-8857-4dcc-a65d-a955c5fac7dd",
+                "text": "After ownership move",
+                "checked": false
+              },
+              {
+                "id": "92dde5b1-d05a-49d1-a979-a2eda1a45f6c",
+                "text": "Preserved board 0",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "room": "move-7f3c66e5-539f-4d23-b3dc-17865265b3c7",
+      "id": "ChecklistWs:01e2de53e2c60929516d33018728235b52666eeae2cb5dfb2eeba3ec88b92511",
+      "initial": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+            "text": "Preserved board 1",
+            "checked": false
+          }
+        ]
+      },
+      "afterReplay": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+            "text": "Preserved board 1",
+            "checked": false
+          }
+        ]
+      },
+      "duplicate": {
+        "type": "ack",
+        "opId": "fb41babe-61bc-42f3-843f-b682550efe78",
+        "revision": 1,
+        "release": "v1"
+      },
+      "snapshot": {
+        "type": "snapshot",
+        "revision": 2,
+        "release": "v1",
+        "items": [
+          {
+            "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+            "text": "Preserved board 1",
+            "checked": false
+          },
+          {
+            "id": "826d4580-b6f7-4513-b4cf-90c2b16bbc03",
+            "text": "After ownership move",
+            "checked": false
+          }
+        ]
+      },
+      "reconnected": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449995791
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995792,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995899,
+          "message": {
+            "type": "ack",
+            "opId": "fb41babe-61bc-42f3-843f-b682550efe78",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995900,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012703,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449995791
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995792,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995899,
+          "message": {
+            "type": "ack",
+            "opId": "fb41babe-61bc-42f3-843f-b682550efe78",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449995900,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012703,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014998,
+          "message": {
+            "type": "ack",
+            "opId": "fb41babe-61bc-42f3-843f-b682550efe78",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450014998,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450015319,
+          "message": {
+            "type": "ack",
+            "opId": "af9f438d-5c5a-40f8-92d8-a7830ba535ca",
+            "revision": 2,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450015319,
+          "message": {
+            "type": "snapshot",
+            "revision": 2,
+            "release": "v1",
+            "items": [
+              {
+                "id": "0ebba3ed-bc6d-441c-919f-0412e8430859",
+                "text": "Preserved board 1",
+                "checked": false
+              },
+              {
+                "id": "826d4580-b6f7-4513-b4cf-90c2b16bbc03",
+                "text": "After ownership move",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "room": "move-3dd275a6-e574-446e-bfc3-dece1272d9fa",
+      "id": "ChecklistWs:af01fead18d80522c27d68fbed40bdc4a4c389398afe4a829118e98ad46ca9f5",
+      "initial": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+            "text": "Preserved board 2",
+            "checked": false
+          }
+        ]
+      },
+      "afterReplay": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+            "text": "Preserved board 2",
+            "checked": false
+          }
+        ]
+      },
+      "duplicate": {
+        "type": "ack",
+        "opId": "1d0df21f-ec40-4d59-a9d3-2e83c58d0573",
+        "revision": 1,
+        "release": "v1"
+      },
+      "snapshot": {
+        "type": "snapshot",
+        "revision": 2,
+        "release": "v1",
+        "items": [
+          {
+            "id": "48ae2edf-ddb3-4bbb-8573-c9562d421223",
+            "text": "After ownership move",
+            "checked": false
+          },
+          {
+            "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+            "text": "Preserved board 2",
+            "checked": false
+          }
+        ]
+      },
+      "reconnected": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449996239
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996239,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996353,
+          "message": {
+            "type": "ack",
+            "opId": "1d0df21f-ec40-4d59-a9d3-2e83c58d0573",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996354,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012705,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "socket": 1,
+          "type": "open",
+          "at": 1792449996239
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996239,
+          "message": {
+            "type": "snapshot",
+            "revision": 0,
+            "release": "v1",
+            "items": []
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996353,
+          "message": {
+            "type": "ack",
+            "opId": "1d0df21f-ec40-4d59-a9d3-2e83c58d0573",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 1,
+          "type": "message",
+          "at": 1792449996354,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 1,
+          "type": "close",
+          "at": 1792450012705,
+          "code": 1012,
+          "reason": "service restart"
+        },
+        {
+          "socket": 2,
+          "type": "open",
+          "at": 1792450013825
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450013825,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450015823,
+          "message": {
+            "type": "ack",
+            "opId": "1d0df21f-ec40-4d59-a9d3-2e83c58d0573",
+            "revision": 1,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450015823,
+          "message": {
+            "type": "snapshot",
+            "revision": 1,
+            "release": "v1",
+            "items": [
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450016138,
+          "message": {
+            "type": "ack",
+            "opId": "e5371f9e-c0ae-4c5d-b250-17d797aee9e1",
+            "revision": 2,
+            "release": "v1"
+          }
+        },
+        {
+          "socket": 2,
+          "type": "message",
+          "at": 1792450016138,
+          "message": {
+            "type": "snapshot",
+            "revision": 2,
+            "release": "v1",
+            "items": [
+              {
+                "id": "48ae2edf-ddb3-4bbb-8573-c9562d421223",
+                "text": "After ownership move",
+                "checked": false
+              },
+              {
+                "id": "f9770327-924e-4bd2-80d8-3548644cafa6",
+                "text": "Preserved board 2",
+                "checked": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "batches": [
+    "slot-1-a-1  | 2026-10-19T22:46:52.687975Z  INFO celld: handing idle cells to peers below their ownership target event=\"rebalance_batch\" cells=5"
+  ],
+  "leaseBefore": {
+    "leases": [
+      {
+        "host": "slot-1-a",
+        "generation": "5ce0b8ce719cf63f0de847e4fa697ec217e164133ac79cb08b5d6683668405d0",
+        "expiresMs": 1792450008684,
+        "pacedHandoff": true,
+        "load": {
+          "sampled_ms": 1792449998684,
+          "owned_cells": 6,
+          "placement_weight": 1,
+          "bucket_format": 2,
+          "resident_cells": 6,
+          "host_websockets": 3,
+          "rss_bytes": 137027584,
+          "in_use_bytes": 119538272,
+          "cgroup_working_set_bytes": 106971136,
+          "cgroup_current_bytes": 108347392,
+          "cpu_percent_x100": 0,
+          "open_fds": 97,
+          "fd_limit": 1048576,
+          "pressured": false,
+          "memory_headroom": true,
+          "shed_cells": 0,
+          "restoring": 0,
+          "rebalance_paused": true,
+          "draining": false
+        },
+        "log": {
+          "state": "open",
+          "epoch": 1,
+          "ensemble": [
+            "slot-1-b"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "generation": "305fa2e81d7e5f6c464ba3df7b6c78fa471017a2fa33fe7b1d7820dc79fccc03",
+        "expiresMs": 1792450010365,
+        "pacedHandoff": true,
+        "load": {
+          "sampled_ms": 1792450000365,
+          "owned_cells": 0,
+          "placement_weight": 100,
+          "bucket_format": 2,
+          "resident_cells": 0,
+          "host_websockets": 0,
+          "rss_bytes": 97103872,
+          "in_use_bytes": 88218056,
+          "cgroup_working_set_bytes": 67358720,
+          "cgroup_current_bytes": 67387392,
+          "cpu_percent_x100": 99,
+          "open_fds": 32,
+          "fd_limit": 1048576,
+          "pressured": false,
+          "memory_headroom": true,
+          "shed_cells": 0,
+          "restoring": 0,
+          "rebalance_paused": false,
+          "draining": false
+        },
+        "log": {
+          "state": "open",
+          "epoch": 1,
+          "ensemble": [
+            "slot-1-a"
+          ],
+          "tiered": 0,
+          "active": false,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      }
+    ],
+    "logEvents": [
+      "slot-1-a-1  | 2026-10-19T22:46:32.695677Z  INFO celld: every live lease reads a paged epoch, or one does not event=\"paged_gate\" open=true format=2 live_leases=1 view_age_ms=0",
+      "slot-1-b-1  | 2026-10-19T22:46:32.710745Z  INFO celld: every live lease reads a paged epoch, or one does not event=\"paged_gate\" open=true format=2 live_leases=1 view_age_ms=0",
+      "slot-1-b-1  | 2026-10-19T22:46:33.700546Z  INFO celld::node_log: log ensemble open; fleet acks enabled epoch=1 members={\"slot-1-a\"}",
+      "slot-1-a-1  | 2026-10-19T22:46:33.700091Z  INFO celld::node_log: log ensemble open; fleet acks enabled epoch=1 members={\"slot-1-b\"}"
+    ]
+  },
+  "leaseAfter": {
+    "leases": [
+      {
+        "host": "slot-1-a",
+        "generation": "5ce0b8ce719cf63f0de847e4fa697ec217e164133ac79cb08b5d6683668405d0",
+        "expiresMs": 1792450025367,
+        "pacedHandoff": true,
+        "load": {
+          "sampled_ms": 1792450015367,
+          "owned_cells": 1,
+          "placement_weight": 1,
+          "bucket_format": 2,
+          "resident_cells": 0,
+          "host_websockets": 0,
+          "rss_bytes": 129216512,
+          "in_use_bytes": 116641216,
+          "cgroup_working_set_bytes": 104366080,
+          "cgroup_current_bytes": 105099264,
+          "cpu_percent_x100": 0,
+          "open_fds": 52,
+          "fd_limit": 1048576,
+          "pressured": false,
+          "memory_headroom": true,
+          "shed_cells": 6,
+          "restoring": 0,
+          "rebalance_paused": true,
+          "draining": false
+        },
+        "log": {
+          "state": "open",
+          "epoch": 1,
+          "ensemble": [
+            "slot-1-b"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "generation": "305fa2e81d7e5f6c464ba3df7b6c78fa471017a2fa33fe7b1d7820dc79fccc03",
+        "expiresMs": 1792450024474,
+        "pacedHandoff": true,
+        "load": {
+          "sampled_ms": 1792450014474,
+          "owned_cells": 5,
+          "placement_weight": 100,
+          "bucket_format": 2,
+          "resident_cells": 3,
+          "host_websockets": 3,
+          "rss_bytes": 94109696,
+          "in_use_bytes": 88192936,
+          "cgroup_working_set_bytes": 64626688,
+          "cgroup_current_bytes": 64638976,
+          "cpu_percent_x100": 99,
+          "open_fds": 42,
+          "fd_limit": 1048576,
+          "pressured": false,
+          "memory_headroom": true,
+          "shed_cells": 0,
+          "restoring": 0,
+          "rebalance_paused": false,
+          "draining": false
+        },
+        "log": {
+          "state": "open",
+          "epoch": 1,
+          "ensemble": [
+            "slot-1-a"
+          ],
+          "tiered": 0,
+          "active": true,
+          "claimant": null,
+          "claimed_ms": null
+        }
+      }
+    ],
+    "logEvents": [
+      "slot-1-b-1  | 2026-10-19T22:46:32.710745Z  INFO celld: every live lease reads a paged epoch, or one does not event=\"paged_gate\" open=true format=2 live_leases=1 view_age_ms=0",
+      "slot-1-b-1  | 2026-10-19T22:46:33.700546Z  INFO celld::node_log: log ensemble open; fleet acks enabled epoch=1 members={\"slot-1-a\"}",
+      "slot-1-a-1  | 2026-10-19T22:46:32.695677Z  INFO celld: every live lease reads a paged epoch, or one does not event=\"paged_gate\" open=true format=2 live_leases=1 view_age_ms=0",
+      "slot-1-a-1  | 2026-10-19T22:46:33.700091Z  INFO celld::node_log: log ensemble open; fleet acks enabled epoch=1 members={\"slot-1-b\"}",
+      "slot-1-a-1  | 2026-10-19T22:46:52.687975Z  INFO celld: handing idle cells to peers below their ownership target event=\"rebalance_batch\" cells=5"
+    ]
+  },
+  "scope": "Healthy native celld rebalance after explicit five-second hibernation; asymmetric weights and owner-pinned ingress; all observed moved boards checked for 1012 reconnect, preserved state/receipt and next edit; no unchanged-socket or latency guarantee",
+  "derivedFrom": ".fogd/m11b-move-final/move.json; curated to omit unrelated runtime details; private full trace retained locally",
+  "runtimePrerequisite": "m11b-sse-patched.json: opt-in celld pre-accept attachment candidate and installed Void patches",
+  "before": [
+    {
+      "host": "slot-1-a",
+      "owned_cells": 6,
+      "rebalanced": 0,
+      "rebalance_failed": 0,
+      "handoff_failed": 0,
+      "phases": {
+        "dormant": 6,
+        "inactive": 11
+      },
+      "quiescing": 0,
+      "evicting": 0,
+      "releasing": 0,
+      "adopting": 0,
+      "testedResidents": []
+    },
+    {
+      "host": "slot-1-b",
+      "owned_cells": 0,
+      "rebalanced": 0,
+      "rebalance_failed": 0,
+      "handoff_failed": 0,
+      "phases": {
+        "inactive": 9
+      },
+      "quiescing": 0,
+      "evicting": 0,
+      "releasing": 0,
+      "adopting": 0,
+      "testedResidents": []
+    }
+  ],
+  "after": [
+    {
+      "host": "slot-1-a",
+      "owned_cells": 1,
+      "rebalanced": 5,
+      "rebalance_failed": 0,
+      "handoff_failed": 0,
+      "phases": {
+        "inactive": 11,
+        "remote": 5,
+        "resident": 1
+      },
+      "quiescing": 0,
+      "evicting": 0,
+      "releasing": 0,
+      "adopting": 0,
+      "testedResidents": []
+    },
+    {
+      "host": "slot-1-b",
+      "owned_cells": 5,
+      "rebalanced": 0,
+      "rebalance_failed": 0,
+      "handoff_failed": 0,
+      "phases": {
+        "inactive": 9,
+        "remote": 1,
+        "resident": 5
+      },
+      "quiescing": 0,
+      "evicting": 0,
+      "releasing": 0,
+      "adopting": 0,
+      "testedResidents": [
+        "ChecklistWs:01e2de53e2c60929516d33018728235b52666eeae2cb5dfb2eeba3ec88b92511",
+        "ChecklistWs:450f6966991de7d27fe9938021f6a64b17cede72112af1913c726efbc8f69fdd",
+        "ChecklistWs:af01fead18d80522c27d68fbed40bdc4a4c389398afe4a829118e98ad46ca9f5"
+      ]
+    }
+  ],
+  "processesBefore": {
+    "slot-1-a": {
+      "startedAt": "2026-10-19T22:46:17.466328007Z",
+      "running": true
+    },
+    "slot-1-b": {
+      "startedAt": "2026-10-19T22:46:17.46715159Z",
+      "running": true
+    },
+    "workerd": {
+      "startedAt": "2026-10-19T22:46:17.469085174Z",
+      "running": true
+    }
+  },
+  "validation": {
+    "workspaceTests": 302,
+    "syntax": "pass",
+    "quality": "pass",
+    "builds": "Application/runtime source unchanged from ba68363, whose offline builds passed; this slice adds a runtime drill and documentation.",
+    "cleanup": "Probe exited zero after health and routed HTTP checks; an independent running-container environment check confirmed canonical slot-1 idle policy, placement weights and workerd FOGD_SLOTS restored."
+  },
+  "remaining": [
+    "stopped board/receipt backup and restoration",
+    "explicit lower-revision recovery scenario"
+  ]
+}

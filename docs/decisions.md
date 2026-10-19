@@ -1122,3 +1122,29 @@ its durable operation path remains unchanged. On two nodes the topic host is als
 a log follower, so the pause exercises replication degradation too. Record that
 transition and require both log ensembles to recover before leaving the fixture.
 This cannot establish latency independent of replication.
+
+
+## ADR 044: qualify room moves through the native balancer
+
+**Context.** Idle eviction and owner process loss are already exercised. Neither
+establishes how a live browser behaves when a healthy node transfers a hibernated
+room to another node. A close code alone cannot distinguish movement from reload.
+
+**Options.** Gracefully drain a node; kill its owner; or trigger the native balancer
+with unequal placement weights and explicit idle eviction. Draining tests shutdown;
+killing repeats an existing failure path. Waiting for incidental balancing makes
+placement difficult to reproduce on a small local fixture.
+
+**Decision.** Use a disposable two-node fleet with unequal weights, pause balancing
+while creating three native rooms, and confirm hibernation without socket closure.
+Resume balancing, then require persisted ownership on the receiver with a higher
+epoch, receiver residency, native rebalance logs/counters, and unchanged process
+generations. Check reconnect snapshots, duplicate receipts and a new edit for every
+observed moved room. Use authoritative receiver reads to check for duplicate effects.
+
+**Consequences.** The test temporarily changes fleet policy and gateway ingress,
+so it belongs on a disposable fixture. Counter changes include topic objects as
+well as boards. The physical WebSocket closes; the SDK reconnects. This qualifies
+hibernated rooms, not active requests, arbitrary alarms, or a recovery-time promise.
+The canonical configuration is restored after the drill. Stopped board/receipt
+backup and restoration remain a separate acceptance check.

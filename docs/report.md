@@ -1035,3 +1035,22 @@ notification and snapshot isolation checks. These are anonymous local fixtures, 
 hostile-tenant security tests. M11b still needs actual room ownership movement and
 stopped board/receipt restoration. The [example guide](../examples/checklist/README.md)
 contains reproduction and interrupted-drill cleanup instructions.
+
+
+## M11b healthy room ownership movement
+
+The [movement evidence](evidence/m11b-move.json) records three hibernated checklist
+rooms transferring between healthy celld nodes. Each browser receives code 1012,
+reconnects through the existing gateway, and receives revision 1 from the runtime.
+Replaying its original operation returns the original receipt without another item;
+a new edit advances to revision 2. Direct reads from the receiver verify both states.
+
+Persisted owner records, higher epochs, receiver residency, native rebalance logs,
+and counters corroborate movement. Both celld process generations and the gateway
+container start time stay unchanged. The donor transfers five objects, including
+topics, with no handoff failures. This uses explicit idle eviction and unequal
+placement weights on a disposable fixture. It does not preserve the physical
+WebSocket or establish behavior for active requests and arbitrary alarms.
+
+The drill restores the canonical policy and gateway. Stopped board/receipt recovery
+and the explicit lower-revision scenario remain before closing M11b.
