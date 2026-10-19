@@ -1,3 +1,6 @@
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
 import { GetObjectCommand, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { bucketClient } from '@fogd/runtime/bucket';
@@ -56,6 +59,18 @@ export class Backend {
     const data = JSON.parse(output.trim().split('\n').at(-1));
     if (typeof data.version !== 'string') throw new Error('Missing deployment version');
     return data.version;
+  }
+  async bootstrap(slot, artifact, resources) {
+    const source = JSON.parse(await readFile(join(artifact, 'wrangler.json'), 'utf8'));
+    const dir = await mkdtemp(join(tmpdir(), 'fogd-queue-bootstrap-'));
+    try {
+      const config = { name: resources.script, main: 'index.js', no_bundle: true,
+        ...(source.compatibility_date ? { compatibility_date: source.compatibility_date } : {}),
+        d1_databases: resources.d1, queues: { producers: resources.queues.producers } };
+      await writeFile(join(dir, 'wrangler.json'), JSON.stringify(config), { mode: 0o600 });
+      await writeFile(join(dir, 'index.js'), "export default {fetch(){return new Response('Bootstrap',{status:503})}};\n", { mode: 0o600 });
+      return await this.publish(slot, dir);
+    } finally { await rm(dir, { recursive: true, force: true }); }
   }
   async ready(slot, version) {
     const deadline = Date.now() + 180000;

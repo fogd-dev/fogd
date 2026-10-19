@@ -3,7 +3,7 @@ import { isDeepStrictEqual } from 'node:util';
 // Approved declarations are a monotonic floor, including failed activations.
 export function resourceChanges(current, next) {
   if (!current) return { r2Added: next.r2 };
-  for (const key of ['script', 'd1', 'durable']) {
+  for (const key of ['script', 'd1', 'durable', 'queues']) {
     if (!isDeepStrictEqual(current[key], next[key])) throw new Error(`Resource identities changed: ${key}`);
   }
   const previous = new Map(current.r2.map(binding => [binding.binding, binding]));

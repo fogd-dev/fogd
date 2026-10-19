@@ -1,3 +1,5 @@
+import { activateRelease } from './activation.mjs';
+import { assertQueueDecision, interruptQueueActivation, recoverQueueHolds, requireQueueCapability, validateQueueState } from './queue-activation.mjs';
 import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
 import { assertLiveName, validateRetirementState } from './retirement.mjs';
 import { pendingDeployments } from './capacity.mjs';
@@ -47,11 +49,13 @@ export class Controller {
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
     await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     validateRetirementState(this.state, this.slots);
+    validateQueueState(this.state);
     for (const request of Object.values(this.state.deployments)) {
-      if (request.status === 'activating') { request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
+      if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
     await inspectOwnership(this);
     await this.save();
+    await recoverQueueHolds(this);
   }
   assertStorage() {
     if (this.#storageFailed) {
@@ -100,6 +104,7 @@ export class Controller {
         if (!this.available(release.app)) throw new Error('No available app slots');
         const changes = this.compatible(release, this.state.apps[release.app]);
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
+        requireQueueCapability(this.state, request.resources);
         this.state.deployments[id] = request;
         await this.save(); this.quota.used += bytes; return request;
       } catch (error) { this.assertStorage(); delete this.state.deployments[id]; await rm(dir, { recursive: true, force: true }); throw error; }
@@ -142,6 +147,7 @@ export class Controller {
       assertClaimRequest(this.state, request);
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
+      assertQueueDecision(this.state.apps[request.app], request, action);
       if (action === 'reject') {
         await rejectUnclaimed(this, request);
         if (this.state.apps[request.app]?.uncertain === id) throw new Error('Reconcile the failed activation before rejecting its artifact');
@@ -159,6 +165,7 @@ export class Controller {
     });
   }
   async prepareActivation(request, app, slot, selected) {
+    requireQueueCapability(this.state, request.resources);
     // Pin the approval before any backend effect, including a first slot claim.
     request.secretRevision = selected.revision;
     request.status = 'activating'; request.step = 'preparing-activation'; request.error = null;
@@ -170,7 +177,7 @@ export class Controller {
       this.occupied.add(slot.id);
       this.bucketOwners.set(slot.id, request.app);
       if (app.claim) { delete app.claim; await this.save(); }
-      await this.reconcile(app, slot);
+      if (!request.resources.queues) await this.reconcile(app, slot);
       request.resourceChanges = this.compatible(request, app);
       if (await artifactDigest(this.artifact(request.id)) !== request.digest) throw new Error('Stored artifact digest mismatch');
     } catch (error) {
@@ -180,51 +187,7 @@ export class Controller {
       await this.save();
       throw new Error(request.error);
     }
-    return this.activate(request, app, slot, selected);
-  }
-  async activate(request, app, slot, selected) {
-    const id = request.id;
-    request.secretRevision = selected.revision;
-    app.privateConfiguration ||= Boolean(selected.revision);
-    let execution = this.artifact(id);
-    request.status = 'activating'; request.error = null; app.route = 'paused';
-    const step = async value => { request.step = value; await this.save(); };
-    const publish = async () => {
-      await step('publishing');
-      request.version = await this.backend.publish(slot, execution);
-      await step('waiting-for-replicas');
-      await this.backend.ready(slot, request.version);
-      if ((request.requiredSecrets || []).length) {
-        await step('validating-application');
-        await this.backend.applicationReady(slot);
-      }
-    };
-    try {
-      app.resources = structuredClone(request.resources);
-      await step('approved');
-      execution = await this.secrets.materialize(request, this.artifact(id), selected.values);
-      if (!app.active) await publish();
-      app.uncertain = id; await step('checking-migration-ledger');
-      await this.reconcile(app, slot);
-      app.uncertain = id; await step('migrating');
-      await this.backend.migrate(slot, execution, request.resources);
-      await this.reconcile(app, slot);
-      if (app.active) await publish();
-      app.active = id; app.route = 'active';
-      for (const other of Object.values(this.state.deployments)) {
-        if (other.app === request.app && other.id !== id && ['pending', 'failed', 'active'].includes(other.status)) other.status = 'superseded';
-      }
-      request.status = 'active'; await step('complete');
-    } catch (error) {
-      this.assertStorage();
-      request.status = 'failed'; request.error = app.privateConfiguration ? 'Private activation failed; secret values and runtime diagnostics are withheld. Check the recorded step and retry explicitly.' : error.message; app.route = 'paused';
-      try { await this.reconcile(app, slot); } catch (reconcileError) { request.error += app.privateConfiguration ? '; migration reconciliation pending' : `; migration reconciliation pending: ${reconcileError.message}`; }
-      await this.save();
-    } finally {
-      try { await this.secrets.cleanup(id); }
-      catch (error) { this.assertStorage(); throw error; }
-    }
-    return request;
+    return activateRelease(this, request, app, slot, selected);
   }
   route(host) {
     const entry = Object.entries(this.state.apps).find(([name]) => `${name}.${this.baseDomain}` === host.toLowerCase());

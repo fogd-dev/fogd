@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { cp, mkdir } from 'node:fs/promises';
+import { context, upload, requireEmptyFleet } from './queue-probe/context.mjs';
+import { stageNative } from './queue-probe/native.mjs';
+import { expect } from './guestbook-browser.mjs';
+
+const [slot, output] = process.argv.slice(2);
+const probe = await context(slot, output, { queueName: 'imports' });
+await requireEmptyFleet(probe);
+const stage = await stageNative(join(probe.output, 'app'));
+const project = await upload(probe, stage.output, 'controller-app');
+const runner = join(probe.output, 'runner'); await mkdir(runner);
+await cp(new URL('./queue-probe/controller.mjs', import.meta.url), join(runner, 'controller.mjs'));
+const remote = await upload(probe, runner, 'controller-runner');
+const result = JSON.parse((await probe.compose(['exec', '-T', 'controller', 'node', `${remote}/controller.mjs`, project, slot])).trim());
+await probe.save('controller', result);
+console.log('PASS: built controller bootstrap, migration, publication, lost resume recovery, and paused update');
+assert.equal((await probe.http('/')).status, 200);
+const response = await probe.http('/api/imports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'coordinator', text: 'apple\npear' }) });
+assert.equal(response.status, 202, response.body);
+const job = async () => JSON.parse((await probe.http('/api/imports?id=coordinator')).body);
+assert.equal((await job()).status, 'accepted');
+assert.equal((await probe.queue('info')).paused, true);
+// Explicit probe action after activation preserved the operator pause.
+await probe.queue('resume');
+await expect.poll(async () => (await job()).status, { timeout: 120000 }).toBe('complete');
+assert.equal((await job()).results.length, 2);
+await probe.queue('pause');
+await probe.save('result', { job: await job(), queue: await probe.queue('info'), replicas: await probe.state() });
+console.log('PASS: native Void app processes retained input after explicit probe resume; queue left paused');

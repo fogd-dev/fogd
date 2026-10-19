@@ -307,5 +307,8 @@ The [queue qualification guide](docs/queue-qualification.md) reproduces runtime
 probes for publication gating, overlapping releases, delayed effects, exhausted
 retries, stopped recovery, and a [native Void imports app](examples/imports/README.md)
 with D1 migration overlap and recovery after killed consumers exhaust delivery.
-Controller activation recovery is the next gate. fogd still rejects queue declarations; these direct-runtime probes do
-not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+The [activation coordinator](docs/queue-activation.md) integrates bootstrap, pause,
+migrations, publication, and restart recovery, with controller process-kill tests.
+A built-controller Docker probe also covers real bootstrap, migration, and lost-resume
+recovery. Public approval/recovery acceptance and operator controls remain pending. fogd still
+rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).

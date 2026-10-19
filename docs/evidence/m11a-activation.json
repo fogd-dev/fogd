@@ -1,0 +1,553 @@
+{
+  "scope": "Built controller private-artifact activation against real celld; not public admission or gateway qualification",
+  "project": "fogd-m11a-controller-v2",
+  "slot": "slot-1",
+  "controllerImage": "sha256:a1731183fd245f26dc17a66deedeb5139cb3a5b3b62d265b20c7ace090f44496",
+  "runtimeImages": {
+    "slot-1-a": "sha256:a1731183fd245f26dc17a66deedeb5139cb3a5b3b62d265b20c7ace090f44496",
+    "slot-1-b": "sha256:a1731183fd245f26dc17a66deedeb5139cb3a5b3b62d265b20c7ace090f44496"
+  },
+  "handlerBudgetSeconds": 20,
+  "controller": {
+    "dir": "/var/lib/fogd/qualification-5dd9d619-9b6a-40ef-9818-2a3fa01513dc",
+    "slot": "slot-1",
+    "first": {
+      "version": "4d340c7f784e1520",
+      "step": "complete",
+      "migrations": [
+        {
+          "database": "imports-db",
+          "name": "0001_imports.sql",
+          "digest": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680"
+        }
+      ]
+    },
+    "update": {
+      "version": "6aec3a40af1e7ae4",
+      "step": "complete"
+    },
+    "delivery": {
+      "schema": 1,
+      "queue": "imports",
+      "desired": "paused",
+      "hold": null,
+      "version": "6aec3a40af1e7ae4",
+      "observed": "paused",
+      "observedAt": "2026-10-19T17:35:48.737Z",
+      "operation": null
+    },
+    "bootstrap": {
+      "phase": "application"
+    },
+    "lostResumeRecovered": true
+  },
+  "result": {
+    "job": {
+      "id": "coordinator",
+      "input_hash": "e22559226f2a9d1bc76ca2adf0b08155312a4176e497a33764502014654b09b3",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 17:35:49",
+      "results": [
+        {
+          "job_id": "coordinator",
+          "position": 0,
+          "label": "APPLE"
+        },
+        {
+          "job_id": "coordinator",
+          "position": 1,
+          "label": "PEAR"
+        }
+      ]
+    },
+    "queue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": true,
+      "stored": 0
+    },
+    "replicas": [
+      {
+        "host": "slot-1-a",
+        "deployment": {
+          "cells": {
+            "__D1Database:94ce77c0bcee2df539a1e1988ef24107e8321a6cc4fc4c78703d26992fcd8aa1": 5,
+            "__Queue:d463c89028a13df148b7c70bcd22af22f372e287302315af0317983de634274b": 5
+          },
+          "draining": [
+            {
+              "generation": 1,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "3935c0604c79d92f"
+            },
+            {
+              "generation": 2,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 686451,
+                    "freed": 0,
+                    "heap_bytes": 2699264,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "3935c0604c79d92f"
+            },
+            {
+              "generation": 3,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 694908,
+                    "freed": 0,
+                    "heap_bytes": 4292608,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "4d340c7f784e1520"
+            },
+            {
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 693551,
+                    "freed": 0,
+                    "heap_bytes": 4292608,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "4d340c7f784e1520"
+            }
+          ],
+          "generation": 5,
+          "isolates": {
+            "cells": {
+              "imports": {
+                "cells": 2,
+                "external_bytes": 699879,
+                "freed": 0,
+                "heap_bytes": 4554752,
+                "live": 1,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "services": {
+              "imports": {
+                "cells": 0,
+                "external_bytes": 717530,
+                "freed": 0,
+                "heap_bytes": 4816896,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 717530,
+              "freed": 0,
+              "heap_bytes": 4816896,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/imports/6aec3a40af1e7ae4",
+          "swapping": 0,
+          "version": "6aec3a40af1e7ae4"
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "deployment": {
+          "cells": {},
+          "draining": [
+            {
+              "generation": 1,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "3935c0604c79d92f"
+            },
+            {
+              "generation": 2,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "3935c0604c79d92f"
+            },
+            {
+              "generation": 3,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "4d340c7f784e1520"
+            },
+            {
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "imports": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "4d340c7f784e1520"
+            }
+          ],
+          "generation": 5,
+          "isolates": {
+            "cells": {
+              "imports": {
+                "cells": 0,
+                "external_bytes": 0,
+                "freed": 0,
+                "heap_bytes": 0,
+                "live": 0,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "services": {
+              "imports": {
+                "cells": 0,
+                "external_bytes": 685505,
+                "freed": 0,
+                "heap_bytes": 2785280,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 685505,
+              "freed": 0,
+              "heap_bytes": 2785280,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/imports/6aec3a40af1e7ae4",
+          "swapping": 0,
+          "version": "6aec3a40af1e7ae4"
+        }
+      }
+    ]
+  },
+  "sourceSha256": {
+    "packages/platform/src/activation.mjs": "92a168b52e0313a160b1f9ea3c2e5a5ebab70dd79c733601b3e06356fd672eb3",
+    "packages/platform/src/queue-activation.mjs": "b5d7890cc1d5974d4d1dc541ee68226b58beaff6874507aee073b3b395abf61f",
+    "packages/platform/src/controller.mjs": "5fed4bad5ef19d0399a30534fc6427a73118a7f3d6b32c7131bd6823aca47ef0",
+    "packages/platform/src/backend.mjs": "99b7ea9002e0091c32344575e4c2e30afed839afe16b3f7fde37c107a54a840f",
+    "packages/platform/src/delivery.mjs": "b70720f5604c5233524015f28374eaf97064cd077ba2acd795d5dba54ec6273a",
+    "scripts/queue-controller.mjs": "0ffd1f27a4df9e7309aea4ad657665783096af0d5c8d767819c7a8bede101440",
+    "scripts/queue-probe/controller.mjs": "c703c6fb638db1cc7ef9cff745cc4a8c6eb30694dbd7b5d2fa4d9b4162b3bd31"
+  },
+  "checks": [
+    "no publication from staging",
+    "producer-only bootstrap passes readiness",
+    "D1 migration precedes app consumer publication",
+    "successful resume with injected lost response retains hold",
+    "fresh controller instance confirms pause",
+    "explicit retry activates application without bootstrap replay",
+    "update preserves operator pause",
+    "native Void import completes after explicit probe resume",
+    "queue paused at completion",
+    "approved configuration update adopts a distinct runtime version while delivery stays paused"
+  ],
+  "limits": [
+    "private controller and privately staged artifacts bypass public admission",
+    "controller object reconstructed, not container killed in this live probe",
+    "stand-in process-kill tests separately cover first activation and updates",
+    "no backup/restore, retention-age, HTTP admin controls, retirement or gateway acceptance in this probe"
+  ]
+}

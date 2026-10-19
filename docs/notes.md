@@ -313,3 +313,36 @@ and `.fogd/m11a-qualified-recovery.log`. Public evidence omits credentials, full
 Compose configurations, queue payload inspection, and recovery archives. These
 are runtime probes, not admitted fogd apps. Follow the reviewed controller/native
 Void gates before changing the supported configuration allowlist.
+
+
+## M11a controller activation qualification (2026-10-19)
+
+Stopped `fogd-m11a-native` with Compose down, preserving its volumes and private
+fixture config in `.fogd/m11a-native-fixture`. This freed its networks and ports
+without touching unrelated stacks. Built `fogd-m11a-activation` on ports 8891/8892,
+with frozen runtime images, two fleets, and 20-second handler budgets.
+
+Private built-controller probes passed on both fleets. Slot 2 used the reviewed
+recovery/restore guards. Evidence is in `.fogd/m11a-controller-live` and
+`.fogd/m11a-controller-live-final`; selected output is committed in
+`docs/evidence/m11a-activation.json`. Both queues were left paused. Controller probe
+state lives in separate qualification directories inside the controller data volume.
+These are not deployments tracked by the main HTTP controller. Its restart after
+slot 1's probe therefore quarantined slot 1 as expected; the private coordinator
+state remains separate. Do not treat this fixture as public approval-flow evidence.
+
+Claude's two reviews and their response are committed under `docs/reviews/`.
+Queue admission stays closed. The next slice is authenticated delivery controls and
+corrected-artifact hold transfer, followed by stopped recovery/retention and full
+approval/isolation acceptance. The process-kill fixtures prove controller recovery
+using persisted fake runtime effects; the live Docker probe uses a lost response
+and object reconstruction rather than killing the controller container.
+
+
+The first live probe reapproved identical bytes, which retained the runtime version.
+Strengthened the probe to change a harmless configuration variable and require a
+distinct version. Parked `fogd-m11a-activation`, again retaining volumes, and built
+`fogd-m11a-controller-v2` from final source on the same ports. Slot 1 passed the full
+probe with distinct versions; `.fogd/m11a-controller-versioned` and the selected
+committed evidence record this run. Its queue is paused and slot 2 is unused.
+The fixture env/config is `.fogd/m11a-controller-v2-fixture/probe.env`.

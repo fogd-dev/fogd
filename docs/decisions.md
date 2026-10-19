@@ -709,3 +709,30 @@ for an explicit supported-state boundary. M10b-era and later controllers enforce
 requirements; earlier binaries are not supported for this state. Full recovery uses
 matching images. No runtime fork or distributed ownership lock is introduced; the
 controller remains the sole publisher for its configured fleets.
+
+## ADR 029: persist queue bootstrap progress independently of the active pointer
+
+Context: a first activation can publish consumer code and then fail before recording
+an active deployment. Using an absent active pointer as permission to bootstrap on
+retry would replace that consumer with platform code. Queue pause can also be
+uncertain after a lost response, making error-path migration reconciliation unsafe.
+
+Options: keep queues unsupported without an integrated coordinator; infer bootstrap
+progress from the active pointer; or record bootstrap progress before publication.
+The first postpones the scenario, and the second cannot distinguish these failures.
+
+Decision: integrate a coordinator while keeping public queue admission closed.
+Persist pending, ready, and application phases on the app. Save the application
+phase before attempting consumer publication. Confirm pause before queue migrations
+or ledger reconciliation, including retries. Rehold interrupted activations and
+confirm pause at startup; never resume automatically. Record a permanent capability
+requirement so supported older controllers refuse this state.
+
+Consequences: retry preserves app code and operator pause intent. Failed startup
+pause leaves that app unavailable with an unknown observation; other apps remain
+available. Running handlers are not drained. The initial coordinator permits only the held artifact to retry; operators
+cannot yet substitute a migration fix or reject that held deployment. This narrow
+restriction avoids an unreviewed hold transfer but must be resolved before public
+admission. Tests use private artifacts and a persistent runtime stand-in. A combined Docker
+probe also exercises the built coordinator with real celld, bypassing public admission.
+Public approval and the remaining operator/recovery gates are still required.

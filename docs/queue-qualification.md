@@ -158,3 +158,38 @@ In particular, `waitUntil` disproves using queue emptiness alone as a drain. A f
 observation window cannot prove that no possible later effect exists. The
 [probe record](m11a-probe.md) distinguishes runtime findings from the still-rejected
 fogd application feature.
+
+## Built-controller activation probe
+
+The `queue-controller` probe uses the built controller against a fresh celld fleet,
+with private staged artifacts. It does not exercise public artifact admission, the
+HTTP approval endpoint, or gateway routing. It keeps controller state in a separate
+qualification directory and leaves delivery paused. Use a disposable installation:
+its main HTTP controller does not own the probe's deployment records, so restarting
+that main controller can quarantine the probe fleet as an unmatched bucket owner.
+
+Choose unused project, directory, and port values:
+
+```sh
+FOGD_PROBE_HTTP_PORT=8899 FOGD_PROBE_ADMIN_PORT=8900 \
+  node scripts/queue-probe/setup.mjs .fogd/controller-fixture fogd-m11-controller
+FOGD_ENV_FILE=.fogd/controller-fixture/probe.env pnpm fogd up
+FOGD_ENV_FILE=.fogd/controller-fixture/probe.env \
+  node scripts/queue-controller.mjs slot-1 .fogd/controller-evidence
+```
+
+The probe refuses a previously deployed or claimed fleet. It builds the native Void
+imports app, records a private request, and verifies that staging has no deployment
+effect. Approval runs producer-only bootstrap, D1 migration, app publication, and
+readiness. The probe then loses the response to an actually successful resume,
+reloads the controller, checks that startup confirms pause, and retries explicitly.
+A second approved artifact changes a harmless configuration variable, adopts a
+distinct runtime version, and preserves operator pause. Finally, the app processes an
+import after explicit probe resume, and the probe pauses it again.
+
+Evidence files record the controller state directory, deployment versions, migration
+hashes, journal state, result rows, replica generations, and pinned runtime images.
+The selected [activation evidence](evidence/m11a-activation.json) also records the
+controller image. This is combined coordinator/runtime evidence. Real controller
+process-kill tests use a persistent runtime stand-in; this Docker probe injects a
+lost response and reconstructs a controller object rather than killing its process.

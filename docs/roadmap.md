@@ -90,8 +90,11 @@ and local operating costs. M10 is complete within this bounded Docker scope.
 The [M11a queue proposal](m11a.md), [review amendments](reviews/m11a-response.md),
 and [repeatable runtime qualification](queue-qualification.md) now define the next
 implementation slice: controller delivery lifecycle. The internal generation gate
-and [delivery journal](delivery-journal.md) are qualified independently; integrating
-them into approved activation, bootstrap progress, and recovery remains next. The native Void imports fixture
+and [delivery journal](delivery-journal.md) are integrated into the
+[activation coordinator](queue-activation.md), with private-artifact controller tests
+and process-kill recovery evidence. A built-controller Docker probe also covers the
+combined lifecycle with private artifacts. Next: authenticated operator controls, corrected-artifact hold transfer, stopped recovery
+with retention-age policy, and retirement/isolation acceptance before queue admission. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be

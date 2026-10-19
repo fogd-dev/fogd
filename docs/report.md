@@ -572,3 +572,24 @@ Queue bootstrap and delivery integration remain pending.
 All 131 tests, example builds, and quality checks pass. The
 [review response](reviews/m11a-claims-response.md) records the cross-fleet release
 fix, supported-state boundary, and delayed bucket-write limitation.
+
+
+The [queue activation coordinator](queue-activation.md) now connects the delivery
+journal to approved activation. It persists bootstrap progress before effects,
+confirms pause before migration ledger writes, publishes only after migrations,
+and releases delivery only after readiness. Restart reholds interrupted activation
+and confirms pause without automatic resume. The active pointer cannot authorize
+bootstrap replay. Queue declarations and journals require a permanent capability
+marker; supported older controllers refuse this state.
+
+Controller tests exercise lost runtime responses, ambiguous writes, and real process
+SIGKILL for first activation and updates. Their runtime effects use a persistent
+stand-in. A [built-controller Docker probe](evidence/m11a-activation.json) also passes
+against real celld: bootstrap readiness, D1 migration, a lost successful resume
+response, reload pause, explicit retry, and an update preserving operator pause.
+The native Void app processes retained input after explicit probe resume. This probe
+uses a private controller and staged artifacts; it does not exercise public HTTP
+approval or the gateway. Public queue admission remains closed. Operator controls,
+corrected-artifact recovery, stopped backup/restore with retention policy, and
+retirement/isolation remain gates. All 185 tests pass. The follow-up recovery policy
+keeps other apps routable when one queue pause cannot be confirmed.
