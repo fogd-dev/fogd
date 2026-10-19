@@ -1,14 +1,11 @@
 import assert from 'node:assert/strict';
-import { QueueRuntime } from '../packages/platform/src/queue-runtime.mjs';
+import { queueRuntime } from './queue-probe/runtime.mjs';
 import { context } from './queue-probe/context.mjs';
 import { expect } from './guestbook-browser.mjs';
 
 const [slot, output] = process.argv.slice(2);
 const probe = await context(slot, output, { queueName: 'imports' });
-const runtime = new QueueRuntime({
-  run: (_slot, args) => probe.cli(args),
-  inspect: async node => JSON.parse(await probe.node(`const r=await fetch(${JSON.stringify(`http://${node}:8081/state`)});if(!r.ok)throw Error('state');console.log(JSON.stringify((await r.json()).deployment));`)),
-});
+const runtime = queueRuntime(probe);
 await runtime.pause(probe.slot, 'imports');
 const initial = await probe.state(), version = initial[0].deployment.version;
 assert.equal(initial[1].deployment.version, version);

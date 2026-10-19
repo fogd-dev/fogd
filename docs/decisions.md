@@ -636,3 +636,27 @@ celld's `engine_api.rs` namespace/HMAC scheme without changing it; qualify the
 recorded address and live cold/resident behavior when updating the runtime.
 Mutation or confirmation failures report an unknown outcome, not a paused state.
 See the [review response](reviews/m11a-generation-response.md).
+
+## ADR 026: retain activation holds until confirmed delivery release
+
+Context: queue resume can be refused before mutation or succeed with a lost response.
+Clearing an activation hold before that call loses ownership even when resume is
+refused. Migration corrections also need to replace a failed activation without
+unpausing delivery.
+
+Options: persist a separate releasing-activation record and restore holds only on
+definite refusal, or retain the hold through confirmation and reconcile uncertainty
+back to paused before explicitly completing activation again.
+
+Choice: retain the hold until runtime confirmation is durably saved. Operator
+intent remains separate. After interruption, explicit reconciliation pauses held
+work; the activation coordinator rechecks readiness before releasing it. Permit an
+explicit expected-owner hold transfer for a newly approved correction, preserving
+operator intent and requiring a fresh confirmed pause.
+
+Why: both pre-mutation refusal and uncertain mutation retain activation ownership.
+Recovery does not need to infer whether an exception occurred before or after the
+runtime effect. The cost is an extra pause/readiness cycle after an uncertain
+activation resume. Existing handlers may still run; this does not create a drain.
+No automatic runtime action occurs during journal reload. The implementation is
+internal until controller approval, bootstrap, recovery, and retirement integrate it.

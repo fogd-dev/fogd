@@ -1,0 +1,61 @@
+{
+  "scope": "Internal delivery journal with real celld; activation completion is simulated, not controller approval or migration qualification",
+  "context": {
+    "project": "fogd-m11a-native",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26",
+      "slot-2-b": "sha256:e67dd0ffd96d0e1002df8ba8395abeb1f000503f08930f74ec24796a05be9b26"
+    }
+  },
+  "operator-paused": {
+    "schema": 1,
+    "queue": "imports",
+    "desired": "paused",
+    "hold": null,
+    "version": "d591b6ed0c500702",
+    "observed": "paused",
+    "observedAt": "2026-10-19T16:40:22.728Z",
+    "operation": null
+  },
+  "uncertain": {
+    "journal": {
+      "schema": 1,
+      "queue": "imports",
+      "desired": "running",
+      "hold": null,
+      "version": "d591b6ed0c500702",
+      "observed": "unknown",
+      "observedAt": null,
+      "operation": "resume"
+    },
+    "runtime": {
+      "paused": false,
+      "stored": 0,
+      "backlogCount": 0,
+      "backlogBytes": 0,
+      "oldestMessageTimestamp": null
+    }
+  },
+  "reconciled": {
+    "schema": 1,
+    "queue": "imports",
+    "desired": "running",
+    "hold": null,
+    "version": "d591b6ed0c500702",
+    "observed": "running",
+    "observedAt": "2026-10-19T16:40:24.306Z",
+    "operation": null
+  },
+  "final": {
+    "schema": 1,
+    "queue": "imports",
+    "desired": "paused",
+    "hold": null,
+    "version": "d591b6ed0c500702",
+    "observed": "paused",
+    "observedAt": "2026-10-19T16:40:25.156Z",
+    "operation": null
+  }
+}

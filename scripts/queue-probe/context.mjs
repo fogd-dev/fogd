@@ -29,10 +29,11 @@ export async function context(slotId, outputArg, { env: selectedEnv = null, queu
   const queue = (verb, selected = slot) => queueCommand(cli, verb, selected, queueName);
   const http = async (path, options = {}) => JSON.parse(await node(`const r=await fetch(${JSON.stringify(`http://${slot.nodes[0]}:8080`)}+${JSON.stringify(path)},${JSON.stringify(options)});console.log(JSON.stringify({status:r.status,body:await r.text()}));`));
   const app = async body => { const response = await http('/', body ? { method: 'POST', body: JSON.stringify(body) } : {}); assert.equal(response.status, 200); return JSON.parse(response.body); };
-  const state = async () => Promise.all(slot.nodes.map(async host => ({ host, deployment: JSON.parse(await node(`const r=await fetch(${JSON.stringify(`http://${host}:8081/state`)});if(!r.ok)throw Error('state');console.log(JSON.stringify((await r.json()).deployment));`)) })));
+  const deployment = async host => JSON.parse(await node(`const r=await fetch(${JSON.stringify(`http://${host}:8081/state`)},{signal:AbortSignal.timeout(5000)});if(!r.ok)throw Error('state');console.log(JSON.stringify((await r.json()).deployment));`));
+  const state = async () => Promise.all(slot.nodes.map(async host => ({ host, deployment: await deployment(host) })));
   const save = async (name, value) => writeFile(join(output, `${name}.json`), JSON.stringify(value, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   await save('context', { project: config.name, slot: slot.id, handlerBudgetSeconds: budget, images: Object.fromEntries(slot.nodes.map(host => [host, config.services[host].image])) });
-  return { env, config, slot, slots, output, budget, compose, node, cli, queue, http, app, state, save };
+  return { env, config, slot, slots, output, budget, compose, node, cli, queue, http, app, deployment, state, save };
 }
 export async function requireEmptyFleet(probe) {
   const code = `import {createRequire} from 'node:module';import {bucketClient} from './packages/runtime/src/bucket.mjs';const require=createRequire('/app/packages/platform/src/backend.mjs');const {ListObjectsV2Command}=require('@aws-sdk/client-s3');const r=await bucketClient().send(new ListObjectsV2Command({Bucket:process.env.FOGD_BUCKET,Prefix:${JSON.stringify(`${probe.slot.prefix}/deploy/`)},MaxKeys:1}));console.log(r.KeyCount||0);`;

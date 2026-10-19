@@ -534,3 +534,15 @@ persist controller delivery intent or enable queue admission. The
 [review response](reviews/m11a-generation-response.md) records exact-cell matching
 and explicit unknown mutation outcomes. The workspace now
 passes 95 tests and all example builds.
+
+The internal [delivery journal](delivery-journal.md) now persists operator intent,
+activation holds, and runtime observations separately. Process-kill tests cover
+both ordinary resume and activation release around durable writes. A refused
+runtime generation keeps the activation hold. A real-celld probe confirms recovery
+from an injected lost resume response through explicit reconciliation, without
+automatic action on reload. [Selected evidence](evidence/m11a-delivery.json) records
+the unknown outcome alongside the actually running queue. Controller integration
+and queue admission remain pending; this is not full activation recovery.
+The [review response](reviews/m11a-delivery-response.md) records the hold-release
+fix and conservative recovery choice. All 109 tests, example builds, syntax, and
+quality checks pass.
