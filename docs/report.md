@@ -20,8 +20,9 @@ Native checklist reconciliation, node failures and idle eviction are qualified
 locally. Preserved-socket updates require the explicit [celld patch candidate](patches/celld-preaccept-attachment.md);
 the [qualification record](evidence/m11b-patched-runtime.json) includes both negative
 controls and runtime provenance. Route pause, patched SSE, healthy room movement
-and [stopped live-session recovery](evidence/m11b-restore.json) also pass. M11b
-remains open for a requirement-by-requirement acceptance audit. Older restore
+and [stopped live-session recovery](evidence/m11b-restore.json) also pass. The
+[M11b acceptance audit](m11b-acceptance.md) qualifies bounded local Docker live
+sessions with the opt-in candidate and pinned Void patches. Older restore
 detection is revision-based; equal-or-higher divergent histories are not detected.
 
 ## What works

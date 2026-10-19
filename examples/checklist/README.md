@@ -226,7 +226,7 @@ gateway restart with a missed edit, and a finite idle observation.
 This is not a fully qualified live-update feature yet. The
 [version-pinned registration patch](../../docs/patches/void-live-registration.md)
 fixes the confirmed race, and a deployment cancellation/reconnection check passes.
-A [bounded publication-stall and cross-app isolation drill](../../docs/evidence/m11b-sse-failure.json) also passes. Room moves and stopped recovery also pass; the M11b acceptance audit remains open. No sign-in is provided, and anonymous readers can
+A [bounded publication-stall and cross-app isolation drill](../../docs/evidence/m11b-sse-failure.json) also passes. Room moves and stopped recovery also pass; see the [bounded M11b acceptance](../../docs/m11b-acceptance.md). No sign-in is provided, and anonymous readers can
 consume the topic's subscription capacity. Publishing is best effort and never
 changes an operation's durable result.
 

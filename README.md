@@ -334,7 +334,7 @@ overlap and retirement/replacement checks. The [acceptance audit](docs/m11a-acce
 Default admission stays off by policy because queues constrain expansion/recovery.
 
 
-## M11b in progress: live sessions
+## M11b: qualified local live sessions
 
 The [reviewed plan](docs/m11b.md) covers durable operations, browser reconciliation,
 preserved WebSockets across updates, and separate SSE acceptance. Its minimal native
@@ -354,5 +354,18 @@ passes hints, reconnect snapshots and deployment replacement with an explicit
 [Void registration patch](docs/patches/void-live-registration.md). [Publication-stall and cross-app isolation checks](docs/evidence/m11b-sse-failure.json)
 also pass. [Healthy ownership movement](docs/evidence/m11b-move.json) preserves
 boards and receipts through native reconnects. [Stopped board/receipt recovery](docs/evidence/m11b-restore.json)
-also passes, including explicit acceptance after an older restore. M11b remains
-open for its acceptance audit.
+also passes, including explicit acceptance after an older restore. The [acceptance audit](docs/m11b-acceptance.md) qualifies this bounded Docker
+slice with pinned Void patches and the opt-in celld candidate.
+
+The [approval probe](scripts/live-approval.mjs) checks two fresh apps before and
+after exact approval. First prepare the two-app [SSE fixture](examples/checklist/README.md#experimental-sse-observer)
+with the candidate runtime; the source must contain `live-probe` and `checklist`.
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-approval.mjs .fogd/live-approval
+```
+
+It temporarily stops the source stack, uses a fresh stack on the same ports, and
+restores the source after cleanup. It retains all volumes. Use a new output
+directory. Scheduled background work is the [next discovery slice](docs/m11c-discovery.md).

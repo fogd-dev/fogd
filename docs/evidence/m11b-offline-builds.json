@@ -1,6 +1,6 @@
 {
-  "command": "docker run --rm --network none fogd-verify:m11b-ui",
-  "image": "sha256:1f6ce8494d448399e14d5710c4a161276807a3d693737e1b1bc9acc0b7b26147",
+  "command": "docker run --rm --network none --mount type=bind,src=\"$PWD/examples/checklist\",dst=/source,readonly fogd-verify:m11b-sse-patched sh -c 'cp -a /source/. /app/examples/checklist/ && node scripts/verify-builds.mjs'",
+  "image": "sha256:19c144ad2efdcb527f0d71b8c8a19f00a30aaafc92fcebd14223aec5c2a06cef",
   "patch": "patches/void@1.1.11.patch",
   "apps": [
     "guestbook",
@@ -36,91 +36,171 @@
         },
         {
           "path": "client/.vite/manifest.json",
-          "bytes": 900
+          "bytes": 1825
         },
         {
-          "path": "client/assets/pages-Darsg-Jn.css",
+          "path": "client/assets/jsx-runtime-BtKYeHzi.js",
+          "bytes": 88043
+        },
+        {
+          "path": "client/assets/jsx-runtime-Darsg-Jn.css",
           "bytes": 968
         },
         {
-          "path": "client/assets/pages-__4K8Swp.js",
-          "bytes": 98791
+          "path": "client/assets/pages-BtrxSyx2.js",
+          "bytes": 10814
         },
         {
-          "path": "client/assets/pages-client-gdm-fOd9.js",
-          "bytes": 239051
+          "path": "client/assets/pages-client-I7MqjSQT.js",
+          "bytes": 239289
         },
         {
-          "path": "client/assets/route-url-BjGv_KKY-ByX1Eq-k.js",
-          "bytes": 9000
+          "path": "client/assets/react-DjGqiD24.js",
+          "bytes": 8380
+        },
+        {
+          "path": "client/assets/route-url-BjGv_KKY-CKbucOec.js",
+          "bytes": 623
+        },
+        {
+          "path": "client/assets/watch-B7K3Ar0v.js",
+          "bytes": 8680
         },
         {
           "path": "ssr/.vite/manifest.json",
-          "bytes": 1816
+          "bytes": 3877
         },
         {
-          "path": "ssr/assets/handler-BZ1t7-Rv-BxY8U59S.js",
-          "bytes": 5555
+          "path": "ssr/assets/handler-BZ1t7-Rv-Bb03BZi1.js",
+          "bytes": 5580
         },
         {
-          "path": "ssr/assets/handler-BZ1t7-Rv-BxY8U59S.js.map",
+          "path": "ssr/assets/handler-BZ1t7-Rv-Bb03BZi1.js.map",
           "bytes": 12895
         },
         {
-          "path": "ssr/assets/index.server-C707Rl_w.js",
-          "bytes": 408
+          "path": "ssr/assets/handler-DY6NiTx1.js",
+          "bytes": 41
         },
         {
-          "path": "ssr/assets/index.server-C707Rl_w.js.map",
-          "bytes": 694
+          "path": "ssr/assets/index.server-BXe2d34h.js",
+          "bytes": 77
         },
         {
-          "path": "ssr/assets/input-DeNPoAtq.js",
-          "bytes": 178293
+          "path": "ssr/assets/index.server-Cj_AZKrK.js",
+          "bytes": 445
         },
         {
-          "path": "ssr/assets/input-DeNPoAtq.js.map",
-          "bytes": 515132
+          "path": "ssr/assets/index.server-Cj_AZKrK.js.map",
+          "bytes": 695
         },
         {
-          "path": "ssr/assets/pages-CSTnZ0Ej.js",
-          "bytes": 12012
+          "path": "ssr/assets/input-_1VFnBcM.js",
+          "bytes": 822
         },
         {
-          "path": "ssr/assets/pages-CSTnZ0Ej.js.map",
-          "bytes": 19159
+          "path": "ssr/assets/input-_1VFnBcM.js.map",
+          "bytes": 1403
         },
         {
-          "path": "ssr/assets/pages-Darsg-Jn.css",
+          "path": "ssr/assets/jsx-runtime-Darsg-Jn.css",
           "bytes": 968
         },
         {
-          "path": "ssr/assets/react-dom-yDvcmg42.js",
-          "bytes": 59996
+          "path": "ssr/assets/jsx-runtime-xytSSB0X.js",
+          "bytes": 1432
         },
         {
-          "path": "ssr/assets/react-dom-yDvcmg42.js.map",
-          "bytes": 134063
+          "path": "ssr/assets/jsx-runtime-xytSSB0X.js.map",
+          "bytes": 1985
         },
         {
-          "path": "ssr/assets/route-url-BjGv_KKY-DpAk0gVz.js",
-          "bytes": 19357
+          "path": "ssr/assets/live-C72PndXG.js",
+          "bytes": 16778
         },
         {
-          "path": "ssr/assets/route-url-BjGv_KKY-DpAk0gVz.js.map",
-          "bytes": 31303
+          "path": "ssr/assets/live-C72PndXG.js.map",
+          "bytes": 30059
+        },
+        {
+          "path": "ssr/assets/live-DveGkUIl.js",
+          "bytes": 669
+        },
+        {
+          "path": "ssr/assets/live-DveGkUIl.js.map",
+          "bytes": 1011
+        },
+        {
+          "path": "ssr/assets/pages-CEcZdq9b.js",
+          "bytes": 10973
+        },
+        {
+          "path": "ssr/assets/pages-CEcZdq9b.js.map",
+          "bytes": 17280
+        },
+        {
+          "path": "ssr/assets/react-dom-CCijfrvg.js",
+          "bytes": 60034
+        },
+        {
+          "path": "ssr/assets/react-dom-CCijfrvg.js.map",
+          "bytes": 134064
+        },
+        {
+          "path": "ssr/assets/react-lbnwQWhq.js",
+          "bytes": 17683
+        },
+        {
+          "path": "ssr/assets/react-lbnwQWhq.js.map",
+          "bytes": 28773
+        },
+        {
+          "path": "ssr/assets/route-url-BjGv_KKY-DOoQ9HfL.js",
+          "bytes": 1728
+        },
+        {
+          "path": "ssr/assets/route-url-BjGv_KKY-DOoQ9HfL.js.map",
+          "bytes": 2647
+        },
+        {
+          "path": "ssr/assets/watch-B3T2E3Hn.js",
+          "bytes": 15973
+        },
+        {
+          "path": "ssr/assets/watch-B3T2E3Hn.js.map",
+          "bytes": 26493
+        },
+        {
+          "path": "ssr/assets/watch.server-BXe2d34h.js",
+          "bytes": 77
+        },
+        {
+          "path": "ssr/assets/wire-BSLdEDzv.js",
+          "bytes": 173715
+        },
+        {
+          "path": "ssr/assets/wire-BSLdEDzv.js.map",
+          "bytes": 506939
+        },
+        {
+          "path": "ssr/assets/ws-ARaOZqmW.js",
+          "bytes": 3860
+        },
+        {
+          "path": "ssr/assets/ws-ARaOZqmW.js.map",
+          "bytes": 6995
         },
         {
           "path": "ssr/index.js",
-          "bytes": 614882
+          "bytes": 638510
         },
         {
           "path": "ssr/index.js.map",
-          "bytes": 1086700
+          "bytes": 1128734
         },
         {
           "path": "ssr/pages-client.js",
-          "bytes": 558032
+          "bytes": 558115
         },
         {
           "path": "ssr/pages-client.js.map",
@@ -128,7 +208,7 @@
         },
         {
           "path": "ssr/wrangler.json",
-          "bytes": 1491
+          "bytes": 1626
         }
       ]
     },
@@ -158,23 +238,35 @@
         },
         {
           "path": "client/.vite/manifest.json",
-          "bytes": 900
+          "bytes": 1825
         },
         {
-          "path": "client/assets/pages-Darsg-Jn.css",
+          "path": "client/assets/jsx-runtime-BtKYeHzi.js",
+          "bytes": 88043
+        },
+        {
+          "path": "client/assets/jsx-runtime-Darsg-Jn.css",
           "bytes": 968
         },
         {
-          "path": "client/assets/pages-__4K8Swp.js",
-          "bytes": 98791
+          "path": "client/assets/pages-BtrxSyx2.js",
+          "bytes": 10814
         },
         {
-          "path": "client/assets/pages-client-gdm-fOd9.js",
-          "bytes": 239051
+          "path": "client/assets/pages-client-I7MqjSQT.js",
+          "bytes": 239289
         },
         {
-          "path": "client/assets/route-url-BjGv_KKY-ByX1Eq-k.js",
-          "bytes": 9000
+          "path": "client/assets/react-DjGqiD24.js",
+          "bytes": 8380
+        },
+        {
+          "path": "client/assets/route-url-BjGv_KKY-CKbucOec.js",
+          "bytes": 623
+        },
+        {
+          "path": "client/assets/watch-B7K3Ar0v.js",
+          "bytes": 8680
         },
         {
           "path": "ssr/.vite/manifest.json",
@@ -186,18 +278,28 @@
         },
         {
           "path": "ssr/index.js",
-          "bytes": 856918
+          "bytes": 914049
         },
         {
           "path": "ssr/index.js.map",
-          "bytes": 1872170
+          "bytes": 1972040
         },
         {
           "path": "ssr/wrangler.json",
-          "bytes": 1491
+          "bytes": 1626
         }
       ]
     }
   },
-  "scope": "Typecheck and managed/fogd builds plus canonical staging, with the explicit SDK patch; no hosted execution"
+  "scope": "Typecheck and managed/fogd builds plus canonical staging, with the explicit SDK patch; no hosted execution",
+  "sourceCommit": "fdb22fa5db5a3cf528a17d8f878d44ffb7423c10",
+  "logSha256": "12d4cfc6cd6334a6fdaf7eca343c422dee3d8ea1d901bf529a439b01f61271dd",
+  "stagedDigests": {
+    "guestbook": "083f780c254a5abaae768990776a1e0633ad427a85f5d9ac862874c09543f0c2",
+    "grown": "21f50bc70ddd80c6402c0c4b24008e2dc3914de8599ea4d3117c74b4b3883a25",
+    "accounts": "80c428cb6797c8b22d33aff7e3e72b8f16beb1f8a4a390a9a6f786f2294d44e4",
+    "imports": "586805188d6e8508734c680e78cabf5b5137a76e5927ea60f1fb8f4e402a6190",
+    "checklist": "0843c3095513091e60e22cf4ad486c2d6ad91bd9dfefed7efad63eb5a8f34cf9"
+  },
+  "imageProvenance": "Verify image predates the commit recording its inputs. Closure reviewer checked patch and lockfile byte identity; build-relevant packages, scripts and other examples are unchanged. Current checklist source is mounted read-only and copied into the container. Root package difference is only the test script."
 }

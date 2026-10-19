@@ -167,8 +167,10 @@ start before their required schema/resources exist. During upgrades, define whic
 release may receive queued work and how in-flight work drains. Disabling HTTP routing
 alone is not a background-event deployment gate.
 
-Today: the adapter rejects Queues and Workflows. Supporting this scenario requires
-lifecycle and recovery work as well as binding/configuration translation.
+Today: bounded Docker queue applications have a [supported opt-in](queue-admission.md),
+including activation, duplicate handling, operator recovery, stopped restore and
+retirement evidence. Workflows remain unsupported; scheduled effects need their
+own lifecycle contract.
 
 ### U8: Colleagues collaborate on live application state
 
@@ -180,8 +182,10 @@ failure model, reconnect/resubscribe after a replica restart, and reconcile miss
 updates without duplicates. Test WebSockets/SSE, close codes, idle behavior, and
 routing across deployment. Do not promise that open sockets survive process loss.
 
-Today: the Durable Object sample tests stored operations, not browser sessions,
-streaming behavior, or reconnect handling.
+Today: the [checklist acceptance](m11b-acceptance.md) qualifies native WebSocket
+reconciliation and SSE observers locally, with pinned Void patches and the opt-in
+celld candidate. Remote infrastructure and broader collaborative semantics remain
+outside that evidence.
 
 ### U9: An operator hosts more apps and retires one safely
 

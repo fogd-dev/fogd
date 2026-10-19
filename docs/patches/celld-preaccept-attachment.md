@@ -44,7 +44,7 @@ Shell exports override `.env`; check both when selecting the image. Kubernetes
 image building does not consume this Docker option and is not qualified here. Unsetting it
 returns future builds to the pinned upstream image; existing processes need a
 normal stack update to change binaries. Use a disposable installation for this
-candidate while the remaining M11b gates are open.
+candidate; the [M11b acceptance](../m11b-acceptance.md) covers bounded local Docker use.
 
 The source-method regression executes the actual upstream methods with a modeled
 host registry. It fails three pre-accept cases on unmodified source and passes all
@@ -59,5 +59,4 @@ The [qualified Docker record](../evidence/m11b-patched-runtime.json) pairs both
 unpatched negative controls with the patched update-after-idle run and the existing
 failure/browser regressions. It includes the binary digest computed from the
 recorded immutable runtime image. Keep the patched image available for recovery;
-its local tag is not a remotely published artifact. The remaining M11b gates are
-still open.
+its local tag is not a remotely published artifact. The [M11b acceptance](../m11b-acceptance.md) records the complete bounded scope.

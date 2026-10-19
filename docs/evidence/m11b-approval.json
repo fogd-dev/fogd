@@ -1,0 +1,231 @@
+{
+  "project": "fogd-m11b-approval-f01d5785",
+  "images": {
+    "bucket-init": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+    "controller": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+    "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "slot-1-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+    "slot-1-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+    "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+    "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+    "workerd": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+  },
+  "results": [
+    {
+      "app": "preapprove-a",
+      "slot": "slot-1",
+      "room": "approval-941b4d1e-84f6-45d0-af75-bcc9cec6a15b",
+      "release": {
+        "id": "a9ca21e1-1fc3-4dbf-b4d4-c976683a88e9",
+        "digest": "efbee1fead3c7dfd41e43956e4f951814ed802b1d8d8fe92f47c9299fdb44a3e",
+        "submitter": "e8f8c615-e821-4aba-8c6b-eb7fa736c085"
+      },
+      "beforeApproval": {
+        "cells": 0,
+        "deploy": 0
+      },
+      "wrongDigest": {
+        "status": 400,
+        "body": {
+          "error": "Deployment/digest mismatch"
+        }
+      },
+      "refused": {
+        "events": [
+          {
+            "type": "error",
+            "at": 1792451413306
+          }
+        ],
+        "code": 1006
+      },
+      "refusedHandshake": {
+        "status": 404,
+        "body": "Unknown app"
+      },
+      "accepted": {
+        "events": [
+          {
+            "type": "open",
+            "at": 1792451427290
+          },
+          {
+            "type": "message",
+            "at": 1792451427292,
+            "message": {
+              "type": "snapshot",
+              "revision": 0,
+              "release": "v1",
+              "items": []
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792451427296,
+            "message": {
+              "type": "ack",
+              "opId": "approval-op",
+              "revision": 1,
+              "release": "v1"
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792451427296,
+            "message": {
+              "type": "snapshot",
+              "revision": 1,
+              "release": "v1",
+              "items": [
+                {
+                  "id": "first",
+                  "text": "Approved native room",
+                  "checked": false
+                }
+              ]
+            }
+          }
+        ],
+        "code": 1000
+      },
+      "origins": [
+        {
+          "id": "73065.2",
+          "origin": "http://preapprove-a.localhost:8905"
+        },
+        {
+          "id": "73065.3",
+          "origin": "http://preapprove-a.localhost:8905"
+        }
+      ],
+      "handshakes": [
+        {
+          "id": "73065.3",
+          "status": 101,
+          "at": 1792451427291
+        }
+      ],
+      "snapshot": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "first",
+            "text": "Approved native room",
+            "checked": false
+          }
+        ]
+      }
+    },
+    {
+      "app": "preapprove-b",
+      "slot": "slot-2",
+      "room": "approval-1ea103b1-4d36-4fb5-8b3e-5a962b50c6d1",
+      "release": {
+        "id": "55190a36-4b95-41a7-a829-c4febc47ceaa",
+        "digest": "50e592dff0db441c3cc5567e69a4876c0b7e85ab1502e574aeee5d112e5ee138",
+        "submitter": "2abbcc7a-fd19-44b5-9876-32fd866465b0"
+      },
+      "beforeApproval": {
+        "cells": 0,
+        "deploy": 0
+      },
+      "wrongDigest": {
+        "status": 400,
+        "body": {
+          "error": "Deployment/digest mismatch"
+        }
+      },
+      "refused": {
+        "events": [
+          {
+            "type": "error",
+            "at": 1792451429202
+          }
+        ],
+        "code": 1006
+      },
+      "refusedHandshake": {
+        "status": 404,
+        "body": "Unknown app"
+      },
+      "accepted": {
+        "events": [
+          {
+            "type": "open",
+            "at": 1792451431284
+          },
+          {
+            "type": "message",
+            "at": 1792451431284,
+            "message": {
+              "type": "snapshot",
+              "revision": 0,
+              "release": "v1",
+              "items": []
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792451431288,
+            "message": {
+              "type": "ack",
+              "opId": "approval-op",
+              "revision": 1,
+              "release": "v1"
+            }
+          },
+          {
+            "type": "message",
+            "at": 1792451431288,
+            "message": {
+              "type": "snapshot",
+              "revision": 1,
+              "release": "v1",
+              "items": [
+                {
+                  "id": "first",
+                  "text": "Approved native room",
+                  "checked": false
+                }
+              ]
+            }
+          }
+        ],
+        "code": 1000
+      },
+      "origins": [
+        {
+          "id": "73160.2",
+          "origin": "http://preapprove-b.localhost:8905"
+        },
+        {
+          "id": "73160.3",
+          "origin": "http://preapprove-b.localhost:8905"
+        }
+      ],
+      "handshakes": [
+        {
+          "id": "73160.3",
+          "status": 101,
+          "at": 1792451431284
+        }
+      ],
+      "snapshot": {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v1",
+        "items": [
+          {
+            "id": "first",
+            "text": "Approved native room",
+            "checked": false
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "Two fresh scoped native Void apps; same-origin Chromium upgrade is refused before approval; an independent standards-compliant upgrade request confirms gateway 404; Chromium receives 101 after exact approval; empty target cells/deploy prefixes before approval; wrong digest refused; both apps active side by side",
+  "probeSha256": "c3526e12566272f09847c9b9b4fd1571fcf26440bb5529e297df9df1abeb8e39"
+}

@@ -119,11 +119,11 @@ cancellation with a version-pinned Void registration patch. Real publication sta
 [bounded fault drill](evidence/m11b-sse-failure.json). Healthy hibernated-room
 [ownership movement](evidence/m11b-move.json) also passes with native reconnects.
 [Stopped board/receipt recovery](evidence/m11b-restore.json) and explicit
-lower-revision reconciliation also pass. Next: the M11b acceptance audit, including
-preapproval WebSocket refusal evidence; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
+lower-revision reconciliation also pass. The [M11b acceptance audit](m11b-acceptance.md)
+qualifies the bounded local Docker slice, including two-app preapproval refusal.
+Next: [scheduled-work discovery](m11c-discovery.md) and a reviewed lifecycle contract. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
-policy. Remaining live-session qualification and scheduled/workflow lifecycle
-remain open M11 work. The native Void imports fixture
+policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. The qualified queue contract permits compatible
 handler overlap, not draining. Live collaboration remains a separate slice.
