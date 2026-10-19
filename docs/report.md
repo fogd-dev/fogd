@@ -9,7 +9,9 @@ Current status: Docker deploy/approval, private configuration, TLS, stopped reco
 capacity reporting, and offline retirement are locally qualified. Kubernetes deployment
 and stopped recovery have experimental local-kind evidence. Remote infrastructure,
 broader background/live applications and portability
-remain open roadmap work.
+remain open roadmap work. The [M11c native timer probe](cron-qualification.md)
+passes on a disposable two-node fleet; scheduled app admission remains closed
+until its [lifecycle contract](m11c.md) is implemented and qualified.
 
 Queued Docker backup/restore has [private-artifact recovery qualification](queue-recovery.md),
 including replica-first pause, retention checks, and explicit acknowledgment/resume.

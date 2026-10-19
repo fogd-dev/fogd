@@ -369,3 +369,10 @@ FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
 It temporarily stops the source stack, uses a fresh stack on the same ports, and
 restores the source after cleanup. It retains all volumes. Use a new output
 directory. Scheduled background work is the [next discovery slice](docs/m11c-discovery.md).
+
+## M11c in progress: scheduled work
+
+The [native cron probe](docs/cron-qualification.md) records timer invocations on
+two celld nodes without HTTP triggering. The [proposed contract](docs/m11c.md)
+requires migration-safe approval, dispatch controls, retry semantics and recovery.
+Ordinary `fogd deploy` still rejects cron declarations.

@@ -1,0 +1,321 @@
+{
+  "context": {
+    "project": "fogd-m11c-native",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "sha256:43256a0fcad7b5a8d4560bd777d49bfc2c413123d4cce0cebf7b90e58448f66d",
+      "slot-1-b": "sha256:43256a0fcad7b5a8d4560bd777d49bfc2c413123d4cce0cebf7b90e58448f66d"
+    }
+  },
+  "native": {
+    "release": {
+      "dry_run": false,
+      "location": "s3://fogd/slots/slot-1/deploy/cron-probe/7f71af9e43904c2a",
+      "version": "7f71af9e43904c2a",
+      "worker": "cron-probe"
+    },
+    "events": [
+      {
+        "id": "5293153d-3b7a-4774-bab7-dd3f5e0854c6",
+        "cron": "* * * * *",
+        "scheduledTime": 1792452060000,
+        "at": 1792452060026,
+        "noRetry": "function"
+      },
+      {
+        "id": "7226ee07-4395-4945-916a-523b2b1284d9",
+        "cron": "* * * * *",
+        "scheduledTime": 1792452120000,
+        "at": 1792452120003,
+        "noRetry": "function"
+      }
+    ],
+    "state": [
+      {
+        "host": "slot-1-a",
+        "deployment": {
+          "cells": {},
+          "draining": [],
+          "generation": 2,
+          "isolates": {
+            "cells": {
+              "cron-probe": {
+                "cells": 0,
+                "external_bytes": 0,
+                "freed": 0,
+                "heap_bytes": 0,
+                "live": 0,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "services": {
+              "cron-probe": {
+                "cells": 0,
+                "external_bytes": 692851,
+                "freed": 0,
+                "heap_bytes": 2953216,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 692851,
+              "freed": 0,
+              "heap_bytes": 2953216,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-probe/7f71af9e43904c2a",
+          "swapping": 0,
+          "version": "7f71af9e43904c2a"
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "deployment": {
+          "cells": {
+            ".cron:cron-probe": 2
+          },
+          "draining": [],
+          "generation": 2,
+          "isolates": {
+            "cells": {
+              "cron-probe": {
+                "cells": 1,
+                "external_bytes": 681967,
+                "freed": 0,
+                "heap_bytes": 2691072,
+                "live": 1,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "services": {
+              "cron-probe": {
+                "cells": 0,
+                "external_bytes": 0,
+                "freed": 1,
+                "heap_bytes": 0,
+                "live": 0,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 0,
+              "freed": 1,
+              "heap_bytes": 0,
+              "live": 0,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-probe/7f71af9e43904c2a",
+          "swapping": 0,
+          "version": "7f71af9e43904c2a"
+        }
+      }
+    ],
+    "scope": "Unfaulted native timer dispatch only; direct runtime deployment bypasses fogd approval. No activation, retry, pause, recovery or exactly-once qualification."
+  },
+  "cleanup": {
+    "release": {
+      "dry_run": false,
+      "location": "s3://fogd/slots/slot-1/deploy/cron-probe/7f71af9e43904c2a",
+      "version": "7f71af9e43904c2a",
+      "worker": "cron-probe"
+    },
+    "state": [
+      {
+        "host": "slot-1-a",
+        "deployment": {
+          "cells": {},
+          "draining": [
+            {
+              "generation": 2,
+              "isolates": {
+                "cells": {
+                  "cron-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "cron-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "7f71af9e43904c2a"
+            }
+          ],
+          "generation": 3,
+          "isolates": {
+            "cells": {},
+            "services": {
+              "cron-probe": {
+                "cells": 0,
+                "external_bytes": 680196,
+                "freed": 0,
+                "heap_bytes": 1871872,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 680196,
+              "freed": 0,
+              "heap_bytes": 1871872,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-probe/7f71af9e43904c2a",
+          "swapping": 0,
+          "version": "7f71af9e43904c2a"
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "deployment": {
+          "cells": {},
+          "draining": [
+            {
+              "generation": 2,
+              "isolates": {
+                "cells": {
+                  "cron-probe": {
+                    "cells": 0,
+                    "external_bytes": 681974,
+                    "freed": 0,
+                    "heap_bytes": 2691072,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "cron-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "7f71af9e43904c2a"
+            }
+          ],
+          "generation": 3,
+          "isolates": {
+            "cells": {},
+            "services": {
+              "cron-probe": {
+                "cells": 0,
+                "external_bytes": 680196,
+                "freed": 0,
+                "heap_bytes": 1871872,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 680196,
+              "freed": 0,
+              "heap_bytes": 1871872,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-probe/7f71af9e43904c2a",
+          "swapping": 0,
+          "version": "7f71af9e43904c2a"
+        }
+      }
+    ],
+    "scope": "Both replicas adopt a deployment with no cron declarations; volumes retained."
+  },
+  "probeSha256": "260cb27d8e1806758b03f8e40e92a86100552f14a3b26900fb64e398e10166f5",
+  "validation": {
+    "checks": "JavaScript syntax and 302 repository tests pass; gateway reserved-path test extended for scheduled endpoint and passes separately.",
+    "cleanup": "Disposable containers/networks removed without volume deletion; original fogd-m11b-sse seven containers restarted.",
+    "limits": "Plain Worker direct runtime deploy, not native Void generation or fogd approval; no timer hold, retries, fault or recovery qualification."
+  }
+}

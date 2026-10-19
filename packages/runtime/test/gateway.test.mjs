@@ -5,7 +5,7 @@ import gateway from '../src/gateway.js';
 test('gateway blocks internal paths including encoded paths before forwarding', async () => {
   let calls = 0;
   const backend = { fetch() { calls++; return new Response('unexpected'); } };
-  for (const path of ['/__fogd/export', '/%5f%5ffogd/export', '/__fogd%2fimport', '/__void/migrate', '/%5f%5fvoid/migrate', '/__void%2fmigrate', '/.well-known/celld/health', '/%2ewell-known/celld/health']) {
+  for (const path of ['/__fogd/export', '/%5f%5ffogd/export', '/__fogd%2fimport', '/__void/migrate', '/%5f%5fvoid/migrate', '/__void%2fmigrate', '/__void/scheduled', '/%5f%5fvoid/scheduled', '/__void%2fscheduled', '/.well-known/celld/health', '/%2ewell-known/celld/health']) {
     const result = await gateway.fetch(new Request('http://hello.localhost' + path), { APP_HOST: 'hello.localhost', NODE_A: backend, NODE_B: backend });
     assert.equal(result.status, 404, path);
   }

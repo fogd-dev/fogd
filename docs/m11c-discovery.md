@@ -3,8 +3,8 @@
 The next M11 slice should let a Void application perform periodic work after a
 user closes the browser. A candidate fixture periodically refreshes an application's
 stored status and exposes its last successful run and failure state. This is a
-reusable application capability, not a claimed FilOz requirement. The acceptance
-contract and runtime choice still need peer review before implementation.
+reusable application capability, not a claimed FilOz requirement. The [proposed acceptance contract](m11c.md) and runtime choice need peer review
+before platform implementation.
 
 ## Source findings
 
