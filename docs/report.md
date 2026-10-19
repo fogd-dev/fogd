@@ -8,11 +8,12 @@ an admin reviews and approves its exact digest. No Cloudflare account or API is 
 Current status: Docker deploy/approval, private configuration, TLS, stopped recovery,
 capacity reporting, and offline retirement are locally qualified. Kubernetes deployment
 and stopped recovery have experimental local-kind evidence. Remote infrastructure,
-capacity expansion, background/live applications, and broader portability
+broader background/live applications and portability
 remain open roadmap work.
 
-Queued installation backup/restore and transformations are [explicitly refused](queue-recovery.md)
-until delivery and retention handling qualify. Public queue admission remains closed.
+Queued Docker backup/restore has [private-artifact recovery qualification](queue-recovery.md),
+including replica-first pause, retention checks, and explicit acknowledgment/resume.
+Queued Kubernetes recovery and transformations remain refused; public queue admission stays closed.
 
 ## What works
 

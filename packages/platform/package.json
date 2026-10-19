@@ -8,6 +8,7 @@
     "@aws-sdk/client-s3": "3.1152.0"
   },
   "exports": {
-    "./retirement": "./src/retirement.mjs"
+    "./retirement": "./src/retirement.mjs",
+    "./queue-snapshot": "./src/queue-snapshot.mjs"
   }
 }

@@ -1,4 +1,5 @@
 import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
+import { validateRecoveryState, recoverQueueSnapshots } from './queue-recovery.mjs';
 import { activateRelease } from './activation.mjs';
 import { assertQueueDecision, interruptQueueActivation, recoverQueueHolds, requireQueueCapability, validateQueueState } from './queue-activation.mjs';
 import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
@@ -21,8 +22,9 @@ export class Controller {
   #storageFailed = false;
   #storageCause;
   #reportStorageFailure;
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic) }) {
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
+    this.clock = clock;
     this.#persist = persist;
     this.#reportStorageFailure = reportStorageFailure;
     this.maxPending = positiveLimit(maxPending, 'Pending deployment limit');
@@ -51,12 +53,14 @@ export class Controller {
     await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     validateRetirementState(this.state, this.slots);
     validateQueueState(this.state);
+    validateRecoveryState(this.state);
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
     await inspectOwnership(this);
     await this.save();
     await recoverQueueHolds(this);
+    await recoverQueueSnapshots(this);
   }
   assertStorage() {
     if (this.#storageFailed) {

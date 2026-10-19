@@ -13,6 +13,11 @@ export function adminState(controller) {
 
 function adminApp(app) {
   const visible = { ...app };
+  delete visible.queueSnapshot;
+  if (app.queueRecovery) {
+    const { id, status, diagnosis, checkError, checkedAt, acknowledgedAt } = app.queueRecovery;
+    visible.queueRecovery = { id, status, diagnosis, checkError, checkedAt, acknowledgedAt };
+  }
   for (const field of ['delivery', 'queueBootstrap']) {
     if (!app[field]) continue;
     const { version: _version, ...state } = app[field];

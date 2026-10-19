@@ -390,3 +390,18 @@ Its first attempt tried to read a response body after the page reloaded, which C
 no longer retained. The probe now captures the posted request and checks controller
 state plus the rendered active card; it passes without changing product behavior.
 Evidence is `.fogd/m11a-repair-browser-final`.
+
+### M11a queued installation recovery qualification
+
+The first full Docker restore retained pending work and persisted pause, then the
+probe used Node fetch with a Host override and hit an unknown-app route. The probe
+now uses the existing HTTP virtual-host helper. A later fresh target hit Docker's
+exhausted address pools; stopped disposable M11 containers/networks were removed
+with Compose down, retaining their volumes and all snapshots. No global prune or
+system network configuration change was used.
+
+The simultaneous-start drill exposed the expected window where a controller records
+pause intent before replicas are ready. Recovery now retries that pending pause,
+records a new review, and requires explicit acknowledgment of it. The final
+qualification uses the documented all-services startup command. Source bundles,
+intermediate failed targets, and private records remain under `.fogd` for inspection.

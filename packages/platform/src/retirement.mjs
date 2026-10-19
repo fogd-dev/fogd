@@ -1,4 +1,5 @@
 import { queueCapability } from './queue-activation.mjs';
+import { queueRecoveryCapability } from './queue-snapshot.mjs';
 import { claimCapability } from './claims.mjs';
 import { appName } from '@fogd/runtime/artifact';
 
@@ -7,7 +8,7 @@ export function assertLiveName(state, name) {
   if (state.apps[name]?.retirement) throw new Error('App name is permanently retired; choose a different name');
 }
 export function validateRetirementState(state, slots) {
-  if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
+  if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability, queueRecoveryCapability].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
   for (const app of Object.values(state.apps)) {
     if (!app.retirement) continue;
     if (!state.requirements?.includes(retirementCapability) || app.slot !== null || app.route !== 'retired') throw new Error('Invalid retirement tombstone; restore matching metadata');

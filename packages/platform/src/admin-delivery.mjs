@@ -1,9 +1,10 @@
 import { deliveryFor } from './queue-activation.mjs';
 import { checkMutation } from './admin-secrets.mjs';
+import { recoveryPending, recoveryReview, prepareQueueSnapshot, acknowledgeQueueRecovery } from './queue-recovery.mjs';
 
 function resumable(controller, app) {
   const active = controller.state.deployments[app.active];
-  return Boolean(active?.status === 'active' && app.route === 'active' && !app.quarantined && !app.retirement && !app.uncertain && !app.delivery.hold && app.queueBootstrap?.phase === 'application' && active.version === app.delivery.version);
+  return Boolean(active?.status === 'active' && app.route === 'active' && !app.quarantined && !app.retirement && !app.uncertain && !app.delivery.hold && !recoveryPending(app) && app.queueBootstrap?.phase === 'application' && active.version === app.delivery.version);
 }
 
 export function deliveryView(controller, name) {
@@ -13,6 +14,7 @@ export function deliveryView(controller, name) {
   const active = controller.state.deployments[app.active];
   return { app: name, ...journal, effective: journal.hold ? 'paused' : journal.desired,
     bootstrap: app.queueBootstrap.phase, recoveryError: app.deliveryRecoveryError || null,
+    recovery: app.queueRecovery ? { id: app.queueRecovery.id, review: recoveryReview(app.queueRecovery), status: app.queueRecovery.status, diagnosis: app.queueRecovery.diagnosis || null, checkError: app.queueRecovery.checkError || null, checkedAt: app.queueRecovery.checkedAt || null, observation: app.queueRecovery.observation || null, firstObservation: app.queueRecovery.firstObservation || null } : null,
     active: active ? { deployment: active.id, digest: active.digest } : null,
     operationAllowed: !app.retirement && !app.quarantined && app.queueBootstrap.phase !== 'pending',
     resumeAllowed: resumable(controller, app) };
@@ -30,8 +32,10 @@ function deliveryTarget(controller, name) {
 
 export async function operateDelivery(controller, name, action, input = {}) {
   const { app, slot } = deliveryTarget(controller, name);
-  if (!['observe', 'pause', 'resume'].includes(action)) throw new Error('Invalid delivery action');
+  if (!['observe', 'pause', 'resume', 'snapshot', 'acknowledge-recovery'].includes(action)) throw new Error('Invalid delivery action');
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Delivery input must be a JSON object');
+  if (action === 'snapshot') return prepareQueueSnapshot(controller, name, input);
+  if (action === 'acknowledge-recovery') { await acknowledgeQueueRecovery(controller, name, input); return deliveryView(controller, name); }
   if (action === 'resume') {
     if (!resumable(controller, app)) throw new Error('Resume requires a completed activation with no hold or uncertain migration');
     const active = controller.state.deployments[app.active];
@@ -52,7 +56,7 @@ export async function operateDelivery(controller, name, action, input = {}) {
 // GET returns recorded state only. Upstream queue info can instantiate a cell,
 // so refreshing observations is an authenticated, CSRF-protected POST.
 export async function deliveryRequest(request, url, controller, csrf, body, send) {
-  const match = /^\/v1\/apps\/([a-z0-9-]+)\/delivery(?:\/(observe|pause|resume))?$/.exec(url.pathname);
+  const match = /^\/v1\/apps\/([a-z0-9-]+)\/delivery(?:\/(observe|pause|resume|snapshot|acknowledge-recovery))?$/.exec(url.pathname);
   if (!match) return false;
   if (request.method === 'GET' && !match[2]) {
     send(200, deliveryView(controller, match[1])); return true;
@@ -68,9 +72,9 @@ export async function deliveryRequest(request, url, controller, csrf, body, send
 export function deliveryHTML(controller, html, csrf) {
   const cards = Object.keys(controller.state.apps).filter(name => controller.state.apps[name].delivery).map(name => {
     const state = deliveryView(controller, name);
-    const buttons = (state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : [])] : []).map(action => `<button data-delivery="${action}" data-app="${html(name)}" data-deployment="${html(state.active?.deployment || '')}" data-digest="${html(state.active?.digest || '')}">${action === 'observe' ? 'Refresh status' : action}</button>`).join(' ');
-    return `<article><h2>${html(name)} queue</h2><p>Desired: ${html(state.desired)}. Effective intent: ${html(state.effective)}. Recorded observation: ${html(state.observed)} at ${html(state.observedAt || 'unknown')}.</p><p>Active deployment: ${html(state.active?.deployment || 'none')}. Digest: <code>${html(state.active?.digest || 'none')}</code>.</p><p>Activation hold: ${html(state.hold || 'none')}. Unconfirmed operation: ${html(state.operation || 'none')}.</p><p>${html(state.recoveryError || '')}</p>${buttons}</article>`;
+    const buttons = (state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : []), ...(state.recovery?.status === 'pending' ? ['acknowledge-recovery'] : [])] : []).map(action => `<button data-delivery="${action}" data-app="${html(name)}" data-recovery="${html(state.recovery?.id || '')}" data-review="${html(state.recovery?.review || '')}" data-deployment="${html(state.active?.deployment || '')}" data-digest="${html(state.active?.digest || '')}">${action === 'observe' ? 'Refresh status' : action === 'acknowledge-recovery' ? 'Acknowledge recovery' : action}</button>`).join(' ');
+    return `<article><h2>${html(name)} queue</h2><p>Desired: ${html(state.desired)}. Effective intent: ${html(state.effective)}. Recorded observation: ${html(state.observed)} at ${html(state.observedAt || 'unknown')}.</p><p>Active deployment: ${html(state.active?.deployment || 'none')}. Digest: <code>${html(state.active?.digest || 'none')}</code>.</p><p>Activation hold: ${html(state.hold || 'none')}. Unconfirmed operation: ${html(state.operation || 'none')}.</p><p>${html(state.recoveryError || '')}</p><p>Recovery: ${html(state.recovery?.status || 'none')}. ${html(state.recovery?.diagnosis || '')} ${html(state.recovery?.checkError || '')}</p>${buttons}</article>`;
   }).join('');
   if (!cards) return '';
-  return `<section><h2>Queue delivery</h2><p>Status is a recorded observation. Pause does not drain running handlers. Operator pause persists across successful approvals. Refresh contacts the runtime; resume requires the displayed active artifact to remain current.</p>${cards}</section><script>for(const b of document.querySelectorAll('button[data-delivery]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/apps/'+encodeURIComponent(b.dataset.app)+'/delivery/'+b.dataset.delivery,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({deployment:b.dataset.deployment,digest:b.dataset.digest})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script>`;
+  return `<section><h2>Queue delivery</h2><p>Status is a recorded observation. Pause does not drain running handlers. Operator pause persists across successful approvals. Refresh contacts the runtime; resume requires the displayed active artifact to remain current.</p>${cards}</section><script>for(const b of document.querySelectorAll('button[data-delivery]'))b.onclick=async()=>{if(b.dataset.delivery==='acknowledge-recovery'&&!confirm('Acknowledge possible expired or completed messages after reconciling retained input? This restores HTTP access but leaves delivery paused.'))return;b.disabled=true;try{const r=await fetch('/v1/apps/'+encodeURIComponent(b.dataset.app)+'/delivery/'+b.dataset.delivery,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({deployment:b.dataset.deployment,digest:b.dataset.digest,...(b.dataset.delivery==='acknowledge-recovery'?{recovery:b.dataset.recovery,review:b.dataset.review,acceptPossibleLoss:true}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script>`;
 }

@@ -1,8 +1,8 @@
 # Back up and restore a local fogd installation
 
-Queued installations are refused pending [queue recovery qualification](queue-recovery.md).
-Known queue history refuses before stopping. A queue submission racing that check
-can leave the source stopped with partial output and no success manifest.
+Privately staged queue apps use the [queued recovery protocol](queue-recovery.md):
+backup pauses delivery and restore requires explicit recovery acknowledgment.
+Public queue admission remains closed.
 
 Use `fogd backup` to stop the supported Docker stack and capture its complete state.
 Use `fogd restore` to recover that snapshot onto fresh volumes with the same images.

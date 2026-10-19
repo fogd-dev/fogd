@@ -12,7 +12,7 @@ export function activationQueue(resources) {
 
 export function deliveryFor(controller, app, slot) {
   return new Delivery({ state: app.delivery, slot, runtime: controller.backend.queues,
-    persist: async state => { controller.assertStorage(); app.delivery = state; await controller.save(); } });
+    persist: async state => { controller.assertStorage(); delete app.queueSnapshot; app.delivery = state; await controller.save(); } });
 }
 
 export function requireQueueCapability(state, resources) {
@@ -69,6 +69,7 @@ export async function recoverQueueHolds(controller) {
 }
 
 export function assertQueueDecision(app, request, action, replacement = false) {
+  if (action !== 'reject' && app?.queueRecovery && app.queueRecovery.status !== 'acknowledged') throw new Error('Acknowledge restored queue recovery before approving another deployment');
   if (!app?.delivery?.hold) return;
   if (action === 'reject') {
     if (app.delivery.hold === request.id) throw new Error('Retry the held queue activation before rejecting its artifact');

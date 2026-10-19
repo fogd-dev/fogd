@@ -85,11 +85,23 @@ function showCapacity(state, extra) {
   console.log(JSON.stringify(state.capacity, null, 2));
 }
 
-async function adminSession() {
-  const env = await configEnv();
+async function adminSession(env = null) {
+  env ||= await configEnv();
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD');
   const headers = { Authorization: `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}` };
   return { env, headers, state: await api(env, '/v1/admin', { headers }) };
+}
+
+export async function prepareSnapshotRequest(env, app, input) {
+  const { headers, state: { csrf } } = await adminSession(env);
+  return api(env, `/v1/apps/${encodeURIComponent(app)}/delivery/snapshot`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(input) });
+}
+
+export async function adminAcknowledgeRecovery(app, deployment, digest, recovery, review, accept) {
+  if (!app || !deployment || !/^[a-f0-9]{64}$/.test(digest || '') || !recovery || !/^[a-f0-9]{64}$/.test(review || '') || accept !== '--accept-possible-loss') throw new Error('Usage: fogd admin recover APP ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss');
+  const { env, headers, state } = await adminSession();
+  const result = await api(env, `/v1/apps/${encodeURIComponent(app)}/delivery/acknowledge-recovery`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest, recovery, review, acceptPossibleLoss: true }) });
+  console.log(JSON.stringify(result, null, 2));
 }
 
 export async function adminDelivery(app, action = 'status', deployment, digest) {

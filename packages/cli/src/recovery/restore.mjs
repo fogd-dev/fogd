@@ -4,7 +4,8 @@ import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
-import { assertSnapshotQueueFree } from './queue-safety.mjs';
+import { restoredQueueState } from './queue-restore.mjs';
+import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 
 async function requireFresh(project, config) {
   if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
@@ -22,7 +23,7 @@ export async function restore(directory, project, output) {
   return restoreInstallation({ manifest, config, dir }, project, destination);
 }
 export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
-  await assertSnapshotQueueFree(dir);
+  const queueState = await restoredQueueState(dir, manifest, change);
   const sourceVolumes = volumeNames(config), images = change?.images || manifest.images;
   if (change && !['retirement', 'expansion'].includes(change.kind)) throw new Error('Unknown installation transformation');
   if (Object.values(images).some(id => !Object.values(manifest.images).includes(id))) throw new Error('Transformation may only use snapshot images');
@@ -37,11 +38,13 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
   if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
   if (change?.kind === 'retirement') await requireRetirementRuntime(manifest.images.controller);
+  if (queueState) await requireQueueRecoveryRuntime(manifest.images.controller);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
   await restoreVolumes(dir, target, volumes, manifest.images.controller, change?.skipped);
+  if (queueState) await writeRetirement(target, manifest.images.controller, queueState);
   if (change) {
     if (change.kind === 'retirement') await writeRetirement(target, manifest.images.controller, change.state);
     await writeJson(join(destination, `${change.kind}.json`), change.evidence);
@@ -54,6 +57,13 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: change?.kind === 'retirement' ? change.evidence.id : null, expansion: change?.kind === 'expansion' ? change.evidence.id : null });
   console.warn('Restoring an older snapshot can resurrect application access, deploy credentials, and secret revisions. Keep the source stopped.');
   console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
+}
+
+async function requireQueueRecoveryRuntime(image) {
+  let capability;
+  try { capability = await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', "import {queueRecoveryCapability} from './packages/platform/src/queue-snapshot.mjs'; console.log(queueRecoveryCapability)"]); }
+  catch { throw new Error('Snapshot runtime does not support queue recovery; upgrade the source and take a new snapshot'); }
+  if (capability.trim() !== queueRecoveryCapability) throw new Error('Snapshot queue recovery capability differs from the CLI');
 }
 
 async function requireRetirementRuntime(image) {

@@ -95,8 +95,10 @@ and [delivery journal](delivery-journal.md) are integrated into the
 and process-kill recovery evidence. A built-controller Docker probe also covers the
 combined lifecycle with private artifacts. [Authenticated delivery controls](delivery-controls.md)
 are qualified through HTTP, CLI, and browser checks. [Corrected-artifact recovery](queue-replacement.md)
-qualifies original migration reconciliation and atomic hold transfer. The [recovery safety boundary](queue-recovery.md) refuses queued snapshots and restores.
-Next: qualify stopped recovery with retention-age policy, and retirement/isolation acceptance before queue admission. The native Void imports fixture
+qualifies original migration reconciliation and atomic hold transfer. The [Docker queue recovery protocol](queue-recovery.md) qualifies retention checks,
+persisted pause, and explicit recovery acknowledgment with private artifacts.
+Next: retirement/isolation acceptance and canonical admission, followed by the full
+public approval/gateway application acceptance flow. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be

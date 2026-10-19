@@ -12,6 +12,9 @@ import { server } from '../src/http.mjs';
 import { initialDelivery } from '../src/delivery.mjs';
 import { queueCapability } from '../src/queue-activation.mjs';
 import { saveJson } from '../src/store.mjs';
+import { randomUUID } from 'node:crypto';
+import { recoveryReview, recoverQueueSnapshots } from '../src/queue-recovery.mjs';
+import { queueRecoveryCapability } from '../src/queue-snapshot.mjs';
 
 const execute = promisify(execFile);
 const id = 'f2e116e5-df28-4fea-bc21-19ada020970a', digest = 'a'.repeat(64);
@@ -22,6 +25,7 @@ async function fixture(t) {
   const calls = []; let paused = false, runtimeVersion = version, fail = null, diskFailure = false;
   const queues = new QueueRuntime({
     async run(_slot, args) {
+      if (args[0] === '--version') return 'celld 0.6.2';
       const verb = args[1]; calls.push(verb);
       if (verb !== 'info') paused = verb === 'pause';
       if (fail === verb) { fail = null; throw Error('private-runtime-diagnostic'); }
@@ -156,4 +160,27 @@ test('unavailable queue fleets expose recorded status without offering runtime c
       assert.deepEqual(f.calls, []);
     });
   }
+});
+
+test('snapshot and recovery acknowledgment require admin CSRF, exact identities, and explicit CLI loss acceptance', async t => {
+  const f = await fixture(t);
+  assert.equal((await f.post('snapshot', { deployment: id, digest }, { 'X-Fogd-CSRF': 'wrong' })).status, 403);
+  assert.equal((await f.post('snapshot', { deployment: id, digest }, { authorization: 'Bearer deploy' })).status, 401);
+  assert.equal((await f.post('snapshot', { deployment: id, digest })).status, 200);
+  const app = f.c.state.apps.imports;
+  app.queueRecovery = { id: randomUUID(), status: 'pending', snapshot: 'a'.repeat(64), prepared: app.queueSnapshot };
+  delete app.queueSnapshot; app.route = 'paused'; f.c.state.requirements.push(queueRecoveryCapability); await f.c.save(); await recoverQueueSnapshots(f.c);
+  const body = { deployment: id, digest, recovery: app.queueRecovery.id, review: recoveryReview(app.queueRecovery), acceptPossibleLoss: true };
+  assert.equal((await f.post('acknowledge-recovery', body, { 'X-Fogd-CSRF': 'wrong' })).status, 403);
+  assert.equal((await f.post('acknowledge-recovery', { ...body, recovery: randomUUID() })).status, 400);
+  for (const path of ['/v1/admin', f.path, '/']) {
+    const text = await (await fetch(f.origin + path, { headers: f.auth })).text();
+    assert.ok(!text.includes(version)); assert.ok(!text.includes('"prepared"'));
+    if (path === '/') assert.match(text, /Acknowledge recovery/);
+  }
+  const cli = (...args) => execute(process.execPath, [fileURLToPath(new URL('../../cli/bin/fogd.js', import.meta.url)), 'admin', 'recover', 'imports', id, digest, app.queueRecovery.id, recoveryReview(app.queueRecovery), ...args], { env: { ...process.env, FOGD_ENV_FILE: join(f.c.dir, 'absent.env'), FOGD_SERVER: f.origin, FOGD_ADMIN_USER: 'admin', FOGD_ADMIN_PASSWORD: 'password' } });
+  await assert.rejects(cli(), /Usage/);
+  const result = JSON.parse((await cli('--accept-possible-loss')).stdout);
+  assert.equal(result.recovery.status, 'acknowledged'); assert.equal(result.desired, 'paused');
+  assert.equal(f.paused(), true);
 });

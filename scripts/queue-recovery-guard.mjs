@@ -10,6 +10,8 @@ import { projectContainers } from '../packages/cli/src/recovery/docker.mjs';
 // Synthetic permanent-capability fixture; no queue deployment or restore claim.
 const probe = await context('slot-1', process.argv[2]);
 assert.equal(probe.config.services.controller.environment.FOGD_DATA_DIR, undefined);
+const metadata = JSON.parse(await probe.node("import {readFile} from 'node:fs/promises';const s=JSON.parse(await readFile('/var/lib/fogd/state.json'));console.log(JSON.stringify({apps:Object.keys(s.apps),queued:s.requirements?.includes('fogd-queue-activation-v1')||false}));"));
+assert.deepEqual(metadata, { apps: [], queued: false }, 'Synthetic capability probe requires an empty public controller');
 const image = probe.config.services.controller.image, volume = probe.config.volumes.controller.name;
 const saved = `/data/queue-recovery-guard-${randomUUID()}.json`;
 const helper = code => volumeHelper(image, volume, ['node', '--input-type=module', '-e', code], { readonly: false });

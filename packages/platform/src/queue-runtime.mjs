@@ -1,4 +1,5 @@
 import { createHash, createHmac } from 'node:crypto';
+import { queueRetentionContract } from './queue-snapshot.mjs';
 
 // Internal M11a primitive. Admission must constrain the fleet to one consumed queue.
 // Callers serialize publication and queue operations; this is an observation gate,
@@ -18,6 +19,18 @@ export class QueueRuntime {
   }
   async pause(slot, name) {
     return this.#mutate(slot, name, 'pause');
+  }
+  async snapshot(slot, name, version) {
+    try {
+      if ((await this.run(slot, ['--version'])).trim() !== queueRetentionContract.runtime) throw new Error('Queue retention requires the pinned runtime contract');
+      const status = await this.status(slot, name);
+      const states = await Promise.all(slot.nodes.map(node => this.inspect(node)));
+      assertQueueGeneration(states, slot.nodes.length, version, queueCell(name));
+      return status;
+    } catch (cause) {
+      const error = new Error('Approved queue generation or pinned retention runtime could not be confirmed', { cause });
+      error.code = 'QUEUE_SNAPSHOT_UNCONFIRMED'; throw error;
+    }
   }
   async #mutate(slot, name, verb) {
     try {

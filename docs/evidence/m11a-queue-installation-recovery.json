@@ -1,0 +1,186 @@
+{
+  "scope": "Private artifact adoption; public queue admission remains closed",
+  "simultaneousStartupFinalImage": {
+    "source": "fogd-m11a-recovery-qualified",
+    "target": "fogd-m11a-recovery-complete",
+    "privateArtifactAdoption": true,
+    "runtimeImage": "sha256:5a96622344421ddc40e595dd6632280740e210a0ef95ff2d60206e3aa86ef74b",
+    "preparationId": "27a993a5-60d4-4a48-9943-539bcbf13f27",
+    "startupMode": "all",
+    "reviewChanged": true,
+    "initialQueue": {
+      "backlogBytes": 62,
+      "backlogCount": 1,
+      "oldestMessageTimestamp": 1792435688310,
+      "paused": true,
+      "stored": 1
+    },
+    "recovery": {
+      "id": "b9d418e2-0429-432d-ab56-6185aafc0457",
+      "review": "6ebb7a58ef041310004b44f067248939c2305041ec88bc97cc6fb9719490e530",
+      "status": "pending",
+      "diagnosis": null,
+      "checkError": null,
+      "checkedAt": 1792436217033,
+      "observation": {
+        "paused": true,
+        "stored": 1,
+        "backlogCount": 1,
+        "backlogBytes": 62,
+        "oldestMessageTimestamp": 1792435688310
+      },
+      "firstObservation": {
+        "at": 1792436217033,
+        "observed": {
+          "paused": true,
+          "stored": 1,
+          "backlogCount": 1,
+          "backlogBytes": 62,
+          "oldestMessageTimestamp": 1792435688310
+        }
+      }
+    },
+    "job": {
+      "id": "stopped-recovery-4f381283-af7b-4094-bdd9-b7662e9d7648",
+      "input_hash": "17f58aa37cd5261b1e76db53f98e088c996bbf7672969be04044a656f06f9c72",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 18:48:08",
+      "results": [
+        {
+          "job_id": "stopped-recovery-4f381283-af7b-4094-bdd9-b7662e9d7648",
+          "position": 0,
+          "label": "DURABLE"
+        },
+        {
+          "job_id": "stopped-recovery-4f381283-af7b-4094-bdd9-b7662e9d7648",
+          "position": 1,
+          "label": "QUEUE"
+        }
+      ]
+    },
+    "finalDelivery": {
+      "app": "imports",
+      "schema": 1,
+      "queue": "imports",
+      "desired": "paused",
+      "hold": null,
+      "observed": "paused",
+      "observedAt": "2026-10-19T18:56:58.040Z",
+      "operation": null,
+      "effective": "paused",
+      "bootstrap": "application",
+      "recoveryError": null,
+      "recovery": {
+        "id": "b9d418e2-0429-432d-ab56-6185aafc0457",
+        "review": "6ebb7a58ef041310004b44f067248939c2305041ec88bc97cc6fb9719490e530",
+        "status": "acknowledged",
+        "diagnosis": null,
+        "checkError": null,
+        "checkedAt": 1792436217192,
+        "observation": {
+          "paused": true,
+          "stored": 1,
+          "backlogCount": 1,
+          "backlogBytes": 62,
+          "oldestMessageTimestamp": 1792435688310
+        },
+        "firstObservation": {
+          "at": 1792436217033,
+          "observed": {
+            "paused": true,
+            "stored": 1,
+            "backlogCount": 1,
+            "backlogBytes": 62,
+            "oldestMessageTimestamp": 1792435688310
+          }
+        }
+      },
+      "active": {
+        "deployment": "fe3bf8f3-3402-4da2-aeec-5564c997d932",
+        "digest": "9473e4ee42dfc77be70627b07ad0ac78a130fb95c47cc244ceb9f2ce1b968d4d"
+      },
+      "operationAllowed": true,
+      "resumeAllowed": true
+    },
+    "snapshotManifestSha256": "149df640d8591be98b5dd9a714c32486042e29f618c18ec52536205033b57687",
+    "priorAcknowledgedRecoveryRetained": true
+  },
+  "replicaFirstRuntimeProof": {
+    "source": "fogd-m11a-recovery-positive",
+    "target": "fogd-m11a-recovery-qualified",
+    "privateArtifactAdoption": true,
+    "beforeController": {
+      "backlogBytes": 25,
+      "backlogCount": 1,
+      "oldestMessageTimestamp": 1792434975329,
+      "paused": true,
+      "stored": 1
+    },
+    "recovery": {
+      "id": "38ffd1a5-9383-4ee4-a650-bf3801d75c37",
+      "status": "pending",
+      "diagnosis": null,
+      "checkedAt": 1792435154033
+    },
+    "job": {
+      "id": "stopped-recovery",
+      "input_hash": "17f58aa37cd5261b1e76db53f98e088c996bbf7672969be04044a656f06f9c72",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "complete",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 18:36:15",
+      "results": [
+        {
+          "job_id": "stopped-recovery",
+          "position": 0,
+          "label": "DURABLE"
+        },
+        {
+          "job_id": "stopped-recovery",
+          "position": 1,
+          "label": "QUEUE"
+        }
+      ]
+    },
+    "finalDelivery": {
+      "app": "imports",
+      "schema": 1,
+      "queue": "imports",
+      "desired": "paused",
+      "hold": null,
+      "observed": "paused",
+      "observedAt": "2026-10-19T18:39:15.358Z",
+      "operation": null,
+      "effective": "paused",
+      "bootstrap": "application",
+      "recoveryError": null,
+      "recovery": {
+        "id": "38ffd1a5-9383-4ee4-a650-bf3801d75c37",
+        "status": "acknowledged",
+        "diagnosis": null,
+        "checkedAt": 1792435154483
+      },
+      "active": {
+        "deployment": "fe3bf8f3-3402-4da2-aeec-5564c997d932",
+        "digest": "9473e4ee42dfc77be70627b07ad0ac78a130fb95c47cc244ceb9f2ce1b968d4d"
+      },
+      "operationAllowed": true,
+      "resumeAllowed": true
+    },
+    "snapshotManifestSha256": "c1c5439beb89a4c0ec9f6c3a6775809ae0bf6ffe717945a3750c6bde2ceeda15",
+    "runtimeImage": "sha256:06c87c2d2df391a49f85e09e0db904bede1a5ec1f7f3f1a5f90a76d7b1f05f3c",
+    "scope": "Private artifact adoption; real Docker full snapshot/restore and public gateway delivery; public artifact admission remains disabled"
+  },
+  "browserStandIn": {
+    "transport": "real browser and HTTP controller with runtime stand-in",
+    "cancellationPreservesPendingRecovery": true,
+    "acknowledgmentBindsRecoveryAndArtifact": true,
+    "deliveryRemainsPaused": true
+  }
+}

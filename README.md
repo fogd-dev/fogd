@@ -313,7 +313,8 @@ A built-controller Docker probe also covers real bootstrap, migration, and lost-
 recovery. [Admin delivery controls](docs/delivery-controls.md) provide recorded status,
 refresh, pause, and exact-approval resume through the CLI and browser.
 [Replacement approvals](docs/queue-replacement.md) recover from faulty unapplied
-migrations while preserving the hold and applied hashes. Public approval, stopped
-recovery/retention, and retirement/isolation acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
+migrations while preserving the hold and applied hashes. Retirement/isolation and
+full public approval acceptance remain pending. fogd still rejects queue declarations; these probes do not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
 
-Queue experiments remain outside supported recovery: see the [queue recovery boundary](docs/queue-recovery.md).
+Docker queue recovery has a [private-artifact qualification](docs/queue-recovery.md)
+with persisted pause, retention checks, and explicit acknowledgment before resume.

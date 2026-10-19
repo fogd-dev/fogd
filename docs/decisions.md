@@ -825,3 +825,34 @@ with incomplete output, so operators must inspect a post-stop refusal before
 restarting. Supported non-queue recovery continues. Full queue recovery
 remains the next acceptance gate; this guard does not complete it or enable queue
 admission. Direct runtime mutation remains outside the managed contract.
+
+## ADR 033: detect queued recovery loss and require explicit acknowledgment
+
+Context: ADR 032 closes recovery until delivery and retention are accounted for.
+celld persists pause but retains wall-clock expiration; delaying restored startup
+can expire work before the controller observes it. Operators need a usable recovery
+path and an honest account of this limit.
+
+Options: permanently block queued recovery; introduce per-replica startup deadlines
+and a shared release protocol; or preserve operator pause, validate snapshot age,
+and require acknowledgment of post-restore findings. The deadline option prevents
+some startup effects but cannot make expired records deliverable and introduces a
+second durable coordination protocol. An immutable bundle already preserves the
+original storage for investigation.
+
+Decision: qualify ordinary Docker backup/restore with exact-artifact preparation
+receipts, stopped-state checks, recorded retention policy, and pending recovery
+receipts. Check actual controller/replica image equality under the pinned Docker
+build contract. Retain the first observation and cumulative findings. Require
+recovery ID, review hash, deployment ID, digest, and explicit possible-loss acceptance before
+restoring HTTP access; delivery needs a separate resume. Add a permanent state
+capability so older controllers cannot ignore this gate.
+
+Consequences: delayed startup can expire messages before detection. Backup failures
+can leave delivery paused or the source stopped. Restored apps require an extra
+administrator action even when no loss was observed. Historical acknowledged
+receipts remain valid across runtime contract changes, but pending recovery actions
+require their supported contract. Operators remain responsible for application-level
+reconciliation and idempotency. This supersedes ADR 032 only for the qualified
+ordinary Docker path; Kubernetes and transformations remain refused. Public queue
+admission and retirement/isolation acceptance remain separate gates.

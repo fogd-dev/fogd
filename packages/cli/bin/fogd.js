@@ -6,7 +6,7 @@ import { kubernetesCommand } from '../src/kubernetes/commands.mjs';
 import { importTLS } from '../src/tls.mjs';
 import { backup } from '../src/recovery/backup.mjs';
 import { restore } from '../src/recovery/restore.mjs';
-import { up, deploy, admin, adminDelivery, adminRepair, status } from '../src/platform.mjs';
+import { up, deploy, admin, adminDelivery, adminRepair, adminAcknowledgeRecovery, status } from '../src/platform.mjs';
 
 const [command, ...args] = process.argv.slice(2);
 try {
@@ -41,7 +41,10 @@ try {
     if (args.length !== 1) throw new Error('Usage: fogd status <deployment-id>');
     await status(args[0]);
   } else if (command === 'admin') {
-    if (args[0] === 'repair') {
+    if (args[0] === 'recover') {
+      if (args.length !== 7) throw new Error('Usage: fogd admin recover APP ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss');
+      await adminAcknowledgeRecovery(...args.slice(1));
+    } else if (args[0] === 'repair') {
       if (args.length > 6) throw new Error('Too many repair arguments');
       await adminRepair(...args.slice(1));
     } else if (args[0] === 'delivery') {
@@ -53,6 +56,6 @@ try {
     }
   }
   else if (!command || command === '--help' || command === 'help') {
-    console.log('fogd docker render DIRECTORY --fleets 2|3  Write an unresolved Compose template\nfogd expand BUNDLE --fleets 3 --project NEW --output DIR\n                           Expand into a fresh stopped installation\nfogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR\n                           Retire into a fresh stopped Docker installation\nfogd kube render DIR --cert CERT --key KEY  Write experimental Kubernetes manifests\nfogd kube backup INSTALLATION BUNDLE --kubeconfig FILE --context NAME\nfogd kube restore BUNDLE --namespace NAME --output DIR --kubeconfig FILE --context NAME\nfogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY   Install a certificate while stopped\nfogd up [--shared]         Start the local or TLS/scoped Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin capacity        Inspect slot, pending, and artifact limits\nfogd admin delivery APP [status|observe|pause|resume ID SHA]  Control queue delivery\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin repair NEW_ID NEW_SHA HELD_ID HELD_SHA [REV]  Approve a corrected artifact\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
+    console.log('fogd docker render DIRECTORY --fleets 2|3  Write an unresolved Compose template\nfogd expand BUNDLE --fleets 3 --project NEW --output DIR\n                           Expand into a fresh stopped installation\nfogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR\n                           Retire into a fresh stopped Docker installation\nfogd kube render DIR --cert CERT --key KEY  Write experimental Kubernetes manifests\nfogd kube backup INSTALLATION BUNDLE --kubeconfig FILE --context NAME\nfogd kube restore BUNDLE --namespace NAME --output DIR --kubeconfig FILE --context NAME\nfogd backup DIRECTORY      Stop and snapshot the local installation\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY   Install a certificate while stopped\nfogd up [--shared]         Start the local or TLS/scoped Docker stack\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin capacity        Inspect slot, pending, and artifact limits\nfogd admin delivery APP [status|observe|pause|resume ID SHA]  Control queue delivery\nfogd admin recover APP ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss  Acknowledge recovery\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin repair NEW_ID NEW_SHA HELD_ID HELD_SHA [REV]  Approve a corrected artifact\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }
