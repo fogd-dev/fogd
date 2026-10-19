@@ -213,3 +213,48 @@ run `docker unpause` on the paused container in this disposable fixture, inspect
 the approval status, and run `fogd up` with the fixture environment before retrying.
 Remove any private `route-pause-compose.json` left in the output directory after
 restoration; it contains credentials.
+
+## Experimental SSE observer
+
+`/watch?room=shared` is a read-only view of the same room. Native `void/live`
+notifications trigger an authoritative room snapshot, and successful registration
+or resubscription also fetches a snapshot. Missed notifications are not replayed.
+The [initial evidence](../../docs/evidence/m11b-sse-initial.json) covers native hints,
+gateway restart with a missed edit, and a finite idle observation.
+
+This is not a qualified live-update feature yet. A confirmed upstream registration
+race can silently remove a subscription; reload the page for current state. The
+[reviewed patch direction](../../docs/reviews/m11b-sse-race-claude.md) and deployment
+cancellation tests remain open. No sign-in is provided, and anonymous readers can
+consume the topic's subscription capacity. Publishing is best effort and never
+changes an operation's durable result.
+
+Use fresh fleets: the live API infers an additional Durable Object, and fogd rejects
+adding it to an existing app's resource identity. From the repository root:
+
+```sh
+FOGD_PROBE_HTTP_PORT=8905 FOGD_PROBE_ADMIN_PORT=8906 \
+  node scripts/queue-probe/setup.mjs .fogd/sse-fixture fogd-m11b-sse-example
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" node packages/cli/bin/fogd.js up
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-board.mjs .fogd/sse-base
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" FOGD_LIVE_SSE_IDLE_SECONDS=30 \
+  node scripts/live-sse.mjs .fogd/sse-browser
+```
+
+The browser probe restarts this fixture's gateway, affecting both example apps.
+Recorded initial evidence uses the opt-in celld image; the setup command uses the
+normal default runtime. Neither qualifies the open SSE gates. Stop clients before
+restoring a snapshot. A lower revision after reconnect requires explicit reload;
+restoring under an uninterrupted observer is outside this example's contract.
+
+To reproduce the upstream race after obtaining the pinned Void source, run:
+
+```sh
+node scripts/void-live-registration-regression.mjs \
+  .upstream/void/packages/void/src/runtime/live-server.ts
+```
+
+The assertion fails on the pinned unpatched source. The script uses actual server
+methods with in-memory storage and delayed transport, so it isolates the race
+without claiming a celld scheduling reproduction.

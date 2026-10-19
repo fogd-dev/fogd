@@ -1,3 +1,5 @@
+import { live } from '../../src/live';
+import { publishHint } from '../../lib/hint.mjs';
 import { z } from 'zod';
 import { defineRoom } from 'void/ws';
 import { ServerMessage } from '../../lib/wire.mjs';
@@ -34,11 +36,18 @@ export default defineRoom({
       if (snapshot) await ctx.connection.send(snapshot);
     } catch { console.warn('Checklist sender disconnected before reply'); }
     // Exclude the sender so its disconnect cannot prevent peer notification.
-    if (snapshot) await ctx.room.broadcast(snapshot, [ctx.connection.id]);
+    if (snapshot) {
+      await ctx.room.broadcast(snapshot, [ctx.connection.id]);
+      // No waitUntil is exposed by native room hooks. Cancellation may lose a hint;
+      // never hold this handler (or the next edit) open waiting for publication.
+      void publishHint(() => live.withEnv(ctx.env).publish(ctx.params.room, { revision: result.revision })).then(outcome => {
+        if (outcome !== 'published') console.warn(`Checklist hint ${outcome}`);
+      });
+    }
   },
   onRequest(ctx) {
     if (!validRoom(ctx.params.room)) return new Response('Invalid room', { status: 400 });
     if (ctx.request.method !== 'GET') return new Response('Method not allowed', { status: 405 });
-    return Response.json(wire(new Board(ctx.storage).snapshot()));
+    return Response.json(wire(new Board(ctx.storage).snapshot()), { headers: { 'cache-control': 'no-store' } });
   },
 });

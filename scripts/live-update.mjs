@@ -24,7 +24,7 @@ let idleEvidence = null;
 const before = await admin(), old = before.deployments[before.apps[app].active];
 assert.equal(old.status, 'active');
 await mkdir(project);
-for (const name of ['package.json','vite.config.ts','void.config.ts','tsconfig.json','fogd.json','routes','lib','pages']) await cp(join(source,name),join(project,name),{recursive:true});
+for (const name of ['package.json','vite.config.ts','void.config.ts','tsconfig.json','fogd.json','routes','lib','pages','src']) await cp(join(source,name),join(project,name),{recursive:true});
 await cp(join(source,'updates/v2'),project,{recursive:true,force:true});
 await symlink(join(source,'node_modules'),join(project,'node_modules'),'dir');
 const credential = JSON.parse(await cli(['admin','issue-token','live-update-qualification',app]));

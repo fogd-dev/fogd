@@ -967,3 +967,28 @@ The fixture has no D1 migration; incompatible schema changes remain outside this
 contract. SSE, ownership moves and stopped recovery remain open. The initial probe
 hit a Playwright page-creation error after pausing; cleanup unfroze the replica and
 completed approval, and corrected runs passed.
+
+## M11b experimental SSE observer and registration race
+
+The [experimental observer](../examples/checklist/README.md#experimental-sse-observer)
+uses native Void SSE with post-registration room snapshots. Browser checks pass
+hints, a missed edit across gateway restart, and a 30-second idle observation.
+Focused tests cover native client registration failures, reconnect ordering,
+stale snapshot rejection and bounded publication diagnostics. The snapshot remains
+authoritative; notifications carry revision hints only.
+
+SSE acceptance is still open. Claude identified a race in upstream registration,
+and a deterministic source-level reproducer confirms that an accepted subscription
+can lose its stored row before registration returns. The browser happy path does
+not exercise that interleaving. The next slice implements the
+[reviewed pending-registration fix](reviews/m11b-sse-race-claude.md), then qualifies
+concurrent subscription cases, deployment cancellation and publication failure.
+Adding the inferred live Durable Object also exposes the current resource-growth
+limitation: existing apps cannot add that binding through an ordinary update.
+The probe uses fresh fleets instead of bypassing that contract.
+
+Validation for this experimental checkpoint: 286 workspace tests, syntax checks,
+quality gates, and ordinary Void plus fogd builds for all five verification apps
+pass. Builds run without network access using the existing verification image with
+the current checklist source mounted and copied into it. The source-level race
+reproducer intentionally fails on unpatched Void.

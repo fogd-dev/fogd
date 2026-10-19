@@ -349,4 +349,6 @@ also preserves the board and reconnects. An [explicit celld patch](docs/patches/
 qualifies preserved-socket updates, including after idle eviction; upstream 0.6.2
 still fails that gate. [Route-pause checks](docs/evidence/m11b-route-pause.json) confirm
 new connections are refused during approval while an established socket commits
-an edit. SSE, ownership moves and stopped recovery remain open.
+an edit. An [experimental SSE observer](examples/checklist/README.md#experimental-sse-observer)
+passes hints and reconnect snapshots; an upstream registration race still blocks
+SSE acceptance. Ownership moves and stopped recovery also remain open.

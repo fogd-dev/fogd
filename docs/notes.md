@@ -487,3 +487,28 @@ an existing registry entry. Idle eviction may retain the JS socket and its cache
 attachment; a generation swap does not. A temporary post-accept rewrite is the next
 discriminating experiment. If it resolves the failure, prefer a labelled celld
 upstream patch retaining the encoded bytes until acceptance over an app workaround.
+
+## M11b SSE investigation
+
+The initial native browser probe passes hints, gateway-disconnect recovery and a
+30-second idle observation on a fresh two-fleet fixture. The observer recovers an
+edit made while its SSE reconnects are blocked by fetching room state after
+registration. The browser's offline toggle did not close the existing stream, so
+the fault drill uses a real workerd restart and temporarily refuses new SSE
+requests in that browser. This does not claim an Internet outage or long idle
+qualification.
+
+Adding the inferred live Durable Object to the existing checklist fails the
+resource-identity contract. The SSE fixture uses fresh app fleets and pinned runtime
+images. Docker's default subnet pool was exhausted; removing only the three unused
+networks of the completed `fogd-m11a-recovery-complete` fixture allowed startup.
+No volumes or unrelated resources were removed.
+
+Claude found a registration/delivery race in Void live-server.ts. The source-level
+reproducer delays the topic registration reply after the row is stored. A publish
+then sees the connection's subscription as missing and deletes the row; control
+still reports success, but later publishes deliver nothing. The reproducer executes
+upstream methods with modelled storage and transport, not celld scheduling. The
+native happy path does not refute it. The second Claude review selects pending registration state with monotonic revisions
+and stale-completion guards. SSE remains unqualified until the race and deployment
+cancellation checks pass.

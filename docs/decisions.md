@@ -1041,3 +1041,29 @@ pre-accept snapshots become visible through the registry. The patch retains an
 extra byte copy and does not fix attachment-size or deserialize-copy semantics.
 The [build note](patches/celld-preaccept-attachment.md) records the exact source and
 scope. No package or image is published and no upstream submission is implied.
+
+## ADR 041: reconcile SSE observers after subscription registration
+
+**Context.** Native Void live events are transient hints. Its browser client
+resubscribes automatically but exposes no resubscription-complete callback. Reading
+before registration can miss an edit between the snapshot and the subscription.
+Room hooks expose no `waitUntil` for keeping a hint publication alive independently.
+
+**Options.** Fetch on connection-open; observe successful registration using the
+SDK's supported fetch adapter; patch the SDK to add a callback; or replace its
+client. Leaving out reconciliation retains a silent missed-update window. An SDK
+callback would be clearer but creates another patch to maintain.
+
+**Decision.** Keep native connection management. The example's fetch adapter
+refreshes room state after successful matching subscription responses, including
+resubscriptions. Revision filtering and transport generations reject stale reads.
+Subscription failures show an explicit retry state. Room edits send their durable
+reply and peer snapshots before launching best-effort publication without awaiting
+it. The observer never treats a hint as authoritative state.
+
+**Consequences.** The example owns a small, tested adapter tied to Void's control
+response contract. A cancelled publication can lose a hint; resubscription repairs
+missed state, without claiming replay. No awaited hint deadline holds up the next
+room operation. This does not solve the separate upstream registration race found
+by review; SSE qualification stays open until that race is addressed. A lower
+snapshot after reconnect requires an explicit reload accepting restored state.

@@ -1,0 +1,86 @@
+{
+  "status": "experimental; not SSE acceptance",
+  "context": {
+    "project": "fogd-m11b-sse",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+    }
+  },
+  "native": {
+    "room": "sse-6f0107b3-6964-44dd-816e-14ffd8992480",
+    "events": [
+      {
+        "type": "open",
+        "at": 1792447023339
+      },
+      {
+        "type": "message",
+        "at": 1792447023587,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "sse-6f0107b3-6964-44dd-816e-14ffd8992480",
+          "data": {
+            "revision": 1
+          }
+        }
+      },
+      {
+        "type": "error",
+        "at": 1792447023706
+      },
+      {
+        "type": "error",
+        "at": 1792447024714
+      },
+      {
+        "type": "open",
+        "at": 1792447025728
+      },
+      {
+        "type": "message",
+        "at": 1792447055844,
+        "data": {
+          "subscriptionId": "board",
+          "topic": "sse-6f0107b3-6964-44dd-816e-14ffd8992480",
+          "data": {
+            "revision": 3
+          }
+        }
+      }
+    ],
+    "errors": [],
+    "reconnectAt": 1792447024979,
+    "idle": {
+      "seconds": 30,
+      "startedAt": 1792447025773,
+      "acknowledgedAt": 1792447055929,
+      "priorEventCount": 5
+    },
+    "observedItems": "\u25cb After finite SSE idle observation\n\u25cb Written while observer offline\n\u25cb Observed through live hint",
+    "scope": "Native SSE hint and missed-notification reconciliation through workerd; finite idle is recorded only when enabled; deployment cancellation and registration race remain open"
+  },
+  "sourceRegression": {
+    "sourceCommit": "6ef71cfe1b3364e04fd0ec261f7f00bef6aeb99f",
+    "accepted": true,
+    "rowsDuringRegister": 0,
+    "rowsAfter": 0,
+    "received": [],
+    "expectedAssertion": "Successful subscription lost later hints after concurrent registration delivery",
+    "scope": "Actual source methods with modelled storage and delayed registration reply; not runtime scheduling proof"
+  },
+  "open": [
+    "registration race fix and concurrent registration cases",
+    "deployment-age stream cancellation",
+    "real publication-failure drill",
+    "cross-app SSE isolation"
+  ],
+  "validation": {
+    "workspaceTests": 286,
+    "syntax": "pass",
+    "quality": "pass",
+    "offlineBuilds": "ordinary Void and fogd, all five apps; network none; existing verification image plus current checklist source"
+  }
+}
