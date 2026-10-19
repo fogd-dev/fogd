@@ -11,7 +11,9 @@ and stopped recovery have experimental local-kind evidence. Remote infrastructur
 broader background/live applications and portability
 remain open roadmap work. The [M11c native timer probe](cron-qualification.md)
 passes on a disposable two-node fleet; scheduled app admission remains closed
-until its [lifecycle contract](m11c.md) is implemented and qualified.
+until its [lifecycle contract](m11c.md) is implemented and qualified. A
+[native owner-loss probe](evidence/m11c-cron-retry-negative.json) confirms a retry
+identity defect in the pinned runtime; a targeted patch is under review.
 
 Queued Docker backup/restore has [private-artifact recovery qualification](queue-recovery.md),
 including replica-first pause, retention checks, and explicit acknowledgment/resume.

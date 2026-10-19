@@ -32,3 +32,24 @@ sharing. A completed probe is only the first transport check for the
 The [initial evidence](evidence/m11c-native-cron.json) records two occurrences and
 the subsequent no-cron deployment on the pinned runtime. These are observations
 of an unfaulted run. They do not establish scheduling latency or execution exactly once.
+
+## Retry identity after owner loss
+
+The [negative control](evidence/m11c-cron-retry-negative.json) confirms a defect in
+the pinned runtime. A published retry deadline becomes the new scheduled time
+on the surviving owner, and an already-successful expression runs again. The
+[diagnostic review](reviews/m11c-retry-claude.md) explains the fault boundary.
+On a separate never-deployed fleet using the unmodified runtime, run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/cron-fixture/probe.env" \
+  node scripts/cron-retry.mjs slot-1 .fogd/cron-retry
+```
+
+This is a negative control: success means it reproduced the defect. It observes
+original callbacks, a retry wake publication, owner residency and the release hash
+before killing the owner ahead of the deadline. It keeps that node down until the
+survivor's outcome is recorded. A missed fault window fails the probe as inconclusive.
+The finalizer restarts the node and publishes without cron declarations. Keep
+volumes and private logs if cleanup fails. A targeted retry-identity patch is under review; timer controls and full lifecycle
+qualification remain open.

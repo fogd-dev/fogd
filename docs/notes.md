@@ -601,3 +601,10 @@ retry becomes overdue. Do not run a third idle experiment without establishing
 observable prerequisites for replacement and the retry deadline. The unfinished
 probe remains outside the committed qualification scripts until it proves the
 intended condition. Native dispatch controls and retry identity remain M11c work.
+
+The reviewed owner-loss experiment subsequently confirmed the defect. It observed
+the retry wake deadline, killed the owner before that deadline, and kept it down
+until the survivor took ownership on the same release. The survivor used the retry
+deadline as `scheduledTime` and reran both expressions. See the
+[negative-control evidence](evidence/m11c-cron-retry-negative.json). The two earlier
+idle attempts remain unsuccessful fault injections, not contradictory evidence.

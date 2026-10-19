@@ -1,0 +1,488 @@
+{
+  "context": {
+    "project": "fogd-m11c-retry-kill",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "sha256:43256a0fcad7b5a8d4560bd777d49bfc2c413123d4cce0cebf7b90e58448f66d",
+      "slot-1-b": "sha256:43256a0fcad7b5a8d4560bd777d49bfc2c413123d4cce0cebf7b90e58448f66d"
+    }
+  },
+  "retry-identity": {
+    "release": {
+      "dry_run": false,
+      "location": "s3://fogd/slots/slot-1/deploy/cron-retry/f68ff70a4a50c5d4",
+      "version": "f68ff70a4a50c5d4",
+      "worker": "cron-retry"
+    },
+    "before": {
+      "first": {
+        "events": [
+          {
+            "instance": "f80e695a-d2ba-4a6c-a708-00097c04bac8",
+            "cron": "*/1 * * * *",
+            "scheduledTime": 1792453080000,
+            "at": 1792453080011
+          },
+          {
+            "instance": "f80e695a-d2ba-4a6c-a708-00097c04bac8",
+            "cron": "* * * * *",
+            "scheduledTime": 1792453080000,
+            "at": 1792453080003
+          }
+        ],
+        "failedOnce": true
+      },
+      "bucket": {
+        "owner": {
+          "node": "slot-1-a",
+          "epoch": 1
+        },
+        "wakes": [
+          {
+            "key": "slots/slot-1/wake/entries/2026-10-19T23:38/.cron:cron-retry/0000000000000001-0000000000000005",
+            "cell": ".cron:cron-retry",
+            "due_ms": 1792453084015,
+            "format": 2,
+            "identity": "0000000000000001-0000000000000005"
+          }
+        ],
+        "at": 1792453080384
+      },
+      "deadline": {
+        "key": "slots/slot-1/wake/entries/2026-10-19T23:38/.cron:cron-retry/0000000000000001-0000000000000005",
+        "cell": ".cron:cron-retry",
+        "due_ms": 1792453084015,
+        "format": 2,
+        "identity": "0000000000000001-0000000000000005"
+      },
+      "owner": "slot-1-a",
+      "survivor": "slot-1-b",
+      "state": {
+        "activating": 0,
+        "activation_waiting": 0,
+        "adopting": 0,
+        "allocator": {
+          "active_bytes": 8032256,
+          "allocated_bytes": 6619744,
+          "mapped_bytes": 32841728,
+          "resident_bytes": 14462976,
+          "retained_bytes": 11722752
+        },
+        "capacity_waiting": 0,
+        "cgroup_current_bytes": 71225344,
+        "cgroup_working_set_bytes": 71045120,
+        "deployment": {
+          "cells": {
+            ".cron:cron-retry": 2
+          },
+          "draining": [
+            {
+              "generation": 1,
+              "isolates": {
+                "cells": {
+                  "cron-retry": {
+                    "cells": 0,
+                    "external_bytes": 680210,
+                    "freed": 0,
+                    "heap_bytes": 2142208,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "cron-retry": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "f68ff70a4a50c5d4"
+            }
+          ],
+          "generation": 2,
+          "isolates": {
+            "cells": {
+              "cron-retry": {
+                "cells": 1,
+                "external_bytes": 682038,
+                "freed": 0,
+                "heap_bytes": 2691072,
+                "live": 1,
+                "live_empty": 0,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "services": {
+              "cron-retry": {
+                "cells": 0,
+                "external_bytes": 691538,
+                "freed": 0,
+                "heap_bytes": 3223552,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 691538,
+              "freed": 0,
+              "heap_bytes": 3223552,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-retry/f68ff70a4a50c5d4",
+          "swapping": 0,
+          "version": "f68ff70a4a50c5d4"
+        },
+        "evicting": 0,
+        "handed_off": 0,
+        "handoff_failed": 0,
+        "in_use_bytes": 90715568,
+        "libc_malloc": {
+          "arena_bytes": 10821632,
+          "free_bytes": 7691264,
+          "in_use_bytes": 3130368,
+          "mmap_bytes": 417792
+        },
+        "node_load": {
+          "bucket_format": 2,
+          "cgroup_current_bytes": 71225344,
+          "cgroup_working_set_bytes": 71045120,
+          "cpu_percent_x100": 99,
+          "draining": false,
+          "fd_limit": 1048576,
+          "host_websockets": 0,
+          "in_use_bytes": 90715568,
+          "memory_headroom": true,
+          "open_fds": 35,
+          "owned_cells": 1,
+          "placement_weight": 1,
+          "pressured": false,
+          "rebalance_paused": false,
+          "resident_cells": 1,
+          "restoring": 0,
+          "rss_bytes": 98553856,
+          "sampled_ms": 1792453080536,
+          "shed_cells": 0
+        },
+        "occupied": 1,
+        "owned_cells": 1,
+        "ownership": "s3",
+        "phases": {
+          "resident": 1
+        },
+        "published": [
+          ".cron:cron-retry"
+        ],
+        "publishes": 2,
+        "quiescing": 0,
+        "rebalance_failed": 0,
+        "rebalanced": 0,
+        "releasing": 0,
+        "remote_route_refreshes": 0,
+        "residents": [
+          ".cron:cron-retry"
+        ],
+        "restoring": 0,
+        "rss_bytes": 98553856,
+        "shedding": null,
+        "stops": 1
+      }
+    },
+    "kill": {
+      "at": 1792453080864,
+      "container": "d48c89beff31cf2a70d925d9ecde81d37df5d9edb655ee7f70365ee49f76c4e2",
+      "exitCode": 137
+    },
+    "after": {
+      "events": [
+        {
+          "instance": "f80e695a-d2ba-4a6c-a708-00097c04bac8",
+          "cron": "*/1 * * * *",
+          "scheduledTime": 1792453080000,
+          "at": 1792453080011
+        },
+        {
+          "instance": "f80e695a-d2ba-4a6c-a708-00097c04bac8",
+          "cron": "* * * * *",
+          "scheduledTime": 1792453080000,
+          "at": 1792453080003
+        },
+        {
+          "instance": "1ee6e50f-485a-4349-b7cc-55a90d00b8ca",
+          "cron": "* * * * *",
+          "scheduledTime": 1792453084015,
+          "at": 1792453123840
+        },
+        {
+          "instance": "1ee6e50f-485a-4349-b7cc-55a90d00b8ca",
+          "cron": "*/1 * * * *",
+          "scheduledTime": 1792453084015,
+          "at": 1792453123843
+        }
+      ],
+      "failedOnce": true,
+      "bucket": {
+        "owner": {
+          "node": "slot-1-b",
+          "epoch": 2
+        },
+        "wakes": [
+          {
+            "key": "slots/slot-1/wake/entries/2026-10-19T23:39/.cron:cron-retry/0000000000000002-0000000000000006",
+            "cell": ".cron:cron-retry",
+            "due_ms": 1792453140000,
+            "format": 2,
+            "identity": "0000000000000002-0000000000000006"
+          }
+        ],
+        "at": 1792453125182
+      },
+      "deployment": {
+        "cells": {
+          ".cron:cron-retry": 2
+        },
+        "draining": [],
+        "generation": 2,
+        "isolates": {
+          "cells": {
+            "cron-retry": {
+              "cells": 1,
+              "external_bytes": 681968,
+              "freed": 0,
+              "heap_bytes": 2428928,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "cron-retry": {
+              "cells": 0,
+              "external_bytes": 684730,
+              "freed": 0,
+              "heap_bytes": 2695168,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 684730,
+            "freed": 0,
+            "heap_bytes": 2695168,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/cron-retry/f68ff70a4a50c5d4",
+        "swapping": 0,
+        "version": "f68ff70a4a50c5d4"
+      }
+    },
+    "scope": "Negative control: published retry wake, SIGKILL before deadline, survivor ownership takeover on unchanged release. Retry deadline becomes scheduledTime and successful sibling reruns. Wake publication alone is not a general SQLite durability proof."
+  },
+  "cleanup": {
+    "release": {
+      "dry_run": false,
+      "location": "s3://fogd/slots/slot-1/deploy/cron-retry/f68ff70a4a50c5d4",
+      "version": "f68ff70a4a50c5d4",
+      "worker": "cron-retry"
+    },
+    "state": [
+      {
+        "host": "slot-1-a",
+        "deployment": {
+          "cells": {},
+          "draining": [
+            {
+              "generation": 1,
+              "isolates": {
+                "cells": {},
+                "services": {
+                  "cron-retry": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "f68ff70a4a50c5d4"
+            }
+          ],
+          "generation": 2,
+          "isolates": {
+            "cells": {},
+            "services": {
+              "cron-retry": {
+                "cells": 0,
+                "external_bytes": 680196,
+                "freed": 0,
+                "heap_bytes": 1871872,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 680196,
+              "freed": 0,
+              "heap_bytes": 1871872,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-retry/f68ff70a4a50c5d4",
+          "swapping": 0,
+          "version": "f68ff70a4a50c5d4"
+        }
+      },
+      {
+        "host": "slot-1-b",
+        "deployment": {
+          "cells": {},
+          "draining": [
+            {
+              "generation": 2,
+              "isolates": {
+                "cells": {
+                  "cron-retry": {
+                    "cells": 0,
+                    "external_bytes": 683740,
+                    "freed": 0,
+                    "heap_bytes": 2428928,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 1,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "cron-retry": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "version": "f68ff70a4a50c5d4"
+            }
+          ],
+          "generation": 3,
+          "isolates": {
+            "cells": {},
+            "services": {
+              "cron-retry": {
+                "cells": 0,
+                "external_bytes": 680196,
+                "freed": 0,
+                "heap_bytes": 1871872,
+                "live": 1,
+                "live_empty": 1,
+                "requests": 0,
+                "retiring": 0,
+                "turns": 0
+              }
+            },
+            "stateless": {
+              "cells": 0,
+              "external_bytes": 680196,
+              "freed": 0,
+              "heap_bytes": 1871872,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "prefix": "deploy/cron-retry/f68ff70a4a50c5d4",
+          "swapping": 0,
+          "version": "f68ff70a4a50c5d4"
+        }
+      }
+    ]
+  },
+  "probeSha256": "c9bd6f0b6d7b22f2eff5bbe46cb7c0cd67ccec9f92b4333995025f45e1988305",
+  "cleanupVerified": "All target containers removed and original seven-container fogd-m11b-sse stack restarted; no volume deletion."
+}
