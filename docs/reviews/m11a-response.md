@@ -69,3 +69,46 @@ update, interruption at activation boundaries, pending/in-flight stopped recover
 and retry exhaustion. Preserve the tested bootstrap sequence and paused-message
 result as evidence, not as completed M11a. Review the resulting lifecycle state
 machine before changing fogd admission.
+
+## Runtime probe review and accepted changes
+
+The [second Claude review](m11a-probes-claude.md) supports implementation using
+persistent pause and compatible overlap without a runtime fork. It does not approve
+changing admission yet. Its key concern is now explicit: old code, including
+`waitUntil`, can run against a later additive schema and can outlive an empty queue.
+
+The qualification harness now asserts queue-cell generation ownership, v2 completion
+before the held v1 completion, and a delayed effect after observed paused/empty
+state. Pause/resume operations are confirmed with a separate status read. Exhaustion
+uses the configured retry count and observes an additional retry-delay margin.
+Timeout observation is anchored to the final attempt's recorded start and intended
+effect time. Recovery captures the actual leased-until value, uses a longer held
+job, and checks paused preservation after that lease has expired. The repeatable
+fixture and cleanup contract are documented in [the guide](../queue-qualification.md).
+
+Accept the bootstrap queue-set equality and retry-progress requirements. Do not
+republish bootstrap merely because an interrupted first deployment lacks an active
+controller record. Accept a generation gate before every resume, and test a cold
+queue cell as well as a resident one. Test D1 migration on bootstrap directly; if it
+works, use pause → migrate → publish for both first deployment and updates.
+
+The suggested rollback check needs strengthening: zero stored messages cannot prove
+that older background work will not enqueue another payload. Keep known older queue
+artifact reactivation unsupported until its payload compatibility policy is explicit.
+Likewise, an empty runtime queue cannot prove application completion after retention
+or process failure. Durable input/job records and reconciliation remain required.
+
+[ADR 025](../decisions.md#adr-025-persistent-queue-pause-with-compatible-handler-overlap)
+records this direction. Remaining implementation gates are native Void/D1 behavior
+across overlap, controller kill points and uncertain operations, interrupted
+attachment/pointer publication, durable reconciliation after killed/exhausted work,
+retention-age recovery policy, and retirement/isolation. No queue admission change
+has been made by the probe work.
+
+The strengthened lifecycle harness subsequently passed on both fleets of a fresh,
+image-pinned fixture, and the strengthened recovery run passed on a fresh target.
+The longer `waitUntil` probe produced its effect beyond the handler response budget.
+The [public evidence](../evidence/m11a-queue-lifecycle.json) records both fleet runs;
+[recovery evidence](../evidence/m11a-queue-recovery.json) includes the actual lease
+expiry and the later paused observation. Setup, probes, and recovery are reproducible
+from the committed [qualification guide](../queue-qualification.md).

@@ -64,3 +64,42 @@ retained its v1 marker. Evidence: `.fogd/m11a-generation-probe.log` and the two 
 node state snapshots. This qualifies only that paused pending-message sequence.
 No handler was held in flight, so the review's old-generation concern remains a
 required probe. See the [review amendments](reviews/m11a-response.md).
+
+## Held handlers, delayed effects, and stopped recovery
+
+The repeatable [qualification harness](queue-qualification.md) adds a producer-only
+bootstrap, explicit generation checks, held v1/v2 overlap, `waitUntil`, retry
+exhaustion, and handler-budget observations. The first direct-runtime run and the strengthened repeat on both fresh fleets
+passed on 2026-10-19. The [recorded lifecycle evidence](evidence/m11a-queue-lifecycle.json)
+separates each phase and retains node generation diagnostics.
+
+The held v1 handler completed after v2 had already completed a pending job. At the
+paused pre-resume observation the queue cell belonged to the current generation,
+while the old generation still had an executing service request. The empty-queue
+`waitUntil` probe recorded an R2 effect about eight seconds after the main handler
+returned. It therefore disproves an empty-backlog drain, and also rules out a
+live-lease count alone as a sufficient drain test.
+
+With `max_retries: 1`, a deliberate failure consumed two attempts and then vanished
+from the runtime queue. A 27-second handler under a 20-second response budget also
+exhausted two attempts without its later completion marker. These observations do
+not prove termination of every kind of I/O or impose that budget on `waitUntil`.
+
+The [recovery evidence](evidence/m11a-queue-recovery.json) covers an interrupted
+handler and a separate pending message. After force-stopping the selected replicas,
+a full snapshot restored onto fresh resources. Both queues stayed paused; the event
+history was unchanged and both messages remained stored. Deliberate resume completed
+the pending job at attempt one and the interrupted job at attempt two. Backup took
+27.6 seconds and restore 13.8 seconds, excluding startup. The source stayed stopped.
+
+These remain direct Worker probes, not native Void/D1/controller qualification.
+The [second review](reviews/m11a-probes-claude.md) requested stronger assertions and
+identified the remaining activation gates; [the response](reviews/m11a-response.md)
+records the accepted changes and implementation direction.
+
+The strengthened runs additionally asserted the queue cell's current-generation
+ownership and actual concurrent overlap: v2 completed its pending message before
+v1 completed its held message. Both runs observed a `waitUntil` effect scheduled
+35 seconds after a handler configured with a 20-second response budget. That budget
+does not bound all background work. The recovery repeat confirmed pause more than
+30 seconds after the interrupted lease's actual expiry before deliberate resume.

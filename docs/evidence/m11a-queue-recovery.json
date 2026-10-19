@@ -1,0 +1,458 @@
+{
+  "scope": "Direct runtime queues with pending and interrupted work; stopped local full-volume recovery, not controller activation qualification.",
+  "before": [
+    {
+      "job": "held",
+      "version": "v1",
+      "attempt": 1,
+      "stage": "completed",
+      "at": 1792424854792
+    },
+    {
+      "job": "held",
+      "version": "v1",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424842788
+    },
+    {
+      "job": "over-budget",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424908446
+    },
+    {
+      "job": "over-budget",
+      "version": "v2",
+      "attempt": 2,
+      "stage": "started",
+      "at": 1792424945457
+    },
+    {
+      "job": "paused",
+      "version": "v1",
+      "attempt": 1,
+      "stage": "completed",
+      "at": 1792424841860
+    },
+    {
+      "job": "paused",
+      "version": "v1",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424841856
+    },
+    {
+      "job": "pending",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "completed",
+      "at": 1792424845103
+    },
+    {
+      "job": "pending",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424845099
+    },
+    {
+      "job": "poison",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "failed",
+      "at": 1792424903445
+    },
+    {
+      "job": "poison",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424903443
+    },
+    {
+      "job": "poison",
+      "version": "v2",
+      "attempt": 2,
+      "stage": "failed",
+      "at": 1792424904459
+    },
+    {
+      "job": "poison",
+      "version": "v2",
+      "attempt": 2,
+      "stage": "started",
+      "at": 1792424904456
+    },
+    {
+      "job": "recover-held",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792425093285
+    },
+    {
+      "job": "wait-until-long",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "completed",
+      "at": 1792424866638
+    },
+    {
+      "job": "wait-until-long",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424866637
+    },
+    {
+      "job": "wait-until-long",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "wait-until",
+      "at": 1792424901640
+    },
+    {
+      "job": "wait-until",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "completed",
+      "at": 1792424856579
+    },
+    {
+      "job": "wait-until",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "started",
+      "at": 1792424856576
+    },
+    {
+      "job": "wait-until",
+      "version": "v2",
+      "attempt": 1,
+      "stage": "wait-until",
+      "at": 1792424864581
+    }
+  ],
+  "paused": {
+    "leaseExpiresAt": 1792425129279,
+    "observedAt": 1792425159376,
+    "events": [
+      {
+        "job": "held",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424854792
+      },
+      {
+        "job": "held",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424842788
+      },
+      {
+        "job": "over-budget",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424908446
+      },
+      {
+        "job": "over-budget",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "started",
+        "at": 1792424945457
+      },
+      {
+        "job": "paused",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424841860
+      },
+      {
+        "job": "paused",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424841856
+      },
+      {
+        "job": "pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424845103
+      },
+      {
+        "job": "pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424845099
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "failed",
+        "at": 1792424903445
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424903443
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "failed",
+        "at": 1792424904459
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "started",
+        "at": 1792424904456
+      },
+      {
+        "job": "recover-held",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792425093285
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424866638
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424866637
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "wait-until",
+        "at": 1792424901640
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424856579
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424856576
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "wait-until",
+        "at": 1792424864581
+      }
+    ],
+    "queue": {
+      "backlogBytes": 60,
+      "backlogCount": 2,
+      "oldestMessageTimestamp": 1792425093275,
+      "paused": true,
+      "stored": 2
+    }
+  },
+  "resumed": {
+    "events": [
+      {
+        "job": "held",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424854792
+      },
+      {
+        "job": "held",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424842788
+      },
+      {
+        "job": "over-budget",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424908446
+      },
+      {
+        "job": "over-budget",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "started",
+        "at": 1792424945457
+      },
+      {
+        "job": "paused",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424841860
+      },
+      {
+        "job": "paused",
+        "version": "v1",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424841856
+      },
+      {
+        "job": "pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424845103
+      },
+      {
+        "job": "pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424845099
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "failed",
+        "at": 1792424903445
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424903443
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "failed",
+        "at": 1792424904459
+      },
+      {
+        "job": "poison",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "started",
+        "at": 1792424904456
+      },
+      {
+        "job": "recover-held",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792425093285
+      },
+      {
+        "job": "recover-held",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "completed",
+        "at": 1792425173058
+      },
+      {
+        "job": "recover-held",
+        "version": "v2",
+        "attempt": 2,
+        "stage": "started",
+        "at": 1792425161054
+      },
+      {
+        "job": "recover-pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792425160065
+      },
+      {
+        "job": "recover-pending",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792425160062
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424866638
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424866637
+      },
+      {
+        "job": "wait-until-long",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "wait-until",
+        "at": 1792424901640
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "completed",
+        "at": 1792424856579
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "started",
+        "at": 1792424856576
+      },
+      {
+        "job": "wait-until",
+        "version": "v2",
+        "attempt": 1,
+        "stage": "wait-until",
+        "at": 1792424864581
+      }
+    ],
+    "queue": {
+      "backlogBytes": 0,
+      "backlogCount": 0,
+      "oldestMessageTimestamp": null,
+      "paused": true,
+      "stored": 0
+    }
+  },
+  "backupDurationMs": 27576,
+  "restoreDurationMs": 13754
+}

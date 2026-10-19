@@ -489,3 +489,28 @@ occupied-target errors are now asserted. Source comparison establishes that ever
 archived file is unchanged; it does not prove that no additional files exist.
 The [review response](reviews/m10c-expansion-response.md) records all accepted
 changes. Final checks passed: 83 tests, all example builds, syntax, and quality gates.
+
+## M11a runtime qualification in progress
+
+A new [repeatable harness](queue-qualification.md) passed on two fresh fleets and
+through stopped recovery. A producer-only platform bootstrap established delivery
+pause before application publication. A held v1 consumer and a v2 consumer ran
+concurrently, with the queue cell on the current runtime generation. Persistent
+pause survived full recovery with pending work and an interrupted lease; explicit
+resume completed the pending job's first attempt and the interrupted job's second.
+
+The probes exposed a critical limit: acknowledged work scheduled with `waitUntil`
+produced effects while the queue was paused and empty, including an effect beyond
+the configured handler response budget. Queue emptiness or a live-lease count alone
+cannot prove a drain. Retry exhaustion also removed messages without a dead-letter
+queue. [ADR 025](decisions.md#adr-025-persistent-queue-pause-with-compatible-handler-overlap)
+therefore selects persistent pause with compatible old-handler overlap, durable
+application input/job records, and explicit reconciliation, without a runtime fork.
+
+[Lifecycle](evidence/m11a-queue-lifecycle.json) and
+[recovery](evidence/m11a-queue-recovery.json) evidence retain phase observations.
+The [Claude review](reviews/m11a-probes-claude.md) and
+[response](reviews/m11a-response.md) distinguish observations from remaining gates.
+This is direct Worker runtime evidence. Native Void queues, D1 migration overlap,
+controller activation failure, retention-age recovery policy, and queue retirement
+remain unqualified. fogd queue admission remains disabled.

@@ -574,3 +574,55 @@ automated image-upgrade path from a recovered configuration to a buildable templ
 Operators seeking rolling expansion will need a later lifecycle protocol. Rendered
 templates and resolved recovery files remain distinct artifacts with different
 credential and image behavior.
+
+## ADR 025: persistent queue pause with compatible handler overlap
+
+Context: M11 needs queued work without allowing a new consumer to run before its
+resources and schema exist. celld publishes consumer attachments independently of
+HTTP routing. An empty fleet cannot accept queue pause, and a queue without stored
+messages can still have `waitUntil` effects in progress. The [runtime probes](queue-qualification.md)
+cover first publication, concurrent old/new handlers, timeout, and stopped recovery.
+
+Options: add a runtime drain/activation patch; gate new deliveries with upstream
+pause while supporting compatible old-handler overlap; or defer all queue support.
+A live-lease diagnostic alone cannot establish a drain because acknowledged work
+can continue through `waitUntil`.
+
+Choice: implement toward persistent pause and compatible overlap, using upstream
+runtime operations. A producer-only platform bootstrap establishes queue support
+without running application code or attaching a consumer. Its queue set must equal
+the approved consumed queue set. Persist bootstrap progress before any application
+publication so retry cannot replace a partially published app with bootstrap code.
+Pause and confirm before application publication; migrate and validate readiness
+before resume. Probe whether the bootstrap can also support D1 migrations before
+application publication, rather than assuming it can.
+
+Before resume, instantiate the consumed queue through its operator status call and
+verify resident queue cells belong to the current approved runtime generation.
+Persist delivery intent separately from observation and HTTP routing. Failures keep
+an activation hold until explicit repair/retry. Backup must establish and record
+paused delivery before stopping writers; a restored installation must not silently
+resume its queues. Retirement must preserve the old paused namespace while using a
+fresh namespace for a replacement app.
+
+M11a initially targets one same-app queue declared at first activation. Adding,
+removing, renaming, or changing its policy after activation needs a separate tested
+transition and is rejected in this slice. Keep logical names within the existing
+per-app fleet namespace. Start administration with status, pause, and resume.
+Queue support remains rejected until controller failure gates and a native Void
+application pass; this ADR chooses the implementation direction, not feature status.
+
+Why: the probes show old and new handlers genuinely overlap, while pause prevents
+new delivery. The established additive migration contract can accommodate that
+behavior if old handlers and their background work remain compatible with later
+schemas and payloads. Empty backlog is not sufficient to authorize rollback:
+old background work can still enqueue messages. Known older queue artifacts need
+an explicit compatibility policy before reactivation is supported.
+
+Costs and limits: the app must make business effects idempotent and retain durable
+input/job records for retry or reconciliation. A terminal-error write alone cannot
+cover a process killed before that write. Queue retention and retry exhaustion can
+remove messages; an empty queue must never be reported as proof of job success.
+No drain, exactly-once external effects, bounded `waitUntil` lifetime, or managed
+Cloudflare execution is promised. Cron, Workflows, and broader queue transitions
+remain later M11 work. See the [review response](reviews/m11a-response.md).

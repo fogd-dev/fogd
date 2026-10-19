@@ -1,0 +1,3647 @@
+{
+  "scope": "Direct Worker runtime probes; no Void, D1 migration, or fogd queue admission qualification.",
+  "runs": [
+    {
+      "context": {
+        "project": "fogd-m11a-qualified",
+        "slot": "slot-1",
+        "handlerBudgetSeconds": 20,
+        "images": {
+          "slot-1-a": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+          "slot-1-b": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db"
+        }
+      },
+      "first-publication": {
+        "events": [
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "held-before-resume": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          }
+        ],
+        "state": [
+          {
+            "host": "slot-1-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 688213,
+                        "freed": 0,
+                        "heap_bytes": 3145728,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 1,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 688213,
+                      "freed": 0,
+                      "heap_bytes": 3145728,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 1,
+                      "retiring": 1,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 680850,
+                    "freed": 0,
+                    "heap_bytes": 2695168,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 682343,
+                    "freed": 0,
+                    "heap_bytes": 2691072,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 682343,
+                  "freed": 0,
+                  "heap_bytes": 2691072,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-1-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ],
+        "queue": {
+          "backlogBytes": 44,
+          "backlogCount": 2,
+          "oldestMessageTimestamp": 1792424842851,
+          "paused": true,
+          "stored": 2
+        },
+        "v2": {
+          "dry_run": false,
+          "location": "s3://fogd/slots/slot-1/deploy/queue-probe/53966eff371a91b1",
+          "version": "53966eff371a91b1",
+          "worker": "queue-probe"
+        }
+      },
+      "held-after-resume": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          }
+        ],
+        "state": [
+          {
+            "host": "slot-1-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 683315,
+                    "freed": 0,
+                    "heap_bytes": 2961408,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 699477,
+                    "freed": 0,
+                    "heap_bytes": 3670016,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 699477,
+                  "freed": 0,
+                  "heap_bytes": 3670016,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-1-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "wait-until-before": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856679
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856676
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        },
+        "state": [
+          {
+            "host": "slot-1-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 686604,
+                    "freed": 0,
+                    "heap_bytes": 3223552,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 713032,
+                    "freed": 0,
+                    "heap_bytes": 3723264,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 1,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 713032,
+                  "freed": 0,
+                  "heap_bytes": 3723264,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 1,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-1-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ]
+      },
+      "wait-until-after": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856679
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856676
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864681
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        }
+      },
+      "wait-until-beyond-budget": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866636
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901639
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856679
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856676
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864681
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        }
+      },
+      "exhaustion": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "failed",
+            "at": 1792424903440
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424903438
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "failed",
+            "at": 1792424904461
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424904458
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866636
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901639
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856679
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856676
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864681
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "over-budget": {
+        "observationAfter": 1792424977453,
+        "observedAt": 1792424982871,
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854865
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842862
+          },
+          {
+            "job": "over-budget",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424908443
+          },
+          {
+            "job": "over-budget",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424945453
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841948
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841945
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845197
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845194
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "failed",
+            "at": 1792424903440
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424903438
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "failed",
+            "at": 1792424904461
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424904458
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866636
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901639
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856679
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856676
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864681
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        },
+        "state": [
+          {
+            "host": "slot-1-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 684698,
+                    "freed": 0,
+                    "heap_bytes": 3125248,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 707284,
+                    "freed": 1,
+                    "heap_bytes": 3207168,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 707284,
+                  "freed": 1,
+                  "heap_bytes": 3207168,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-1-b",
+            "deployment": {
+              "cells": {},
+              "draining": [],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "context": {
+        "project": "fogd-m11a-qualified",
+        "slot": "slot-2",
+        "handlerBudgetSeconds": 20,
+        "images": {
+          "slot-2-a": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db",
+          "slot-2-b": "sha256:a416436bea3dca26dbddb9d8d628f02bb5e9c2c5403507f6b1227ef1e6a0c6db"
+        }
+      },
+      "first-publication": {
+        "events": [
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "held-before-resume": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          }
+        ],
+        "state": [
+          {
+            "host": "slot-2-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 688213,
+                        "freed": 0,
+                        "heap_bytes": 3145728,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 1,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 688213,
+                      "freed": 0,
+                      "heap_bytes": 3145728,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 1,
+                      "retiring": 1,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 680850,
+                    "freed": 0,
+                    "heap_bytes": 2695168,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 682343,
+                    "freed": 0,
+                    "heap_bytes": 2691072,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 682343,
+                  "freed": 0,
+                  "heap_bytes": 2691072,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-2-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ],
+        "queue": {
+          "backlogBytes": 44,
+          "backlogCount": 2,
+          "oldestMessageTimestamp": 1792424842776,
+          "paused": true,
+          "stored": 2
+        },
+        "v2": {
+          "dry_run": false,
+          "location": "s3://fogd/slots/slot-2/deploy/queue-probe/53966eff371a91b1",
+          "version": "53966eff371a91b1",
+          "worker": "queue-probe"
+        }
+      },
+      "held-after-resume": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          }
+        ],
+        "state": [
+          {
+            "host": "slot-2-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 683315,
+                    "freed": 0,
+                    "heap_bytes": 2961408,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 699477,
+                    "freed": 0,
+                    "heap_bytes": 3670016,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 699477,
+                  "freed": 0,
+                  "heap_bytes": 3670016,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-2-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "wait-until-before": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856579
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856576
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        },
+        "state": [
+          {
+            "host": "slot-2-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 681339,
+                        "freed": 0,
+                        "heap_bytes": 2695168,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 685293,
+                        "freed": 0,
+                        "heap_bytes": 3223552,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 1,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 686604,
+                    "freed": 0,
+                    "heap_bytes": 3223552,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 713032,
+                    "freed": 0,
+                    "heap_bytes": 3723264,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 1,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 713032,
+                  "freed": 0,
+                  "heap_bytes": 3723264,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 1,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-2-b",
+            "deployment": {
+              "cells": {},
+              "draining": [
+                {
+                  "generation": 1,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 2,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "1c22d0504243526e"
+                },
+                {
+                  "generation": 3,
+                  "isolates": {
+                    "cells": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 0,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "services": {
+                      "queue-probe": {
+                        "cells": 0,
+                        "external_bytes": 0,
+                        "freed": 1,
+                        "heap_bytes": 0,
+                        "live": 0,
+                        "live_empty": 0,
+                        "requests": 0,
+                        "retiring": 0,
+                        "turns": 0
+                      }
+                    },
+                    "stateless": {
+                      "cells": 0,
+                      "external_bytes": 0,
+                      "freed": 1,
+                      "heap_bytes": 0,
+                      "live": 0,
+                      "live_empty": 0,
+                      "requests": 0,
+                      "retiring": 0,
+                      "turns": 0
+                    }
+                  },
+                  "version": "661840986f45338e"
+                }
+              ],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 680196,
+                    "freed": 0,
+                    "heap_bytes": 1871872,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 680196,
+                  "freed": 0,
+                  "heap_bytes": 1871872,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ]
+      },
+      "wait-until-after": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856579
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856576
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864581
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        }
+      },
+      "wait-until-beyond-budget": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866637
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901640
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856579
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856576
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864581
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": true,
+          "stored": 0
+        }
+      },
+      "exhaustion": {
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "failed",
+            "at": 1792424903445
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424903443
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "failed",
+            "at": 1792424904459
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424904456
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866637
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901640
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856579
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856576
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864581
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        }
+      },
+      "over-budget": {
+        "observationAfter": 1792424977457,
+        "observedAt": 1792424982871,
+        "events": [
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424854792
+          },
+          {
+            "job": "held",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424842788
+          },
+          {
+            "job": "over-budget",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424908446
+          },
+          {
+            "job": "over-budget",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424945457
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424841860
+          },
+          {
+            "job": "paused",
+            "version": "v1",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424841856
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424845103
+          },
+          {
+            "job": "pending",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424845099
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "failed",
+            "at": 1792424903445
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424903443
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "failed",
+            "at": 1792424904459
+          },
+          {
+            "job": "poison",
+            "version": "v2",
+            "attempt": 2,
+            "stage": "started",
+            "at": 1792424904456
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424866638
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424866637
+          },
+          {
+            "job": "wait-until-long",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424901640
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "completed",
+            "at": 1792424856579
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "started",
+            "at": 1792424856576
+          },
+          {
+            "job": "wait-until",
+            "version": "v2",
+            "attempt": 1,
+            "stage": "wait-until",
+            "at": 1792424864581
+          }
+        ],
+        "queue": {
+          "backlogBytes": 0,
+          "backlogCount": 0,
+          "oldestMessageTimestamp": null,
+          "paused": false,
+          "stored": 0
+        },
+        "state": [
+          {
+            "host": "slot-2-a",
+            "deployment": {
+              "cells": {
+                "__Queue:883546e871f237428fe59e794ec2b0baa33f572879413c5550083b406cc93a21": 4
+              },
+              "draining": [],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 1,
+                    "external_bytes": 684698,
+                    "freed": 0,
+                    "heap_bytes": 3125248,
+                    "live": 1,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 707284,
+                    "freed": 1,
+                    "heap_bytes": 3207168,
+                    "live": 1,
+                    "live_empty": 1,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 707284,
+                  "freed": 1,
+                  "heap_bytes": 3207168,
+                  "live": 1,
+                  "live_empty": 1,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          },
+          {
+            "host": "slot-2-b",
+            "deployment": {
+              "cells": {},
+              "draining": [],
+              "generation": 4,
+              "isolates": {
+                "cells": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 0,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "services": {
+                  "queue-probe": {
+                    "cells": 0,
+                    "external_bytes": 0,
+                    "freed": 1,
+                    "heap_bytes": 0,
+                    "live": 0,
+                    "live_empty": 0,
+                    "requests": 0,
+                    "retiring": 0,
+                    "turns": 0
+                  }
+                },
+                "stateless": {
+                  "cells": 0,
+                  "external_bytes": 0,
+                  "freed": 1,
+                  "heap_bytes": 0,
+                  "live": 0,
+                  "live_empty": 0,
+                  "requests": 0,
+                  "retiring": 0,
+                  "turns": 0
+                }
+              },
+              "prefix": "deploy/queue-probe/53966eff371a91b1",
+              "swapping": 0,
+              "version": "53966eff371a91b1"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

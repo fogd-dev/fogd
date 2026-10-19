@@ -294,3 +294,22 @@ space before that rerun; its volumes remain retained. The source archive check
 compares archived entries, not the absence of extra files. Updated the PASS wording
 accordingly. The paired measurements intentionally restarted disposable source
 copies sequentially; those copies are no longer pristine snapshot contents.
+
+### M11a queue lifecycle and recovery evidence
+
+The initial held-handler probe passed on the second fleet of `fogd-m11a-probe`.
+After Claude review, both fleets of the fresh `fogd-m11a-qualified` fixture passed
+the strengthened harness: generation ownership, concurrent v1/v2 completion,
+empty/paused `waitUntil` effects, background work beyond the response budget,
+exhaustion, and timeout without a late R2 completion marker. The recovery repeat
+passed on `fogd-m11a-qualified-restored`, including an observed pause after the
+interrupted message's captured lease expiry. That target remains running with
+both queues paused; the qualified source remains stopped. Earlier fixture volumes
+and snapshots are retained. Only verified stopped fixture containers/networks were
+removed to free Docker address pools; unrelated workloads were untouched.
+
+Private logs: `.fogd/m11a-qualified-slot1.log`, `.fogd/m11a-qualified-slot2.log`,
+and `.fogd/m11a-qualified-recovery.log`. Public evidence omits credentials, full
+Compose configurations, queue payload inspection, and recovery archives. These
+are runtime probes, not admitted fogd apps. Follow the reviewed controller/native
+Void gates before changing the supported configuration allowlist.

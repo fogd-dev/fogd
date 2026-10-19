@@ -300,3 +300,11 @@ retirement/reuse are qualified locally. Kubernetes remains at two fleets.
 The [measurement guide](docs/capacity-measurement.md) records paired two/three-fleet
 observations with the same paced workload per existing app. These are shared-VM
 measurements, not a maximum app density or production sizing recommendation.
+
+## M11a in progress: queued work
+
+The [queue qualification guide](docs/queue-qualification.md) reproduces runtime
+probes for publication gating, overlapping releases, delayed effects, exhausted
+retries, and stopped recovery. Native Void/D1 and controller activation are the
+next gates. fogd still rejects queue declarations; these direct-runtime probes do
+not enable application queue support. See the [design and review response](docs/reviews/m11a-response.md).
