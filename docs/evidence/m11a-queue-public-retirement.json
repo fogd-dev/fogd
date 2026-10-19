@@ -1,0 +1,61 @@
+{
+  "source": "fogd-m11a-public-recovery",
+  "target": "fogd-m11a-public-retired",
+  "app": "imports-public",
+  "active": {
+    "id": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "digest": "90003156554861234e6e48de5387de21b329919612af51ca0cf89b1c279acf02"
+  },
+  "pendingJob": "retire-090d196b-c875-4198-ae8f-2da313afc09d",
+  "retainedPrefix": "retirement-generations/3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+  "retainedObjects": 40,
+  "retirement": {
+    "id": "bf7e9f38-e41c-451d-b992-cc7ddd7220cf",
+    "at": "2026-10-19T19:59:26.010Z",
+    "app": "imports-public",
+    "digest": "90003156554861234e6e48de5387de21b329919612af51ca0cf89b1c279acf02",
+    "snapshot": {
+      "bytes": 3906,
+      "sha256": "6cee9b833d6c1ed5dbc5fed8293b969c38560eecc99a44730870c3d5e30c3e5e"
+    },
+    "previous": {
+      "slot": "slot-1",
+      "prefix": "retirement-generations/3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+      "nodes": [
+        "slot-1-a-3f39cb21-cc03-4e42-b99c-cfb72f90516f",
+        "slot-1-b-3f39cb21-cc03-4e42-b99c-cfb72f90516f"
+      ]
+    },
+    "replacement": {
+      "prefix": "retirement-generations/bf7e9f38-e41c-451d-b992-cc7ddd7220cf",
+      "nodes": [
+        "slot-1-a-bf7e9f38-e41c-451d-b992-cc7ddd7220cf",
+        "slot-1-b-bf7e9f38-e41c-451d-b992-cc7ddd7220cf"
+      ]
+    },
+    "deployment": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "queue": {
+      "stopQueuedWork": true,
+      "queue": "imports-public-imports",
+      "snapshot": {
+        "id": "fd64803e-ebfb-43ba-8e37-f647d3f428a3",
+        "at": 1792439928324,
+        "backlogCount": 1
+      }
+    }
+  },
+  "neighbor": {
+    "app": "imports-claim",
+    "rows": [],
+    "dataPreservationQualified": false,
+    "limitation": "Empty response proves availability only; rerun with populated neighbor required"
+  },
+  "replacement": {
+    "app": "imports-next",
+    "id": "8f6d5a07-bf64-4a86-806f-990fc576194a",
+    "digest": "b75be072ad4c72a4f0bcf1c13c5244551da3e6fa7f323c281ad374938f5b0829",
+    "rows": []
+  },
+  "retainedPrefixDigest": "795b74f631ff30444ce753a969e74a359946ac9fe267814523ad8f88ad6c7034",
+  "replacementPrefix": "retirement-generations/bf7e9f38-e41c-451d-b992-cc7ddd7220cf"
+}

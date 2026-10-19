@@ -102,8 +102,10 @@ and [source-preservation/zero-live restore evidence](evidence/m11a-queue-retirem
 The [admission foundation](queue-admission.md) now has normal scoped CLI upload,
 pending-only backup/restore, exact approval, and derived-name dispatch evidence.
 Canonical artifacts now pass duplicate pending-work recovery and direct gateway
-browser acceptance. Next: additive update/overlap and retirement of canonical
-artifacts before a reviewed decision on default enablement. The native Void imports fixture
+browser acceptance, additive update with old/new handler overlap, and retirement
+with retained-prefix verification and ordinary replacement approval. Next: audit
+M11a acceptance evidence, rerun canonical retirement with a populated neighbor,
+and review the default admission decision. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
 killed consumers exhaust delivery. Activation,
 retries, idempotency, handler overlap/draining, and stopped recovery must be

@@ -696,8 +696,8 @@ or deployment before approval, pending-only backup/restore, exact approval, Void
 physical-name dispatch, failures and explicit retry without duplicate business rows.
 Idle celld wake-format objects are runtime metadata; the preapproval check inspects
 app ownership and deployment objects rather than requiring an entirely empty prefix.
-Remaining integrated acceptance: additive updates and overlap, retirement of
-canonical artifacts, and a reviewed decision on default enablement.
+The canonical update and retirement drills below close those integrated checks.
+The final acceptance audit and reviewed decision on default enablement remain.
 
 
 The [failed-claim Docker drill](evidence/m11a-queue-public-claim.json) also passes:
@@ -733,3 +733,26 @@ through the workerd virtual host, without intercepted requests. Submission, save
 job URL, reload while paused, one retryable failure, completion, and reload of the
 two results passed with no browser errors. Delivery is paused again. All 261 tests
 and syntax checks passed; queue admission remains opt-in.
+
+
+## M11a canonical update and retirement
+
+The [normal CLI update drill](evidence/m11a-queue-public-update.json) keeps a v1 handler
+in flight while approving v2's additive D1 migration. Approval took 374 ms in this
+local run; this is not a performance guarantee. The v2 handler completed pending
+work before v1 finished. Each job had one attempt and the expected processor marker,
+and the queue drained. Archived controller state confirms the migration was absent
+before the update and present afterward. Pause limits new delivery; it is not a drain.
+
+The [canonical retirement drill](evidence/m11a-queue-public-retirement.json) retained
+one pending message, compared every old-prefix object's bytes before and after
+retirement and replacement approval, and verified the retired route returns 404.
+The neighboring hello app retained its empty response, which proves availability
+but not preservation of nonempty data. A populated-neighbor rerun remains open.
+A new scoped CLI deployment
+and exact approval ran a replacement hello app in the released fleet. This is the
+local two-fleet canonical path; earlier three-fleet isolation evidence remains
+separate. Source volumes and private recovery material remain retained.
+
+All 261 tests and example builds pass. Queue admission remains opt-in pending the
+final M11a acceptance audit and policy review.

@@ -329,5 +329,6 @@ objects with the source and restores an installation containing only retired que
 The [normal CLI checkpoint](docs/queue-admission.md) now covers scoped upload,
 pending-only backup/restore, exact approval, derived-name dispatch, and application
 retry. The same guide includes duplicate pending-work recovery and direct gateway
-browser checks; both pass for canonical CLI artifacts. Default admission stays off
-until the remaining acceptance checks pass.
+browser checks. Canonical CLI artifacts also pass additive update with handler
+overlap and retirement/replacement checks. Default admission stays off pending the
+final acceptance audit and policy review.

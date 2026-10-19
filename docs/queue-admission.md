@@ -1,8 +1,8 @@
 # Experimental queue admission
 
 The normal build/upload path now accepts a bounded Void queue profile. Controller
-admission remains **off by default** while integrated update, recovery, retirement,
-and browser acceptance is completed. Docker qualification can opt in with
+admission remains **off by default** pending the final acceptance audit and default
+policy review. Integrated update, recovery, retirement, and browser drills now pass. Docker qualification can opt in with
 `FOGD_QUEUE_APPS=1` in its private operator environment before starting the stack.
 Kubernetes rendering does not forward that setting, and its controller refuses
 new queued submissions and approvals.
@@ -80,8 +80,8 @@ snapshots, and leaves the approved app operator-paused. No artifact bypass is us
 If upload succeeded but the harness stopped before backup, `--submitted` reuses the
 single pending request and verifies its credential scope instead of uploading again.
 
-The remaining acceptance run must exercise additive updates, in-flight compatibility,
-and retirement using these canonical artifacts. The wider queue policy range and Kubernetes activation remain separate
+Canonical artifacts now pass additive updates with in-flight compatibility and
+retirement. The final acceptance audit and default policy review remain. The wider queue policy range and Kubernetes activation remain separate
 qualification work.
 
 
@@ -115,3 +115,21 @@ fixture. Chromium connects directly to `imports-public.localhost` on the configu
 HTTP port. It checks submission, saved URL, reload, retry, and results through workerd.
 Both probes leave delivery paused. These scripts require the disposable canonical
 fixture with its existing `imports-public` approval, not an arbitrary installation.
+
+
+After the browser drill, run `scripts/queue-public-update.mjs NEW_OUTPUT` against the
+restored fixture. It enables admission in that disposable controller, builds the v2
+fixture overlay through ordinary `fogd deploy`, and approves its additive migration
+while a v1 handler is running. This requires v1 with 0002_processor.sql unapplied.
+The probe fails if v1 finishes too early to establish overlap. It leaves delivery
+paused; it does not roll back the additive migration.
+
+Populate the neighboring hello app with at least one post, then run
+`scripts/queue-public-retirement.mjs NEW_OUTPUT NEW_PROJECT`. The first recorded
+run had an empty neighbor response, so it qualifies availability only; the stricter
+populated-neighbor rerun remains open. It enqueues
+pending work, snapshots, fingerprints the stopped app's bucket prefix, and runs
+`fogd retire` with the exact digest and explicit stop-work flag. It retains source
+volumes, verifies the old prefix's bytes, checks the neighboring hello app, and
+approves a new hello app into the released fleet. Select the resulting
+`NEW_OUTPUT/retired/compose.json` for further work. The retired app name stays reserved.

@@ -1,0 +1,105 @@
+{
+  "source": "fogd-m11a-public-recovery",
+  "old": {
+    "id": "6f69256d-e1ec-4683-93b8-3fa253409ca7",
+    "digest": "3764cc5cd8cc6c909e82de145bc53b5ea7e69c58a9c31cdcb14fe360857f7624"
+  },
+  "update": {
+    "id": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "digest": "90003156554861234e6e48de5387de21b329919612af51ca0cf89b1c279acf02"
+  },
+  "delayMs": 17000,
+  "approvalMs": 374,
+  "held": {
+    "id": "held-a94485c9-85c2-44c4-8a43-dfe4fddf6927",
+    "input_hash": "6815f3c300383519de8e437497e2c3e97852fe8d717a5419d5aafb00cb43c494",
+    "mode": "normal",
+    "delay_ms": 17000,
+    "status": "complete",
+    "attempts": 1,
+    "error": null,
+    "created_at": "2026-10-19 19:57:51",
+    "results": [
+      {
+        "job_id": "held-a94485c9-85c2-44c4-8a43-dfe4fddf6927",
+        "position": 0,
+        "label": "MANGO",
+        "processor": "v1"
+      }
+    ]
+  },
+  "pending": {
+    "id": "pending-e451458f-441d-4803-8c40-f7d9364ba1f5",
+    "input_hash": "0e27150cb1fc10c8366e5924160b7d3c36bc045edf614989b5134136bd719188",
+    "mode": "normal",
+    "delay_ms": 0,
+    "status": "complete",
+    "attempts": 1,
+    "error": null,
+    "created_at": "2026-10-19 19:57:51",
+    "results": [
+      {
+        "job_id": "pending-e451458f-441d-4803-8c40-f7d9364ba1f5",
+        "position": 0,
+        "label": "GUAVA",
+        "processor": "v2"
+      }
+    ]
+  },
+  "migratedBeforeResume": {
+    "old": "6f69256d-e1ec-4683-93b8-3fa253409ca7",
+    "update": "8224e038-5200-4dfc-858c-47053c0eb33a",
+    "delayMs": 17000,
+    "approvalMs": 374,
+    "held": {
+      "id": "held-a94485c9-85c2-44c4-8a43-dfe4fddf6927",
+      "input_hash": "6815f3c300383519de8e437497e2c3e97852fe8d717a5419d5aafb00cb43c494",
+      "mode": "normal",
+      "delay_ms": 17000,
+      "status": "accepted",
+      "attempts": 1,
+      "error": null,
+      "created_at": "2026-10-19 19:57:51",
+      "results": []
+    },
+    "pending": {
+      "id": "pending-e451458f-441d-4803-8c40-f7d9364ba1f5",
+      "input_hash": "0e27150cb1fc10c8366e5924160b7d3c36bc045edf614989b5134136bd719188",
+      "mode": "normal",
+      "delay_ms": 0,
+      "status": "accepted",
+      "attempts": 0,
+      "error": null,
+      "created_at": "2026-10-19 19:57:51",
+      "results": []
+    },
+    "queue": {
+      "backlogBytes": 103,
+      "backlogCount": 2,
+      "oldestMessageTimestamp": 1792439871565,
+      "paused": true,
+      "stored": 2
+    }
+  },
+  "migrations": {
+    "before": [
+      {
+        "database": "imports-public-db",
+        "name": "0001_imports.sql",
+        "digest": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680"
+      }
+    ],
+    "after": [
+      {
+        "database": "imports-public-db",
+        "name": "0001_imports.sql",
+        "digest": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680"
+      },
+      {
+        "database": "imports-public-db",
+        "name": "0002_processor.sql",
+        "digest": "a820b0c7e3c1c6a36b37f10b7a94e5e12c0e22c146609e3ab020d28c3d04a60a"
+      }
+    ]
+  }
+}
