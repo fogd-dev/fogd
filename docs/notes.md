@@ -463,3 +463,27 @@ superseded by a non-queue approval. It also stops one replica, kills the control
 while a new queued approval holds delivery, restarts with admission disabled, and
 retries the pinned approval. All pass and the final backup is complete. Independent
 Docker inspection confirms admission was 0 in the actual controller container.
+
+
+## Native Void attachment loss across deployment replacement
+
+The M11b update experiment in `.fogd/m11b-update-linked` built a copied checklist
+with only its release marker changed to v2 and deployed through scoped upload and
+exact approval. Its initial copy needed a node_modules link for the React plugin;
+that build issue was corrected before the runtime experiment.
+
+After approval the browser still had its original socket. The next saved v1 edit
+hit `Missing checklist room attachment`, closed with 1011 and recovered after
+reconnect. `.fogd/m11b-update-runtime.log` records the failing handler. Ordinary idle
+eviction already passes the attachment guard, so the current discriminator is
+handler replacement. The pinned source is celld v0.6.2 at 90b4301. A focused Claude
+review is tracing the reload path. Do not remove the guard or count reconnection as
+passing the preserved-socket gate.
+
+
+The source review identifies an attach-before-accept mismatch: Void writes its
+stored connection before `acceptWebSocket`, while celld's attachment op only writes
+an existing registry entry. Idle eviction may retain the JS socket and its cached
+attachment; a generation swap does not. A temporary post-accept rewrite is the next
+discriminating experiment. If it resolves the failure, prefer a labelled celld
+upstream patch retaining the encoded bytes until acceptance over an app workaround.

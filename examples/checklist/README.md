@@ -128,3 +128,31 @@ Cleanup restores the original replica configuration and waits for celld health.
 The private output contains a Compose file with credentials; keep it local. This
 finite observation does not establish an unlimited idle lifetime or behavior when
 room ownership moves to another node.
+
+## Non-owning ingress failure
+
+With `checklist` active on slot-2 of the disposable fixture, run:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node scripts/live-ingress.mjs .fogd/checklist-ingress
+```
+
+The probe identifies the room owner from runtime state, then temporarily orders
+workerd's backends to select the other node for the loaded browser's reconnect.
+It kills that non-owner and requires the selected socket to close. The next edit
+must be acknowledged while the killed ingress remains stopped and both the owner
+and workerd retain their process start times. The original gateway configuration
+and killed replica are restored during cleanup. Use a quiet disposable fixture;
+this probe intentionally interrupts its gateway connections during setup.
+
+If interrupted before cleanup, restore the original fixture with:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/m11b-fixture/probe.env" \
+  node packages/cli/bin/fogd.js up
+```
+
+Remove any `ingress-compose.json` left in that run's private output directory after
+restoration; it contains credentials. The direct-owner control process has a
+two-minute deadline. Its normal cleanup removes its private state file.

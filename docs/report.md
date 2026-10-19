@@ -889,7 +889,9 @@ owner, so this run makes no claim about an ownership move.
 
 The checklist message handler requires room parameters restored from Void's socket
 attachment. Missing parameters fail before a mutation. This makes the post-eviction
-acknowledgment evidence of attachment restoration as well as storage preservation.
+acknowledgment evidence that the room parameters remain usable. The later update
+experiment shows that this does not prove reconstruction in a fresh isolate: idle
+eviction can retain the original JS socket object.
 The [source review](reviews/m11b-idle-source-claude.md) confirms that celld's resident
 list describes in-memory cells and that idle eviction is disabled when unset.
 
@@ -897,3 +899,22 @@ All 278 tests and offline builds pass. The physical probe passes, with the origi
 replica configuration restored during cleanup. The [review response](reviews/m11b-idle-response.md)
 records readiness and evidence improvements. Non-owning ingress loss, compatible
 updates, SSE, room-move behavior and stopped recovery remain open.
+
+## M11b non-owning ingress failure and update investigation
+
+The [ingress probe](evidence/m11b-ingress.json) verifies the remaining distinct node
+failure path. The browser's selected socket closes after the non-owning ingress is
+killed. A control socket directly to the room owner stays open, sees the new board
+revision and answers a message. The browser reconnects and commits a second edit
+while the ingress remains stopped; owner and workerd process start times remain
+unchanged. Cleanup restores the original gateway order and starts the killed node.
+Claude's [follow-up review](reviews/m11b-ingress-control-claude.md) accepts the control
+socket evidence. This qualifies ingress loss separately from owner loss.
+
+A subsequent compatible-update experiment exposes an open failure: approval leaves
+the original socket open, but its first message reaches a handler without its Void
+room parameters. The guard throws `Missing checklist room attachment`, celld closes
+with 1011, and the browser reconnects before recovering the edit. Reconnection does
+not meet the preserved-socket acceptance requirement. The runtime attachment/reload
+path is under investigation; the requirement remains open. No runtime workaround
+or compatibility claim is included in this checkpoint.

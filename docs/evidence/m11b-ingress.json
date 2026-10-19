@@ -1,0 +1,192 @@
+{
+  "room": "ingress-32a77f13-5cf9-4a25-bec2-5a14688d99cd",
+  "owner": {
+    "host": "slot-2-b",
+    "id": "ChecklistWs:308d28baf60e94608226d56348e90d003573dffa805492cc4e1d20e934a247e1"
+  },
+  "ingress": "slot-2-a",
+  "selectedSocket": 2,
+  "selectedAt": 1792443927064,
+  "killAt": 1792443929540,
+  "acknowledgedAt": 1792443930833,
+  "directOwner": {
+    "opens": 1,
+    "closes": [],
+    "messages": [
+      {
+        "type": "snapshot",
+        "revision": 1,
+        "release": "v2",
+        "items": [
+          {
+            "id": "58b4e1a7-d9be-4810-819e-9ef4a11da8a8",
+            "text": "Before ingress loss",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "type": "snapshot",
+        "revision": 2,
+        "release": "v2",
+        "items": [
+          {
+            "id": "58b4e1a7-d9be-4810-819e-9ef4a11da8a8",
+            "text": "Before ingress loss",
+            "checked": false
+          },
+          {
+            "id": "991672f4-b08e-4050-9d07-ebf95031b0de",
+            "text": "After ingress loss",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "type": "rejected",
+        "opId": "control-probe",
+        "reason": "invalid-operation",
+        "release": "v2"
+      }
+    ]
+  },
+  "ownerStartedAt": "2026-10-19T20:46:51.61368701Z",
+  "ownerStillRunning": true,
+  "ingressStillStopped": true,
+  "gatewayStartedAt": "2026-10-19T21:05:27.634430471Z",
+  "immediatelyBefore": [
+    {
+      "host": "slot-2-a",
+      "residents": [],
+      "published": []
+    },
+    {
+      "host": "slot-2-b",
+      "residents": [
+        "ChecklistWs:0bf21be7d568ebc5d3dbeab0900390d3804e1ae384c2f80207e60d1e54c496ec",
+        "ChecklistWs:1bf8bc09845d9751762059d29e7e6969ed5348b58783b6cc63d9ec5e9bf887e3",
+        "ChecklistWs:308d28baf60e94608226d56348e90d003573dffa805492cc4e1d20e934a247e1",
+        "ChecklistWs:44842e03b78a727505c70d22dda0f586568877c326028c8b0c4f5857841ea46b",
+        "ChecklistWs:7779d2cad53492595324b0fb3f451e2c713bddf70f3bdb5305171df268b72a05",
+        "ChecklistWs:81d2ded7f8aae0583140e6d6de8fe7699b442bb116a39c1d8bc1bceb1fa40557",
+        "ChecklistWs:e18a22c492fcfd0400c0060b2c05410aa8bfd3f6c0cf8779b667b46500eb763f"
+      ],
+      "published": [
+        "ChecklistWs:0bf21be7d568ebc5d3dbeab0900390d3804e1ae384c2f80207e60d1e54c496ec",
+        "ChecklistWs:1bf8bc09845d9751762059d29e7e6969ed5348b58783b6cc63d9ec5e9bf887e3",
+        "ChecklistWs:308d28baf60e94608226d56348e90d003573dffa805492cc4e1d20e934a247e1",
+        "ChecklistWs:44842e03b78a727505c70d22dda0f586568877c326028c8b0c4f5857841ea46b",
+        "ChecklistWs:7779d2cad53492595324b0fb3f451e2c713bddf70f3bdb5305171df268b72a05",
+        "ChecklistWs:81d2ded7f8aae0583140e6d6de8fe7699b442bb116a39c1d8bc1bceb1fa40557",
+        "ChecklistWs:e18a22c492fcfd0400c0060b2c05410aa8bfd3f6c0cf8779b667b46500eb763f"
+      ]
+    }
+  ],
+  "survivor": {
+    "host": "slot-2-b",
+    "residents": [
+      "ChecklistWs:0bf21be7d568ebc5d3dbeab0900390d3804e1ae384c2f80207e60d1e54c496ec",
+      "ChecklistWs:1bf8bc09845d9751762059d29e7e6969ed5348b58783b6cc63d9ec5e9bf887e3",
+      "ChecklistWs:308d28baf60e94608226d56348e90d003573dffa805492cc4e1d20e934a247e1",
+      "ChecklistWs:44842e03b78a727505c70d22dda0f586568877c326028c8b0c4f5857841ea46b",
+      "ChecklistWs:7779d2cad53492595324b0fb3f451e2c713bddf70f3bdb5305171df268b72a05",
+      "ChecklistWs:81d2ded7f8aae0583140e6d6de8fe7699b442bb116a39c1d8bc1bceb1fa40557",
+      "ChecklistWs:e18a22c492fcfd0400c0060b2c05410aa8bfd3f6c0cf8779b667b46500eb763f"
+    ],
+    "published": [
+      "ChecklistWs:0bf21be7d568ebc5d3dbeab0900390d3804e1ae384c2f80207e60d1e54c496ec",
+      "ChecklistWs:1bf8bc09845d9751762059d29e7e6969ed5348b58783b6cc63d9ec5e9bf887e3",
+      "ChecklistWs:308d28baf60e94608226d56348e90d003573dffa805492cc4e1d20e934a247e1",
+      "ChecklistWs:44842e03b78a727505c70d22dda0f586568877c326028c8b0c4f5857841ea46b",
+      "ChecklistWs:7779d2cad53492595324b0fb3f451e2c713bddf70f3bdb5305171df268b72a05",
+      "ChecklistWs:81d2ded7f8aae0583140e6d6de8fe7699b442bb116a39c1d8bc1bceb1fa40557",
+      "ChecklistWs:e18a22c492fcfd0400c0060b2c05410aa8bfd3f6c0cf8779b667b46500eb763f"
+    ]
+  },
+  "events": [
+    {
+      "event": "open",
+      "socket": 1,
+      "at": 1792443926730
+    },
+    {
+      "event": "snapshot",
+      "socket": 1,
+      "at": 1792443926730,
+      "revision": 0
+    },
+    {
+      "event": "snapshot",
+      "socket": 1,
+      "at": 1792443926866,
+      "revision": 1
+    },
+    {
+      "event": "close",
+      "socket": 1,
+      "at": 1792443927236,
+      "code": 1006
+    },
+    {
+      "event": "open",
+      "socket": 2,
+      "at": 1792443928250
+    },
+    {
+      "event": "snapshot",
+      "socket": 2,
+      "at": 1792443928250,
+      "revision": 1
+    },
+    {
+      "event": "close",
+      "socket": 2,
+      "at": 1792443929645,
+      "code": 1006
+    },
+    {
+      "event": "open",
+      "socket": 3,
+      "at": 1792443930659
+    },
+    {
+      "event": "snapshot",
+      "socket": 3,
+      "at": 1792443930662,
+      "revision": 1
+    },
+    {
+      "event": "snapshot",
+      "socket": 3,
+      "at": 1792443930791,
+      "revision": 2
+    }
+  ],
+  "snapshot": {
+    "type": "snapshot",
+    "revision": 2,
+    "release": "v2",
+    "items": [
+      {
+        "id": "58b4e1a7-d9be-4810-819e-9ef4a11da8a8",
+        "text": "Before ingress loss",
+        "checked": false
+      },
+      {
+        "id": "991672f4-b08e-4050-9d07-ebf95031b0de",
+        "text": "After ingress loss",
+        "checked": false
+      }
+    ]
+  },
+  "scope": "Real workerd/native client, temporary backend order selects non-owner; selected socket closes on non-owner kill while direct owner control remains open and answers; owner and gateway processes unchanged",
+  "fixture": {
+    "project": "fogd-m11b-live",
+    "slot": "slot-2",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-2-a": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+      "slot-2-b": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817"
+    }
+  }
+}
