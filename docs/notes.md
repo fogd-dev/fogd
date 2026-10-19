@@ -577,3 +577,27 @@ reporting and skip source restart after failed target cleanup. The evidence reco
 this provenance and does not claim fault-injection coverage for those cleanup paths.
 The broader M11b audit still needs explicit preapproval WebSocket refusal evidence;
 existing native transport probes approve before attempting their first upgrade.
+
+## M11c retry-identity reproduction attempts
+
+The two-tick native cron probe passes, but it does not exercise instance replacement
+during retry. Gemini's source review identifies a possible lost `_owed` record that
+would turn a retry deadline into a new scheduled time. This remains unproven by a
+fault-injected runtime test at this checkpoint.
+
+The first retry probe used an unrecognized idle setting and timed out without
+replacing the worker. The corrected probe uses `CELLD_IDLE_EVICT_S=1` and
+`CELLD_ALARM_RESIDENT_MS=0`, verified inside both containers. Runtime logs show
+idle eviction before the first occurrence, but the failed occurrence and its
+four-second retry use the same worker instance and original scheduled time.
+It also timed out waiting for the intended fault. Neither attempt disproves the
+source finding; neither qualifies the fault boundary. Both finalizers published
+without crons, removed disposable containers/networks and restarted the source
+stack without deleting volumes. Private records are under
+`.fogd/m11c-retry-first` and `.fogd/m11c-retry-fixed`.
+
+A focused Claude review is evaluating a controlled owner restart after a persisted
+retry becomes overdue. Do not run a third idle experiment without establishing
+observable prerequisites for replacement and the retry deadline. The unfinished
+probe remains outside the committed qualification scripts until it proves the
+intended condition. Native dispatch controls and retry identity remain M11c work.
