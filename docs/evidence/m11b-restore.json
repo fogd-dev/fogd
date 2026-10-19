@@ -1,0 +1,729 @@
+{
+  "room": "restore-feeb3d56-ce5c-4237-8316-41e5e384a46a",
+  "baseline": {
+    "type": "snapshot",
+    "revision": 1,
+    "release": "v1",
+    "items": [
+      {
+        "id": "b5abfcb6-ab13-4365-921d-a50b9cdd5c1e",
+        "text": "Included in stopped snapshot",
+        "checked": false
+      }
+    ]
+  },
+  "otherBaseline": {
+    "type": "snapshot",
+    "revision": 1,
+    "release": "v1",
+    "items": [
+      {
+        "id": "1ae4157f-b1c7-46e6-9675-f3cfd989028e",
+        "text": "Other app snapshot",
+        "checked": false
+      }
+    ]
+  },
+  "operation": {
+    "type": "operation",
+    "opId": "aca08eb8-e356-4663-a075-4d4126c0540b",
+    "operation": {
+      "kind": "add",
+      "itemId": "b5abfcb6-ab13-4365-921d-a50b9cdd5c1e",
+      "text": "Included in stopped snapshot"
+    }
+  },
+  "receipt": {
+    "type": "ack",
+    "opId": "aca08eb8-e356-4663-a075-4d4126c0540b",
+    "revision": 1,
+    "release": "v1"
+  },
+  "conflict": {
+    "type": "rejected",
+    "opId": "aca08eb8-e356-4663-a075-4d4126c0540b",
+    "reason": "operation-conflict",
+    "release": "v1"
+  },
+  "later": {
+    "type": "snapshot",
+    "revision": 2,
+    "release": "v1",
+    "items": [
+      {
+        "id": "1429cd10-f04b-4383-a761-db609d8f126d",
+        "text": "Acknowledged after the snapshot",
+        "checked": false
+      },
+      {
+        "id": "b5abfcb6-ab13-4365-921d-a50b9cdd5c1e",
+        "text": "Included in stopped snapshot",
+        "checked": false
+      }
+    ]
+  },
+  "rollback": {
+    "writerStatus": "Writes stopped \u00b7 Revision 1 \u00b7 1 pending",
+    "observerStatus": "Restored state detected \u00b7 Revision 2",
+    "pending": [
+      {
+        "opId": "81af5eae-5c8d-4f27-93ad-a341d0150837",
+        "operation": {
+          "kind": "add",
+          "itemId": "e99a33d7-dd51-40ea-863a-490a43678e9f",
+          "text": "Offline edit awaiting explicit acceptance"
+        },
+        "order": 1792450589565
+      }
+    ],
+    "framesWhileBlocked": 0,
+    "observerEvents": [
+      {
+        "type": "open",
+        "at": 1792450589416
+      },
+      {
+        "type": "error",
+        "at": 1792450589719
+      },
+      {
+        "type": "error",
+        "at": 1792450590727
+      },
+      {
+        "type": "error",
+        "at": 1792450591734
+      },
+      {
+        "type": "error",
+        "at": 1792450592739
+      },
+      {
+        "type": "error",
+        "at": 1792450593745
+      },
+      {
+        "type": "error",
+        "at": 1792450594751
+      },
+      {
+        "type": "error",
+        "at": 1792450595756
+      },
+      {
+        "type": "error",
+        "at": 1792450596763
+      },
+      {
+        "type": "error",
+        "at": 1792450597770
+      },
+      {
+        "type": "error",
+        "at": 1792450598777
+      },
+      {
+        "type": "error",
+        "at": 1792450599785
+      },
+      {
+        "type": "error",
+        "at": 1792450600790
+      },
+      {
+        "type": "error",
+        "at": 1792450601798
+      },
+      {
+        "type": "error",
+        "at": 1792450602804
+      },
+      {
+        "type": "error",
+        "at": 1792450603808
+      },
+      {
+        "type": "error",
+        "at": 1792450604814
+      },
+      {
+        "type": "error",
+        "at": 1792450605821
+      },
+      {
+        "type": "error",
+        "at": 1792450606829
+      },
+      {
+        "type": "error",
+        "at": 1792450607835
+      },
+      {
+        "type": "error",
+        "at": 1792450608839
+      },
+      {
+        "type": "error",
+        "at": 1792450609846
+      },
+      {
+        "type": "error",
+        "at": 1792450610853
+      },
+      {
+        "type": "error",
+        "at": 1792450611857
+      },
+      {
+        "type": "error",
+        "at": 1792450612864
+      },
+      {
+        "type": "error",
+        "at": 1792450613871
+      },
+      {
+        "type": "error",
+        "at": 1792450614877
+      },
+      {
+        "type": "error",
+        "at": 1792450615885
+      },
+      {
+        "type": "error",
+        "at": 1792450616892
+      },
+      {
+        "type": "error",
+        "at": 1792450617900
+      },
+      {
+        "type": "error",
+        "at": 1792450618904
+      },
+      {
+        "type": "error",
+        "at": 1792450619910
+      },
+      {
+        "type": "error",
+        "at": 1792450620912
+      },
+      {
+        "type": "error",
+        "at": 1792450621915
+      },
+      {
+        "type": "error",
+        "at": 1792450622917
+      },
+      {
+        "type": "error",
+        "at": 1792450623919
+      },
+      {
+        "type": "error",
+        "at": 1792450624920
+      },
+      {
+        "type": "error",
+        "at": 1792450625921
+      },
+      {
+        "type": "error",
+        "at": 1792450626923
+      },
+      {
+        "type": "error",
+        "at": 1792450627924
+      },
+      {
+        "type": "error",
+        "at": 1792450628926
+      },
+      {
+        "type": "error",
+        "at": 1792450629927
+      },
+      {
+        "type": "error",
+        "at": 1792450630928
+      },
+      {
+        "type": "error",
+        "at": 1792450631931
+      },
+      {
+        "type": "error",
+        "at": 1792450632932
+      },
+      {
+        "type": "error",
+        "at": 1792450633935
+      },
+      {
+        "type": "error",
+        "at": 1792450634936
+      },
+      {
+        "type": "error",
+        "at": 1792450635938
+      },
+      {
+        "type": "error",
+        "at": 1792450636940
+      },
+      {
+        "type": "error",
+        "at": 1792450637941
+      },
+      {
+        "type": "error",
+        "at": 1792450638955
+      },
+      {
+        "type": "error",
+        "at": 1792450639962
+      },
+      {
+        "type": "error",
+        "at": 1792450640981
+      },
+      {
+        "type": "error",
+        "at": 1792450641998
+      },
+      {
+        "type": "error",
+        "at": 1792450643014
+      },
+      {
+        "type": "error",
+        "at": 1792450644021
+      },
+      {
+        "type": "error",
+        "at": 1792450645039
+      },
+      {
+        "type": "error",
+        "at": 1792450646053
+      },
+      {
+        "type": "error",
+        "at": 1792450647062
+      },
+      {
+        "type": "error",
+        "at": 1792450648076
+      },
+      {
+        "type": "error",
+        "at": 1792450649088
+      },
+      {
+        "type": "error",
+        "at": 1792450650099
+      },
+      {
+        "type": "error",
+        "at": 1792450651120
+      },
+      {
+        "type": "error",
+        "at": 1792450652130
+      },
+      {
+        "type": "error",
+        "at": 1792450653139
+      },
+      {
+        "type": "error",
+        "at": 1792450654155
+      },
+      {
+        "type": "error",
+        "at": 1792450655168
+      },
+      {
+        "type": "open",
+        "at": 1792450656244
+      }
+    ],
+    "observerControls": [
+      {
+        "at": 1792450589446,
+        "status": 200,
+        "body": {
+          "accepted": true,
+          "connectionId": "ea32ab50-eb89-4058-bacb-beb94859a2c9",
+          "results": [
+            {
+              "ok": true,
+              "kind": "subscribe",
+              "id": "board",
+              "topic": "restore-feeb3d56-ce5c-4237-8316-41e5e384a46a"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1792450656267,
+        "status": 200,
+        "body": {
+          "accepted": true,
+          "connectionId": "ea32ab50-eb89-4058-bacb-beb94859a2c9",
+          "results": [
+            {
+              "ok": true,
+              "kind": "subscribe",
+              "id": "board",
+              "topic": "restore-feeb3d56-ce5c-4237-8316-41e5e384a46a"
+            }
+          ]
+        }
+      }
+    ],
+    "firstStopStartedAt": 1792450589584,
+    "firstStoppedAt": 1792450621783
+  },
+  "after": {
+    "type": "snapshot",
+    "revision": 2,
+    "release": "v1",
+    "items": [
+      {
+        "id": "b5abfcb6-ab13-4365-921d-a50b9cdd5c1e",
+        "text": "Included in stopped snapshot",
+        "checked": false
+      },
+      {
+        "id": "e99a33d7-dd51-40ea-863a-490a43678e9f",
+        "text": "Offline edit awaiting explicit acceptance",
+        "checked": false
+      }
+    ]
+  },
+  "retried": [
+    {
+      "at": 1792450658629,
+      "message": {
+        "type": "operation",
+        "opId": "81af5eae-5c8d-4f27-93ad-a341d0150837",
+        "operation": {
+          "kind": "add",
+          "itemId": "e99a33d7-dd51-40ea-863a-490a43678e9f",
+          "text": "Offline edit awaiting explicit acceptance"
+        }
+      },
+      "forwarded": true
+    }
+  ],
+  "pendingReceipt": {
+    "type": "ack",
+    "opId": "81af5eae-5c8d-4f27-93ad-a341d0150837",
+    "revision": 2,
+    "release": "v1"
+  },
+  "manifest": {
+    "format": "fogd-stopped-v1",
+    "sourceProject": "fogd-m11b-sse",
+    "stoppedAt": "2026-10-19T22:55:25.269Z",
+    "completedAt": "2026-10-19T22:55:38.311Z",
+    "durationMs": 29529,
+    "exits": [
+      {
+        "service": "slot-2-b",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "controller",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "slot-2-a",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "slot-1-a",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "slot-1-b",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "bucket-init",
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      {
+        "service": "workerd",
+        "exitCode": 1,
+        "oomKilled": false
+      },
+      {
+        "service": "minio",
+        "exitCode": 0,
+        "oomKilled": false
+      }
+    ],
+    "images": {
+      "bucket-init": "sha256:be33fe8d02f9153a4eb613fb02e82b394bbaee9c0fbdb33d90be9da918605817",
+      "controller": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+      "slot-1-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-1-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-a": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "slot-2-b": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844",
+      "workerd": "sha256:2a6bc3692f29f6f0de7a6ec09f8e383bb8c764cca25ecc2ca7cf6e96c74ae844"
+    },
+    "files": {
+      "bucket.tar": {
+        "bytes": 20992000,
+        "sha256": "b2369fa7b2883fb5e776d2d614ec3037723d3ab857dd27f5b458e780886f29ff"
+      },
+      "compose.json": {
+        "bytes": 13523,
+        "sha256": "a2683133eb8eebef509771d4bff55dd07c1ec1ec7399918588dad4137e2bb128"
+      },
+      "controller.tar": {
+        "bytes": 20541440,
+        "sha256": "3addf0612c1f95810b646a38325fc3a9af99bea86fbe9f50bdcb7aded18a6c28"
+      },
+      "images.tar": {
+        "bytes": 1153271296,
+        "sha256": "f749010ecfe66674c9320a3e718dec8ee4c6208454883f43b7dfee4232075319"
+      },
+      "slot-1-a.tar": {
+        "bytes": 1167360,
+        "sha256": "5357ca4f0df4944d436ecec33bfae6f913495e630a6898893b12d491286ef5c9"
+      },
+      "slot-1-b.tar": {
+        "bytes": 716800,
+        "sha256": "7b858b0f68a7a34e2a518fd80fe5280de9f1f5c6b0a7e62b381ff6633015a9f6"
+      },
+      "slot-2-a.tar": {
+        "bytes": 143360,
+        "sha256": "8494c947f5b8a1d16aa81bef604b9b65929f258dccf1daea5c798e4447b713fe"
+      },
+      "slot-2-b.tar": {
+        "bytes": 1249280,
+        "sha256": "10a13204e264ec7f46ffb2fcfd1940416e29d29c0300c6fb4bc9e1f2eea29c45"
+      },
+      "tls.tar": {
+        "bytes": 10240,
+        "sha256": "f48249c7be948cbe892da3f36bd326d955da30e5a50e42bd3447181d8dfb9e4e"
+      }
+    }
+  },
+  "targets": [
+    {
+      "project": "fogd-m11b-sse-restore-10d2b298",
+      "mounts": [
+        {
+          "service": "slot-2-b",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_slot-2-b"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_fleet-2"
+          ]
+        },
+        {
+          "service": "controller",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_tls",
+            "fogd-m11b-sse-restore-10d2b298_controller"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_control",
+            "fogd-m11b-sse-restore-10d2b298_fleet-1",
+            "fogd-m11b-sse-restore-10d2b298_fleet-2"
+          ]
+        },
+        {
+          "service": "slot-2-a",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_slot-2-a"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_fleet-2"
+          ]
+        },
+        {
+          "service": "slot-1-b",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_slot-1-b"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_fleet-1"
+          ]
+        },
+        {
+          "service": "slot-1-a",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_slot-1-a"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_fleet-1"
+          ]
+        },
+        {
+          "service": "bucket-init",
+          "volumes": [],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_control"
+          ]
+        },
+        {
+          "service": "workerd",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_tls"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_control",
+            "fogd-m11b-sse-restore-10d2b298_fleet-1",
+            "fogd-m11b-sse-restore-10d2b298_fleet-2"
+          ]
+        },
+        {
+          "service": "minio",
+          "volumes": [
+            "fogd-m11b-sse-restore-10d2b298_bucket"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-10d2b298_control",
+            "fogd-m11b-sse-restore-10d2b298_fleet-1",
+            "fogd-m11b-sse-restore-10d2b298_fleet-2"
+          ]
+        }
+      ],
+      "volumes": [
+        "fogd-m11b-sse-restore-10d2b298_bucket",
+        "fogd-m11b-sse-restore-10d2b298_controller",
+        "fogd-m11b-sse-restore-10d2b298_slot-1-a",
+        "fogd-m11b-sse-restore-10d2b298_slot-1-b",
+        "fogd-m11b-sse-restore-10d2b298_slot-2-a",
+        "fogd-m11b-sse-restore-10d2b298_slot-2-b",
+        "fogd-m11b-sse-restore-10d2b298_tls"
+      ]
+    },
+    {
+      "project": "fogd-m11b-sse-restore-8ed18e22",
+      "mounts": [
+        {
+          "service": "slot-2-b",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_slot-2-b"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_fleet-2"
+          ]
+        },
+        {
+          "service": "slot-2-a",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_slot-2-a"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_fleet-2"
+          ]
+        },
+        {
+          "service": "controller",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_controller",
+            "fogd-m11b-sse-restore-8ed18e22_tls"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_control",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-1",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-2"
+          ]
+        },
+        {
+          "service": "slot-1-b",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_slot-1-b"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_fleet-1"
+          ]
+        },
+        {
+          "service": "slot-1-a",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_slot-1-a"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_fleet-1"
+          ]
+        },
+        {
+          "service": "bucket-init",
+          "volumes": [],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_control"
+          ]
+        },
+        {
+          "service": "minio",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_bucket"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_control",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-1",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-2"
+          ]
+        },
+        {
+          "service": "workerd",
+          "volumes": [
+            "fogd-m11b-sse-restore-8ed18e22_tls"
+          ],
+          "networks": [
+            "fogd-m11b-sse-restore-8ed18e22_control",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-1",
+            "fogd-m11b-sse-restore-8ed18e22_fleet-2"
+          ]
+        }
+      ],
+      "volumes": [
+        "fogd-m11b-sse-restore-8ed18e22_bucket",
+        "fogd-m11b-sse-restore-8ed18e22_controller",
+        "fogd-m11b-sse-restore-8ed18e22_slot-1-a",
+        "fogd-m11b-sse-restore-8ed18e22_slot-1-b",
+        "fogd-m11b-sse-restore-8ed18e22_slot-2-a",
+        "fogd-m11b-sse-restore-8ed18e22_slot-2-b",
+        "fogd-m11b-sse-restore-8ed18e22_tls"
+      ]
+    }
+  ],
+  "scope": "Complete stopped snapshot restored into fresh volumes; original board/receipt preserved. Separate older-snapshot drill intentionally loses a later acknowledged edit, stops browser writes, retains pending ID, and requires explicit writer/observer acceptance; no zero-loss restore claim. Equal-or-higher revision divergence is undetected by this example.",
+  "derivedFrom": ".fogd/m11b-restore-reviewed/restore.json; completed with terminal exit 0 and source restarted",
+  "validation": {
+    "workspaceTests": 302,
+    "syntax": "pass",
+    "quality": "pass",
+    "retirementSourcesUnchangedSince": "d3c83c1",
+    "retirementSources": [
+      "packages/platform/src/retirement.mjs",
+      "packages/platform/src/queue-retirement.mjs",
+      "packages/cli/src/recovery/retire.mjs"
+    ],
+    "applicationBuild": "No application or runtime source changed in this slice; existing offline builds at ba68363 remain applicable.",
+    "cleanup": "Terminal exit 0. Independent Docker inspection found no target containers; routed reads on the original source matched both original board snapshots. All volumes and backups retained."
+  },
+  "provenance": "The successful run loaded the browser helper before its goto-error cleanup was added. Later runner changes only add complete-exit-inventory and operation-type assertions (rechecked against this artifact), report target paths on failure, and avoid source restart when target cleanup fails. These edits do not change the observed successful flow; failure paths were not fault-injected.",
+  "remaining": [
+    "M11b requirement-by-requirement acceptance audit, including explicit preapproval WebSocket refusal evidence"
+  ]
+}

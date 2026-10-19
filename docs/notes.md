@@ -558,3 +558,22 @@ receiver snapshots, receipt replay, process generations and native balance count
 The donor's five transferred objects include notification topics. No room alarm or
 SSE observer keeps these boards active. A remaining room on the donor would be an
 unmoved observation, not a passing movement result.
+
+
+## M11b complete snapshot restoration
+
+The initial real restoration passed the core rollback flow. The strengthened run
+also verified both apps, clean stop exits, changed-payload receipt rejection,
+actual writer watermark, two-way frame counting, targetB SSE registration, and
+post-acceptance reload. Both completed and returned the original fixture to service.
+All backup bundles and clone volumes remain private and retained. No snapshot lost
+its later writes silently in the evidence: the separate rollback scenario explicitly
+omits an edit acknowledged after the original snapshot.
+
+Review identified that one helper gained startup-error cleanup during execution.
+That change affects failed navigation only. Subsequent service-inventory and frame
+assertions were checked against the completed artifact; other changes improve error
+reporting and skip source restart after failed target cleanup. The evidence records
+this provenance and does not claim fault-injection coverage for those cleanup paths.
+The broader M11b audit still needs explicit preapproval WebSocket refusal evidence;
+existing native transport probes approve before attempting their first upgrade.

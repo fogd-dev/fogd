@@ -118,7 +118,9 @@ sockets keep writing while new connections are refused. The experimental SSE obs
 cancellation with a version-pinned Void registration patch. Real publication stalls and cross-app SSE isolation also pass in the
 [bounded fault drill](evidence/m11b-sse-failure.json). Healthy hibernated-room
 [ownership movement](evidence/m11b-move.json) also passes with native reconnects.
-Next: stopped board/receipt recovery and the explicit lower-revision scenario; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
+[Stopped board/receipt recovery](evidence/m11b-restore.json) and explicit
+lower-revision reconciliation also pass. Next: the M11b acceptance audit, including
+preapproval WebSocket refusal evidence; do not close M11b from the patch result alone. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Remaining live-session qualification and scheduled/workflow lifecycle
 remain open M11 work. The native Void imports fixture

@@ -4,8 +4,9 @@ This native Void room is the first implementation of [M11b](../../docs/m11b.md).
 Open `/?room=shared` in two browsers after deployment. The native Void UI retains
 pending edits in browser storage, waits for a snapshot before replaying them, and
 settles server receipts or rejections. WebSocket and HTTP state live at `/rooms/:room`.
-Node failure, preserved-socket updates, SSE, idle eviction, and physical recovery
-remain under qualification.
+Bounded node-failure, update, SSE, idle-eviction, ownership-movement and stopped
+recovery probes pass with the documented patches. The M11b acceptance audit remains
+open; the example is not a general collaborative editor.
 
 The anonymous fixture accepts same-origin browser WebSockets. It has no membership
 or application authentication; use a disposable local stack. Room names are 1–64
@@ -225,7 +226,7 @@ gateway restart with a missed edit, and a finite idle observation.
 This is not a fully qualified live-update feature yet. The
 [version-pinned registration patch](../../docs/patches/void-live-registration.md)
 fixes the confirmed race, and a deployment cancellation/reconnection check passes.
-A [bounded publication-stall and cross-app isolation drill](../../docs/evidence/m11b-sse-failure.json) also passes. Room moves and stopped recovery remain open M11b checks. No sign-in is provided, and anonymous readers can
+A [bounded publication-stall and cross-app isolation drill](../../docs/evidence/m11b-sse-failure.json) also passes. Room moves and stopped recovery also pass; the M11b acceptance audit remains open. No sign-in is provided, and anonymous readers can
 consume the topic's subscription capacity. Publishing is best effort and never
 changes an operation's durable result.
 
@@ -337,3 +338,33 @@ Cleanup resumes balancing and restores the canonical configuration. If the probe
 is forcibly killed, run `fogd up` with the fixture's `FOGD_ENV_FILE` to recreate
 replicas and restore gateway selection; recreation clears the native in-memory
 balance pause. Keep the fixture's bucket and replica volumes.
+
+
+### Stopped backup and restore
+
+On the disposable SSE fixture with both apps approved and the documented candidate:
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
+  node scripts/live-restore.mjs .fogd/live-restore
+```
+
+The drill stops the complete installation, backs up through `fogd backup`, and
+restores through `fogd restore` into fresh projects. It preserves both apps' state
+and approval metadata and verifies the original receipt and conflicting-payload
+rejection. It then exercises a separate older-snapshot restore with real browser
+history and an offline pending edit. The writer must stop automatic writes until
+acceptance, and the observer must require reload. A lower revision is detectable;
+a different history at an equal or higher revision is not.
+
+Use new output directories. The drill removes only its projects' containers and
+networks to reuse the local ports and Docker address space. It retains source and
+target volumes, the backup bundle and private configuration. It closes browsers
+before returning the source to service. A backup is not a promise to preserve writes
+acknowledged after its snapshot.
+
+If interrupted, inspect the target project names in the output directory. Stop their
+containers with `docker compose -f <target-compose> -p <target-project> down`, without
+`-v`, before starting the source with its fixture environment. A partial restore can
+have `compose.pending.json` instead of `compose.json`. If target cleanup fails,
+inspect those projects before restarting the source; the ports may still be occupied.

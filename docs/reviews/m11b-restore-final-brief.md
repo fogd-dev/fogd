@@ -1,0 +1,9 @@
+# Stopped board recovery review brief
+
+Review the implemented M11b stopped recovery drill, read only. Files: scripts/live-restore.mjs and scripts/live-restore-browser.mjs. The original design review is .fogd/reviews/m11b-restore-claude.jsonl (last result); brief .fogd/reviews/m11b-restore-brief.md.
+
+The initial real run passed at .fogd/m11b-restore-first/restore.json. The stronger rerun is .fogd/m11b-restore-reviewed (currently running). Code now asserts clean non-workerd exits/no OOM/no queue recovery; fresh volumes, actual container mounts/networks/image IDs, exact ordinary restored config; both apps' metadata and separate board state; original receipt ack and changed-payload conflict; real stored writer watermark2; route frames both directions with no replay before explicit acceptance; EventSource error during targetA shutdown and successful targetB registration; reload after acceptance and duplicate pending receipt2. Both source/target volumes and bundle retained. Cleanup tries final config then pending config, requires no target containers if both absent, restores source without building. Ephemeral browsers close first.
+
+No product implementation changes. App receives real restored revision1, no fabricated watermark/snapshot. A later acknowledged edit intentionally disappears on older restore; equal/higher revision history divergence is explicitly OUTSIDE this revision-only detector. Original backup includes all replica identities/logs, bucket, controller, images. Source stays down until both targets are down. No Cloudflare APIs or publication.
+
+Find blockers, false passes or cleanup hazards, and whether evidence meets M11b item7 (broader acceptance audit separate). If final evidence not ready, inspect first evidence and code, state that distinction. Do not run tests or mutate. Keep review concise. For image/volume safety, current backup/restore source is authoritative; no need broad repo search.

@@ -353,5 +353,6 @@ an edit. An [experimental SSE observer](examples/checklist/README.md#experimenta
 passes hints, reconnect snapshots and deployment replacement with an explicit
 [Void registration patch](docs/patches/void-live-registration.md). [Publication-stall and cross-app isolation checks](docs/evidence/m11b-sse-failure.json)
 also pass. [Healthy ownership movement](docs/evidence/m11b-move.json) preserves
-boards and receipts through native reconnects. Stopped board/receipt recovery
-remains open; M11b is still in progress.
+boards and receipts through native reconnects. [Stopped board/receipt recovery](docs/evidence/m11b-restore.json)
+also passes, including explicit acceptance after an older restore. M11b remains
+open for its acceptance audit.

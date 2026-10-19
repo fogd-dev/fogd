@@ -1148,3 +1148,29 @@ well as boards. The physical WebSocket closes; the SDK reconnects. This qualifie
 hibernated rooms, not active requests, arbitrary alarms, or a recovery-time promise.
 The canonical configuration is restored after the drill. Stopped board/receipt
 backup and restoration remain a separate acceptance check.
+
+
+## ADR 045: separate snapshot preservation from rollback detection
+
+**Context.** A stopped backup promises the captured board and receipts, not later
+acknowledged writes. A browser can retain a higher revision and pending operations
+when an operator restores older storage. Testing only a new browser misses that case.
+
+**Options.** Change the browser's saved watermark; replace just the room database;
+or restore a complete installation twice. A synthetic watermark isolates the client
+logic but cannot qualify storage recovery. Replacing only a database bypasses replica
+logs, ownership, controller metadata and the ordinary recovery commands.
+
+**Decision.** Seed and stop clients, take the complete stopped backup, then restore
+fresh volumes and verify board/receipt preservation. On that first restored copy,
+acknowledge a later edit and queue a disconnected edit. Restore the original backup
+into another fresh installation at the same origin. Require visible lower-revision
+handling, retained pending identity, no automatic writes, and explicit writer and
+observer acceptance. Verify the accepted retry once and after browser reload.
+
+**Consequences.** The drill copies images and all managed volumes twice, retaining
+those copies for inspection. It uses a disposable installation and closes clients
+before returning to the source. Acknowledgments outside the snapshot are deliberately
+lost in the second scenario. Revision-only comparison cannot detect divergent
+histories with equal or higher revisions; lineage detection remains outside this
+example's contract. Existing offline retirement behavior stays unchanged.

@@ -19,8 +19,10 @@ Bounded queue apps have a [supported Docker opt-in](queue-admission.md), off by 
 Native checklist reconciliation, node failures and idle eviction are qualified
 locally. Preserved-socket updates require the explicit [celld patch candidate](patches/celld-preaccept-attachment.md);
 the [qualification record](evidence/m11b-patched-runtime.json) includes both negative
-controls and runtime provenance. Route pause, SSE, actual room moves and stopped
-recovery for live sessions remain open.
+controls and runtime provenance. Route pause, patched SSE, healthy room movement
+and [stopped live-session recovery](evidence/m11b-restore.json) also pass. M11b
+remains open for a requirement-by-requirement acceptance audit. Older restore
+detection is revision-based; equal-or-higher divergent histories are not detected.
 
 ## What works
 
@@ -1054,3 +1056,27 @@ WebSocket or establish behavior for active requests and arbitrary alarms.
 
 The drill restores the canonical policy and gateway. Stopped board/receipt recovery
 and the explicit lower-revision scenario remain before closing M11b.
+
+
+## M11b stopped restoration and explicit rollback acceptance
+
+The [restoration evidence](evidence/m11b-restore.json) preserves both apps in fresh,
+separate volumes, including board state, exact approval metadata and original
+operation receipts. Replaying an original operation returns its original revision;
+changing that operation's payload returns `operation-conflict`. All stateful
+services stopped cleanly before the backup, with no OOM or queued recovery path.
+
+A separate rollback scenario restores the original backup after an acknowledged
+edit on the first restored copy. The writer reports older server state, retains its
+pending operation and sends no mutation until explicit acceptance. The SSE observer
+also detects the older board and requires reload. Acceptance reuses the pending id
+once; receipt replay and browser reload confirm the result. The later acknowledged
+edit outside the snapshot is absent, as expected. Equal-or-higher revision divergence
+is not detected by this example.
+
+The ordinary CLI captures controller state, bucket, every replica volume and images.
+Actual target mounts, networks and image identities match each fresh installation.
+Cleanup retained all volumes and backups and returned the source to service. Existing
+offline retirement implementations have no changes since the M11b baseline. The
+[review response](reviews/m11b-restore-response.md) distinguishes the completed
+success path from cleanup-error branches that were not fault-injected.
