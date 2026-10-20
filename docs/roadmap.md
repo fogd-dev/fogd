@@ -130,7 +130,10 @@ transport checks approved replica/cell generations before resume and preserves
 uncertain mutation outcomes. Platform admission remains closed
 while the [experimental activation journal](cron-activation.md) is qualified through
 controller interruption and native bootstrap drills. Approval pins its artifact and
-secret revision before effects; ordinary Void jobs and recovery remain open.
+secret revision before effects. The [Void refresh fixture](../examples/refresh/README.md)
+has bounded native workerd, sibling-retry and lost-reply evidence plus offline
+target builds. Normal scoped cron admission and the remaining operator, fault and
+recovery gates remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

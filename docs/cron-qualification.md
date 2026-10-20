@@ -91,3 +91,24 @@ Two intermediate minute occurrences were skipped. The immediate no-cron cleanup
 read still had an older callback retiring; both replicas had adopted a later
 generation, and the runner stopped the whole disposable stack. That read is not a
 drain receipt. The result qualifies only this recorded termination profile.
+
+## Native Void refresh jobs
+
+The [refresh example](../examples/refresh/README.md) uses ordinary Void cron
+discovery for two jobs sharing one expression. Its
+[bounded native evidence](evidence/m11c-void-refresh.json) records real minute
+callbacks, successful-sibling retries, a visible source failure with retained
+success, and a simulated lost reply after a committed D1 result. Ledger attempts
+and duplicate counters establish that handlers ran again; the result table's
+unique occurrence key constrains business rows. The browser and API use workerd
+with normal authenticated controller route lookups.
+
+The same source builds through ordinary Void and fogd in a container with
+networking disabled. A generated declaration check confirms one expression and a
+required private value, while normal artifact staging still rejects cron.
+The runtime drill privately stages the declaration through the experimental
+coordinator; it does not open admission or complete the M11c lifecycle gates.
+Owner loss for this app, native activation interruption, full stopped recovery,
+replacement and retirement remain open. Inspect runner exit, cleanup and selected
+service logs before accepting a result; the evidence rejects the earlier gateway
+harness and storage-exhaustion trials.

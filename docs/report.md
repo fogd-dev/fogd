@@ -110,8 +110,12 @@ passes bootstrap/adoption and restart checks, including a callback that finishes
 while its sibling is suppressed. These are runtime experiments. Upstream Rust
 tests/clippy and CPU-exhaustion qualification remain open. An internally staged
 [activation coordinator](cron-activation.md) has file-backed interruption tests and
-a native D1/secret bootstrap, lost-resume reload and paused-update profile. Ordinary
-approved Void cron apps, operator interfaces and full recovery tests remain
+a native D1/secret bootstrap, lost-resume reload and paused-update profile. The
+[Void refresh fixture](../examples/refresh/README.md) also passes its bounded native
+workerd flow: two jobs share an expression, use separate ledgers when that expression
+retries, retain a visible prior success during failure and deduplicate after a
+simulated lost reply. Offline builds cover ordinary Void and fogd. Normal scoped
+cron admission, operator interfaces and full recovery tests remain
 unqualified. Workflows/general alarms, remote
 infrastructure and M12 portability follow their own acceptance contracts.
 

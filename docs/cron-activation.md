@@ -83,3 +83,6 @@ Inspect the private evidence and cleanup result, then stop the disposable fleet
 while retaining its volumes. A printed pass before cleanup is insufficient.
 The probe bypasses ordinary upload admission and does not qualify native activation
 process kills, ordinary Void jobs, workerd ingress or stopped snapshot recovery.
+The separate [Void refresh profile](../examples/refresh/README.md) exercises native
+jobs and workerd through private staging; normal cron admission and recovery gates
+remain open.

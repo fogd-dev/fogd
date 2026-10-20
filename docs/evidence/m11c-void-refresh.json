@@ -1,0 +1,308 @@
+{
+  "profile": "M11c native Void scheduled refresh fixture through workerd and a private activation controller",
+  "result": "pass",
+  "scope": "Ordinary Void source and real native minute callbacks; declarations staged privately because normal cron admission stays closed. No ordinary CLI admission, owner-loss/replacement/restore/retirement acceptance or exactly once external effects.",
+  "runtime": {
+    "image": "sha256:bb6c847465cac835682263adfb4a9718aa04c66536fa39a93fefa4fe3a3b6fb4",
+    "celldBinarySha256": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "controlPatchProvenance": "m11c-cron-controls.json",
+    "platformRevision": "e29f609",
+    "selectedReplicaControllerAndGatewayImagesMatch": true
+  },
+  "sources": {
+    "app": {
+      "package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+      "vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+      "void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+      "env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+      "fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+      "tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+      "db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+      "db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+      "lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+      "lib/page.mjs": "a27ff3392e22b8960eb265e29fdb8bb55f5e01ec74b62f6cb86872e719b7b143",
+      "lib/refresh.mjs": "1a8e6c05a5c232396dddfc63386ab3817cefe174f015c13699ce36056180ecbb",
+      "routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+      "routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+      "crons/inventory.ts": "8247d7077d9ddfd84cfb8541439b423c7f03bc1f455823e2b43986c110b30525",
+      "crons/advisory.ts": "ff8ba3dad263f2504bc372512cf1e2c75722b4dcdcea96812a529f263810d88d"
+    },
+    "scripts": {
+      "scripts/cron-void.mjs": "abd6d723625c8cbf28011b9b58de33faa5ab441526b87c887e900d6f09439992",
+      "scripts/cron-probe/void-controller.mjs": "8f3347ca2409b39cf57a6472f50c078d03cd529fc5468728dbf2852a96334626",
+      "scripts/cron-probe/native.mjs": "b13ef798dc00870ef31eeae1845a888ef2ced8be95b5cbbc922eeeb1e4927198",
+      "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
+      "scripts/queue-probe/controller-artifact.mjs": "8eddf411a448d52d1d14ced13c89dfa97a66de4030a1aa31977d5011102bc87c",
+      "scripts/verify-builds.mjs": "3ae600eac4b2d0746d863ebe9e0684261109669ed7e085d51b5356e844120a0b"
+    },
+    "voidPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
+    "submittedWorkerSha256": "17a907be8d16f51868c0d5f258a3b80d3504675f2f9638db86784de9c948b148"
+  },
+  "build": {
+    "network": "none; verifier asserts loopback-only interfaces",
+    "image": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf",
+    "managed": {
+      "target": "refresh-managed",
+      "triggers": {
+        "crons": [
+          "* * * * *"
+        ]
+      },
+      "secrets": {
+        "required": [
+          "REFRESH_TOKEN"
+        ]
+      }
+    },
+    "fogd": {
+      "target": "refresh-fogd",
+      "triggers": {
+        "crons": [
+          "* * * * *"
+        ]
+      },
+      "secrets": {
+        "required": [
+          "REFRESH_TOKEN"
+        ]
+      },
+      "workerJavaScriptFiles": [
+        "ssr/index.js"
+      ]
+    },
+    "sameSourcesCheckedAgainstOfflineImage": true,
+    "ordinaryCronAdmission": "rejected"
+  },
+  "approval": {
+    "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540",
+    "preapprovalMinuteBoundary": 1792527420000,
+    "migrations": [
+      {
+        "database": "refresh-db",
+        "name": "0001_refresh.sql",
+        "digest": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be"
+      }
+    ],
+    "privateValueAbsentFromSubmittedArtifactAndAdminStatus": true,
+    "postActivationPrivacy": {
+      "artifactUnchanged": true,
+      "tokenAbsentFromArtifact": true,
+      "tokenAbsentFromPublicApi": true
+    }
+  },
+  "nativeRetry": {
+    "scheduledTime": 1792527480000,
+    "jobs": [
+      {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527480000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 0,
+        "last_attempt_at": 1792527484028,
+        "error": null,
+        "completed_at": 1792527484028
+      },
+      {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527480000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 1,
+        "last_attempt_at": 1792527484028,
+        "error": null,
+        "completed_at": 1792527480007
+      }
+    ],
+    "browserNotOpenedYet": true
+  },
+  "sourceFailure": {
+    "advisory": {
+      "job": "advisory",
+      "latest": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527540000,
+        "initial_mode": "offline",
+        "status": "failed",
+        "attempts": 1,
+        "duplicates": 0,
+        "last_attempt_at": 1792527540007,
+        "error": "The local advisory source is unavailable. A later attempt can recover.",
+        "completed_at": null
+      },
+      "lastSuccess": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527480000,
+        "value": "Collection on time",
+        "saved_at": 1792527484028
+      }
+    },
+    "inventory": {
+      "job": "inventory",
+      "latest": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527540000,
+        "initial_mode": "offline",
+        "status": "complete",
+        "attempts": 1,
+        "duplicates": 0,
+        "last_attempt_at": 1792527540007,
+        "error": null,
+        "completed_at": 1792527540007
+      },
+      "lastSuccess": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527540000,
+        "value": "25 sample items available",
+        "saved_at": 1792527540007
+      }
+    }
+  },
+  "lostReplyAfterSave": {
+    "scheduledTime": 1792527600000,
+    "jobs": [
+      {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527600000,
+        "initial_mode": "lost-ack-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 1,
+        "last_attempt_at": 1792527604029,
+        "error": null,
+        "completed_at": 1792527600006
+      },
+      {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792527600000,
+        "initial_mode": "lost-ack-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 1,
+        "last_attempt_at": 1792527604029,
+        "error": null,
+        "completed_at": 1792527600006
+      }
+    ],
+    "actualRetryAfterCommittedSave": true,
+    "effectBoundary": "The app throws after its committed D1 batch; the native scheduler retries the expression."
+  },
+  "results": [
+    {
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792527484028,
+      "scheduled_time": 1792527480000,
+      "value": "Collection on time"
+    },
+    {
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792527480007,
+      "scheduled_time": 1792527480000,
+      "value": "24 sample items available"
+    },
+    {
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792527540007,
+      "scheduled_time": 1792527540000,
+      "value": "25 sample items available"
+    },
+    {
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792527600006,
+      "scheduled_time": 1792527600000,
+      "value": "Extra collection available"
+    },
+    {
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792527600006,
+      "scheduled_time": 1792527600000,
+      "value": "26 sample items available"
+    }
+  ],
+  "browser": {
+    "errors": [],
+    "failureVisible": true,
+    "retainedSuccessVisible": true,
+    "settingChanged": true,
+    "screenshotSha256": "b93e9bcb1c7a789cbc168eed73fdcc6c638c5793f575bd51690a8edfb4b938b6",
+    "visualInspection": "Failure and prior successful value are visible; controls and recent-work table render without clipping."
+  },
+  "finalDispatch": {
+    "desired": "paused",
+    "observed": "paused",
+    "hold": null,
+    "operation": null,
+    "runtimeHoldIndependentlyObserved": true,
+    "noAlarmIndependentlyObserved": true
+  },
+  "replicas": [
+    {
+      "host": "slot-2-a",
+      "approvedVersionAdopted": true,
+      "generation": 3,
+      "cells": {
+        ".cron:refresh": 3,
+        "__D1Database:824a93c84bd2d1d1bb8a3f8d656ae05d55fd5ddcbc116629dbe6fc949b5c9fba": 3
+      }
+    },
+    {
+      "host": "slot-2-b",
+      "approvedVersionAdopted": true,
+      "generation": 3,
+      "cells": {}
+    }
+  ],
+  "checks": {
+    "ordinaryTests": 379,
+    "finalTargetedAppAndImportsTests": 13,
+    "typecheck": "pass",
+    "syntax": "pass",
+    "antiSlop": "pass",
+    "privateRuntimeVersionsOmitted": true
+  },
+  "cleanup": {
+    "runnerExitCode": 0,
+    "failureArtifactAbsent": true,
+    "cleanupFailureArtifactAbsent": true,
+    "allFixtureContainersStopped": true,
+    "applicationVolumesRetained": true
+  },
+  "logScope": {
+    "services": [
+      "controller",
+      "minio",
+      "workerd",
+      "slot-2-a",
+      "slot-2-b"
+    ],
+    "since": "2026-10-20T20:16:16.849Z",
+    "acceptedLogSha256": "24cb1914de5d4a41c99dde30ed05420d757ef4a7b8ecf0ab0fe440b6e215e8d0",
+    "priorFailedSlotLogsExcluded": true
+  },
+  "rejectedTrials": [
+    "Initial gateway harness used Node fetch with an ignored Host header; exit 1, not accepted.",
+    "First corrected trial hit MinIO 507 before qualification; exit 1 and cleanup-failure artifact, not accepted."
+  ],
+  "remaining": [
+    "Normal scoped CLI cron admission and runtime provenance enforcement",
+    "Operator interfaces and native activation process-kill profiles",
+    "Ordinary-app owner loss, noRetry/terminal failure, replacement and downtime profiles",
+    "Held stopped snapshot recovery, retirement and slot reuse",
+    "Upstream Rust checks and CPU-exhaustion qualification"
+  ]
+}
