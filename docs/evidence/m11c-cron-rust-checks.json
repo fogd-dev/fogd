@@ -1,0 +1,81 @@
+{
+  "status": "partial",
+  "scope": "Native lab-profile compilation and clippy on the exact source of the functional candidate. This is not Rust test execution qualification or release-bound runtime approval.",
+  "baseCommit": "90b43017241f81189453d326d05948f388b34652",
+  "sourceSetSha256": "882ef5786ecc1d02abd10a7fd217c1dc61a65c0fae345a32d81dd01f3d01b75f",
+  "sourceFilesCompared": 178,
+  "patches": {
+    "celld-0.6.2-cron-retry.patch": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19",
+    "celld-0.6.2-preaccept-attachment.patch": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd",
+    "celld-0.6.2-cron-controls.patch": "0837791235505d4900f605c4253b08e198591fb708b676de213f60d2e600f0a8"
+  },
+  "baseBuildImage": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc",
+  "checkedBuildImage": "sha256:fc43da7bd1295311ac473bef434881d700fc444c4ff67e8d880c5faa11408565",
+  "celldBinarySha256": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+  "processExit": 0,
+  "commands": [
+    "cargo test --profile lab --locked",
+    "cargo clippy --profile lab --all-targets --locked -- -D warnings"
+  ],
+  "environment": {
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "clippy": {
+    "status": "pass",
+    "warningsDenied": true,
+    "targets": "all"
+  },
+  "cargoTest": {
+    "status": "not-qualified",
+    "publicHarnessResults": [
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "executedTests": 0,
+    "reason": "The pinned public source gates celld suites on celld_internal_tests and includes external harness paths through environment variables. logic and ltx set lib.test=false. The default successful command executes zero tests.",
+    "externalHarnessEnvironmentRequirements": [
+      "CELLD_CONFORMANCE_CORE_LOOP_TESTS",
+      "CELLD_CONFORMANCE_FACET_FAILURE_TESTS",
+      "CELLD_INTERNAL_ASYNCRT",
+      "CELLD_INTERNAL_ASYNCRT_TESTS",
+      "CELLD_INTERNAL_SQLITE_FAULT",
+      "CELLD_INTERNAL_COMPOSED_SIMULATION",
+      "CELLD_INTERNAL_SIMULATION_REPRODUCTION",
+      "CELLD_INTERNAL_TOKEN_PROBE",
+      "CELLD_CONFORMANCE_WORLD_TESTS",
+      "CELLD_CONFORMANCE_SIM_STORE_TESTS",
+      "CELLD_CONFORMANCE_SIM_CELL_HOST_TESTS",
+      "CELLD_CONFORMANCE_WORLD_COVERAGE_TESTS"
+    ]
+  },
+  "logSha256": "6a6b12e9910b75e048b4bec7029788650780b461bc2171f01495e97a1714547d",
+  "limits": [
+    "Real upstream Rust suites remain unqualified.",
+    "The lab profile is functional evidence, not a release-profile or performance qualification.",
+    "No CPU-exhaustion evidence or cron admission authorization."
+  ]
+}

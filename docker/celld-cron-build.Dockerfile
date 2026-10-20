@@ -19,8 +19,9 @@ RUN --mount=type=cache,id=celld-cargo-registry,target=/usr/local/cargo/registry,
     cargo build --profile "${CELLD_PROFILE}" --locked -p celld && \
     install -m 755 "target/${CELLD_PROFILE}/celld" /out/celld
 
-# The final image depends on this stage, so a break in the engine's tests or
-# lints stops the build.
+# This stage checks public harness compilation and native lints. At the pinned
+# revision, real suites require external internal-test sources; default cargo
+# test executes zero tests. A successful image is not Rust execution evidence.
 FROM build AS test
 ARG TARGETARCH
 RUN rustup component add clippy

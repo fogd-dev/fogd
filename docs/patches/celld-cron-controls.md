@@ -102,7 +102,11 @@ defaults describe the retry-only candidate. Compare the compiled source with a
 freshly applied patch stack, check the control markers in the binary and compare
 that binary's hash across build, package and runtime images. Labels alone are
 insufficient provenance. Keep source-pinned hashes with qualification evidence;
-upstream Rust tests/clippy remain open.
+[Native clippy passes](../evidence/m11c-cron-rust-checks.json), while real Rust
+test execution remains unqualified: default `cargo test` executes zero tests.
+The public revision gates its celld suites on `celld_internal_tests` and external
+harness source paths, and disables library tests for logic and ltx. A successful
+public build must not be presented as execution of those suites.
 
 
 The accepted run uses `cron-controls-candidate5`. Its evidence includes the
