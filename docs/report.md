@@ -116,10 +116,12 @@ workerd flow: two jobs share an expression, use separate ledgers when that expre
 retries, retain a visible prior success during failure and deduplicate after a
 simulated lost reply. Offline builds cover ordinary Void and fogd. The
 [operator controls](cron-controls.md) add authenticated recorded status, observe,
-pause and artifact-pinned resume with native lost-reply reconciliation. Normal
-scoped cron admission and full recovery tests remain unqualified. Workflows/general
-alarms, remote infrastructure and M12 portability follow their own acceptance
-contracts.
+pause and artifact-pinned resume with native lost-reply reconciliation. Selected
+[native controller SIGKILL cuts](cron-activation.md#native-process-interruptions)
+cover publication, resume and durable release, including a paused update and
+explicit artifact-pinned retries. Normal scoped cron admission and full recovery
+tests remain unqualified. Workflows/general alarms, remote infrastructure and M12
+portability follow their own acceptance contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.
 Current acceptance documents and `docs/evidence/` contain the scoped proof; an

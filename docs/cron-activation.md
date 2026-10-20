@@ -3,8 +3,9 @@
 Cron admission remains closed. The controller has an internally staged activation
 path for the [M11c contract](m11c.md); ordinary artifact submission still rejects
 cron declarations. The default backend has no cron transport and there is no
-installation flag that opens this path. Runtime provenance enforcement, native
-activation process kills, replacement and recovery still need qualification.
+installation flag that opens this path. Runtime provenance enforcement,
+replacement and stopped recovery still need qualification. Selected native process
+interruptions have a separate bounded profile below.
 The [Void refresh fixture](../examples/refresh/README.md) and
 [operator controls](cron-controls.md) have separate bounded profiles.
 
@@ -92,3 +93,51 @@ remain open.
 [Scheduled operator controls](cron-controls.md) expose recorded status and explicit
 observe, pause and artifact-pinned resume through the admin API, page and CLI.
 They retain activation holds and leave application outcomes to the app.
+
+### Native process interruptions
+
+The [bounded evidence](evidence/m11c-cron-interruptions.json) records selected
+native cuts. The [SIGKILL probe](../scripts/cron-interruptions.mjs) runs ordinary Void refresh
+code through private staging on a never-deployed fleet. It preserves the native
+job code and adds an inert configuration variable to distinguish update artifacts.
+Use a fresh disposable installation with current controller sources and the
+qualified cron patch on every replica. Keep the stock controller on a separate
+state directory; workerd uses the private controller's internal listener on 8084.
+Select a never-deployed slot; the recorded profile uses slot-1.
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/cron-interruption-fixture/probe.env" \
+  node scripts/cron-interruptions.mjs slot-1 .fogd/cron-interruption-evidence
+```
+
+The driver verifies the checkpoint process's PID, command arguments and process
+start time before sending SIGKILL. It requires the actual container exec to exit
+137. Native operations complete before their after-effect checkpoints; the durable
+release checkpoint follows the controller metadata write and directory fsync.
+The killed process cannot run a shutdown pause.
+
+The selected cuts cover first application publication before its reply is saved,
+first native resume before journal confirmation, an update's durable release before
+the active pointer, and a paused update's publication. The profile also observes
+minute boundaries before approval and during delayed migration. Restart must retain
+the same artifact and secret revision, re-establish its hold and require explicit
+approval. No bootstrap, migration, application publication or resume is allowed
+during restart. The probe checks native control state and a held minute boundary,
+then retries the original artifact. It verifies actual future results, adoption of
+the approved version by every replica, retained business data and a paused update
+that stays paused after retry while HTTP serves the app.
+
+A release that reached the runtime can execute approved callbacks before restart
+confirms its new hold. The probe deliberately waits for native saved results in
+that window. Routing pause does not prevent those callbacks. Recorded held
+intervals are rechecked against later native results, so delayed ledger writes
+cannot hide a new occurrence in those intervals. The paused update's first minute
+after retry is checked a full minute later. The ledger does not establish callback
+entry times or distinguish retries of older occurrences. Neither the ledger nor a
+null alarm proves callback or `waitUntil` drain.
+
+Inspect the receipts, terminal status, cleanup and selected-service logs, then stop
+the disposable installation while retaining its volumes. A printed pass alone is
+insufficient. These selected cuts complement the broader file-backed kill matrix;
+they do not qualify scoped cron upload, every native failure boundary, corrected
+artifacts, handler overlap or historical snapshot recovery.

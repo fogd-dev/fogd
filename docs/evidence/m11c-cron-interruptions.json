@@ -1,0 +1,426 @@
+{
+  "status": "pass",
+  "scope": "Selected actual controller SIGKILL boundaries with ordinary Void refresh code privately staged on a qualified two-node Docker runtime. Cron admission remains closed. New occurrence identities are checked through held intervals; callback entry timing and old retry attempts are excluded.",
+  "fixture": {
+    "selectedFleet": "slot-1",
+    "replicas": [
+      "slot-1-a",
+      "slot-1-b"
+    ],
+    "handlerBudgetSeconds": 20
+  },
+  "runtimePrerequisiteEvidence": "m11c-cron-operators.json",
+  "platformSourceBaseCommit": "93aa2bb033e7cc168d2084848bf6d579643dc1b5",
+  "celldSourceCommit": "90b43017241f81189453d326d05948f388b34652",
+  "runtime": {
+    "controller": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-1-a": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-1-b": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "workerd": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    }
+  },
+  "platformSourceSetSha256": "56769735a84a0f6ab73028e740b05cf6acf5b78fd2e8086253f0b5b72fca9160",
+  "sourceSha256": {
+    "scripts/cron-interruptions.mjs": "f8290d161713aee571566f564699a87edc97e8088f3569a8c456e174a1b1a54b",
+    "scripts/cron-probe/interruption-controller.mjs": "e0129571b3528d2d4401e85440f764bb009c66516f1b75e2b8e40c94c602102d",
+    "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+    "scripts/queue-probe/controller-artifact.mjs": "8eddf411a448d52d1d14ced13c89dfa97a66de4030a1aa31977d5011102bc87c",
+    "scripts/queue-probe/context.mjs": "178bd428dec26feb029e2b5a7f7d4c0d7e88a2f482ed4adbe54999e356127fba",
+    "scripts/cron-probe/native.mjs": "b13ef798dc00870ef31eeae1845a888ef2ced8be95b5cbbc922eeeb1e4927198",
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
+    "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
+    "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
+    "examples/refresh/crons/advisory.ts": "ff8ba3dad263f2504bc372512cf1e2c75722b4dcdcea96812a529f263810d88d",
+    "examples/refresh/crons/inventory.ts": "8247d7077d9ddfd84cfb8541439b423c7f03bc1f455823e2b43986c110b30525",
+    "examples/refresh/lib/refresh.mjs": "1a8e6c05a5c232396dddfc63386ab3817cefe174f015c13699ce36056180ecbb",
+    "examples/refresh/env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3"
+  },
+  "workerBundleSha256": "34e2ea352e36822181b22371efa3e27ea5b63304abe4ebfa24a2bf7af917b59f",
+  "nativeDeclarations": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "qualificationAdapter": "Inert FOGD_INTERRUPTION_CASE var changes each update artifact; job code and schema remain unchanged.",
+  "preapprovalBoundary": 1792530840000,
+  "delayedMigration": {
+    "before": {
+      "paused": true,
+      "revision": 0,
+      "nextAlarm": null,
+      "crons": []
+    },
+    "boundary": 1792530900000,
+    "after": {
+      "paused": true,
+      "revision": 0,
+      "nextAlarm": null,
+      "crons": []
+    }
+  },
+  "cases": [
+    {
+      "name": "first-publication",
+      "checkpoint": "publish",
+      "killExit": 137,
+      "durable": {
+        "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+        "status": "activating",
+        "step": "publishing",
+        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
+        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "operation": null,
+        "desired": "running",
+        "active": null,
+        "bootstrap": "application"
+      },
+      "beforeKill": {
+        "crons": [
+          "* * * * *"
+        ],
+        "nextAlarm": null,
+        "paused": true,
+        "revision": 0
+      },
+      "approvalChecksBeforeCut": 6,
+      "recovery": {
+        "identity": {
+          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
+          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "status": "failed",
+        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "desired": "running",
+        "observed": "paused",
+        "operation": null,
+        "events": [
+          "pause:before",
+          "pause:after"
+        ],
+        "native": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 0
+        },
+        "boundary": 1792530960000
+      }
+    },
+    {
+      "name": "first-resume",
+      "checkpoint": "resume",
+      "killExit": 137,
+      "durable": {
+        "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+        "status": "activating",
+        "step": "releasing-dispatch",
+        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
+        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "operation": "resume",
+        "desired": "running",
+        "active": null,
+        "bootstrap": "application"
+      },
+      "beforeKill": {
+        "crons": [
+          "* * * * *"
+        ],
+        "nextAlarm": 1792531020000,
+        "paused": false,
+        "revision": 1
+      },
+      "approvalChecksBeforeCut": 6,
+      "recovery": {
+        "identity": {
+          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
+          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "status": "failed",
+        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "desired": "running",
+        "observed": "paused",
+        "operation": null,
+        "events": [
+          "pause:before",
+          "pause:after"
+        ],
+        "native": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 2
+        },
+        "boundary": 1792531080000
+      },
+      "explicitRetry": {
+        "identity": {
+          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
+          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "requestedAt": 1792531082257,
+        "active": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "desired": "running",
+        "observed": "running",
+        "hold": null,
+        "adoptedApprovedVersion": true,
+        "noBootstrap": true
+      }
+    },
+    {
+      "name": "update-durable-release",
+      "checkpoint": "released",
+      "killExit": 137,
+      "durable": {
+        "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
+        "status": "activating",
+        "step": "releasing-dispatch",
+        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
+        "hold": null,
+        "operation": null,
+        "desired": "running",
+        "active": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "bootstrap": "application"
+      },
+      "beforeKill": {
+        "crons": [
+          "* * * * *"
+        ],
+        "nextAlarm": 1792531200000,
+        "paused": false,
+        "revision": 5
+      },
+      "approvalChecksBeforeCut": 6,
+      "recovery": {
+        "identity": {
+          "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+          "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "status": "failed",
+        "hold": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "desired": "running",
+        "observed": "paused",
+        "operation": null,
+        "events": [
+          "pause:before",
+          "pause:after"
+        ],
+        "native": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 6
+        },
+        "boundary": 1792531200000
+      },
+      "explicitRetry": {
+        "identity": {
+          "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+          "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "requestedAt": 1792531202410,
+        "active": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "desired": "running",
+        "observed": "running",
+        "hold": null,
+        "adoptedApprovedVersion": true,
+        "noBootstrap": true
+      }
+    },
+    {
+      "name": "paused-update-publication",
+      "checkpoint": "publish",
+      "killExit": 137,
+      "durable": {
+        "id": "3ce03888-0079-4518-9891-b894751acbae",
+        "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
+        "status": "activating",
+        "step": "publishing",
+        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
+        "hold": "3ce03888-0079-4518-9891-b894751acbae",
+        "operation": null,
+        "desired": "paused",
+        "active": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "bootstrap": "application"
+      },
+      "beforeKill": {
+        "crons": [
+          "* * * * *"
+        ],
+        "nextAlarm": null,
+        "paused": true,
+        "revision": 8
+      },
+      "approvalChecksBeforeCut": 4,
+      "recovery": {
+        "identity": {
+          "id": "3ce03888-0079-4518-9891-b894751acbae",
+          "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "status": "failed",
+        "hold": "3ce03888-0079-4518-9891-b894751acbae",
+        "desired": "paused",
+        "observed": "paused",
+        "operation": null,
+        "events": [
+          "pause:before",
+          "pause:after"
+        ],
+        "native": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 8
+        },
+        "boundary": 1792531320000
+      },
+      "explicitRetry": {
+        "identity": {
+          "id": "3ce03888-0079-4518-9891-b894751acbae",
+          "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
+          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+        },
+        "requestedAt": 1792531322180,
+        "active": "3ce03888-0079-4518-9891-b894751acbae",
+        "desired": "paused",
+        "observed": "paused",
+        "hold": null,
+        "adoptedApprovedVersion": true,
+        "noBootstrap": true
+      }
+    }
+  ],
+  "sameArtifactRetriedAcrossInitialCuts": true,
+  "savedNativeOccurrencesBeforeResumeReplyWasJournaled": [
+    {
+      "attempts": 2,
+      "completed_at": 1792531024037,
+      "cron": "* * * * *",
+      "duplicates": 0,
+      "job": "advisory",
+      "scheduled_time": 1792531020000,
+      "status": "complete"
+    },
+    {
+      "attempts": 2,
+      "completed_at": 1792531020010,
+      "cron": "* * * * *",
+      "duplicates": 1,
+      "job": "inventory",
+      "scheduled_time": 1792531020000,
+      "status": "complete"
+    }
+  ],
+  "heldIntervalsRecheckedAfterLaterNativeWork": [
+    {
+      "start": 1792530960000,
+      "end": 1792530962951
+    },
+    {
+      "start": 1792531080000,
+      "end": 1792531082257
+    },
+    {
+      "start": 1792531200000,
+      "end": 1792531202410
+    },
+    {
+      "start": 1792531320000,
+      "end": 1792531440000
+    }
+  ],
+  "pausedUpdate": {
+    "firstPostRetryBoundary": 1792531380000,
+    "recheckedAfterBoundary": 1792531440000,
+    "retainedBusinessRows": 4
+  },
+  "unfinishedAppOccurrencesAtFinalPause": [
+    {
+      "attempts": 1,
+      "completed_at": null,
+      "cron": "* * * * *",
+      "duplicates": 0,
+      "job": "advisory",
+      "scheduled_time": 1792531140000,
+      "status": "failed"
+    },
+    {
+      "attempts": 1,
+      "completed_at": null,
+      "cron": "* * * * *",
+      "duplicates": 0,
+      "job": "advisory",
+      "scheduled_time": 1792531260000,
+      "status": "failed"
+    }
+  ],
+  "retainedResultCounts": [
+    3,
+    4,
+    4
+  ],
+  "finalResultRowsSha256": "9cb811237e2362ac2f79e9a065fec474dae493f03fdee105800fec831e56db45",
+  "qualification": {
+    "processExit": 0,
+    "cleanupFailureAbsent": true,
+    "allDisposableServicesStopped": true,
+    "logsSince": "2026-10-20T21:13:05.623Z",
+    "services": [
+      "controller",
+      "minio",
+      "workerd",
+      "slot-1-a",
+      "slot-1-b"
+    ],
+    "selectedLogSha256": "0605803b91c205eff7ad4e2cdef51f3677ce1bb539f0a18083f10a0b82a7d9c4",
+    "forbiddenRuntimeFaultPatternsAbsent": true,
+    "checks": [
+      "pnpm check",
+      "pnpm test: 387 passed",
+      "anti-slop: PASS",
+      "Claude review B1 and R1 resolved"
+    ],
+    "rejectedTrials": [
+      "Setup selected an old Compose project through an inherited environment key and failed before staging.",
+      "Exploratory slot-2 profile printed pass with a weak early boundary check; rejected after review.",
+      "Earlier slot-1 run was stopped because it excluded the first post-retry minute; replaced with this fresh installation."
+    ],
+    "sourceInstallationHealthy": true
+  },
+  "limitations": [
+    "No ordinary scoped cron upload or admission.",
+    "Selected cuts complement a broader file-backed model matrix; other native boundaries remain open.",
+    "No proof of callback entry timing, old retry attempts, drain or waitUntil cancellation.",
+    "No general old/new handler overlap or corrected-artifact recovery.",
+    "No stopped historical snapshot restore, retirement or topology qualification.",
+    "CPU-exhaustion and upstream Rust tests/clippy remain open."
+  ],
+  "privateValuesAndRuntimeVersionsAbsent": true
+}
