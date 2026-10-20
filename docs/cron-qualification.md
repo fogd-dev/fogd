@@ -116,7 +116,9 @@ networking disabled. A generated declaration check confirms one expression and a
 required private value, while normal artifact staging still rejects cron.
 The runtime drill privately stages the declaration through the experimental
 coordinator; it does not open admission or complete the M11c lifecycle gates.
-Owner loss for this app, native activation interruption, full stopped recovery,
-replacement and retirement remain open. Inspect runner exit, cleanup and selected
+The [ordinary Void failure profile](cron-failures.md) separately qualifies owner
+loss, `noRetry`, counted terminal retries and downtime. Selected native controller
+interruptions have [separate evidence](evidence/m11c-cron-interruptions.json).
+Full stopped recovery, release overlap and retirement remain open. Inspect runner exit, cleanup and selected
 service logs before accepting a result; the evidence rejects the earlier gateway
 harness and storage-exhaustion trials.

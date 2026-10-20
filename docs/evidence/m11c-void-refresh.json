@@ -304,5 +304,11 @@
     "Ordinary-app owner loss, noRetry/terminal failure, replacement and downtime profiles",
     "Held stopped snapshot recovery, retirement and slot reuse",
     "Upstream Rust checks and CPU-exhaustion qualification"
-  ]
+  ],
+  "runnerProvenance": {
+    "qualificationCommit": "18b440e",
+    "scope": "Historical qualification of the script and app source hashes recorded here. The shared-session runner refactor is covered separately by m11c-void-failures.json; this record does not qualify that new runner.",
+    "appAndScriptHashesVerifiedAgainstCommit": true,
+    "privateControllerSnapshotMatchesRecordedHash": true
+  }
 }

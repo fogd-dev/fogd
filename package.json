@@ -9,7 +9,7 @@
   "scripts": {
     "fogd": "node packages/cli/bin/fogd.js",
     "check": "node scripts/check.mjs",
-    "test": "node --test packages/*/test/*.test.mjs examples/guestbook/updates/attachments/*.test.mjs examples/accounts/test/*.test.mjs examples/imports/test/*.test.mjs examples/checklist/test/*.test.mjs examples/refresh/test/*.test.mjs scripts/void-live-probe/registration.test.mjs scripts/live-log.test.mjs",
+    "test": "node --test packages/*/test/*.test.mjs examples/guestbook/updates/attachments/*.test.mjs examples/accounts/test/*.test.mjs examples/imports/test/*.test.mjs examples/checklist/test/*.test.mjs examples/refresh/test/*.test.mjs scripts/void-live-probe/registration.test.mjs scripts/live-log.test.mjs scripts/cron-probe/faults/fault.test.mjs",
     "build": "pnpm check && pnpm --filter \"@fogd/example-*\" build"
   },
   "devDependencies": {

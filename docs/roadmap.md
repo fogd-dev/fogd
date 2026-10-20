@@ -135,8 +135,10 @@ has bounded native workerd, sibling-retry and lost-reply evidence plus offline
 target builds. [Operator dispatch controls](cron-controls.md) provide recorded
 status and explicit observe, pause and artifact-pinned resume. Selected
 [controller SIGKILL cuts](cron-activation.md#native-process-interruptions) also pass
-their bounded native profile. Normal scoped cron admission and the remaining native
-fault and recovery gates remain open.
+their bounded native profile. The ordinary Void [failure profile](cron-failures.md) records `noRetry`, counted
+terminal retries, owner takeover and autonomous overdue work after downtime.
+Normal scoped cron admission, release overlap, stopped recovery, retirement and
+release-bound runtime qualification remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

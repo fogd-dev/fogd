@@ -378,4 +378,7 @@ requires migration-safe approval, dispatch controls, retry semantics and recover
 patched celld build now preserves the original scheduled time through a single-node
 owner loss; see the [evidence](docs/evidence/m11c-cron-retry-positive.json). This is
 not a supported deployment mode: ordinary `fogd deploy` still rejects cron
-declarations, and native tests, timeout behavior, pause controls and recovery remain open.
+declarations. Private activation, operator controls and the ordinary Void
+[failure profile](docs/cron-failures.md) have bounded native evidence. Scoped
+admission, release overlap, stopped recovery, retirement and release-bound runtime
+qualification remain open. Handler watchdog evidence does not qualify CPU limits.

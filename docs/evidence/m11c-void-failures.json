@@ -1,0 +1,1290 @@
+{
+  "status": "pass",
+  "scope": "Private ordinary Void job overlays, actual native alarms, counted failures, noRetry, owner SIGKILL and three due minutes of full fleet downtime. All ordering uses the VM clock. Autonomous dispatch requires completed overdue entries before the first request after a 45-second quiet window. The ledger excludes invocations that fail before their first durable write, including process loss or unavailable storage. No cron admission, historical snapshot recovery, general callback drain or exactly-once external effects.",
+  "autonomousObservation": "The driver makes no native replica calls during its 45-second quiet window. Runtime internal traffic continues; overdue job entry and finish precede the first subsequent ledger request.",
+  "clockDomain": "VM clock for native entry/finish, control observations, fault boundaries and Docker timestamps. Host durations only bound polling.",
+  "platformSourceBaseCommit": "5d68a592dd981e9304dcc7fac9c7908ec7dc5ff1",
+  "scriptBaseCommit": "d476189",
+  "sourceProvenance": "Driver, controller runner and fault overlays match persisted execution snapshots. Other listed helpers remained frozen through the run and are hashed at evidence generation.",
+  "celldSourceCommit": "90b43017241f81189453d326d05948f388b34652",
+  "runtime": {
+    "controller": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-1-a": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-1-b": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "workerd": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    }
+  },
+  "platformSourceSetSha256": "56769735a84a0f6ab73028e740b05cf6acf5b78fd2e8086253f0b5b72fca9160",
+  "sourceSha256": {
+    "scripts/cron-failures.mjs": "33aca409fe1a01a2aea2ce284cc10f080d3d80677b5b3cf7f4afc4cb4841500d",
+    "scripts/cron-probe/faults/build.mjs": "890d166899cc922d91f74d714a5f8cea9bd55bc157c009def560a5062889b1f8",
+    "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+    "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
+    "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+    "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
+    "scripts/cron-probe/void-controller.mjs": "4873b6f02f59601e80886b70ddcf35a8c9007cf40b9a7901c1039a87c2d18def",
+    "scripts/cron-probe/void-controller-session.mjs": "902db7f80ed1e2fb9c767c25424a3cb382b5bf372e212e7d04120ad868de5afb",
+    "scripts/cron-probe/void-driver-session.mjs": "be438ab0a73486f1fde3fce677428afa988e24b6a842bad8f0aaff306145fef1",
+    "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+    "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+    "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
+    "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
+    "scripts/queue-probe/context.mjs": "12120de990861cf7ce3978a9674b187918a11def8e47f1c7c96320f6492cf296",
+    "scripts/queue-probe/controller-artifact.mjs": "8eddf411a448d52d1d14ced13c89dfa97a66de4030a1aa31977d5011102bc87c",
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
+    "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
+    "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b"
+  },
+  "runtimeBuildProvenance": {
+    "buildImage": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc",
+    "baseCommit": "90b43017241f81189453d326d05948f388b34652",
+    "sourceFilesCompared": 178,
+    "sourceSetSha256": "882ef5786ecc1d02abd10a7fd217c1dc61a65c0fae345a32d81dd01f3d01b75f",
+    "patches": {
+      "celld-0.6.2-cron-retry.patch": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19",
+      "celld-0.6.2-preaccept-attachment.patch": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd",
+      "celld-0.6.2-cron-controls.patch": "0837791235505d4900f605c4253b08e198591fb708b676de213f60d2e600f0a8"
+    },
+    "upstreamRustChecks": "open"
+  },
+  "baseline": {
+    "nativeAttempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792534920004,
+        "finished_at": 1792534920059,
+        "id": "169eadee-ea90-483f-9c21-5e6f131b7843",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "baseline",
+        "policy": "healthy",
+        "scheduled_time": 1792534920000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792534920004,
+        "finished_at": 1792534920059,
+        "id": "fbaca27c-7127-4b6b-a83e-16e1aadf4531",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "baseline",
+        "policy": "healthy",
+        "scheduled_time": 1792534920000
+      }
+    ],
+    "browserErrors": [],
+    "screenshotSha256": "11991cd880769e37e81418d2f16fc0d2791603b3ebe6012124c12abcc7b61dd2"
+  },
+  "noRetry": {
+    "name": "no-retry",
+    "policy": "no-retry",
+    "startedAt": 1792534923125,
+    "scheduledTime": 1792534980000,
+    "rows": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792534980008,
+        "finished_at": 1792534980027,
+        "id": "1351f9b4-38d7-4ad2-9384-bbb9c6813524",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "no-retry",
+        "policy": "no-retry",
+        "scheduled_time": 1792534980000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792534980008,
+        "finished_at": 1792534980018,
+        "id": "447ac406-a881-40e9-bc94-17f9cc673183",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 1,
+        "outcome": "thrown",
+        "phase": "no-retry",
+        "policy": "no-retry",
+        "scheduled_time": 1792534980000
+      }
+    ],
+    "future": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535040004,
+        "finished_at": 1792535040027,
+        "id": "3358cd00-0b7d-4b37-84aa-29474138957a",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "no-retry-future",
+        "policy": "healthy",
+        "scheduled_time": 1792535040000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535040004,
+        "finished_at": 1792535040027,
+        "id": "33a0eb5a-b0cf-432e-8ae2-7091adb215c7",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "no-retry-future",
+        "policy": "healthy",
+        "scheduled_time": 1792535040000
+      }
+    ]
+  },
+  "ownerLoss": {
+    "name": "owner-loss",
+    "policy": "owner-loss",
+    "startedAt": 1792535041721,
+    "scheduledTime": 1792535100000,
+    "owner": "slot-1-a",
+    "survivor": "slot-1-b",
+    "ownerBefore": {
+      "node": "slot-1-a",
+      "epoch": 1
+    },
+    "ownerAfter": {
+      "node": "slot-1-b",
+      "epoch": 2
+    },
+    "retry": {
+      "key": "slots/slot-1/wake/entries/2026-10-20T22:25/.cron:refresh/0000000000000001-000000000000000c",
+      "cell": ".cron:refresh",
+      "due_ms": 1792535112035,
+      "format": 2,
+      "identity": "0000000000000001-000000000000000c"
+    },
+    "killed": [
+      {
+        "service": "slot-1-a",
+        "running": false,
+        "exit": 137,
+        "finishedAt": "2026-10-20T22:25:04.794831377Z"
+      }
+    ],
+    "killedAt": 1792535105117,
+    "rowsBefore": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535100003,
+        "finished_at": 1792535100016,
+        "id": "7f1b93bb-8b87-4823-a725-d3db65042747",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535100003,
+        "finished_at": 1792535100009,
+        "id": "f43eca7d-7d1e-428a-998a-4f32801f4e05",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535104022,
+        "finished_at": 1792535104028,
+        "id": "89347e07-eeba-4c7a-99e7-c677c9627396",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535104022,
+        "finished_at": 1792535104032,
+        "id": "c7b6d7af-769b-4a09-9a2b-c9cac51f335e",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      }
+    ],
+    "rowsAfter": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535100003,
+        "finished_at": 1792535100016,
+        "id": "7f1b93bb-8b87-4823-a725-d3db65042747",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535100003,
+        "finished_at": 1792535100009,
+        "id": "f43eca7d-7d1e-428a-998a-4f32801f4e05",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535104022,
+        "finished_at": 1792535104028,
+        "id": "89347e07-eeba-4c7a-99e7-c677c9627396",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535104022,
+        "finished_at": 1792535104032,
+        "id": "c7b6d7af-769b-4a09-9a2b-c9cac51f335e",
+        "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535163563,
+        "finished_at": 1792535163595,
+        "id": "c247b7fb-8946-43b4-8ef8-c5b21e7247ff",
+        "instance": "0a5844c7-c3d5-4ccf-b1ad-3ef107548ff2",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535163563,
+        "finished_at": 1792535163591,
+        "id": "ee745479-7175-4df0-a85e-92d01b581f55",
+        "instance": "0a5844c7-c3d5-4ccf-b1ad-3ef107548ff2",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "owner-loss",
+        "policy": "owner-loss",
+        "scheduled_time": 1792535100000
+      }
+    ],
+    "observedAfterAt": 1792535164004,
+    "retryDelayAfterDueMs": 51528,
+    "crossedNextMinute": true,
+    "crossedOccurrences": [
+      {
+        "scheduledTime": 1792535160000,
+        "recordedAttempts": []
+      }
+    ],
+    "persistedWakesAfterRecovery": [
+      {
+        "key": "slots/slot-1/wake/entries/2026-10-20T22:27/.cron:refresh/0000000000000002-000000000000000d",
+        "cell": ".cron:refresh",
+        "due_ms": 1792535220000,
+        "format": 2,
+        "identity": "0000000000000002-000000000000000d"
+      }
+    ],
+    "crossedOccurrenceObservation": "Absent entries mean no durable job entry was recorded through final pause; callbacks failing before their initial INSERT remain outside ledger scope."
+  },
+  "terminal": {
+    "name": "terminal",
+    "policy": "terminal",
+    "startedAt": 1792535223937,
+    "scheduledTime": 1792535400000,
+    "rows": [
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535400004,
+        "finished_at": 1792535400035,
+        "id": "6c93495c-ae3a-4f41-8603-3f5961af7bd9",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535400004,
+        "finished_at": 1792535400022,
+        "id": "87e522a0-85f9-46a2-ae23-d798a55a7c2a",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535404040,
+        "finished_at": 1792535404052,
+        "id": "2e753a33-1244-47a5-87fd-27602c044c4b",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535404040,
+        "finished_at": 1792535404046,
+        "id": "788435c4-f26b-4006-a2b7-4b7e608eff21",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535412057,
+        "finished_at": 1792535412068,
+        "id": "59d10f9b-f8b6-41f0-9d09-2a712b42ad13",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535412057,
+        "finished_at": 1792535412078,
+        "id": "6bca646e-671e-4508-b792-bff261254689",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535428085,
+        "finished_at": 1792535428095,
+        "id": "5a452836-effb-45b2-8131-5e694efff983",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535428085,
+        "finished_at": 1792535428089,
+        "id": "b5c635dc-9fd3-4650-b1b7-f07870c6e619",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535460101,
+        "finished_at": 1792535460115,
+        "id": "0322036b-a6f1-4c04-8713-cd8a1588bc56",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535460101,
+        "finished_at": 1792535460109,
+        "id": "f5657313-6418-4eb4-8ed6-d964e532eb24",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535524122,
+        "finished_at": 1792535524136,
+        "id": "7efd3e5f-5d0e-42f4-a810-296f842d53b7",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535524122,
+        "finished_at": 1792535524130,
+        "id": "85011b84-c44b-4ae6-a15e-d5f24ddd041e",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "terminal",
+        "policy": "terminal",
+        "scheduled_time": 1792535400000
+      }
+    ],
+    "future": [
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535580003,
+        "finished_at": 1792535580027,
+        "id": "41d8dd2a-8cbb-40ae-8f04-79bb3b28a442",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal-future",
+        "policy": "healthy",
+        "scheduled_time": 1792535580000
+      },
+      {
+        "cron": "*/3 * * * *",
+        "entered_at": 1792535580003,
+        "finished_at": 1792535580027,
+        "id": "d482d71c-830f-4737-9563-15f9bf14ff1b",
+        "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "terminal-future",
+        "policy": "healthy",
+        "scheduled_time": 1792535580000
+      }
+    ]
+  },
+  "downtime": {
+    "name": "downtime",
+    "policy": "healthy",
+    "startedAt": 1792535582717,
+    "scheduledTime": 1792535640000,
+    "rows": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535640003,
+        "finished_at": 1792535640019,
+        "id": "27e72fe6-0878-48d1-af43-104b11dbd521",
+        "instance": "443b1b24-4145-48dd-b9b1-d029958c903d",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535640000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535640003,
+        "finished_at": 1792535640018,
+        "id": "5370410f-27f5-45b1-86c5-2f0385cd0479",
+        "instance": "443b1b24-4145-48dd-b9b1-d029958c903d",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535640000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535837682,
+        "finished_at": 1792535837702,
+        "id": "42693c73-6828-4172-8cd3-d31807095be2",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535700000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535837682,
+        "finished_at": 1792535837702,
+        "id": "f9dba38b-8ab3-4a65-b00b-bc6f4b27527a",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535700000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535880002,
+        "finished_at": 1792535880019,
+        "id": "521a0a93-f2a9-4c07-99f3-9399c47364e5",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535880000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535880002,
+        "finished_at": 1792535880019,
+        "id": "f3df7241-3db6-41f1-b4f3-18c786ef991c",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535880000
+      }
+    ],
+    "future": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535880002,
+        "finished_at": 1792535880019,
+        "id": "521a0a93-f2a9-4c07-99f3-9399c47364e5",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535880000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535880002,
+        "finished_at": 1792535880019,
+        "id": "f3df7241-3db6-41f1-b4f3-18c786ef991c",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535880000
+      }
+    ],
+    "downAt": 1792535640941,
+    "due": 1792535700000,
+    "killed": [
+      {
+        "service": "slot-1-a",
+        "running": false,
+        "exit": 137,
+        "finishedAt": "2026-10-20T22:34:00.941023875Z"
+      },
+      {
+        "service": "slot-1-b",
+        "running": false,
+        "exit": 137,
+        "finishedAt": "2026-10-20T22:34:00.94141025Z"
+      }
+    ],
+    "stillStopped": [
+      {
+        "service": "slot-1-a",
+        "running": false,
+        "exit": 137,
+        "finishedAt": "2026-10-20T22:34:00.941023875Z"
+      },
+      {
+        "service": "slot-1-b",
+        "running": false,
+        "exit": 137,
+        "finishedAt": "2026-10-20T22:34:00.94141025Z"
+      }
+    ],
+    "restartRequestedAt": 1792535822304,
+    "replicasStartedAt": 1792535822674,
+    "quietUntil": 1792535867806,
+    "firstReadAt": 1792535867981,
+    "overdue": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535837682,
+        "finished_at": 1792535837702,
+        "id": "42693c73-6828-4172-8cd3-d31807095be2",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535700000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792535837682,
+        "finished_at": 1792535837702,
+        "id": "f9dba38b-8ab3-4a65-b00b-bc6f4b27527a",
+        "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "downtime",
+        "policy": "healthy",
+        "scheduled_time": 1792535700000
+      }
+    ],
+    "skipped": [
+      1792535760000,
+      1792535820000
+    ]
+  },
+  "finalAttempts": [
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792534920004,
+      "finished_at": 1792534920059,
+      "id": "169eadee-ea90-483f-9c21-5e6f131b7843",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "baseline",
+      "policy": "healthy",
+      "scheduled_time": 1792534920000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792534920004,
+      "finished_at": 1792534920059,
+      "id": "fbaca27c-7127-4b6b-a83e-16e1aadf4531",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "baseline",
+      "policy": "healthy",
+      "scheduled_time": 1792534920000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792534980008,
+      "finished_at": 1792534980027,
+      "id": "1351f9b4-38d7-4ad2-9384-bbb9c6813524",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "no-retry",
+      "policy": "no-retry",
+      "scheduled_time": 1792534980000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792534980008,
+      "finished_at": 1792534980018,
+      "id": "447ac406-a881-40e9-bc94-17f9cc673183",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "advisory",
+      "no_retry_called": 1,
+      "outcome": "thrown",
+      "phase": "no-retry",
+      "policy": "no-retry",
+      "scheduled_time": 1792534980000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535040004,
+      "finished_at": 1792535040027,
+      "id": "3358cd00-0b7d-4b37-84aa-29474138957a",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "no-retry-future",
+      "policy": "healthy",
+      "scheduled_time": 1792535040000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535040004,
+      "finished_at": 1792535040027,
+      "id": "33a0eb5a-b0cf-432e-8ae2-7091adb215c7",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "no-retry-future",
+      "policy": "healthy",
+      "scheduled_time": 1792535040000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535100003,
+      "finished_at": 1792535100016,
+      "id": "7f1b93bb-8b87-4823-a725-d3db65042747",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535100003,
+      "finished_at": 1792535100009,
+      "id": "f43eca7d-7d1e-428a-998a-4f32801f4e05",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535104022,
+      "finished_at": 1792535104028,
+      "id": "89347e07-eeba-4c7a-99e7-c677c9627396",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535104022,
+      "finished_at": 1792535104032,
+      "id": "c7b6d7af-769b-4a09-9a2b-c9cac51f335e",
+      "instance": "301fbb05-8fab-46a9-be52-bc38a1657828",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535163563,
+      "finished_at": 1792535163595,
+      "id": "c247b7fb-8946-43b4-8ef8-c5b21e7247ff",
+      "instance": "0a5844c7-c3d5-4ccf-b1ad-3ef107548ff2",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535163563,
+      "finished_at": 1792535163591,
+      "id": "ee745479-7175-4df0-a85e-92d01b581f55",
+      "instance": "0a5844c7-c3d5-4ccf-b1ad-3ef107548ff2",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "owner-loss",
+      "policy": "owner-loss",
+      "scheduled_time": 1792535100000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535400004,
+      "finished_at": 1792535400035,
+      "id": "6c93495c-ae3a-4f41-8603-3f5961af7bd9",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535400004,
+      "finished_at": 1792535400022,
+      "id": "87e522a0-85f9-46a2-ae23-d798a55a7c2a",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535404040,
+      "finished_at": 1792535404052,
+      "id": "2e753a33-1244-47a5-87fd-27602c044c4b",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535404040,
+      "finished_at": 1792535404046,
+      "id": "788435c4-f26b-4006-a2b7-4b7e608eff21",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535412057,
+      "finished_at": 1792535412068,
+      "id": "59d10f9b-f8b6-41f0-9d09-2a712b42ad13",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535412057,
+      "finished_at": 1792535412078,
+      "id": "6bca646e-671e-4508-b792-bff261254689",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535428085,
+      "finished_at": 1792535428095,
+      "id": "5a452836-effb-45b2-8131-5e694efff983",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535428085,
+      "finished_at": 1792535428089,
+      "id": "b5c635dc-9fd3-4650-b1b7-f07870c6e619",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535460101,
+      "finished_at": 1792535460115,
+      "id": "0322036b-a6f1-4c04-8713-cd8a1588bc56",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535460101,
+      "finished_at": 1792535460109,
+      "id": "f5657313-6418-4eb4-8ed6-d964e532eb24",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535524122,
+      "finished_at": 1792535524136,
+      "id": "7efd3e5f-5d0e-42f4-a810-296f842d53b7",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535524122,
+      "finished_at": 1792535524130,
+      "id": "85011b84-c44b-4ae6-a15e-d5f24ddd041e",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "thrown",
+      "phase": "terminal",
+      "policy": "terminal",
+      "scheduled_time": 1792535400000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535580003,
+      "finished_at": 1792535580027,
+      "id": "41d8dd2a-8cbb-40ae-8f04-79bb3b28a442",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal-future",
+      "policy": "healthy",
+      "scheduled_time": 1792535580000
+    },
+    {
+      "cron": "*/3 * * * *",
+      "entered_at": 1792535580003,
+      "finished_at": 1792535580027,
+      "id": "d482d71c-830f-4737-9563-15f9bf14ff1b",
+      "instance": "97278d37-c6c6-4501-a15b-47172759b6e5",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "terminal-future",
+      "policy": "healthy",
+      "scheduled_time": 1792535580000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535640003,
+      "finished_at": 1792535640019,
+      "id": "27e72fe6-0878-48d1-af43-104b11dbd521",
+      "instance": "443b1b24-4145-48dd-b9b1-d029958c903d",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535640000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535640003,
+      "finished_at": 1792535640018,
+      "id": "5370410f-27f5-45b1-86c5-2f0385cd0479",
+      "instance": "443b1b24-4145-48dd-b9b1-d029958c903d",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535640000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535837682,
+      "finished_at": 1792535837702,
+      "id": "42693c73-6828-4172-8cd3-d31807095be2",
+      "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535700000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535837682,
+      "finished_at": 1792535837702,
+      "id": "f9dba38b-8ab3-4a65-b00b-bc6f4b27527a",
+      "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535700000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535880002,
+      "finished_at": 1792535880019,
+      "id": "521a0a93-f2a9-4c07-99f3-9399c47364e5",
+      "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+      "job": "inventory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535880000
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792535880002,
+      "finished_at": 1792535880019,
+      "id": "f3df7241-3db6-41f1-b4f3-18c786ef991c",
+      "instance": "93c43521-6767-40bb-9e6f-48bb4541f66e",
+      "job": "advisory",
+      "no_retry_called": 0,
+      "outcome": "success",
+      "phase": "downtime",
+      "policy": "healthy",
+      "scheduled_time": 1792535880000
+    }
+  ],
+  "heldEntryIntervals": [
+    {
+      "start": 1792535180320,
+      "end": 1792535222390
+    }
+  ],
+  "unavailableReads": [
+    {
+      "phase": "owner-loss",
+      "at": 1792535105395
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535105883
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535106677
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535107488
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535108283
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535109154
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535109938
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535110733
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535111537
+    },
+    {
+      "phase": "owner-loss",
+      "at": 1792535112333
+    }
+  ],
+  "businessResultCount": 16,
+  "businessResultsSha256": "4c3f852460021cfd7dc65ba51c1f6219058e021a007b190d8fd6a9fc300e1be7",
+  "offlineBuilds": {
+    "fast": {
+      "status": "pass",
+      "network": "none",
+      "crons": [
+        "* * * * *"
+      ],
+      "managed": {
+        "triggers": {
+          "crons": [
+            "* * * * *"
+          ]
+        },
+        "secrets": {
+          "required": [
+            "REFRESH_TOKEN"
+          ]
+        }
+      },
+      "fogd": {
+        "triggers": {
+          "crons": [
+            "* * * * *"
+          ]
+        },
+        "secrets": {
+          "required": [
+            "REFRESH_TOKEN"
+          ]
+        }
+      },
+      "workerSha256": "7ce029663a7c938638de83c0bf1c2f150a5aca8b8d2cc7cfc5d976482479a3a6",
+      "faultSourceSha256": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+      "migrationSha256": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381"
+    },
+    "sparse": {
+      "status": "pass",
+      "network": "none",
+      "crons": [
+        "*/3 * * * *"
+      ],
+      "managed": {
+        "triggers": {
+          "crons": [
+            "*/3 * * * *"
+          ]
+        },
+        "secrets": {
+          "required": [
+            "REFRESH_TOKEN"
+          ]
+        }
+      },
+      "fogd": {
+        "triggers": {
+          "crons": [
+            "*/3 * * * *"
+          ]
+        },
+        "secrets": {
+          "required": [
+            "REFRESH_TOKEN"
+          ]
+        }
+      },
+      "workerSha256": "da768795c2816e06c0ca4290deaa429ebfd655a059bb606b9b77edb818f5b135",
+      "faultSourceSha256": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+      "migrationSha256": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381"
+    },
+    "image": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf",
+    "buildSourcesSha256": "50532223d9dbae3fbfa0fc9ec0b0d36c21d158d2fd4527e11052f2e0dbbfd5ff",
+    "buildSourcesMountedReadOnly": true,
+    "normalAdmission": "rejected"
+  },
+  "qualification": {
+    "processExit": 0,
+    "cleanupFailureAbsent": true,
+    "allDisposableServicesStopped": true,
+    "logsSince": "2026-10-20T22:19:48.420222925Z",
+    "services": [
+      "controller",
+      "minio",
+      "workerd",
+      "slot-1-a",
+      "slot-1-b"
+    ],
+    "selectedLogSha256": "728b699983f86336789f056275290de26e8ab3ba623c7194d6b553ead7f8a26a",
+    "forbiddenRuntimeFaultPatternsAbsent": true,
+    "checks": [
+      "pnpm check",
+      "pnpm test: 393 passed",
+      "anti-slop: PASS",
+      "Claude peer review"
+    ],
+    "rejectedTrials": [
+      "Exploratory run aborted on transient D1 reads during deliberate owner loss.",
+      "VM-clock run stopped after a 45-second owner-loss observation timeout. A later diagnostic ledger showed original-time completion at +63 seconds. That run is not accepted."
+    ],
+    "sourceInstallationHealthy": true
+  },
+  "limitations": [
+    "Private staging only; ordinary scoped cron admission remains closed.",
+    "Recorded durable entries exclude callbacks that fail before their first INSERT; this is not an exhaustive process-level invocation trace.",
+    "Counted retry ceiling applies to this sparse thrown-error profile; it is not a universal watchdog or operation-deadline callback count.",
+    "Owner takeover can cross a minute boundary; this is not a scheduling latency guarantee.",
+    "No stopped fresh-storage or historical snapshot recovery, retirement, topology expansion, old/new handler overlap, general drain or exactly-once external effects.",
+    "Runtime candidate is not release-bound; upstream Rust tests/clippy and CPU-exhaustion behavior remain open."
+  ],
+  "privateValuesAndRuntimeVersionsAbsent": true
+}

@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { context, requireEmptyFleet, deploy } from './queue-probe/context.mjs';
 import { expect } from './guestbook-browser.mjs';
 import { execute } from '../packages/cli/src/recovery/execute.mjs';
+import { cronRecords } from './cron-probe/records.mjs';
 const probe = await context(...process.argv.slice(2));
 await requireEmptyFleet(probe);
 const cell = '.cron:cron-retry';
@@ -31,18 +32,8 @@ async function publish(label,crons) {
   await writeFile(join(directory,'wrangler.json'),JSON.stringify({name:'cron-retry',main:'index.js',compatibility_date:'2026-01-01',no_bundle:true,triggers:{crons},r2_buckets:[{binding:'RESULTS',bucket_name:'cron-retry-results'}]}));
   return deploy(probe,directory,label);
 }
-async function records() {
-  return JSON.parse(await probe.node(`
-    import {createRequire} from 'node:module';import {bucketClient} from './packages/runtime/src/bucket.mjs';
-    const require=createRequire('/app/packages/platform/src/backend.mjs'),{GetObjectCommand,ListObjectsV2Command}=require('@aws-sdk/client-s3'),client=bucketClient(),Bucket=process.env.FOGD_BUCKET,prefix=${JSON.stringify(probe.slot.prefix)};
-    const read=async Key=>JSON.parse(await(await client.send(new GetObjectCommand({Bucket,Key}))).Body.transformToString());
-    const owner=await read(prefix+'/cells/${cell}/own.json');
-    const listing=await client.send(new ListObjectsV2Command({Bucket,Prefix:prefix+'/wake/entries/'}));
-    if(listing.IsTruncated)throw Error('Unexpected truncated wake listing');
-    const wakes=(await Promise.all((listing.Contents||[]).map(async o=>({key:o.Key,...await read(o.Key)})))).filter(r=>r.cell===${JSON.stringify(cell)});
-    console.log(JSON.stringify({owner,wakes,at:Date.now()}));
-  `));
-}
+const records = () => cronRecords(probe, 'cron-retry');
+
 async function observe(host) {
   return JSON.parse(await probe.node(`const r=await fetch(${JSON.stringify(`http://${host}:8080/`)},{signal:AbortSignal.timeout(3000)});if(!r.ok)throw Error('read failed '+r.status);console.log(await r.text());`));
 }
