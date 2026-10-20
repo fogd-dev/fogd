@@ -23,7 +23,7 @@ export async function context(slotId, outputArg, { env: selectedEnv = null, queu
   assert.equal(Number(config.services[`${slotId}-b`].environment.CELLD_HANDLER_BUDGET_S), budget);
   await mkdir(output, { mode: 0o700 });
   const file = env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml');
-  const compose = args => execute('docker', [...composeArgs(file, config.name), ...args], { env });
+  const compose = (args, { timeoutMs } = {}) => execute('docker', [...composeArgs(file, config.name), ...args], { env, timeoutMs });
   const node = code => compose(['exec', '-T', 'controller', 'node', '--input-type=module', '-e', code]);
   const cli = (args, selected = slot) => compose(['exec', '-T', '-e', `CELLD_BUCKET=s3://${config.services.controller.environment.FOGD_BUCKET}/${selected.prefix}`, 'controller', 'celld', ...args]);
   const queue = (verb, selected = slot) => queueCommand(cli, verb, selected, queueName);

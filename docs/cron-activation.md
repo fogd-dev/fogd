@@ -103,7 +103,7 @@ job code and adds an inert configuration variable to distinguish update artifact
 Use a fresh disposable installation with current controller sources and the
 qualified cron patch on every replica. Keep the stock controller on a separate
 state directory; workerd uses the private controller's internal listener on 8084.
-Select a never-deployed slot; the recorded profile uses slot-1.
+Select a never-deployed slot. The VM-clock replay uses slot-2.
 
 ```sh
 FOGD_ENV_FILE="$PWD/.fogd/cron-interruption-fixture/probe.env" \

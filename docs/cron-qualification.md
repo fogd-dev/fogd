@@ -33,6 +33,14 @@ The [initial evidence](evidence/m11c-native-cron.json) records two occurrences a
 the subsequent no-cron deployment on the pinned runtime. These are observations
 of an unfaulted run. They do not establish scheduling latency or execution exactly once.
 
+## Clock and log scope
+
+The operator and controller-interruption profiles compare native occurrence times,
+controller observations and fault boundaries using the Docker VM clock. Host
+wall time only bounds observer waits. Their accepted log scans begin at a stable
+fixture service startup timestamp from Docker inspection, in the same clock
+domain. These replays supersede the earlier unmeasured host/VM alignment assumption.
+
 ## Retry identity after owner loss
 
 The [negative control](evidence/m11c-cron-retry-negative.json) confirms a defect in

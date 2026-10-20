@@ -5,12 +5,14 @@ import { join } from 'node:path';
 import { context, requireEmptyFleet, upload } from './queue-probe/context.mjs';
 import { stageRefresh } from './cron-probe/native.mjs';
 import { refreshGateway } from './cron-probe/gateway.mjs';
+import { cronSQL } from './cron-probe/sql.mjs';
 import { cleanupCronProbe } from './cron-probe-cleanup.mjs';
 import { expect } from './guestbook-browser.mjs';
-import { waitForMinuteBoundary as boundary } from './cron-probe/minute.mjs';
+import { vmNow, vmMinuteBoundary } from './cron-probe/vm-time.mjs';
 
 const probe = await context(process.argv[2], process.argv[3]); await requireEmptyFleet(probe);
 await cp(new URL(import.meta.url), join(probe.output, 'driver.mjs'));
+const boundary = () => vmMinuteBoundary(probe);
 const stage = await stageRefresh(join(probe.output, 'app'));
 const source = await upload(probe, stage.output, 'interruption-app');
 const runner = join(probe.output, 'runner'); await mkdir(runner);
@@ -53,7 +55,7 @@ async function finish(child = current) {
   return child.result;
 }
 async function approve(child = current) {
-  const requestedAt = Date.now();
+  const requestedAt = await vmNow(probe);
   const id = await send('approve', child);
   await expect.poll(async () => (await receipt(child))?.command?.id, { timeout: 180000 }).toBe(id);
   const value = await receipt(child); assert.equal(value.state.target.status, 'active');
@@ -74,14 +76,12 @@ async function locateChild(child) {
 const native = async () => JSON.parse(await probe.cli(['cron', 'info', 'refresh', '--json']));
 async function ledger(artifact) {
   const sql = 'SELECT job,cron,scheduled_time,status,attempts,duplicates,completed_at FROM refresh_occurrences ORDER BY scheduled_time,job;';
-  return query(artifact, sql);
+  return cronSQL(probe, artifact, sql);
 }
 async function results(artifact) {
-  return query(artifact, 'SELECT job,cron,scheduled_time,value,saved_at FROM refresh_results ORDER BY scheduled_time,job;');
+  return cronSQL(probe, artifact, 'SELECT job,cron,scheduled_time,value,saved_at FROM refresh_results ORDER BY scheduled_time,job;');
 }
-async function query(artifact, sql) {
-  return (await probe.cli(['d1', 'execute', 'refresh-db', '--command', sql, artifact, '--json'])).trim().split('\n').filter(Boolean).map(line => JSON.parse(line));
-}
+
 function assertRetained(before, after) {
   for (const row of before) assert.deepEqual(after.find(value => value.job === row.job && value.cron === row.cron && value.scheduled_time === row.scheduled_time), row);
 }
@@ -110,7 +110,7 @@ async function cut(name, mode, point, { preapproval = false, waitForNativeResult
   const child = launch(name, mode, point), ready = await waitReady(child);
   let preapprovalBoundary;
   if (preapproval) { preapprovalBoundary = await boundary(); await requireEmptyFleet(probe); }
-  const approvalRequestedAt = Date.now();
+  const approvalRequestedAt = await vmNow(probe);
   await send('approve', child);
   await expect.poll(async () => (await receipt(child))?.step, { timeout: 180000 }).toBe('checkpoint');
   const stoppedAt = await receipt(child); assert.equal(stoppedAt.point, point);

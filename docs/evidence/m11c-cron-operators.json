@@ -1,5 +1,6 @@
 {
   "status": "pass",
+  "clockDomain": "VM timestamps; log scope begins at the earliest stable fixture service startup. This replay supersedes the earlier unmeasured host/VM clock alignment assumption.",
   "scope": "Experimental qualified two-node Docker cron runtime injected into a private controller. Authenticated operator controls; ordinary cron admission remains closed. No drain, historical restore or atomic release fence claim.",
   "prerequisite": "m11c-void-refresh.json",
   "sourceCommit": "90b43017241f81189453d326d05948f388b34652",
@@ -27,9 +28,11 @@
     "packages/platform/src/http.mjs": "bb1ed754d33fca1c5be1042e728e71074df2168aa51b51d94d11a84af3d50c31",
     "packages/cli/src/platform.mjs": "084ad7626736ee42a4949c7d8f821708b2b49ad80a864df4a493b35e1b7153c7",
     "packages/cli/bin/fogd.js": "169fc0b7dcf8b97e21a590a6b1959e47e3352255e2272312c1a16169c58d9061",
-    "scripts/cron-operators.mjs": "ad76fcad83de78ca15a5f185f2bd47ff2db66c09f1d726cacd794311c3f97634",
+    "scripts/cron-operators.mjs": "b95e4d69db4e29778e7dff12bf2585d9783f534a19f5ae934422efafae88ddbc",
     "scripts/cron-probe/operator-controller.mjs": "f48d08da4fdc3d990aebe088cd893d66c312e0183a41885ef0967ea6f563a0ea",
-    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a"
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
+    "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+    "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684"
   },
   "active": {
     "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
@@ -74,7 +77,7 @@
       "desired": "running",
       "hold": null,
       "observed": "running",
-      "observedAt": "2026-10-20T20:47:44.469Z",
+      "observedAt": "2026-10-20T22:22:28.620Z",
       "operation": "resume",
       "effective": "running",
       "bootstrap": "application",
@@ -100,7 +103,7 @@
       "desired": "paused",
       "hold": null,
       "observed": "paused",
-      "observedAt": "2026-10-20T20:47:44.579Z",
+      "observedAt": "2026-10-20T22:22:28.744Z",
       "operation": null,
       "effective": "paused",
       "bootstrap": "application",
@@ -124,34 +127,34 @@
     {
       "job": "advisory",
       "cron": "* * * * *",
-      "scheduled_time": 1792529280000,
+      "scheduled_time": 1792534980000,
       "initial_mode": "lost-ack-once",
       "status": "complete",
       "attempts": 1,
       "duplicates": 0,
-      "last_attempt_at": 1792529280008,
+      "last_attempt_at": 1792534980006,
       "error": null,
-      "completed_at": 1792529280008
+      "completed_at": 1792534980006
     },
     {
       "job": "inventory",
       "cron": "* * * * *",
-      "scheduled_time": 1792529280000,
+      "scheduled_time": 1792534980000,
       "initial_mode": "lost-ack-once",
       "status": "complete",
       "attempts": 1,
       "duplicates": 0,
-      "last_attempt_at": 1792529280009,
+      "last_attempt_at": 1792534980006,
       "error": null,
-      "completed_at": 1792529280009
+      "completed_at": 1792534980006
     }
   ],
-  "heldMinuteBoundary": 1792529340000,
+  "heldMinuteBoundary": 1792535040000,
   "replicaRestartHeld": true,
   "controllerReloadHeldWithoutDispatchCommands": true,
   "reopenedNative": {
     "paused": true,
-    "revision": 12,
+    "revision": 20,
     "nextAlarm": null,
     "crons": [
       "* * * * *"
@@ -162,14 +165,14 @@
     "resumed": true,
     "paused": true,
     "approvalVisible": true,
-    "screenshotSha256": "87c6c203b6dad968292eb9138d5c43a1c5edc128ba1970342d88aff5326df44a"
+    "screenshotSha256": "aa0255f77951074a1a483a74df5e3a0c4654d2e84334f70741a4109b854d48ed"
   },
   "qualification": {
     "processExit": 0,
     "cleanupFailureAbsent": true,
     "allDisposableServicesStopped": true,
-    "selectedLogSha256": "0e4094e22098985b1b988d34303e2e821902359aa8c7928cbeae602cd47c162f",
-    "logsSince": "2026-10-20T20:47:42.122Z",
+    "selectedLogSha256": "72622a6ea4f0c835047600d89130951296702ea3010dfe27cfb978e75fc5640e",
+    "logsSince": "2026-10-20T22:22:09.487820879Z",
     "services": [
       "controller",
       "minio",
@@ -192,7 +195,7 @@
   },
   "limitations": [
     "Runtime candidate is not release-bound; default Backend has no cron transport.",
-    "No ordinary scoped cron upload, native activation process-kill or stopped fresh-storage recovery qualification.",
+    "No ordinary scoped cron upload or stopped fresh-storage recovery qualification; selected native activation process interruptions have separate evidence.",
     "Replica restart checks paused control state and preserved data; only the pre-restart profile observes a complete held minute boundary.",
     "Pause does not drain callbacks or waitUntil.",
     "CPU-exhaustion behavior remains unqualified."

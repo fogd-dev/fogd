@@ -7,6 +7,7 @@ import { execute } from '../packages/cli/src/recovery/execute.mjs';
 import { chromium, expect } from './guestbook-browser.mjs';
 import { refreshGateway } from './cron-probe/gateway.mjs';
 import { cleanupCronProbe } from './cron-probe-cleanup.mjs';
+import { vmMinuteBoundary } from './cron-probe/vm-time.mjs';
 
 // Run after cron-void against its stopped, retained private controller and fleet.
 const [slot, output, priorEvidence, origin] = process.argv.slice(2);
@@ -75,8 +76,7 @@ try {
   assert.deepEqual(errors, []); await browser.close(); browser = null;
   // No armed alarm is a hold observation, not evidence of a drain.
   await expect.poll(async () => (await command('inspect')).native.nextAlarm, { timeout: 30000 }).toBe(null);
-  const frozen = await appState(), boundary = Math.floor(Date.now() / 60000 + 1) * 60000;
-  while (Date.now() < boundary + 2000) await new Promise(resolve => setTimeout(resolve, 250));
+  const frozen = await appState(), boundary = await vmMinuteBoundary(probe);
   assert.deepEqual(await appState(), frozen);
   await probe.compose(['restart', ...probe.slot.nodes]);
   await expect.poll(async () => {

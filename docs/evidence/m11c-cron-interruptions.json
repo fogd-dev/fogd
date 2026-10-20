@@ -1,11 +1,12 @@
 {
   "status": "pass",
+  "clockDomain": "VM timestamps; log scope begins at the earliest stable fixture service startup. This replay supersedes the earlier unmeasured host/VM clock alignment assumption.",
   "scope": "Selected actual controller SIGKILL boundaries with ordinary Void refresh code privately staged on a qualified two-node Docker runtime. Cron admission remains closed. New occurrence identities are checked through held intervals; callback entry timing and old retry attempts are excluded.",
   "fixture": {
-    "selectedFleet": "slot-1",
+    "selectedFleet": "slot-2",
     "replicas": [
-      "slot-1-a",
-      "slot-1-b"
+      "slot-2-a",
+      "slot-2-b"
     ],
     "handlerBudgetSeconds": 20
   },
@@ -17,11 +18,11 @@
       "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
       "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
     },
-    "slot-1-a": {
+    "slot-2-a": {
       "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
       "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
     },
-    "slot-1-b": {
+    "slot-2-b": {
       "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
       "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
     },
@@ -32,12 +33,14 @@
   },
   "platformSourceSetSha256": "56769735a84a0f6ab73028e740b05cf6acf5b78fd2e8086253f0b5b72fca9160",
   "sourceSha256": {
-    "scripts/cron-interruptions.mjs": "f8290d161713aee571566f564699a87edc97e8088f3569a8c456e174a1b1a54b",
+    "scripts/cron-interruptions.mjs": "a2dab55533e9b3e30b7d0a0e5c537551de73066a6035d41745a1c93adc805cc8",
     "scripts/cron-probe/interruption-controller.mjs": "e0129571b3528d2d4401e85440f764bb009c66516f1b75e2b8e40c94c602102d",
     "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+    "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+    "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
     "scripts/queue-probe/controller-artifact.mjs": "8eddf411a448d52d1d14ced13c89dfa97a66de4030a1aa31977d5011102bc87c",
-    "scripts/queue-probe/context.mjs": "178bd428dec26feb029e2b5a7f7d4c0d7e88a2f482ed4adbe54999e356127fba",
-    "scripts/cron-probe/native.mjs": "b13ef798dc00870ef31eeae1845a888ef2ced8be95b5cbbc922eeeb1e4927198",
+    "scripts/queue-probe/context.mjs": "12120de990861cf7ce3978a9674b187918a11def8e47f1c7c96320f6492cf296",
+    "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
     "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
     "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
     "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
@@ -46,14 +49,14 @@
     "examples/refresh/lib/refresh.mjs": "1a8e6c05a5c232396dddfc63386ab3817cefe174f015c13699ce36056180ecbb",
     "examples/refresh/env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3"
   },
-  "workerBundleSha256": "34e2ea352e36822181b22371efa3e27ea5b63304abe4ebfa24a2bf7af917b59f",
+  "workerBundleSha256": "d33a7508cc80f914127f20b4692aaa3c5dbbeaf13ca26f0e7a7646d37ad7681a",
   "nativeDeclarations": {
     "crons": [
       "* * * * *"
     ]
   },
   "qualificationAdapter": "Inert FOGD_INTERRUPTION_CASE var changes each update artifact; job code and schema remain unchanged.",
-  "preapprovalBoundary": 1792530840000,
+  "preapprovalBoundary": 1792534140000,
   "delayedMigration": {
     "before": {
       "paused": true,
@@ -61,7 +64,7 @@
       "nextAlarm": null,
       "crons": []
     },
-    "boundary": 1792530900000,
+    "boundary": 1792534200000,
     "after": {
       "paused": true,
       "revision": 0,
@@ -75,21 +78,19 @@
       "checkpoint": "publish",
       "killExit": 137,
       "durable": {
-        "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
-        "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+        "id": "3cad7b3d-fc23-4a80-82ef-769378fef483",
+        "digest": "73ab69584f7966b8a2d6ce5fd3115c91c73dc2c9d6e6746c92d607de60796a27",
         "status": "activating",
         "step": "publishing",
-        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
-        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554",
+        "hold": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "operation": null,
         "desired": "running",
         "active": null,
         "bootstrap": "application"
       },
       "beforeKill": {
-        "crons": [
-          "* * * * *"
-        ],
+        "crons": [],
         "nextAlarm": null,
         "paused": true,
         "revision": 0
@@ -97,12 +98,12 @@
       "approvalChecksBeforeCut": 6,
       "recovery": {
         "identity": {
-          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
-          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "3cad7b3d-fc23-4a80-82ef-769378fef483",
+          "digest": "73ab69584f7966b8a2d6ce5fd3115c91c73dc2c9d6e6746c92d607de60796a27",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
         "status": "failed",
-        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "hold": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "desired": "running",
         "observed": "paused",
         "operation": null,
@@ -118,7 +119,7 @@
           "paused": true,
           "revision": 0
         },
-        "boundary": 1792530960000
+        "boundary": 1792534260000
       }
     },
     {
@@ -126,12 +127,12 @@
       "checkpoint": "resume",
       "killExit": 137,
       "durable": {
-        "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
-        "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
+        "id": "3cad7b3d-fc23-4a80-82ef-769378fef483",
+        "digest": "73ab69584f7966b8a2d6ce5fd3115c91c73dc2c9d6e6746c92d607de60796a27",
         "status": "activating",
         "step": "releasing-dispatch",
-        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
-        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554",
+        "hold": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "operation": "resume",
         "desired": "running",
         "active": null,
@@ -141,19 +142,19 @@
         "crons": [
           "* * * * *"
         ],
-        "nextAlarm": 1792531020000,
+        "nextAlarm": 1792534320000,
         "paused": false,
         "revision": 1
       },
       "approvalChecksBeforeCut": 6,
       "recovery": {
         "identity": {
-          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
-          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "3cad7b3d-fc23-4a80-82ef-769378fef483",
+          "digest": "73ab69584f7966b8a2d6ce5fd3115c91c73dc2c9d6e6746c92d607de60796a27",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
         "status": "failed",
-        "hold": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "hold": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "desired": "running",
         "observed": "paused",
         "operation": null,
@@ -169,16 +170,16 @@
           "paused": true,
           "revision": 2
         },
-        "boundary": 1792531080000
+        "boundary": 1792534380000
       },
       "explicitRetry": {
         "identity": {
-          "id": "49b6433b-4228-4c9d-bf04-b125665c5291",
-          "digest": "e40443edbe29bc0e6a8af21701efd6ca5f3f8ace5a75de3d45f15f50bcbbaa7b",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "3cad7b3d-fc23-4a80-82ef-769378fef483",
+          "digest": "73ab69584f7966b8a2d6ce5fd3115c91c73dc2c9d6e6746c92d607de60796a27",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
-        "requestedAt": 1792531082257,
-        "active": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "requestedAt": 1792534382290,
+        "active": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "desired": "running",
         "observed": "running",
         "hold": null,
@@ -191,34 +192,34 @@
       "checkpoint": "released",
       "killExit": 137,
       "durable": {
-        "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
-        "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
+        "id": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
+        "digest": "6aef21f58e3fef8d8db7d7f49390feb6d4ae6d922415be40480adc9374ae53f6",
         "status": "activating",
         "step": "releasing-dispatch",
-        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
+        "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554",
         "hold": null,
         "operation": null,
         "desired": "running",
-        "active": "49b6433b-4228-4c9d-bf04-b125665c5291",
+        "active": "3cad7b3d-fc23-4a80-82ef-769378fef483",
         "bootstrap": "application"
       },
       "beforeKill": {
         "crons": [
           "* * * * *"
         ],
-        "nextAlarm": 1792531200000,
+        "nextAlarm": 1792534500000,
         "paused": false,
         "revision": 5
       },
       "approvalChecksBeforeCut": 6,
       "recovery": {
         "identity": {
-          "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
-          "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
+          "digest": "6aef21f58e3fef8d8db7d7f49390feb6d4ae6d922415be40480adc9374ae53f6",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
         "status": "failed",
-        "hold": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "hold": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
         "desired": "running",
         "observed": "paused",
         "operation": null,
@@ -234,16 +235,16 @@
           "paused": true,
           "revision": 6
         },
-        "boundary": 1792531200000
+        "boundary": 1792534500000
       },
       "explicitRetry": {
         "identity": {
-          "id": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
-          "digest": "29183cf8991ddcc2ba3e351949261fb43d4fcb75f581d59c9377b964d3c17957",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
+          "digest": "6aef21f58e3fef8d8db7d7f49390feb6d4ae6d922415be40480adc9374ae53f6",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
-        "requestedAt": 1792531202410,
-        "active": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "requestedAt": 1792534502464,
+        "active": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
         "desired": "running",
         "observed": "running",
         "hold": null,
@@ -256,15 +257,15 @@
       "checkpoint": "publish",
       "killExit": 137,
       "durable": {
-        "id": "3ce03888-0079-4518-9891-b894751acbae",
-        "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
+        "id": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
+        "digest": "2cc81b65a4483eb706dd05879e56cc73e5ab1bbbd6e54deae2bc4ef1ab6da664",
         "status": "activating",
         "step": "publishing",
-        "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8",
-        "hold": "3ce03888-0079-4518-9891-b894751acbae",
+        "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554",
+        "hold": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
         "operation": null,
         "desired": "paused",
-        "active": "05220bfc-b9a6-44c5-9d3d-5a0a0902d2d0",
+        "active": "8e22920d-169f-4033-8cd4-e201ad7e8b15",
         "bootstrap": "application"
       },
       "beforeKill": {
@@ -278,12 +279,12 @@
       "approvalChecksBeforeCut": 4,
       "recovery": {
         "identity": {
-          "id": "3ce03888-0079-4518-9891-b894751acbae",
-          "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
+          "digest": "2cc81b65a4483eb706dd05879e56cc73e5ab1bbbd6e54deae2bc4ef1ab6da664",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
         "status": "failed",
-        "hold": "3ce03888-0079-4518-9891-b894751acbae",
+        "hold": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
         "desired": "paused",
         "observed": "paused",
         "operation": null,
@@ -299,16 +300,16 @@
           "paused": true,
           "revision": 8
         },
-        "boundary": 1792531320000
+        "boundary": 1792534620000
       },
       "explicitRetry": {
         "identity": {
-          "id": "3ce03888-0079-4518-9891-b894751acbae",
-          "digest": "a9cd83592a3f1806784877c0462e0e3c03ce136595d7f959850f333bb5bf25bb",
-          "secretRevision": "fdcb34e4-34aa-4477-b0db-3948052db1f8"
+          "id": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
+          "digest": "2cc81b65a4483eb706dd05879e56cc73e5ab1bbbd6e54deae2bc4ef1ab6da664",
+          "secretRevision": "0445c631-44c7-46ef-8648-c69f74703554"
         },
-        "requestedAt": 1792531322180,
-        "active": "3ce03888-0079-4518-9891-b894751acbae",
+        "requestedAt": 1792534622370,
+        "active": "55e9f45a-83d8-4e57-ba6b-80f39209eab5",
         "desired": "paused",
         "observed": "paused",
         "hold": null,
@@ -321,44 +322,44 @@
   "savedNativeOccurrencesBeforeResumeReplyWasJournaled": [
     {
       "attempts": 2,
-      "completed_at": 1792531024037,
+      "completed_at": 1792534324039,
       "cron": "* * * * *",
       "duplicates": 0,
       "job": "advisory",
-      "scheduled_time": 1792531020000,
+      "scheduled_time": 1792534320000,
       "status": "complete"
     },
     {
       "attempts": 2,
-      "completed_at": 1792531020010,
+      "completed_at": 1792534320020,
       "cron": "* * * * *",
       "duplicates": 1,
       "job": "inventory",
-      "scheduled_time": 1792531020000,
+      "scheduled_time": 1792534320000,
       "status": "complete"
     }
   ],
   "heldIntervalsRecheckedAfterLaterNativeWork": [
     {
-      "start": 1792530960000,
-      "end": 1792530962951
+      "start": 1792534260000,
+      "end": 1792534263239
     },
     {
-      "start": 1792531080000,
-      "end": 1792531082257
+      "start": 1792534380000,
+      "end": 1792534382290
     },
     {
-      "start": 1792531200000,
-      "end": 1792531202410
+      "start": 1792534500000,
+      "end": 1792534502464
     },
     {
-      "start": 1792531320000,
-      "end": 1792531440000
+      "start": 1792534620000,
+      "end": 1792534740000
     }
   ],
   "pausedUpdate": {
-    "firstPostRetryBoundary": 1792531380000,
-    "recheckedAfterBoundary": 1792531440000,
+    "firstPostRetryBoundary": 1792534680000,
+    "recheckedAfterBoundary": 1792534740000,
     "retainedBusinessRows": 4
   },
   "unfinishedAppOccurrencesAtFinalPause": [
@@ -368,7 +369,7 @@
       "cron": "* * * * *",
       "duplicates": 0,
       "job": "advisory",
-      "scheduled_time": 1792531140000,
+      "scheduled_time": 1792534440000,
       "status": "failed"
     },
     {
@@ -377,7 +378,7 @@
       "cron": "* * * * *",
       "duplicates": 0,
       "job": "advisory",
-      "scheduled_time": 1792531260000,
+      "scheduled_time": 1792534560000,
       "status": "failed"
     }
   ],
@@ -386,20 +387,20 @@
     4,
     4
   ],
-  "finalResultRowsSha256": "9cb811237e2362ac2f79e9a065fec474dae493f03fdee105800fec831e56db45",
+  "finalResultRowsSha256": "62f0112ef99e28cdcc7ba77d2fc9431da2f9027381f99db2ead01ddb76a41cb3",
   "qualification": {
     "processExit": 0,
     "cleanupFailureAbsent": true,
     "allDisposableServicesStopped": true,
-    "logsSince": "2026-10-20T21:13:05.623Z",
+    "logsSince": "2026-10-20T22:06:30.693009917Z",
     "services": [
       "controller",
       "minio",
       "workerd",
-      "slot-1-a",
-      "slot-1-b"
+      "slot-2-a",
+      "slot-2-b"
     ],
-    "selectedLogSha256": "0605803b91c205eff7ad4e2cdef51f3677ce1bb539f0a18083f10a0b82a7d9c4",
+    "selectedLogSha256": "f23512369364ceacd25789ffa858b1d310ccb274e9bdef0749d077e314c902c9",
     "forbiddenRuntimeFaultPatternsAbsent": true,
     "checks": [
       "pnpm check",
