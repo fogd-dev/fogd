@@ -1,0 +1,137 @@
+{
+  "status": "pass",
+  "scope": "Published retry wake, SIGKILL before deadline, survivor ownership takeover on unchanged release before the next occurrence. Expected identity outcome: preserved. Wake publication alone is not a general SQLite durability proof.",
+  "fixture": {
+    "project": "fogd-m11c-retry-patched3",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "fogd-runtime:cron-retry-candidate4",
+      "slot-1-b": "fogd-runtime:cron-retry-candidate4"
+    }
+  },
+  "release": {
+    "dry_run": false,
+    "location": "s3://fogd/slots/slot-1/deploy/cron-retry/f68ff70a4a50c5d4",
+    "version": "f68ff70a4a50c5d4",
+    "worker": "cron-retry"
+  },
+  "initial": {
+    "events": [
+      {
+        "instance": "7b029948-2079-4f3d-ac55-b32bb4aab011",
+        "cron": "* * * * *",
+        "scheduledTime": 1792503420000,
+        "at": 1792503420003
+      },
+      {
+        "instance": "7b029948-2079-4f3d-ac55-b32bb4aab011",
+        "cron": "*/1 * * * *",
+        "scheduledTime": 1792503420000,
+        "at": 1792503420010
+      }
+    ],
+    "failedOnce": true
+  },
+  "ownerBefore": "slot-1-b",
+  "survivor": "slot-1-a",
+  "publishedRetryWake": {
+    "key": "slots/slot-1/wake/entries/2026-10-20T13:37/.cron:cron-retry/0000000000000001-0000000000000005",
+    "cell": ".cron:cron-retry",
+    "due_ms": 1792503424014,
+    "format": 2,
+    "identity": "0000000000000001-0000000000000005"
+  },
+  "kill": {
+    "at": 1792503421138,
+    "container": "22d98fb07192d2b0f6a811cb0b6400a319ebb955529173d37aa9184cb7c00083",
+    "exitCode": 137
+  },
+  "result": {
+    "expected": "preserved",
+    "events": [
+      {
+        "instance": "d9a20701-1c3b-406e-91f7-960b152a6855",
+        "cron": "* * * * *",
+        "scheduledTime": 1792503420000,
+        "at": 1792503448219
+      },
+      {
+        "instance": "7b029948-2079-4f3d-ac55-b32bb4aab011",
+        "cron": "* * * * *",
+        "scheduledTime": 1792503420000,
+        "at": 1792503420003
+      },
+      {
+        "instance": "7b029948-2079-4f3d-ac55-b32bb4aab011",
+        "cron": "*/1 * * * *",
+        "scheduledTime": 1792503420000,
+        "at": 1792503420010
+      }
+    ],
+    "ownerAfter": {
+      "node": "slot-1-a",
+      "epoch": 2
+    },
+    "deployment": {
+      "cells": {
+        ".cron:cron-retry": 2
+      },
+      "draining": [],
+      "generation": 2,
+      "isolates": {
+        "cells": {
+          "cron-retry": {
+            "cells": 1,
+            "external_bytes": 682938,
+            "freed": 0,
+            "heap_bytes": 2424832,
+            "live": 1,
+            "live_empty": 0,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "services": {
+          "cron-retry": {
+            "cells": 0,
+            "external_bytes": 685469,
+            "freed": 0,
+            "heap_bytes": 2691072,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "stateless": {
+          "cells": 0,
+          "external_bytes": 685469,
+          "freed": 0,
+          "heap_bytes": 2691072,
+          "live": 1,
+          "live_empty": 1,
+          "requests": 0,
+          "retiring": 0,
+          "turns": 0
+        }
+      },
+      "prefix": "deploy/cron-retry/f68ff70a4a50c5d4",
+      "swapping": 0,
+      "version": "f68ff70a4a50c5d4"
+    }
+  },
+  "runtime": {
+    "imageId": "sha256:3ce1172d316028169a904beeb1e592196b9cea502c0cdf39186381908e5b6f53",
+    "celldBinarySha256": "73aced358c70e0501877f9414f725d650aef57c7fdf132f022759352e38464e0",
+    "baseCommit": "90b43017241f81189453d326d05948f388b34652",
+    "cronPatchSha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19"
+  },
+  "limits": [
+    "One disposable Docker slot and one unchanged app release.",
+    "The successful sibling did not rerun after owner loss; app ledger observed the original scheduledTime for the retried expression.",
+    "No claim about exactly-once external effects, downtime catch-up, mixed-version upgrade, timer pause, or CPU-timeout behavior."
+  ]
+}

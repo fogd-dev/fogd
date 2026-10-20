@@ -1,0 +1,187 @@
+diff --git a/crates/celld/js.rs b/crates/celld/js.rs
+index ec40b41..98648bd 100644
+--- a/crates/celld/js.rs
++++ b/crates/celld/js.rs
+@@ -6798,6 +6798,7 @@ ops! { OP_NAMES, install_op_functions,
+         "__alarm_set" => op_alarm_set,
+         "__queue_alarm_set_wait" => op_queue_alarm_set_wait,
+         "__alarm_get" => op_alarm_get,
++        "__alarm_active" => op_alarm_active,
+         "__alarm_delete" => op_alarm_delete,
+         "__loader_load" => op_loader_load,
+         "__loader_fetch" => op_loader_fetch,
+@@ -12172,6 +12173,15 @@ fn op_alarm_get(
+         None => rv.set(v8::null(scope).into()),
+     }
+ }
++// Host state is cleared on settlement even when V8 termination skips JS finally.
++fn op_alarm_active(
++    scope: &mut v8::PinScope,
++    args: v8::FunctionCallbackArguments,
++    mut rv: v8::ReturnValue<v8::Value>,
++) {
++    let s = args.get(0).to_rust_string_lossy(scope);
++    rv.set(v8::Boolean::new(scope, storage::active_alarm_scheduled_time(&s).is_some()).into());
++}
+ fn op_alarm_delete(
+     scope: &mut v8::PinScope,
+     args: v8::FunctionCallbackArguments,
+diff --git a/crates/celld/js/harness.js b/crates/celld/js/harness.js
+index 074ea11..f9b1c5b 100644
+--- a/crates/celld/js/harness.js
++++ b/crates/celld/js/harness.js
+@@ -5873,28 +5873,31 @@ __celld.__fireAlarm = async (scope, scheduledTime, retryCount) => {
+ class CelldCronSchedule {
+   constructor(state) {
+     this._state = state;
+-    // Failures within one occurrence. Held in memory on purpose: losing the
+-    // count to an eviction only makes the next retry sooner, and every retry
+-    // is capped at the next occurrence anyway, so it need not be durable.
+-    this._retry = 0;
+-    // What a pending retry owes: the occurrence, the expressions of it that
+-    // failed, and the deadline the retry was armed for. A retry deadline is a
+-    // backoff instant and not an occurrence, so nothing about it can be
+-    // recovered from the deadline itself -- without this record the wake
+-    // matches no expression, runs nothing, and drops the failed tick in
+-    // silence. Held in memory beside `_retry` and for the same reason: an
+-    // eviction costs the retry, never the next occurrence.
+-    this._owed = null;
++    // A retry deadline is not an occurrence. Persist its identity with the
++    // alarm so eviction and ownership transfer cannot reinterpret that deadline.
++    this._load();
++  }
++  _load() {
++    const saved = this._state.storage.kv.get("__cron_retry_v1");
++    this._retry = saved?.retry || 0;
++    this._owed = saved?.owed || null;
+   }
+   // celld calls this once per node after a deployment loads, because a cron
+   // cell has no client to wake it. Arming is idempotent -- the same schedule
+   // and the same clock give the same answer -- so it does not matter which
+   // node wins the cell.
+   async fetch() {
+-    // A pending retry is a deadline this cell already owes, and re-arming
+-    // would move it to the next occurrence and lose the tick it owes with it.
+-    if (this._owed !== null) return new Response(null, { status: 204 });
++    // getAlarm() deliberately reports null during an active handler. Do not
++    // mistake that view for a missing alarm and overwrite the in-flight turn.
++    if (__alarm_active(this._state.storage._scope)) return new Response(null, { status: 204 });
+     const armed = await this._state.storage.getAlarm();
++    if (__alarm_active(this._state.storage._scope)) return new Response(null, { status: 204 });
++    this._load();
++    // Preserve scheduled retries and runtime backoffs, whose deadline may differ
++    // from the recorded occurrence. A missing row must instead heal on adoption.
++    if (armed !== null && this._owed !== null &&
++        (this._owed.kind === "retry" || armed !== this._owed.armedFor))
++      return new Response(null, { status: 204 });
+     // An alarm already due is a tick that is late, not one that is wrong.
+     // Leaving it alone is what makes a fleet that was down fire the missed
+     // occurrence once, instead of skipping it by re-arming into the future.
+@@ -5902,21 +5905,48 @@ class CelldCronSchedule {
+     return new Response(null, { status: 204 });
+   }
+   async alarm(info) {
++    this._load();
++    await this._runAlarm(info);
++  }
++  async _runAlarm(info) {
+     const crons = __cell.crons || [];
+-    // A retry wake carries the backoff instant as its deadline, so what to run
+-    // and what time to report both come from the record the failure left. Only
+-    // a deadline that is not a retry is an occurrence to match against.
+-    const owed = this._owed !== null && this._owed.armedFor === info.scheduledTime
++    // Runtime-enforced retries change the alarm deadline without changing our
++    // record. Keep the original occurrence even when backoff crosses a minute.
++    let owed = this._owed !== null &&
++        (this._owed.armedFor === info.scheduledTime || info.retryCount > 0)
+       ? this._owed
+       : null;
++    if (owed === null && (info.retryCount > 0 || info.scheduledTime % 60_000 !== 0)) {
++      // A pre-patch alarm can lack identity. Rounding a backoff time would invent
++      // an occurrence, especially across minute boundaries. Report and skip it.
++      console.error("cron alarm has no occurrence identity; advancing to the next occurrence");
++      await this._arm(null, [], false);
++      return;
++    }
+     const occurrence = owed === null ? info.scheduledTime : owed.at;
+-    // One deadline can belong to several expressions, and each is its own
+-    // invocation with its own controller.cron, as on Cloudflare. A retry
+-    // repeats only the expressions that failed, because the ones that
+-    // succeeded already ran for this occurrence.
++    // Native CPU and wall termination retries do not consume celld's counted
++    // failure ceiling. Bound one occurrence so an uncatchable handler cannot
++    // keep the cron cell on the same tick forever.
++    if (owed !== null && info.retryCount >= 6) {
++      console.error("cron occurrence exceeded the native retry budget; advancing");
++      await this._arm(null, [], false);
++      return;
++    }
+     const due = owed === null
+-      ? __cron_plan(crons, info.scheduledTime, Date.now(), 0, false).matching
+-      : owed.indices;
++      ? __cron_plan(crons, occurrence, Date.now(), 0, false).matching
++      : owed.expressions.map((expression) => crons.indexOf(expression))
++        .filter((index) => index >= 0);
++    if (owed === null) {
++      // Upgrade of a minute-aligned alarm from an older runtime. Record its
++      // identity before callbacks; do not change the active alarm generation.
++      owed = { kind: "occurrence", at: occurrence,
++        expressions: due.map((index) => crons[index]), armedFor: info.scheduledTime };
++      this._state.storage.transactionSync(() => {
++        this._state.storage.kv.put("__cron_retry_v1", { retry: 0, owed });
++      });
++      this._retry = 0;
++      this._owed = owed;
++    }
+     const failed = [];
+     for (const index of due) {
+       let noRetry = false;
+@@ -5949,7 +5979,7 @@ class CelldCronSchedule {
+         if (drain !== null) await drain;
+       }
+     }
+-    await this._arm(occurrence, failed, owed !== null);
++    await this._arm(occurrence, failed, owed.kind === "retry");
+   }
+   // `occurrence` is the tick just handled, or null when the cell is only
+   // arming, `failed` holds the expressions of it still owed, and `retried`
+@@ -5961,19 +5991,26 @@ class CelldCronSchedule {
+     // spend `alarm_retry`'s ceiling once and leave every later occurrence
+     // with no retry at all, which is a budget for the schedule and not for
+     // the tick.
+-    this._retry = failed.length ? (retried ? this._retry + 1 : 1) : 0;
+-    // A negative first argument means "arming only, nothing fired".
+-    const plan = __cron_plan(crons, -1, Date.now(), this._retry, failed.length > 0);
+-    // The next occurrence beats the backoff whenever it is sooner, and it then
+-    // cancels the retry rather than queueing behind it, so the record the
+-    // retry needed goes when the retry does.
+-    this._owed = plan.armIsRetry
+-      ? { at: occurrence, indices: failed, armedFor: plan.armAt }
+-      : null;
+-    // No expression matches again and nothing is owed: the deployment dropped
+-    // its crons, so the cell retires rather than waking forever.
+-    if (plan.armAt === null) await this._state.storage.deleteAlarm();
+-    else await this._state.storage.setAlarm(plan.armAt);
++    const retry = failed.length ? (retried ? this._retry + 1 : 1) : 0;
++    const plan = __cron_plan(crons, -1, Date.now(), retry, failed.length > 0);
++    // Expressions, not array indices, identify failed callbacks across changes
++    // in declaration order. Removed expressions are discarded on the next wake.
++    // Persist identity for every armed turn, including a first occurrence that
++    // could hard-timeout before reaching this method again.
++    const owed = plan.armAt === null ? null : plan.armIsRetry
++      ? { kind: "retry", at: occurrence,
++        expressions: failed.map((index) => crons[index]), armedFor: plan.armAt }
++      : { kind: "occurrence", at: plan.armAt,
++        expressions: __cron_plan(crons, plan.armAt, Date.now(), 0, false).matching
++          .map((index) => crons[index]), armedFor: plan.armAt };
++    const storage = this._state.storage;
++    storage.transactionSync(() => {
++      storage.kv.put("__cron_retry_v1", { retry, owed });
++      if (plan.armAt === null) __alarm_delete(storage._scope);
++      else __alarm_set(storage._scope, plan.armAt);
++    });
++    this._retry = retry;
++    this._owed = owed;
+   }
+ }
+ const __cell = __celld.__cell = {

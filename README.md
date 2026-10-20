@@ -374,5 +374,8 @@ directory. Scheduled background work is the [next discovery slice](docs/m11c-dis
 
 The [native cron probe](docs/cron-qualification.md) records timer invocations on
 two celld nodes without HTTP triggering. The [proposed contract](docs/m11c.md)
-requires migration-safe approval, dispatch controls, retry semantics and recovery.
-Ordinary `fogd deploy` still rejects cron declarations.
+requires migration-safe approval, dispatch controls, retry semantics and recovery. A
+patched celld build now preserves the original scheduled time through a single-node
+owner loss; see the [evidence](docs/evidence/m11c-cron-retry-positive.json). This is
+not a supported deployment mode: ordinary `fogd deploy` still rejects cron
+declarations, and native tests, timeout behavior, pause controls and recovery remain open.

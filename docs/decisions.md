@@ -1212,6 +1212,8 @@ replicas; setting a flag after boot is too late. Existing uncontrolled snapshots
 need refusal or a separately qualified offline conversion. Resume skips paused
 historical occurrences and arms the next future occurrence. Retry persistence
 must retain the original occurrence and failed expression identity, while keeping
-native retry limits and the next-occurrence policy. These are implementation and
-qualification obligations, not current support claims. Workflows and general DO
+the native next-occurrence policy. The experimental celld patch caps uncounted
+native retries at six per armed alarm; this can skip work after repeated hard
+timeouts. Dedicated qualification remains a requirement before cron admission. These
+are implementation obligations, not support claims. Workflows and general DO
 alarm governance remain open. See the [review response](reviews/m11c-design-response.md).

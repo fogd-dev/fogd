@@ -1,4 +1,4 @@
-// Negative control: kill the cron owner after observing its published retry deadline.
+// Kill the cron owner after observing its published retry deadline.
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -8,6 +8,8 @@ import { execute } from '../packages/cli/src/recovery/execute.mjs';
 const probe = await context(...process.argv.slice(2));
 await requireEmptyFleet(probe);
 const cell = '.cron:cron-retry';
+const expected = process.argv[4] || 'lost';
+assert.ok(['lost','preserved'].includes(expected), 'Expected outcome must be lost or preserved');
 const source = `const instance=crypto.randomUUID();
 export default {
   async fetch(request,env) {
@@ -69,23 +71,36 @@ try {
   assert.equal(inspection.State.Running,false);
   evidence.kill={at:killAt,container,exitCode:inspection.State.ExitCode};
   assert.ok(killAt<deadline.due_ms,'Inconclusive: kill missed retry deadline');
-  let after;
-  await expect.poll(async()=>{try{after=await observe(survivor);return after.events.some(e=>e.scheduledTime%60000!==0);}catch{return false;}},{timeout:120000,intervals:[500,1000]}).toBe(true);
-  const moved=await records(),deployment=await probe.deployment(survivor);
+  let after, moved;
+  await expect.poll(async()=>{try{after=await observe(survivor);return after.events.some(e=>e.instance!==initial.instance);}catch{return false;}},{timeout:120000,intervals:[500,1000]}).toBe(true);
+  // Publication of the next occurrence follows completion of the entire callback
+  // group; do not assert sibling counts after only its first R2 write appears.
+  await expect.poll(async()=>{moved=await records();return moved.wakes.some(w=>w.due_ms===initial.scheduledTime+60000);},{timeout:10000,intervals:[100,500]}).toBe(true);
+  after=await observe(survivor);
+  const deployment=await probe.deployment(survivor);
   assert.equal(moved.owner.node,survivor);assert.ok(moved.owner.epoch>before.owner.epoch);
   assert.equal(deployment.version,evidence.release.version);
-  const retry=after.events.filter(e=>e.scheduledTime===deadline.due_ms);
-  assert.deepEqual(retry.map(e=>e.cron).sort(),['* * * * *','*/1 * * * *'].sort());
-  assert.ok(retry.every(e=>e.instance!==initial.instance&&e.at>killAt));
+  const retry=after.events.filter(e=>e.instance!==initial.instance);
+  assert.ok(retry.every(e=>e.at>killAt&&e.at<initial.scheduledTime+60000),'Inconclusive: takeover crossed the next occurrence');
+  if(expected==='lost') {
+    assert.deepEqual(retry.map(e=>e.cron).sort(),['* * * * *','*/1 * * * *'].sort());
+    assert.ok(retry.every(e=>e.scheduledTime===deadline.due_ms));
+  } else {
+    assert.equal(retry.length,1);
+    assert.equal(retry[0].cron,'* * * * *');assert.equal(retry[0].scheduledTime,initial.scheduledTime);
+    assert.equal(after.events.filter(e=>e.cron==='*/1 * * * *'&&e.scheduledTime===initial.scheduledTime).length,1);
+    assert.ok(after.events.every(e=>e.scheduledTime%60000===0));
+  }
   assert.equal(after.events.filter(e=>e.at<=killAt).length,2,'Inconclusive: retry ran before kill');
-  evidence.after={...after,bucket:moved,deployment};
-  evidence.scope='Negative control: published retry wake, SIGKILL before deadline, survivor ownership takeover on unchanged release. Retry deadline becomes scheduledTime and successful sibling reruns. Wake publication alone is not a general SQLite durability proof.';
+  evidence.after={...after,bucket:moved,deployment};evidence.expected=expected;
+  evidence.scope='Published retry wake, SIGKILL before deadline, survivor ownership takeover on unchanged release before the next occurrence. Expected identity outcome: '+expected+'. Wake publication alone is not a general SQLite durability proof.';
   await probe.save('retry-identity',evidence);
-  console.log('CONFIRMED: owner takeover changes retry scheduledTime and reruns the successful expression');
+  console.log('PASS: owner takeover retry identity is '+expected+' as expected');
 } catch(error) {
   await probe.save('failure',{error:error.message,evidence});throw error;
 } finally {
-  await writeFile(join(probe.output,'runtime.log'),await probe.compose(['logs','--no-color',...probe.slot.nodes]),{mode:0o600});
+  await writeFile(join(probe.output,'runtime.log'),await probe.compose(['logs','--no-color']),{mode:0o600});
+  await writeFile(join(probe.output,'containers.txt'),await probe.compose(['ps','-a']),{mode:0o600});
   if(killed)await probe.compose(['up','-d','--no-deps','--no-build','--pull','never',killed]);
   const release=await publish('unscheduled',[]);
   await probe.save('cleanup',{release,state:await probe.state()});
