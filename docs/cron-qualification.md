@@ -51,5 +51,43 @@ original callbacks, a retry wake publication, owner residency and the release ha
 before killing the owner ahead of the deadline. It keeps that node down until the
 survivor's outcome is recorded. A missed fault window fails the probe as inconclusive.
 The finalizer restarts the node and publishes without cron declarations. Keep
-volumes and private logs if cleanup fails. A targeted retry-identity patch is under review; timer controls and full lifecycle
-qualification remain open.
+volumes and private logs if cleanup fails. The [retry candidate](patches/celld-cron-retry.md) preserves identity in a built
+two-node owner-loss test. The separate [native hold candidate](patches/celld-cron-controls.md)
+has bounded qualification; platform activation and full recovery remain open.
+
+## Handler-budget termination
+
+The [timeout probe](../scripts/cron-timeout.mjs) isolates unresolved-promise
+termination from the shorter native operation deadline. Before starting its
+never-deployed disposable fleet, configure both selected replicas with
+`CELLD_HANDLER_BUDGET_S=20` and `CELLD_OPERATION_DEADLINE_MS=60000` in the rendered
+Compose service environment. The probe rejects a deadline at or below the handler
+budget. Run on the retry-only candidate image; a runtime with native dispatch
+controls starts held and requires its own explicit resume protocol.
+
+```sh
+FOGD_ENV_FILE="$PWD/.fogd/cron-fixture/probe.env" \
+  node scripts/cron-timeout.mjs slot-1 .fogd/cron-timeout
+```
+
+The scheduled handler writes an R2 event and awaits an unresolved promise. The
+probe sorts events, captures the actual future minute-aligned wake, observes a
+callback at that wake and only then counts callbacks for the original occurrence.
+It rejects runtime lease fences and panics. The finalizer attempts a no-cron
+publication even when diagnostic capture fails. Stop the disposable installation
+and retain its volumes if cleanup fails.
+
+The [shorter-deadline observation](evidence/m11c-cron-operation-deadline.json)
+rejects the earlier six-callback claim: the default 15-second operation deadline
+with a 20-second handler budget produced seven callbacks before advancement.
+Native `retryCount` is not a direct callback counter when the operation expires
+before host termination settles. Neither configuration proves CPU exhaustion,
+an arbitrary application retry ceiling or retention of every missed tick.
+
+
+The [isolated watchdog evidence](evidence/m11c-cron-timeout.json) records six final
+callbacks at the original scheduled time, the future wake and its actual callback.
+Two intermediate minute occurrences were skipped. The immediate no-cron cleanup
+read still had an older callback retiring; both replicas had adopted a later
+generation, and the runner stopped the whole disposable stack. That read is not a
+drain receipt. The result qualifies only this recorded termination profile.

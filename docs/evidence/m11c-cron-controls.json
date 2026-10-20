@@ -1,0 +1,192 @@
+{
+  "initial": {
+    "crons": [],
+    "nextAlarm": null,
+    "paused": true,
+    "revision": 0
+  },
+  "unsignedAccess": [
+    {
+      "path": "/do/.cron:cron-controls",
+      "status": 403,
+      "body": "{\"error\":\".cron is a runtime class and is not reachable over /do/; reach it through its binding\"}"
+    },
+    {
+      "path": "/runtime/.cron:cron-controls",
+      "status": 401,
+      "body": "peer authentication failed"
+    }
+  ],
+  "heldBoundary": 1792522140000,
+  "resumedAt": 1792522142042,
+  "resumed": {
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ],
+    "nextAlarm": 1792522200000,
+    "paused": false,
+    "revision": 1
+  },
+  "started": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522200000,
+      "at": 1792522200003,
+      "phase": "started"
+    }
+  ],
+  "paused": {
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ],
+    "nextAlarm": null,
+    "paused": true,
+    "revision": 2
+  },
+  "finished": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522200000,
+      "at": 1792522200003,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522200000,
+      "at": 1792522200424,
+      "phase": "finished"
+    }
+  ],
+  "restartBoundary": 1792522260000,
+  "restartStatus": {
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ],
+    "nextAlarm": null,
+    "paused": true,
+    "revision": 2
+  },
+  "explicitResumeAt": 1792522262194,
+  "explicitResume": {
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ],
+    "nextAlarm": 1792522320000,
+    "paused": false,
+    "revision": 3
+  },
+  "afterResume": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522200000,
+      "at": 1792522200003,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522200000,
+      "at": 1792522200424,
+      "phase": "finished"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522320000,
+      "at": 1792522320003,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792522320000,
+      "at": 1792522320009,
+      "phase": "finished"
+    },
+    {
+      "cron": "*/1 * * * *",
+      "scheduledTime": 1792522320000,
+      "at": 1792522320012,
+      "phase": "started"
+    },
+    {
+      "cron": "*/1 * * * *",
+      "scheduledTime": 1792522320000,
+      "at": 1792522320014,
+      "phase": "finished"
+    }
+  ],
+  "finalPause": {
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ],
+    "nextAlarm": null,
+    "paused": true,
+    "revision": 4
+  },
+  "scope": "Native primitive only. Hold survives adoption and full replica restart; an in-flight callback finishes while its sibling and rearm are suppressed. Platform activation and snapshot recovery remain unqualified.",
+  "status": "pass",
+  "fixture": {
+    "project": "fogd-m11c-cron-controls6",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "fogd-runtime:cron-controls-candidate5",
+      "slot-1-b": "fogd-runtime:cron-controls-candidate5"
+    }
+  },
+  "provenance": {
+    "sourceCommit": "90b43017241f81189453d326d05948f388b34652",
+    "profile": "lab",
+    "patchSha256": {
+      "celld-0.6.2-preaccept-attachment.patch": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd",
+      "celld-0.6.2-cron-retry.patch": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19",
+      "celld-0.6.2-cron-controls.patch": "0837791235505d4900f605c4253b08e198591fb708b676de213f60d2e600f0a8"
+    },
+    "images": {
+      "fogd-celld-cron-controls-build5:local": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc",
+      "fogd-celld:cron-controls-candidate5": "sha256:11941d46f388098509a3a91a0bb82476e3b49a31990e5e7bf189c292c8b275ca",
+      "fogd-runtime:cron-controls-candidate5": "sha256:1e1c0c6ca1c3e1012e8d2ac63d885f4c10a4a293a360dcb0f3ed56caab2b6a87"
+    },
+    "binarySha256": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "compiledSourceMatchesCheckout": true,
+    "runtimeAndPackageBinaryMatchBuild": true,
+    "requiredControlMarkersPresent": true,
+    "upstreamRustTestsAndClippy": "not run on this candidate; an earlier upstream stage was blocked by Debian apt signature verification"
+  },
+  "releases": {
+    "bootstrap": "0b2977e48e13e4ca",
+    "scheduled": "7a160ec6b6a85efa"
+  },
+  "replicas": [
+    {
+      "host": "slot-1-a",
+      "version": "7a160ec6b6a85efa",
+      "generation": 1,
+      "cells": {
+        ".cron:cron-controls": 1
+      }
+    },
+    {
+      "host": "slot-1-b",
+      "version": "7a160ec6b6a85efa",
+      "generation": 1,
+      "cells": {}
+    }
+  ],
+  "cleanup": {
+    "runnerExitCode": 0,
+    "failureArtifactAbsent": true,
+    "cleanupFailureArtifactAbsent": true,
+    "selectedReplicasStopped": true
+  },
+  "limitations": [
+    "Native operator primitive only; cron admission remains closed.",
+    "The hold is not release-bound; controller activation, exact approval and secret/migration ordering remain unqualified.",
+    "Snapshot restore, retirement/reuse and ordinary Void jobs remain M11c work.",
+    "A null alarm view during a running handler is not evidence of deletion or draining.",
+    "Upstream Rust tests/clippy and CPU exhaustion remain unqualified."
+  ]
+}

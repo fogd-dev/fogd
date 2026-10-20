@@ -5,7 +5,7 @@ object is reconstructed. The [native owner-loss evidence](../evidence/m11c-cron-
 shows the surviving node treating the retry deadline as `scheduledTime` and rerunning
 an expression that already succeeded. The [patch](../../patches/celld-0.6.2-cron-retry.patch)
 passed one built two-node owner-loss experiment. It remains an experimental patch;
-cron admission in fogd remains closed pending native timeout tests and operator controls.
+cron admission in fogd remains closed pending its full activation and recovery contract.
 
 ## Evidence and proposed behavior
 
@@ -31,9 +31,12 @@ new occurrence key. This is a compatibility limitation, not recovered work. An i
 group can repeat already-successful effects, so applications still need idempotency.
 A hard interruption can also repeat a callback that called `noRetry()` earlier in
 the same group. Native backoff can cross the next scheduled minute; later missed ticks are not
-backfilled. The candidate caps a native alarm retry at six attempts, then advances to the next
-scheduled occurrence. The bound applies per armed alarm because each application
-retry resets celld’s counter. A callback that repeatedly times out can also prevent
+backfilled. The candidate advances without another application callback when native
+`retryCount` reaches six. This is a counter threshold, not a universal six-callback
+bound: a shorter host operation deadline can redispatch before handler termination
+settles the prior attempt. The default-deadline probe observed seven callbacks for
+one occurrence before advancement. Each application retry resets the native
+counter, so the threshold applies per armed alarm. A callback that repeatedly times out can also prevent
 its later siblings from running. The cap can skip work; it does not provide a dead
 letter record or operator retry control. The number mirrors celld’s
 `RETRY_CEILING` and must change with that upstream constant.
@@ -41,7 +44,8 @@ letter record or operator retry control. The number mirrors celld’s
 Stop every node before replacing the runtime, then start all nodes on the same
 patched image. This causes full downtime because celld starts dispatch as soon as
 any node starts. The candidate does not support rolling replacement, mixed versions
-or rollback. An operator pause does not exist yet, so this cutover is manual. A stock
+or rollback. The separate [native control candidate](celld-cron-controls.md) remains experimental;
+this retry-only cutover is manual. A stock
 node can advance the alarm but leave the cron record stale, causing a later retry to
 replay the wrong occurrence. A future rollback procedure must reconcile the alarm
 and record while every node is stopped; do not delete live keys.

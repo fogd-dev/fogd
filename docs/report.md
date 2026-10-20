@@ -37,7 +37,7 @@ No Cloudflare account, credentials or API calls are used by these qualifications
 | Capacity and retirement, M10 | Qualified Docker layouts through three app fleets, capacity reporting, stopped expansion/retirement and retained-state isolation; [capacity](capacity.md), [expansion](expansion.md), [retirement](retirement.md) |
 | Background queues, M11a | Bounded Docker opt-in, disabled by default; native Void import flow, activation controls, retries, duplicate handling and recovery; [acceptance](m11a-acceptance.md) |
 | Live sessions, M11b | Bounded native WebSocket/SSE lifecycle, lost-ack reconciliation, owner/gateway failures, compatible replacement, movement and stopped restore; [acceptance](m11b-acceptance.md). Pinned Void patches and the opt-in celld candidate are required |
-| Scheduled work, M11c | Native timer dispatch passes; owner loss confirms a retry-identity defect. D1-only app-free bootstrap is implemented, but cron admission remains closed. [Contract](m11c.md), [runtime probes](cron-qualification.md) |
+| Scheduled work, M11c | Native timers, patched retry identity, isolated watchdog termination and experimental dispatch holds pass bounded runtime probes. D1-only app-free bootstrap is implemented; cron admission remains closed. [Contract](m11c.md), [runtime probes](cron-qualification.md) |
 | Broader portability, M12 | Offline ordinary Void/fogd builds and bounded logical transfer already exist. General target migration and non-Void Workers import remain open |
 
 ## How the system is arranged
@@ -102,9 +102,14 @@ path; compatibility is verified through concrete app and failure scenarios.
 M11c keeps native Void/celld scheduling and adds durable dispatch controls instead
 of a fogd scheduler. Its first app-free D1 bootstrap foundation passes tests. The
 [native retry negative control](evidence/m11c-cron-retry-negative.json) confirms a
-runtime defect; a targeted patch is under review and built-runtime qualification
-is pending. Timer holds, ordinary approved Void cron apps, operator controls and
-full recovery tests still need implementation. Workflows/general alarms, remote
+runtime defect. A source-pinned candidate preserves the failed expression and
+original occurrence after owner loss in a two-node runtime probe. The
+[watchdog evidence](evidence/m11c-cron-timeout.json) records its terminal callback
+set and actual future dispatch. The [native hold candidate](patches/celld-cron-controls.md)
+passes bootstrap/adoption and restart checks, including a callback that finishes
+while its sibling is suppressed. These are runtime experiments. Upstream Rust
+tests/clippy and CPU-exhaustion qualification remain open. Ordinary approved Void
+cron apps, activation controls and full recovery tests remain unqualified. Workflows/general alarms, remote
 infrastructure and M12 portability follow their own acceptance contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.

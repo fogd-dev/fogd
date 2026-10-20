@@ -7,21 +7,23 @@ const source = await readFile(process.argv[2], 'utf8');
 const start = source.indexOf('class CelldCronSchedule {');
 const end = source.indexOf('\nconst __cell = __celld.__cell', start);
 assert.ok(start >= 0 && end > start, 'Expected pinned native cron class');
+const controls = process.argv.includes('--controls');
 const T = 1800000000000;
 const expressions = ['* * * * *', '*/1 * * * *'];
-function runtime() {
+function runtime({ held = false } = {}) {
   const world = { now: T, alarm: null, rows: new Map(), calls: [], failAlarm: false };
+  if (controls && !held) world.rows.set('__cron_control_v1', {paused:false, revision:1});
   const alarm = value => { if (world.failAlarm) { world.failAlarm = false; throw Error('alarm write failed'); } world.alarm = value; };
   const storage = { _scope: '.cron:test',
     kv: { get: key => structuredClone(world.rows.get(key)), put: (key, value) => world.rows.set(key, structuredClone(value)) },
     getAlarm: async () => world.activeAlarm ? null : world.alarm, setAlarm: async value => alarm(value), deleteAlarm: async () => alarm(null),
     transactionSync(callback) { const rows = structuredClone(world.rows), before = world.alarm; try { return callback(); } catch (error) { world.rows = rows; world.alarm = before; throw error; } },
   };
-  const cell = { crons: [...expressions], env: {}, async selfScheduled(controller) {
+  const cell = { script:'test', crons: [...expressions], env: {}, async selfScheduled(controller) {
     world.calls.push({ cron: controller.cron, scheduledTime: controller.scheduledTime });
     if (world.calls.length === 1) throw Error('first callback fails');
   } };
-  const context = vm.createContext({ Date: class extends Date { static now() { return world.now; } }, Response,
+  const context = vm.createContext({ URL, Request, Date: class extends Date { static now() { return world.now; } }, Response,
     __cell: cell, console: { error() {} }, __beginEvent: () => ({}), __endEvent: () => { if (world.failDrain) { world.failDrain = false; return Promise.reject(Error("drain failed")); } return null; },
     __alarm_active: () => Boolean(world.activeAlarm),
     __alarm_set: (_scope, value) => alarm(value), __alarm_delete: () => alarm(null),
@@ -141,4 +143,72 @@ const cases = {
     assert.deepEqual(r.world.calls.slice(2), expressions.map(cron => ({ cron, scheduledTime: T + 60000 })));
   },
 };
+async function command(instance, op) {
+  const response = await instance.fetch(new Request('http://cell/', {method:'POST', body:JSON.stringify({op})}));
+  assert.equal(response.status, 200);
+  const reply = await response.json();
+  assert.ok(reply?.result && typeof reply.result === 'object', 'Authenticated operator transport requires a result envelope');
+  return reply.result;
+}
+const controlCases = {
+  async 'failed resume leaves the hold and alarm unchanged'() {
+    const r = runtime({held:true}); r.world.failAlarm = true;
+    await assert.rejects(command(r.create(), 'resume'), /alarm write failed/);
+    assert.equal((await command(r.create(), 'info')).paused, true);
+    assert.equal(r.world.alarm, null);
+  },
+  async 'a control cannot materialize another script schedule'() {
+    const r = runtime(); r.cell.script = 'other';
+    assert.throws(() => r.create(), /cron scope does not match/);
+  },
+  async 'malformed persisted controls fail closed'() {
+    const r = runtime(); r.world.rows.set('__cron_control_v1', {});
+    await assert.rejects(r.create().alarm({scheduledTime:T}), /invalid persisted cron control/);
+    assert.equal(r.world.calls.length, 0);
+  },
+  async 'missing control record holds a restored due alarm and bootstrap'() {
+    const r = runtime({held:true}); r.world.alarm = T;
+    await r.create().alarm({scheduledTime:T}); await r.create().fetch();
+    assert.equal(r.world.calls.length, 0);
+    assert.equal((await command(r.create(), 'info')).paused, true);
+  },
+  async 'resume skips held history and persists across reconstruction'() {
+    const r = runtime({held:true}); r.world.now = T + 65000;
+    const status = await command(r.create(), 'resume');
+    assert.equal(status.paused, false); assert.equal(r.world.alarm, T + 120000);
+    await r.create().fetch(); assert.equal(r.world.alarm, T + 120000);
+    // Repeating a lost response must not change the already armed occurrence.
+    r.world.now = T + 125000; await command(r.create(), 'resume');
+    assert.equal(r.world.alarm, T + 120000);
+  },
+  async 'pause persists and deletes a pending retry'() {
+    const r = runtime(); await failedOccurrence(r);
+    await command(r.create(), 'pause');
+    assert.equal(r.world.alarm, null);
+    assert.equal(r.world.rows.get('__cron_retry_v1').owed, null);
+    await r.create().alarm({scheduledTime:T + 4000, retryCount:1});
+    assert.equal(r.world.calls.length, 2);
+    assert.equal((await command(r.create(), 'info')).paused, true);
+  },
+  async 'pause and resume cannot let an old callback dispatch siblings or rearm'() {
+    const r = runtime(), instance = r.create(); r.world.now = T - 1000; await instance.fetch();
+    let enter, release;
+    const entered = new Promise(resolve => { enter = resolve; });
+    const held = new Promise(resolve => { release = resolve; });
+    r.cell.selfScheduled = async controller => { r.world.calls.push(controller.cron); enter(); await held; };
+    r.world.now = T;
+    const running = instance.alarm({scheduledTime:T}); await entered;
+    await command(r.create(), 'pause');
+    r.world.now = T + 65000; await command(r.create(), 'resume');
+    release(); await running;
+    assert.equal(r.world.calls.length, 1); assert.equal(r.world.alarm, T + 120000);
+  },
+  async 'failed pause transaction leaves the running schedule intact'() {
+    const r = runtime(); await failedOccurrence(r); const before = structuredClone(r.world.rows);
+    r.world.failAlarm = true;
+    await assert.rejects(command(r.create(), 'pause'), /alarm write failed/);
+    assert.deepEqual(r.world.rows, before); assert.equal(r.world.alarm, T + 4000);
+  },
+};
+if (controls) Object.assign(cases, controlCases);
 for (const [name, check] of Object.entries(cases)) { await check(); console.log(`PASS: ${name}`); }

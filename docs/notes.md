@@ -608,3 +608,41 @@ until the survivor took ownership on the same release. The survivor used the ret
 deadline as `scheduledTime` and reran both expressions. See the
 [negative-control evidence](evidence/m11c-cron-retry-negative.json). The two earlier
 idle attempts remain unsuccessful fault injections, not contradictory evidence.
+
+
+## M11c timeout probe isolation
+
+The timeout probe requires a final event read after alarm advancement. An earlier
+run saved six callbacks before the terminal wake, and assigned the result of
+Playwright `expect.poll` to `nextWake`; that assertion returns no observed value.
+The output therefore omitted the wake. That run's printed pass is insufficient
+qualification evidence. Sort R2 events by invocation time, save the observed wake,
+and confirm it actually dispatches before counting the earlier occurrence.
+
+A concurrent Rust build coincided with replica lease fencing during a later
+attempt. That attempt was stopped without accepting its outcome. Another attempt
+failed before deployment because MinIO refused writes on the full Docker VM disk.
+Reclaiming only the identified Rust target and MinIO compiler build caches freed
+4.715 GB; volumes and images were retained. Run native timing drills separately
+from compilation, and reject logs containing lease fences or runtime panics.
+The configured handler budget is distinct from the shorter native operation
+deadline. An unresolved-promise probe does not qualify CPU exhaustion.
+
+
+The corrected observation with the default 15-second operation deadline and a
+20-second handler budget reached seven callbacks before advancement. The probe
+rejected its six-callback assertion after observing the next occurrence. The
+native retry counter is a different quantity from callback count when operation
+expiry can redispatch before host termination settles. Watchdog qualification must
+set the operation deadline above the handler budget; it cannot infer termination
+from a configured budget alone. Docker network removal also encountered stale
+endpoints and the predefined address pool was exhausted. Disposable runners use
+stop/start and explicitly unused per-project subnets; system configuration and
+unrelated resources remain unchanged.
+
+
+The first native control attempt exposed an operator-protocol mismatch: the cell
+returned status directly, while `Reachable::call` requires a `result` envelope.
+The CLI refused the reply. Source regressions now check that wire envelope, and
+the candidate uses it for status and mutations. No native control pass was accepted
+from that attempt.

@@ -1,0 +1,136 @@
+{
+  "status": "pass",
+  "scope": "Disposable runtime only. Unresolved-promise termination and native alarm retries are bounded for one armed alarm. The configured operation deadline exceeds the handler budget for this run. This does not qualify CPU limits or arbitrary application retries.",
+  "fixture": {
+    "project": "fogd-m11c-cron-timeout9",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "fogd-runtime:cron-retry-candidate4",
+      "slot-1-b": "fogd-runtime:cron-retry-candidate4"
+    }
+  },
+  "sourceCommit": "90b43017241f81189453d326d05948f388b34652",
+  "runtimeImage": "sha256:3ce1172d316028169a904beeb1e592196b9cea502c0cdf39186381908e5b6f53",
+  "binarySha256": "73aced358c70e0501877f9414f725d650aef57c7fdf132f022759352e38464e0",
+  "cronRetryPatchSha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19",
+  "handlerBudgetSeconds": 20,
+  "operationDeadlineMs": 60000,
+  "firstScheduled": 1792521420000,
+  "attempts": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521420003
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521440011
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521460023
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521480030
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521500039
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521532041
+    }
+  ],
+  "advancedAt": 1792521596215,
+  "nextWake": [
+    {
+      "cell": ".cron:cron-timeout",
+      "due_ms": 1792521600000,
+      "format": 2,
+      "identity": "0000000000000001-000000000000000b"
+    }
+  ],
+  "finalEvents": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521420003
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521440011
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521460023
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521480030
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521500039
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521420000,
+      "at": 1792521532041
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792521600000,
+      "at": 1792521600004
+    }
+  ],
+  "skippedMinuteOccurrences": [
+    1792521480000,
+    1792521540000
+  ],
+  "nativeRetryCapLogged": true,
+  "replicasOnRelease": 2,
+  "cleanup": {
+    "version": "5f9828ccddf90867",
+    "observed": [
+      {
+        "host": "slot-1-a",
+        "generation": 3,
+        "residentCells": {
+          ".cron:cron-timeout": 2
+        },
+        "drainingGenerations": [
+          2
+        ],
+        "swapping": 1
+      },
+      {
+        "host": "slot-1-b",
+        "generation": 3,
+        "residentCells": {},
+        "drainingGenerations": [
+          2
+        ],
+        "swapping": 0
+      }
+    ],
+    "scope": "Both replicas adopted a later no-cron generation. An old callback was still retiring in the immediate read; this is not a drain or cancellation receipt. The runner stopped the entire disposable stack."
+  },
+  "limitations": [
+    "CPU exhaustion is unqualified.",
+    "This retry-only runtime has no dispatch hold; the separate control candidate needs its own qualification.",
+    "A shorter operation deadline produced seven callbacks; this six-callback result applies only to the recorded profile.",
+    "Missed ticks are not a durable backlog."
+  ]
+}

@@ -83,8 +83,12 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | Replicated durable state and replica-failure recovery | Yes; tested, retain node IDs and disks | Yes; fleet protocol | No distributed storage | Runtime responsibility | Managed durable storage; no fogd recovery test |
 | Installation backup/restore | Partial; stopped local stack, exact images, two/three-fleet Docker recovery tested | Requires bucket and all node logs/identities | External orchestration required | Operator responsibility | Not audited here |
 | Whole-stack high availability | No; bucket/controller single points of failure | Depends on bucket/fleet topology | External orchestration required | Depends on hosting/services | Managed platform; outside this test scope |
-| Resource limits | Partial; containers, heap, cells, body size, retained artifacts, pending requests, concurrent uploads | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
+| Resource limits | Partial; containers, heap, cells, body size, retained artifacts, pending requests, concurrent uploads; per-worker `cpu_ms` is not mapped by fogd and top-level `limits` is rejected by pinned celld | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
 | Automatic schema rollback | No | No fogd rollback mechanism | No deployment migration runner | Not audited | Not audited |
+
+CPU configuration is excluded by fogd's [artifact allowlist](../packages/runtime/src/artifact.mjs)
+and the [pinned celld deploy allowlist](https://github.com/denoland/celld/blob/90b43017241f81189453d326d05948f388b34652/crates/celld/deploy.rs#L42).
+Runtime watchdog internals do not establish a supported Void configuration path.
 
 Void already implements roles and artifact-scoped OAuth publish approval. This is
 not evidence of a universal “teammate submits, separate admin approves every release”

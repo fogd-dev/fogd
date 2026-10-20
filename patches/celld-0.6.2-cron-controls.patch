@@ -1,0 +1,267 @@
+--- a/crates/celld/generation.rs
++++ b/crates/celld/generation.rs
+@@ -341,6 +341,7 @@
+     pub fn cron_cell(&self) -> Option<String> {
+         self.cell_configs
+             .get(celld_logic::cron::RESERVED_CLASS)
++            .filter(|config| !config.crons.is_empty())
+             .map(|config| celld_logic::cron::reserved_cell(&config.script_name))
+     }
+ 
+@@ -354,17 +355,12 @@
+     /// once — and the cron cell must run the new schedule before the
+     /// adoption arms it.
+     ///
+-    /// The cron class is named beside `deploy::is_reserved_class` rather
+-    /// than added to it. That predicate also decides which classes refuse an
+-    /// unauthenticated operator route, and the cron cell is not one of them,
+-    /// so widening it to reach this list would widen that refusal too.
++    /// The same reserved-class predicate also protects these cells from the
++    /// unauthenticated /do/ route.
+     pub fn reserved_classes(&self) -> Vec<String> {
+         self.cell_configs
+             .keys()
+-            .filter(|class| {
+-                crate::deploy::is_reserved_class(class)
+-                    || class.as_str() == celld_logic::cron::RESERVED_CLASS
+-            })
++            .filter(|class| crate::deploy::is_reserved_class(class))
+             .cloned()
+             .collect()
+     }
+@@ -598,7 +594,7 @@
+             }
+             // Cron is runtime-supplied, not a manifest class. Its alarm calls
+             // the primary script's scheduled handler with that script's bindings.
+-            if !config.crons.is_empty() {
++            if is_primary {
+                 cell_configs.insert(celld_logic::cron::RESERVED_CLASS.to_string(), config);
+             }
+         }
+--- a/crates/celld/deploy.rs
++++ b/crates/celld/deploy.rs
+@@ -86,7 +86,13 @@
+ pub const QUEUE_CLASS: &str = celld_logic::queue::RESERVED_CLASS;
+ 
+ /// Every runtime-supplied Durable Object class.
+-pub const RESERVED_CLASSES: &[&str] = &[D1_CLASS, WORKFLOW_CLASS, KV_CLASS, QUEUE_CLASS];
++pub const RESERVED_CLASSES: &[&str] = &[
++    D1_CLASS,
++    WORKFLOW_CLASS,
++    KV_CLASS,
++    QUEUE_CLASS,
++    celld_logic::cron::RESERVED_CLASS,
++];
+ 
+ /// The Durable Object class a script's workflow instances run as.
+ ///
+--- a/crates/celld/lib.rs
++++ b/crates/celld/lib.rs
+@@ -48,6 +48,7 @@
+ pub mod cli_output;
+ pub mod container;
+ pub mod control_plane;
++pub mod cron_cli;
+ pub mod d1_cli;
+ pub mod dead_node_gc;
+ pub mod deploy;
+--- a/crates/celld/main.rs
++++ b/crates/celld/main.rs
+@@ -3525,6 +3525,7 @@
+         Action::D1(arguments) => return celld::d1_cli::run(arguments).await,
+         Action::Kv(arguments) => return celld::kv_cli::run(arguments).await,
+         Action::Queue(arguments) => return celld::queue_cli::run(arguments).await,
++        Action::Cron(arguments) => return celld::cron_cli::run(arguments).await,
+         Action::R2(arguments) => return celld::r2_cli::run(arguments).await,
+         Action::Connect(arguments) => {
+             return celld::control_plane::handle_connect_command(arguments).await
+--- a/crates/celld/js/harness.js
++++ b/crates/celld/js/harness.js
+@@ -5866,7 +5866,7 @@
+   }
+ };
+ // The reserved cron cell. It is not a user class: celld registers it under
+-// `.cron` for every deployment that declares `triggers.crons`, and one cell
++// `.cron` for every primary deployment, including an app-free bootstrap. One cell
+ // per script carries that script's whole schedule. Ownership CAS on that one
+ // name is what makes a cron trigger fire once per fleet rather than once per
+ // node -- the same arbiter an alarm already relies on, with nothing added.
+@@ -5876,6 +5876,8 @@
+ // effect on the next activation and needs no migration of an armed alarm.
+ class CelldCronSchedule {
+   constructor(state) {
++    if (state.storage._scope !== `.cron:${__cell.script}`)
++      throw new Error("cron scope does not match the primary script");
+     this._state = state;
+     // A retry deadline is not an occurrence. Persist its identity with the
+     // alarm so eviction and ownership transfer cannot reinterpret that deadline.
+@@ -5886,11 +5888,52 @@
+     this._retry = saved?.retry || 0;
+     this._owed = saved?.owed || null;
+   }
++  _control() {
++    const control = this._state.storage.kv.get("__cron_control_v1");
++    if (control === undefined) return { paused: true, revision: 0 };
++    if (typeof control?.paused !== "boolean" || !Number.isSafeInteger(control.revision) || control.revision < 0)
++      throw new Error("invalid persisted cron control");
++    return control;
++  }
++  _canDispatch(revision) {
++    const control = this._control();
++    return !control.paused && control.revision === revision;
++  }
++  async _status() {
++    return { ...this._control(), nextAlarm: await this._state.storage.getAlarm(), crons: __cell.crons || [] };
++  }
++  async _operate(command) {
++    if (!command || Object.keys(command).length !== 1 ||
++        !["info", "pause", "resume"].includes(command.op))
++      return Response.json({ error: "invalid cron command" }, { status: 400 });
++    if (command.op === "info") return Response.json({ result: await this._status() });
++    const control = this._control();
++    const paused = command.op === "pause";
++    if (control.paused !== paused) {
++      const storage = this._state.storage;
++      storage.transactionSync(() => {
++        storage.kv.put("__cron_control_v1", { paused, revision: control.revision + 1 });
++        storage.kv.put("__cron_retry_v1", { retry: 0, owed: null });
++        this._load();
++        if (paused) __alarm_delete(storage._scope);
++        else this._arm(null, [], false);
++      });
++      this._load();
++    }
++    return Response.json({ result: await this._status() });
++  }
++  async fetch(request) {
++    // Adoption uses the internal arm path; /runtime/ supplies operator JSON.
++    if (request && new URL(request.url).pathname !== "/arm")
++      return this._operate(await request.json());
++    return this._armOnAdoption();
++  }
+   // celld calls this once per node after a deployment loads, because a cron
+   // cell has no client to wake it. Arming is idempotent -- the same schedule
+   // and the same clock give the same answer -- so it does not matter which
+   // node wins the cell.
+-  async fetch() {
++  async _armOnAdoption() {
++    if (this._control().paused) return new Response(null, { status: 204 });
+     // getAlarm() deliberately reports null during an active handler. Do not
+     // mistake that view for a missing alarm and overwrite the in-flight turn.
+     if (__alarm_active(this._state.storage._scope)) return new Response(null, { status: 204 });
+@@ -5913,6 +5956,8 @@
+     await this._runAlarm(info);
+   }
+   async _runAlarm(info) {
++    const control = this._control();
++    if (control.paused) return;
+     const crons = __cell.crons || [];
+     // Runtime-enforced retries change the alarm deadline without changing our
+     // record. Keep the original occurrence even when backoff crosses a minute.
+@@ -5953,6 +5998,7 @@
+     }
+     const failed = [];
+     for (const index of due) {
++      if (!this._canDispatch(control.revision)) return;
+       let noRetry = false;
+       const controller = {
+         // The occurrence, never the instant this attempt started, so a late
+@@ -5983,12 +6029,13 @@
+         if (drain !== null) await drain;
+       }
+     }
+-    await this._arm(occurrence, failed, owed.kind === "retry");
++    await this._arm(occurrence, failed, owed.kind === "retry", control.revision);
+   }
+   // `occurrence` is the tick just handled, or null when the cell is only
+   // arming, `failed` holds the expressions of it still owed, and `retried`
+   // says the deadline just handled was a backoff rather than an occurrence.
+-  async _arm(occurrence, failed, retried) {
++  _arm(occurrence, failed, retried, revision = this._control().revision) {
++    if (!this._canDispatch(revision)) return;
+     const crons = __cell.crons || [];
+     // The count is failures within one occurrence, so a fresh occurrence
+     // starts at one however the last one ended. Carrying it across would
+--- a/crates/celld/main/cli.rs
++++ b/crates/celld/main/cli.rs
+@@ -41,6 +41,7 @@
+     D1(Vec<String>),
+     Kv(Vec<String>),
+     Queue(Vec<String>),
++    Cron(Vec<String>),
+     R2(Vec<String>),
+     Connect(Vec<String>),
+     Credentials(Vec<String>),
+@@ -78,6 +79,7 @@
+             "d1" => return Ok(Action::D1(arguments)),
+             "kv" => return Ok(Action::Kv(arguments)),
+             "queue" => return Ok(Action::Queue(arguments)),
++            "cron" => return Ok(Action::Cron(arguments)),
+             "r2" => return Ok(Action::R2(arguments)),
+             "connect" => return Ok(Action::Connect(arguments)),
+             "credentials" => return Ok(Action::Credentials(arguments)),
+--- /dev/null
++++ b/crates/celld/cron_cli.rs
+@@ -0,0 +1,62 @@
++// Copyright 2026 Deno Land Inc. Apache-2.0 license.
++
++//! Authenticated operations on the primary script's native cron cell.
++
++use std::time::Duration;
++
++use anyhow::{anyhow, bail};
++use serde_json::json;
++
++use crate::cli_options::FleetFlags;
++use crate::operator_cell::{Fleet, Reachable, Subject};
++
++pub async fn run(arguments: Vec<String>) -> anyhow::Result<()> {
++    let mut arguments = arguments.into_iter();
++    let Some(action) = arguments.next() else {
++        println!("celld cron <info|pause|resume> <script> [--json] [fleet flags]");
++        return Ok(());
++    };
++    if !["info", "pause", "resume"].contains(&action.as_str()) {
++        bail!("unknown celld cron command: {action}");
++    }
++    let script = arguments
++        .next()
++        .ok_or_else(|| anyhow!("cron {action} requires a script name"))?;
++    if !celld_logic::cell::valid_cell_scope(&script) || script.contains(':') {
++        bail!("invalid cron script name");
++    }
++    let mut flags = FleetFlags::default();
++    while let Some(flag) = arguments.next() {
++        if flag == "--json" {
++            continue;
++        }
++        let mut value = |name: &str| {
++            arguments
++                .next()
++                .ok_or_else(|| anyhow!("{name} requires a value"))
++        };
++        if !flags.consume(&flag, &mut value)? {
++            bail!("unknown cron flag: {flag}");
++        }
++    }
++    let storage = flags.resolve("celld cron")?;
++    let cron = Reachable::open(
++        Fleet {
++            bucket: &storage.bucket,
++            endpoint: storage.endpoint.as_deref(),
++            region: &storage.region,
++            unsafe_public_advertise: false,
++        },
++        Subject {
++            noun: "cron schedule",
++            source: "cron",
++            timeout: Duration::from_secs(60),
++        },
++        celld_logic::cron::reserved_cell(&script),
++        None,
++    )
++    .await?;
++    let reply = cron.call(json!({ "op": action })).await?;
++    println!("{}", serde_json::to_string(&reply)?);
++    Ok(())
++}

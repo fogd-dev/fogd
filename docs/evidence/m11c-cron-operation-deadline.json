@@ -1,0 +1,67 @@
+{
+  "status": "rejected-six-callback-claim",
+  "scope": "Native retry candidate4, configured handler budget20s and default operation deadline15s. Seven callbacks were observed before advancement. This is not a universal seven-callback ceiling or CPU-exhaustion qualification.",
+  "fixture": {
+    "project": "fogd-m11c-cron-timeout8",
+    "slot": "slot-1",
+    "handlerBudgetSeconds": 20,
+    "images": {
+      "slot-1-a": "fogd-runtime:cron-retry-candidate4",
+      "slot-1-b": "fogd-runtime:cron-retry-candidate4"
+    }
+  },
+  "operationDeadlineMs": 15000,
+  "firstScheduled": 1792520880000,
+  "attempts": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520880004
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520895507
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520911011
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520926517
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520942023
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520957530
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792520880000,
+      "at": 1792520974027
+    }
+  ],
+  "futureWakeObservedAt": 1792521048348,
+  "nextWake": [
+    {
+      "cell": ".cron:cron-timeout",
+      "due_ms": 1792521060000,
+      "format": 2,
+      "identity": "0000000000000001-000000000000000b"
+    }
+  ],
+  "failure": {
+    "stage": "terminal attempt assertions",
+    "message": "Expected callbacks at native retryCount 0 through 5; count 6 advances without invoking\n\n7 !== 6\n"
+  },
+  "nativeCapLog": "cron occurrence exceeded the native retry budget; advancing",
+  "interpretation": "The generic operation deadline can expire before the handler budget and before host alarm settlement. Native retryCount is not a direct callback counter. The runner reached its terminal-count assertion after observing the next wake dispatch and rejected 7 != 6."
+}
