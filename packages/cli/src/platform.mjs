@@ -104,11 +104,14 @@ export async function adminAcknowledgeRecovery(app, deployment, digest, recovery
   console.log(JSON.stringify(result, null, 2));
 }
 
-export async function adminDelivery(app, action = 'status', deployment, digest) {
-  if (!app || !['status', 'observe', 'pause', 'resume'].includes(action)) throw new Error('Usage: fogd admin delivery APP [status|observe|pause|resume ID SHA]');
-  if (action === 'resume' ? !deployment || !/^[a-f0-9]{64}$/.test(digest || '') : deployment !== undefined || digest !== undefined) throw new Error('Resume requires the inspected deployment ID and digest; other delivery actions take no extra arguments');
+export async function adminDelivery(app, action = 'status', deployment, digest) { return adminBackground('delivery', app, action, deployment, digest); }
+export async function adminDispatch(app, action = 'status', deployment, digest) { return adminBackground('dispatch', app, action, deployment, digest); }
+
+async function adminBackground(surface, app, action, deployment, digest) {
+  if (!app || !['status', 'observe', 'pause', 'resume'].includes(action)) throw new Error(`Usage: fogd admin ${surface} APP [status|observe|pause|resume ID SHA]`);
+  if (action === 'resume' ? !deployment || !/^[a-f0-9]{64}$/.test(digest || '') : deployment !== undefined || digest !== undefined) throw new Error(`Resume requires the inspected deployment ID and digest; other ${surface} actions take no extra arguments`);
   const { env, headers, state } = await adminSession();
-  const path = `/v1/apps/${encodeURIComponent(app)}/delivery`;
+  const path = `/v1/apps/${encodeURIComponent(app)}/${surface}`;
   const options = action === 'status' ? { headers } : { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest }) };
   const result = await api(env, action === 'status' ? path : `${path}/${action}`, options);
   console.log(JSON.stringify(result, null, 2));

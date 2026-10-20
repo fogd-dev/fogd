@@ -1,0 +1,200 @@
+{
+  "status": "pass",
+  "scope": "Experimental qualified two-node Docker cron runtime injected into a private controller. Authenticated operator controls; ordinary cron admission remains closed. No drain, historical restore or atomic release fence claim.",
+  "prerequisite": "m11c-void-refresh.json",
+  "sourceCommit": "90b43017241f81189453d326d05948f388b34652",
+  "runtime": {
+    "controller": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-2-a": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-2-b": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "workerd": {
+      "image": "sha256:caa0ff91ee11af5fe77d0dc79549a6c8a354b641621c9baf96569eca3469bdf5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    }
+  },
+  "platformSourceSetSha256": "56769735a84a0f6ab73028e740b05cf6acf5b78fd2e8086253f0b5b72fca9160",
+  "sourceSha256": {
+    "packages/platform/src/admin-dispatch.mjs": "e31ddce4d91fad277961a6d467dc446b0c4a3fce2884ddd9b09596180d9329a1",
+    "packages/platform/src/http.mjs": "bb1ed754d33fca1c5be1042e728e71074df2168aa51b51d94d11a84af3d50c31",
+    "packages/cli/src/platform.mjs": "084ad7626736ee42a4949c7d8f821708b2b49ad80a864df4a493b35e1b7153c7",
+    "packages/cli/bin/fogd.js": "169fc0b7dcf8b97e21a590a6b1959e47e3352255e2272312c1a16169c58d9061",
+    "scripts/cron-operators.mjs": "ad76fcad83de78ca15a5f185f2bd47ff2db66c09f1d726cacd794311c3f97634",
+    "scripts/cron-probe/operator-controller.mjs": "f48d08da4fdc3d990aebe088cd893d66c312e0183a41885ef0967ea6f563a0ea",
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a"
+  },
+  "active": {
+    "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+    "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540"
+  },
+  "recordedReadsNoRuntimeCommands": true,
+  "digestMismatchRejected": true,
+  "privateValuesAbsent": true,
+  "lostResume": {
+    "apiStatus": 502,
+    "nativeRunning": true,
+    "unknown": {
+      "app": "refresh",
+      "schema": 1,
+      "script": "refresh",
+      "desired": "running",
+      "hold": null,
+      "observed": "unknown",
+      "observedAt": null,
+      "operation": "resume",
+      "effective": "running",
+      "bootstrap": "application",
+      "recoveryError": null,
+      "active": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540"
+      },
+      "approval": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540",
+        "status": "active",
+        "step": "complete"
+      },
+      "applicationOutcomes": "not-observed",
+      "operationAllowed": true,
+      "resumeAllowed": true
+    },
+    "observed": {
+      "app": "refresh",
+      "schema": 1,
+      "script": "refresh",
+      "desired": "running",
+      "hold": null,
+      "observed": "running",
+      "observedAt": "2026-10-20T20:47:44.469Z",
+      "operation": "resume",
+      "effective": "running",
+      "bootstrap": "application",
+      "recoveryError": null,
+      "active": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540"
+      },
+      "approval": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540",
+        "status": "active",
+        "step": "complete"
+      },
+      "applicationOutcomes": "not-observed",
+      "operationAllowed": true,
+      "resumeAllowed": true
+    },
+    "reconciled": {
+      "app": "refresh",
+      "schema": 1,
+      "script": "refresh",
+      "desired": "paused",
+      "hold": null,
+      "observed": "paused",
+      "observedAt": "2026-10-20T20:47:44.579Z",
+      "operation": null,
+      "effective": "paused",
+      "bootstrap": "application",
+      "recoveryError": null,
+      "active": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540"
+      },
+      "approval": {
+        "deployment": "bb4db8ff-def7-45bf-a230-927e28b0988c",
+        "digest": "0175e3f23e45548da528ba7095d9df4fce1c9f42028fb252ccada5dc2a301540",
+        "status": "active",
+        "step": "complete"
+      },
+      "applicationOutcomes": "not-observed",
+      "operationAllowed": true,
+      "resumeAllowed": true
+    }
+  },
+  "nativeNewCompleteOccurrences": [
+    {
+      "job": "advisory",
+      "cron": "* * * * *",
+      "scheduled_time": 1792529280000,
+      "initial_mode": "lost-ack-once",
+      "status": "complete",
+      "attempts": 1,
+      "duplicates": 0,
+      "last_attempt_at": 1792529280008,
+      "error": null,
+      "completed_at": 1792529280008
+    },
+    {
+      "job": "inventory",
+      "cron": "* * * * *",
+      "scheduled_time": 1792529280000,
+      "initial_mode": "lost-ack-once",
+      "status": "complete",
+      "attempts": 1,
+      "duplicates": 0,
+      "last_attempt_at": 1792529280009,
+      "error": null,
+      "completed_at": 1792529280009
+    }
+  ],
+  "heldMinuteBoundary": 1792529340000,
+  "replicaRestartHeld": true,
+  "controllerReloadHeldWithoutDispatchCommands": true,
+  "reopenedNative": {
+    "paused": true,
+    "revision": 12,
+    "nextAlarm": null,
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "browser": {
+    "errors": [],
+    "resumed": true,
+    "paused": true,
+    "approvalVisible": true,
+    "screenshotSha256": "87c6c203b6dad968292eb9138d5c43a1c5edc128ba1970342d88aff5326df44a"
+  },
+  "qualification": {
+    "processExit": 0,
+    "cleanupFailureAbsent": true,
+    "allDisposableServicesStopped": true,
+    "selectedLogSha256": "0e4094e22098985b1b988d34303e2e821902359aa8c7928cbeae602cd47c162f",
+    "logsSince": "2026-10-20T20:47:42.122Z",
+    "services": [
+      "controller",
+      "minio",
+      "workerd",
+      "slot-2-a",
+      "slot-2-b"
+    ],
+    "forbiddenRuntimeFaultPatternsAbsent": true,
+    "rejectedTrials": [
+      "Expanded startup trial failed before cron inspection; cleanup also failed. Not accepted.",
+      "Next trial incorrectly expected recorded paused despite a prior unknown observation. Rejected and assertion corrected to compare recorded API/CLI state."
+    ],
+    "sourceInstallationHealthy": true,
+    "checks": [
+      "pnpm check",
+      "pnpm test: 387 passed",
+      "anti-slop: PASS",
+      "Claude review required harness findings resolved"
+    ]
+  },
+  "limitations": [
+    "Runtime candidate is not release-bound; default Backend has no cron transport.",
+    "No ordinary scoped cron upload, native activation process-kill or stopped fresh-storage recovery qualification.",
+    "Replica restart checks paused control state and preserved data; only the pre-restart profile observes a complete held minute boundary.",
+    "Pause does not drain callbacks or waitUntil.",
+    "CPU-exhaustion behavior remains unqualified."
+  ]
+}

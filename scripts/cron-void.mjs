@@ -1,16 +1,17 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { request as httpRequest } from 'node:http';
 import { isDeepStrictEqual } from 'node:util';
 import { mkdir, cp } from 'node:fs/promises';
 import { join } from 'node:path';
 import { context, requireEmptyFleet, upload } from './queue-probe/context.mjs';
 import { stageRefresh } from './cron-probe/native.mjs';
+import { refreshGateway } from './cron-probe/gateway.mjs';
 import { cleanupCronProbe } from './cron-probe-cleanup.mjs';
 import { chromium, expect } from './guestbook-browser.mjs';
 
 const probe = await context(process.argv[2], process.argv[3]); await requireEmptyFleet(probe);
 const port = probe.env.FOGD_HTTP_PORT, url = `http://refresh.localhost:${port}`;
+const gateway = (path, options) => refreshGateway(port, path, options);
 const stage = await stageRefresh(join(probe.output, 'app'));
 const source = await upload(probe, stage.output, 'void-refresh');
 const runner = join(probe.output, 'runner'); await mkdir(runner);
@@ -36,17 +37,7 @@ async function api(mode) {
   const response = await gateway('/api/refresh', mode ? { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: url }, body: JSON.stringify({ mode }) } : {});
   assert.equal(response.status, 200); return response.json();
 }
-function gateway(path, options = {}) {
-  return new Promise((resolve, reject) => {
-    const request = httpRequest({ hostname: '127.0.0.1', port, path, method: options.method || 'GET', headers: { Host: `refresh.localhost:${port}`, ...options.headers } }, response => {
-      const chunks = []; response.on('data', chunk => chunks.push(chunk));
-      response.on('end', () => resolve(new Response(Buffer.concat(chunks), { status: response.statusCode })));
-      response.on('error', reject);
-    });
-    request.on('error', reject); request.setTimeout(15000, () => request.destroy(Error('Gateway request timed out')));
-    request.end(options.body);
-  });
-}
+
 const latest = (state, job) => state.jobs.find(row => row.job === job).latest;
 async function bothComplete(mode, duplicates) {
   let state, occurrence;

@@ -3,8 +3,10 @@
 Cron admission remains closed. The controller has an internally staged activation
 path for the [M11c contract](m11c.md); ordinary artifact submission still rejects
 cron declarations. The default backend has no cron transport and there is no
-installation flag that opens this path. Runtime provenance, ordinary Void jobs,
-operator interfaces, replacement and recovery still need qualification.
+installation flag that opens this path. Runtime provenance enforcement, native
+activation process kills, replacement and recovery still need qualification.
+The [Void refresh fixture](../examples/refresh/README.md) and
+[operator controls](cron-controls.md) have separate bounded profiles.
 
 ## Approval and dispatch ordering
 
@@ -86,3 +88,7 @@ process kills, ordinary Void jobs, workerd ingress or stopped snapshot recovery.
 The separate [Void refresh profile](../examples/refresh/README.md) exercises native
 jobs and workerd through private staging; normal cron admission and recovery gates
 remain open.
+
+[Scheduled operator controls](cron-controls.md) expose recorded status and explicit
+observe, pause and artifact-pinned resume through the admin API, page and CLI.
+They retain activation holds and leave application outcomes to the app.

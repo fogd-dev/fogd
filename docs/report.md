@@ -114,10 +114,12 @@ a native D1/secret bootstrap, lost-resume reload and paused-update profile. The
 [Void refresh fixture](../examples/refresh/README.md) also passes its bounded native
 workerd flow: two jobs share an expression, use separate ledgers when that expression
 retries, retain a visible prior success during failure and deduplicate after a
-simulated lost reply. Offline builds cover ordinary Void and fogd. Normal scoped
-cron admission, operator interfaces and full recovery tests remain
-unqualified. Workflows/general alarms, remote
-infrastructure and M12 portability follow their own acceptance contracts.
+simulated lost reply. Offline builds cover ordinary Void and fogd. The
+[operator controls](cron-controls.md) add authenticated recorded status, observe,
+pause and artifact-pinned resume with native lost-reply reconciliation. Normal
+scoped cron admission and full recovery tests remain unqualified. Workflows/general
+alarms, remote infrastructure and M12 portability follow their own acceptance
+contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.
 Current acceptance documents and `docs/evidence/` contain the scoped proof; an

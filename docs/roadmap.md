@@ -132,8 +132,9 @@ while the [experimental activation journal](cron-activation.md) is qualified thr
 controller interruption and native bootstrap drills. Approval pins its artifact and
 secret revision before effects. The [Void refresh fixture](../examples/refresh/README.md)
 has bounded native workerd, sibling-retry and lost-reply evidence plus offline
-target builds. Normal scoped cron admission and the remaining operator, fault and
-recovery gates remain open.
+target builds. [Operator dispatch controls](cron-controls.md) provide recorded
+status and explicit observe, pause and artifact-pinned resume. Normal scoped cron
+admission and the remaining native fault and recovery gates remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
