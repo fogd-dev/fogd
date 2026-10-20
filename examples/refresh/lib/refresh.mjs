@@ -13,20 +13,24 @@ function source(job, scheduledTime, mode, attempt) {
   return job === 'inventory' ? `${20 + minute % 7} sample items available` : ['Collection on time', 'Collection delayed ten minutes', 'Extra collection available'][minute % 3];
 }
 
-export async function refreshJob(db, job, event, clock = Date.now) {
+async function beginRefresh(db, job, event, clock) {
   const key = occurrence(job, event), mode = (await db.prepare('SELECT mode FROM refresh_settings WHERE id = 1').first()).mode;
   const attemptedAt = clock();
   const record = await db.prepare(`INSERT INTO refresh_occurrences (job,cron,scheduled_time,initial_mode,last_attempt_at) VALUES (?,?,?,?,?)
     ON CONFLICT(job,cron,scheduled_time) DO UPDATE SET attempts = attempts + 1, last_attempt_at = excluded.last_attempt_at RETURNING *`).bind(...key, mode, attemptedAt).first();
+  return { complete: () => completeRefresh(db, job, event, { key, mode, record, clock }) };
+}
+
+async function completeRefresh(db, job, event, { key, mode, record, clock }) {
   if (record.status === 'complete') {
     await db.prepare('UPDATE refresh_occurrences SET duplicates = duplicates + 1 WHERE job = ? AND cron = ? AND scheduled_time = ?').bind(...key).run();
     return;
   }
   try {
-    const value = source(job, event.scheduledTime, mode, record.attempts);
+    const value = source(job, event.scheduledTime, mode, record.attempts), completedAt = clock();
     await db.batch([
-      db.prepare('INSERT INTO refresh_results (job,cron,scheduled_time,value,saved_at) VALUES (?,?,?,?,?) ON CONFLICT(job,cron,scheduled_time) DO NOTHING').bind(...key, value, attemptedAt),
-      db.prepare("UPDATE refresh_occurrences SET status = 'complete', error = NULL, completed_at = ? WHERE job = ? AND cron = ? AND scheduled_time = ? AND status != 'complete'").bind(attemptedAt, ...key),
+      db.prepare('INSERT INTO refresh_results (job,cron,scheduled_time,value,saved_at) VALUES (?,?,?,?,?) ON CONFLICT(job,cron,scheduled_time) DO NOTHING').bind(...key, value, completedAt),
+      db.prepare("UPDATE refresh_occurrences SET status = 'complete', error = NULL, completed_at = ? WHERE job = ? AND cron = ? AND scheduled_time = ? AND status != 'complete'").bind(completedAt, ...key),
     ]);
     // Simulate a failed acknowledgement after the durable business result, so
     // the real native scheduler retries an already-completed job.
@@ -38,19 +42,32 @@ export async function refreshJob(db, job, event, clock = Date.now) {
   }
 }
 
-export async function scheduledRefresh(job, event, env) {
-  if (!env.REFRESH_TOKEN) throw new Error('Required refresh configuration is missing');
-  return refreshJob(env.DB, job, event);
+export async function refreshJob(db, job, event, clock = Date.now) {
+  return (await beginRefresh(db, job, event, clock)).complete();
 }
 
-export async function summary(db) {
+export async function beginScheduledRefresh(job, event, env) {
+  if (!env.REFRESH_TOKEN) throw new Error('Required refresh configuration is missing');
+  return beginRefresh(env.DB, job, event, Date.now);
+}
+
+export async function scheduledRefresh(job, event, env) {
+  return (await beginScheduledRefresh(job, event, env)).complete();
+}
+
+export async function summary(db, clock = Date.now) {
   const setting = await db.prepare('SELECT mode FROM refresh_settings WHERE id = 1').first();
   const history = (await db.prepare('SELECT * FROM refresh_occurrences ORDER BY scheduled_time DESC, job LIMIT 20').all()).results;
   const views = await Promise.all(jobs.map(async job => ({ job,
     latest: await db.prepare('SELECT * FROM refresh_occurrences WHERE job = ? ORDER BY scheduled_time DESC LIMIT 1').bind(job).first(),
     lastSuccess: await db.prepare('SELECT * FROM refresh_results WHERE job = ? ORDER BY scheduled_time DESC LIMIT 1').bind(job).first(),
   })));
-  return { mode: setting.mode, jobs: views, history };
+  const unfinishedWhere = `status = 'pending' AND (last_attempt_at <= ? OR EXISTS
+    (SELECT 1 FROM refresh_results AS saved WHERE saved.job = pending.job AND saved.scheduled_time > pending.scheduled_time))`;
+  const cutoff = clock() - 60000;
+  const unfinished = (await db.prepare(`SELECT * FROM refresh_occurrences AS pending WHERE ${unfinishedWhere} ORDER BY scheduled_time,job LIMIT 20`).bind(cutoff).all()).results;
+  const { count } = await db.prepare(`SELECT count(*) AS count FROM refresh_occurrences AS pending WHERE ${unfinishedWhere}`).bind(cutoff).first();
+  return { mode: setting.mode, jobs: views, history, unfinished, unfinishedCount: count };
 }
 
 export async function changeMode(db, mode) {

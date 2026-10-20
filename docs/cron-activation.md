@@ -3,8 +3,9 @@
 Cron admission remains closed. The controller has an internally staged activation
 path for the [M11c contract](m11c.md); ordinary artifact submission still rejects
 cron declarations. The default backend has no cron transport and there is no
-installation flag that opens this path. Runtime provenance enforcement,
-replacement and stopped recovery still need qualification. Selected native process
+installation flag that opens this path. Runtime provenance enforcement and
+stopped recovery still need qualification. [Compatible replacement](cron-replacement.md)
+has a separate bounded profile. Selected native process
 interruptions have a separate bounded profile below.
 The [Void refresh fixture](../examples/refresh/README.md) and
 [operator controls](cron-controls.md) have separate bounded profiles.

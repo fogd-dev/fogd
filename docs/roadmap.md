@@ -137,8 +137,10 @@ status and explicit observe, pause and artifact-pinned resume. Selected
 [controller SIGKILL cuts](cron-activation.md#native-process-interruptions) also pass
 their bounded native profile. The ordinary Void [failure profile](cron-failures.md) records `noRetry`, counted
 terminal retries, owner takeover and autonomous overdue work after downtime.
-Normal scoped cron admission, release overlap, stopped recovery, retirement and
-release-bound runtime qualification remain open.
+The bounded [replacement profile](cron-replacement.md) covers old work through
+compatible migration, lost completion near publication, unfinished application
+status and new-code native retries. Normal scoped cron admission, stopped recovery,
+retirement and release-bound runtime qualification remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

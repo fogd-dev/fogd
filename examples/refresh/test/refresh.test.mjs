@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { d1Fixture } from '../../../scripts/test-d1.mjs';
-import { refreshJob, summary, changeMode, scheduledRefresh } from '../lib/refresh.mjs';
+import { refreshJob, summary, changeMode, scheduledRefresh, beginScheduledRefresh } from '../lib/refresh.mjs';
 const event = { cron: '* * * * *', scheduledTime: 60000 };
 function fixture(t) {
   const f = d1Fixture(new URL('../db/migrations/0001_refresh.sql', import.meta.url));
@@ -83,4 +83,41 @@ test('a long source outage cannot hide its last success behind another job’s r
   const advisory = (await summary(db)).jobs.find(job => job.job === 'advisory');
   assert.equal(advisory.lastSuccess.scheduled_time, 60000);
   assert.equal(advisory.latest.status, 'failed');
+});
+
+test('a prepared refresh is visible before its business commit and completion has its own time', async t => {
+  const { db, sql } = fixture(t); await changeMode(db, 'healthy'); let now = 61000;
+  t.mock.method(Date, 'now', () => now);
+  const work = await beginScheduledRefresh('advisory', event, { DB: db, REFRESH_TOKEN: 'test' });
+  assert.equal(sql.prepare('SELECT status FROM refresh_occurrences').get().status, 'pending');
+  assert.equal(sql.prepare('SELECT count(*) AS n FROM refresh_results').get().n, 0);
+  assert.deepEqual((await summary(db, () => 120999)).unfinished, []);
+  assert.equal((await summary(db, () => 121000)).unfinished.length, 1);
+  now = 125000; await work.complete();
+  const row = sql.prepare('SELECT * FROM refresh_occurrences').get();
+  assert.equal(row.last_attempt_at, 61000); assert.equal(row.completed_at, 125000);
+  assert.equal(sql.prepare('SELECT saved_at FROM refresh_results').get().saved_at, 125000);
+  assert.deepEqual((await summary(db)).unfinished, []);
+});
+
+test('a later saved occurrence exposes earlier unfinished work without changing its stored outcome', async t => {
+  const { db, sql } = fixture(t); await changeMode(db, 'healthy');
+  t.mock.method(Date, 'now', () => 119000);
+  await beginScheduledRefresh('advisory', event, { DB: db, REFRESH_TOKEN: 'test' });
+  await run(db, 'advisory', { ...event, scheduledTime: 120000 });
+  const observed = await summary(db, () => 121000);
+  assert.equal(observed.jobs[1].latest.status, 'complete'); assert.equal(observed.unfinished[0].scheduled_time, 60000);
+  assert.equal(sql.prepare('SELECT status FROM refresh_occurrences WHERE scheduled_time = 60000').get().status, 'pending');
+});
+
+test('recently retried older rows cannot hide an unfinished occurrence beyond the display limit', async t => {
+  const { db, sql } = fixture(t);
+  const insert = sql.prepare("INSERT INTO refresh_occurrences (job,cron,scheduled_time,initial_mode,last_attempt_at) VALUES ('advisory','* * * * *',?,'healthy',?)");
+  for (let n = 1; n <= 20; n++) insert.run(n * 60000, 10000000);
+  insert.run(21 * 60000, 9000000);
+  const state = await summary(db, () => 10000001);
+  assert.deepEqual(state.unfinished.map(row => row.scheduled_time), [21 * 60000]);
+  for (let n = 22; n <= 45; n++) insert.run(n * 60000, 9000000);
+  const capped = await summary(db, () => 10000001);
+  assert.equal(capped.unfinished.length, 20); assert.equal(capped.unfinishedCount, 25);
 });

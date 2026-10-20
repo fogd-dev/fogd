@@ -1,0 +1,799 @@
+{
+  "status": "pass",
+  "scope": "Private ordinary Void releases. Old work commits under a compatible migration before publication. Held pre/post-commit callbacks continue recording heartbeats after pause and migration, then stop recording near publication swap; no later D1 progress is observed after the old generation is freed. Unfinished application work and later new-code occurrences are observed. A separate lost reply retries the original occurrence and increments duplicate counters without another business row. No drain, external-effect termination, automatic replay guarantee, arbitrary external-effect exactly once, scoped cron admission, stopped snapshot recovery or retirement.",
+  "clockDomain": "Controller Date.now, worker entry/heartbeat times, celld logs and Docker timestamps share one Docker VM kernel clock. Host clocks only bound polling.",
+  "sourceBaseCommit": "72231aa",
+  "sourceProvenance": "Driver, build helper, private-project copier, controller runner and authored app projects match execution snapshots. Other listed helpers remained frozen through the run.",
+  "runtimePrerequisites": [
+    "m11c-cron-controls.json",
+    "m11c-cron-rust-checks.json"
+  ],
+  "voidPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
+  "celldSourceCommit": "90b43017241f81189453d326d05948f388b34652",
+  "runtime": {
+    "controller": {
+      "image": "sha256:178b925b36d1c8bddbf188ed063476791c281a0e9279d02f170f43ae1e2778b5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-2-a": {
+      "image": "sha256:178b925b36d1c8bddbf188ed063476791c281a0e9279d02f170f43ae1e2778b5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "slot-2-b": {
+      "image": "sha256:178b925b36d1c8bddbf188ed063476791c281a0e9279d02f170f43ae1e2778b5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    },
+    "workerd": {
+      "image": "sha256:178b925b36d1c8bddbf188ed063476791c281a0e9279d02f170f43ae1e2778b5",
+      "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+    }
+  },
+  "platformSourceSetSha256": "d6b51a6869faa80a81ddf0e649b410dc29799560f283cd7d966822fda5309e49",
+  "sourceSha256": {
+    "scripts/cron-replacement.mjs": "12d9926c5062395e4901646c03b0c31fd36fdd4c6a96e0a36c5f7883fc9069d1",
+    "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+    "scripts/cron-probe/replacement/build.mjs": "f5ed8a942868ededced81981cfd64a3c4a9817ddf3acc0cc0151dcff53319c6e",
+    "scripts/cron-probe/replacement/job.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
+    "scripts/cron-probe/replacement/job.test.mjs": "3f99e0cd585dc083b62ce3c63b57ae71b1631cbbbc129f1ecd4c413282cd90fc",
+    "scripts/cron-probe/replacement/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
+    "scripts/cron-probe/controller-update.mjs": "9a5c5e9bd405a017c31c1f1db77fc7a0be0657a4ced51272e1be87a67cfb5289",
+    "scripts/cron-probe/void-controller.mjs": "4873b6f02f59601e80886b70ddcf35a8c9007cf40b9a7901c1039a87c2d18def",
+    "scripts/cron-probe/void-controller-session.mjs": "947a28c412a72500161419c308aa3b086c3a819c858f50f70602508eae823bb5",
+    "scripts/cron-probe/void-driver-session.mjs": "e8b178c8f2b018468616e8534211edcea3d57023a650862c3eec315266730fc6",
+    "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+    "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+    "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
+    "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
+    "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
+    "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
+    "scripts/queue-probe/context.mjs": "12120de990861cf7ce3978a9674b187918a11def8e47f1c7c96320f6492cf296",
+    "scripts/queue-probe/controller-artifact.mjs": "8eddf411a448d52d1d14ced13c89dfa97a66de4030a1aa31977d5011102bc87c",
+    "packages/platform/src/admin-view.mjs": "552649d0876c8e191d48413ca4d9b85b06b202a8235fa0c274c25647d392a02c",
+    "packages/platform/src/admin-dispatch.mjs": "169c053170978ec74be6c9def62a21b73ba2aa0d3faf7491b6104be1311af2f8",
+    "packages/platform/src/cron-dispatch.mjs": "2ef1288f566e0fdae78df2e6bae352030109337ce9ddfb2b6d876e15e7229b29",
+    "packages/platform/src/http.mjs": "f90a890865e9f25b3da906908911f37a3d6034655866926440f36626c7c7dba8",
+    "examples/refresh/lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+    "examples/refresh/lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+    "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
+    "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/runtime/src/artifact.mjs": "04257ca69e120cb1b5df9da1e7a42cb60618cd337f2d2fe97960684381f38f7d",
+    "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
+    "patches/void@1.1.11.patch": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024"
+  },
+  "budgets": {
+    "slot-2-a": {
+      "handlerBudgetSeconds": 30,
+      "operationDeadlineMs": 60000
+    },
+    "slot-2-b": {
+      "handlerBudgetSeconds": 30,
+      "operationDeadlineMs": 60000
+    }
+  },
+  "migrationOverlap": {
+    "scheduledTime": 1792538280000,
+    "checkpoint": {
+      "id": "5d5d054b-caec-4f55-a735-70a1a2959bfa",
+      "point": "after-migration",
+      "at": 1792538280511,
+      "native": {
+        "paused": true,
+        "revision": 2,
+        "nextAlarm": null,
+        "crons": [
+          "* * * * *"
+        ]
+      }
+    },
+    "lifecycle": {
+      "pauseConfirmedAt": 1792538280463,
+      "migrationCompletedAt": 1792538280511,
+      "gateReleasedAt": 1792538281945,
+      "publishRequestedAt": 1792538281969,
+      "publishCompletedAt": 1792538281999
+    },
+    "gateHoldMs": 1434,
+    "oldAttempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538280003,
+        "finished_at": 1792538281429,
+        "held_at": 1792538280017,
+        "id": "2baba7ea-89a6-4011-8a7f-b7f9eed2d736",
+        "instance": "0017acc6-f23e-4301-a04d-456e15dc9aa3",
+        "job": "advisory",
+        "last_poll_at": 1792538281417,
+        "outcome": "success",
+        "release": "old",
+        "result_saved_at": 1792538281423,
+        "scheduled_time": 1792538280000,
+        "unblocked_at": 1792538281421
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538280003,
+        "finished_at": 1792538280035,
+        "held_at": null,
+        "id": "3fc8ae4b-cb66-455c-b7f8-684d8dbef754",
+        "instance": "0017acc6-f23e-4301-a04d-456e15dc9aa3",
+        "job": "inventory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "old",
+        "result_saved_at": 1792538280017,
+        "scheduled_time": 1792538280000,
+        "unblocked_at": null
+      }
+    ],
+    "oldBusinessResult": {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792538281423,
+      "scheduled_time": 1792538280000,
+      "value": "Collection on time"
+    },
+    "finishedBeforePublication": true
+  },
+  "publication": {
+    "scheduledTime": 1792538340000,
+    "beforeApplicationOutcomes": [
+      {
+        "attempts": 1,
+        "completed_at": null,
+        "cron": "* * * * *",
+        "duplicates": 0,
+        "error": null,
+        "initial_mode": "healthy",
+        "job": "advisory",
+        "last_attempt_at": 1792538340011,
+        "scheduled_time": 1792538340000,
+        "status": "pending"
+      },
+      {
+        "attempts": 1,
+        "completed_at": 1792538340017,
+        "cron": "* * * * *",
+        "duplicates": 0,
+        "error": null,
+        "initial_mode": "healthy",
+        "job": "inventory",
+        "last_attempt_at": 1792538340011,
+        "scheduled_time": 1792538340000,
+        "status": "complete"
+      }
+    ],
+    "prepublicationGate": {
+      "id": "443394b3-f07c-4b11-b1dc-241fd4ea0de5",
+      "point": "before-publication",
+      "at": 1792538341107,
+      "native": {
+        "paused": true,
+        "revision": 4,
+        "nextAlarm": null,
+        "crons": [
+          "* * * * *"
+        ]
+      }
+    },
+    "lifecycle": {
+      "pauseConfirmedAt": 1792538341028,
+      "migrationCompletedAt": 1792538341080,
+      "gateReleasedAt": 1792538341930,
+      "publishRequestedAt": 1792538341931,
+      "publishCompletedAt": 1792538341961
+    },
+    "gateHoldMs": 823,
+    "liveAfterPauseAndMigration": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538340005,
+        "finished_at": null,
+        "held_at": 1792538340025,
+        "id": "06b66ff9-03d1-41c1-afd2-64820474f47e",
+        "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+        "job": "inventory",
+        "last_poll_at": 1792538341508,
+        "outcome": "pending",
+        "release": "new",
+        "result_saved_at": 1792538340017,
+        "scheduled_time": 1792538340000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538340005,
+        "finished_at": null,
+        "held_at": 1792538340017,
+        "id": "fc4122ae-9e0a-40d5-be16-ef0196d7b472",
+        "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+        "job": "advisory",
+        "last_poll_at": 1792538341508,
+        "outcome": "pending",
+        "release": "new",
+        "result_saved_at": null,
+        "scheduled_time": 1792538340000,
+        "unblocked_at": null
+      }
+    ],
+    "owner": {
+      "node": "slot-2-a",
+      "epoch": 1
+    },
+    "oldGeneration": 4,
+    "swapAt": 1792538341987,
+    "freedAt": 1792538342020,
+    "swapAfterPublishReplyMs": 26,
+    "approvedAt": 1792538342575,
+    "heartbeatsRelativeToSwap": [
+      {
+        "job": "inventory",
+        "ms": -52
+      },
+      {
+        "job": "advisory",
+        "ms": -52
+      }
+    ],
+    "finalAbandonedAttempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538340005,
+        "finished_at": null,
+        "held_at": 1792538340025,
+        "id": "06b66ff9-03d1-41c1-afd2-64820474f47e",
+        "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+        "job": "inventory",
+        "last_poll_at": 1792538341935,
+        "outcome": "pending",
+        "release": "new",
+        "result_saved_at": 1792538340017,
+        "scheduled_time": 1792538340000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538340005,
+        "finished_at": null,
+        "held_at": 1792538340017,
+        "id": "fc4122ae-9e0a-40d5-be16-ef0196d7b472",
+        "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+        "job": "advisory",
+        "last_poll_at": 1792538341935,
+        "outcome": "pending",
+        "release": "new",
+        "result_saved_at": null,
+        "scheduled_time": 1792538340000,
+        "unblocked_at": null
+      }
+    ],
+    "futureAlarm": 1792538400000,
+    "noOriginalOccurrenceReplayObservedThrough": 1792538522971
+  },
+  "lostReply": {
+    "fault": "The application throws after an acknowledged D1 batch commit to simulate a lost reply; no network packet fault is injected.",
+    "scheduledTime": 1792538400000,
+    "retryWake": {
+      "key": "slots/slot-2/wake/entries/2026-10-20T23:20/.cron:refresh/0000000000000001-0000000000000006",
+      "cell": ".cron:refresh",
+      "due_ms": 1792538404025,
+      "format": 2,
+      "identity": "0000000000000001-0000000000000006"
+    },
+    "stableOwner": {
+      "node": "slot-2-a",
+      "epoch": 1
+    },
+    "attempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538400003,
+        "finished_at": 1792538400020,
+        "held_at": null,
+        "id": "1c5eb416-4d71-4073-992b-ac04611b5267",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "advisory",
+        "last_poll_at": null,
+        "outcome": "thrown",
+        "release": "final",
+        "result_saved_at": 1792538400015,
+        "scheduled_time": 1792538400000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538400003,
+        "finished_at": 1792538400023,
+        "held_at": null,
+        "id": "3ac8cf06-018f-4b58-ae46-3cb9acfe8cb3",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "inventory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "final",
+        "result_saved_at": 1792538400014,
+        "scheduled_time": 1792538400000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538404029,
+        "finished_at": 1792538404059,
+        "held_at": null,
+        "id": "1a322c15-0c20-40f0-ad04-7dbf0acb4ab4",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "inventory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "final",
+        "result_saved_at": 1792538400014,
+        "scheduled_time": 1792538400000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538404029,
+        "finished_at": 1792538404059,
+        "held_at": null,
+        "id": "c84f80e6-635f-4796-a5a9-010cb432788b",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "advisory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "final",
+        "result_saved_at": 1792538400015,
+        "scheduled_time": 1792538400000,
+        "unblocked_at": null
+      }
+    ],
+    "applicationOccurrences": [
+      {
+        "attempts": 2,
+        "completed_at": 1792538400015,
+        "cron": "* * * * *",
+        "duplicates": 1,
+        "error": null,
+        "initial_mode": "lost-ack-once",
+        "job": "advisory",
+        "last_attempt_at": 1792538404042,
+        "scheduled_time": 1792538400000,
+        "status": "complete"
+      },
+      {
+        "attempts": 2,
+        "completed_at": 1792538400014,
+        "cron": "* * * * *",
+        "duplicates": 1,
+        "error": null,
+        "initial_mode": "lost-ack-once",
+        "job": "inventory",
+        "last_attempt_at": 1792538404041,
+        "scheduled_time": 1792538400000,
+        "status": "complete"
+      }
+    ],
+    "futureAttempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538460005,
+        "finished_at": 1792538460023,
+        "held_at": null,
+        "id": "21026806-3678-4fc1-ae7c-96f9f4e4aa28",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "advisory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "final",
+        "result_saved_at": 1792538460014,
+        "scheduled_time": 1792538460000,
+        "unblocked_at": null
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792538460005,
+        "finished_at": 1792538460023,
+        "held_at": null,
+        "id": "a9cdad90-9191-41d9-88c7-63515f7abd4b",
+        "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+        "job": "inventory",
+        "last_poll_at": null,
+        "outcome": "success",
+        "release": "final",
+        "result_saved_at": 1792538460014,
+        "scheduled_time": 1792538460000,
+        "unblocked_at": null
+      }
+    ]
+  },
+  "finalAttempts": [
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538280003,
+      "finished_at": 1792538281429,
+      "held_at": 1792538280017,
+      "id": "2baba7ea-89a6-4011-8a7f-b7f9eed2d736",
+      "instance": "0017acc6-f23e-4301-a04d-456e15dc9aa3",
+      "job": "advisory",
+      "last_poll_at": 1792538281417,
+      "outcome": "success",
+      "release": "old",
+      "result_saved_at": 1792538281423,
+      "scheduled_time": 1792538280000,
+      "unblocked_at": 1792538281421
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538280003,
+      "finished_at": 1792538280035,
+      "held_at": null,
+      "id": "3fc8ae4b-cb66-455c-b7f8-684d8dbef754",
+      "instance": "0017acc6-f23e-4301-a04d-456e15dc9aa3",
+      "job": "inventory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "old",
+      "result_saved_at": 1792538280017,
+      "scheduled_time": 1792538280000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538340005,
+      "finished_at": null,
+      "held_at": 1792538340025,
+      "id": "06b66ff9-03d1-41c1-afd2-64820474f47e",
+      "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+      "job": "inventory",
+      "last_poll_at": 1792538341935,
+      "outcome": "pending",
+      "release": "new",
+      "result_saved_at": 1792538340017,
+      "scheduled_time": 1792538340000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538340005,
+      "finished_at": null,
+      "held_at": 1792538340017,
+      "id": "fc4122ae-9e0a-40d5-be16-ef0196d7b472",
+      "instance": "8c4d3d60-6334-4825-9cd1-395c81846187",
+      "job": "advisory",
+      "last_poll_at": 1792538341935,
+      "outcome": "pending",
+      "release": "new",
+      "result_saved_at": null,
+      "scheduled_time": 1792538340000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538400003,
+      "finished_at": 1792538400020,
+      "held_at": null,
+      "id": "1c5eb416-4d71-4073-992b-ac04611b5267",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "advisory",
+      "last_poll_at": null,
+      "outcome": "thrown",
+      "release": "final",
+      "result_saved_at": 1792538400015,
+      "scheduled_time": 1792538400000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538400003,
+      "finished_at": 1792538400023,
+      "held_at": null,
+      "id": "3ac8cf06-018f-4b58-ae46-3cb9acfe8cb3",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "inventory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "final",
+      "result_saved_at": 1792538400014,
+      "scheduled_time": 1792538400000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538404029,
+      "finished_at": 1792538404059,
+      "held_at": null,
+      "id": "1a322c15-0c20-40f0-ad04-7dbf0acb4ab4",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "inventory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "final",
+      "result_saved_at": 1792538400014,
+      "scheduled_time": 1792538400000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538404029,
+      "finished_at": 1792538404059,
+      "held_at": null,
+      "id": "c84f80e6-635f-4796-a5a9-010cb432788b",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "advisory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "final",
+      "result_saved_at": 1792538400015,
+      "scheduled_time": 1792538400000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538460005,
+      "finished_at": 1792538460023,
+      "held_at": null,
+      "id": "21026806-3678-4fc1-ae7c-96f9f4e4aa28",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "advisory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "final",
+      "result_saved_at": 1792538460014,
+      "scheduled_time": 1792538460000,
+      "unblocked_at": null
+    },
+    {
+      "cron": "* * * * *",
+      "entered_at": 1792538460005,
+      "finished_at": 1792538460023,
+      "held_at": null,
+      "id": "a9cdad90-9191-41d9-88c7-63515f7abd4b",
+      "instance": "b5f79cc9-5e79-47fd-a89d-c0b6b684384d",
+      "job": "inventory",
+      "last_poll_at": null,
+      "outcome": "success",
+      "release": "final",
+      "result_saved_at": 1792538460014,
+      "scheduled_time": 1792538460000,
+      "unblocked_at": null
+    }
+  ],
+  "finalBusinessResults": [
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792538281423,
+      "scheduled_time": 1792538280000,
+      "value": "Collection on time"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792538280017,
+      "scheduled_time": 1792538280000,
+      "value": "22 sample items available"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792538340017,
+      "scheduled_time": 1792538340000,
+      "value": "23 sample items available"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792538400015,
+      "scheduled_time": 1792538400000,
+      "value": "Extra collection available"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792538400014,
+      "scheduled_time": 1792538400000,
+      "value": "24 sample items available"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "advisory",
+      "saved_at": 1792538460014,
+      "scheduled_time": 1792538460000,
+      "value": "Collection on time"
+    },
+    {
+      "compatibility_marker": "compatible",
+      "cron": "* * * * *",
+      "job": "inventory",
+      "saved_at": 1792538460014,
+      "scheduled_time": 1792538460000,
+      "value": "25 sample items available"
+    }
+  ],
+  "unfinished": [
+    {
+      "job": "advisory",
+      "cron": "* * * * *",
+      "scheduled_time": 1792538340000,
+      "initial_mode": "healthy",
+      "status": "pending",
+      "attempts": 1,
+      "duplicates": 0,
+      "last_attempt_at": 1792538340011,
+      "error": null,
+      "completed_at": null
+    }
+  ],
+  "heldEntryInterval": {
+    "start": 1792538461348,
+    "boundary": 1792538520000,
+    "end": 1792538522971
+  },
+  "browser": {
+    "errors": [],
+    "screenshotSha256": "6b2c314bbc99154cda7510b032a94f46becaa74a70b2566f0639c7f3ab7142b7"
+  },
+  "offlineBuilds": {
+    "image": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf",
+    "buildSourcesMountedReadOnly": true,
+    "profiles": {
+      "old": {
+        "status": "pass",
+        "release": "old",
+        "network": "none",
+        "declarations": {
+          "triggers": {
+            "crons": [
+              "* * * * *"
+            ]
+          },
+          "secrets": {
+            "required": [
+              "REFRESH_TOKEN"
+            ]
+          }
+        },
+        "ordinaryAdmission": "rejected",
+        "sourceSha256": {
+          "package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+          "vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+          "void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+          "fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+          "env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+          "tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+          "db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+          "db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+          "lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+          "lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+          "lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+          "routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+          "routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+          "lib/replacement.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
+          "db/migrations/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
+          "crons/inventory.ts": "96e9142520c563cf242797bdf7cc0f61732d2a54ccc71fc3f4eea4c67b758f52",
+          "crons/advisory.ts": "bb842a1b0bbb703302ffe31ae0e172f625cb467a1935820db9e180d4810f42d6"
+        }
+      },
+      "new": {
+        "status": "pass",
+        "release": "new",
+        "network": "none",
+        "declarations": {
+          "triggers": {
+            "crons": [
+              "* * * * *"
+            ]
+          },
+          "secrets": {
+            "required": [
+              "REFRESH_TOKEN"
+            ]
+          }
+        },
+        "ordinaryAdmission": "rejected",
+        "sourceSha256": {
+          "package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+          "vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+          "void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+          "fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+          "env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+          "tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+          "db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+          "db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+          "lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+          "lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+          "lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+          "routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+          "routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+          "lib/replacement.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
+          "db/migrations/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
+          "crons/inventory.ts": "0c1dbe0bd685e0046f143cc319dc42d703978fb05f99ae2a9fff340ed9ebde5a",
+          "crons/advisory.ts": "d769c98594f5eb9b97c434ab658ee6c1610ab1afa5d5c2c4ce6289d7341d39d8",
+          "db/migrations/0003_compatible.sql": "b5a3f3b411a0aef6abaf975bd2b68fdd07bac39b86d2621cccbac82a44f78460"
+        }
+      },
+      "final": {
+        "status": "pass",
+        "release": "final",
+        "network": "none",
+        "declarations": {
+          "triggers": {
+            "crons": [
+              "* * * * *"
+            ]
+          },
+          "secrets": {
+            "required": [
+              "REFRESH_TOKEN"
+            ]
+          }
+        },
+        "ordinaryAdmission": "rejected",
+        "sourceSha256": {
+          "package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+          "vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+          "void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+          "fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+          "env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+          "tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+          "db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+          "db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+          "lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+          "lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+          "lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+          "routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+          "routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+          "lib/replacement.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
+          "db/migrations/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
+          "crons/inventory.ts": "0a6ecbd0b2d07a04fcf96981d5458e61c97bb98c05f2d721867c740e795a764a",
+          "crons/advisory.ts": "ce2a28a3edd9e6651da73aeafc292229db673dbda68647ca721d235e2ebbc174",
+          "db/migrations/0003_compatible.sql": "b5a3f3b411a0aef6abaf975bd2b68fdd07bac39b86d2621cccbac82a44f78460"
+        }
+      }
+    }
+  },
+  "qualification": {
+    "processExit": 0,
+    "cleanupFailureAbsent": true,
+    "allDisposableServicesStopped": true,
+    "logsSince": "2026-10-20T23:02:06.284288211Z",
+    "services": [
+      "controller",
+      "minio",
+      "workerd",
+      "slot-2-a",
+      "slot-2-b"
+    ],
+    "selectedLogSha256": "112595e933630ccea6b930eef8603510027568d9b1d51249a3f398cb8e36b4c5",
+    "forbiddenRuntimeFaultPatternsAbsent": true,
+    "checks": [
+      "pnpm check",
+      "pnpm test: 404 passed",
+      "anti-slop: PASS",
+      "Claude policy and code reviews"
+    ],
+    "rejectedTrials": [
+      "Initial run assumed old callback survives publication. Actual generation swap left its attempt pending and no business result; rejected. Retry provenance/configuration guards were also incomplete."
+    ],
+    "sourceInstallationHealthy": true
+  },
+  "limitations": [
+    "Ordinary cron admission remains closed.",
+    "This sample observes no later D1 progress after generation free; it does not establish termination of arbitrary external effects or waitUntil work.",
+    "No universal publication latency, drain, exactly-once effects or automatic replay guarantee.",
+    "Entry logging excludes calls that fail before their first durable INSERT.",
+    "Unfinished historical rows remain audit material; there is no general application reconciliation/replay action.",
+    "Stopped historical recovery, retirement and topology qualification remain open.",
+    "Real upstream Rust suites and CPU-exhaustion behavior remain unqualified; clippy has separate evidence."
+  ],
+  "privateValuesAndRuntimeVersionsAbsent": true,
+  "exactArtifactAndSecretPinsChecked": true
+}

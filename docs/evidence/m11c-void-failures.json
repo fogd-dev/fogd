@@ -1286,5 +1286,7 @@
     "No stopped fresh-storage or historical snapshot recovery, retirement, topology expansion, old/new handler overlap, general drain or exactly-once external effects.",
     "Runtime candidate is not release-bound; upstream Rust tests/clippy and CPU-exhaustion behavior remain open."
   ],
-  "privateValuesAndRuntimeVersionsAbsent": true
+  "privateValuesAndRuntimeVersionsAbsent": true,
+  "qualificationCommit": "06bc94b",
+  "runnerProvenance": "Historical source hashes match qualification commit 06bc94b. This historical run does not qualify the later project-copy extraction or the changed refresh lifecycle and completion-time timestamps. Those need separate replacement-profile evidence."
 }

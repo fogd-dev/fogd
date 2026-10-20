@@ -35,9 +35,13 @@ test('recorded dispatch API, page and CLI status have no runtime effects or priv
     const response = await fetch(f.origin + path, { headers: f.auth }); assert.equal(response.status, 200);
     assert.equal(response.headers.get('Cache-Control'), 'no-store');
     const text = await response.text(); assert.ok(!text.includes(f.active.version)); assert.ok(!text.includes('private-refresh-value'));
-    if (path === '/') { assert.match(text, /Scheduled dispatch/); assert.match(text, /Pause does not drain/); assert.match(text, /Check the application/); }
+    if (path === '/') { assert.match(text, /Scheduled dispatch/); assert.match(text, /Pause does not drain/); assert.match(text, /Check the application/); assert.match(text, /An update can interrupt/);
+      const approvalCard = text.match(/<article><h2>refresh — active[\s\S]*?<\/article>/); assert.ok(approvalCard); assert.match(approvalCard[0], /An update can interrupt/); }
   }
+  const visibleAdmin = await (await fetch(f.origin + '/v1/admin', { headers: f.auth })).json();
+  assert.match(visibleAdmin.deployments[f.active.id].backgroundWorkNotice, /An update can interrupt/);
   const state = JSON.parse((await f.cli([])).stdout);
+  assert.match(state.updateNotice, /An update can interrupt/);
   assert.equal(state.desired, 'running'); assert.equal(state.applicationOutcomes, 'not-observed');
   assert.deepEqual(state.active, { deployment: f.active.id, digest: f.active.digest });
   assert.equal(state.approval.status, 'active'); assert.equal(state.approval.step, 'complete');

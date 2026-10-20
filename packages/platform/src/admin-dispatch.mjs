@@ -1,3 +1,4 @@
+import { cronUpdateNotice } from './cron-dispatch.mjs';
 import { dispatchFor } from './cron-activation.mjs';
 import { checkMutation } from './admin-secrets.mjs';
 
@@ -17,6 +18,7 @@ export function dispatchView(controller, name) {
     bootstrap: app.cronBootstrap.phase, recoveryError: app.dispatchRecoveryError || null,
     active: active ? { deployment: active.id, digest: active.digest } : null,
     approval: approval ? { deployment: approval.id, digest: approval.digest, status: approval.status, step: approval.step } : null,
+    updateNotice: cronUpdateNotice,
     applicationOutcomes: 'not-observed', operationAllowed, resumeAllowed: operationAllowed && resumable(controller, app) };
 }
 
@@ -73,5 +75,5 @@ export function dispatchHTML(controller, html, csrf) {
     return `<article><h2>${html(name)} scheduled dispatch</h2><p>Desired: ${html(state.desired)}. Effective intent: ${html(state.effective)}. Recorded observation: ${html(state.observed)} at ${html(state.observedAt || 'unknown')}.</p><p>Active deployment: ${html(state.active?.deployment || 'none')}. Digest: <code>${html(state.active?.digest || 'none')}</code>.</p><p>Activation hold: ${html(state.hold || 'none')}. Unconfirmed operation: ${html(state.operation || 'none')}.</p><p>Approval: ${html(state.approval?.status || 'none')} at ${html(state.approval?.step || 'unknown')}. ${html(state.recoveryError || '')}</p>${buttons}</article>`;
   }).join('');
   if (!cards) return '';
-  return `<section><h2>Scheduled dispatch</h2><p>Status is a recorded runtime observation. Pause does not drain running callbacks or waitUntil work. Operator pause persists across approvals. Resume requires the displayed active artifact to remain current. Check the application for saved results and job failures.</p>${cards}</section><script>for(const b of document.querySelectorAll('button[data-dispatch]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/apps/'+encodeURIComponent(b.dataset.app)+'/dispatch/'+b.dataset.dispatch,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({deployment:b.dataset.deployment,digest:b.dataset.digest})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script>`;
+  return `<section><h2>Scheduled dispatch</h2><p>Status is a recorded runtime observation. ${html(cronUpdateNotice)} Operator pause persists across approvals. Resume requires the displayed active artifact to remain current. Check the application for saved results and job failures.</p>${cards}</section><script>for(const b of document.querySelectorAll('button[data-dispatch]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/apps/'+encodeURIComponent(b.dataset.app)+'/dispatch/'+b.dataset.dispatch,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({deployment:b.dataset.deployment,digest:b.dataset.digest})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script>`;
 }

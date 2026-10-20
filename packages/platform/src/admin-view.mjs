@@ -1,10 +1,12 @@
+import { cronUpdateNotice } from './cron-dispatch.mjs';
 import { capacity } from './capacity.mjs';
 
 // celld versions hash the materialized config, including private vars. Keep them
 // in controller storage for readiness/recovery, not in API inspection responses.
 export function adminDeployment(request) {
-  if (!request.secretRevision) return request;
-  const { version: _version, ...visible } = request;
+  const visible = { ...request };
+  if (request.secretRevision) delete visible.version;
+  if (request.resources?.crons) visible.backgroundWorkNotice = cronUpdateNotice;
   return visible;
 }
 export function adminState(controller) {

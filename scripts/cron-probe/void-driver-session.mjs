@@ -7,7 +7,7 @@ import { expect } from '../guestbook-browser.mjs';
 
 export async function startVoidSession(probe, source, minutes = 12) {
   const runner = join(probe.output, 'runner'); await mkdir(runner);
-  for (const file of ['void-controller.mjs', 'void-controller-session.mjs', 'minute.mjs']) await cp(new URL(file, import.meta.url), join(runner, file));
+  for (const file of ['void-controller.mjs', 'void-controller-session.mjs', 'controller-update.mjs', 'minute.mjs']) await cp(new URL(file, import.meta.url), join(runner, file));
   await cp(new URL('../queue-probe/controller-artifact.mjs', import.meta.url), join(runner, 'controller-artifact.mjs'));
   const remote = await upload(probe, runner, 'void-controller');
   let result, failure, terminal = false;
@@ -29,5 +29,9 @@ export async function startVoidSession(probe, source, minutes = 12) {
     await command('finish'); await running; if (failure) throw failure;
     assert.equal(result.step, 'complete'); return result;
   }
-  return { receipt, command, finish, get terminal() { return terminal; } };
+  async function releaseUpdate(id) {
+    assert.match(id, /^[a-f0-9-]{36}$/);
+    await probe.node(`import{writeFile,rename}from'node:fs/promises';const p=${JSON.stringify(`${remote}/update-release.json`)};await writeFile(p+'.tmp',${JSON.stringify(JSON.stringify({ id }))});await rename(p+'.tmp',p);`);
+  }
+  return { receipt, command, finish, releaseUpdate, get terminal() { return terminal; } };
 }

@@ -45,7 +45,16 @@ unavailable, and a reply lost after save. A lost reply throws after the batch ha
 committed. Void retries the expression, including the successful inventory sibling.
 Each job's ledger prevents another result row for that occurrence. The latest
 success is queried independently for each job, so a long advisory outage cannot
-hide its saved value behind newer inventory results.
+hide its saved value behind newer inventory results. Success timestamps record
+completion rather than the beginning of an attempt.
+
+The unfinished-work section separately queries pending occurrences with no
+completion for a minute, or with a later successful refresh for the same job. It
+shows the oldest twenty matching records and counts the rest. Later success does
+not erase an earlier unfinished occurrence. These records report missing completion,
+not proof that no external effect happened. Failed rows remain failures. The
+example retains this history and gets fresh data on future ticks; it has no general
+replay or acknowledgment action.
 
 This protects the example's D1 writes. It provides no exactly once guarantee for
 external effects. A failed row records an observed failure; it does not establish
@@ -76,3 +85,6 @@ Inspect its private evidence, require a successful runner exit and cleanup, then
 stop the disposable installation while preserving its volumes. The probe leaves
 dispatch paused. It does not qualify normal scoped cron upload admission, runtime
 owner loss for this app, release replacement, full stopped recovery or retirement.
+Those first two have separate [failure](../../docs/cron-failures.md) and
+[replacement](../../docs/cron-replacement.md) profiles; recovery and retirement
+remain open.

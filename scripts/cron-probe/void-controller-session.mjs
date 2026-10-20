@@ -14,6 +14,7 @@ import { stageRequest } from './controller-artifact.mjs';
 import { regularFiles } from '/app/packages/runtime/src/artifact.mjs';
 import { adminState } from '/app/packages/platform/src/admin-view.mjs';
 
+import { updateApprover } from './controller-update.mjs';
 import { waitForMinuteBoundary } from './minute.mjs';
 
 export async function serveVoidController(source, slotId, output, minutes = 12) {
@@ -32,6 +33,8 @@ export async function serveVoidController(source, slotId, output, minutes = 12) 
   try {
     const token = randomBytes(32).toString('hex');
     const selected = await controller.replaceSecrets('refresh', { REFRESH_TOKEN: token });
+    const approveUpdate = updateApprover({ controller, backend, slot, output, receipt, save, token, revision: selected.revision,
+      onRequest: value => { request = value; }, onStep: value => { commandStep = value; } });
     request = await stageRequest(controller, source, async () => {}, { requiredSecrets: ['REFRESH_TOKEN'] });
     for (const file of await regularFiles(controller.artifact(request.id))) assert.ok(!(await readFile(join(controller.artifact(request.id), file), 'utf8')).includes(token));
     receipt.digest = request.digest; await save();
@@ -51,16 +54,8 @@ export async function serveVoidController(source, slotId, output, minutes = 12) 
       if (command && command.id !== commandId) {
         commandId = command.id;
         assert.ok(['pause', 'resume', 'finish', 'update'].includes(command.operation));
-        if (command.operation === 'update') {
-          commandStep = 'staging update';
-          assert.match(command.source || '', new RegExp('^/tmp/fogd-queue-probe-' + slot.id + '-[a-z0-9-]+$'));
-          const update = await stageRequest(controller, command.source, async () => {}, { requiredSecrets: ['REFRESH_TOKEN'] });
-          for (const file of await regularFiles(controller.artifact(update.id))) assert.ok(!(await readFile(join(controller.artifact(update.id), file), 'utf8')).includes(token));
-          request = update; commandStep = null;
-          await controller.mutate(update.id, update.digest, 'approve', selected.revision);
-          assert.equal(update.status, 'active', `Native update failed at ${update.step}`);
-          receipt.digest = update.digest; receipt.artifact = controller.artifact(update.id);
-        } else if (command.operation !== 'finish') await controller.exclusive(() => dispatchFor(controller, controller.state.apps.refresh, slot)[command.operation]());
+        if (command.operation === 'update') await approveUpdate(command);
+        else if (command.operation !== 'finish') await controller.exclusive(() => dispatchFor(controller, controller.state.apps.refresh, slot)[command.operation]());
         receipt.command = { id: command.id, operation: command.operation };
         receipt.dispatch = controller.state.apps.refresh.dispatch; await save();
         if (command.operation === 'finish') break;
