@@ -5,10 +5,13 @@ import { join } from 'node:path';
 import { context, requireEmptyFleet, deploy } from './queue-probe/context.mjs';
 import { expect } from './guestbook-browser.mjs';
 import { cleanupCronProbe } from './cron-probe-cleanup.mjs';
+import { CronRuntime } from '../packages/platform/src/cron-runtime.mjs';
 
 const probe = await context(process.argv[2], process.argv[3]);
 await requireEmptyFleet(probe);
 const script = 'cron-controls';
+const runtime = new CronRuntime({ run: (_slot, args) => probe.cli(args), inspect: node => probe.deployment(node) });
+let approvedVersion;
 const source = `export default {
   async fetch(request, env) {
     if(request.method==='POST') { await env.RESULTS.put('release','yes'); return Response.json({released:true}); }
@@ -31,7 +34,8 @@ async function publish(label, crons) {
   return deploy(probe, dir, label);
 }
 async function control(op) {
-  return JSON.parse((await probe.cli(['cron', op, script, '--json'])).trim());
+  return op === 'resume' ? runtime.resume(probe.slot, script, approvedVersion)
+    : runtime[op === 'info' ? 'status' : op](probe.slot, script);
 }
 async function throughBoundary() {
   const boundary = Math.floor(Date.now() / 60000 + 1) * 60000;
@@ -44,6 +48,7 @@ try {
   const bootstrap = await publish('bootstrap', []);
   const initial = await control('info');
   assert.equal(initial.paused, true); assert.equal(initial.nextAlarm, null);
+  await assert.rejects(runtime.resume(probe.slot, script, bootstrap.version), { code: 'CRON_EMPTY_SCHEDULE' });
   stage = 'unsigned internal transport';
   const unsignedAccess = [];
   for (const path of [`/do/.cron:${script}`, `/runtime/.cron:${script}`]) {
@@ -54,6 +59,9 @@ try {
   }
   stage = 'adoption hold';
   const scheduled = await publish('scheduled', ['* * * * *', '*/1 * * * *']);
+  approvedVersion = scheduled.version;
+  await assert.rejects(runtime.resume(probe.slot, script, 'unapproved-version'), /approved runtime version/);
+  assert.deepEqual(await control('info'), { ...initial, crons: ['* * * * *', '*/1 * * * *'] });
   const heldBoundary = await throughBoundary();
   assert.deepEqual(await probe.app(), []);
   stage = 'held callback pause';

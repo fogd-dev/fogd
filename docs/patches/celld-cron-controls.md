@@ -42,6 +42,27 @@ Resuming an empty bootstrap and then publishing user code is unsafe as an activa
 protocol. A runtime observation is not a release fence. These requirements keep
 platform admission closed until the full lifecycle is implemented and qualified.
 
+The experimental [controller transport](../../packages/platform/src/cron-runtime.mjs)
+checks every configured replica and the resident cron cell's generation before
+resume, and refuses to resume an empty bootstrap schedule. It confirms mutations
+with a separate status read and reports lost replies
+as uncertain, without automatic retry. Status exposes control observations only;
+it cannot infer callback completion from the alarm view. The controller must still
+persist approval and dispatch intent before using this transport. The transport
+does not implement that activation journal or authorize cron declarations.
+Use it only with the qualified patched runtime on every replica. Deployment
+versions identify application code, not the runtime binary; the transport cannot
+detect an older runtime before its first command. On an older harness, even an
+info request can arm a timer. Runtime provenance and stopped replacement remain
+operator prerequisites.
+
+The [native transport profile](../evidence/m11c-cron-transport.json) exercises
+these checks on a fresh two-node fleet, including empty-bootstrap and unapproved
+version refusal, mid-callback pause and held restart. Its accepted result requires
+a successful runner exit, independently checked events and stopped disposable
+containers. Lost-response and malformed-status cases are covered by the
+[transport tests](../../packages/platform/test/cron-runtime.test.mjs).
+
 Stop every replica before replacing the runtime. Mixed versions, rolling upgrades
 and rollback are unqualified: older runtimes ignore the hold. A held full snapshot
 and explicit recovery acknowledgment still need stopped-restore qualification.

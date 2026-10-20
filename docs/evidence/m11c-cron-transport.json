@@ -1,0 +1,188 @@
+{
+  "profile": "M11c experimental cron transport on a fresh two-node Docker fleet",
+  "result": "pass",
+  "scope": "Native runtime controls through the experimental transport. No fogd approval/activation journal, ordinary Void cron admission, snapshot recovery or release fence is qualified.",
+  "runtime": {
+    "image": "sha256:1e1c0c6ca1c3e1012e8d2ac63d885f4c10a4a293a360dcb0f3ed56caab2b6a87",
+    "binarySha256": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "provenance": "m11c-cron-controls.json",
+    "controllerAndReplicaBinaryHashesChecked": true
+  },
+  "sources": {
+    "adapterSha256": "d39ae485a8d960b46cbd3a6871cf40b13d757481953e59fdbe2b484df5f27200",
+    "probeSha256": "8a563023c627145f6244495ab8e603dafe3977f0ce31687f7ec1b963edd6f481"
+  },
+  "preflightRefusals": {
+    "emptyBootstrapSchedule": true,
+    "unapprovedReplicaVersion": true
+  },
+  "releases": {
+    "bootstrap": "0b2977e48e13e4ca",
+    "scheduled": "7a160ec6b6a85efa"
+  },
+  "initial": {
+    "paused": true,
+    "revision": 0,
+    "nextAlarm": null,
+    "crons": []
+  },
+  "unsignedAccess": [
+    {
+      "path": "/do/.cron:cron-controls",
+      "status": 403,
+      "body": "{\"error\":\".cron is a runtime class and is not reachable over /do/; reach it through its binding\"}"
+    },
+    {
+      "path": "/runtime/.cron:cron-controls",
+      "status": 401,
+      "body": "peer authentication failed"
+    }
+  ],
+  "heldBoundary": 1792523820000,
+  "resumedAt": 1792523822810,
+  "resumed": {
+    "paused": false,
+    "revision": 1,
+    "nextAlarm": 1792523880000,
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ]
+  },
+  "started": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792523880000,
+      "at": 1792523880003,
+      "phase": "started"
+    }
+  ],
+  "paused": {
+    "paused": true,
+    "revision": 2,
+    "nextAlarm": null,
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ]
+  },
+  "finished": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792523880000,
+      "at": 1792523880003,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792523880000,
+      "at": 1792523881041,
+      "phase": "finished"
+    }
+  ],
+  "restartBoundary": 1792523940000,
+  "restartStatus": {
+    "paused": true,
+    "revision": 2,
+    "nextAlarm": null,
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ]
+  },
+  "explicitResumeAt": 1792523942717,
+  "explicitResume": {
+    "paused": false,
+    "revision": 3,
+    "nextAlarm": 1792524000000,
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ]
+  },
+  "afterResume": [
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792523880000,
+      "at": 1792523880003,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792523880000,
+      "at": 1792523881041,
+      "phase": "finished"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792524000000,
+      "at": 1792524000004,
+      "phase": "started"
+    },
+    {
+      "cron": "* * * * *",
+      "scheduledTime": 1792524000000,
+      "at": 1792524000011,
+      "phase": "finished"
+    },
+    {
+      "cron": "*/1 * * * *",
+      "scheduledTime": 1792524000000,
+      "at": 1792524000014,
+      "phase": "started"
+    },
+    {
+      "cron": "*/1 * * * *",
+      "scheduledTime": 1792524000000,
+      "at": 1792524000018,
+      "phase": "finished"
+    }
+  ],
+  "finalPause": {
+    "paused": true,
+    "revision": 4,
+    "nextAlarm": null,
+    "crons": [
+      "* * * * *",
+      "*/1 * * * *"
+    ]
+  },
+  "replicas": [
+    {
+      "host": "slot-1-a",
+      "version": "7a160ec6b6a85efa",
+      "generation": 1,
+      "cells": {
+        ".cron:cron-controls": 1
+      }
+    },
+    {
+      "host": "slot-1-b",
+      "version": "7a160ec6b6a85efa",
+      "generation": 1,
+      "cells": {}
+    }
+  ],
+  "checks": {
+    "ordinaryTests": 315,
+    "transportTests": 12,
+    "deliberateMutationsCaught": 6,
+    "syntax": "pass",
+    "antiSlop": "pass",
+    "ordinaryCronAdmission": "rejected"
+  },
+  "cleanup": {
+    "runnerExitCode": 0,
+    "failureArtifactAbsent": true,
+    "cleanupFailureArtifactAbsent": true,
+    "allFixtureContainersStopped": true,
+    "volumesRetained": true
+  },
+  "remaining": [
+    "Controller activation and persisted dispatch intents",
+    "Ordinary Void scheduled app and application idempotency",
+    "Replacement, recovery and retirement lifecycle",
+    "Runtime provenance enforcement before admission",
+    "Upstream Rust tests/clippy and CPU-exhaustion qualification"
+  ]
+}

@@ -125,7 +125,9 @@ Next: the [M11c scheduled-work contract](m11c.md), informed by
 [source discovery](m11c-discovery.md) and the [native timer probe](cron-qualification.md).
 Native timer, retry-owner-loss and isolated watchdog probes pass their recorded
 profiles. The experimental [native hold](patches/celld-cron-controls.md) also has
-bootstrap/adoption and replica-restart evidence. Platform admission remains closed
+bootstrap/adoption and replica-restart evidence. An experimental controller
+transport checks approved replica/cell generations before resume and preserves
+uncertain mutation outcomes. Platform admission remains closed
 pending approved Void jobs and the controller/recovery lifecycle. The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
