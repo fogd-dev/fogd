@@ -23,7 +23,7 @@ function adminApp(app) {
     const { id, status, diagnosis, checkError, checkedAt, acknowledgedAt } = app.queueRecovery;
     visible.queueRecovery = { id, status, diagnosis, checkError, checkedAt, acknowledgedAt };
   }
-  for (const field of ['delivery', 'queueBootstrap']) {
+  for (const field of ['delivery', 'queueBootstrap', 'dispatch', 'cronBootstrap']) {
     if (!app[field]) continue;
     const { version: _version, ...state } = app[field];
     visible[field] = state;

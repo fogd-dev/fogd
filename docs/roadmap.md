@@ -128,7 +128,10 @@ profiles. The experimental [native hold](patches/celld-cron-controls.md) also ha
 bootstrap/adoption and replica-restart evidence. An experimental controller
 transport checks approved replica/cell generations before resume and preserves
 uncertain mutation outcomes. Platform admission remains closed
-pending approved Void jobs and the controller/recovery lifecycle. The [M11a acceptance audit](m11a-acceptance.md)
+while the [experimental activation journal](cron-activation.md) is qualified through
+controller interruption and native bootstrap drills. Approval pins its artifact and
+secret revision before effects; ordinary Void jobs and recovery remain open.
+The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
 qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after

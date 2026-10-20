@@ -1,4 +1,11 @@
 import { prepareQueue, markQueueApplication } from './queue-activation.mjs';
+import { prepareCron, markCronApplication } from './cron-activation.mjs';
+
+async function prepareBackground(controller, request, app, slot, execution, step) {
+  const cron = Boolean(request.resources.crons);
+  const control = await (cron ? prepareCron : prepareQueue)(controller, request, app, slot, execution, step);
+  return control ? { control, mark: cron ? markCronApplication : markQueueApplication, releaseStep: cron ? 'releasing-dispatch' : 'releasing-delivery' } : null;
+}
 
 async function publish(controller, request, slot, execution, step) {
   await step('publishing');
@@ -31,7 +38,7 @@ async function finish(controller, request, app, step) {
 async function failed(controller, request, app, slot) {
   // Queue failures retain their hold. Reconciliation can write D1, so defer it
   // until explicit retry has established pause again (resume may be uncertain).
-  if (request.resources.queues) return;
+  if (request.resources.queues || request.resources.crons) return;
   try { await controller.reconcile(app, slot); }
   catch (error) { request.error += app.privateConfiguration ? '; migration reconciliation pending' : `; migration reconciliation pending: ${error.message}`; }
 }
@@ -43,14 +50,14 @@ export async function activateRelease(controller, request, app, slot, selected) 
     app.resources = structuredClone(request.resources);
     await step('approved');
     execution = await controller.secrets.materialize(request, execution, selected.values);
-    const delivery = await prepareQueue(controller, request, app, slot, execution, step);
-    if (!app.active && !delivery) await publish(controller, request, slot, execution, step);
+    const background = await prepareBackground(controller, request, app, slot, execution, step);
+    if (!app.active && !background) await publish(controller, request, slot, execution, step);
     await migrate(controller, request, app, slot, execution, step);
-    await markQueueApplication(app, delivery, step);
-    if (app.active || delivery) await publish(controller, request, slot, execution, step);
-    if (delivery) {
-      await step('releasing-delivery');
-      await delivery.completeActivation(request.id, request.version);
+    if (background) await background.mark(app, background.control, step);
+    if (app.active || background) await publish(controller, request, slot, execution, step);
+    if (background) {
+      await step(background.releaseStep);
+      await background.control.completeActivation(request.id, request.version);
     }
     await finish(controller, request, app, step);
   } catch (error) {

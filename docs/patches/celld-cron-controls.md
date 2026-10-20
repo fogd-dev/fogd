@@ -49,7 +49,9 @@ with a separate status read and reports lost replies
 as uncertain, without automatic retry. Status exposes control observations only;
 it cannot infer callback completion from the alarm view. The controller must still
 persist approval and dispatch intent before using this transport. The transport
-does not implement that activation journal or authorize cron declarations.
+does not implement that activation journal or authorize cron declarations. The
+[experimental coordinator](../cron-activation.md) supplies a separate, internally
+staged journal; ordinary approved cron applications remain unqualified.
 Use it only with the qualified patched runtime on every replica. Deployment
 versions identify application code, not the runtime binary; the transport cannot
 detect an older runtime before its first command. On an older harness, even an

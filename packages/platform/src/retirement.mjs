@@ -2,6 +2,7 @@ import { queueCapability } from './queue-activation.mjs';
 import { queueRecoveryCapability } from './queue-snapshot.mjs';
 import { queueRetirementCapability, assertQueueRetirement, retainRetiredQueue, validateRetiredQueue } from './queue-retirement.mjs';
 import { claimCapability } from './claims.mjs';
+import { cronCapability } from './cron-dispatch.mjs';
 import { appName } from '@fogd/runtime/artifact';
 
 export const retirementCapability = 'fogd-retirement-v1';
@@ -9,7 +10,7 @@ export function assertLiveName(state, name) {
   if (state.apps[name]?.retirement) throw new Error('App name is permanently retired; choose a different name');
 }
 export function validateRetirementState(state, slots) {
-  if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability, queueRecoveryCapability, queueRetirementCapability].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
+  if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability, queueRecoveryCapability, queueRetirementCapability, cronCapability].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
   for (const [name, app] of Object.entries(state.apps)) {
     if (!app.retirement) continue;
     if (!state.requirements?.includes(retirementCapability) || app.slot !== null || app.route !== 'retired') throw new Error('Invalid retirement tombstone; restore matching metadata');
@@ -22,6 +23,7 @@ export const overlap = (a, b) => a === b || a.startsWith(b + '/') || b.startsWit
 export function retirementApp(state, name, digest, { stopQueuedWork = false } = {}) {
   appName(name); assertLiveName(state, name);
   const app = state.apps[name], active = state.deployments[app?.active];
+  if (app?.dispatch || app?.resources?.crons) throw new Error('Scheduled app retirement is not qualified');
   assertQueueRetirement(state, name, stopQueuedWork);
   if (!app || !active) throw new Error('Retirement requires an existing activated app');
   if (app.quarantined || app.uncertain || !['active', 'paused'].includes(app.route) || active.status !== 'active') throw new Error('Retirement requires a known active version with reconciled migrations');

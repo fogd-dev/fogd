@@ -1,0 +1,174 @@
+{
+  "profile": "M11c internally staged activation journal; native two-node Docker controller drill",
+  "result": "pass",
+  "scope": "Raw Worker staged privately; ordinary cron upload admission remains closed. Native controller object reload is tested, not native activation SIGKILL or full installation recovery. Workerd ingress and ordinary Void scheduled jobs remain unqualified.",
+  "runtime": {
+    "image": "sha256:bb6c847465cac835682263adfb4a9718aa04c66536fa39a93fefa4fe3a3b6fb4",
+    "binarySha256": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "controlPatchProvenance": "m11c-cron-controls.json",
+    "allSelectedImagesMatch": true,
+    "imagePlatformSourcesComparedWithCheckout": true
+  },
+  "sources": {
+    "platform": {
+      "activation.mjs": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+      "admin-capacity.mjs": "e779d72f40a3568ba5cf822fe3ce796b5dd4d384118bfc3b0d4bd5467bc7a238",
+      "admin-credentials.mjs": "2c762aa30fa1c0ce83f8daf7059946ed8e6a20ceb48e36ba545c6af4b6a90e5b",
+      "admin-delivery.mjs": "102bbc90dc1fcbbe75fa348f90fc3d930ef42488ce82b5ab6bac47b53610af95",
+      "admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
+      "admin-view.mjs": "0ab2468de1d28f2680ca241758a28f66e63428dcb31910f20004d6f20a417d95",
+      "backend.mjs": "ab1dc727a77215f522c369d6b758861d8948b96f77e61f4346b93ef0c74ee532",
+      "capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
+      "claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
+      "controller.mjs": "c79075a31ce4317f255b0bee1ed18e76ddbfd5f566d96f2b86697561802ceea2",
+      "credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
+      "cron-activation.mjs": "0650a773c991f22c970e64600bd2af76399b6296a6fd1caf3032935fa9098da6",
+      "cron-dispatch.mjs": "9bfdf82760fdad6787e3c26e915f7bc6f0a16dfe20b389a3622610f1b11cca4e",
+      "cron-runtime.mjs": "d39ae485a8d960b46cbd3a6871cf40b13d757481953e59fdbe2b484df5f27200",
+      "delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+      "deployment-http.mjs": "6cdbf3168f64295b0e2c2d400695119ff0ae550728dee600b9b20d65c65cdbc4",
+      "deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
+      "dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+      "http.mjs": "8e212326e2f7b2471f69d33c2226aace26cd79c50f734fcc5c02ed57081b6f58",
+      "main.mjs": "d5bb7a1c20a6a365cf812987423ef52cda1cd6298f79d54cacaa3085675c62c3",
+      "queue-activation.mjs": "23284caca3163c7f9ee70157f78d324842cfea5fb03dbd0169e3fcc4af52345d",
+      "queue-history.mjs": "0e42c80d1cfccf4b1e05b3565efdc0028f3ee6e34866df0bbee72051cdc766f3",
+      "queue-recovery.mjs": "47a2cd02ebefbb1d29f58eb61fa019e961d828f82aee5153aa879446ab2d777c",
+      "queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+      "queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+      "queue-runtime.mjs": "570a10dabc87f9f01a06a8d0df4f91003c2b5308bb101afe7bb3ea47ae753f1d",
+      "queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+      "quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
+      "resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
+      "retirement.mjs": "c5df4e0f1ca42767b8d6e72897bd7be715f235aa42feb0b3a994b4a1650e7636",
+      "secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
+      "security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
+      "store.mjs": "b0f11bbd640047a1661dbcbff7d05f198c546b89bbd5062f96b8b7a9d482a531"
+    },
+    "runnerSha256": "7b19ff362d8ba1159b0cb9e84c454cb2c6069bc1b120c86b6199fdaa1622c96a",
+    "hostProbeSha256": "fcc6b5b641315465e6cb5387ca74a00878397a807f3091ba1952feeb8ce4d6d3"
+  },
+  "preapproval": {
+    "minuteBoundary": 1792525500000,
+    "artifactRemainedUnpublished": true,
+    "exactApprovalAndSecretPinnedBeforeClaim": true
+  },
+  "delayedMigration": {
+    "minuteBoundary": 1792525560000,
+    "before": {
+      "paused": true,
+      "revision": 0,
+      "nextAlarm": null,
+      "crons": []
+    },
+    "after": {
+      "paused": true,
+      "revision": 0,
+      "nextAlarm": null,
+      "crons": []
+    },
+    "appFreeBootstrapAdoptedByBothReplicas": true
+  },
+  "lostResume": {
+    "runtimeAfterLostReply": {
+      "paused": false,
+      "revision": 1,
+      "nextAlarm": 1792525620000,
+      "crons": [
+        "* * * * *"
+      ]
+    },
+    "runtimeAfterControllerReload": {
+      "paused": true,
+      "revision": 2,
+      "nextAlarm": null,
+      "crons": [
+        "* * * * *"
+      ]
+    },
+    "originalApprovalExplicitlyRetried": true,
+    "noImplicitResumeOnReload": true
+  },
+  "firstRows": [
+    {
+      "cron": "* * * * *",
+      "scheduled_time": 1792525620000,
+      "ran_at": 1792525620029,
+      "revision": "1",
+      "secret_ready": 1
+    }
+  ],
+  "pausedUpdate": {
+    "minuteBoundary": 1792525680000,
+    "runtime": {
+      "paused": true,
+      "revision": 4,
+      "nextAlarm": null,
+      "crons": [
+        "* * * * *"
+      ]
+    },
+    "desired": "paused",
+    "observed": "paused",
+    "hold": null,
+    "operation": null,
+    "finalRows": [
+      {
+        "cron": "* * * * *",
+        "scheduled_time": 1792525620000,
+        "ran_at": 1792525620029,
+        "revision": "1",
+        "secret_ready": 1
+      }
+    ],
+    "approvedRuntimeChanged": true,
+    "allReplicasAdoptedApprovedVersion": true
+  },
+  "approvals": {
+    "firstDigest": "7ed6145e54d1e518b3bf12a9701580a054712c7638dacdb9ed174fa23c662ce8",
+    "updateDigest": "eb6650552bd3ad9c8cf87a5e99b91f1809101f5182fb3070b6002d6021f13ac3",
+    "privateRuntimeVersionsOmitted": true
+  },
+  "replicas": [
+    {
+      "node": "slot-1-a",
+      "approvedVersionAdopted": true,
+      "generation": 5,
+      "cells": {
+        ".cron:refresh": 5,
+        "__D1Database:824a93c84bd2d1d1bb8a3f8d656ae05d55fd5ddcbc116629dbe6fc949b5c9fba": 5
+      }
+    },
+    {
+      "node": "slot-1-b",
+      "approvedVersionAdopted": true,
+      "generation": 5,
+      "cells": {}
+    }
+  ],
+  "tests": {
+    "ordinary": 370,
+    "cronActivationAndState": 55,
+    "modelControllerSigkillCases": 14,
+    "modelMetadataAmbiguityCases": 20,
+    "modelLostResponseMatrixCases": 7,
+    "syntax": "pass",
+    "antiSlop": "pass",
+    "modelScope": "File-backed runtime stand-in. These process-kill and ambiguous-write tests are not native runtime qualification."
+  },
+  "cleanup": {
+    "runnerExitCode": 0,
+    "failureArtifactAbsent": true,
+    "cleanupFailureArtifactAbsent": true,
+    "allFixtureContainersStopped": true,
+    "volumesRetained": true,
+    "sourceStackHealthy": true
+  },
+  "remaining": [
+    "Ordinary scoped CLI/Void scheduled application admission and job-level idempotency",
+    "Operator dispatch interfaces and runtime provenance enforcement",
+    "Native process-kill activation, release replacement and retry/failure profiles",
+    "Held snapshots, recovery acknowledgment, retirement and slot reuse",
+    "Upstream Rust checks and CPU-exhaustion qualification"
+  ]
+}

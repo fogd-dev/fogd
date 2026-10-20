@@ -108,8 +108,11 @@ original occurrence after owner loss in a two-node runtime probe. The
 set and actual future dispatch. The [native hold candidate](patches/celld-cron-controls.md)
 passes bootstrap/adoption and restart checks, including a callback that finishes
 while its sibling is suppressed. These are runtime experiments. Upstream Rust
-tests/clippy and CPU-exhaustion qualification remain open. Ordinary approved Void
-cron apps, activation controls and full recovery tests remain unqualified. Workflows/general alarms, remote
+tests/clippy and CPU-exhaustion qualification remain open. An internally staged
+[activation coordinator](cron-activation.md) has file-backed interruption tests and
+a native D1/secret bootstrap, lost-resume reload and paused-update profile. Ordinary
+approved Void cron apps, operator interfaces and full recovery tests remain
+unqualified. Workflows/general alarms, remote
 infrastructure and M12 portability follow their own acceptance contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.

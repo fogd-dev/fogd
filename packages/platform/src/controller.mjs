@@ -1,6 +1,8 @@
 import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
 import { validateRecoveryState, recoverQueueSnapshots } from './queue-recovery.mjs';
 import { activateRelease } from './activation.mjs';
+import { assertCronDecision, interruptCronActivation, recoverCronHolds, validateCronState } from './cron-activation.mjs';
+import { requireCronCapability } from './cron-dispatch.mjs';
 import { assertQueueDecision, interruptQueueActivation, recoverQueueHolds, requireQueueCapability, validateQueueState } from './queue-activation.mjs';
 import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
 import { assertLiveName, validateRetirementState } from './retirement.mjs';
@@ -55,13 +57,15 @@ export class Controller {
     await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     validateRetirementState(this.state, this.slots);
     validateQueueState(this.state);
+    validateCronState(this.state, this.backend.crons);
     validateRecoveryState(this.state);
     for (const request of Object.values(this.state.deployments)) {
-      if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
+      if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); interruptCronActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
     await inspectOwnership(this);
     await this.save();
     await recoverQueueHolds(this);
+    await recoverCronHolds(this);
     await recoverQueueSnapshots(this);
   }
   assertStorage() {
@@ -161,6 +165,7 @@ export class Controller {
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
       this.assertQueueAdmission(request, action);
+      assertCronDecision(this.state.apps[request.app], request, action, replaces, this.backend.crons);
       if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
       const previous = replacementFor(this, request, replaces);
       assertQueueDecision(this.state.apps[request.app], request, action, Boolean(previous));
@@ -183,6 +188,7 @@ export class Controller {
   }
   async prepareActivation(request, app, slot, selected) {
     requireQueueCapability(this.state, request.resources);
+    requireCronCapability(this.state, request.resources);
     // Pin the approval before any backend effect, including a first slot claim.
     request.secretRevision = selected.revision;
     request.status = 'activating'; request.step = 'preparing-activation'; request.error = null;
@@ -194,7 +200,7 @@ export class Controller {
       this.occupied.add(slot.id);
       this.bucketOwners.set(slot.id, request.app);
       if (app.claim) { delete app.claim; await this.save(); }
-      if (!request.resources.queues) await this.reconcile(app, slot);
+      if (!request.resources.queues && !request.resources.crons) await this.reconcile(app, slot);
       request.resourceChanges = this.compatible(request, app);
       if (await artifactDigest(this.artifact(request.id)) !== request.digest) throw new Error('Stored artifact digest mismatch');
     } catch (error) {

@@ -6,6 +6,12 @@ const failures = {
   'checking-migration-ledger': 'Migration history could not be verified. An administrator must reconcile it before retrying.',
   'validating-application': 'The application environment failed validation. Ask an administrator to check the declared configuration.',
   migrating: 'A database migration failed or was interrupted. Ask an administrator to inspect the migration before retrying.',
+  'cron-bootstrap-intent': 'Scheduled activation preparation failed. An administrator must inspect and retry this release.',
+  'publishing-cron-bootstrap': 'Database bootstrap publication is uncertain. An administrator must inspect and retry this release.',
+  'waiting-for-cron-bootstrap': 'The replicas did not adopt the database bootstrap. Ask an administrator to check their health.',
+  'pausing-dispatch': 'Scheduled dispatch pause could not be confirmed. An administrator must restore the fleet before retrying.',
+  'cron-application-intent': 'Scheduled application publication could not start. An administrator must inspect and retry this release.',
+  'releasing-dispatch': 'Scheduled dispatch release is uncertain. An administrator must inspect and retry this release.',
   complete: 'Activation was interrupted while recording its result. Ask an administrator to inspect this release.',
 };
 
