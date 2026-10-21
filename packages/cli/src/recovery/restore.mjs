@@ -1,4 +1,10 @@
-import { mkdir, rename, open } from 'node:fs/promises';
+import { parseArgs } from 'node:util';
+import { requestedRecoveryRuntime, selectedRecoveryPlan } from '../runtime/recovery-selection.mjs';
+import { authorizeInstalledPolicy, verifyRuntimeFamily } from '../runtime/catalog.mjs';
+import { writeRuntimeConfiguration, completeRuntimeRestore, hasRuntimeEnrollment } from '../runtime/installation-state.mjs';
+import { writeRecoverySource } from '../runtime/recovery-source.mjs';
+import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { mkdir, rename, open, lstat } from 'node:fs/promises';
 import { restoreVolumes, volumeHelper } from './volumes.mjs';
 import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
@@ -18,13 +24,17 @@ import { restoredRuntimeConfig } from '../runtime/cron-preboot.mjs';
 import { verifyCronRuntimeImage, verifyCronStorageImage } from '../runtime/cron-image.mjs';
 import { hasCronHistory } from '@fogd/platform/cron-history';
 
-export async function restore(directory, project, output) {
+export async function restore(directory, project, output, selection = {}) {
+  requestedRecoveryRuntime(selection);
   projectName(project);
   const dir = resolve(directory), destination = resolve(output);
   const { manifest, config } = await verifyBundle(dir);
-  return restoreInstallation({ manifest, config, dir }, project, destination);
+  const selected = selectedRecoveryPlan({ manifest, config }, selection);
+  return restoreInstallation({ manifest, config, dir }, project, destination, null, selected?.targetPolicy, { selected: Boolean(selected) });
 }
-export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null, runtimeProfile = null) {
+export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null, runtimeProfile = null, { selected = false } = {}) {
+  if (await hasRuntimeEnrollment(project)) throw new Error('Installation enrollment already exists; retain it and choose a fresh project');
+  await requireNewOutput(destination);
   const policy = runtimeProfile && structuredClone(runtimeProfile);
   const state = await restoredInstallationState(dir, manifest, change);
   assertCronDockerTopology(state, config);
@@ -39,27 +49,66 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   validateTopology(base);
   const target = restoredRuntimeConfig(state, base, policy);
   const volumes = volumeNames(target);
-  if (change) await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
+  if (change || selected) await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   await requireFresh(project, target);
   const started = Date.now(), file = join(destination, 'compose.pending.json');
-  await loadRestoreImages(dir, manifest.images, images.controller, state, change, policy, hasRuntimePolicy(target));
-  await mkdir(destination, { mode: 0o700 });
+  await prepareRestoreRuntime({ manifest, config, dir }, images.controller, state, change, policy, target, selected, destination);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
   await restoreSnapshotData(dir, target, manifest.images.controller, state, change?.skipped, policy);
+  await finalizeRestore({ manifest, config }, target, destination, change, started, selected ? policy : null);
+  return { config: target, policy, directory: destination };
+}
+
+async function prepareRestoreRuntime({ manifest, config, dir }, controller, state, change, policy, target, selected, destination) {
+  if (selected) {
+    await verifyRuntimeFamily(authorizeInstalledPolicy(policy));
+    await requireStateRuntime(controller, state, change, policy, true);
+    const env = target.services.controller.environment;
+    console.log(`Selected recovery ingress: ${env.FOGD_PUBLIC_BIND_ADDRESS || '127.0.0.1'}; TLS ${env.FOGD_TLS === '1' ? 'enabled' : 'disabled'}. Review trusted snapshot exposure before startup.`);
+  } else await loadRestoreImages(dir, manifest.images, controller, state, change, policy, hasRuntimePolicy(target));
+  await mkdir(destination, { mode: 0o700 });
+  if (selected) {
+    await writeRuntimeConfiguration(target, { reserve: true, recovery: true });
+    await writeRecoverySource(target.name, manifest.sourceProject, config);
+  }
+}
+
+async function requireNewOutput(destination) {
+  try { await lstat(destination); }
+  catch (error) { if (error.code === 'ENOENT') return; throw error; }
+  throw new Error('Recovery output already exists; retain it and choose a fresh directory');
+}
+
+async function finalizeRestore({ manifest, config }, target, destination, change, started, policy) {
   if (change) {
     await writeJson(join(destination, `${change.kind}.json`), change.evidence);
-    await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   }
-  await stopped(project, volumes.map(name => target.volumes[name].name));
-  await rename(file, join(destination, 'compose.json'));
+  if (change || policy) await stopped(manifest.sourceProject, volumeNames(config).map(name => config.volumes[name].name));
+  await stopped(target.name, volumeNames(target).map(name => target.volumes[name].name));
+  await rename(join(destination, 'compose.pending.json'), join(destination, 'compose.json'));
   const parent = await open(destination, 'r');
   try { await parent.sync(); } finally { await parent.close(); }
-  await writeJson(join(destination, 'restored.json'), { format: manifest.format, sourceProject: manifest.sourceProject, project, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: change?.kind === 'retirement' ? change.evidence.id : null, expansion: change?.kind === 'expansion' ? change.evidence.id : null });
+  const selection = policy ? { runtimeFamily: policy.family, identitySha256: runtimePolicyIdentity(policy) } : {};
+  await writeJson(join(destination, 'restored.json'), { ...selection, format: manifest.format, sourceProject: manifest.sourceProject, project: target.name, completedAt: new Date().toISOString(), durationMs: Date.now() - started, retirement: change?.kind === 'retirement' ? change.evidence.id : null, expansion: change?.kind === 'expansion' ? change.evidence.id : null });
+  if (policy) await completeRuntimeRestore(target.name);
   console.warn('Restoring an older snapshot can resurrect application access, deploy credentials, and secret revisions. Keep the source stopped.');
-  console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
+  showRestoredInstallation(destination, target.name, policy);
+}
+
+function showRestoredInstallation(destination, project, policy) {
+  const file = join(destination, 'compose.json');
+  if (!policy) { console.log(`Restore complete, still stopped. Start with: docker compose -f ${file} -p ${project} up -d --pull never`); return; }
+  console.log(`Restored ${policy.family}; installation identity ${runtimePolicyIdentity(policy)}. Services remain stopped. Keep the source stopped on every host. Retain the source operator environment for TLS trust, endpoint and credentials.`);
+  console.log(`Start with: fogd up --installation ${project}`);
+}
+
+export async function restoreCommand(args) {
+  const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { project: { type: 'string' }, output: { type: 'string' }, runtime: { type: 'string' }, 'expected-identity': { type: 'string' } } });
+  if (positionals.length !== 1 || !values.project || !values.output) throw new Error('Usage: fogd restore BUNDLE --project NEW --output DIR [--runtime FAMILY --expected-identity SHA256]');
+  return restore(positionals[0], values.project, values.output, { runtime: values.runtime, expectedIdentity: values['expected-identity'] });
 }
 
 async function restoreSnapshotData(dir, target, image, state, skipped, policy) {

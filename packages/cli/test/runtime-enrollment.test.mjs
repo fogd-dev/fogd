@@ -28,6 +28,8 @@ async function fixture(t) {
       else process.exit(98);
     }else if(args[0]==='compose'){if(args.includes('config'))console.log(readFileSync(process.env.FOGD_TEST_SOURCE,'utf8'));else process.exit(91);}
     else if(args[0]==='network'&&args.includes('--filter')&&process.env.FOGD_TEST_ORPHAN)console.log('orphaned-network');
+    else if(args[0]==='ps'&&args.includes('label=com.docker.compose.project='+(process.env.FOGD_TEST_RUNNING_PROJECT||'source'))&&process.env.FOGD_TEST_SOURCE_RUNNING)console.log('running-source');
+    else if(args[0]==='inspect'&&args.includes('running-source'))console.log(JSON.stringify([{State:process.env.FOGD_TEST_SOURCE_RESTARTING?{Running:false,Restarting:true}:{Running:true}}]));
     else if(args[0]==='ps'&&args.includes('-aq')&&process.env.FOGD_TEST_CONTAINER)console.log('existing-container');
     else if(args[0]==='inspect'&&process.env.FOGD_TEST_CONTAINER)console.log(JSON.stringify([{Image:entry.image,State:{Running:false}}]));
     else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING)console.log(process.env.FOGD_TEST_EXISTING);
@@ -136,4 +138,75 @@ test('a clean legacy project still reaches its ordinary build command', async t 
   await assert.rejects(exec(process.execPath, [cli, 'up'], { env: f.env, timeout: 10000 }),
     error => error.code === 1 && /exited 91/.test(error.stderr));
   assert.ok((await calls(f)).some(args => args[0] === 'compose' && args.includes('up') && args.includes('--build')));
+});
+
+test('ordinary installation startup uses the existing policy and pinned no-build path without writing credentials', async t => {
+  const f = await fixture(t), entry = runtimeFamilies()[0], plan = freshRuntimePlan(f.source, entry), policy = join(f.root, 'policy.json');
+  await writeFile(policy, JSON.stringify(plan.policy));
+  const directory = join(f.root, '.fogd/installations/original'); await mkdir(directory, { recursive: true, mode: 0o700 });
+  await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
+  await assert.rejects(exec(process.execPath, [cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy }, timeout: 10000 }),
+    error => error.code === 1 && /docker command failed \(91\)/.test(error.stderr));
+  const launch = (await calls(f)).filter(args => args[0] === 'compose');
+  assert.equal(launch.length, 1); assert.deepEqual(launch[0].slice(-5), ['up', '-d', '--no-build', '--pull', 'never']);
+  assert.equal(launch[0].includes('--build'), false);
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
+
+
+test('an enrolled recovery target refuses startup while its recorded local source is running', async t => {
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), directory = join(f.root, '.fogd/installations/original');
+  await mkdir(directory, { recursive: true, mode: 0o700 });
+  await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
+  await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project: 'original', sourceProject: 'source', volumes: ['source_bucket'] }), { mode: 0o600 });
+  await assert.rejects(exec(process.execPath, [cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_SOURCE_RUNNING: '1' }, timeout: 10000 }), error => /Project still has running containers/.test(error.stderr));
+  assert.equal((await calls(f)).some(args => ['compose', 'run', 'image'].includes(args[0])), false);
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
+
+test('a repeated explicit fresh enrollment retains the earlier failed-create fence', async t => {
+  const f = await fixture(t), selection = { runtime: runtimeFamilies()[0].id, candidateEnrollment: true };
+  await assert.rejects(f.invoke(selection), error => /command failed \(91\)/.test(error.stderr));
+  const path = join(f.root, '.fogd/installations/original/compose.json'), before = await readFile(path, 'utf8');
+  await assert.rejects(f.invoke(selection), error => /enrollment already exists/.test(error.stderr));
+  assert.equal(await readFile(path, 'utf8'), before);
+  assert.equal((await calls(f)).filter(args => args[0] === 'compose').length, 1);
+});
+
+
+test('recorded recovery relationships exclude running descendants, siblings, chains and restarting sources', async t => {
+  for (const [records, running, restarting] of [
+    [[['target', 'original']], 'target', false],
+    [[['original', 'source'], ['target', 'source']], 'target', false],
+    [[['original', 'middle'], ['middle', 'source'], ['target', 'source']], 'target', false],
+    [[['original', 'source']], 'source', true],
+  ]) {
+    const f = await fixture(t);
+    for (const [project, sourceProject] of records) {
+      const directory = join(f.root, '.fogd/installations', project); await mkdir(directory, { recursive: true, mode: 0o700 });
+      await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project, sourceProject, volumes: [sourceProject + '_bucket'] }), { mode: 0o600 });
+    }
+    await assert.rejects(f.invoke({}, { FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: running, ...(restarting ? { FOGD_TEST_SOURCE_RESTARTING: '1' } : {}) }), error => /Project still has running containers/.test(error.stderr));
+    assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
+    await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+  }
+});
+
+
+test('a running recorded installation outside the recovery family does not block a clean legacy project', async t => {
+  const f = await fixture(t), directory = join(f.root, '.fogd/installations/other'); await mkdir(directory, { recursive: true, mode: 0o700 });
+  await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project: 'other', sourceProject: 'unrelated', volumes: ['unrelated_bucket'] }), { mode: 0o600 });
+  const result = await f.invoke({}, { FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: 'other' });
+  assert.equal(JSON.parse(result.stdout), null);
+  assert.equal((await calls(f)).some(args => args.includes('label=com.docker.compose.project=other')), false);
+});
+
+test('recovery source publication refuses replacement and cleans the staged file', async t => {
+  const f = await fixture(t), state = new URL('../src/runtime/installation-state.mjs', import.meta.url).href, source = new URL('../src/runtime/recovery-source.mjs', import.meta.url).href;
+  const code = `import{writeRuntimeConfiguration}from ${JSON.stringify(state)};import{writeRecoverySource}from ${JSON.stringify(source)};await writeRuntimeConfiguration({name:'target'},{reserve:true,recovery:true});await writeRecoverySource('target','original',${JSON.stringify(f.source)});await writeRecoverySource('target','other',${JSON.stringify(f.source)});`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: f.env }), error => /EEXIST/.test(error.stderr));
+  const directory = join(f.root, '.fogd/installations/target');
+  assert.deepEqual(JSON.parse(await readFile(join(directory, 'recovery-source.json'))), { schema: 1, project: 'target', sourceProject: 'original', volumes: Object.keys(f.source.volumes).sort().map(name => f.source.volumes[name].name) });
+  const list = (await import('node:fs/promises')).readdir;
+  assert.deepEqual((await list(directory)).filter(name => name.startsWith('recovery-source-')), []);
 });

@@ -7,22 +7,29 @@ import { sealRuntimeConfig } from './cron-preboot.mjs';
 
 export function freshRuntimePlan(input, entry, networks, generation = randomUUID()) {
   const config = structuredClone(input); validateTopology(config);
-  networks ??= declaredNetworks(config);
+  networks ??= declaredRuntimeNetworks(config);
   if (!/^[a-f0-9-]{36}$/.test(generation)) throw new Error('Invalid installation identity generation');
   for (const fleet of fleetLayout(config)) for (const host of fleet.nodes) {
     if (config.services[host].environment.CELLD_NODE !== host) throw new Error('Fresh runtime enrollment requires template identities; use independently selected restore for existing identities');
     const id = `${host}-${generation}`;
     config.services[host].environment.CELLD_NODE = id;
   }
+  const policy = runtimePolicyForConfig(config, entry, networks);
+  return { config: selectedRuntimeConfig(config, entry, policy), policy };
+}
+
+// Construction validates data; callers still authorize the family and source
+// identity independently before installing this policy.
+export function runtimePolicyForConfig(config, entry, networks) {
+  validateTopology(config);
   const env = config.services.controller.environment;
-  const policy = validateRuntimePolicy({ schema: 2, family: entry.id, admission: entry.admission,
+  return validateRuntimePolicy({ schema: 2, family: entry.id, admission: entry.admission,
     image: entry.image, storageImage: entry.storageImage, binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256,
     controllerArgs: ['packages/platform/src/main.mjs'], bucket: env.FOGD_BUCKET,
     storage: { endpoint: storageOrigin(env.S3_ENDPOINT), region: env.AWS_REGION },
     fleets: fleetLayout(config).map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(host => ({ host, id: config.services[host].environment.CELLD_NODE })) })),
     ...(networks ? { networks } : {}),
   }, env);
-  return { config: selectedRuntimeConfig(config, entry, policy), policy };
 }
 
 export function selectedRuntimeConfig(input, entry, policy) {
@@ -67,7 +74,7 @@ function bindNativeDefaults(config) {
   }
 }
 
-function declaredNetworks(config) {
+export function declaredRuntimeNetworks(config) {
   if (!Object.values(config.networks).some(network => Object.keys(network.ipam || {}).length)) return undefined;
   return Object.fromEntries(Object.entries(config.networks).map(([name, network]) => [name, network.ipam?.config?.[0]?.subnet]));
 }

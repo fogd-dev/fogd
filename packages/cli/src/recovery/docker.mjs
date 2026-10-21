@@ -17,7 +17,7 @@ export async function projectContainers(project) {
   return ids.length ? json(['inspect', ...ids]) : [];
 }
 export async function stopped(project, names) {
-  if ((await projectContainers(project)).some(c => c.State.Running)) throw new Error('Project still has running containers');
+  if ((await projectContainers(project)).some(c => c.State.Running || c.State.Restarting || c.State.Paused)) throw new Error('Project still has running containers');
   for (const name of names) {
     if ((await docker(['ps', '-q', '--filter', `volume=${name}`])).trim()) throw new Error('A snapshot volume still has a running writer');
   }

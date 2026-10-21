@@ -64,19 +64,76 @@ submit them. The server revalidates the uploaded artifact. Upload remains inert
 until exact artifact approval and the required secret revision pass admission.
 Existing dispatch pause/resume controls retain their guarded native checks.
 
-## Recovery boundary
+## Selected recovery
+
+Selected restore and retirement require both `--runtime FAMILY` and
+`--expected-identity SHA256`. The public commands accept qualified catalog entries
+only; the current candidate remains refused. Record the identity printed by `up`
+or backup separately from the snapshot. A hash supplied by a snapshot cannot
+establish independent identity. Keep using trusted operator-created backups:
+this digest binds storage and native identities, not every byte in the archive.
+
+The selector requires the source's sealed launch configuration, complete immutable
+image inventory and separately expected identity to match. It verifies the cached
+catalog programs before image-provided helpers. Selected recovery skips the image
+archive, so it cannot replace cached image tags. Network placement comes from the
+independent target selection; omitted placement uses ordinary bridge allocation.
+Snapshot subnets cannot select target placement. Internal qualification can choose
+separate private subnets without changing logical storage identity.
 
 Stopped backup inventories every managed volume, including the policy volume,
-but archives application and operator data only. Restoring a snapshot cannot
-supply runtime authority through an archived policy. The internal recovery adapter
-requires an independently selected policy, imports it separately and leaves
-services stopped. Explicit target network placement can differ from the source
-without changing logical storage identity.
+but archives application and operator data only. Restore copies those archives,
+writes held recovery state and installs the independent policy separately. The
+policy volume is never populated from a snapshot archive. Retirement first checks
+the source identity, then permits only the retired fleet's namespace and native
+IDs to change. Survivor and storage identities stay equal. Operation evidence
+records the source and target digests; the new target digest is printed for the
+operator to retain independently.
 
-Public scheduled restore and retirement remain refused, including zero-live
-scheduled history. Independent public runtime selection and expected-identity
-checks for those commands, followed by the complete frozen-runtime acceptance
-profiles, remain M11c work.
+An enrolled name and an existing output directory refuse recovery. Selected
+recovery reserves private host configuration before creating stopped containers.
+The host-state filesystem must support hard links and directory fsync for atomic
+source-record publication. A pending restoration marker prevents startup, TLS import and backup until the
+complete data, policy and output records have been checked and durably finalized.
+Failures retain their marker, configuration and volumes. Use a fresh project and
+output for another attempt; removing the fence does not prove the data is empty.
+The same rule applies to a failed first enrollment, including an explicit retry.
+
+Start a successfully recovered installation through its canonical host state:
+
+```sh
+fogd up --installation PROJECT
+```
+
+This command requires an existing independent policy, validates the catalog again,
+and starts pinned images without credential bootstrapping, building or pulling.
+It cannot be combined with `--runtime` or `--shared`. Retain the source operator
+environment for subsequent admin/deploy endpoints, credentials and TLS trust.
+Restored scheduled work requires recovery acknowledgment and a separate explicit
+resume. A late initial runtime check can change recovery findings: inspect the new
+status and acknowledge its current review digest rather than replaying an old one.
+
+Local source project and volume writers must be stopped before selected recovery
+and finalization. Host recovery metadata also checks related sources, descendants and sibling
+restores before subsequent selected operations. Keep using the same `FOGD_HOME`
+and its private installation state for these checks; they do not inventory other
+checkouts or remote hosts. These are local observations, not an atomic writer fence.
+The operator must keep source copies on every host stopped and prevent concurrent
+starts. The output reports the ingress bind and TLS mode for review; the storage
+identity does not authenticate those exposure settings.
+
+The [selected recovery receipt](evidence/m11c-selected-runtime-recovery.json)
+covers a previously paused schedule through ordinary installed startup, reviewed
+acknowledgment, separate resume and autonomous future jobs. Armed-timer, pending
+retry and older-snapshot restore remain unqualified on this product image. The
+[selected retirement receipt](evidence/m11c-selected-runtime-retirement.json)
+covers zero-live backup/restore, unchanged retained-prefix contents and a scoped
+replacement using the fresh slot. Active cron/queue survivor and pending-retry
+retirement remain unqualified on this image.
+
+Full frozen-runtime acceptance and promotion to a qualified catalog entry remain
+[M11c gates](m11c.md). Expansion and other topologies remain refused for scheduled
+history.
 
 ## Cached build provenance
 

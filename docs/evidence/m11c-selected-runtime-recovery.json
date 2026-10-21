@@ -1,0 +1,322 @@
+{
+  "schema": 1,
+  "scope": "Bounded same-version local Linux arm64 candidate selected recovery through ordinary installed HTTPS startup, explicit reviewed acknowledgment and separate resume. Complete M11c and public candidate enrollment remain unqualified.",
+  "terminalExitCode": 0,
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "family": "celld-cron-v2-linux-arm64",
+  "admission": "candidate",
+  "catalogSha256": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+  "sourceProject": "fogd-selected-9dba765d758d",
+  "project": "fogd-selected-recovery-261db5bba4cf",
+  "sourceIdentitySha256": "fed264e38627cebb4e5057c496cc241a0db8087ff99a5151b16a940c54bf9518",
+  "targetIdentitySha256": "fed264e38627cebb4e5057c496cc241a0db8087ff99a5151b16a940c54bf9518",
+  "initialServices": [
+    {
+      "service": "slot-2-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-1-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "controller",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-2-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-1-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "bucket-init",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "minio",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "workerd",
+      "startedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "heldBoundary": {
+    "before": 1792620308789,
+    "after": 1792620362002
+  },
+  "initialRecoveryUnconfirmed": true,
+  "acknowledgmentAttempts": [
+    {
+      "review": "fc61511f72e6d826da7837aa2ae3e3079f88f70526e85ad34644e2218dea8819",
+      "result": "findings-changed"
+    },
+    {
+      "review": "deb46a0ca6d4c4b287f64820a176754cd99c32992af107d15bf4caee7346b1bb",
+      "result": "acknowledged"
+    }
+  ],
+  "recoveryAcknowledgedWithoutResume": true,
+  "resumeReturnedAt": 1792620365469,
+  "firstAppReadAt": 1792620428003,
+  "jobs": [
+    {
+      "job": "inventory",
+      "latest": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620420000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 1,
+        "last_attempt_at": 1792620424028,
+        "error": null,
+        "completed_at": 1792620420016
+      },
+      "lastSuccess": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620420000,
+        "value": "26 sample items available",
+        "saved_at": 1792620420016
+      }
+    },
+    {
+      "job": "advisory",
+      "latest": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620420000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 0,
+        "last_attempt_at": 1792620424028,
+        "error": null,
+        "completed_at": 1792620424033
+      },
+      "lastSuccess": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620420000,
+        "value": "Collection delayed ten minutes",
+        "saved_at": 1792620424033
+      }
+    }
+  ],
+  "oldOccurrenceLedgerRowsUnchanged": true,
+  "unexpectedLedgerOccurrencesObserved": false,
+  "independentNativeProofs": [
+    {
+      "host": "slot-1-a",
+      "challenge": "b1fd4454a6db3fec338b75c8a9339bf46db4ad19386123556ea16d68bbe23124",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "b1fd4454a6db3fec338b75c8a9339bf46db4ad19386123556ea16d68bbe23124",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "ca4bebf4b059f776fd531714faa4b97c02573f3579f04c0f3a0ff783a1423099",
+        "processKeySha256": "3c5667076df3dad347419aa27f65167bd5b0b27975f81decff6b056553726a92",
+        "publicKey": "0f8b0ba223814a59e5c7f957bfa22004c3e3ce3d660d6b124de5e59aa8c59211",
+        "schema": 2,
+        "signature": "6d6a4bde449ca8abdfe18d984362cae903602fa0250636099e6a7f5cd91c68b23ecf614a74e30998f37f4666c9d073aa3c306f03669fbaf128be3d41c9868406",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "ca4bebf4b059f776fd531714faa4b97c02573f3579f04c0f3a0ff783a1423099",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456",
+        "processKeySha256": "3c5667076df3dad347419aa27f65167bd5b0b27975f81decff6b056553726a92"
+      }
+    },
+    {
+      "host": "slot-1-b",
+      "challenge": "4411dbbd020f561949029aea9e050403945478805bff36605f1017fe2510b06d",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "4411dbbd020f561949029aea9e050403945478805bff36605f1017fe2510b06d",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "19d283f74580936d1f163d8917d5ec296cfffb1a75b18ca4771a1aa4126dc0f0",
+        "processKeySha256": "44be5defa44de3fdbf0969bf261bc932f5626e7f23e339ab43dbffe365500498",
+        "publicKey": "7c78e85697bcb1558ea3443197d9f1a877b1a874ee18bdcee880d33e622038a2",
+        "schema": 2,
+        "signature": "79ebb0553a2dd3a0c427365dfa43b7ec735d822bd03b6de2a4a1e834695f98b9294e5be6e7cc04530d7e91024487cb5e65ee336aaebf92600576bbf92dd71104",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "19d283f74580936d1f163d8917d5ec296cfffb1a75b18ca4771a1aa4126dc0f0",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456",
+        "processKeySha256": "44be5defa44de3fdbf0969bf261bc932f5626e7f23e339ab43dbffe365500498"
+      }
+    },
+    {
+      "host": "slot-2-a",
+      "challenge": "e5c8367824e2fa1e4029c05c13c7531895641b1666da416ae4b1a3299ca9868d",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "e5c8367824e2fa1e4029c05c13c7531895641b1666da416ae4b1a3299ca9868d",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "ebadc558397f49cbd3a635ee8c67f06ec03c2786ed8cf10ae976103ce2274a3d",
+        "processKeySha256": "87d6edc7adc34154231291c7a60fe1d11c010123f259c7860232323a11d34248",
+        "publicKey": "9c940d24a83ad1b43c57e24118806c9a9080d32552066885d7a6daa4409f19db",
+        "schema": 2,
+        "signature": "9bd64a5556d226f4590758d9c3f4967578cbea313e39dd7792d6fd6ef18bf8c995e8799574e93c7d6279c72e50288a26ba1eb47e8b20e86d24b400d1499dfb0d",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "ebadc558397f49cbd3a635ee8c67f06ec03c2786ed8cf10ae976103ce2274a3d",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1",
+        "processKeySha256": "87d6edc7adc34154231291c7a60fe1d11c010123f259c7860232323a11d34248"
+      }
+    },
+    {
+      "host": "slot-2-b",
+      "challenge": "32d3949b2d630acfcede52f23a8a51afbc5a2bcc8554ee701c7bf238419ed4ae",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "32d3949b2d630acfcede52f23a8a51afbc5a2bcc8554ee701c7bf238419ed4ae",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b2f9e60b5c5b4df9ad55d808d458616c2a26b9949a29440fc6ba7c67660f7423",
+        "processKeySha256": "c277e23f0062dff5cddca721cb8bec579588ba64f3c616750014a9742f2cb50b",
+        "publicKey": "9699bf78a4d20fbab2cc4581bc76d20ab5f55df808a4b38b5bae0ebcb9cf951b",
+        "schema": 2,
+        "signature": "63bcfae6c9277b742dd804946bbde096a38d774a325f2617d689515a5027260ce45cc0edae56fe093a3d6aef477d5cd3eefd67cfae8d0bd14f95f72038271206",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "b2f9e60b5c5b4df9ad55d808d458616c2a26b9949a29440fc6ba7c67660f7423",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1",
+        "processKeySha256": "c277e23f0062dff5cddca721cb8bec579588ba64f3c616750014a9742f2cb50b"
+      }
+    }
+  ],
+  "signatureAudit": {
+    "method": "Independent OpenSSL Ed25519 verification and altered-signature rejection on all four nodes",
+    "verifierSha256": "4a60f6d8fc73134ac78aeb41199839d4ee0ab66c10eb9cf71682a4bc24c2bc4e"
+  },
+  "hostSourceFiles": {
+    "packages/cli/src/bootstrap.mjs": "57073be3090df24ff9bb360c4d18c8aed6b7479461c1a057ce3772be34fef9f5",
+    "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+    "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+    "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+    "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+    "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+    "packages/cli/src/deploy-capabilities.mjs": "284e7eb90d2ec5c62d9803cafe5c44b0523d43898405a28940e05a86681a992b",
+    "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+    "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+    "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+    "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+    "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+    "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+    "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+    "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+    "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+    "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+    "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+    "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+    "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+    "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+    "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+    "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+    "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+    "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+    "packages/cli/src/local.mjs": "9ce356963c11d8f8ad9d0f82c9b57e14f1501f4f8ba40cb32275ba9b3bd00fd8",
+    "packages/cli/src/platform.mjs": "c0276d05eecb85f5647106eafc7aedcfaf68825e4c265415f3508c46250bb50e",
+    "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+    "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+    "packages/cli/src/recovery/backup.mjs": "9918a6dd450886910cba1b644daec301c89839d1d97fc1ce77feba72b27fc63c",
+    "packages/cli/src/recovery/bundle.mjs": "bf123e3bb388439b03168ce2a87621b41b35590bfe0ed4f4f7bbe53b41da126e",
+    "packages/cli/src/recovery/container-isolation.mjs": "acc6c83e45ba66bdd02098063e55a4aefd43d65d74b7824a4cdfce6c8c2fe72b",
+    "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
+    "packages/cli/src/recovery/docker.mjs": "f43143dfe9ed2e0e4e8e203834296cb857e561f65dd40fcba6914b5e5c06a488",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+    "packages/cli/src/recovery/expand.mjs": "2b53829959c06ebe22ce8575fd01e982a2dc3e5a014202b570821df04fa1d6bc",
+    "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+    "packages/cli/src/recovery/inventory.mjs": "b4989acd755e4fa4a2ff9e3d793a6840353e114a7eaf016797d221d965416295",
+    "packages/cli/src/recovery/layout-validation.mjs": "ff6b01cc67c598f5e7813989e52d11fc1353e6ee4421622805e74ad1c2b7e1c6",
+    "packages/cli/src/recovery/layout.mjs": "7284f2fe6ddd8a13dc31d5d964e73bdccc24958d2edbfc6a6cf84c68a5b75ffd",
+    "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+    "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+    "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+    "packages/cli/src/recovery/restore.mjs": "b8ebe2cc33247c2242208737f5d27bb9495472beacd2211bd84e2b7c6c77f8f7",
+    "packages/cli/src/recovery/retire.mjs": "5c3902db6bcde1c3e3ec7bb430f69162e913bf57a914d36ac310c19503dfbc0a",
+    "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
+    "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+    "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+    "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+    "packages/cli/src/recovery/volumes.mjs": "63d3aca2c94cef375be604a25ef0ffa2f562d151f1b9789b896cf81552c26de8",
+    "packages/cli/src/runtime/catalog.mjs": "2752537065abb0c289776bfc6c124f1426cefd79d9dc2a863337a645dc5c1e44",
+    "packages/cli/src/runtime/cron-image.mjs": "2def74e4ffd8f726b194e3dcad38401d33ca9781de31c363307f36dab9062afa",
+    "packages/cli/src/runtime/cron-preboot.mjs": "354366ed2dca9adf67233d9a502b8f8ac6962ee530893ab8c08a871ac2732869",
+    "packages/cli/src/runtime/cron-shape.mjs": "fa2bf883083951fb5b24f6bd21b7145cee9e7e744f90dd6e3ac8961b2a0f7ca6",
+    "packages/cli/src/runtime/install-policy.mjs": "8458717d90143d3a967aa3e6f102a941b0c573849627a908a18e4558a931ea81",
+    "packages/cli/src/runtime/installation-state.mjs": "898b68b069d95ff20db420ddb4d244ec10500a6890a8b56bf76d1acb760b9b35",
+    "packages/cli/src/runtime/installation.mjs": "6ee30186f7164db5d60a59365af0cbb6ff7dc1397fe46ff4f1ffbd39bbf3c333",
+    "packages/cli/src/runtime/installed-policy.mjs": "6ce64ca97ed242603b16e7a741f769a3eafa7ecdcae947e59c1a38932ee884c5",
+    "packages/cli/src/runtime/policy-volume.mjs": "e66eca8be90546acbfee5cee9da1f84e7d482e8205ad693b74fa425a2f370902",
+    "packages/cli/src/runtime/program-inventory.mjs": "d4f70a413e1658a09f39bfea1fb637aac92ca8cdd956b041fddd370fa930f350",
+    "packages/cli/src/runtime/recovery-ingress.mjs": "5f47f14a7169838916c756e1b6623d138ffc3984622a91b690f43f99267e7c03",
+    "packages/cli/src/runtime/recovery-selection.mjs": "96acf86af87fbb1e81102b92df66abca6e4871124c3e0d7813850e9a0d129bb3",
+    "packages/cli/src/runtime/recovery-source.mjs": "d0a43c563c13419c4ae098fff91a699be4f2693dec5e8bbc9ec0f2340b8be7fa",
+    "packages/cli/src/runtime/selection-plan.mjs": "4bdcd12996d2c98dd599b973ac0e8ddb1d376eb226048675338bf6880745b0fa",
+    "packages/cli/src/runtime/start-installation.mjs": "75762d15a7767353f7ec3a8a39229a5188a3844fcf1b112f12b6a3ddb5290478",
+    "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+    "packages/cli/src/tls.mjs": "6fe802b828e6962659e1ee0fa9a855c6f7272dca21d178a9904610bdf83e9028",
+    "packages/cli/bin/fogd.js": "cabcad033d99c2436b05444ff5816b1a1935e2ec4ce408e0df639d0478dde4a1",
+    "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753"
+  },
+  "backupChecksumsVerified": true,
+  "backupFiles": [
+    "bucket.tar",
+    "compose.json",
+    "controller.tar",
+    "images.tar",
+    "slot-1-a.tar",
+    "slot-1-b.tar",
+    "slot-2-a.tar",
+    "slot-2-b.tar",
+    "tls.tar"
+  ],
+  "policyArchiveExcluded": true,
+  "canonicalHostStateMatched": true,
+  "sourceExclusionRecorded": true,
+  "ownedContainersRemoved": true,
+  "ownedNetworksRemoved": true,
+  "retainedVolumes": [
+    "fogd-selected-recovery-261db5bba4cf_bucket",
+    "fogd-selected-recovery-261db5bba4cf_controller",
+    "fogd-selected-recovery-261db5bba4cf_slot-1-a",
+    "fogd-selected-recovery-261db5bba4cf_slot-1-b",
+    "fogd-selected-recovery-261db5bba4cf_slot-2-a",
+    "fogd-selected-recovery-261db5bba4cf_slot-2-b",
+    "fogd-selected-recovery-261db5bba4cf_tls",
+    "fogd-selected-recovery-261db5bba4cf_runtime-policy"
+  ],
+  "driverSha256": "e647b365223781a02cc07133b16f85a1d5719bd849ac1e3299117600de4fe0f2",
+  "privateEvidenceRoot": ".fogd/selected-recovery-smoke6",
+  "notQualified": [
+    "armed due timer or pending retry restore on this product image",
+    "older snapshot or active survivor restore on this product image",
+    "complete M11c acceptance",
+    "atomic or remote writer exclusion",
+    "public catalog promotion"
+  ]
+}

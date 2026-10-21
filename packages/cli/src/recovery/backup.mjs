@@ -11,6 +11,7 @@ import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEviden
 import { snapshotState } from './snapshot-state.mjs';
 import { volumeHelper } from './volumes.mjs';
 import { assertCronDockerTopology } from './cron-backup.mjs';
+import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { selectedInstallation } from '../runtime/installation.mjs';
 
 export async function backup(directory) {
@@ -19,6 +20,7 @@ export async function backup(directory) {
   const raw = await resolvedCompose(env), selected = await selectedInstallation(raw);
   const file = selected?.file || resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
   const config = selected?.config || raw;
+  if (selected) console.log(`Record independently for recovery: runtime ${selected.entry.id}; installation identity ${runtimePolicyIdentity(selected.policy)}`);
   projectName(config.name); validateTopology(config);
   const layout = recoveryLayout(config), { volumes, archiveVolumes } = layout;
   const images = await inventory(config);

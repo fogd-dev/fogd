@@ -1,0 +1,423 @@
+{
+  "schema": 1,
+  "scope": "Bounded local Linux arm64 selected candidate retirement, zero-live restore and ordinary scoped fresh-slot replacement. No active survivor or pending-retry retirement is qualified by this receipt; complete M11c remains open.",
+  "terminalExitCode": 0,
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "family": "celld-cron-v2-linux-arm64",
+  "admission": "candidate",
+  "catalogSha256": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+  "sourceProject": "fogd-selected-9dba765d758d",
+  "retirementProject": "fogd-selected-retirement-69c7f58252ec",
+  "zeroLiveProject": "fogd-selected-zero-live-863beeb0016a",
+  "sourceIdentitySha256": "fed264e38627cebb4e5057c496cc241a0db8087ff99a5151b16a940c54bf9518",
+  "targetIdentitySha256": "b35e50178ad78acf0b983d98201c7089e82174931d019230130f4f06a0b51133",
+  "zeroIdentitySha256": "b35e50178ad78acf0b983d98201c7089e82174931d019230130f4f06a0b51133",
+  "retiredSlot": "slot-1",
+  "retirement": {
+    "id": "eaa9bc55-f872-4a5f-83e5-48ba35a8a4cd",
+    "at": "2026-10-21T22:03:01.435Z",
+    "app": "refresh",
+    "digest": "1a22667145330fd8ada70bb876ad1b954889ac31287b2cb20ff87f7d52fb0f03",
+    "snapshot": {
+      "bytes": 3821,
+      "sha256": "cba9ebeee702ec4f7b3ca7027cbb223a6340f42fe1b1d2708997113ad214775b"
+    },
+    "previous": {
+      "slot": "slot-1",
+      "prefix": "slots/slot-1",
+      "nodes": [
+        "slot-1-a-0e22f868-09a1-49d0-90e5-7ecf440ee5d0",
+        "slot-1-b-0e22f868-09a1-49d0-90e5-7ecf440ee5d0"
+      ]
+    },
+    "replacement": {
+      "prefix": "retirement-generations/eaa9bc55-f872-4a5f-83e5-48ba35a8a4cd",
+      "nodes": [
+        "slot-1-a-eaa9bc55-f872-4a5f-83e5-48ba35a8a4cd",
+        "slot-1-b-eaa9bc55-f872-4a5f-83e5-48ba35a8a4cd"
+      ]
+    },
+    "runtimeSelection": {
+      "family": "celld-cron-v2-linux-arm64",
+      "sourceIdentitySha256": "fed264e38627cebb4e5057c496cc241a0db8087ff99a5151b16a940c54bf9518",
+      "targetIdentitySha256": "b35e50178ad78acf0b983d98201c7089e82174931d019230130f4f06a0b51133"
+    }
+  },
+  "initialServices": [
+    {
+      "service": "slot-1-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-2-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "controller",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-2-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-1-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "bucket-init",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "workerd",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "minio",
+      "startedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "zeroInitialServices": [
+    {
+      "service": "slot-1-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-2-b",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "controller",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-1-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "slot-2-a",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "bucket-init",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "minio",
+      "startedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "service": "workerd",
+      "startedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "zeroLiveBoundary": {
+    "before": 1792620511182,
+    "after": 1792620542002
+  },
+  "restoredZeroBoundary": {
+    "before": 1792620572278,
+    "after": 1792620602003
+  },
+  "retainedPrefix": {
+    "count": 24,
+    "sha256": "aec131eed811f578d4d053016c2e19bfbd62cfe238b928ba1bcb62d1b80e1bbe"
+  },
+  "retainedPrefixUnchanged": true,
+  "relatedSourceStartsRefused": [
+    "fogd-selected-retirement-69c7f58252ec"
+  ],
+  "zeroLiveScheduledHistoryPreserved": true,
+  "replacement": {
+    "id": "78b7e902-7987-4d59-9776-62f291439f4e",
+    "app": "replacement",
+    "digest": "e6b39063ed50e48a608920f53f69e7284ca88a85a9fe9c9c9fa91bf6cfc211de",
+    "status": "pending",
+    "admin": "https://localhost:53056"
+  },
+  "assignments": {
+    "retired": "retired",
+    "retiredSlot": null,
+    "replacementSlot": "slot-1"
+  },
+  "approvalReturnedAt": 1792620607394,
+  "firstAppReadAt": 1792620668003,
+  "jobs": [
+    {
+      "job": "inventory",
+      "latest": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620660000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 1,
+        "last_attempt_at": 1792620664030,
+        "error": null,
+        "completed_at": 1792620660016
+      },
+      "lastSuccess": {
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620660000,
+        "value": "23 sample items available",
+        "saved_at": 1792620660016
+      }
+    },
+    {
+      "job": "advisory",
+      "latest": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620660000,
+        "initial_mode": "retry-once",
+        "status": "complete",
+        "attempts": 2,
+        "duplicates": 0,
+        "last_attempt_at": 1792620664030,
+        "error": null,
+        "completed_at": 1792620664038
+      },
+      "lastSuccess": {
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792620660000,
+        "value": "Extra collection available",
+        "saved_at": 1792620664038
+      }
+    }
+  ],
+  "replacementHasOnlyNewLedgerOccurrences": true,
+  "replacementSecretRevisionDistinct": true,
+  "immutableArtifactSecretExcluded": true,
+  "decodedArtifactPrivacyPassed": true,
+  "operatorEnvironmentUnchanged": true,
+  "independentNativeProofs": [
+    {
+      "host": "slot-1-a",
+      "challenge": "b62d6dfa49fb5347b437b0eb12c746e67e6cf1eaf010cfc43388cfacb87ca0d4",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "b62d6dfa49fb5347b437b0eb12c746e67e6cf1eaf010cfc43388cfacb87ca0d4",
+        "namespaceSha256": "26e58ce8c9656fb902c1668e01f6ad77f96ddfb7a38adac00d79f9cd8fdb8513",
+        "nodeSha256": "066f846773fe828c8fe3f170b59f1d180e48cddfd4734f6bfe144a9bc8260997",
+        "processKeySha256": "5e9c042a76f49d05380fe0def9c0375397ded94ff6c317fb8894355a7f890d05",
+        "publicKey": "4663bb9630cc5ed7236cfca1d679af04c6477f09378984d6d7f223222dece09d",
+        "schema": 2,
+        "signature": "4e33f68470960a65ad4467d6472a879f96ffbd965fbd90c517dbfa417e52cfd83516d53aaa5853cf62b6e04381599740d1d7dce1c6e229d193123be55ebadc0b",
+        "storageSha256": "6ded0bd8703a089e2bcf791c0ef1256cbc8bfdb7a6d264ae1125e80fbba5db5b"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "066f846773fe828c8fe3f170b59f1d180e48cddfd4734f6bfe144a9bc8260997",
+        "namespaceSha256": "26e58ce8c9656fb902c1668e01f6ad77f96ddfb7a38adac00d79f9cd8fdb8513",
+        "storageSha256": "6ded0bd8703a089e2bcf791c0ef1256cbc8bfdb7a6d264ae1125e80fbba5db5b",
+        "processKeySha256": "5e9c042a76f49d05380fe0def9c0375397ded94ff6c317fb8894355a7f890d05"
+      }
+    },
+    {
+      "host": "slot-1-b",
+      "challenge": "f6b1f54800e08c3de081eda320d3f1a0f37c5911dcb575e0f5607fdedce39c1a",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "f6b1f54800e08c3de081eda320d3f1a0f37c5911dcb575e0f5607fdedce39c1a",
+        "namespaceSha256": "26e58ce8c9656fb902c1668e01f6ad77f96ddfb7a38adac00d79f9cd8fdb8513",
+        "nodeSha256": "b32e9e59fccfc4b9efca6008c362a7abe065d9802c15d7bf7c077f78dc3aae7d",
+        "processKeySha256": "7b96fa70d5d0e8a48e1af1de98ec88d6c7c0658c4806be5ef8d3d8c00e6a5ce4",
+        "publicKey": "24356cd5cce0d894be554d5a8f3e1f912dee34b3ef91b2415776534386f4987c",
+        "schema": 2,
+        "signature": "df73e52ddbc3c609ce3c640cddedac6bf0fd502db4c913bbdf3dbe237551db94ce6f03ea4a13bd6fd7cf1569eacea39f03797027e6a3a593f2537092d43fce06",
+        "storageSha256": "6ded0bd8703a089e2bcf791c0ef1256cbc8bfdb7a6d264ae1125e80fbba5db5b"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "b32e9e59fccfc4b9efca6008c362a7abe065d9802c15d7bf7c077f78dc3aae7d",
+        "namespaceSha256": "26e58ce8c9656fb902c1668e01f6ad77f96ddfb7a38adac00d79f9cd8fdb8513",
+        "storageSha256": "6ded0bd8703a089e2bcf791c0ef1256cbc8bfdb7a6d264ae1125e80fbba5db5b",
+        "processKeySha256": "7b96fa70d5d0e8a48e1af1de98ec88d6c7c0658c4806be5ef8d3d8c00e6a5ce4"
+      }
+    },
+    {
+      "host": "slot-2-a",
+      "challenge": "4ab37f7c9c482f024b1c19fbb8feaa846dd5c31e2743f274a7899d82880e183f",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "4ab37f7c9c482f024b1c19fbb8feaa846dd5c31e2743f274a7899d82880e183f",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "ebadc558397f49cbd3a635ee8c67f06ec03c2786ed8cf10ae976103ce2274a3d",
+        "processKeySha256": "6ffcd570d5fb2b8fa15475b72690b4b74329a05c629c521f5c6da56d8337d22d",
+        "publicKey": "f876c7c81a921f8c5db8b6ebd0042162c7e88cb3835d75c48f30960ce23cbf5d",
+        "schema": 2,
+        "signature": "baddfee87eae0712669fc88949718e17653513a81e1fca827ae18837ee9c41eea22c40badba41e919249af58eca8319a6532734c7d25d585b9316e792ecc520c",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "ebadc558397f49cbd3a635ee8c67f06ec03c2786ed8cf10ae976103ce2274a3d",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1",
+        "processKeySha256": "6ffcd570d5fb2b8fa15475b72690b4b74329a05c629c521f5c6da56d8337d22d"
+      }
+    },
+    {
+      "host": "slot-2-b",
+      "challenge": "b340cf42bc80127e79232438d936282ad3c361c446e3c1b7ca505cacf9e5fc52",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "b340cf42bc80127e79232438d936282ad3c361c446e3c1b7ca505cacf9e5fc52",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b2f9e60b5c5b4df9ad55d808d458616c2a26b9949a29440fc6ba7c67660f7423",
+        "processKeySha256": "6bb81ed7e274beea8835a3d5df6dd112cc4992460c376b51c5533890fca49029",
+        "publicKey": "a751554f5bbad6f078742a1d7963a7b5e3cabbe053c64f3d67f9150479010d44",
+        "schema": 2,
+        "signature": "cb3e6a675a2268be6d3771b622c6600a661ff53170b7842b203cfc72c2792295c50ec5652a412e571102c763b22dfc5b72758ac55d63a49654e1e86b1f038900",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "expected": {
+        "schema": 2,
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "nodeSha256": "b2f9e60b5c5b4df9ad55d808d458616c2a26b9949a29440fc6ba7c67660f7423",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1",
+        "processKeySha256": "6bb81ed7e274beea8835a3d5df6dd112cc4992460c376b51c5533890fca49029"
+      }
+    }
+  ],
+  "signatureAudit": {
+    "method": "Independent OpenSSL Ed25519 signatures and altered-signature rejection for all four new target nodes",
+    "verifierSha256": "3c112610f4be93abe8284587ad7e647b44292ea682e289a7a77aba7693b51a8a"
+  },
+  "backupChecksumsVerified": true,
+  "zeroLiveBackupFiles": [
+    "bucket.tar",
+    "compose.json",
+    "controller.tar",
+    "images.tar",
+    "slot-1-a.tar",
+    "slot-1-b.tar",
+    "slot-2-a.tar",
+    "slot-2-b.tar",
+    "tls.tar"
+  ],
+  "replacementBackupFiles": [
+    "bucket.tar",
+    "compose.json",
+    "controller.tar",
+    "images.tar",
+    "slot-1-a.tar",
+    "slot-1-b.tar",
+    "slot-2-a.tar",
+    "slot-2-b.tar",
+    "tls.tar"
+  ],
+  "canonicalHostStateMatched": true,
+  "policyArchivesExcluded": true,
+  "hostSourceFiles": {
+    "packages/cli/src/bootstrap.mjs": "57073be3090df24ff9bb360c4d18c8aed6b7479461c1a057ce3772be34fef9f5",
+    "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+    "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+    "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+    "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+    "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+    "packages/cli/src/deploy-capabilities.mjs": "284e7eb90d2ec5c62d9803cafe5c44b0523d43898405a28940e05a86681a992b",
+    "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+    "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+    "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+    "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+    "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+    "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+    "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+    "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+    "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+    "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+    "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+    "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+    "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+    "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+    "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+    "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+    "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+    "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+    "packages/cli/src/local.mjs": "9ce356963c11d8f8ad9d0f82c9b57e14f1501f4f8ba40cb32275ba9b3bd00fd8",
+    "packages/cli/src/platform.mjs": "c0276d05eecb85f5647106eafc7aedcfaf68825e4c265415f3508c46250bb50e",
+    "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+    "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+    "packages/cli/src/recovery/backup.mjs": "9918a6dd450886910cba1b644daec301c89839d1d97fc1ce77feba72b27fc63c",
+    "packages/cli/src/recovery/bundle.mjs": "bf123e3bb388439b03168ce2a87621b41b35590bfe0ed4f4f7bbe53b41da126e",
+    "packages/cli/src/recovery/container-isolation.mjs": "acc6c83e45ba66bdd02098063e55a4aefd43d65d74b7824a4cdfce6c8c2fe72b",
+    "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
+    "packages/cli/src/recovery/docker.mjs": "f43143dfe9ed2e0e4e8e203834296cb857e561f65dd40fcba6914b5e5c06a488",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+    "packages/cli/src/recovery/expand.mjs": "2b53829959c06ebe22ce8575fd01e982a2dc3e5a014202b570821df04fa1d6bc",
+    "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+    "packages/cli/src/recovery/inventory.mjs": "b4989acd755e4fa4a2ff9e3d793a6840353e114a7eaf016797d221d965416295",
+    "packages/cli/src/recovery/layout-validation.mjs": "ff6b01cc67c598f5e7813989e52d11fc1353e6ee4421622805e74ad1c2b7e1c6",
+    "packages/cli/src/recovery/layout.mjs": "7284f2fe6ddd8a13dc31d5d964e73bdccc24958d2edbfc6a6cf84c68a5b75ffd",
+    "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+    "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+    "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+    "packages/cli/src/recovery/restore.mjs": "b8ebe2cc33247c2242208737f5d27bb9495472beacd2211bd84e2b7c6c77f8f7",
+    "packages/cli/src/recovery/retire.mjs": "5c3902db6bcde1c3e3ec7bb430f69162e913bf57a914d36ac310c19503dfbc0a",
+    "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
+    "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+    "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+    "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+    "packages/cli/src/recovery/volumes.mjs": "63d3aca2c94cef375be604a25ef0ffa2f562d151f1b9789b896cf81552c26de8",
+    "packages/cli/src/runtime/catalog.mjs": "2752537065abb0c289776bfc6c124f1426cefd79d9dc2a863337a645dc5c1e44",
+    "packages/cli/src/runtime/cron-image.mjs": "2def74e4ffd8f726b194e3dcad38401d33ca9781de31c363307f36dab9062afa",
+    "packages/cli/src/runtime/cron-preboot.mjs": "354366ed2dca9adf67233d9a502b8f8ac6962ee530893ab8c08a871ac2732869",
+    "packages/cli/src/runtime/cron-shape.mjs": "fa2bf883083951fb5b24f6bd21b7145cee9e7e744f90dd6e3ac8961b2a0f7ca6",
+    "packages/cli/src/runtime/install-policy.mjs": "8458717d90143d3a967aa3e6f102a941b0c573849627a908a18e4558a931ea81",
+    "packages/cli/src/runtime/installation-state.mjs": "898b68b069d95ff20db420ddb4d244ec10500a6890a8b56bf76d1acb760b9b35",
+    "packages/cli/src/runtime/installation.mjs": "6ee30186f7164db5d60a59365af0cbb6ff7dc1397fe46ff4f1ffbd39bbf3c333",
+    "packages/cli/src/runtime/installed-policy.mjs": "6ce64ca97ed242603b16e7a741f769a3eafa7ecdcae947e59c1a38932ee884c5",
+    "packages/cli/src/runtime/policy-volume.mjs": "e66eca8be90546acbfee5cee9da1f84e7d482e8205ad693b74fa425a2f370902",
+    "packages/cli/src/runtime/program-inventory.mjs": "d4f70a413e1658a09f39bfea1fb637aac92ca8cdd956b041fddd370fa930f350",
+    "packages/cli/src/runtime/recovery-ingress.mjs": "5f47f14a7169838916c756e1b6623d138ffc3984622a91b690f43f99267e7c03",
+    "packages/cli/src/runtime/recovery-selection.mjs": "96acf86af87fbb1e81102b92df66abca6e4871124c3e0d7813850e9a0d129bb3",
+    "packages/cli/src/runtime/recovery-source.mjs": "d0a43c563c13419c4ae098fff91a699be4f2693dec5e8bbc9ec0f2340b8be7fa",
+    "packages/cli/src/runtime/selection-plan.mjs": "4bdcd12996d2c98dd599b973ac0e8ddb1d376eb226048675338bf6880745b0fa",
+    "packages/cli/src/runtime/start-installation.mjs": "75762d15a7767353f7ec3a8a39229a5188a3844fcf1b112f12b6a3ddb5290478",
+    "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+    "packages/cli/src/tls.mjs": "6fe802b828e6962659e1ee0fa9a855c6f7272dca21d178a9904610bdf83e9028",
+    "packages/cli/bin/fogd.js": "cabcad033d99c2436b05444ff5816b1a1935e2ec4ce408e0df639d0478dde4a1"
+  },
+  "ownedContainersRemoved": true,
+  "ownedNetworksRemoved": true,
+  "retainedVolumes": [
+    "fogd-selected-retirement-69c7f58252ec_bucket",
+    "fogd-selected-retirement-69c7f58252ec_controller",
+    "fogd-selected-retirement-69c7f58252ec_slot-1-a",
+    "fogd-selected-retirement-69c7f58252ec_slot-1-b",
+    "fogd-selected-retirement-69c7f58252ec_slot-2-a",
+    "fogd-selected-retirement-69c7f58252ec_slot-2-b",
+    "fogd-selected-retirement-69c7f58252ec_tls",
+    "fogd-selected-retirement-69c7f58252ec_runtime-policy",
+    "fogd-selected-zero-live-863beeb0016a_bucket",
+    "fogd-selected-zero-live-863beeb0016a_controller",
+    "fogd-selected-zero-live-863beeb0016a_runtime-policy",
+    "fogd-selected-zero-live-863beeb0016a_slot-1-a",
+    "fogd-selected-zero-live-863beeb0016a_slot-1-b",
+    "fogd-selected-zero-live-863beeb0016a_slot-2-a",
+    "fogd-selected-zero-live-863beeb0016a_slot-2-b",
+    "fogd-selected-zero-live-863beeb0016a_tls"
+  ],
+  "driverSha256": {
+    "stopped": "64230c2d155182139e6be71df699d4cbb86234338ec651a878a58fdbbaf4b658",
+    "live": "261d7020fdaab3de79d355bd0e51700e59e02e7c28792383a3bd8d23b280cab5"
+  },
+  "privateEvidenceRoot": ".fogd/selected-retirement-smoke3",
+  "notQualified": [
+    "active cron or queue survivor retirement on this product image",
+    "pending native retry retirement on this product image",
+    "complete M11c acceptance",
+    "global or atomic writer exclusion",
+    "public candidate enrollment or catalog promotion"
+  ]
+}
