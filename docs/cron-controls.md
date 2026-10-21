@@ -4,7 +4,8 @@ Scheduled dispatch controls expose recorded state and explicit operator actions
 for an internally staged cron application. Cron admission remains closed. The
 default backend has no cron transport; these controls require the qualified
 [native patch](patches/celld-cron-controls.md) on every replica and an experimentally
-injected transport. They do not qualify installation recovery or mixed runtimes.
+injected transport. The separate [recovery profile](cron-recovery.md) qualifies
+bounded stopped recovery. Mixed runtimes remain unqualified.
 
 ## Inspect and operate
 
@@ -54,9 +55,9 @@ rejection of the hold owner.
 
 The controller has snapshot preparation and recovery acknowledgment controls.
 Full-installation cron backup/restore has an experimental archive path for
-internally staged fixtures. Native recovery qualification remains open and ordinary
-cron admission stays closed. Controller checks alone do not establish that timers
-were held before the controller started.
+internally staged fixtures. The [native recovery profile](cron-recovery.md)
+qualifies same-version local Linux arm64 Docker with two application fleets,
+including dispatch held before controller startup. Ordinary cron admission stays closed.
 
 `fogd backup` inventories separate queue and cron apps before preparing either
 family. It requires identical pinned controller and replica images, pauses each
@@ -110,9 +111,9 @@ Pausing clears pending timer and retry identity. Resume schedules a future
 occurrence. An older snapshot can lose acknowledged results or replay external
 effects; application idempotency and reconciliation remain necessary. The
 [controller tests](../packages/platform/test/cron-recovery.test.mjs) cover these
-metadata and runtime-transport boundaries. Fresh-storage native startup, due timer,
-pending retry, older-snapshot and idempotent native pause qualification remain open under
-[M11c gate 7](m11c.md).
+metadata and runtime-transport boundaries. The separate [native recovery evidence](evidence/m11c-cron-recovery.json)
+covers fresh storage, due timers, pending retries, older snapshots and repeated
+held-state reconciliation within the bounded [M11c gate 7 profile](cron-recovery.md).
 
 ## Native qualification
 

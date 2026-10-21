@@ -380,6 +380,8 @@ owner loss; see the [evidence](docs/evidence/m11c-cron-retry-positive.json). Thi
 not a supported deployment mode: ordinary `fogd deploy` still rejects cron
 declarations. Private activation, operator controls and the ordinary Void
 [failure profile](docs/cron-failures.md) have bounded native evidence. Scoped
-admission, stopped recovery, retirement and release-bound runtime qualification
-remain open. [Compatible replacement](docs/cron-replacement.md) now has bounded
+admission, retirement and release-bound runtime qualification remain open.
+[Stopped cron recovery](docs/cron-recovery.md) qualifies same-version local Linux
+arm64 Docker with two application fleets, due timers, pending retries and an
+older snapshot. [Compatible replacement](docs/cron-replacement.md) now has bounded
 migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.

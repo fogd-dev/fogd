@@ -1,0 +1,1190 @@
+{
+  "schema": 1,
+  "status": "qualified-bounded",
+  "scope": "Experimental local two-fleet stopped Docker recovery with one native Void cron app and an opt-in queue survivor; ordinary cron admission remains closed",
+  "privateEvidence": ".fogd/m11c-recovery-qualified3",
+  "actualProcessExitCode": 0,
+  "provenance": {
+    "image": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+    "architecture": "arm64",
+    "os": "linux",
+    "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "platform": {
+      "packages/platform/src/activation.mjs": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+      "packages/platform/src/admin-capacity.mjs": "e779d72f40a3568ba5cf822fe3ce796b5dd4d384118bfc3b0d4bd5467bc7a238",
+      "packages/platform/src/admin-control-script.mjs": "495584a6889575ffc0019a8cd0441a2907dd530c5948c3d946949026b3774df8",
+      "packages/platform/src/admin-credentials.mjs": "2c762aa30fa1c0ce83f8daf7059946ed8e6a20ceb48e36ba545c6af4b6a90e5b",
+      "packages/platform/src/admin-delivery.mjs": "0104bde803db296b0d57520ad98a4a3cfabcc03557285559bfeeda6c67a1ab89",
+      "packages/platform/src/admin-dispatch.mjs": "395c768b6feb3ad49f55653f52aa9a614605c9315afaff1c323284dde41b9c27",
+      "packages/platform/src/admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
+      "packages/platform/src/admin-view.mjs": "aea65eae58aa1eabb92ecd3f531c69a29cef037dbc3ef32d6c80208e08ac8c5f",
+      "packages/platform/src/backend.mjs": "ab1dc727a77215f522c369d6b758861d8948b96f77e61f4346b93ef0c74ee532",
+      "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
+      "packages/platform/src/capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
+      "packages/platform/src/claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
+      "packages/platform/src/controller.mjs": "4cda646bd0ddf3e0123997f7513c0ea65cd0e1689dfe1aef220851eff10653d9",
+      "packages/platform/src/credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
+      "packages/platform/src/cron-activation.mjs": "eb5cf6b616dfb08aaac2f639c092712066b3ffe1ef877efff531de712ff12f0e",
+      "packages/platform/src/cron-dispatch.mjs": "2ef1288f566e0fdae78df2e6bae352030109337ce9ddfb2b6d876e15e7229b29",
+      "packages/platform/src/cron-history.mjs": "7e26d87a56aefe1b602fc080fe19d01d45f963e66b4b2841f3660eb99e751a6c",
+      "packages/platform/src/cron-recovery.mjs": "12b4ea4a376360a652cfebc3b8a6eaddebe8d865c10b65b3cafb152eeac0771c",
+      "packages/platform/src/cron-runtime.mjs": "0d4c50fe9df76db1e82b3eaf83fe33d45e3f0780f391a691a10f8c544c753a86",
+      "packages/platform/src/cron-snapshot.mjs": "8b08a23b02849d33cc15fa53641174a1286dc703bae7f04da6f59cace59d4c8d",
+      "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+      "packages/platform/src/deployment-http.mjs": "6cdbf3168f64295b0e2c2d400695119ff0ae550728dee600b9b20d65c65cdbc4",
+      "packages/platform/src/deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
+      "packages/platform/src/dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+      "packages/platform/src/http.mjs": "210d5c612026d160936aa1e7e27328c726d0096dc5256a2f3a4a37144cd9b575",
+      "packages/platform/src/main.mjs": "33f418a67c4c6faa860182928600d729f7ecbc5453307d39d57161015bd08c04",
+      "packages/platform/src/queue-activation.mjs": "23284caca3163c7f9ee70157f78d324842cfea5fb03dbd0169e3fcc4af52345d",
+      "packages/platform/src/queue-history.mjs": "d5aea93f441ae3561b1243e520401550a1cda241a8697c1ef8b7a4f66f1e90b5",
+      "packages/platform/src/queue-recovery.mjs": "bf1fba3d1c27f9e3b8a43457d1c4ceea8c149dee6a57dab008577ac7a45e09d4",
+      "packages/platform/src/queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+      "packages/platform/src/queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+      "packages/platform/src/queue-runtime.mjs": "570a10dabc87f9f01a06a8d0df4f91003c2b5308bb101afe7bb3ea47ae753f1d",
+      "packages/platform/src/queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+      "packages/platform/src/quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
+      "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
+      "packages/platform/src/resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
+      "packages/platform/src/retirement.mjs": "a5db0e2ccf9246738e0e618ce616ed274f3396e4dc8605d960f3939ee30b1ac2",
+      "packages/platform/src/secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
+      "packages/platform/src/security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
+      "packages/platform/src/startup.mjs": "2abe860912da5f466a695fc0e8c2501030a56c534a10855bf254e827a9c6e518",
+      "packages/platform/src/store.mjs": "b0f11bbd640047a1661dbcbff7d05f198c546b89bbd5062f96b8b7a9d482a531",
+      "packages/runtime/src/artifact.mjs": "04257ca69e120cb1b5df9da1e7a42cb60618cd337f2d2fe97960684381f38f7d",
+      "packages/runtime/src/assets.mjs": "4eddd14ff6c344461674b8c6f42e3f0780d454a11ebe9d80448f1daa68d68eb1",
+      "packages/runtime/src/bucket.mjs": "d8619235d1b1ad8fa6cd0d999a6c8997ad1fe178f899ead57463eff0a778c03f",
+      "packages/runtime/src/deployment.mjs": "ec38b0083a7ec776a469eb89f4587b513cd8b83e9acf904d4f48f1026b43af1c",
+      "packages/runtime/src/files.mjs": "ba76bca333878955b4571b17079d27372e482cd6ea21d22cd892d1d5fc62b779",
+      "packages/runtime/src/gateway.js": "33dd151f608ad0bfdfa84719d4e1c966f7e6b9cc8f0d4e68b5b276e7a5839e1a",
+      "packages/runtime/src/import-tls.mjs": "10d734ae50daae56e74d4c8d202fceecde4e7bb9a9e99d986743ca98d463fd20",
+      "packages/runtime/src/init-bucket.mjs": "6154efa6dbedbecad7ba4c6ec155cb7046a75cf3f7daf727b9e82d314e17ded6",
+      "packages/runtime/src/manifest.mjs": "de8d2f22e5e98fe8c1744e97f3cdfa263bc9c9d36e585775f7276f34b58cb97b",
+      "packages/runtime/src/queues.mjs": "c4ad9681617dcdd2a7d66d9286648db0e02086e1c20139b7ff33cb2832fedbc9",
+      "packages/runtime/src/serve.mjs": "336f6ea199f2f8946c046d26a907750a13c6c87077bd1df8d507ea04a48f50e1",
+      "packages/runtime/src/transport.mjs": "d69aa1b2aadbdc7a4cba6cd2e04afdf86a36aeb9a68bfacd7d0683216457ce5b"
+    },
+    "probe": {
+      "docker/celld-supervisor.sh": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+      "docker/runtime.Dockerfile": "57b930e2c9a122ebaa560500f3a8cb338f60a38fd4fe42563890f1fdea73fba0",
+      "examples/imports/README.md": "f02101366bb6f6a854b5fefd2c352920eb4d98bbf819aa0bd97eb1b4f966d86b",
+      "examples/imports/db/migrations/0001_imports.sql": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680",
+      "examples/imports/db/schema.ts": "930caf87188c53629993824c2853f0ae035c47836138d7c39959627f566de49a",
+      "examples/imports/fogd.json": "7474e92ede55e9675747244f68c4f55e4f14aee8ec93a386f83955cf5a69f011",
+      "examples/imports/lib/input.mjs": "2ec28e405d7cb6722649861b37d2bc5b8dd23745b8f18e9c0187cc3211ddf808",
+      "examples/imports/lib/jobs.mjs": "93c83474963376c6cc011da49fbf528f119df690f4cbeb071a37dd66a3f50201",
+      "examples/imports/lib/page.mjs": "0108161a3bb82fb02794ae54fb42543f1d1bd1ff49f1a809b39c51a64938ce55",
+      "examples/imports/lib/process.mjs": "db5e10339d76415e4f7a0ebbc2149a0560299dc60d6795b7fd63f99126de510b",
+      "examples/imports/lib/results.mjs": "aac1c47cea8f88feb78a427bbc6f8d4f77115d800ba9800947f664a729afbcec",
+      "examples/imports/package.json": "9829b0f8d82d37f388903d8983955dc60c828c0c572d0d59fd9175025c43eca5",
+      "examples/imports/queues/imports.ts": "6576f8fdc3fc0c23357a74bbe2ece3c951efd3707c10592d95c43d055cbd01cd",
+      "examples/imports/routes/api/imports.ts": "061f809efd59aebff8f9ae97c793c993d0013981b540bc04547116a2080085e3",
+      "examples/imports/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+      "examples/imports/test/fixture.mjs": "1918ce21b01766be916151346d5a4490ce9a1d2c5896c08c952af2361fa6b8ac",
+      "examples/imports/test/jobs.test.mjs": "fca9d0ae500b3f3dfdb25c3b5e98b3c85e40bacb91c2658218b099aed0e22bb2",
+      "examples/imports/tsconfig.json": "6968e6d8e09397db2768797d4173e2b2b977f038df49deb58bd22dea368fb8cc",
+      "examples/imports/updates/v2/db/migrations/0002_processor.sql": "a820b0c7e3c1c6a36b37f10b7a94e5e12c0e22c146609e3ab020d28c3d04a60a",
+      "examples/imports/updates/v2/db/schema.ts": "c234d0a79e43b47d43bafab761c3d3dccd60466f7a4bcf113532c4358284f2f1",
+      "examples/imports/updates/v2/lib/results.mjs": "5d9f5cd1ba6aedd1a39faf88cb08ff52008a70f28bee723e3dcbb324db7c6943",
+      "examples/imports/vite.config.ts": "d4d96ab47ec182d6159309bf798dd73dd8abe2c7a4fc58ff2d2b80c100156e98",
+      "examples/imports/void.config.ts": "490088e818d8a0277394b978e81befca6d6591c2580fbdb433bbed4831635ed3",
+      "examples/refresh/README.md": "1f110cf700698f2a6addeb2dd5eb0173d46c6fef546818a640f5e901963f4087",
+      "examples/refresh/crons/advisory.ts": "ff8ba3dad263f2504bc372512cf1e2c75722b4dcdcea96812a529f263810d88d",
+      "examples/refresh/crons/inventory.ts": "8247d7077d9ddfd84cfb8541439b423c7f03bc1f455823e2b43986c110b30525",
+      "examples/refresh/db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+      "examples/refresh/db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+      "examples/refresh/env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+      "examples/refresh/fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+      "examples/refresh/lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+      "examples/refresh/lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+      "examples/refresh/lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+      "examples/refresh/package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+      "examples/refresh/routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+      "examples/refresh/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+      "examples/refresh/test/input.test.mjs": "e65db169fb844b360c2f056ba0a5caf9d4076661ceb9df35a0bd536b1f98240f",
+      "examples/refresh/test/refresh.test.mjs": "ac54dcd7eb93e523475a7aec2928e10aa3e0743145dcb446d80cd0d93c9709de",
+      "examples/refresh/tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+      "examples/refresh/vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+      "examples/refresh/void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+      "package.json": "427a154954a619934b3d0ba8b2150c30c0bb72bda6664481aef4c249418ca6e2",
+      "packages/cli/bin/fogd.js": "495e290e247e170b0ad57a8ea908b439a96e867cb697adbff2c38578727bf321",
+      "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
+      "packages/cli/src/bootstrap.mjs": "3673e5510feed3a8fa3d24ee28372be478c51f1b907d0e7133209d5b95dce0ad",
+      "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+      "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+      "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+      "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+      "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+      "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+      "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+      "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+      "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+      "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+      "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+      "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+      "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+      "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+      "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+      "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+      "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+      "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+      "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+      "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+      "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+      "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+      "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+      "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+      "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+      "packages/cli/src/local.mjs": "92eba0e5f90cc06955c0143ba7131cd90e8bbd21d2eacc8a1639fbac91dbe731",
+      "packages/cli/src/platform.mjs": "615af51e2962adde8dc55e02528e0551534e034a57ed8dd6d80d1812444628b5",
+      "packages/cli/src/recovery/background-backup.mjs": "8511b8e9e865fb9f27c55ae175ce2f5f203260aca392741e91cd73cc9b5cfa34",
+      "packages/cli/src/recovery/background-restore.mjs": "b034658f8132873ecb8ced9ecd18c6363a1d0a93d6ec2358c0aa2f36e4d814d1",
+      "packages/cli/src/recovery/backup.mjs": "9c6627d3cd5802923d6e87f726746efe6386400c160b78208ad609f7875dea52",
+      "packages/cli/src/recovery/bundle.mjs": "cbf7594d04c1758b105cefa895c6abd147db7644dc0b2dfb5d8c10a6d637d7aa",
+      "packages/cli/src/recovery/cron-backup.mjs": "5849d22ab828cd5c8c37670de3a1deb06950c39bca92536eec31056f41bd5c9f",
+      "packages/cli/src/recovery/docker.mjs": "79c59e5703c73e4df6419891926521256808bae86a9980b7e43f454d80249455",
+      "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+      "packages/cli/src/recovery/expand.mjs": "ed772cfae3e2e2ad46089b24a6096a45ee5facd6dba685b7931d74872a0e922d",
+      "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+      "packages/cli/src/recovery/inventory.mjs": "bea0f7110da25999cab19024de09825d19fdde3f3b3d92f8beba89fd5b866b12",
+      "packages/cli/src/recovery/layout-validation.mjs": "b823822c258b04266eccf20fc36be58485ec5658ee8c088bc5cca55d5102e52a",
+      "packages/cli/src/recovery/layout.mjs": "823fc5906e4591e3d11ca8e0d534c683afd3079bf1396d1e8929b95650fd2295",
+      "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+      "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+      "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+      "packages/cli/src/recovery/restore.mjs": "c89f45b2835cfe778c4c0422ef2ec2214d798fcc9cb695cd1bdf7ee46f9e36c7",
+      "packages/cli/src/recovery/retire.mjs": "4a53f337ba6d318f046f45a58210b6f612d3eaac82806e1a8bd342e83ebf2b86",
+      "packages/cli/src/recovery/retirement-plan.mjs": "fe8ec02684a35ee43fcfbd36fc9de13194fc0bbe245ff0144cd964920ab19825",
+      "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+      "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+      "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+      "packages/cli/src/recovery/volumes.mjs": "75ce841f12c825b640571092bc5068aba4cb0f70d38743301f7b087446724603",
+      "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+      "packages/cli/src/tls.mjs": "e2139574e845b7b84078054a7285b0b9d27b950576c08769c884c250f87009e5",
+      "packages/platform/package.json": "1c00cb4239ab1c3ea4f8e76fc1fc4b178cf7da664b31a819ac4df0cc7c43b60c",
+      "packages/runtime/package.json": "629c692a946958a67fee2863c5f4b43df1e52ee699d7bedea3356a52110b2160",
+      "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
+      "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
+      "scripts/cron-probe/faults/build.mjs": "0d2501c16b08b7dce1e61d3236cff3012fd945225df66f5c09c1a2d8dca4c398",
+      "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+      "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+      "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+      "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
+      "scripts/cron-probe/recovery/client.mjs": "1eacf99e0cd8d4ada3ef1100953a35e5b4efaa9fb5df9bc402f5fef56bd24d89",
+      "scripts/cron-probe/recovery/controller.mjs": "0840e224da96bd15d67fd047d23f1b4657e25479bef5fd94600b99547ebec266",
+      "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
+      "scripts/cron-probe/recovery/fixture.mjs": "14fd6651121f472ebfe8fc46d5c809211252017aa654533b4f1606bfa14a57d7",
+      "scripts/cron-probe/recovery/lifecycle.mjs": "f1979b26b570579c364ce4d6274ffb8b02e1d67807e032a145ab74a99de77e0d",
+      "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
+      "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
+      "scripts/cron-probe/recovery/provenance.mjs": "9763a2766fc9f20a640fb4701623d0183bc6907370bb46911849b244f600950d",
+      "scripts/cron-probe/recovery/restore.mjs": "18bc3b15be50b6ef54612de7d2cdcbca0e019639976deb3eabf6229856e900ae",
+      "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+      "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+      "scripts/cron-recovery.mjs": "8f86d940dee4ddca5bc5b9f99883fc29f19e3281bab944e69966bc88f71c247b",
+      "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
+      "scripts/http.mjs": "cbb8ef8feb9bfcaf8074f5828cb75f5b3502d81858045c1eeed66e59b334fa2a",
+      "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
+      "scripts/platform-client.mjs": "300ed24f6a7411dce4c8d07244ecb990852a54afb0863ebc82943f37c7f0bd00",
+      "scripts/queue-probe/controller-artifact.mjs": "ddb716f9f578cae64e5a5b4ab9930b5fdc0f09418673221c56eca5737b62da9c"
+    },
+    "git": {
+      "head": "78c4da4be5ec3c10971f00545f078766e8389f83",
+      "status": "M packages/platform/src/main.mjs\n?? packages/platform/src/startup.mjs\n?? packages/platform/test/cron-recovery-oracles.test.mjs\n?? packages/platform/test/startup.test.mjs\n?? scripts/cron-probe/recovery/\n?? scripts/cron-recovery.mjs"
+    },
+    "finalGit": {
+      "head": "78c4da4be5ec3c10971f00545f078766e8389f83",
+      "status": "M packages/platform/src/main.mjs\n?? docs/cron-recovery.md\n?? packages/platform/src/startup.mjs\n?? packages/platform/test/cron-recovery-oracles.test.mjs\n?? packages/platform/test/startup.test.mjs\n?? scripts/cron-probe/recovery/\n?? scripts/cron-recovery.mjs"
+    }
+  },
+  "cases": {
+    "a": {
+      "nativeOnlyHold": {
+        "startedAt": 1792545631348,
+        "endedAt": 1792545693377,
+        "durationMs": 62029,
+        "controllerAndGatewayStopped": true,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 4
+        }
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792545704152,
+        "endedAt": 1792545766355,
+        "durationMs": 62203,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 4
+        }
+      },
+      "applicationDataUnchangedDuringHolds": true,
+      "states": {
+        "refresh": {
+          "recoveryId": "7d96e332-f431-4954-a252-52c356325f3f",
+          "review": "1c2d46f06c5001c2dbb8c02a0168735bd02d9b894f78f221b87fe76cce49310a",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        },
+        "imports": {
+          "recoveryId": "2722f0e1-b5aa-4e0c-8a59-6ebb9146110c",
+          "review": "5ca500a695c80a9057c9d593cbc7840abb7105dca8799b6a977140a2a4f6781c",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        }
+      }
+    },
+    "b": {
+      "nativeOnlyHold": {
+        "startedAt": 1792545988329,
+        "endedAt": 1792546050550,
+        "durationMs": 62221,
+        "controllerAndGatewayStopped": true,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 8
+        }
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792546061295,
+        "endedAt": 1792546123403,
+        "durationMs": 62108,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 8
+        }
+      },
+      "applicationDataUnchangedDuringHolds": true,
+      "states": {
+        "refresh": {
+          "recoveryId": "268483c9-a0c4-40ad-818b-51ee8f185826",
+          "review": "94fbe0ad447cfdb1df26c45babef1d1c85c6d484ada8a4db4face4f64ff65d16",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        },
+        "imports": {
+          "recoveryId": "5e5b7cd1-4118-4e76-b227-1f08d953e100",
+          "review": "674867066d422b19c47a5abe4cf854162c7145337d127e9522dcf6a07c3a1e30",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        }
+      }
+    },
+    "older-a": {
+      "nativeOnlyHold": {
+        "startedAt": 1792546275640,
+        "endedAt": 1792546337773,
+        "durationMs": 62133,
+        "controllerAndGatewayStopped": true,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 4
+        }
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792546348198,
+        "endedAt": 1792546410413,
+        "durationMs": 62215,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 4
+        }
+      },
+      "applicationDataUnchangedDuringHolds": true,
+      "states": {
+        "refresh": {
+          "recoveryId": "c6244a6e-e3b5-4d98-8f83-424bc7f09e66",
+          "review": "e440b4a24da0e039e8e536eb41a3da496ef2b9a35aa2eeea76f56c2f3d7519c4",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        },
+        "imports": {
+          "recoveryId": "2ff60180-0b5a-4c17-bffb-547fcaccb71a",
+          "review": "5fe3e0b93f70d36d5f5e618dc4f96f437f7dd27234474a47aef75a9ce7ece469",
+          "routingInitiallyPaused": true,
+          "acknowledgedWithoutResume": true
+        }
+      }
+    }
+  },
+  "futureDispatch": {
+    "a": {
+      "resume": {
+        "requestedAt": 1792545785179,
+        "confirmedAt": 1792545785480,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792545840000,
+          "paused": false,
+          "revision": 5
+        }
+      },
+      "dueFate": {
+        "scheduledTime": 1792545600000,
+        "resumeRequestedAt": 1792545785179,
+        "outcome": "skipped; resume schedules future work"
+      },
+      "nativeRows": [
+        {
+          "id": "3ac22c9c-7b2a-4279-90fc-f95ec95beef2",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792545840000,
+          "entered_at": 1792545840003,
+          "finished_at": 1792545840023,
+          "phase": "after-a",
+          "outcome": "success"
+        },
+        {
+          "id": "e6fc662d-f8ba-47cf-8551-61455bb12b0b",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792545840000,
+          "entered_at": 1792545840003,
+          "finished_at": 1792545840023,
+          "phase": "after-a",
+          "outcome": "success"
+        }
+      ]
+    },
+    "b": {
+      "resume": {
+        "requestedAt": 1792546145408,
+        "confirmedAt": 1792546145708,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792546200000,
+          "paused": false,
+          "revision": 9
+        }
+      },
+      "nativeRows": [
+        {
+          "id": "301a5c3d-a839-4405-ad5f-23da4730dcad",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792546200000,
+          "entered_at": 1792546200003,
+          "finished_at": 1792546200028,
+          "phase": "after-b",
+          "outcome": "success"
+        },
+        {
+          "id": "e44154a9-dda7-439e-a0f6-e4bff24cbea9",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792546200000,
+          "entered_at": 1792546200003,
+          "finished_at": 1792546200028,
+          "phase": "after-b",
+          "outcome": "success"
+        }
+      ],
+      "oldAttemptsResultsAndCountersUnchangedBeforeResumeBoundary": true,
+      "restoredQueuedLabels": [
+        "KIWI",
+        "LIME"
+      ]
+    },
+    "older-a": {
+      "resume": {
+        "requestedAt": 1792546413064,
+        "confirmedAt": 1792546413357,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792546440000,
+          "paused": false,
+          "revision": 5
+        }
+      },
+      "dueFate": {
+        "scheduledTime": 1792545600000,
+        "resumeRequestedAt": 1792546413064,
+        "outcome": "skipped; resume schedules future work"
+      },
+      "nativeRows": [
+        {
+          "id": "51bd0b58-005e-4b1d-99ea-12a578edd49a",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792546440000,
+          "entered_at": 1792546440002,
+          "finished_at": 1792546440028,
+          "phase": "older-a",
+          "outcome": "success"
+        },
+        {
+          "id": "7532f87d-a53a-4aef-adca-22605d27ee93",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792546440000,
+          "entered_at": 1792546440002,
+          "finished_at": 1792546440028,
+          "phase": "older-a",
+          "outcome": "success"
+        }
+      ]
+    }
+  },
+  "pendingRetry": {
+    "native": {
+      "crons": [
+        "* * * * *"
+      ],
+      "nextAlarm": 1792545928086,
+      "paused": false,
+      "revision": 7
+    },
+    "wake": {
+      "key": "slots/slot-1/wake/entries/2026-10-21T01:25/.cron:refresh/0000000000000002-000000000000000c",
+      "cell": ".cron:refresh",
+      "due_ms": 1792545928086,
+      "format": 2,
+      "identity": "0000000000000002-000000000000000c"
+    },
+    "observedAt": 1792545912705,
+    "nativeRows": [
+      {
+        "id": "c78eb1fa-a930-462a-abe5-2b33b90faeb2",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545900003,
+        "finished_at": 1792545900028,
+        "phase": "retry-b",
+        "outcome": "success"
+      },
+      {
+        "id": "fe180c84-3359-4813-9cb4-90aba7d48006",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545900003,
+        "finished_at": 1792545900016,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "5119600a-079b-45d5-a919-e0aae61ecce3",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545904032,
+        "finished_at": 1792545904039,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "b45ecd99-3068-47da-be92-6da4b604e5fe",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545904032,
+        "finished_at": 1792545904051,
+        "phase": "retry-b",
+        "outcome": "success"
+      },
+      {
+        "id": "191afe26-8d14-45e5-b79e-2fed66ec3d97",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545912057,
+        "finished_at": 1792545912081,
+        "phase": "retry-b",
+        "outcome": "success"
+      },
+      {
+        "id": "ac5c59e5-3986-4923-823a-1364b192efdd",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792545900000,
+        "entered_at": 1792545912057,
+        "finished_at": 1792545912068,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      }
+    ],
+    "resume": {
+      "requestedAt": 1792545843398,
+      "confirmedAt": 1792545843704,
+      "control": {
+        "crons": [
+          "* * * * *"
+        ],
+        "nextAlarm": 1792545900000,
+        "paused": false,
+        "revision": 7
+      }
+    }
+  },
+  "olderLoss": {
+    "olderCase": "due-timer snapshot A, before pending-retry snapshot B",
+    "lostImports": [
+      "after-a",
+      "pending-b"
+    ],
+    "lostNativeAttemptIds": [
+      "3ac22c9c-7b2a-4279-90fc-f95ec95beef2",
+      "e6fc662d-f8ba-47cf-8551-61455bb12b0b"
+    ],
+    "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging."
+  },
+  "sourcePreservation": {
+    "a": {
+      "earliest": "2026-10-21T01:18:11.190019921Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    "b": {
+      "earliest": "2026-10-21T01:20:13.015488505Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    }
+  },
+  "shutdowns": [
+    {
+      "project": "fogd-m11c-cron-recovery-64bc73",
+      "earliest": "2026-10-21T01:18:11.190019921Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-recovery-64bc73-a",
+      "earliest": "2026-10-21T01:20:13.015488505Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-recovery-64bc73-b",
+      "earliest": "2026-10-21T01:26:09.131368045Z",
+      "exits": [
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ]
+    },
+    {
+      "project": "fogd-m11c-cron-recovery-64bc73-older-a",
+      "earliest": "2026-10-21T01:30:57.612446346Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ]
+    }
+  ],
+  "snapshots": {
+    "a": {
+      "sourceProject": "fogd-m11c-cron-recovery-64bc73",
+      "stoppedAt": "2026-10-21T01:19:32.944Z",
+      "completedAt": "2026-10-21T01:19:54.694Z",
+      "durationMs": 49379,
+      "images": {
+        "bucket-init": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "controller": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "slot-1-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-1-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-2-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-2-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "workerd": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5"
+      },
+      "files": {
+        "bucket.tar": {
+          "bytes": 1054720,
+          "sha256": "da1ad787e04a12c9960300003f7b4918aa15676b7e04c923f77f1adffc4d20f8"
+        },
+        "compose.json": {
+          "bytes": 14063,
+          "sha256": "e271a050edd26219b451f1d572e319ac3ae90d8e78208acb15d06cdc508b43b3"
+        },
+        "controller.tar": {
+          "bytes": 1443840,
+          "sha256": "edd38fa8cf8cceb12f02439c00d2bc9753cffda40deb2bb6ed01187720a32aab"
+        },
+        "images.tar": {
+          "bytes": 915859968,
+          "sha256": "d86f4b1e90836ce21db19b04ccbf0cc73a7117d84b1e387524649e93ab3152ee"
+        },
+        "slot-1-a.tar": {
+          "bytes": 10240,
+          "sha256": "9993378f1d36a8a3aba1187209df510fb8d83e1fe82a42b76dccd00c8f635432"
+        },
+        "slot-1-b.tar": {
+          "bytes": 10240,
+          "sha256": "c01d2a696cbfde4fa263419e150b3845f21bf75d5f4a8f15d458df43ed528fde"
+        },
+        "slot-2-a.tar": {
+          "bytes": 10240,
+          "sha256": "9dd29d46ae73a880cf9886a52829455e2b55da2f366095e9f76ff7e38b6731d2"
+        },
+        "slot-2-b.tar": {
+          "bytes": 10240,
+          "sha256": "3bda5bf4b2ebee0f836d62f2e97c74a2eac3967fadfc5f7bc1c6e2e97d728c2d"
+        },
+        "tls.tar": {
+          "bytes": 10240,
+          "sha256": "7c0c419286c8b70cf81e6a5fbc2a5783c4b0bf0a98d3d3aa8bff0452e908dd41"
+        }
+      },
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "exitCode": 1,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "exitCode": 0,
+          "oomKilled": false
+        }
+      ]
+    },
+    "b": {
+      "sourceProject": "fogd-m11c-cron-recovery-64bc73-a",
+      "stoppedAt": "2026-10-21T01:25:41.267Z",
+      "completedAt": "2026-10-21T01:25:51.252Z",
+      "durationMs": 36648,
+      "images": {
+        "bucket-init": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "controller": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "slot-1-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-1-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-2-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "slot-2-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "workerd": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5"
+      },
+      "files": {
+        "bucket.tar": {
+          "bytes": 983040,
+          "sha256": "4020529da30f8f0a50f3c2286f35e8b8ac5fb274f44595e6fdfd74781dce243d"
+        },
+        "compose.json": {
+          "bytes": 14325,
+          "sha256": "110b56d7d2558adff98aefe1466f2ac7e1224e49d503987bccd5e64a07323502"
+        },
+        "controller.tar": {
+          "bytes": 1443840,
+          "sha256": "73fa7d3fbb0eef39799778a379c3ecb285bac41d9880a68382d6c5db1f09ebd3"
+        },
+        "images.tar": {
+          "bytes": 915859968,
+          "sha256": "2abe447f08e59118e6c0adbd956293fec1af0a231cf9b91ff49ed7dd8460d66a"
+        },
+        "slot-1-a.tar": {
+          "bytes": 10240,
+          "sha256": "fc9f64af354f979273ac92d206967fa116f048b4ddb5e667642d0d1c9ed2d370"
+        },
+        "slot-1-b.tar": {
+          "bytes": 10240,
+          "sha256": "86f225439e3ff2df6c4e613f5b505d08fb8d7ad5f9c55ee99e14200ce527e1a0"
+        },
+        "slot-2-a.tar": {
+          "bytes": 10240,
+          "sha256": "712ca78bed9ee2e3de466cdeabbf149e77c974eb11cd32940e7f469f85be3db2"
+        },
+        "slot-2-b.tar": {
+          "bytes": 10240,
+          "sha256": "05d50d5d2a153c0940e8d152254a8dad661acba99e4ece31916a8bb272789fd4"
+        },
+        "tls.tar": {
+          "bytes": 10240,
+          "sha256": "7c0c419286c8b70cf81e6a5fbc2a5783c4b0bf0a98d3d3aa8bff0452e908dd41"
+        }
+      },
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "exitCode": 1,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "exitCode": 0,
+          "oomKilled": false
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Same-version local Docker profile with preserved identities and all volumes; no live snapshot or topology transformation",
+    "Older case restores due-timer snapshot A from before retry snapshot B",
+    "Pausing clears timer/retry identity; no retained missed-tick backlog or arbitrary external-effect exactly-once guarantee",
+    "Scoped cron admission, retirement and release-bound runtime qualification remain open"
+  ],
+  "privateValuesAndVersionsAbsent": true
+}

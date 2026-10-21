@@ -139,7 +139,9 @@ their bounded native profile. The ordinary Void [failure profile](cron-failures.
 terminal retries, owner takeover and autonomous overdue work after downtime.
 The bounded [replacement profile](cron-replacement.md) covers old work through
 compatible migration, lost completion near publication, unfinished application
-status and new-code native retries. Normal scoped cron admission, stopped recovery,
+status and new-code native retries. The [stopped cron recovery profile](cron-recovery.md)
+qualifies same-version local Linux arm64 Docker with two application fleets, due
+timers, pending retries and an older snapshot. Normal scoped cron admission,
 retirement and release-bound runtime qualification remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
