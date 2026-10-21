@@ -30,8 +30,10 @@ export async function provenance(image, { binary = legacyBinary, imagePattern = 
 async function probeSources() {
   const tracked = await execute('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'examples/imports', 'examples/refresh']);
   const apps = tracked.split('\0').filter(Boolean);
-  return sources(['scripts/cron-probe/recovery', 'scripts/cron-probe/retirement', 'scripts/cron-probe/faults', 'scripts/cron-probe/sealed', 'packages/cli/src', 'packages/cli/bin'], [...apps,
+  return sources(['scripts/cron-probe/recovery', 'scripts/cron-probe/retirement', 'scripts/cron-probe/faults', 'scripts/cron-probe/sealed', 'scripts/cron-probe/activation', 'packages/cli/src', 'packages/cli/bin'], [...apps,
     'scripts/cron-recovery.mjs', 'scripts/cron-sealed-recovery.mjs', 'scripts/cron-probe/private-compose.mjs', 'scripts/cron-retirement.mjs', 'scripts/queue-probe/prefix-fingerprints.mjs', 'scripts/queue-probe/controller-artifact.mjs', 'scripts/native-build.mjs',
+    'scripts/cron-interruptions.mjs', 'scripts/cron-sealed-activation.mjs', 'scripts/cron-probe/native.mjs', 'pnpm-workspace.yaml',
+    'scripts/queue-probe/context.mjs', 'scripts/cron-probe/gateway.mjs', 'scripts/cron-probe/sql.mjs', 'scripts/cron-probe-cleanup.mjs',
     'scripts/cron-probe/records.mjs', 'scripts/cron-probe/vm-time.mjs', 'scripts/cron-probe/minute.mjs', 'scripts/cron-probe/refresh-project.mjs',
     'scripts/platform-client.mjs', 'scripts/guestbook-browser.mjs', 'scripts/http.mjs',
     'compose.yaml', 'docs/evidence/m11c-runtime-binding.json', 'docs/evidence/m11c-runtime-preboot.json',

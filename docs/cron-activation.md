@@ -3,8 +3,10 @@
 Cron admission remains closed. The controller has an internally staged activation
 path for the [M11c contract](m11c.md); ordinary artifact submission still rejects
 cron declarations. The default backend has no cron transport and there is no
-installation flag that opens this path. Runtime provenance enforcement and
-stopped recovery still need qualification. [Compatible replacement](cron-replacement.md)
+installation flag that opens this path. The [guarded release profile](cron-sealed-activation.md)
+qualifies selected activation and SIGKILL boundaries with immutable programs and
+runtime identity checks. [Stopped sealed recovery](cron-sealed-recovery.md) has a
+separate bounded profile. [Compatible replacement](cron-replacement.md)
 has a separate bounded profile. Selected native process
 interruptions have a separate bounded profile below.
 The [Void refresh fixture](../examples/refresh/README.md) and
@@ -48,16 +50,18 @@ original artifact with its pinned secret revision; another artifact cannot take
 over that hold. Cross-artifact correction is unqualified.
 
 Cron state carries a capability marker so older controllers refuse it. Current
-backup, restore and expansion paths refuse this history; restarting a controller
-is not installation recovery. Scheduled app retirement also refuses until its
-dispatch, data and authority isolation gates have evidence. Do not start historical
+normal restore, retirement and unsupported expansion paths refuse scheduled
+history; restarting a controller is not installation recovery. The
+[sealed recovery profile](cron-sealed-recovery.md) qualifies stopped backup and
+restore through an independently supplied runtime policy. Do not start historical
 snapshots and then rely on a controller pause to stop overdue timers.
 
 Even pending or rejected private cron records require the experimental transport
 when reopening their controller directory. A default backend refuses that directory.
 If a held artifact or pinned secret revision is unavailable, its matching retained
 metadata must be recovered before retry; rejection, replacement and retirement
-cannot discard the hold. General scheduled installation recovery is unqualified.
+cannot discard the hold. Scheduled installation recovery remains limited to its
+explicitly qualified profile.
 
 ## Qualification
 
@@ -66,10 +70,11 @@ file-backed runtime model to exercise lost replies, ambiguous metadata writes,
 pinned secrets and actual controller process kills. Those tests do not establish
 native timer behavior.
 
-The [bounded native evidence](evidence/m11c-cron-activation.json) records the
-internally staged profile; it does not open admission. The
+The [bounded native evidence](evidence/m11c-cron-activation.json) records a
+historical internally staged profile; it does not open admission. Reproduce it
+with its recorded runtime and corresponding platform sources. The
 [native controller probe](../scripts/cron-controller.mjs) needs a never-deployed
-fleet in a disposable installation. Its controller must contain current platform
+fleet in a disposable installation. Its controller must contain those platform
 sources, and every replica must use the qualified
 [native control patch](patches/celld-cron-controls.md). Use the private fixture
 environment from the [disposable setup](queue-qualification.md#prepare-a-disposable-installation):
@@ -96,6 +101,13 @@ observe, pause and artifact-pinned resume through the admin API, page and CLI.
 They retain activation holds and leave application outcomes to the app.
 
 ### Native process interruptions
+
+The following profile is historical. Its driver and helper source hashes match
+[commit d476189](https://github.com/fogd-dev/fogd/tree/d476189683d438c57693b04daf98443a3c7753bf),
+whose production source tree matches the receipt's recorded base. Reproduce it in
+a separate checkout of that commit. Current historical entry points fail immediately;
+use the [guarded release profile](cron-sealed-activation.md) for the current runner.
+The profiles retain their separate runtime and source scope.
 
 The [bounded evidence](evidence/m11c-cron-interruptions.json) records selected
 native cuts. The [SIGKILL probe](../scripts/cron-interruptions.mjs) runs ordinary Void refresh

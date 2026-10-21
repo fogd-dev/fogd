@@ -399,5 +399,7 @@ native evidence is app-free. The [sealed scheduled recovery profile](docs/cron-s
 qualifies due timers, pending retries, older snapshots and a queued survivor on the
 signed release executable and read-only layout. Current normal CLI restore and
 retirement refuse all scheduled history; the historical profiles above require
-their pinned sources. The remaining release-runtime lifecycle, runtime selection
+their pinned sources. The [guarded release activation profile](docs/cron-sealed-activation.md)
+also checks selected controller SIGKILL cuts, explicit retry and paused updates
+with immutable programs. The remaining release-runtime lifecycle, runtime selection
 and ordinary cron admission remain open.

@@ -54,7 +54,7 @@ export async function snapshot(probe, directory, expectedAlarm, selected) {
   return { directory, before, manifest, prepared, approvals: probe.approvals, shutdown };
 }
 export async function retainAndDown(probe, bundle, label) {
-  assert.match(probe.project, /^fogd-m11c-cron-(?:recovery|retirement)-/);
+  assert.match(probe.project, /^fogd-m11c-cron-(?:recovery|retirement|activation)-/);
   let failure, observed;
   if (probe.daemon) {
     try {

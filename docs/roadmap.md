@@ -165,6 +165,10 @@ history. The [sealed scheduled recovery profile](cron-sealed-recovery.md) qualif
 due/retry/older snapshots and a queued survivor on this release binary and layout.
 A qualified-runtime registry, the remaining release-runtime lifecycle and ordinary
 admission remain open; historical receipts retain their pinned-source scope.
+The [guarded release activation profile](cron-sealed-activation.md) qualifies
+selected publication/resume/durable-release controller kills and paused-update
+recovery on that binary. Remaining lifecycle gates, runtime selection and normal
+scoped cron admission remain open.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

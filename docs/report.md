@@ -37,7 +37,7 @@ No Cloudflare account, credentials or API calls are used by these qualifications
 | Capacity and retirement, M10 | Qualified Docker layouts through three app fleets, capacity reporting, stopped expansion/retirement and retained-state isolation; [capacity](capacity.md), [expansion](expansion.md), [retirement](retirement.md) |
 | Background queues, M11a | Bounded Docker opt-in, disabled by default; native Void import flow, activation controls, retries, duplicate handling and recovery; [acceptance](m11a-acceptance.md) |
 | Live sessions, M11b | Bounded native WebSocket/SSE lifecycle, lost-ack reconciliation, owner/gateway failures, compatible replacement, movement and stopped restore; [acceptance](m11b-acceptance.md). Pinned Void patches and the opt-in celld candidate are required |
-| Scheduled work, M11c | Bounded native timer/retry/dispatch profiles and sealed release-runtime recovery have evidence; cron admission remains closed. [Contract](m11c.md), [sealed recovery](cron-sealed-recovery.md) |
+| Scheduled work, M11c | Bounded native profiles, sealed recovery and selected guarded release activation interruptions have evidence; cron admission remains closed. [Contract](m11c.md), [recovery](cron-sealed-recovery.md), [activation](cron-sealed-activation.md) |
 | Broader portability, M12 | Offline ordinary Void/fogd builds and bounded logical transfer already exist. General target migration and non-Void Workers import remain open |
 
 ## How the system is arranged
@@ -152,6 +152,12 @@ this release binary and layout. Independent acceptance checks verify native
 signatures, the approved artifact and all retained source files. A qualified-runtime
 registry, the remaining release-runtime lifecycle and ordinary admission remain
 open; historical receipts retain their pinned-source scope.
+The [guarded activation profile](cron-sealed-activation.md) adds four actual
+controller SIGKILL cuts with hold-only restart and explicit approval retry. It
+checks durable approval/secret pins, paused updates and retained business results.
+Independent acceptance verifies native signatures, image layers and all three
+retained artifacts. This is direct controller qualification; normal admission and
+the external admin/TLS activation flow remain open.
 
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.

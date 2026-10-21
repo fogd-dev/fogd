@@ -6,7 +6,7 @@ import { createGunzip } from 'node:zlib';
 import { join } from 'node:path';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 
-export async function addedLayers(directory, image, parent) {
+export async function addedLayers(directory, image, parent, programs) {
   const archive = join(directory, 'image.tar');
   await execute('docker', ['image', 'save', image.Id], { output: archive });
   const read = path => execute('tar', ['-xOf', archive, path]);
@@ -25,16 +25,16 @@ export async function addedLayers(directory, image, parent) {
     const paths = (await execute('tar', ['-tf', file])).trim().split('\n').filter(Boolean);
     const verbose = (await execute('tar', ['-tvf', file])).trim().split('\n').filter(Boolean);
     assert.ok(verbose.every(line => ['d', '-'].includes(line[0])), 'No added layer may contain links or special files');
-    assert.ok(paths.every(allowedPath), 'Added image layers may contain only reviewed package sources/manifests and qualification programs');
+    assert.ok(paths.every(path => allowedPath(path, programs)), 'Added image layers may contain only reviewed package sources/manifests and qualification programs');
     result.push({ diffId: image.RootFS.Layers[index], paths });
   }
   return result;
 }
-function allowedPath(raw) {
+function allowedPath(raw, programs) {
   const path = raw.replace(/^\.\//, '').replace(/\/$/, '');
   if (path.startsWith('/') || path.split('/').some(part => part === '..' || part.startsWith('.wh.'))) return false;
   const directories = ['app', 'app/packages', 'app/packages/platform', 'app/packages/runtime', 'app/qualification'];
-  return directories.includes(path) || /^app\/packages\/(platform|runtime)\/(src(?:\/.*)?|package\.json)$/.test(path) || /^app\/qualification\/(backend\.mjs|controller\.mjs|controller-artifact\.mjs|runtime-policy\.json)$/.test(path);
+  return directories.includes(path) || /^app\/packages\/(platform|runtime)\/(src(?:\/.*)?|package\.json)$/.test(path) || programs.includes(`/${path}`);
 }
 async function layerDigest(path) {
   const file = await open(path, 'r'), header = Buffer.alloc(2);

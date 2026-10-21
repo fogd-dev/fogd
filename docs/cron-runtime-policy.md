@@ -7,8 +7,9 @@ closed, and the default backend does not install a cron transport.
 The [signed release-profile receipt](evidence/m11c-runtime-binding.json)
 qualifies caller checks on an app-free two-node Docker fleet. It covers refusals
 before CLI calls, guarded bootstrap, complete live leases and an empty held cron
-cell. Scheduled applications and restored startup remain unqualified on this
-binary. The [schema 1 receipt](evidence/m11c-runtime-policy.json) is historical.
+cell. The separate [sealed recovery](cron-sealed-recovery.md) and
+[activation interruption](cron-sealed-activation.md) profiles qualify their bounded
+application scenarios on this binary. The [schema 1 receipt](evidence/m11c-runtime-policy.json) is historical.
 
 ## Explicit composition
 
@@ -105,6 +106,8 @@ or transfer application lifecycle evidence to the new native binary.
 
 The [host preboot foundation](cron-runtime-preboot.md) adds independent image and
 launch checks for experimental restore, with app-free read-only startup evidence.
-It does not close the restored-schedule or full runtime lifecycle gates. Normal
-CLI restore and retirement refuse all scheduled history until a qualified policy
-is available.
+The separate [sealed recovery profile](cron-sealed-recovery.md) qualifies restored
+schedules in its two-fleet scope. [Guarded activation](cron-sealed-activation.md)
+qualifies selected controller interruptions; the full runtime lifecycle remains
+open. Normal CLI restore and retirement refuse all scheduled history until a
+qualified policy is available.
