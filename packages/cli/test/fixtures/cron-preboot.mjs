@@ -24,4 +24,3 @@ export function prebootFixture() {
   }
   return { source, profile };
 }
-

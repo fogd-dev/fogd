@@ -505,6 +505,11 @@
       }
     ]
   },
+  "finalFormattingCheck": {
+    "command": "node --test packages/cli/test/cron-preboot.test.mjs packages/cli/test/cron-preboot-restore.test.mjs",
+    "passed": 13,
+    "reason": "Removed a trailing blank line in the test fixture after the full-suite run; production and native qualification inputs unchanged."
+  },
   "review": {
     "externalVerdict": "PASS WITH CONCERNS",
     "blockingFindings": 0,
@@ -667,7 +672,7 @@
     "packages/cli/test/fixtures/recovery-layout.mjs": "1709f71518155a030fb9ec2ed4f0b609a1eca5777eb08ee3ffc0d8fdbf5ad245",
     "packages/cli/test/fixtures/cron-snapshot.mjs": "1203a815134bbc1aeecd7e9b9504122a8b1ed2a46357dc27772d618f19d49af1",
     "packages/cli/test/fixtures/kubernetes.mjs": "286dafaeb1daf61a875a193fd75a4a6be83a2b5b0dde060583585444059a6f92",
-    "packages/cli/test/fixtures/cron-preboot.mjs": "7b7852185d425f6595a2ea5cdf481a3ed31226836946e736e5202d43c5d9871b"
+    "packages/cli/test/fixtures/cron-preboot.mjs": "a4242409bbb5f9716f41c5ee1805b5500059bfe523bc809de15013cbdb35b422"
   },
   "rawEvidenceSha256": {
     "logs.json": "7d4f4615918e350597953c8a3f061833bf9e2b47990596244a02dcbb8b6c6051",
@@ -682,7 +687,8 @@
     "fogd-preboot-mutants.py": "4d552f7edd2e17c4ecece1f66a91c2a7f34e9c4d2abdc02c1236f54d03cc7386",
     "fogd-preboot-quality-final2.log": "601e3ee5c12118887bcc1068b40a9a71a0fb4fe700fb26ee37200304b25326a5",
     "fogd-preboot-native6.log": "859b6f183a44616230c66b349698ab7964e55c49c26d7cd1f7c4f2c19fb35401",
-    "fogd-accept-preboot.py": "4eec72ee94df78f035b07dd9662f4a95234040e5bf00c379192d449a64430e4e",
+    "fogd-accept-preboot.py": "e75cc0ac1524f6f1a1a83cf3da4e6a3fbe7d07eef170bda5faec4d66f1770fe5",
+    "fogd-preboot-format-focused.log": "d708f1b9b056292b42659a6cd0ba95729e93864f98293b14da05b437def8888c",
     "fogd-preboot-tests4.log": "178d59d082a75a579bacba9666a0ebe940a65f789b3461be875fdbbe3d014a35"
   },
   "limitations": [
