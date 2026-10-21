@@ -7,8 +7,9 @@ cron recovery receipts apply to their pinned sources, not this guarded path.
 
 The internal restore adapter accepts a separately supplied qualification policy.
 The [app-free native receipt](evidence/m11c-runtime-preboot.json) checks program
-identity and read-only startup. It does not qualify restored timers, a scheduled
-application, backup of the sealed layout or the complete runtime lifecycle.
+identity and read-only startup. The separate [sealed recovery profile](cron-sealed-recovery.md)
+qualifies scheduled-app backup and stopped recovery on that layout. The complete
+runtime lifecycle remains an admission gate.
 
 ## Independent launch policy
 
@@ -77,10 +78,12 @@ With the receipt's local images available, use a new private directory:
 node scripts/cron-runtime-preboot.mjs .fogd/NEW_PREBOOT_EVIDENCE
 ```
 
-The full scheduled-application recovery drill must still run on this release
-binary and sealed layout. Backup inventory needs to account for its temporary
-mounts. A qualified-runtime registry, controller composition for the new profile,
-normal scoped admission and general startup/runtime ownership checks remain open.
+The [sealed scheduled recovery drill](cron-sealed-recovery.md) covers an armed timer,
+a pending retry, a queued survivor and an older snapshot on this release binary.
+Backup inventory verifies the declared temporary filesystem and named-volume
+permissions. Already-sealed Node commands must match the same launch policy when
+restored again. A qualified-runtime registry, normal scoped admission, the remaining
+release-runtime lifecycle and general startup/runtime ownership checks remain open.
 The host gate does not inspect native cells for schedules hidden by inconsistent
 controller metadata: coherent, trusted stopped snapshots remain an assumption.
 It does not prevent a privileged Docker operator from replacing a container or

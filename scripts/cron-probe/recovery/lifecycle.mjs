@@ -14,6 +14,7 @@ export async function bootstrap(probe, runner) {
   assert.equal((await projectContainers(probe.project)).length, 0, 'Use a fresh qualification project');
   await probe.compose(['create', '--pull', 'never']);
   await probe.compose(['cp', `${runner}/.`, 'controller:/var/lib/fogd/qualification']);
+  await probe.prepareControllerData?.();
   await probe.compose(['up', '-d', '--no-build', '--pull', 'never']);
   await waitForController(probe);
   const id = randomUUID();

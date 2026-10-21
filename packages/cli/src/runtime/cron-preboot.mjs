@@ -85,8 +85,7 @@ function sealService(service, image) {
 function assertController(service, profile) {
   assertStorage(service.environment, profile);
   if (Object.keys(service.environment).some(key => key.startsWith('CELLD_'))) throw new Error('Scheduled controller refuses native startup overrides');
-  if (service.entrypoint?.length || !isDeepStrictEqual(service.command, ['node', ...profile.controllerArgs])) throw new Error('Scheduled controller command differs from launch policy');
-  service.entrypoint = ['/usr/local/bin/node']; service.command = [...profile.controllerArgs];
+  sealNodeLaunch(service, profile.controllerArgs);
 }
 function assertUtilityCommands(services, profile) {
   if (services.workerd.environment.FOGD_CONTROLLER !== 'controller:8083') throw new Error('Scheduled gateway controller address differs');
@@ -94,8 +93,7 @@ function assertUtilityCommands(services, profile) {
   assertCredentials(services['bucket-init'].environment, services.controller.environment);
   for (const [name, args] of [['bucket-init', ['node', 'packages/runtime/src/init-bucket.mjs']], ['workerd', ['node', 'packages/runtime/src/serve.mjs']]]) {
     const service = services[name];
-    if (service.entrypoint?.length || (service.command && !isDeepStrictEqual(service.command, args))) throw new Error('Scheduled utility startup command differs');
-    service.entrypoint = ['/usr/local/bin/node']; service.command = args.slice(1);
+    sealNodeLaunch(service, args.slice(1), name === 'workerd');
   }
 }
 function assertStorage(env, profile) {
@@ -125,4 +123,11 @@ function assertStorageService(services) {
   if (service.entrypoint?.length && ![['minio'], ['/usr/local/bin/minio']].some(value => isDeepStrictEqual(service.entrypoint, value))) throw new Error('Scheduled storage entrypoint differs');
   if (service.environment.MINIO_ROOT_USER !== controller.AWS_ACCESS_KEY_ID || service.environment.MINIO_ROOT_PASSWORD !== controller.AWS_SECRET_ACCESS_KEY) throw new Error('Scheduled storage account differs');
   service.entrypoint = ['/usr/local/bin/minio']; service.command = args;
+}
+
+function sealNodeLaunch(service, args, allowDefault = false) {
+  const plain = !service.entrypoint?.length && (isDeepStrictEqual(service.command, ['node', ...args]) || (allowDefault && !service.command));
+  const sealed = isDeepStrictEqual(service.entrypoint, ['/usr/local/bin/node']) && isDeepStrictEqual(service.command, args);
+  if (!plain && !sealed) throw new Error('Scheduled Node command differs from launch policy');
+  service.entrypoint = ['/usr/local/bin/node']; service.command = [...args];
 }

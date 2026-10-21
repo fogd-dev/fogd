@@ -6,15 +6,16 @@ import { regularFiles } from '../../../packages/runtime/src/artifact.mjs';
 import { stackRoot } from '../../../packages/cli/src/local.mjs';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 
-const binary = 'b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70';
+const legacyBinary = 'b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70';
 const digest = async path => createHash('sha256').update(await readFile(path)).digest('hex');
 async function sources(directories, files = []) {
   const paths = [...files];
   for (const directory of directories) for (const file of await regularFiles(join(stackRoot, directory))) paths.push(`${directory}/${file}`);
   return Object.fromEntries(await Promise.all(paths.sort().map(async file => [file, await digest(join(stackRoot, file))])));
 }
-export async function provenance(image) {
-  assert.match(image, /^fogd-runtime:cron-(?:recovery|retirement)-candidate[0-9]+$/);
+export async function provenance(image, { binary = legacyBinary, imagePattern = /^fogd-runtime:cron-(?:recovery|retirement)-candidate[0-9]+$/ } = {}) {
+  assert.match(image, imagePattern);
+  assert.match(binary, /^[a-f0-9]{64}$/);
   const [info] = JSON.parse(await execute('docker', ['image', 'inspect', image]));
   assert.equal(info.Os, 'linux'); assert.equal(info.Architecture, 'arm64');
   const platform = await sources(['packages/platform/src', 'packages/runtime/src']);
@@ -29,10 +30,11 @@ export async function provenance(image) {
 async function probeSources() {
   const tracked = await execute('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'examples/imports', 'examples/refresh']);
   const apps = tracked.split('\0').filter(Boolean);
-  return sources(['scripts/cron-probe/recovery', 'scripts/cron-probe/retirement', 'scripts/cron-probe/faults', 'packages/cli/src', 'packages/cli/bin'], [...apps,
-    'scripts/cron-recovery.mjs', 'scripts/cron-retirement.mjs', 'scripts/queue-probe/prefix-fingerprints.mjs', 'scripts/queue-probe/controller-artifact.mjs', 'scripts/native-build.mjs',
+  return sources(['scripts/cron-probe/recovery', 'scripts/cron-probe/retirement', 'scripts/cron-probe/faults', 'scripts/cron-probe/sealed', 'packages/cli/src', 'packages/cli/bin'], [...apps,
+    'scripts/cron-recovery.mjs', 'scripts/cron-sealed-recovery.mjs', 'scripts/cron-probe/private-compose.mjs', 'scripts/cron-retirement.mjs', 'scripts/queue-probe/prefix-fingerprints.mjs', 'scripts/queue-probe/controller-artifact.mjs', 'scripts/native-build.mjs',
     'scripts/cron-probe/records.mjs', 'scripts/cron-probe/vm-time.mjs', 'scripts/cron-probe/minute.mjs', 'scripts/cron-probe/refresh-project.mjs',
     'scripts/platform-client.mjs', 'scripts/guestbook-browser.mjs', 'scripts/http.mjs',
+    'compose.yaml', 'docs/evidence/m11c-runtime-binding.json', 'docs/evidence/m11c-runtime-preboot.json',
     'package.json', 'pnpm-lock.yaml', 'packages/cli/package.json', 'packages/platform/package.json', 'packages/runtime/package.json', 'docker/runtime.Dockerfile', 'docker/celld-supervisor.sh']);
 }
 async function gitState() { return { head: (await execute('git', ['rev-parse', 'HEAD'])).trim(), status: (await execute('git', ['status', '--short'])).trim() }; }

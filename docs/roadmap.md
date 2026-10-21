@@ -154,16 +154,17 @@ metadata evidence. The [caller policy](cron-runtime-policy.md) now has native
 app-free refusal/bootstrap evidence. The
 [signed binding foundation](patches/celld-runtime-binding.md) adds storage-origin
 and region claims, fresh lease-key possession proofs and separate bootstrap/live
-command checks, with app-free evidence on a fat-LTO release build. Runtime
-lifecycle fencing, restored preboot checks, shipped-runtime selection and scheduled
-application qualification on this binary remain open.
+command checks, with app-free evidence on a fat-LTO release build. General runtime
+lifecycle fencing, shipped-runtime selection and the remaining scheduled lifecycle
+qualification on this binary remain open.
 The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
 runtime/storage launch policy before experimental restore creates application
 containers. Its app-free native profile checks image/program identity and
 read-only startup. Normal CLI cron restore and retirement refuse all scheduled
-history. Full scheduled recovery on the sealed layout, a qualified-runtime
-registry and ordinary admission remain open; historical receipts retain their
-pinned-source scope.
+history. The [sealed scheduled recovery profile](cron-sealed-recovery.md) qualifies
+due/retry/older snapshots and a queued survivor on this release binary and layout.
+A qualified-runtime registry, the remaining release-runtime lifecycle and ordinary
+admission remain open; historical receipts retain their pinned-source scope.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

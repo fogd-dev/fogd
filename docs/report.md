@@ -37,7 +37,7 @@ No Cloudflare account, credentials or API calls are used by these qualifications
 | Capacity and retirement, M10 | Qualified Docker layouts through three app fleets, capacity reporting, stopped expansion/retirement and retained-state isolation; [capacity](capacity.md), [expansion](expansion.md), [retirement](retirement.md) |
 | Background queues, M11a | Bounded Docker opt-in, disabled by default; native Void import flow, activation controls, retries, duplicate handling and recovery; [acceptance](m11a-acceptance.md) |
 | Live sessions, M11b | Bounded native WebSocket/SSE lifecycle, lost-ack reconciliation, owner/gateway failures, compatible replacement, movement and stopped restore; [acceptance](m11b-acceptance.md). Pinned Void patches and the opt-in celld candidate are required |
-| Scheduled work, M11c | Native timers, patched retry identity, isolated watchdog termination and experimental dispatch holds pass bounded runtime probes. D1-only app-free bootstrap is implemented; cron admission remains closed. [Contract](m11c.md), [runtime probes](cron-qualification.md) |
+| Scheduled work, M11c | Bounded native timer/retry/dispatch profiles and sealed release-runtime recovery have evidence; cron admission remains closed. [Contract](m11c.md), [sealed recovery](cron-sealed-recovery.md) |
 | Broader portability, M12 | Offline ordinary Void/fogd builds and bounded logical transfer already exist. General target migration and non-Void Workers import remain open |
 
 ## How the system is arranged
@@ -139,16 +139,19 @@ evidence. The
 [signed release-profile foundation](patches/celld-runtime-binding.md) adds
 storage-origin/region claims and fresh lease-key possession proofs. Its app-free
 qualification includes nine native Rust tests, 498 repository tests and separate
-bootstrap/live-lease command checks. Runtime lifecycle fencing, shipped-runtime
-selection, host-side restored-start validation and scheduled application
-qualification on this binary remain open.
+bootstrap/live-lease command checks. General runtime lifecycle fencing,
+shipped-runtime selection and the remaining scheduled lifecycle qualification on
+this binary remain open.
 The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
 runtime/storage launch policy before experimental restore creates application
 containers. Its app-free native profile checks image/program identity and
 read-only startup. Normal CLI cron restore and retirement refuse all scheduled
-history. Full scheduled recovery on the sealed layout, a qualified-runtime
-registry and ordinary admission remain open; historical receipts retain their
-pinned-source scope.
+history. The [sealed scheduled recovery profile](cron-sealed-recovery.md) qualifies
+due/retry/older snapshots, explicit acknowledgment/resume and a queued survivor on
+this release binary and layout. Independent acceptance checks verify native
+signatures, the approved artifact and all retained source files. A qualified-runtime
+registry, the remaining release-runtime lifecycle and ordinary admission remain
+open; historical receipts retain their pinned-source scope.
 
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.

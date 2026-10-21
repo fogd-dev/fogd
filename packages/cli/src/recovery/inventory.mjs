@@ -1,8 +1,10 @@
 import { serviceNames, volumeNames } from './layout.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { json, projectContainers } from './docker.mjs';
+import { checkIsolation, checkMounts } from './container-isolation.mjs';
 
 export function checkContainer(service, container, image) {
+  checkIsolation(service, container);
   const actual = Object.fromEntries(container.Config.Env.map(entry => { const i = entry.indexOf('='); return [entry.slice(0, i), entry.slice(i + 1)]; }));
   for (const [key, value] of Object.entries(service.environment || {})) {
     if (actual[key] !== String(value)) throw new Error('Running configuration differs from Compose; restore its original configuration before backup');
@@ -21,9 +23,7 @@ export async function inventory(config) {
     images[name] = container.Image;
     const [image] = await json(['image', 'inspect', container.Image]);
     checkContainer(service, container, image);
-    const expected = (service.volumes || []).map(m => [config.volumes[m.source].name, m.target]).sort();
-    const actual = container.Mounts.map(m => [m.Type === 'volume' ? m.Name : null, m.Destination]).sort();
-    if (!isDeepStrictEqual(expected, actual)) throw new Error('Container volumes do not match the resolved configuration');
+    checkMounts(service, container, config.volumes);
   }
   if (containers.length !== services.length) throw new Error('Unexpected project containers');
   for (const name of volumeNames(config)) {

@@ -28,6 +28,7 @@ export async function recoveryClient(directory, config, selected) {
 export async function waitForController(probe) {
   await expect.poll(async () => { try { return Boolean((await probe.api('/v1/admin')).csrf); } catch { return false; } }, { timeout: 120000 }).toBe(true);
   probe.daemon = true;
+  await probe.verifyController?.();
 }
 export async function requireDaemonStopped(probe) {
   const containers = await projectContainers(probe.project);

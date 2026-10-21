@@ -3,7 +3,8 @@ import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
-import { restoredConfig, composeLiteral } from '../../../packages/cli/src/recovery/bundle.mjs';
+import { composeLiteral } from '../../../packages/cli/src/recovery/bundle.mjs';
+import { privateCompose } from '../private-compose.mjs';
 import { cronRestoreConfig } from '../../../packages/cli/src/runtime/cron-preboot.mjs';
 
 export async function prebootFixture(directory) {
@@ -13,18 +14,8 @@ export async function prebootFixture(directory) {
   await writeFile(join(output, 'source-pins.json'), JSON.stringify(inputs, null, 2), { mode: 0o600 });
   const receipt = JSON.parse(await readFile('docs/evidence/m11c-runtime-binding.json', 'utf8'));
   const image = receipt.images.observer.id;
-  const env = Object.fromEntries(['PATH', 'HOME', 'DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_CONFIG'].filter(key => process.env[key]).map(key => [key, process.env[key]]));
-  Object.assign(env, { COMPOSE_PROJECT_NAME: project, FOGD_RUNTIME_IMAGE: image, FOGD_BUCKET_USER: 'preboot-probe',
-    FOGD_BUCKET_PASSWORD: randomUUID(), FOGD_ADMIN_PASSWORD: randomUUID(), FOGD_GATEWAY_TOKEN: randomUUID(), FOGD_DEPLOY_TOKEN: randomUUID() });
-  const source = JSON.parse(await execute('docker', ['compose', '--env-file', '/dev/null', '-f', 'compose.yaml', 'config', '--format', 'json'], { env }));
-  const images = Object.fromEntries(Object.keys(source.services).map(name => [name, name === 'minio' ? receipt.images.minio.id : image]));
-  const config = restoredConfig(source, project, images);
-  for (const service of Object.values(config.services)) delete service.ports;
-  for (const [name, service] of Object.entries(config.services)) if (name.startsWith('slot-')) Object.assign(service.environment, {
-    CELLD_CLOUD: '0', CELLD_RUNTIME_IDENTITY_LISTEN: '0.0.0.0:8082',
-  });
   const networks = { control: '10.252.232.0/24', 'fleet-1': '10.252.233.0/24', 'fleet-2': '10.252.234.0/24' };
-  for (const [name, subnet] of Object.entries(networks)) config.networks[name].ipam = { config: [{ subnet }] };
+  const { config, env } = await privateCompose({ project, runtimeImage: image, storageImage: receipt.images.minio.id, networks });
   const profile = { networks, schema: 2, image, storageImage: receipt.images.minio.id, binarySha256: receipt.nativeBuild.binarySha256,
     supervisorSha256: createHash('sha256').update(await readFile('docker/celld-supervisor.sh')).digest('hex'),
     bucket: env.FOGD_BUCKET || 'fogd', storage: { endpoint: 'http://minio:9000', region: 'us-east-1' },
@@ -66,7 +57,7 @@ export async function prebootMutants(probe) {
 export async function prebootInputs() {
   const files = ['compose.yaml', 'docker/celld-supervisor.sh', 'package.json', 'pnpm-lock.yaml',
     'packages/cli/package.json', 'packages/platform/package.json', 'packages/runtime/package.json',
-    'docs/evidence/m11c-runtime-binding.json', 'scripts/cron-runtime-preboot.mjs', 'scripts/cron-probe/preboot/fixture.mjs'];
+    'docs/evidence/m11c-runtime-binding.json', 'scripts/cron-runtime-preboot.mjs', 'scripts/cron-probe/preboot/fixture.mjs', 'scripts/cron-probe/private-compose.mjs'];
   for (const directory of ['packages/cli/src', 'packages/platform/src', 'packages/runtime/src']) await collect(directory, files);
   return Object.fromEntries(await Promise.all(files.sort().map(async file => [file, createHash('sha256').update(await readFile(file)).digest('hex')])));
 }

@@ -4,8 +4,9 @@ Current CLI restore and retirement refuse all scheduled history before Docker
 access. The [preboot foundation](cron-runtime-preboot.md) requires an independent
 launch policy that only an internal qualification caller can supply. The native
 recovery profiles below are historical evidence; reproduce them with their pinned
-sources. Their scripts do not qualify the current guarded path. Ordinary cron
-admission remains closed.
+sources. The separate [sealed recovery profile](cron-sealed-recovery.md) qualifies
+the current guarded path on the signed release executable. Ordinary cron admission
+remains closed.
 
 Cron installation recovery uses a native persisted hold and a full stopped Docker
 archive. The [native evidence](evidence/m11c-cron-recovery.json) qualifies

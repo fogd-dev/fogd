@@ -104,7 +104,6 @@ test('wrong native file, malformed proof and failed inspection refuse preboot wi
   }
 });
 
-
 test('image-declared volumes, loader environment and writable search paths refuse before any container', async () => {
   for (const alter of [
     image => { image.Config.Volumes = { '/usr/local/bin': {} }; },
@@ -121,7 +120,6 @@ test('image-declared volumes, loader environment and writable search paths refus
     assert.deepEqual(calls, ['image']);
   }
 });
-
 
 test('private network overrides require a complete nonoverlapping launch policy', () => {
   const f = fixture();
@@ -144,7 +142,6 @@ test('image verification snapshots caller policy before asynchronous image inspe
   assert.equal(f.profile.binarySha256, '0'.repeat(64));
 });
 
-
 test('storage image refuses anonymous mounts, startup loaders and active healthchecks before any container', async () => {
   for (const alter of [
     image => { image.Config.Volumes = { '/usr/local/bin': {} }; },
@@ -158,5 +155,25 @@ test('storage image refuses anonymous mounts, startup loaders and active healthc
     alter(images[0]);
     await assert.rejects(verifyCronStorageImage(f.profile.storageImage, async args => { calls.push(args[0]); return JSON.stringify(images); }), /preboot verification failed/);
     assert.deepEqual(calls, ['image']);
+  }
+});
+
+test('a sealed snapshot can be sealed again without changing its launch policy', () => {
+  const f = fixture(), sealed = cronRestoreConfig(state, f.source, f.profile);
+  assert.deepEqual(cronRestoreConfig(state, sealed, f.profile), sealed);
+  sealed.services.controller.entrypoint = ['/var/lib/fogd/node'];
+  assert.throws(() => cronRestoreConfig(state, sealed, f.profile), { code: 'CRON_PREBOOT_REFUSED' });
+});
+
+test('sealed controller and utility programs reject changed arguments and mixed node forms', () => {
+  for (const alter of [
+    config => { config.services.controller.command = ['private.mjs']; },
+    config => { config.services.workerd.command = ['private.mjs']; },
+    config => { config.services['bucket-init'].command = ['private.mjs']; },
+    config => { delete config.services['bucket-init'].command; },
+    config => { config.services.controller.command.unshift('node'); },
+  ]) {
+    const f = fixture(), sealed = cronRestoreConfig(state, f.source, f.profile); alter(sealed);
+    assert.throws(() => cronRestoreConfig(state, sealed, f.profile), { code: 'CRON_PREBOOT_REFUSED' });
   }
 });

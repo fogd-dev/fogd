@@ -395,6 +395,9 @@ migration, publication and unfinished-work evidence. Handler watchdog evidence d
 
 The [preboot foundation](docs/cron-runtime-preboot.md) checks runtime images and
 launch topology before experimental restore creates application containers. Its
-native evidence is app-free. Current normal CLI restore and retirement refuse all
-scheduled history; the recovery and retirement profiles above require their
-historical pinned sources. Ordinary cron admission remains closed.
+native evidence is app-free. The [sealed scheduled recovery profile](docs/cron-sealed-recovery.md)
+qualifies due timers, pending retries, older snapshots and a queued survivor on the
+signed release executable and read-only layout. Current normal CLI restore and
+retirement refuse all scheduled history; the historical profiles above require
+their pinned sources. The remaining release-runtime lifecycle, runtime selection
+and ordinary cron admission remain open.
