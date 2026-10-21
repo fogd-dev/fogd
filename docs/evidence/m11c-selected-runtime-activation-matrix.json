@@ -1,0 +1,735 @@
+{
+  "schema": 1,
+  "scope": "Bounded local Linux arm64 Docker selected-runtime activation through the ordinary HTTPS CLI. Full M11c and public enrollment remain open.",
+  "terminalExitCode": 0,
+  "family": "celld-cron-v2-linux-arm64",
+  "admission": "candidate",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "catalogSha256": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+  "productSourceInventorySha256": "7143aabaed8e5d53e84ee8de5a3a3f2175c4d57ee4c9339cc31f3ec17d0a19f9",
+  "imageAudit": {
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "sourceFilesVerified": 63,
+    "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+    "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+    "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+  },
+  "project": "fogd-selected-activation-6a573bdcd89eba5d",
+  "sourceBaseCommit": "b62e7d0c68adff7676a3ac382276bcdfc4a706f4",
+  "sourceTreeDirty": true,
+  "hostNodeVersion": "v26.2.0",
+  "hostSourceFiles": {
+    "packages/cli/bin/fogd.js": "cabcad033d99c2436b05444ff5816b1a1935e2ec4ce408e0df639d0478dde4a1",
+    "packages/cli/src/bootstrap.mjs": "57073be3090df24ff9bb360c4d18c8aed6b7479461c1a057ce3772be34fef9f5",
+    "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+    "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+    "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+    "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+    "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+    "packages/cli/src/deploy-capabilities.mjs": "284e7eb90d2ec5c62d9803cafe5c44b0523d43898405a28940e05a86681a992b",
+    "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+    "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+    "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+    "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+    "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+    "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+    "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+    "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+    "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+    "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+    "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+    "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+    "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+    "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+    "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+    "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+    "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+    "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+    "packages/cli/src/local.mjs": "9ce356963c11d8f8ad9d0f82c9b57e14f1501f4f8ba40cb32275ba9b3bd00fd8",
+    "packages/cli/src/platform.mjs": "c0276d05eecb85f5647106eafc7aedcfaf68825e4c265415f3508c46250bb50e",
+    "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+    "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+    "packages/cli/src/recovery/backup.mjs": "9918a6dd450886910cba1b644daec301c89839d1d97fc1ce77feba72b27fc63c",
+    "packages/cli/src/recovery/bundle.mjs": "bf123e3bb388439b03168ce2a87621b41b35590bfe0ed4f4f7bbe53b41da126e",
+    "packages/cli/src/recovery/container-isolation.mjs": "acc6c83e45ba66bdd02098063e55a4aefd43d65d74b7824a4cdfce6c8c2fe72b",
+    "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
+    "packages/cli/src/recovery/docker.mjs": "f43143dfe9ed2e0e4e8e203834296cb857e561f65dd40fcba6914b5e5c06a488",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+    "packages/cli/src/recovery/expand.mjs": "2b53829959c06ebe22ce8575fd01e982a2dc3e5a014202b570821df04fa1d6bc",
+    "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+    "packages/cli/src/recovery/inventory.mjs": "b4989acd755e4fa4a2ff9e3d793a6840353e114a7eaf016797d221d965416295",
+    "packages/cli/src/recovery/layout-validation.mjs": "ff6b01cc67c598f5e7813989e52d11fc1353e6ee4421622805e74ad1c2b7e1c6",
+    "packages/cli/src/recovery/layout.mjs": "7284f2fe6ddd8a13dc31d5d964e73bdccc24958d2edbfc6a6cf84c68a5b75ffd",
+    "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+    "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+    "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+    "packages/cli/src/recovery/restore.mjs": "b8ebe2cc33247c2242208737f5d27bb9495472beacd2211bd84e2b7c6c77f8f7",
+    "packages/cli/src/recovery/retire.mjs": "5c3902db6bcde1c3e3ec7bb430f69162e913bf57a914d36ac310c19503dfbc0a",
+    "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
+    "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+    "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+    "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+    "packages/cli/src/recovery/volumes.mjs": "63d3aca2c94cef375be604a25ef0ffa2f562d151f1b9789b896cf81552c26de8",
+    "packages/cli/src/runtime/catalog.json": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+    "packages/cli/src/runtime/catalog.mjs": "2752537065abb0c289776bfc6c124f1426cefd79d9dc2a863337a645dc5c1e44",
+    "packages/cli/src/runtime/cron-image.mjs": "2def74e4ffd8f726b194e3dcad38401d33ca9781de31c363307f36dab9062afa",
+    "packages/cli/src/runtime/cron-preboot.mjs": "354366ed2dca9adf67233d9a502b8f8ac6962ee530893ab8c08a871ac2732869",
+    "packages/cli/src/runtime/cron-shape.mjs": "fa2bf883083951fb5b24f6bd21b7145cee9e7e744f90dd6e3ac8961b2a0f7ca6",
+    "packages/cli/src/runtime/install-policy.mjs": "8458717d90143d3a967aa3e6f102a941b0c573849627a908a18e4558a931ea81",
+    "packages/cli/src/runtime/installation-state.mjs": "898b68b069d95ff20db420ddb4d244ec10500a6890a8b56bf76d1acb760b9b35",
+    "packages/cli/src/runtime/installation.mjs": "6ee30186f7164db5d60a59365af0cbb6ff7dc1397fe46ff4f1ffbd39bbf3c333",
+    "packages/cli/src/runtime/installed-policy.mjs": "6ce64ca97ed242603b16e7a741f769a3eafa7ecdcae947e59c1a38932ee884c5",
+    "packages/cli/src/runtime/policy-volume.mjs": "e66eca8be90546acbfee5cee9da1f84e7d482e8205ad693b74fa425a2f370902",
+    "packages/cli/src/runtime/program-inventory.mjs": "d4f70a413e1658a09f39bfea1fb637aac92ca8cdd956b041fddd370fa930f350",
+    "packages/cli/src/runtime/recovery-ingress.mjs": "5f47f14a7169838916c756e1b6623d138ffc3984622a91b690f43f99267e7c03",
+    "packages/cli/src/runtime/recovery-selection.mjs": "96acf86af87fbb1e81102b92df66abca6e4871124c3e0d7813850e9a0d129bb3",
+    "packages/cli/src/runtime/recovery-source.mjs": "d0a43c563c13419c4ae098fff91a699be4f2693dec5e8bbc9ec0f2340b8be7fa",
+    "packages/cli/src/runtime/selection-plan.mjs": "4bdcd12996d2c98dd599b973ac0e8ddb1d376eb226048675338bf6880745b0fa",
+    "packages/cli/src/runtime/start-installation.mjs": "75762d15a7767353f7ec3a8a39229a5188a3844fcf1b112f12b6a3ddb5290478",
+    "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+    "packages/cli/src/tls.mjs": "6fe802b828e6962659e1ee0fa9a855c6f7272dca21d178a9904610bdf83e9028",
+    "scripts/cron-probe/selected/activation-matrix.mjs": "0572d2dd066777875c3d19bcf648bf808f5b53e7b766fbda4f6eb829dbe3868d",
+    "scripts/cron-probe/selected/activation.mjs": "b6ceca06ae5d3d1dd471408a9c414d09e7b0aa08fe561191fa368433e5383a26",
+    "scripts/cron-probe/selected/commands.mjs": "8412df587a99da6287980151a59a7a41d04dba84214e98a5b90484ccbfaf46a1",
+    "scripts/cron-probe/selected/controller-debugger.mjs": "572c7aba60bfa0f8991cda5f077b4800e16b904464fab466aa34590b9cb21af5",
+    "scripts/cron-probe/selected/debugger-transport.mjs": "dbf5dc91aa47269c3d0244458547cea42a6426e54caa3bdfdddd5f0eb483f4e3",
+    "scripts/cron-probe/selected/debugger.test.mjs": "9306a576cf5cf5d764df8922a11c2907ebdb5f8f522761cdc9dca44cc87bb698",
+    "scripts/cron-probe/selected/evidence.mjs": "636d100e7043cd804a496f97058bcf066e17854da87a86af59ab659c7d4840ba",
+    "scripts/cron-probe/selected/fixture.mjs": "b8336b8cbe94b863230ae53b7614417ba68d2935512d70979879cd8cc6dd6651",
+    "scripts/cron-probe/selected/future-jobs.mjs": "ff17dbfe975199201f3ae94197b8284da02d4e7880b6833256bcc217f2bced62",
+    "scripts/cron-probe/selected/host.mjs": "c5ef0506e7af965acd303e470085b6b3dee0bbc03d6f8dd118a4c6a04e291b3a",
+    "scripts/cron-probe/selected/https.mjs": "13bad80a81b3c58f014be03af2f321a03ccd73b83be9e4640b28904edbf98ca2",
+    "scripts/cron-probe/selected/inspector-agent.mjs": "8138f0324ed1fd964b96914df128e279b44fa458a0d64e37b61ac3190d93d0de",
+    "scripts/cron-probe/selected/interruption.mjs": "91739250ea13f8233e3a2a6a2276885a9f06220310b86ebdcba46fc44dcf7d8a",
+    "scripts/cron-probe/selected/native-observer.mjs": "2b5f8da7c6adfd80ba195f9bcb33fc746b8f2408cbc2b6343f965e99f664899b",
+    "scripts/cron-probe/selected/observations.mjs": "555bbf1464a242b98a14ad4a67741081d06a5a36b34ece00e178a964d4fa4c5f",
+    "scripts/cron-probe/selected/privacy.mjs": "3afeaff6265ecafeedae40e2feb8bb37aad3cbf2665d2f84fe6828239875fbff",
+    "scripts/cron-probe/selected/privacy.test.mjs": "d940c47085f9d24b41c1acc486770644a4c20d9fa0433fae29c2a7a1accc7c11",
+    "scripts/cron-probe/selected/resources.mjs": "4d4acf47b7cc68bdbba99ac8ca9605dc6817c4a004fc6c6f4a965313ec5d227f",
+    "scripts/cron-probe/selected/source-debugger.mjs": "1c544ec8903c09752f02091d70ea068610eedc83c62eb1e7859dacdbc0930cd6"
+  },
+  "sourceInventorySha256": "27e136ceb30c1519af8978a4dfe71b3874d4f90b2f7b5b41c5c868777a00fe19",
+  "privacy": {
+    "adminJSON": true,
+    "adminHTML": true,
+    "scopedStatuses": 7,
+    "decodedArtifacts": 7,
+    "privateDiagnosticsChecked": 16,
+    "completeReceiptChecked": true
+  },
+  "nativeProofs": [
+    {
+      "slot": "slot-1",
+      "host": "slot-1-a",
+      "node": "slot-1-a-95ba4c1e-47f8-4353-9877-d9df73d2b4e0",
+      "challenge": "03b2a49cba36192612c1ab9ff73a3ed9c8b0b58e8eef7ae1dcb1479873faa832",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "03b2a49cba36192612c1ab9ff73a3ed9c8b0b58e8eef7ae1dcb1479873faa832",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "172c9094d1d4f76436e915920bd552fc83b15ae9b5bbc6dc81321c0980feafd9",
+        "processKeySha256": "f8e99e2c0c4d1bf98f9064a549531493a9bb1ad29e2e02701e20a372f5ffde36",
+        "publicKey": "8fb027cd0b872a2743af8ab66f8355bb5152f86d2b87d54606675501ae680f7d",
+        "schema": 2,
+        "signature": "3aad14719e8613818caa358aefbd342ae98572962302ccf125d7f6abe222a9546ec67da5205ac5a7b73ccf4a6b6d6601b6ed52c880b215d0f0fa863d8b31e702",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      },
+      "leaseBinding": "live fleet"
+    },
+    {
+      "slot": "slot-1",
+      "host": "slot-1-b",
+      "node": "slot-1-b-95ba4c1e-47f8-4353-9877-d9df73d2b4e0",
+      "challenge": "d838cd3e78b3ef220ac52cfb8e0325453a544e68248563f72cf81effe7ffb7cc",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "d838cd3e78b3ef220ac52cfb8e0325453a544e68248563f72cf81effe7ffb7cc",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "290d926696f0dee402331e455f0b942a87fbafa93c6e073a8f67aca836e11591",
+        "processKeySha256": "f64f4fbf9b2e5c0f173b01aff5e66b1bfd5c9b215cb06e8b2bb0b6892d085686",
+        "publicKey": "41854016f276a52e0254940edd48f1fb892f9ff6bf07f3ff761dd4826924f865",
+        "schema": 2,
+        "signature": "1609ba8ae83a79178d88f6fa5c0a5cb64f5d97fa6b03c0c5e4f19ec872b22b32e7889774eb7f1a8cb588aeba294a22bbfeadd82b27a3a97fd67c7f199c36b309",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      },
+      "leaseBinding": "live fleet"
+    },
+    {
+      "slot": "slot-2",
+      "host": "slot-2-a",
+      "node": "slot-2-a-95ba4c1e-47f8-4353-9877-d9df73d2b4e0",
+      "challenge": "d7c77085c4b4ff7b6892fe3c7232ca4011e2fada05173af82a6f194344a234e6",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "d7c77085c4b4ff7b6892fe3c7232ca4011e2fada05173af82a6f194344a234e6",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "9abde0b8a727c0a04e96a5d013aaf150bc18e1489b95e7dde27d1be1fcfc1af4",
+        "processKeySha256": "77fbeb33568a9135e97340594f8e72badf3f58f5014c6d4fa56612f758746c3f",
+        "publicKey": "d1597f2e73c1d675b0f51527a94c95848427b239cc03d7a1123c13f77334a5c6",
+        "schema": 2,
+        "signature": "c735a9a29b38b903be0582a00fb7f4b7a2df4436892270149fcb27e20b927bd313b1c9b58b092fe8ee4a29b4265f6460efc4b26c43c604e7aeb5254c7efa4c01",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "leaseBinding": "app-free bootstrap"
+    },
+    {
+      "slot": "slot-2",
+      "host": "slot-2-b",
+      "node": "slot-2-b-95ba4c1e-47f8-4353-9877-d9df73d2b4e0",
+      "challenge": "ed981a1e63272f817db3b147496a417541e16eb7a42ff49fd7f0aed3bc7d3355",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "ed981a1e63272f817db3b147496a417541e16eb7a42ff49fd7f0aed3bc7d3355",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "8ee25982688c6b06d4c19d076d4496402483090beb4f7ca5b6328416fa51374d",
+        "processKeySha256": "db08d5438f7eb08c8ddeedac512a84dd75bef494e17cc2ae94f458062e85aa76",
+        "publicKey": "3d1e3a77f251b39ff506a94e6f6f6049fdc7d2dc0839020fb008a12423ae8047",
+        "schema": 2,
+        "signature": "878f47429dee496c0a64a3d8fa94a0dd58fccd98b27049543302e8d6cf3acdab46c353bbfbaffbf462c05f265fdbb25903e6505440ac9108309ecfc9d48bb501",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      },
+      "leaseBinding": "app-free bootstrap"
+    }
+  ],
+  "independentAudit": {
+    "scope": "Independent selected activation evidence audit; full M11c remains open",
+    "signatureProofsVerified": 4,
+    "alteredSignaturesRejected": 4,
+    "casesVerified": 3,
+    "ownedContainersRemoved": true,
+    "ownedNetworksRemoved": true,
+    "retainedVolumes": [
+      "fogd-selected-activation-6a573bdcd89eba5d_bucket",
+      "fogd-selected-activation-6a573bdcd89eba5d_controller",
+      "fogd-selected-activation-6a573bdcd89eba5d_runtime-policy",
+      "fogd-selected-activation-6a573bdcd89eba5d_slot-1-a",
+      "fogd-selected-activation-6a573bdcd89eba5d_slot-1-b",
+      "fogd-selected-activation-6a573bdcd89eba5d_slot-2-a",
+      "fogd-selected-activation-6a573bdcd89eba5d_slot-2-b",
+      "fogd-selected-activation-6a573bdcd89eba5d_tls"
+    ],
+    "retainedFinalApprovalVerified": true,
+    "sourceInventorySha256": "27e136ceb30c1519af8978a4dfe71b3874d4f90b2f7b5b41c5c868777a00fe19",
+    "verifierSha256": "ffea7966e781bc0d3c62ea1f785f8ca2eb70286c898bf86d29512048a120e9d1"
+  },
+  "privateEvidenceRoot": ".fogd/selected-activation-matrix3",
+  "notQualified": [
+    "complete M11c acceptance or public candidate enrollment",
+    "all controller/native interruption or failure boundaries",
+    "compatible migration overlap and lost-reply replacement on this product image",
+    "due, pending-retry or older-snapshot recovery on this product image",
+    "active-survivor and pending-retry retirement on this product image",
+    "ordinary offline target builds on this product image",
+    "arbitrary in-flight callback draining, CPU-exhaustion limits, automatic restart or shared remote operation"
+  ],
+  "profile": "native resume, durable release and paused-update interruptions",
+  "cases": [
+    {
+      "label": "resume-cut-v2",
+      "cut": "resume",
+      "desired": "running",
+      "submission": {
+        "id": "2f4cc081-772e-48fb-9c75-99ce639edb36",
+        "app": "refresh",
+        "digest": "3bcfb6e08335dbf5f15642eeb9899df1959f1bda02f0149ca57736e50edec201",
+        "status": "pending",
+        "admin": "https://localhost:64560",
+        "label": "resume-cut-v2",
+        "fixtureChanges": {
+          "lib/refresh.mjs": "59fd0ca8af0779a04f36e21c8d4148d4fa43f75bf4c1fa1c5995dc9dd402c335",
+          "routes/api/refresh.ts": "3276dafe483fa5f2da9b9e49d4ce1e11b0fbd890b6e6496145a4018be92f8d28"
+        }
+      },
+      "checkpoint": {
+        "checkpoint": {
+          "id": "4:45:4:167",
+          "path": "packages/platform/src/dispatch-control.mjs",
+          "sha256": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+          "functionName": "#apply",
+          "condition": "verb === \"resume\" && releaseHold === true",
+          "location": {
+            "scriptId": "167",
+            "lineNumber": 45,
+            "columnNumber": 4
+          }
+        },
+        "pauseSequence": 1,
+        "reason": "other",
+        "frame": {
+          "functionName": "#apply",
+          "location": {
+            "scriptId": "167",
+            "lineNumber": 45,
+            "columnNumber": 4
+          }
+        }
+      },
+      "durableDispatch": {
+        "schema": 1,
+        "script": "refresh",
+        "desired": "running",
+        "hold": "2f4cc081-772e-48fb-9c75-99ce639edb36",
+        "version": "3e1e7687856de72a",
+        "observed": "unknown",
+        "observedAt": null,
+        "operation": "resume"
+      },
+      "nativeDispatch": {
+        "paused": false,
+        "revision": 3,
+        "nextAlarm": 1792625160000,
+        "crons": [
+          "* * * * *"
+        ]
+      },
+      "replicas": [
+        {
+          "node": "slot-1-a",
+          "version": "d455ffc52812b80b",
+          "generation": 4
+        },
+        {
+          "node": "slot-1-b",
+          "version": "d455ffc52812b80b",
+          "generation": 4
+        }
+      ],
+      "stored": {
+        "pointer": {
+          "script_name": "refresh",
+          "version": "d455ffc52812b80b",
+          "prefix": "deploy/refresh/d455ffc52812b80b",
+          "rollout": {
+            "percent": 100
+          }
+        },
+        "manifestSha256": "afe378b7ea32810d94186fab89dedd5a23646f1b0d54c84e9ad881cd5e534570",
+        "manifest": {
+          "script": "refresh",
+          "version": "d455ffc52812b80b",
+          "crons": [
+            "* * * * *"
+          ]
+        }
+      },
+      "interruption": {
+        "exitCode": 137,
+        "oomKilled": false,
+        "stopped": true,
+        "restartCount": 0
+      },
+      "killRequestedAt": 1792625108871,
+      "interruptedApproval": {
+        "ok": false,
+        "at": 1792625108999
+      },
+      "reholdConfirmedAt": 1792625112423,
+      "heldBoundary": {
+        "before": 1792625115748,
+        "after": 1792625161502
+      },
+      "fullOccurrenceAndResultRowsUnchanged": true,
+      "authorizedOccurrenceKeysBeforeRehold": [],
+      "refusedAlternative": {
+        "id": "c960f2b8-787a-47c7-ae6e-9d07ac316c00",
+        "digest": "9e3518b7c496173c86f0efe4c0961cfb0d0200e1b9bdcd54b47d23d65d1f9e32",
+        "code": 1,
+        "signal": null,
+        "expectedRefusalMatched": true
+      },
+      "retryRequestedAt": 1792625163310,
+      "retryReturnedAt": 1792625164476,
+      "firstAppReadAt": 1792625224239,
+      "jobs": [
+        {
+          "job": "inventory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625220011,
+            "cron": "* * * * *",
+            "duplicates": 1,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "inventory",
+            "last_attempt_at": 1792625224019,
+            "scheduled_time": 1792625220000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792625220011,
+            "scheduled_time": 1792625220000,
+            "value": "resume-cut-v2:22 sample items available"
+          }
+        },
+        {
+          "job": "advisory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625224025,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "advisory",
+            "last_attempt_at": 1792625224019,
+            "scheduled_time": 1792625220000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792625224025,
+            "scheduled_time": 1792625220000,
+            "value": "resume-cut-v2:Collection on time"
+          }
+        }
+      ]
+    },
+    {
+      "label": "release-cut-v3",
+      "cut": "release",
+      "desired": "running",
+      "submission": {
+        "id": "6f8760f9-ea1e-441d-b682-e5f9332a47c9",
+        "app": "refresh",
+        "digest": "ad6b2d776ad8e45e92035ab19094658c6e57bf929142e5512fc029f720e1f651",
+        "status": "pending",
+        "admin": "https://localhost:64560",
+        "label": "release-cut-v3",
+        "fixtureChanges": {
+          "lib/refresh.mjs": "75138eb1e45e53b450aa5d9831439c72a5b26d7f693dcc64b6a996ba07706c72",
+          "routes/api/refresh.ts": "178dbd069f84142a8a80396bc7cd6183d38b01b9a44e2adcecfce1bbe4b05477"
+        }
+      },
+      "checkpoint": {
+        "checkpoint": {
+          "id": "4:61:4:177",
+          "path": "packages/platform/src/activation.mjs",
+          "sha256": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+          "functionName": "activateRelease",
+          "condition": "",
+          "location": {
+            "scriptId": "177",
+            "lineNumber": 61,
+            "columnNumber": 4
+          }
+        },
+        "pauseSequence": 1,
+        "reason": "other",
+        "frame": {
+          "functionName": "activateRelease",
+          "location": {
+            "scriptId": "177",
+            "lineNumber": 61,
+            "columnNumber": 4
+          }
+        }
+      },
+      "durableDispatch": {
+        "schema": 1,
+        "script": "refresh",
+        "desired": "running",
+        "hold": null,
+        "version": "911321d41d4c2d2d",
+        "observed": "running",
+        "observedAt": "2026-10-21T23:27:08.267Z",
+        "operation": null
+      },
+      "nativeDispatch": {
+        "paused": false,
+        "revision": 7,
+        "nextAlarm": 1792625280000,
+        "crons": [
+          "* * * * *"
+        ]
+      },
+      "replicas": [
+        {
+          "node": "slot-1-a",
+          "version": "911321d41d4c2d2d",
+          "generation": 6
+        },
+        {
+          "node": "slot-1-b",
+          "version": "911321d41d4c2d2d",
+          "generation": 6
+        }
+      ],
+      "stored": {
+        "pointer": {
+          "script_name": "refresh",
+          "version": "911321d41d4c2d2d",
+          "prefix": "deploy/refresh/911321d41d4c2d2d",
+          "rollout": {
+            "percent": 100
+          }
+        },
+        "manifestSha256": "33c6019cc3eae47f80dd316bd5be830cb17b6413141c73b23828a75f369189eb",
+        "manifest": {
+          "script": "refresh",
+          "version": "911321d41d4c2d2d",
+          "crons": [
+            "* * * * *"
+          ]
+        }
+      },
+      "interruption": {
+        "exitCode": 137,
+        "oomKilled": false,
+        "stopped": true,
+        "restartCount": 0
+      },
+      "killRequestedAt": 1792625229212,
+      "interruptedApproval": {
+        "ok": false,
+        "at": 1792625229350
+      },
+      "reholdConfirmedAt": 1792625233517,
+      "heldBoundary": {
+        "before": 1792625237208,
+        "after": 1792625281503
+      },
+      "fullOccurrenceAndResultRowsUnchanged": true,
+      "authorizedOccurrenceKeysBeforeRehold": [],
+      "refusedAlternative": {
+        "id": "88565696-14f3-415d-b9d0-944aa078cb6c",
+        "digest": "07746d56e3193ff28a1009e780ddfaf0f29fb4048b2f289cf6659b17271b9909",
+        "code": 1,
+        "signal": null,
+        "expectedRefusalMatched": true
+      },
+      "retryRequestedAt": 1792625283450,
+      "retryReturnedAt": 1792625284657,
+      "firstAppReadAt": 1792625344690,
+      "jobs": [
+        {
+          "job": "inventory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625340030,
+            "cron": "* * * * *",
+            "duplicates": 1,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "inventory",
+            "last_attempt_at": 1792625344044,
+            "scheduled_time": 1792625340000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792625340030,
+            "scheduled_time": 1792625340000,
+            "value": "release-cut-v3:24 sample items available"
+          }
+        },
+        {
+          "job": "advisory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625344054,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "advisory",
+            "last_attempt_at": 1792625344044,
+            "scheduled_time": 1792625340000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792625344054,
+            "scheduled_time": 1792625340000,
+            "value": "release-cut-v3:Extra collection available"
+          }
+        }
+      ]
+    },
+    {
+      "label": "paused-update-v4",
+      "cut": "release",
+      "desired": "paused",
+      "submission": {
+        "id": "e846de14-882c-4740-b394-8de1b4d4cf33",
+        "app": "refresh",
+        "digest": "46e7bd784898806134bbca04ff5d897217eba3f40c2c0de30a2a4c569bad08df",
+        "status": "pending",
+        "admin": "https://localhost:64560",
+        "label": "paused-update-v4",
+        "fixtureChanges": {
+          "lib/refresh.mjs": "b4195911c9a009021fd43a748f87255634afb4b3a92a2068f9cec6292465b3d5",
+          "routes/api/refresh.ts": "156244c6a30ad00b2ca2a76d95ea4a4746b3d23b549776c62483132eb6c0e0e5"
+        }
+      },
+      "checkpoint": {
+        "checkpoint": {
+          "id": "4:61:4:177",
+          "path": "packages/platform/src/activation.mjs",
+          "sha256": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+          "functionName": "activateRelease",
+          "condition": "",
+          "location": {
+            "scriptId": "177",
+            "lineNumber": 61,
+            "columnNumber": 4
+          }
+        },
+        "pauseSequence": 1,
+        "reason": "other",
+        "frame": {
+          "functionName": "activateRelease",
+          "location": {
+            "scriptId": "177",
+            "lineNumber": 61,
+            "columnNumber": 4
+          }
+        }
+      },
+      "durableDispatch": {
+        "schema": 1,
+        "script": "refresh",
+        "desired": "paused",
+        "hold": null,
+        "version": "a32cdc1d2aa5eb0a",
+        "observed": "paused",
+        "observedAt": "2026-10-21T23:29:08.741Z",
+        "operation": null
+      },
+      "nativeDispatch": {
+        "paused": true,
+        "revision": 10,
+        "nextAlarm": null,
+        "crons": [
+          "* * * * *"
+        ]
+      },
+      "replicas": [
+        {
+          "node": "slot-1-a",
+          "version": "a32cdc1d2aa5eb0a",
+          "generation": 8
+        },
+        {
+          "node": "slot-1-b",
+          "version": "a32cdc1d2aa5eb0a",
+          "generation": 8
+        }
+      ],
+      "stored": {
+        "pointer": {
+          "script_name": "refresh",
+          "version": "a32cdc1d2aa5eb0a",
+          "prefix": "deploy/refresh/a32cdc1d2aa5eb0a",
+          "rollout": {
+            "percent": 100
+          }
+        },
+        "manifestSha256": "e79f504fd2f35c384138c4e501199859ef268d8c188864f57ed8a4e4771ecd0f",
+        "manifest": {
+          "script": "refresh",
+          "version": "a32cdc1d2aa5eb0a",
+          "crons": [
+            "* * * * *"
+          ]
+        }
+      },
+      "interruption": {
+        "exitCode": 137,
+        "oomKilled": false,
+        "stopped": true,
+        "restartCount": 0
+      },
+      "killRequestedAt": 1792625349624,
+      "interruptedApproval": {
+        "ok": false,
+        "at": 1792625349762
+      },
+      "reholdConfirmedAt": 1792625353564,
+      "heldBoundary": {
+        "before": 1792625357119,
+        "after": 1792625401502
+      },
+      "fullOccurrenceAndResultRowsUnchanged": true,
+      "authorizedOccurrenceKeysBeforeRehold": [],
+      "refusedAlternative": {
+        "id": "7d60fca7-8d28-4af9-8768-23527e4ca5d5",
+        "digest": "1428a89f206e8628e146133e0bdb3155711911e5062b0462cd66aa76fa13d7b3",
+        "code": 1,
+        "signal": null,
+        "expectedRefusalMatched": true
+      },
+      "retryRequestedAt": 1792625403396,
+      "retryReturnedAt": 1792625404475,
+      "pausedBoundary": {
+        "before": 1792625405358,
+        "after": 1792625461501
+      },
+      "explicitResumeReturnedAt": 1792625462960,
+      "pausedRetryLedgerReplayPassed": true,
+      "firstAppReadAt": 1792625525434,
+      "jobs": [
+        {
+          "job": "inventory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625520014,
+            "cron": "* * * * *",
+            "duplicates": 1,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "inventory",
+            "last_attempt_at": 1792625524025,
+            "scheduled_time": 1792625520000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792625520014,
+            "scheduled_time": 1792625520000,
+            "value": "paused-update-v4:20 sample items available"
+          }
+        },
+        {
+          "job": "advisory",
+          "occurrence": {
+            "attempts": 2,
+            "completed_at": 1792625524031,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "retry-once",
+            "job": "advisory",
+            "last_attempt_at": 1792625524024,
+            "scheduled_time": 1792625520000,
+            "status": "complete"
+          },
+          "result": {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792625524031,
+            "scheduled_time": 1792625520000,
+            "value": "paused-update-v4:Extra collection available"
+          }
+        }
+      ]
+    }
+  ],
+  "postRunOracleCheck": {
+    "description": "The packaged driver also asserts full ledger equality across paused retry approval. That comparison passed against both recorded native snapshots after the run.",
+    "interval": "after refusal through paused retry approval",
+    "fullOccurrenceAndResultRowsUnchanged": true,
+    "executedDriverSha256": "0572d2dd066777875c3d19bcf648bf808f5b53e7b766fbda4f6eb829dbe3868d",
+    "packagedDriverSha256": "91061590a9c34d7e12537358663d91a32056ee4db429848d1af37c6ce78e979d"
+  }
+}

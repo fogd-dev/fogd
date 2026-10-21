@@ -198,6 +198,12 @@ scheduled restore and retirement, including zero-live history, remain refused.
 Runtime selection, the external admin/TLS flow and ordinary scoped admission retain
 their acceptance gates.
 
+The [selected cron activation profile](cron-selected-activation.md)
+checks the normal HTTPS CLI flow, first migration hold, selected controller kills,
+explicit retry and paused updates on the frozen product image. Failure/replacement,
+due/retry/older recovery, active-survivor retirement and offline builds still need
+their selected-image evidence before the M11c audit can permit public admission.
+
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

@@ -12,6 +12,12 @@ approval, autonomous native jobs, dispatch pause and stopped backup. Its indepen
 audit checks source pins, timestamps, backup checksums and retained volumes. This
 bounded flow does not qualify the remaining failure and recovery gates.
 
+The [selected activation profile](cron-selected-activation.md) adds ordinary HTTPS
+approval with migration hold, controller interruption, explicit original retry and
+paused-update evidence on the same product image. It checks full job ledgers,
+decoded artifact privacy and fresh native signatures. The remaining M11c gates
+still control public catalog admission.
+
 ## Installation authority
 
 The host CLI owns the [catalog](../packages/cli/src/runtime/catalog.json).
