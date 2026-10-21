@@ -16,7 +16,7 @@ const backend = new Backend();
 backend.crons = new CronRuntime({ run: (slot, args) => backend.run(slot, args), inspect: node => backend.deployment(node) });
 assert.equal(await backend.owner(slot), null); assert.equal(await backend.hasDeployment(slot), false);
 const dir = join(process.env.FOGD_DATA_DIR || '/var/lib/fogd', `cron-qualification-${randomUUID()}`);
-const create = () => new Controller({ dir, slots: [slot], backend });
+const create = () => new Controller({ cronApps: true, dir, slots: [slot], backend });
 let controller = create(); await controller.init();
 const selected = await controller.replaceSecrets('refresh', { REFRESH_TOKEN: randomBytes(32).toString('hex') });
 const initial = await stage('1');

@@ -25,7 +25,7 @@ test('an archived controller receipt restores into the actual recovery lifecycle
   const restored = await restoredInstallationState(archive, manifest);
   const target = join(archive, 'target'); await cp(f.dir, target, { recursive: true });
   await writeFile(join(target, 'state.json'), JSON.stringify(restored));
-  const controller = new Controller({ dir: target, slots, backend: cronBackend(target) }); await controller.init();
+  const controller = new Controller({ cronApps: true, dir: target, slots, backend: cronBackend(target) }); await controller.init();
   const view = dispatchView(controller, 'refresh');
   assert.equal(view.recovery.status, 'pending'); assert.equal(view.recovery.checkError, null);
   assert.equal(controller.route('refresh.localhost').state, 'paused'); assert.equal(view.resumeAllowed, false);

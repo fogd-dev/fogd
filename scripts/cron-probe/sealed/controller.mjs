@@ -13,7 +13,7 @@ import { artifactDigest } from '/app/packages/runtime/src/artifact.mjs';
 const directory = '/var/lib/fogd/qualification';
 const { expectedArtifactSha256 } = await qualificationPolicy();
 assert.match(expectedArtifactSha256, /^[a-f0-9]{64}$/);
-const { controller } = await startController(await guardedBackend());
+const { controller } = await startController(await guardedBackend(), { cronApps: true });
 let consumed = (await readJson(join(directory, 'result.json'), null))?.id, stopping = false;
 for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => { stopping = true; });
 while (!stopping) {

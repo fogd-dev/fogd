@@ -24,7 +24,7 @@ export async function serveVoidController(source, slotId, output, minutes = 12) 
   backend.crons = new CronRuntime({ run: (slot, args) => backend.run(slot, args), inspect: node => backend.deployment(node) });
   assert.equal(await backend.owner(slot), null); assert.equal(await backend.hasDeployment(slot), false);
   const dir = join(process.env.FOGD_DATA_DIR || '/var/lib/fogd', `void-cron-${randomUUID()}`);
-  const controller = new Controller({ dir, slots: [slot], backend }); await controller.init();
+  const controller = new Controller({ cronApps: true, dir, slots: [slot], backend }); await controller.init();
   const internal = server(controller, { user: process.env.FOGD_ADMIN_USER, password: process.env.FOGD_ADMIN_PASSWORD, gateway: process.env.FOGD_GATEWAY_TOKEN }, { role: 'internal' });
   await new Promise(resolve => internal.listen(8084, '0.0.0.0', resolve));
   let request, commandStep;

@@ -1,4 +1,19 @@
 import { isDeepStrictEqual } from 'node:util';
+import { hasRuntimePolicy, runtimePolicyVolume } from './layout.mjs';
+
+export function validateRuntimePolicyVolume(config, fleets) {
+  if (!hasRuntimePolicy(config)) return;
+  const definition = config.volumes[runtimePolicyVolume];
+  const name = `${config.name}_${runtimePolicyVolume}`;
+  if (fleets.length !== 2 || !isDeepStrictEqual(definition, { name }) ||
+    Object.entries(config.volumes).some(([role, volume]) => role !== runtimePolicyVolume && volume.name === name)) {
+    throw new Error('Runtime policy requires a separate canonical two-fleet installation volume');
+  }
+  const mount = config.services.controller.volumes?.find(m => m.source === runtimePolicyVolume);
+  if (!isDeepStrictEqual(mount, { type: 'volume', source: runtimePolicyVolume, target: '/var/lib/fogd-runtime', read_only: true, volume: { nocopy: true } })) {
+    throw new Error('Runtime policy requires a read-only controller mount without image seeding');
+  }
+}
 
 export function validateFleetStorage(config, fleets) {
   const bucket = config.services.controller.environment.FOGD_BUCKET;
@@ -26,6 +41,7 @@ export function validateMounts(config, replicas) {
   const dataDir = config.services.controller.environment.FOGD_DATA_DIR;
   if (dataDir !== undefined && dataDir !== '/var/lib/fogd') throw new Error('Recovery requires the canonical controller data path /var/lib/fogd');
   const expected = { minio: [['bucket', '/data']], controller: [['controller', '/var/lib/fogd']], workerd: [], 'bucket-init': [] };
+  if (hasRuntimePolicy(config)) expected.controller.push([runtimePolicyVolume, '/var/lib/fogd-runtime']);
   for (const name of replicas) expected[name] = [[name, '/var/lib/celld']];
   if (Object.hasOwn(config.volumes, 'tls')) for (const name of ['controller', 'workerd']) expected[name].push(['tls', '/var/lib/fogd-tls']);
   for (const [name, mounts] of Object.entries(expected)) {

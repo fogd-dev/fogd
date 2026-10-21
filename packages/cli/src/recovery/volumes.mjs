@@ -1,11 +1,14 @@
 import { join } from 'node:path';
 import { docker } from './docker.mjs';
+import { runtimePolicyVolume } from './layout.mjs';
 
-export function volumeHelper(image, volume, args, { readonly = true, ...options } = {}) {
-  const caps = readonly ? ['DAC_OVERRIDE'] : ['CHOWN', 'FOWNER', 'FSETID', 'DAC_OVERRIDE'];
-  return docker(['run', ...(options.input || options.inputText !== undefined ? ['-i'] : []), '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', ...caps.flatMap(cap => ['--cap-add', cap]), '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${volume},dst=/data${readonly ? ',readonly' : ''}`, image, ...args], options);
+export function volumeHelper(image, volume, args, { readonly = true, entrypoint, capabilities, ...options } = {}) {
+  const caps = capabilities ?? (readonly ? ['DAC_OVERRIDE'] : ['CHOWN', 'FOWNER', 'FSETID', 'DAC_OVERRIDE']);
+  return docker(['run', ...(options.input || options.inputText !== undefined ? ['-i'] : []), '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', ...caps.flatMap(cap => ['--cap-add', cap]), '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${volume},dst=/data${readonly ? ',readonly' : ''}`, ...(entrypoint ? ['--entrypoint', entrypoint] : []), image, ...args], options);
 }
 export async function restoreVolumes(directory, target, names, image, skipped = []) {
+  // Execution authority is installed independently after data restoration.
+  skipped = [...skipped, runtimePolicyVolume];
   for (const name of names) {
     const volume = target.volumes[name].name;
     await requireEmpty(image, volume);

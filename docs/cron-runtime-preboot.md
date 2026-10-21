@@ -9,7 +9,10 @@ The internal restore adapter accepts a separately supplied qualification policy.
 The [app-free native receipt](evidence/m11c-runtime-preboot.json) checks program
 identity and read-only startup. The separate [sealed recovery profile](cron-sealed-recovery.md)
 qualifies scheduled-app backup and stopped recovery on that layout. The complete
-runtime lifecycle remains an admission gate.
+runtime lifecycle remains an admission gate. The [selected Docker runtime
+foundation](runtime-selection.md) adds a host catalog, an independent policy
+volume and normal startup/TLS integration; its catalog candidate remains closed
+to ordinary enrollment.
 
 ## Independent launch policy
 

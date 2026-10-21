@@ -15,6 +15,7 @@
     "./cron-snapshot": "./src/cron-snapshot.mjs",
     "./cron-retirement": "./src/cron-retirement.mjs",
     "./cron-history": "./src/cron-history.mjs",
-    "./runtime-identity-proof": "./src/runtime-identity-proof.mjs"
+    "./runtime-identity-proof": "./src/runtime-identity-proof.mjs",
+    "./runtime-policy": "./src/runtime-policy.mjs"
   }
 }

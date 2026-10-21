@@ -21,7 +21,7 @@ export async function fixture(t) {
     await saveJson(path, value);
     if (fail === 'after') throw Error('lost write response');
   };
-  const create = () => new Controller({ dir, slots, backend, persist, reportStorageFailure: () => {} });
+  const create = () => new Controller({ cronApps: true, dir, slots, backend, persist, reportStorageFailure: () => {} });
   const c = create(); await c.init();
   // Private staging bypasses artifact admission. Ordinary triggers stay rejected.
   async function request(controller = c, { crons = ['* * * * *'], requiredSecrets = [] } = {}) {

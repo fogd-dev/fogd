@@ -4,18 +4,29 @@ import { transportPolicy } from '@fogd/runtime/transport';
 import { prepareEnvironment } from './bootstrap.mjs';
 import { checkInstalledTLS } from './tls.mjs';
 import { readSecretInput } from './secret-input.mjs';
+import { deployCapabilities } from './deploy-capabilities.mjs';
+import { selectedInstallation } from './runtime/installation.mjs';
+import { docker } from './recovery/docker.mjs';
+import { requestedRuntime } from './runtime/catalog.mjs';
+import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { join } from 'node:path';
 import { manifest } from '@fogd/runtime/manifest';
-import { buildArtifact, requireDocker, configEnv, configPath, compose, stackRoot } from './local.mjs';
+import { buildArtifact, artifactProject, requireDocker, configEnv, configPath, compose, stackRoot } from './local.mjs';
 
-export async function up(shared = false) {
+export async function up(shared = false, selection = {}) {
+  requestedRuntime(selection);
   const env = await prepareEnvironment(shared);
   requireDocker(env);
-  const config = await resolvedCompose(env);
-  await checkFleetSelection(config);
+  const raw = await resolvedCompose(env);
+  await checkFleetSelection(raw);
   const policy = transportPolicy(env);
+  const selected = await selectedInstallation(raw, selection), config = selected?.config || raw;
+  const launch = transportPolicy(config.services.controller.environment);
+  if (launch.profile !== policy.profile || launch.tls !== policy.tls) throw new Error('Configuration does not match the requested TLS/profile policy');
   if (policy.tls) await checkInstalledTLS(env, config);
-  await compose(['up', '-d', '--build'], env);
+  if (selected) await docker([...selected.command, 'up', '-d', '--no-build', '--pull', 'never']);
+  else await compose(['up', '-d', '--build'], env);
+  if (selected) console.log(`Runtime ${selected.entry.id} (${selected.entry.admission}); installation identity ${runtimePolicyIdentity(selected.policy)}`);
   console.log(`Stack started. Admin: ${origin(env)} (user ${env.FOGD_ADMIN_USER || 'admin'}, password in ${configPath()}).\nRun fogd deploy in a Void app; an admin must approve its digest.`);
 }
 const origin = env => env.FOGD_SERVER || `${env.FOGD_TLS === '1' ? 'https' : 'http'}://127.0.0.1:${env.FOGD_ADMIN_PORT || 8788}`;
@@ -26,9 +37,11 @@ async function api(env, path, options = {}) {
   return data;
 }
 export async function deploy(project, name) {
-  const release = await buildArtifact(project, name);
   const env = await configEnv();
   if (!env.FOGD_DEPLOY_TOKEN) throw new Error('Set FOGD_DEPLOY_TOKEN (local operators: run fogd up first)');
+  const { app } = await artifactProject(project, name);
+  const capabilities = await deployCapabilities(origin(env), env.FOGD_DEPLOY_TOKEN, app);
+  const release = await buildArtifact(project, app, capabilities);
   const result = await api(env, '/v1/deployments', { method: 'POST', headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify(await manifest(release.outputDir, release)) });
   console.log(JSON.stringify({ id: result.id, app: result.app, digest: result.digest, status: result.status, admin: origin(env) }, null, 2));
 }

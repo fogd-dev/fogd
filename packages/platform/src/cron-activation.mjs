@@ -1,5 +1,6 @@
 import { validateRetiredCron } from './cron-retirement.mjs';
 import { cronRecoveryPending } from './cron-snapshot.mjs';
+import { artifactOnlyCronRequest } from './cron-history.mjs';
 import { CronDispatch, initialCronDispatch, validateCronDispatch, cronCapability, cronScript, requireCronCapability } from './cron-dispatch.mjs';
 
 export function dispatchFor(controller, app, slot) {
@@ -25,7 +26,7 @@ export function validateCronState(state, runtime) {
 function requiresCronRuntime(state, retired) {
   const hasCrons = record => Object.hasOwn(record.resources || {}, 'crons');
   return Object.entries(state.apps).some(([name, app]) => !retired.includes(name) && hasCrons(app)) ||
-    Object.values(state.deployments).some(request => !retired.includes(request.app) && hasCrons(request));
+    Object.values(state.deployments).some(request => !retired.includes(request.app) && hasCrons(request) && !artifactOnlyCronRequest(state, request));
 }
 
 function validateAppCron(state, name, app) {
@@ -80,7 +81,7 @@ export async function recoverCronHolds(controller) {
   }
 }
 
-function requireCronRuntime(runtime) {
+export function requireCronRuntime(runtime) {
   if (!['pause', 'resume', 'status'].every(verb => typeof runtime?.[verb] === 'function')) throw new Error('Experimental cron activation requires the qualified runtime transport');
 }
 

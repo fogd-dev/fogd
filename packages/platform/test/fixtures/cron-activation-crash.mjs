@@ -5,7 +5,7 @@ import { slots } from './cron-controller.mjs';
 const [dir, id, point] = process.argv.slice(2);
 const crash = () => process.kill(process.pid, 'SIGKILL');
 const backend = cronBackend(dir, event => { if (point === `effect:${event}`) crash(); });
-const c = new Controller({ dir, slots, backend,
+const c = new Controller({ cronApps: true, dir, slots, backend,
   async persist(path, value) {
     await saveJson(path, value);
     const request = value.deployments?.[id];

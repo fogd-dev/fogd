@@ -22,3 +22,13 @@ export async function stopped(project, names) {
     if ((await docker(['ps', '-q', '--filter', `volume=${name}`])).trim()) throw new Error('A snapshot volume still has a running writer');
   }
 }
+
+export async function requireFresh(project, config) {
+  if ((await projectContainers(project)).length) throw new Error('Target project already has containers');
+  for (const kind of ['volume', 'network']) {
+    const existing = new Set((await docker([kind, 'ls', '--format', '{{.Name}}'])).trim().split('\n'));
+    const labeled = (await docker([kind, 'ls', '-q', '--filter', `label=com.docker.compose.project=${project}`])).trim();
+    const names = Object.values(config[kind === 'volume' ? 'volumes' : 'networks']).map(item => item.name);
+    if (labeled || names.some(name => existing.has(name))) throw new Error('Target resources already exist; choose a fresh project');
+  }
+}

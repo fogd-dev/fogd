@@ -13,14 +13,27 @@ export async function manifest(dir, release) {
   }
   return { app: release.app, digest: release.digest, files };
 }
-export async function receiveArtifact(body, dir) {
+export async function receiveArtifact(body, dir, capabilities) {
   appName(body.app);
   if (!/^[a-f0-9]{64}$/.test(body.digest)) throw new Error('Invalid digest');
-  if (!Array.isArray(body.files) || body.files.length < 2 || body.files.length > 2000) throw new Error('Invalid file count');
+  const paths = await receiveFiles(body.files, dir);
+  const config = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8'));
+  const metadata = await readMetadata(dir, paths, config);
+  validateConfig(config, body.app, paths, capabilities);
+  const migrations = await artifactMigrations(config, paths, dir);
+  if (await artifactDigest(dir) !== body.digest) throw new Error('Artifact digest mismatch');
+  return { app: body.app, digest: body.digest, ...metadata, resources: resourceIdentity(config), migrations };
+}
+
+function artifactPath(path) {
+  if (typeof path !== 'string' || path.length > 512 || !/^(wrangler\.json|fogd-deployment\.json|(?:worker|assets|migrations)\/[^\x00-\x1f\\]+)$/.test(path) || path.split('/').some(p => !p || p === '.' || p === '..')) throw new Error(`Invalid artifact path: ${path}`);
+  return path;
+}
+async function receiveFiles(files, dir) {
+  if (!Array.isArray(files) || files.length < 2 || files.length > 2000) throw new Error('Invalid file count');
   const paths = new Set(); let total = 0;
-  for (const file of body.files) {
-    const path = file.path;
-    if (typeof path !== 'string' || path.length > 512 || !/^(wrangler\.json|fogd-deployment\.json|(?:worker|assets|migrations)\/[^\x00-\x1f\\]+)$/.test(path) || path.split('/').some(p => !p || p === '.' || p === '..')) throw new Error(`Invalid artifact path: ${path}`);
+  for (const file of files) {
+    const path = artifactPath(file.path);
     if (paths.has(path)) throw new Error('Duplicate artifact path');
     paths.add(path);
     if (typeof file.data !== 'string') throw new Error('Invalid file encoding');
@@ -31,14 +44,17 @@ export async function receiveArtifact(body, dir) {
     await mkdir(dirname(join(dir, path)), { recursive: true });
     await writeFile(join(dir, path), data, { flag: 'wx', mode: 0o600 });
   }
-  const config = JSON.parse(await readFile(join(dir, 'wrangler.json'), 'utf8'));
-  const metadata = await readMetadata(dir, paths, config);
-  const canonical = translateConfig(config, body.app);
+  return paths;
+}
+function validateConfig(config, app, paths, capabilities) {
+  const canonical = translateConfig(config, app, capabilities);
   if (typeof config.main !== 'string' || !paths.has(config.main) || !/^worker\/.*\.[cm]?js$/.test(config.main)) throw new Error('Invalid worker entry');
   canonical.main = config.main;
   if (!isDeepStrictEqual(config, canonical)) throw new Error('Noncanonical celld config');
   if (config.d1_databases.length > 1) throw new Error('Only one D1 database is supported');
   if ([...paths].filter(p => p.startsWith('worker/') && /\.[cm]?js$/.test(p)).length !== 1) throw new Error('Expected one JavaScript module');
+}
+async function artifactMigrations(config, paths, dir) {
   const migrations = []; const allowedMigrations = new Set();
   for (const db of config.d1_databases) {
     let previous = -1n;
@@ -51,8 +67,7 @@ export async function receiveArtifact(body, dir) {
     }
   }
   for (const path of paths) if (path.startsWith('migrations/') && !allowedMigrations.has(path)) throw new Error('Unmapped migration');
-  if (await artifactDigest(dir) !== body.digest) throw new Error('Artifact digest mismatch');
-  return { app: body.app, digest: body.digest, ...metadata, resources: resourceIdentity(config), migrations };
+  return migrations;
 }
 
 async function readMetadata(dir, paths, config) {

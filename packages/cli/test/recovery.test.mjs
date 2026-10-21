@@ -60,6 +60,18 @@ test('running configuration drift is refused without disclosing values', async (
   assert.throws(() => checkContainer({ command: ['other'] }, container, image), /command differs/);
 });
 
+test('sealed backup refuses a changed immutable image or undeclared runtime environment', async () => {
+  const { checkContainer } = await import('../src/recovery/inventory.mjs');
+  const id = 'sha256:' + 'a'.repeat(64), image = { Config: { Cmd: ['node', 'main'], Entrypoint: null, Env: ['PATH=/usr/bin'] } };
+  const service = { image: id, read_only: true, environment: { CELLD_NODE: 'one' } };
+  const container = { Image: id, HostConfig: { ReadonlyRootfs: true }, Config: { ...image.Config, Env: ['PATH=/usr/bin', 'CELLD_NODE=one'] } };
+  checkContainer(service, container, image);
+  container.Image = 'sha256:' + 'b'.repeat(64);
+  assert.throws(() => checkContainer(service, container, image), /Running image differs/);
+  container.Image = id; container.Config.Env.push('NODE_OPTIONS=--import=/private');
+  assert.throws(() => checkContainer(service, container, image), error => /Sealed container environment differs/.test(error.message) && !error.message.includes('private'));
+});
+
 
 test('malformed backup JSON does not echo private configuration', async t => {
   const dir = await mkdtemp(join(tmpdir(), 'fogd-private-backup-')); t.after(() => rm(dir, { recursive: true, force: true }));

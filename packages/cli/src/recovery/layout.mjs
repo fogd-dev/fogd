@@ -1,5 +1,8 @@
 import { isDeepStrictEqual } from 'node:util';
 
+export const runtimePolicyVolume = 'runtime-policy';
+export const hasRuntimePolicy = config => Object.hasOwn(config.volumes || {}, runtimePolicyVolume);
+
 function parseSlots(input) {
   try { return JSON.parse(input); }
   catch { throw new Error('Unreadable private slot configuration'); }
@@ -21,8 +24,9 @@ export function fleetLayout(config) {
 export function recoveryLayout(config) {
   const fleets = fleetLayout(config), replicas = fleets.flatMap(f => f.replicas);
   const services = ['bucket-init', 'controller', 'minio', ...replicas, 'workerd'].sort();
-  const volumes = ['bucket', 'controller', ...replicas, ...(Object.hasOwn(config.volumes || {}, 'tls') ? ['tls'] : [])].sort();
-  return { fleets, replicas, services, volumes, archives: ['compose.json', 'images.tar', ...volumes.map(name => `${name}.tar`)].sort() };
+  const archiveVolumes = ['bucket', 'controller', ...replicas, ...(Object.hasOwn(config.volumes || {}, 'tls') ? ['tls'] : [])].sort();
+  const volumes = [...archiveVolumes, ...(hasRuntimePolicy(config) ? [runtimePolicyVolume] : [])].sort();
+  return { fleets, replicas, services, volumes, archiveVolumes, archives: ['compose.json', 'images.tar', ...archiveVolumes.map(name => `${name}.tar`)].sort() };
 }
 export const serviceNames = config => recoveryLayout(config).services;
 export const volumeNames = config => recoveryLayout(config).volumes;

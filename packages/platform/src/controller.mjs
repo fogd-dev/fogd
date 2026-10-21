@@ -2,7 +2,7 @@ import { validateCronRecoveryState, recoverCronSnapshots } from './cron-recovery
 import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
 import { validateRecoveryState, recoverQueueSnapshots } from './queue-recovery.mjs';
 import { activateRelease } from './activation.mjs';
-import { assertCronDecision, interruptCronActivation, recoverCronHolds, validateCronState } from './cron-activation.mjs';
+import { assertCronDecision, interruptCronActivation, recoverCronHolds, validateCronState, requireCronRuntime } from './cron-activation.mjs';
 import { requireCronCapability } from './cron-dispatch.mjs';
 import { assertQueueDecision, interruptQueueActivation, recoverQueueHolds, requireQueueCapability, validateQueueState } from './queue-activation.mjs';
 import { inspectOwnership, reserveClaim, assertClaimRequest, rejectUnclaimed } from './claims.mjs';
@@ -25,11 +25,13 @@ export class Controller {
   #storageFailed = false;
   #storageCause;
   #reportStorageFailure;
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false }) {
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false, cronApps = false }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
     this.clock = clock;
     if (typeof queueApps !== 'boolean') throw new Error('Queue admission setting must be boolean');
     this.queueApps = queueApps;
+    if (typeof cronApps !== 'boolean') throw new Error('Scheduled admission setting must be boolean');
+    this.cronApps = cronApps;
     this.#persist = persist;
     this.#reportStorageFailure = reportStorageFailure;
     this.maxPending = positiveLimit(maxPending, 'Pending deployment limit');
@@ -49,6 +51,7 @@ export class Controller {
   }
   async init() {
     this.assertStorage();
+    if (this.cronApps) requireCronRuntime(this.backend.crons);
     await this.secrets.init();
     await this.credentials.init();
     await mkdir(join(this.dir, 'artifacts'), { recursive: true });
@@ -105,10 +108,11 @@ export class Controller {
     }
     return resourceChanges(this.state.deployments[app.active]?.resources, release.resources);
   }
-  assertQueueAdmission(request, action = 'submit') {
+  assertAdmission(request, action = 'submit') {
     if (action === 'reject') return;
     if (action === 'approve' && request.status === 'failed' && Object.hasOwn(request, 'secretRevision')) return;
     if (request.resources?.queues && !this.queueApps) throw new Error('Queue applications are not enabled on this installation');
+    if (request.resources?.crons && !this.cronApps) throw new Error('Scheduled applications are not enabled on this installation');
   }
   submit(body, submitter) {
     return this.exclusive(async () => {
@@ -119,8 +123,9 @@ export class Controller {
       if (pendingDeployments(this).length >= this.maxPending) throw new Error('Pending deployment limit reached');
       const id = randomUUID(), dir = this.artifact(id);
       try {
-        const release = await receiveArtifact(body, dir);
-        this.assertQueueAdmission(release);
+        const release = await receiveArtifact(body, dir, { cronApps: this.cronApps });
+        this.assertAdmission(release);
+        if (release.resources.crons && submitter === 'team-token') throw new Error('Scheduled applications require an app-scoped deployment credential');
         if (!this.available(release.app)) throw new Error('No available app slots');
         const changes = this.compatible(release, this.state.apps[release.app]);
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
@@ -168,7 +173,7 @@ export class Controller {
       assertClaimRequest(this.state, request);
       assertLiveName(this.state, request.app);
       if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
-      this.assertQueueAdmission(request, action);
+      this.assertAdmission(request, action);
       assertCronDecision(this.state.apps[request.app], request, action, replaces, this.backend.crons);
       if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
       const previous = replacementFor(this, request, replaces);

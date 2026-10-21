@@ -11,7 +11,7 @@ export async function runCommands({ project, decorate = () => {}, stage }) {
   const qualification = '/var/lib/fogd/qualification', backend = new Backend();
   backend.crons = new CronRuntime({ run: (slot, args) => backend.run(slot, args), inspect: node => backend.deployment(node) });
   decorate(backend, qualification);
-  const { controller } = await startController(backend);
+  const { controller } = await startController(backend, { cronApps: true });
   let last = (await readJson(join(qualification, 'result.json'), null))?.id, stopping = false;
   for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => { stopping = true; });
   while (!stopping) {

@@ -131,7 +131,7 @@ test('SIGKILL at first activation and update boundaries requires rehold and expl
       const child = spawnSync(process.execPath, [fileURLToPath(new URL('./fixtures/cron-activation-crash.mjs', import.meta.url)), f.dir, request.id, point], { encoding: 'utf8', timeout: 15000 });
       assert.equal(child.signal, 'SIGKILL', child.stderr);
       const before = await f.runtime();
-      const restarted = new Controller({ dir: f.dir, slots, backend: cronBackend(f.dir) }); await restarted.init();
+      const restarted = new Controller({ cronApps: true, dir: f.dir, slots, backend: cronBackend(f.dir) }); await restarted.init();
       const after = await f.runtime();
       assert.equal(restarted.state.deployments[request.id].status, 'failed');
       assert.equal(restarted.state.apps.refresh.dispatch.hold, request.id);

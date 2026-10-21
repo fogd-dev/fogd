@@ -87,7 +87,7 @@ const persist = async (path, value) => {
 
 await save();
 try {
-  controller = new Controller({ dir, slots: [slot], backend, persist }); await controller.init();
+  controller = new Controller({ cronApps: true, dir, slots: [slot], backend, persist }); await controller.init();
   receipt.startupEvents = [...receipt.events];
   if (mode === 'initial') {
     assert.equal(await backend.owner(slot), null); assert.equal(await backend.hasDeployment(slot), false);

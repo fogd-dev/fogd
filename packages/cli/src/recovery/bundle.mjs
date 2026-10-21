@@ -3,7 +3,7 @@ import { readFile, open, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { validateFleetStorage, validateNetworks, validateMounts } from './layout-validation.mjs';
+import { validateFleetStorage, validateNetworks, validateMounts, validateRuntimePolicyVolume } from './layout-validation.mjs';
 import { recoveryLayout } from './layout.mjs';
 
 export async function fingerprint(path) {
@@ -36,6 +36,7 @@ export function validateTopology(config) {
   }
   validateFleetStorage(config, fleets);
   validateNetworks(config, fleets);
+  validateRuntimePolicyVolume(config, fleets);
   validateMounts(config, replicas);
   if (Object.values(config.volumes).some(v => v.external) || Object.values(config.networks).some(n => n.external)) throw new Error('External Docker resources are unsupported');
 }

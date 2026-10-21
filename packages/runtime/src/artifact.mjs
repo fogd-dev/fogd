@@ -1,4 +1,5 @@
 import { translateQueues } from './queues.mjs';
+import { translateTriggers } from './crons.mjs';
 import { readdir, readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -6,7 +7,7 @@ import { buildMetadata } from './deployment.mjs';
 import { stageAssets } from './assets.mjs';
 import { copyFiles } from './files.mjs';
 
-const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle', 'secrets', 'queues']);
+const supported = new Set(['name', 'main', 'compatibility_date', 'compatibility_flags', 'vars', 'd1_databases', 'r2_buckets', 'durable_objects', 'migrations', 'assets', 'no_bundle', 'secrets', 'queues', 'triggers']);
 const generated = new Set(['$schema', 'configPath', 'userConfigPath', 'topLevelName', 'definedEnvironments', 'jsx_factory', 'jsx_fragment', 'exports', 'upload_source_maps', 'python_modules', 'dev', 'rules', 'observability', 'version_metadata', 'build']);
 const flags = new Set(['nodejs_als', 'nodejs_compat', 'js_rpc', 'fetcher_no_get_put_delete', 'delete_all_deletes_alarm', 'websocket_standard_binary_type']);
 const empty = value => value == null || value === false || value === '' || (typeof value === 'object' && Object.values(value).every(empty));
@@ -34,25 +35,41 @@ function validateStorage(input, app) {
     if (`${app}-${binding.binding.toLowerCase()}`.length > 64) throw new Error('Derived resource name exceeds celld limit of 64 characters; shorten the app or binding name');
   }
 }
-export function translateConfig(input, app) {
+export function translateConfig(input, app, capabilities) {
   appName(app);
   buildMetadata(input);
+  validateConfigFields(input);
+  const queues = translateQueues(input.queues, app);
+  const triggers = translateTriggers(input.triggers, capabilities);
+  if (queues && triggers) throw new Error('Combined cron and queue activation is not qualified');
+  validateBindings(input, queues);
+  validateStorage(input, app);
+  validateDurableObjects(input);
+  if (input.assets) keys(input.assets, ['directory', 'binding', 'html_handling', 'not_found_handling', 'run_worker_first']);
+  const result = resourceConfig(input, app, queues, triggers);
+  if (input.assets) result.assets = { ...input.assets, directory: 'assets' };
+  return result;
+}
+
+function validateConfigFields(input) {
   for (const [key, value] of Object.entries(input)) {
     if (!supported.has(key) && !generated.has(key) && !empty(value)) throw new Error(`Unsupported binding/config: ${key}`);
   }
   for (const flag of input.compatibility_flags || []) {
     if (!flags.has(flag)) throw new Error(`Unsupported compatibility flag: ${flag}`);
   }
-  for (const [key, value] of Object.entries(input.vars || {})) {
-    if (key.startsWith('__VOID_') || key.startsWith('__PROJECT_')) throw new Error(`Unsupported platform/auth variable: ${key}`);
-    if (typeof value !== 'string') throw new Error(`celld requires string var: ${key}`);
-  }
+  validateVariables(input.vars || {});
   for (const rule of input.rules || []) {
     if (rule.type !== 'ESModule') throw new Error(`Unsupported prebuilt module rule: ${rule.type}`);
   }
-  const queues = translateQueues(input.queues, app);
-  validateBindings(input, queues);
-  validateStorage(input, app);
+}
+function validateVariables(variables) {
+  for (const [key, value] of Object.entries(variables)) {
+    if (key.startsWith('__VOID_') || key.startsWith('__PROJECT_')) throw new Error(`Unsupported platform/auth variable: ${key}`);
+    if (typeof value !== 'string') throw new Error(`celld requires string var: ${key}`);
+  }
+}
+function validateDurableObjects(input) {
   if (input.durable_objects) keys(input.durable_objects, ['bindings']);
   for (const b of input.durable_objects?.bindings || []) {
     if (b.script_name) throw new Error('Cross-script Durable Objects are not supported');
@@ -63,9 +80,11 @@ export function translateConfig(input, app) {
     if (typeof m.tag !== 'string' || !m.tag) throw new Error('Invalid DO migration tag');
     for (const name of m.new_sqlite_classes || []) identifier(name);
   }
-  if (input.assets) keys(input.assets, ['directory', 'binding', 'html_handling', 'not_found_handling', 'run_worker_first']);
-  const result = {
+}
+function resourceConfig(input, app, queues, triggers) {
+  return {
     name: app,
+    ...(triggers ? { triggers } : {}),
     ...(queues ? { queues } : {}),
     main: 'worker/index.js',
     ...(input.compatibility_date ? { compatibility_date: input.compatibility_date } : {}),
@@ -82,15 +101,11 @@ export function translateConfig(input, app) {
     })),
     r2_buckets: (input.r2_buckets || []).map(binding => ({ binding: binding.binding, bucket_name: `${app}-${binding.binding.toLowerCase()}` })),
   };
-  for (const binding of result.durable_objects.bindings || []) {
-    if (binding.script_name) throw new Error('Cross-script Durable Objects are not supported');
-  }
-  if (input.assets) result.assets = { ...input.assets, directory: 'assets' };
-  return result;
 }
 export function resourceIdentity(config) {
   return {
     script: config.name,
+    ...(config.triggers?.crons?.length ? { crons: [...config.triggers.crons] } : {}),
     ...(config.queues ? { queues: config.queues } : {}),
     d1: config.d1_databases,
     r2: config.r2_buckets,
@@ -127,12 +142,12 @@ async function workerBundle(bundleDir) {
   if (!moduleFiles.includes(entry) || !/\.[cm]?js$/.test(entry)) throw new Error('Worker main must identify the built JavaScript entry');
   return { input, entry, moduleFiles };
 }
-export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 'dist/ssr', migrationsDir = 'db/migrations' }) {
+export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 'dist/ssr', migrationsDir = 'db/migrations', capabilities }) {
   appName(app);
   const bundleDir = inside(projectDir, buildOutput);
   const { input, entry, moduleFiles } = await workerBundle(bundleDir);
   const metadata = buildMetadata(input);
-  const config = translateConfig(input, app);
+  const config = translateConfig(input, app, capabilities);
   // Keep the entry and Wasm paths; celld does not load preview config or maps.
   config.main = `worker/${entry}`;
   await mkdir(outputDir, { recursive: false });

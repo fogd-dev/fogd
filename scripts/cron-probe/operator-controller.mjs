@@ -23,7 +23,7 @@ backend.crons = new CronRuntime({
     return result;
   },
 });
-const controller = new Controller({ dir, slots: [slot], backend }); await controller.init();
+const controller = new Controller({ cronApps: true, dir, slots: [slot], backend }); await controller.init();
 const app = controller.state.apps.refresh;
 assert.equal(app.dispatch.hold, null); assert.equal(app.dispatch.desired, 'paused'); assert.equal(app.route, 'active');
 const active = controller.state.deployments[app.active]; assert.equal(active.status, 'active');

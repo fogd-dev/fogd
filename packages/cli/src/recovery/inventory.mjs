@@ -4,10 +4,16 @@ import { json, projectContainers } from './docker.mjs';
 import { checkIsolation, checkMounts } from './container-isolation.mjs';
 
 export function checkContainer(service, container, image) {
+  if (/^sha256:[a-f0-9]{64}$/.test(service.image || '') && container.Image !== service.image) throw new Error('Running image differs from the pinned Compose image');
   checkIsolation(service, container);
   const actual = Object.fromEntries(container.Config.Env.map(entry => { const i = entry.indexOf('='); return [entry.slice(0, i), entry.slice(i + 1)]; }));
   for (const [key, value] of Object.entries(service.environment || {})) {
     if (actual[key] !== String(value)) throw new Error('Running configuration differs from Compose; restore its original configuration before backup');
+  }
+  if (service.read_only) {
+    const inherited = Object.fromEntries((image.Config.Env || []).map(entry => { const i = entry.indexOf('='); return [entry.slice(0, i), entry.slice(i + 1)]; }));
+    const expected = { ...inherited, ...Object.fromEntries(Object.entries(service.environment || {}).map(([key, value]) => [key, String(value)])) };
+    if (!isDeepStrictEqual(actual, expected)) throw new Error('Sealed container environment differs from Compose and the pinned image');
   }
   for (const [field, key] of [['Cmd', 'command'], ['Entrypoint', 'entrypoint']]) {
     if (!isDeepStrictEqual(container.Config[field], service[key] ?? image.Config[field])) throw new Error('Running command differs from Compose');

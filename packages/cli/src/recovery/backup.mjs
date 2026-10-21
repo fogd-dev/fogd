@@ -11,14 +11,16 @@ import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEviden
 import { snapshotState } from './snapshot-state.mjs';
 import { volumeHelper } from './volumes.mjs';
 import { assertCronDockerTopology } from './cron-backup.mjs';
+import { selectedInstallation } from '../runtime/installation.mjs';
 
 export async function backup(directory) {
   const env = await configEnv();
   requireDocker(env);
-  const file = resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
-  const config = await resolvedCompose(env);
+  const raw = await resolvedCompose(env), selected = await selectedInstallation(raw);
+  const file = selected?.file || resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
+  const config = selected?.config || raw;
   projectName(config.name); validateTopology(config);
-  const layout = recoveryLayout(config), { volumes } = layout;
+  const layout = recoveryLayout(config), { volumes, archiveVolumes } = layout;
   const images = await inventory(config);
   let state;
   try { state = JSON.parse(await volumeHelper(images.controller, config.volumes.controller.name, ['cat', '/data/state.json'])); }
@@ -43,7 +45,7 @@ export async function backup(directory) {
   await writeJson(join(dir, 'compose.json'), config);
   const files = {};
   let evidence;
-  for (const name of ['controller', ...volumes.filter(name => name !== 'controller')]) {
+  for (const name of ['controller', ...archiveVolumes.filter(name => name !== 'controller')]) {
     await docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--cap-add', 'DAC_OVERRIDE', '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${config.volumes[name].name},dst=/data,readonly`, images.controller, 'tar', '--numeric-owner', '-C', '/data', '-cpf', '-', '.'], { output: join(dir, `${name}.tar`) });
     if (name === 'controller') evidence = backgroundSnapshotEvidence(await snapshotState(dir), prepared);
   }

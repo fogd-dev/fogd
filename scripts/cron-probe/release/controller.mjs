@@ -23,7 +23,7 @@ const policy = await qualificationPolicy(), initial = selectedRelease(policy, co
 assert.equal(await artifactDigest(initial.source), initial.digest, 'Initial artifact differs before initialization');
 const slot = JSON.parse(process.env.FOGD_SLOTS).find(slot => slot.id === initial.slot); assert.ok(slot);
 await mkdir(initial.output, { recursive: true });
-const backend = await guardedBackend(), controller = new Controller({ dir: initial.dir, slots: [slot], backend });
+const backend = await guardedBackend(), controller = new Controller({ cronApps: true, dir: initial.dir, slots: [slot], backend });
 let request, activating, revision, internal, current;
 const receipt = { step: 'starting', pid: process.pid, processStart: (await readFile('/proc/self/stat', 'utf8')).split(' ')[21], events: [], approvalChecks: 0 };
 const save = () => saveJson(join(initial.output, 'receipt.json'), receipt);

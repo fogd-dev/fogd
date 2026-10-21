@@ -33,16 +33,20 @@ export function requireDocker(env) {
   if (env.FOGD_TOPOLOGY && env.FOGD_TOPOLOGY !== 'docker') throw new Error('This command supports Docker installations only; Kubernetes PVC recovery requires its own adapter');
 }
 export const compose = (args, env, capture = false) => run('docker', ['compose', '--env-file', devNull, '--project-directory', stackRoot, '-f', resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml')), ...args], { env, capture });
-export async function buildArtifact(projectDir, nameOverride) {
+export async function artifactProject(projectDir, nameOverride) {
   const project = resolve(projectDir);
   const settings = await readJson(join(project, 'fogd.json'), {});
   const pkg = await readJson(join(project, 'package.json'), {});
   const app = appName(nameOverride || settings.name || pkg.name?.split('/').at(-1));
+  return { project, settings, app };
+}
+export async function buildArtifact(projectDir, nameOverride, capabilities) {
+  const { project, settings, app } = await artifactProject(projectDir, nameOverride);
   const buildEnv = buildEnvironment();
   await run(process.execPath, [fileURLToPath(new URL('./build.mjs', import.meta.url)), project], { cwd: project, env: buildEnv });
   const parent = join(stackRoot, '.fogd', 'releases', app);
   await mkdir(parent, { recursive: true });
   const outputDir = join(parent, randomUUID());
-  const release = await stageArtifact({ projectDir: project, outputDir, app, buildOutput: settings.buildOutput, migrationsDir: settings.migrationsDir });
+  const release = await stageArtifact({ projectDir: project, outputDir, app, buildOutput: settings.buildOutput, migrationsDir: settings.migrationsDir, capabilities });
   return { ...release, outputDir };
 }

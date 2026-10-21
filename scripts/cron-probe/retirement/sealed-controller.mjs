@@ -28,7 +28,7 @@ backend.bootstrap = async (slot, artifact, resources) => {
   return version;
 };
 assertRetirementHistory(policy, variant, await readJson('/var/lib/fogd/state.json', { apps: {} }));
-const { controller } = await startController(backend);
+const { controller } = await startController(backend, { cronApps: true });
 let consumed = (await readJson(join(directory, 'result.json'), null))?.id, stopping = false;
 for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => { stopping = true; });
 while (!stopping) {

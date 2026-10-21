@@ -18,13 +18,18 @@ export async function verifyCronRuntimeImage(profile, run = docker) {
     if (!/^sha256:[a-f0-9]{64}$/.test(profile?.image || '') ||
       !['binarySha256', 'supervisorSha256'].every(key => /^[a-f0-9]{64}$/.test(profile[key] || ''))) throw new Error('Invalid preboot profile');
     const images = JSON.parse(await run(['image', 'inspect', profile.image], { timeoutMs: 15000 }));
+    if ((profile.os && images[0]?.Os !== profile.os) || (profile.architecture && images[0]?.Architecture !== profile.architecture)) throw new Error('Runtime platform differs');
     assertImage(images, profile.image);
-    const output = await run(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-      '--memory', '128m', '--cpus', '1', '--pids-limit', '64', '--entrypoint', '/usr/local/bin/node',
-      ...['NODE_OPTIONS', 'NODE_PATH', 'LD_PRELOAD', 'LD_LIBRARY_PATH', 'BASH_ENV', 'ENV'].flatMap(key => ['--env', `${key}=`]),
-      profile.image, '--input-type=module', '-e', code], { timeoutMs: 15000 });
+    const output = await runtimeInspector(profile.image, code, run);
     if (!isDeepStrictEqual(JSON.parse(output), { binarySha256: profile.binarySha256, supervisorSha256: profile.supervisorSha256 })) throw new Error('Runtime files differ');
   } catch { throw new Error('Scheduled runtime preboot verification failed; no application runtime was started'); }
+}
+
+export function runtimeInspector(image, code, run = docker) {
+  return run(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+    '--memory', '128m', '--cpus', '1', '--pids-limit', '64', '--entrypoint', '/usr/local/bin/node',
+    ...['NODE_OPTIONS', 'NODE_PATH', 'LD_PRELOAD', 'LD_LIBRARY_PATH', 'BASH_ENV', 'ENV'].flatMap(key => ['--env', `${key}=`]),
+    image, '--input-type=module', '-e', code], { timeoutMs: 15000 });
 }
 
 function assertImage(images, expected) {

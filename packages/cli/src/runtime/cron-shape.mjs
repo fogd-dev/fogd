@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from 'node:util';
-import { isIP } from 'node:net';
+import { privateRuntimeSubnet } from '@fogd/platform/runtime-policy';
 const keys = (value, allowed) => value && !Array.isArray(value) && typeof value === 'object' && Object.keys(value).every(key => allowed.includes(key));
 const bucket = ['S3_ENDPOINT', 'AWS_REGION', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'FOGD_BUCKET'];
 const transport = ['FOGD_PROFILE', 'FOGD_TLS', 'FOGD_PUBLIC_BIND_ADDRESS'];
@@ -24,18 +24,13 @@ function assertMount(mount) {
 }
 
 function assertNetworks(networks, expected) {
-  if (expected !== undefined && (!expected || !isDeepStrictEqual(Object.keys(expected).sort(), Object.keys(networks).sort()) || !Object.values(expected).every(privateSubnet))) throw new Error('Scheduled network inventory differs');
+  if (expected !== undefined && (!expected || !isDeepStrictEqual(Object.keys(expected).sort(), Object.keys(networks).sort()) || !Object.values(expected).every(privateRuntimeSubnet))) throw new Error('Scheduled network inventory differs');
   for (const [name, network] of Object.entries(networks)) {
     if (!keys(network, ['name', 'ipam'])) throw new Error('Scheduled restore requires ordinary private bridge networks');
     const subnet = expected?.[name];
     if (subnet) {
-      if (!privateSubnet(subnet) || !isDeepStrictEqual(network.ipam, { config: [{ subnet }] })) throw new Error('Scheduled private network differs from launch policy');
+      if (!privateRuntimeSubnet(subnet) || !isDeepStrictEqual(network.ipam, { config: [{ subnet }] })) throw new Error('Scheduled private network differs from launch policy');
     } else if (network.ipam && Object.keys(network.ipam).length) throw new Error('Unqualified scheduled network settings');
   }
   if (expected && new Set(Object.values(expected)).size !== Object.keys(expected).length) throw new Error('Scheduled private networks overlap');
-}
-function privateSubnet(value) {
-  if (typeof value !== 'string' || !value.endsWith('.0/24')) return false;
-  const address = value.slice(0, -3);
-  return isIP(address) === 4 && address.startsWith('10.');
 }

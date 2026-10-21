@@ -2,30 +2,22 @@ import { mkdir, rename, open } from 'node:fs/promises';
 import { restoreVolumes, volumeHelper } from './volumes.mjs';
 import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
-import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
+import { docker, json, composeArgs, requireFresh, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
 import { restoredInstallationState } from './background-restore.mjs';
 import { assertPinnedSnapshotImages } from './snapshot-evidence.mjs';
-import { recoveryLayout } from './layout.mjs';
+import { recoveryLayout, hasRuntimePolicy } from './layout.mjs';
+import { installRuntimePolicy } from '../runtime/install-policy.mjs';
 import { cronRetirementCapability } from '@fogd/platform/cron-retirement';
 import { cronCapability } from '@fogd/platform/cron-history';
 import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 import { assertCronDockerTopology } from './cron-backup.mjs';
-import { cronRestoreConfig } from '../runtime/cron-preboot.mjs';
+import { restoredRuntimeConfig } from '../runtime/cron-preboot.mjs';
 import { verifyCronRuntimeImage, verifyCronStorageImage } from '../runtime/cron-image.mjs';
 import { hasCronHistory } from '@fogd/platform/cron-history';
 
-async function requireFresh(project, config) {
-  if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
-  for (const kind of ['volume', 'network']) {
-    const existing = new Set((await docker([kind, 'ls', '--format', '{{.Name}}'])).trim().split('\n'));
-    const labeled = (await docker([kind, 'ls', '-q', '--filter', `label=com.docker.compose.project=${project}`])).trim();
-    const names = Object.values(config[kind === 'volume' ? 'volumes' : 'networks']).map(item => item.name);
-    if (labeled || names.some(name => existing.has(name))) throw new Error('Restore target resources already exist; choose a fresh project');
-  }
-}
 export async function restore(directory, project, output) {
   projectName(project);
   const dir = resolve(directory), destination = resolve(output);
@@ -45,19 +37,18 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   if (project === manifest.sourceProject) throw new Error('Restore requires a different project from its source');
   const base = restoredConfig(change?.config || config, project, images);
   validateTopology(base);
-  const target = cronRestoreConfig(state, base, policy);
+  const target = restoredRuntimeConfig(state, base, policy);
   const volumes = volumeNames(target);
   if (change) await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   await requireFresh(project, target);
   const started = Date.now(), file = join(destination, 'compose.pending.json');
-  await loadRestoreImages(dir, manifest.images, images.controller, state, change, policy);
+  await loadRestoreImages(dir, manifest.images, images.controller, state, change, policy, hasRuntimePolicy(target));
   await mkdir(destination, { mode: 0o700 });
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
-  await restoreVolumes(dir, target, volumes, manifest.images.controller, change?.skipped);
-  if (state) await writeRecoveredState(target, manifest.images.controller, state);
+  await restoreSnapshotData(dir, target, manifest.images.controller, state, change?.skipped, policy);
   if (change) {
     await writeJson(join(destination, `${change.kind}.json`), change.evidence);
     await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
@@ -71,11 +62,17 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
 }
 
-async function loadRestoreImages(dir, snapshotImages, controller, state, change, policy) {
+async function restoreSnapshotData(dir, target, image, state, skipped, policy) {
+  await restoreVolumes(dir, target, volumeNames(target), image, skipped);
+  if (state) await writeRecoveredState(target, image, state);
+  if (hasRuntimePolicy(target)) await installRuntimePolicy(target, policy);
+}
+
+async function loadRestoreImages(dir, snapshotImages, controller, state, change, policy, installedPolicy) {
   await docker(['image', 'load'], { input: join(dir, 'images.tar') });
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(snapshotImages))]);
   if (Object.values(snapshotImages).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
-  await requireStateRuntime(controller, state, change, policy);
+  await requireStateRuntime(controller, state, change, policy, installedPolicy);
 }
 
 export function requiredCapabilities(state, change) {
@@ -88,8 +85,8 @@ export function requiredCapabilities(state, change) {
   if (state?.requirements?.includes(cronRetirementCapability)) required.push(['cron-retirement', 'cronRetirementCapability', cronRetirementCapability]);
   return required;
 }
-async function requireStateRuntime(image, state, change, runtimeProfile) {
-  if (state && hasCronHistory(state)) {
+async function requireStateRuntime(image, state, change, runtimeProfile, installedPolicy) {
+  if (installedPolicy || (state && hasCronHistory(state))) {
     await verifyCronStorageImage(runtimeProfile.storageImage);
     await verifyCronRuntimeImage(runtimeProfile);
   }

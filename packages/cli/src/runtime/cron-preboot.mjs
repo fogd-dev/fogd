@@ -1,9 +1,10 @@
 import { isDeepStrictEqual } from 'node:util';
 import { hasCronHistory } from '@fogd/platform/cron-history';
-import { fleetLayout } from '../recovery/layout.mjs';
+import { fleetLayout, hasRuntimePolicy } from '../recovery/layout.mjs';
 import { validateTopology } from '../recovery/bundle.mjs';
 import { assertCronComposeShape } from './cron-shape.mjs';
 import { storageOrigin } from '@fogd/platform/runtime-identity-proof';
+import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 
 const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const serviceFields = new Set(['image', 'build', 'command', 'entrypoint', 'environment', 'networks', 'volumes', 'depends_on',
@@ -17,10 +18,32 @@ const nodeEnvironment = new Set(['S3_ENDPOINT', 'AWS_REGION', 'AWS_ACCESS_KEY_ID
 // Only a trusted qualification caller can supply this policy. A snapshot's
 // configuration or capability marker is not authority to select a runtime.
 export function cronRestoreConfig(state, config, profile) {
-  if (!state || !hasCronHistory(state)) return config;
+  if ((!state || !hasCronHistory(state)) && !hasRuntimePolicy(config)) return config;
+  return sealRuntimeConfig(config, profile);
+}
+
+export function restoredRuntimeConfig(state, config, profile) {
+  if (!hasRuntimePolicy(config)) return cronRestoreConfig(state, config, profile);
+  // Snapshot network placement is data, not launch authority. A selected restore
+  // can use fresh private subnets while the source's stopped networks remain.
+  try {
+    const policy = validateRuntimePolicy(profile, config.services.controller.environment);
+    const target = structuredClone(config);
+    for (const [name, network] of Object.entries(target.networks)) {
+      if (policy.networks) network.ipam = { config: [{ subnet: policy.networks[name] }] };
+      else delete network.ipam;
+    }
+    return sealRuntimeConfig(target, policy);
+  } catch { throw prebootRefused(config); }
+}
+
+// Sealed launch is required before the first deployment, too.
+export function sealRuntimeConfig(config, profile) {
   try {
     assertProfile(profile);
     validateTopology(config);
+    if (hasRuntimePolicy(config)) validateRuntimePolicy(profile, config.services.controller.environment);
+    else if (profile.family !== undefined) throw new Error('Installed runtime policy volume is missing');
     assertCronComposeShape(config, profile);
     const fleets = fleetLayout(config), result = structuredClone(config);
     for (const key of Object.keys(result).filter(key => key.startsWith('x-'))) delete result[key];
@@ -37,10 +60,13 @@ export function cronRestoreConfig(state, config, profile) {
       sealNode(result.services[host], host, node.id, fleet.prefix, profile, result.services.controller.environment);
     }
     return result;
-  } catch {
-    const error = new Error('Scheduled startup requires a matching independently checked runtime profile; ordinary admission remains closed');
-    error.code = 'CRON_PREBOOT_REFUSED'; throw error;
-  }
+  } catch { throw prebootRefused(config); }
+}
+
+function prebootRefused(config) {
+  const subject = hasRuntimePolicy(config) ? 'Installed runtime' : 'Scheduled startup';
+  const error = new Error(`${subject} requires a matching independently checked runtime profile; ordinary admission remains closed`);
+  error.code = 'CRON_PREBOOT_REFUSED'; return error;
 }
 
 function assertProfile(profile) {

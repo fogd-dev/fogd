@@ -1,6 +1,9 @@
 import { transportPolicy, loadTLS } from '@fogd/runtime/transport';
 import { Controller } from './controller.mjs';
 import { Backend } from './backend.mjs';
+import { backendCronRuntime } from './backend-runtime-identity.mjs';
+import { installedRuntimePolicy } from './runtime-policy-file.mjs';
+import { validateRuntimePolicy, RuntimePolicyError } from './runtime-policy.mjs';
 import { server } from './http.mjs';
 
 const required = key => { const value = process.env[key]; if (!value) throw new Error(`${key} is required; run fogd up to initialize local credentials`); return value; };
@@ -19,14 +22,27 @@ function controllerOptions(backend) {
   return { queueApps: process.env.FOGD_QUEUE_APPS === '1', dir: process.env.FOGD_DATA_DIR || '/var/lib/fogd', slots, backend, baseDomain: process.env.FOGD_BASE_DOMAIN || 'localhost', maxPending: process.env.FOGD_MAX_PENDING ?? 20, maxPendingPerCredential: process.env.FOGD_MAX_PENDING_PER_CREDENTIAL ?? 5, maxArtifactBytes: process.env.FOGD_MAX_ARTIFACT_BYTES ?? 268435456 };
 }
 
-// The ordinary entry point uses Backend unchanged. Private qualification can
-// supply its experimental transport without exposing an admission setting.
-export async function startController(backend) {
+export function selectedBackend(backend, policy, env) {
+  if (policy === null || policy === undefined) return backend ?? new Backend(env);
+  if (!env || typeof env !== 'object' || Array.isArray(env)) throw new RuntimePolicyError();
+  const expected = validateRuntimePolicy(policy, env);
+  if (backend !== undefined && backend !== null) throw new Error('Injected backend conflicts with installed runtime policy');
+  const selected = new Backend(env);
+  selected.crons = backendCronRuntime(selected, expected);
+  return selected;
+}
+
+// A dedicated host-written policy selects the guarded transport. Without it,
+// existing installations and private backend composition retain their behavior.
+// Artifact admission remains separately controlled by the controller.
+export async function startController(backend, { readPolicy = installedRuntimePolicy, cronApps = false } = {}) {
   transportPolicy(process.env);
   const tls = await loadTLS(process.env);
   const credentials = { user: required('FOGD_ADMIN_USER'), password: required('FOGD_ADMIN_PASSWORD'), deploy: process.env.FOGD_DEPLOY_TOKEN || null, gateway: required('FOGD_GATEWAY_TOKEN') };
   const options = controllerOptions(backend);
-  options.backend ??= new Backend();
+  const policy = await readPolicy(process.env);
+  options.backend = selectedBackend(options.backend, policy, process.env);
+  options.cronApps = policy ? true : cronApps;
   const controller = new Controller(options);
   await controller.init();
   const http = server(controller, credentials, { maxUploads: process.env.FOGD_MAX_UPLOADS ?? 2, tls });
