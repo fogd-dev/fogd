@@ -5,7 +5,7 @@ import { cronRecords } from '../records.mjs';
 import { vmNow, vmWaitUntil, vmMinuteBoundary } from '../vm-time.mjs';
 import { refreshGateway } from '../gateway.mjs';
 import { lateReapPlan, reapTick } from './reap-plan.mjs';
-import { cleanupReplacement } from './cleanup.mjs';
+import { cleanupRelease } from '../release/cleanup.mjs';
 import { chromium, expect } from '../../guestbook-browser.mjs';
 
 export async function replacementScenarios({ probe, session, defaults, progress = async () => {} }) {
@@ -214,7 +214,7 @@ export async function replacementScenarios({ probe, session, defaults, progress 
       scope: 'Private ordinary Void releases. Old work commits under a compatible migration before publication. Held pre/post-commit callbacks continue recording heartbeats after pause and migration, then stop recording near publication swap; no later D1 progress is observed after the old generation is freed. Unfinished application work and later new-code occurrences are observed. A separate lost reply retries the original occurrence and increments duplicate counters without another business row. No drain, external-effect termination, automatic replay guarantee, arbitrary external-effect exactly once, scoped cron admission, stopped snapshot recovery or retirement.' };
     await probe.save('replacement', result);
   } catch (error) { failure = error; await probe.save('replacement-failure', { message: error.message,evidence }); throw error; }
-  finally { await cleanupReplacement({ probe, session, pendingGate, failure, browser }); }
+  finally { await cleanupRelease({ probe, session, pendingGate, failure, browser }); }
 
   return result;
 }

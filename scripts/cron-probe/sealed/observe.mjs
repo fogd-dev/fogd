@@ -5,7 +5,7 @@ import { verifyIdentityProof, storageOrigin } from '../../../packages/platform/s
 import { expect } from '../../guestbook-browser.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
-export async function observeSealedRuntime(probe, programs) {
+export async function observeSealedRuntime(probe, programs, name = 'sealed-runtime') {
   const listed = JSON.parse(await probe.compose(['exec', '-T', 'controller', '/usr/local/bin/node', '--input-type=module', '-e', "import{regularFiles}from'/app/packages/runtime/src/artifact.mjs';console.log(JSON.stringify((await regularFiles('/app/qualification')).map(file=>'/app/qualification/'+file)));"]));
   assert.deepEqual(listed.sort(), Object.keys(programs).sort(), 'Unexpected qualification programs in the image');
   const output = await probe.compose(['exec', '-T', 'controller', '/usr/bin/sha256sum', ...Object.keys(programs)]);
@@ -28,5 +28,5 @@ export async function observeSealedRuntime(probe, programs) {
       processKeySha256: identity.processKeySha256 });
   }
   const result = { images, programs: actual, identities, sealedInventoryVerified: true };
-  await probe.save('sealed-runtime', result); return result;
+  await probe.save(name, result); return result;
 }

@@ -9,8 +9,8 @@ export async function startVoidSession(probe, source, minutes = 12) {
   const runner = join(probe.output, 'runner'); await mkdir(runner);
   for (const file of ['void-controller.mjs', 'void-controller-session.mjs', 'controller-update.mjs', 'minute.mjs']) await cp(new URL(file, import.meta.url), join(runner, file));
   await cp(new URL('../queue-probe/controller-artifact.mjs', import.meta.url), join(runner, 'controller-artifact.mjs'));
-  await mkdir(join(runner, 'replacement'));
-  await cp(new URL('./replacement/update-audit.mjs', import.meta.url), join(runner, 'replacement/update-audit.mjs'));
+  await mkdir(join(runner, 'release'));
+  await cp(new URL('./release/update-audit.mjs', import.meta.url), join(runner, 'release/update-audit.mjs'));
   const remote = await upload(probe, runner, 'void-controller');
   let result, failure, terminal = false;
   const running = probe.compose(['exec', '-T', 'controller', 'node', `${remote}/void-controller.mjs`, source, probe.slot.id, remote, String(minutes)], { timeoutMs: (minutes + 5) * 60000 })

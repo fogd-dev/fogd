@@ -15,7 +15,7 @@ async function pauseFailedSession(session, pendingGate) {
 }
 // Failure cannot release an approval gate. Give the broker time to persist its
 // own failure pause before considering PID-verified termination.
-export async function cleanupReplacement({ probe, session, pendingGate, failure, browser, expectedRejection = false }) {
+export async function cleanupRelease({ probe, session, pendingGate, failure, browser, expectedRejection = false }) {
   try { await browser?.close(); }
   finally {
     if (failure && !session.terminal) await pauseFailedSession(session, pendingGate);

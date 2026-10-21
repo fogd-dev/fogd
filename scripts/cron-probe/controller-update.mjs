@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { regularFiles } from '/app/packages/runtime/src/artifact.mjs';
 import { stageRequest } from './controller-artifact.mjs';
-import { updateAudit } from './replacement/update-audit.mjs';
+import { updateAudit } from './release/update-audit.mjs';
 
 
 export function updateApprover({ controller, backend, slot, output, receipt, save, token, revision, onRequest, onStep }) {

@@ -10,7 +10,9 @@ import { regularFiles, stageArtifact } from '../../../packages/runtime/src/artif
 import { stageRefresh } from '../native.mjs';
 
 assert.ok(Object.values(networkInterfaces()).flat().every(address => address.internal), 'Offline build requires network none');
-const source = '/source/project', project = '/app/.fogd/sealed-replacement-project', output = '/results';
+const cron = process.env.FOGD_FIXTURE_CRON;
+assert.ok(['* * * * *', '*/3 * * * *'].includes(cron), 'Unknown offline fixture schedule');
+const source = '/source/project', project = '/app/.fogd/sealed-release-project', output = '/results';
 const paths = ['package.json', 'vite.config.ts', 'void.config.ts', 'fogd.json', 'tsconfig.json', 'env.ts', 'db', 'routes', 'lib', 'crons'];
 async function sourceHashes() {
   const hashes = {};
@@ -33,9 +35,9 @@ try {
   await run('pnpm', ['run', 'build'], { cwd: project });
   const managed = JSON.parse(await readFile(join(project, 'dist/ssr/wrangler.json'), 'utf8'));
   await cp(join(project, 'dist'), join(output, 'managed'), { recursive: true });
-  const native = await stageRefresh(join(output, 'artifact'), project);
+  const native = await stageRefresh(join(output, 'artifact'), project, [cron]);
   const fogd = JSON.parse(await readFile(join(project, 'dist/ssr/wrangler.json'), 'utf8'));
-  assert.deepEqual(managed.triggers, { crons: ['* * * * *'] }); assert.deepEqual(managed.triggers, fogd.triggers);
+  assert.deepEqual(managed.triggers, { crons: [cron] }); assert.deepEqual(managed.triggers, fogd.triggers);
   assert.deepEqual(managed.secrets, { required: ['REFRESH_TOKEN'] }); assert.deepEqual(managed.secrets, fogd.secrets);
   await assert.rejects(stageArtifact({ projectDir: project, outputDir: join(output, 'rejected'), app: 'refresh' }), /Unsupported binding\/config: triggers/);
   await writeFile(join(native.output, 'wrangler.json'), JSON.stringify(native.config));

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { expect } from '../../guestbook-browser.mjs';
-import { cleanupReplacement } from './cleanup.mjs';
+import { cleanupRelease } from '../release/cleanup.mjs';
 import { requireIdleHost } from '../activation/processes.mjs';
 
 export async function rejectedPublicationGate(probe, session) {
@@ -22,7 +22,7 @@ export async function rejectedPublicationGate(probe, session) {
     heldAt = Number(await probe.node('console.log(Date.now())'));
     expectedRejection = true;
   } catch (error) { failure = error; throw error; }
-  finally { await cleanupReplacement({ probe, session, pendingGate, failure: failure || Error('Deliberately rejected observation'), expectedRejection }); }
+  finally { await cleanupRelease({ probe, session, pendingGate, failure: failure || Error('Deliberately rejected observation'), expectedRejection }); }
   assert.equal(session.exitCode, 1, 'A rejected gate must fail the broker without killing or approving it');
   const failed = await session.rawReceipt(); assert.equal(failed.step, 'failed'); assert.equal(failed.cleanupFailure, undefined);
   assert.equal(failed.updateLifecycle.gateReleasedAt, undefined);

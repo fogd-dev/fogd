@@ -3,11 +3,11 @@ import { randomUUID } from 'node:crypto';
 import { expect } from '../../guestbook-browser.mjs';
 import { requireIdleHost } from '../activation/processes.mjs';
 
-export async function startReplacementSession(probe, policy) {
-  await requireIdleHost(probe);
-  const output = policy.replacement.output, executable = '/app/qualification/replacement-controller.mjs';
+export async function startReleaseSession(probe, policy, minutes) {
+  assert.ok([20, 35].includes(minutes)); await requireIdleHost(probe);
+  const output = policy.releases.output, executable = '/app/qualification/release-controller.mjs';
   let result, failure, terminal = false, exitCode;
-  const running = probe.compose(['exec', '-T', 'controller', '/usr/local/bin/node', executable], { timeoutMs: 25 * 60000 })
+  const running = probe.compose(['exec', '-T', 'controller', '/usr/local/bin/node', executable], { timeoutMs: (minutes + 5) * 60000 })
     .then(text => { exitCode = 0; try { result = JSON.parse(text.trim()); } catch (error) { failure = error; } terminal = true; }, error => { exitCode = error.exitCode; failure = error; terminal = true; });
   async function readReceipt() {
     const value = JSON.parse(await probe.node(`import{readFile}from'node:fs/promises';try{console.log(await readFile(${JSON.stringify(output+'/receipt.json')},'utf8'))}catch(error){if(error.code!=='ENOENT')throw error;console.log('null')}`));
@@ -18,6 +18,7 @@ export async function startReplacementSession(probe, policy) {
     const value = await readReceipt(); if (value?.step === 'failed') throw Error(value.error); return value;
   }
   async function send(operation, input = {}) {
+    probe.recordAccess?.('command');
     const id = randomUUID();
     await probe.node(`import{saveJson}from'/app/packages/platform/src/store.mjs';await saveJson(${JSON.stringify(output+'/command.json')},${JSON.stringify({ ...input, id, operation })});`);
     return id;

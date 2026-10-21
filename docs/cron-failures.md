@@ -6,6 +6,9 @@ through the experimental activation controller. Normal scoped cron admission sta
 closed. The [M11c contract](m11c.md) also requires release overlap, stopped snapshot
 recovery and retirement evidence before admission.
 
+The [guarded release failure profile](cron-sealed-failures.md) provides the signed-runtime
+driver and its separate receipt. This page describes the historical profile below.
+
 The [recorded receipt](evidence/m11c-void-failures.json) matches source commit
 `06bc94bdf14c909867715be2f5c9489c1fc72eec`. Reproduce that historical result
 at its pinned revision and runtime. Shared controller helpers in the current tree

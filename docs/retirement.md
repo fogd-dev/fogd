@@ -164,6 +164,12 @@ exit, and restart state. Neither probe waits through the four-day retention inte
 
 ## Experimental scheduled app retirement
 
+The single-cron receipt pins commit
+`7d08edbc55848aaf3efd8a54aebccbb92edf37f4`; the two-cron receipt pins
+`bdd828e2b520c35a343955e0e8107bfd2ac3d604`. Their source maps have been
+checked against those Git revisions. Current shared qualification helpers have
+different fingerprints.
+
 The following receipts and commands describe historical pinned profiles. Current
 normal CLI retirement and restore refuse all cron history, including retired or
 pending schedules. `--stop-scheduled-work` does not bypass the

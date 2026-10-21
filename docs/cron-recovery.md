@@ -5,7 +5,7 @@ access. The [preboot foundation](cron-runtime-preboot.md) requires an independen
 launch policy that only an internal qualification caller can supply. The native
 recovery profiles below are historical evidence; reproduce them with their pinned
 sources. The separate [sealed recovery profile](cron-sealed-recovery.md) qualifies
-the current guarded path on the signed release executable. Ordinary cron admission
+the guarded path on the signed release executable at its recorded revision. Ordinary cron admission
 remains closed.
 
 Cron installation recovery uses a native persisted hold and a full stopped Docker
@@ -17,6 +17,10 @@ adds a qualifier and validation-failure cleanup while preserving the same produc
 runtime sources. Each receipt identifies its executed qualification-helper versions.
 Ordinary cron admission remains closed: the [M11c contract](m11c.md) also requires
 scoped admission and release-bound runtime qualification.
+
+The historical recovery receipt pins commit
+`fb0a487e9ac28fa05ab10f703728218431226fba`. Reproduce its commands
+from that revision; current qualification helpers have different fingerprints.
 
 ## Recovery contract
 

@@ -37,7 +37,7 @@ No Cloudflare account, credentials or API calls are used by these qualifications
 | Capacity and retirement, M10 | Qualified Docker layouts through three app fleets, capacity reporting, stopped expansion/retirement and retained-state isolation; [capacity](capacity.md), [expansion](expansion.md), [retirement](retirement.md) |
 | Background queues, M11a | Bounded Docker opt-in, disabled by default; native Void import flow, activation controls, retries, duplicate handling and recovery; [acceptance](m11a-acceptance.md) |
 | Live sessions, M11b | Bounded native WebSocket/SSE lifecycle, lost-ack reconciliation, owner/gateway failures, compatible replacement, movement and stopped restore; [acceptance](m11b-acceptance.md). Pinned Void patches and the opt-in celld candidate are required |
-| Scheduled work, M11c | Bounded native profiles, sealed recovery and selected guarded release activation interruptions have evidence; cron admission remains closed. [Contract](m11c.md), [recovery](cron-sealed-recovery.md), [activation](cron-sealed-activation.md) |
+| Scheduled work, M11c | Bounded native profiles, sealed recovery, guarded activation, replacement and failure profiles have evidence; cron admission remains closed. [Contract](m11c.md), [recovery](cron-sealed-recovery.md), [activation](cron-sealed-activation.md), [replacement](cron-sealed-replacement.md), [failures](cron-sealed-failures.md) |
 | Broader portability, M12 | Offline ordinary Void/fogd builds and bounded logical transfer already exist. General target migration and non-Void Workers import remain open |
 
 ## How the system is arranged
@@ -163,8 +163,18 @@ The [guarded release replacement profile](cron-sealed-replacement.md) checks
 compatible migration overlap, unfinished work after publication, original-occurrence
 lost-reply retries and offline-built artifacts on the signed runtime's native
 defaults. Its refusal regression preserves the prior approval and journal pause
-after an unreleased publication gate expires. Runtime selection, remaining failure
-and retirement qualification, and ordinary scoped admission remain open.
+after an unreleased publication gate expires.
+
+The [guarded failure profile](cron-sealed-failures.md) checks native `noRetry`,
+counted terminal failure, owner loss before a persisted retry and downtime of both replicas in the app slot.
+It measures the advisory waker-role transition and original-occurrence recovery on
+the signed runtime's default election timing. Offline-built minute and sparse
+artifacts pass the same immutable release broker as replacement. Independent
+acceptance checks retained state, image contents, signed process identities and
+autonomous future-wake persistence before the first post-restart replica request.
+Runtime selection, release-bound retirement, the external admin/TLS flow and
+ordinary scoped admission remain open. Earlier activation, recovery and retirement
+receipts retain the source revisions identified in their guides.
 
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.

@@ -4,14 +4,18 @@ const shared = {
   'backend.mjs': './backend.mjs',
   'controller-artifact.mjs': '../../queue-probe/controller-artifact.mjs',
 };
+function releasePrograms(contract) {
+  return { ...shared, 'controller.mjs': '../activation/idle.mjs',
+    'release-controller.mjs': '../release/controller.mjs', 'release-policy.mjs': '../release/policy.mjs', 'release-contract.mjs': contract,
+    'update-audit.mjs': '../release/update-audit.mjs', 'minute.mjs': '../minute.mjs' };
+}
 const profiles = {
   recovery: { ...shared, 'controller.mjs': './controller.mjs' },
   activation: { ...shared, 'controller.mjs': '../activation/idle.mjs',
     'interruption-controller.mjs': '../activation/controller.mjs', 'interruption-policy.mjs': '../activation/policy.mjs',
     'minute.mjs': '../minute.mjs' },
-  replacement: { ...shared, 'controller.mjs': '../activation/idle.mjs',
-    'replacement-controller.mjs': '../replacement/controller.mjs', 'replacement-policy.mjs': '../replacement/policy.mjs',
-    'update-audit.mjs': '../replacement/update-audit.mjs', 'minute.mjs': '../minute.mjs' },
+  replacement: releasePrograms('../replacement/contract.mjs'),
+  failures: { ...releasePrograms('../faults/contract.mjs'), 'failure-observation.mjs': '../faults/observation.mjs', 'read-records.mjs': '../release/read-records.mjs' },
 };
 export function sealedPrograms(kind) {
   if (!Object.hasOwn(profiles, kind)) throw new Error('Unknown sealed qualification profile');

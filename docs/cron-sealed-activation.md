@@ -6,9 +6,14 @@ with read-only program files and runtime identity checks. Ordinary cron admissio
 remains closed. This profile drives a direct `Controller` instance through private
 commands; it does not qualify the normal deployment or external admin/TLS flow.
 
+The receipt pins the qualification sources at commit
+`107bf03f3ed97f2dc78b48f90c893b6ab8d94a52`. Reproduce the recorded result from that
+revision. Shared release helpers in the current tree have different fingerprints;
+the receipt does not qualify those later helper changes.
+
 ## Reproduce the profile
 
-With the local images identified in the receipt available, run the
+At the pinned revision, with the local images identified in the receipt available, run the
 [driver](../scripts/cron-sealed-activation.mjs) in a new private directory:
 
 ```sh

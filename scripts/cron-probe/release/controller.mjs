@@ -1,4 +1,4 @@
-// Immutable replacement fixture controller; command data selects only named
+// Immutable release qualification controller; command data selects only named
 // releases whose sources, order and gates are already pinned in this image.
 import assert from 'node:assert/strict';
 import { mkdir, readFile } from 'node:fs/promises';
@@ -12,13 +12,14 @@ import { readJson, saveJson } from '/app/packages/platform/src/store.mjs';
 import { artifactDigest, regularFiles } from '/app/packages/runtime/src/artifact.mjs';
 import { guardedBackend, qualificationPolicy } from './backend.mjs';
 import { stageRequest } from './controller-artifact.mjs';
-import { replacementRelease, replacementCommand } from './replacement-policy.mjs';
+import { selectedRelease, releaseCommand, activeRelease } from './release-policy.mjs';
+import contract from './release-contract.mjs';
 import { updateAudit } from './update-audit.mjs';
 import { waitForMinuteBoundary } from './minute.mjs';
 
 assert.deepEqual(process.execArgv, []); assert.equal(process.env.NODE_OPTIONS, undefined);
-assert.deepEqual(process.argv, ['/usr/local/bin/node', '/app/qualification/replacement-controller.mjs']);
-const policy = await qualificationPolicy(), initial = replacementRelease(policy, 'old');
+assert.deepEqual(process.argv, ['/usr/local/bin/node', '/app/qualification/release-controller.mjs']);
+const policy = await qualificationPolicy(), initial = selectedRelease(policy, contract, contract.initial);
 assert.equal(await artifactDigest(initial.source), initial.digest, 'Initial artifact differs before initialization');
 const slot = JSON.parse(process.env.FOGD_SLOTS).find(slot => slot.id === initial.slot); assert.ok(slot);
 await mkdir(initial.output, { recursive: true });
@@ -55,9 +56,10 @@ async function stage(selected) {
 async function approve(selected, command, staged = null) {
   const firstEvent = receipt.events.length;
   request = staged || await stage(selected); activating = request;
-  if (command) audit.begin({ id: command.id, updateGate: selected.gate });
-  try { await controller.mutate(request.id, request.digest, 'approve', revision); assert.equal(request.status, 'active', `Replacement activation failed at ${request.step}`); }
-  finally { activating = null; if (command) audit.end(); }
+  try {
+    if (command) audit.begin({ id: command.id, updateGate: selected.gate ?? undefined });
+    await controller.mutate(request.id, request.digest, 'approve', revision); assert.equal(request.status, 'active', `Release activation failed at ${request.step}`);
+  } finally { activating = null; if (command) audit.end(); }
   if (command) { receipt.updateEvents = receipt.events.slice(firstEvent); assert.ok(!receipt.updateEvents.some(event => event.startsWith('bootstrap:'))); }
   current = selected.release; receipt.release = current; receipt.digest = request.digest; receipt.artifact = controller.artifact(request.id);
   receipt.dispatch = controller.state.apps.refresh.dispatch; receipt.privateValueAbsentFromArtifactAndStatus = true;
@@ -71,24 +73,29 @@ try {
   receipt.step = 'pending'; await save();
   receipt.preapprovalBoundary = await waitForMinuteBoundary(); assert.equal(await backend.hasDeployment(slot), false);
   await approve(initial, null, request); receipt.step = 'active'; await save();
-  const deadline = Date.now() + 20 * 60000; let commandId;
+  const deadline = Date.now() + contract.minutes * 60000; let commandId;
   while (Date.now() < deadline) {
     const command = await readJson(join(initial.output, 'command.json'), null);
     if (command && command.id !== commandId) {
       const active = controller.state.deployments[controller.state.apps.refresh.active];
-      const durableRelease = Object.entries(policy.replacement.artifacts).find(([, digest]) => digest === active.digest)?.[0];
+      const durableRelease = activeRelease(policy, contract, controller.state);
       assert.equal(durableRelease, current, 'Release authority must match durable active approval');
-      const selected = replacementCommand(policy, durableRelease, command); commandId = command.id;
+      const selected = releaseCommand(policy, contract, durableRelease, command); commandId = command.id;
       if (selected) await approve(selected, command);
       else if (command.operation !== 'finish') await controller.exclusive(() => operateDispatch(controller, 'refresh', command.operation, { deployment: active.id, digest: active.digest }));
       receipt.command = { id: command.id, operation: command.operation }; receipt.dispatch = controller.state.apps.refresh.dispatch; await save();
-      if (command.operation === 'finish') break;
+      if (command.operation === 'finish') {
+        assert.equal(receipt.dispatch.desired, 'paused'); assert.equal(receipt.dispatch.observed, 'paused'); assert.equal(receipt.dispatch.operation, null);
+        break;
+      }
     }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-  assert.equal(receipt.command?.operation, 'finish', 'Replacement command deadline exceeded');
+  assert.equal(receipt.command?.operation, 'finish', 'Release command deadline exceeded');
   receipt.step = 'complete'; await save(); console.log(JSON.stringify(receipt));
-} catch (error) { receipt.step = 'failed'; receipt.error = `Replacement qualification failed at ${request?.step || 'initialization'}`; await save(); throw error; }
+} catch (error) {
+  await saveJson(join(initial.output, 'failure-details.json'), { name: error.name, code: error.code || null, message: error.message, stack: error.stack }).catch(() => { receipt.failureDetailsWriteFailed = true; });
+  receipt.step = 'failed'; receipt.error = `Release qualification failed at ${request?.step || 'initialization'}`; await save(); throw error; }
 finally {
   try { if (receipt.step !== 'complete' && controller?.state?.apps.refresh?.dispatch) await controller.exclusive(() => operateDispatch(controller, 'refresh', 'pause')); }
   catch { receipt.cleanupFailure = true; await save(); }

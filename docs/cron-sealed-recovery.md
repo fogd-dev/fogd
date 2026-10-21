@@ -7,9 +7,14 @@ read-only program files and an independently supplied launch policy. Ordinary cr
 upload, CLI restore and retirement remain closed. Other cron lifecycle receipts
 retain their own pinned-source scope.
 
+The receipt pins the qualification sources at commit
+`4e44708b6363c2732d07e3836faa49207de30379`. Reproduce the recorded result from that
+revision. Shared release helpers in the current tree have different fingerprints;
+the receipt does not qualify those later helper changes.
+
 ## Reproduce the qualification
 
-Run the [qualification driver](../scripts/cron-sealed-recovery.mjs) with the local
+At the pinned revision, run the [qualification driver](../scripts/cron-sealed-recovery.mjs) with the local
 images identified in the receipt and a new private output directory:
 
 ```sh

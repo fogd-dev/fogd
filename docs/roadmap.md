@@ -174,8 +174,18 @@ The [guarded release replacement profile](cron-sealed-replacement.md) checks
 compatible migration overlap, unfinished work after publication, original-occurrence
 lost-reply retries and offline-built artifacts on the signed runtime's native
 defaults. Its refusal regression preserves the prior approval and journal pause
-after an unreleased publication gate expires. Runtime selection, remaining failure
-and retirement qualification, and ordinary scoped admission remain open.
+after an unreleased publication gate expires.
+
+The [guarded failure profile](cron-sealed-failures.md) checks native `noRetry`,
+counted terminal failure, owner loss before a persisted retry and downtime of both replicas in the app slot.
+It measures the advisory waker-role transition and original-occurrence recovery on
+the signed runtime's default election timing. Offline-built minute and sparse
+artifacts pass the same immutable release broker as replacement. Independent
+acceptance checks retained state, image contents, signed process identities and
+autonomous future-wake persistence before the first post-restart replica request.
+Runtime selection, release-bound retirement, the external admin/TLS flow and
+ordinary scoped admission remain open. Earlier activation, recovery and retirement
+receipts retain the source revisions identified in their guides.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

@@ -6,7 +6,12 @@
     "actualLaterOccurrenceObserved": true,
     "shortDeadlineSevenCallbackClaimRejected": true,
     "perWorkerCpuQuotaQualified": false,
-    "rawObservationSha256": "d776c8fd25bf129f6b2d54e5f473af4aa6afe384a579da4f5f0cbd3c5312c8c5"
+    "rawObservationSha256": "d776c8fd25bf129f6b2d54e5f473af4aa6afe384a579da4f5f0cbd3c5312c8c5",
+    "sourceReceipt": "docs/evidence/m11c-cron-timeout.json",
+    "binarySha256": "73aced358c70e0501877f9414f725d650aef57c7fdf132f022759352e38464e0",
+    "handlerBudgetSeconds": 20,
+    "operationDeadlineMs": 60000,
+    "scope": "Historical unresolved-promise watchdog profile, separate from this signed-release qualification; no CPU quota or CPU-exhaustion claim."
   },
   "scope": "Private guarded release-runtime replacement on native defaults, with exact artifacts produced by offline ordinary Void/fogd builds. No normal cron admission or generic drain/replay guarantee.",
   "normalCronAdmission": "closed",
@@ -18,21 +23,24 @@
     "checks": "pnpm check",
     "tests": {
       "command": "pnpm test",
-      "passed": 527,
+      "passed": 560,
       "failed": 0,
       "skipped": 0
     },
     "policyMutations": {
       "baseline": "pass",
       "mutationsRejected": {
-        "ignore-policy-schema": true,
-        "ignore-release-order": true,
-        "ignore-locations": true,
-        "accept-inherited-artifact": true,
-        "ignore-digest-format": true,
-        "accept-command-paths": true
-      },
-      "coercedReleaseNames": "Array release names remain rejected by strict release-order validation; the redundant typeof guard was removed."
+        "schema": true,
+        "profile-kind": true,
+        "release-order": true,
+        "locations": true,
+        "digest-format": true,
+        "command-paths": true,
+        "approval-order": true,
+        "active-id": true,
+        "completed-only": true,
+        "approval-digest": true
+      }
     },
     "maintenanceMutations": {
       "baseline": "pass",
@@ -49,10 +57,16 @@
     "architecture": "arm64",
     "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
     "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
-    "image": "sha256:4331c300078a8acf2746c80b96056280ee246794021774ced4ad87ce5ea8c80a",
+    "image": "sha256:f2b313f6879e8f178fc19a8ed37030c17778501d28e42a3041371f47dfe8a0e4",
     "parent": "sha256:1ee29c8d41f6b4e46db616413c2f6676fbe1639283658196e11891af8237bdae",
     "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
     "defaults": {
+      "wakerTickMs": 60000,
+      "wakerLeaseTtlMs": 180000,
+      "nodeLeaseTtlMs": 10000,
+      "alarmRetryCeiling": 6,
+      "alarmBackoffBaseMs": 2000,
+      "alarmMaxBackoffShift": 6,
       "generationReapIntervalMs": 30000,
       "handlerBudgetSeconds": 300,
       "operationDeadlineMs": 15000,
@@ -63,7 +77,10 @@
         "crates/celld/generation.rs": "a8f354593f275b23132dd46b087b1d639dd2a2c9558847e500cf86185ae2ec6c",
         "crates/celld/pool.rs": "db6c210d5b5528d3ff715aa8f851cc7fb2f5203656e700476dcbe48543eb48ca",
         "crates/logic/alarm.rs": "d6d85d890d0d0dceda5f8521a11dc215d36832833a0706a8269630014b2a7346",
-        "crates/logic/lib.rs": "c42a7598a2eac11ddb5d8e81f24cab545314a7c0f7a7180125e6a771c12a246b"
+        "crates/logic/lib.rs": "c42a7598a2eac11ddb5d8e81f24cab545314a7c0f7a7180125e6a771c12a246b",
+        "crates/celld/main.rs": "0be1c7c027ea1ca7b7351f925793dbc7e98a39305952173f5bede6f459223ed9",
+        "crates/celld/wake.rs": "e51326d1cd216c86ddc35c2346e0677ac2867c90a10cc35d23755b9a7a8bb813",
+        "crates/celld/dead_node_gc.rs": "4b243a98b988f1da8179148c539b870f0c7cb98bbf2d75387e01aa72ca89c8a7"
       }
     },
     "timingOverrides": {
@@ -76,7 +93,9 @@
       "composeAndRunningEnvironmentChecked": true,
       "absent": [
         "CELLD_HANDLER_BUDGET_S",
-        "CELLD_OPERATION_DEADLINE_MS"
+        "CELLD_OPERATION_DEADLINE_MS",
+        "CELLD_WAKER_TICK_MS",
+        "CELLD_TTL_MS"
       ]
     }
   },
@@ -85,19 +104,21 @@
       "/app/qualification/backend.mjs": "85246e06be5fcce9af5176363bebbaab51c6b0fabbeb7baa00e7dd03bcb2b00f",
       "/app/qualification/controller-artifact.mjs": "ddb716f9f578cae64e5a5b4ab9930b5fdc0f09418673221c56eca5737b62da9c",
       "/app/qualification/controller.mjs": "d9d11de14591fa8a03a8217279e5f02b07a218be044274bec12e96251058d776",
-      "/app/qualification/replacement-controller.mjs": "276874bea133ac245f0885fd256c399daa806da80f26ea7357d537d4100a29e6",
-      "/app/qualification/replacement-policy.mjs": "8cb01b4d513721f4788bb833a20b22e649cff31c8d83a7d4a284095dae9fb09f",
+      "/app/qualification/release-controller.mjs": "80edcdff4830c13fbcaca43dc6007d82baf4c6204ca14f9c08cf0420a156a68f",
+      "/app/qualification/release-policy.mjs": "11432d438d5f38627220ab15eb6eb0eaf60338c0c7437d50bf536bde8e704751",
+      "/app/qualification/release-contract.mjs": "0625e24fe5933afdd866be2fb9a25381ae7af59ade7cb5bbad147d3bf1919e3c",
       "/app/qualification/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
       "/app/qualification/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
-      "/app/qualification/runtime-policy.json": "157a43c5a81dc1ce02edc8334a0c7588f25137fe72f5b2927ecd0287a987ea10"
+      "/app/qualification/runtime-policy.json": "dae375e734677aefea4ec856b7a992194d9f359f96379d8f0c0fac2c52e6e633"
     },
     "sourcePrograms": {
       "/app/qualification/backend.mjs": "scripts/cron-probe/sealed/backend.mjs",
       "/app/qualification/controller-artifact.mjs": "scripts/queue-probe/controller-artifact.mjs",
       "/app/qualification/controller.mjs": "scripts/cron-probe/activation/idle.mjs",
-      "/app/qualification/replacement-controller.mjs": "scripts/cron-probe/replacement/controller.mjs",
-      "/app/qualification/replacement-policy.mjs": "scripts/cron-probe/replacement/policy.mjs",
-      "/app/qualification/update-audit.mjs": "scripts/cron-probe/replacement/update-audit.mjs",
+      "/app/qualification/release-controller.mjs": "scripts/cron-probe/release/controller.mjs",
+      "/app/qualification/release-policy.mjs": "scripts/cron-probe/release/policy.mjs",
+      "/app/qualification/release-contract.mjs": "scripts/cron-probe/replacement/contract.mjs",
+      "/app/qualification/update-audit.mjs": "scripts/cron-probe/release/update-audit.mjs",
       "/app/qualification/minute.mjs": "scripts/cron-probe/minute.mjs"
     },
     "layers": [
@@ -172,7 +193,7 @@
         ]
       },
       {
-        "diffId": "sha256:01b08fbd97122dac75691e373651feb14fdb5af76e0e1c17d7c35751d77d5ac3",
+        "diffId": "sha256:c602981dd9882657d62ca7c0953f0694bb135b624bd40727720be6317a7e8505",
         "paths": [
           "app/",
           "app/qualification/",
@@ -180,8 +201,9 @@
           "app/qualification/controller-artifact.mjs",
           "app/qualification/controller.mjs",
           "app/qualification/minute.mjs",
-          "app/qualification/replacement-controller.mjs",
-          "app/qualification/replacement-policy.mjs",
+          "app/qualification/release-contract.mjs",
+          "app/qualification/release-controller.mjs",
+          "app/qualification/release-policy.mjs",
           "app/qualification/runtime-policy.json",
           "app/qualification/update-audit.mjs"
         ]
@@ -293,7 +315,7 @@
       "examples/refresh/tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
       "examples/refresh/vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
       "examples/refresh/void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
-      "package.json": "fcede5385d1b15f06cb5dfae91984acb2f38659f2554b350d3bc437f2625a654",
+      "package.json": "1f402fce65cd26b2512ed967d8f4c3efd522b7c4088b65034e86c267d310bec8",
       "packages/cli/bin/fogd.js": "495e290e247e170b0ad57a8ea908b439a96e867cb697adbff2c38578727bf321",
       "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
       "packages/cli/src/bootstrap.mjs": "3673e5510feed3a8fa3d24ee28372be478c51f1b907d0e7133209d5b95dce0ad",
@@ -357,6 +379,7 @@
       "patches/void@1.1.11.patch": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
       "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
       "pnpm-workspace.yaml": "84cc5dfeabf8611e04d085412e394a3a40e81e2cd39e27cc738d235bb22bc28e",
+      "scripts/cron-failures.mjs": "d107ea933f46b002cd951a5c9e584b77a0478459815a8e800e254de9788101fe",
       "scripts/cron-interruptions.mjs": "793101d634afdc0915e6ab5dd940c4ff6552923fe27af7fc9d450e91c0a30d43",
       "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
       "scripts/cron-probe/activation/artifacts.mjs": "58b0ba932012906e44bd0fd80cb9107c354a58f2c9aab147ca86555cdf014639",
@@ -369,9 +392,19 @@
       "scripts/cron-probe/activation/processes.mjs": "7ef0431185a2d303038d5f982ee6dba9e697d0167dfe4dfcac6888671e7e8406",
       "scripts/cron-probe/activation/scenarios.mjs": "cb246871d23f62c58e19fa2c6ae40c788c8ea9bd14028450379c8b51c7e4a1e6",
       "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
-      "scripts/cron-probe/faults/build.mjs": "0d2501c16b08b7dce1e61d3236cff3012fd945225df66f5c09c1a2d8dca4c398",
+      "scripts/cron-probe/faults/artifacts.mjs": "ea1b8520f9e7bce87bd9cf760fd512e4661ced352cf259fcb3224e368e1ac5be",
+      "scripts/cron-probe/faults/build.mjs": "ab1fbb46487901e42d2149bebfec9bf15c654b8efbe609f9bc24df42da5377f8",
+      "scripts/cron-probe/faults/client.mjs": "9a3cc737973c4eb0e5192d211782baef3544a9325534aafd131697b582df87a8",
+      "scripts/cron-probe/faults/contract.mjs": "1aec6810538ff6fa8ef0b699f58b0b591a202c8368e77ee9c02478b075de022e",
       "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
       "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+      "scripts/cron-probe/faults/observation.mjs": "49cce7d974775a352ce701e446d088a2638515059b2b012e688d6128665b7ed6",
+      "scripts/cron-probe/faults/policy.test.mjs": "88417e187c45ba7913d584ae99fe324996a522de5efd88af102b50775fd9388f",
+      "scripts/cron-probe/faults/postflight.mjs": "f95e29ec79229c3451c595c70c9b247acd6e555b1846eb1e1fa94d3ac66f439d",
+      "scripts/cron-probe/faults/recovery-window.mjs": "63f97ec3b24f2aa0de750792df2bd4ae70f42be29ce949512c28a1623a41e607",
+      "scripts/cron-probe/faults/recovery-window.test.mjs": "2d039f01dd50921b58ab4d0a724f71b8734887c863179bdb53e1f9675fd1eeaf",
+      "scripts/cron-probe/faults/recovery.mjs": "a366eae12de52df3cbab60e2722c62f776d717fc40eeea92f0d9f4ed1bc8c180",
+      "scripts/cron-probe/faults/scenarios.mjs": "ea9e4d35524961a93b6a6622e4aa0f3d08cf41ab0aa2efc03ec12ca0b737a076",
       "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
       "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
       "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
@@ -382,34 +415,40 @@
       "scripts/cron-probe/recovery/controller.mjs": "9e28b7c480a1ef2907876e2254d9b4c1fb178c5b8e5c60b46c0c5e4e4e999a0e",
       "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
       "scripts/cron-probe/recovery/fixture.mjs": "30c26686ad7f4320706d12dbf22b362e71aa3d3b2b84c9e025e4097994db7afb",
-      "scripts/cron-probe/recovery/lifecycle.mjs": "096ee5ed7a5289939b5d42421d5c7a710dfead62cf1c8a17ee892fac33fedfd7",
+      "scripts/cron-probe/recovery/lifecycle.mjs": "7e8553becdbf96d98eda878374130b50d859c9f046aebfa063c9c2b8e582e5fd",
       "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
       "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
-      "scripts/cron-probe/recovery/provenance.mjs": "0187efeca3566684d00cca4b47eca090a7442922481fd260496a7c9d8aa8b84c",
+      "scripts/cron-probe/recovery/provenance.mjs": "84a72628f32e57c0d48cbc4362e1ad39cc2e94a5f8035482538e3935fe33db4a",
       "scripts/cron-probe/recovery/restore.mjs": "8daed844057fb7d930f44dc61d1ccb63bd8efad200bf75ff2e25d0808206759c",
       "scripts/cron-probe/recovery/scenarios.mjs": "2737220f16aad2cc28af64537674df664d5ebf307175f85de6263b05fbb017c0",
       "scripts/cron-probe/recovery/trial.mjs": "e9b99d707ea583248033f404db15b406de36087d6de45646d83c7ec22935ba6a",
       "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+      "scripts/cron-probe/release/artifacts.mjs": "ff401c525b25e43c2b68c90ae518f77fcae44c9b37f8062e7773efa32e295ea3",
+      "scripts/cron-probe/release/authority.test.mjs": "dc6b5990974f36cbb16a825f2e53c8d8866482444e72c244f34d0e0213df908a",
+      "scripts/cron-probe/release/cleanup.mjs": "8bf36e653fbcbee8785c471047ccb2e8b6a57e619a13ec92c34b01c9afafe759",
+      "scripts/cron-probe/release/client.mjs": "f86e52cd82ebc3af70d2b3f9285d35a77c43a4d91a2e8c7558c851dfd00bfab4",
+      "scripts/cron-probe/release/controller.mjs": "80edcdff4830c13fbcaca43dc6007d82baf4c6204ca14f9c08cf0420a156a68f",
+      "scripts/cron-probe/release/offline-worker.mjs": "b765d1bfd77ef04fb024b6ebde70c5511576e1195250fba4c18034c8cce6e666",
+      "scripts/cron-probe/release/offline.mjs": "c9966da973251b396dd87ce3c88b9369afe54baf8bb3ddf8d4b32b5f815f8e89",
+      "scripts/cron-probe/release/policy.mjs": "11432d438d5f38627220ab15eb6eb0eaf60338c0c7437d50bf536bde8e704751",
+      "scripts/cron-probe/release/postflight.mjs": "e870c074aa13bc649a17babf38f4d06f7ad32ef46796e9c00f4fed0944673015",
+      "scripts/cron-probe/release/qualification.mjs": "bbfc5e3d297e28abfe4da75b731e36de0aaf57a09808ac181cf4f6ae25f3ef2a",
+      "scripts/cron-probe/release/read-records.mjs": "d0a832cf96352704dd6c84f5ff775563cd73905f8cf467cc971b58033ec60910",
+      "scripts/cron-probe/release/session.mjs": "44b2990d9deabf437addaa24e6dcc35f103287a539f54802de2932b4428de880",
+      "scripts/cron-probe/release/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
       "scripts/cron-probe/replacement/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
-      "scripts/cron-probe/replacement/artifacts.mjs": "d10add7ec0b1bb3a719b136bd3638f4b24b085af6b9bb823009bf0194103fa23",
+      "scripts/cron-probe/replacement/artifacts.mjs": "f6281064f5487ae0faaf635f31c88e7000ff8c8317152460b02953434c8e434b",
       "scripts/cron-probe/replacement/build.mjs": "e8da4615c03e2be7c793065de8f766c631088ce2b73bac797809013415b9a300",
-      "scripts/cron-probe/replacement/cleanup.mjs": "6b61f53ab89e2301d2b5823d5ea93797ff1a585ee349da78c30cbe1e5d34eaa7",
-      "scripts/cron-probe/replacement/client.mjs": "8bc776059284f9b3e73d45cd4875df09f22696b652cf1719ff30ba1be9b34a81",
-      "scripts/cron-probe/replacement/controller.mjs": "276874bea133ac245f0885fd256c399daa806da80f26ea7357d537d4100a29e6",
-      "scripts/cron-probe/replacement/defaults.mjs": "d029c430d277aa7b1694126c4cc5eee107e18fd30797c42a09f54ed534c48fe9",
+      "scripts/cron-probe/replacement/client.mjs": "a227241282903896f9f21c772166f30f05d1aef49448c5fda814e19eecf5e78a",
+      "scripts/cron-probe/replacement/contract.mjs": "0625e24fe5933afdd866be2fb9a25381ae7af59ade7cb5bbad147d3bf1919e3c",
       "scripts/cron-probe/replacement/job.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
       "scripts/cron-probe/replacement/job.test.mjs": "3f99e0cd585dc083b62ce3c63b57ae71b1631cbbbc129f1ecd4c413282cd90fc",
-      "scripts/cron-probe/replacement/offline-worker.mjs": "01e470991199d315e5aacb51be9a2624f70f19a3a71516778ca05e74d96aeb05",
-      "scripts/cron-probe/replacement/offline.mjs": "6e89fb90ce6d2c2eafb9549f366e1befd3cdd055ccf0bafcdd50985503e339a7",
-      "scripts/cron-probe/replacement/policy.mjs": "8cb01b4d513721f4788bb833a20b22e649cff31c8d83a7d4a284095dae9fb09f",
-      "scripts/cron-probe/replacement/policy.test.mjs": "83277cd340a815c0fb84d46c34d445fc8bc4ed597a0a6dab6b714ef0ecf1581a",
-      "scripts/cron-probe/replacement/postflight.mjs": "2be984a22211192c2a8bef8a594191e292d9db30746d61e291e440ff68abe464",
+      "scripts/cron-probe/replacement/policy.test.mjs": "44888db78fa9643d8b4e6da3f8a287e7cb3e6d6e9cfb05d5d49d5cdbb83acf01",
+      "scripts/cron-probe/replacement/postflight.mjs": "b3c109d833c91a26b9f04982a9174a7f24b0265ef64ec283574613b67562af9a",
       "scripts/cron-probe/replacement/reap-plan.mjs": "591a91f623879e42b3c2dab10582019066681fc53645ba9d37c29d666ca49945",
       "scripts/cron-probe/replacement/reap-plan.test.mjs": "02ba9fc4734a470af8b3511cd45ca7c6ebc429bdb681aaac592a98f772396641",
-      "scripts/cron-probe/replacement/rejected-gate.mjs": "a997c1d8906688fe64d2aadce72db8efa21dedf7a952ebd257afb69693d3acff",
-      "scripts/cron-probe/replacement/scenarios.mjs": "cf3662d75366ffed1199e29bc93d2418a673a37a0dafc81b100d65a08e175ae1",
-      "scripts/cron-probe/replacement/session.mjs": "9ffde3734302ffe0cae64bb03ff568d460d4240e72879b27bc6c1a54fff3ff99",
-      "scripts/cron-probe/replacement/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
+      "scripts/cron-probe/replacement/rejected-gate.mjs": "0fe453a7f9dfac6e742a28a2ef4d95bd6c32e21fcf0f7963afd967a9fad447f4",
+      "scripts/cron-probe/replacement/scenarios.mjs": "6aa246dd857312b5ca3fd9cccd97323ed1f975b7df44c739bb04e81f41e129db",
       "scripts/cron-probe/retirement/applications.mjs": "f7e1bb185266e4849d7105479c134b8ae21067fe6e913f721ef199a69eb60cbf",
       "scripts/cron-probe/retirement/controller.mjs": "ea73cdf0729bbf68cd54648282c0bcf67549d27ff60ed03a52053bff09611bb7",
       "scripts/cron-probe/retirement/dual.mjs": "5b732d2d7cdc37eae6e4e83d61fbe3fb81da767760fa12165e55d534000ea65d",
@@ -422,20 +461,22 @@
       "scripts/cron-probe/sealed/build.mjs": "a623b35afbc6716788266e5d8d46bf470dd164014d136aaa5a911262c7ecbd4e",
       "scripts/cron-probe/sealed/client.mjs": "4eaba677d0471b55acba8b39cd19f602fe8c0d1200c9ceef5e22ddfd619bb746",
       "scripts/cron-probe/sealed/controller.mjs": "f10bde7181a2ed433a7f70c632dde3637378d37a3b9038c40ab1684362fa456c",
-      "scripts/cron-probe/sealed/fixture.mjs": "8f5552b5d09f6f18af2f800c6765a24bfb5e127a9c3cf6c5aaf49ce5fddcf954",
+      "scripts/cron-probe/sealed/defaults.mjs": "be71c93eb191b3ee0469db936f9d1cdd0788baf8e6971651693ab3bb3bd7aefe",
+      "scripts/cron-probe/sealed/fixture.mjs": "126f136ec8ce3e6795a6f79e92b70a32960148a93c342ca7d6b85e9c5b9ea76b",
       "scripts/cron-probe/sealed/layers.mjs": "1a228544e0b144b4a4dbb2d0a540f331cb9ab14f92d6d055f8f3c90cbeba045f",
       "scripts/cron-probe/sealed/negatives.mjs": "64245c7b5ed8bfeb43201aaeb4d53b66c57676bcbc5e0f4e6bec8a505d4185fc",
-      "scripts/cron-probe/sealed/observe.mjs": "23d14228c0cebdedde5fbb8d43efe80bd5a44a8cee72fc9ac84fc4c563b1d82e",
+      "scripts/cron-probe/sealed/observe.mjs": "5437866b298522c861a6afba10b5ad1484c1e73a2518f47b74d5f5a8341c9ff1",
       "scripts/cron-probe/sealed/postflight.mjs": "1bf0800a1d4941949c5f1150c1868cd3bcd23fc0f3d5ba2bc164bd24e03aa444",
-      "scripts/cron-probe/sealed/programs.mjs": "122d138b9880b4e314729a8c4fd94d02ab038e79dff442922af7dbc35e164812",
+      "scripts/cron-probe/sealed/programs.mjs": "b18cab678807450e70798d3c6558e5aa23476d44213e81ed6ca2b8f1310709b7",
       "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
       "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
       "scripts/cron-recovery.mjs": "0dd742e7604d770325e2ee221ba9df3b971b88f42504722a38f0dd50bac0c0e0",
       "scripts/cron-replacement.mjs": "32281c2ff06fe6321c4288c0b7b0da57c1dc8bbe9c0ac520731cfd42d47a00d8",
       "scripts/cron-retirement.mjs": "9332b0bb1dc33a244c98c1b5be7d8fc7d9defb67b849ac70e1e9f71e12375bfe",
       "scripts/cron-sealed-activation.mjs": "8d5727b51d71d33c116c16d87a4a4e5c480f5c4fd9724669adc55a90d5233283",
+      "scripts/cron-sealed-failures.mjs": "a3e6bb03fe4c3f816233b226ab667f64a49388a2a9fe5333d9d2d27bd11d3d5d",
       "scripts/cron-sealed-recovery.mjs": "fce412acca64579ad1eb2d9ffe9f729a27e57539ad409a3b2766660df78cba69",
-      "scripts/cron-sealed-replacement.mjs": "4c4e6bf637203d0556c4bbb35b51ca227d9ef5476033c9ffc01780c54720e855",
+      "scripts/cron-sealed-replacement.mjs": "8b2e6087edee718bd41b4824f9ee4e10b75504cb18efd03df543874d33492015",
       "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
       "scripts/http.mjs": "cbb8ef8feb9bfcaf8074f5828cb75f5b3502d81858045c1eeed66e59b334fa2a",
       "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
@@ -550,7 +591,7 @@
       "examples/refresh/tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
       "examples/refresh/vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
       "examples/refresh/void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
-      "package.json": "fcede5385d1b15f06cb5dfae91984acb2f38659f2554b350d3bc437f2625a654",
+      "package.json": "1f402fce65cd26b2512ed967d8f4c3efd522b7c4088b65034e86c267d310bec8",
       "packages/cli/bin/fogd.js": "495e290e247e170b0ad57a8ea908b439a96e867cb697adbff2c38578727bf321",
       "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
       "packages/cli/src/bootstrap.mjs": "3673e5510feed3a8fa3d24ee28372be478c51f1b907d0e7133209d5b95dce0ad",
@@ -614,6 +655,7 @@
       "patches/void@1.1.11.patch": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
       "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
       "pnpm-workspace.yaml": "84cc5dfeabf8611e04d085412e394a3a40e81e2cd39e27cc738d235bb22bc28e",
+      "scripts/cron-failures.mjs": "d107ea933f46b002cd951a5c9e584b77a0478459815a8e800e254de9788101fe",
       "scripts/cron-interruptions.mjs": "793101d634afdc0915e6ab5dd940c4ff6552923fe27af7fc9d450e91c0a30d43",
       "scripts/cron-probe-cleanup.mjs": "7c29c3e935fe9308e12cc99659889145cbb7f8478348bf41f05f78703b18e6b9",
       "scripts/cron-probe/activation/artifacts.mjs": "58b0ba932012906e44bd0fd80cb9107c354a58f2c9aab147ca86555cdf014639",
@@ -626,9 +668,19 @@
       "scripts/cron-probe/activation/processes.mjs": "7ef0431185a2d303038d5f982ee6dba9e697d0167dfe4dfcac6888671e7e8406",
       "scripts/cron-probe/activation/scenarios.mjs": "cb246871d23f62c58e19fa2c6ae40c788c8ea9bd14028450379c8b51c7e4a1e6",
       "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
-      "scripts/cron-probe/faults/build.mjs": "0d2501c16b08b7dce1e61d3236cff3012fd945225df66f5c09c1a2d8dca4c398",
+      "scripts/cron-probe/faults/artifacts.mjs": "ea1b8520f9e7bce87bd9cf760fd512e4661ced352cf259fcb3224e368e1ac5be",
+      "scripts/cron-probe/faults/build.mjs": "ab1fbb46487901e42d2149bebfec9bf15c654b8efbe609f9bc24df42da5377f8",
+      "scripts/cron-probe/faults/client.mjs": "9a3cc737973c4eb0e5192d211782baef3544a9325534aafd131697b582df87a8",
+      "scripts/cron-probe/faults/contract.mjs": "1aec6810538ff6fa8ef0b699f58b0b591a202c8368e77ee9c02478b075de022e",
       "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
       "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+      "scripts/cron-probe/faults/observation.mjs": "49cce7d974775a352ce701e446d088a2638515059b2b012e688d6128665b7ed6",
+      "scripts/cron-probe/faults/policy.test.mjs": "88417e187c45ba7913d584ae99fe324996a522de5efd88af102b50775fd9388f",
+      "scripts/cron-probe/faults/postflight.mjs": "f95e29ec79229c3451c595c70c9b247acd6e555b1846eb1e1fa94d3ac66f439d",
+      "scripts/cron-probe/faults/recovery-window.mjs": "63f97ec3b24f2aa0de750792df2bd4ae70f42be29ce949512c28a1623a41e607",
+      "scripts/cron-probe/faults/recovery-window.test.mjs": "2d039f01dd50921b58ab4d0a724f71b8734887c863179bdb53e1f9675fd1eeaf",
+      "scripts/cron-probe/faults/recovery.mjs": "a366eae12de52df3cbab60e2722c62f776d717fc40eeea92f0d9f4ed1bc8c180",
+      "scripts/cron-probe/faults/scenarios.mjs": "ea9e4d35524961a93b6a6622e4aa0f3d08cf41ab0aa2efc03ec12ca0b737a076",
       "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
       "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
       "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
@@ -639,34 +691,40 @@
       "scripts/cron-probe/recovery/controller.mjs": "9e28b7c480a1ef2907876e2254d9b4c1fb178c5b8e5c60b46c0c5e4e4e999a0e",
       "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
       "scripts/cron-probe/recovery/fixture.mjs": "30c26686ad7f4320706d12dbf22b362e71aa3d3b2b84c9e025e4097994db7afb",
-      "scripts/cron-probe/recovery/lifecycle.mjs": "096ee5ed7a5289939b5d42421d5c7a710dfead62cf1c8a17ee892fac33fedfd7",
+      "scripts/cron-probe/recovery/lifecycle.mjs": "7e8553becdbf96d98eda878374130b50d859c9f046aebfa063c9c2b8e582e5fd",
       "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
       "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
-      "scripts/cron-probe/recovery/provenance.mjs": "0187efeca3566684d00cca4b47eca090a7442922481fd260496a7c9d8aa8b84c",
+      "scripts/cron-probe/recovery/provenance.mjs": "84a72628f32e57c0d48cbc4362e1ad39cc2e94a5f8035482538e3935fe33db4a",
       "scripts/cron-probe/recovery/restore.mjs": "8daed844057fb7d930f44dc61d1ccb63bd8efad200bf75ff2e25d0808206759c",
       "scripts/cron-probe/recovery/scenarios.mjs": "2737220f16aad2cc28af64537674df664d5ebf307175f85de6263b05fbb017c0",
       "scripts/cron-probe/recovery/trial.mjs": "e9b99d707ea583248033f404db15b406de36087d6de45646d83c7ec22935ba6a",
       "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+      "scripts/cron-probe/release/artifacts.mjs": "ff401c525b25e43c2b68c90ae518f77fcae44c9b37f8062e7773efa32e295ea3",
+      "scripts/cron-probe/release/authority.test.mjs": "dc6b5990974f36cbb16a825f2e53c8d8866482444e72c244f34d0e0213df908a",
+      "scripts/cron-probe/release/cleanup.mjs": "8bf36e653fbcbee8785c471047ccb2e8b6a57e619a13ec92c34b01c9afafe759",
+      "scripts/cron-probe/release/client.mjs": "f86e52cd82ebc3af70d2b3f9285d35a77c43a4d91a2e8c7558c851dfd00bfab4",
+      "scripts/cron-probe/release/controller.mjs": "80edcdff4830c13fbcaca43dc6007d82baf4c6204ca14f9c08cf0420a156a68f",
+      "scripts/cron-probe/release/offline-worker.mjs": "b765d1bfd77ef04fb024b6ebde70c5511576e1195250fba4c18034c8cce6e666",
+      "scripts/cron-probe/release/offline.mjs": "c9966da973251b396dd87ce3c88b9369afe54baf8bb3ddf8d4b32b5f815f8e89",
+      "scripts/cron-probe/release/policy.mjs": "11432d438d5f38627220ab15eb6eb0eaf60338c0c7437d50bf536bde8e704751",
+      "scripts/cron-probe/release/postflight.mjs": "e870c074aa13bc649a17babf38f4d06f7ad32ef46796e9c00f4fed0944673015",
+      "scripts/cron-probe/release/qualification.mjs": "bbfc5e3d297e28abfe4da75b731e36de0aaf57a09808ac181cf4f6ae25f3ef2a",
+      "scripts/cron-probe/release/read-records.mjs": "d0a832cf96352704dd6c84f5ff775563cd73905f8cf467cc971b58033ec60910",
+      "scripts/cron-probe/release/session.mjs": "44b2990d9deabf437addaa24e6dcc35f103287a539f54802de2932b4428de880",
+      "scripts/cron-probe/release/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
       "scripts/cron-probe/replacement/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
-      "scripts/cron-probe/replacement/artifacts.mjs": "d10add7ec0b1bb3a719b136bd3638f4b24b085af6b9bb823009bf0194103fa23",
+      "scripts/cron-probe/replacement/artifacts.mjs": "f6281064f5487ae0faaf635f31c88e7000ff8c8317152460b02953434c8e434b",
       "scripts/cron-probe/replacement/build.mjs": "e8da4615c03e2be7c793065de8f766c631088ce2b73bac797809013415b9a300",
-      "scripts/cron-probe/replacement/cleanup.mjs": "6b61f53ab89e2301d2b5823d5ea93797ff1a585ee349da78c30cbe1e5d34eaa7",
-      "scripts/cron-probe/replacement/client.mjs": "8bc776059284f9b3e73d45cd4875df09f22696b652cf1719ff30ba1be9b34a81",
-      "scripts/cron-probe/replacement/controller.mjs": "276874bea133ac245f0885fd256c399daa806da80f26ea7357d537d4100a29e6",
-      "scripts/cron-probe/replacement/defaults.mjs": "d029c430d277aa7b1694126c4cc5eee107e18fd30797c42a09f54ed534c48fe9",
+      "scripts/cron-probe/replacement/client.mjs": "a227241282903896f9f21c772166f30f05d1aef49448c5fda814e19eecf5e78a",
+      "scripts/cron-probe/replacement/contract.mjs": "0625e24fe5933afdd866be2fb9a25381ae7af59ade7cb5bbad147d3bf1919e3c",
       "scripts/cron-probe/replacement/job.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
       "scripts/cron-probe/replacement/job.test.mjs": "3f99e0cd585dc083b62ce3c63b57ae71b1631cbbbc129f1ecd4c413282cd90fc",
-      "scripts/cron-probe/replacement/offline-worker.mjs": "01e470991199d315e5aacb51be9a2624f70f19a3a71516778ca05e74d96aeb05",
-      "scripts/cron-probe/replacement/offline.mjs": "6e89fb90ce6d2c2eafb9549f366e1befd3cdd055ccf0bafcdd50985503e339a7",
-      "scripts/cron-probe/replacement/policy.mjs": "8cb01b4d513721f4788bb833a20b22e649cff31c8d83a7d4a284095dae9fb09f",
-      "scripts/cron-probe/replacement/policy.test.mjs": "83277cd340a815c0fb84d46c34d445fc8bc4ed597a0a6dab6b714ef0ecf1581a",
-      "scripts/cron-probe/replacement/postflight.mjs": "2be984a22211192c2a8bef8a594191e292d9db30746d61e291e440ff68abe464",
+      "scripts/cron-probe/replacement/policy.test.mjs": "44888db78fa9643d8b4e6da3f8a287e7cb3e6d6e9cfb05d5d49d5cdbb83acf01",
+      "scripts/cron-probe/replacement/postflight.mjs": "b3c109d833c91a26b9f04982a9174a7f24b0265ef64ec283574613b67562af9a",
       "scripts/cron-probe/replacement/reap-plan.mjs": "591a91f623879e42b3c2dab10582019066681fc53645ba9d37c29d666ca49945",
       "scripts/cron-probe/replacement/reap-plan.test.mjs": "02ba9fc4734a470af8b3511cd45ca7c6ebc429bdb681aaac592a98f772396641",
-      "scripts/cron-probe/replacement/rejected-gate.mjs": "a997c1d8906688fe64d2aadce72db8efa21dedf7a952ebd257afb69693d3acff",
-      "scripts/cron-probe/replacement/scenarios.mjs": "cf3662d75366ffed1199e29bc93d2418a673a37a0dafc81b100d65a08e175ae1",
-      "scripts/cron-probe/replacement/session.mjs": "9ffde3734302ffe0cae64bb03ff568d460d4240e72879b27bc6c1a54fff3ff99",
-      "scripts/cron-probe/replacement/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
+      "scripts/cron-probe/replacement/rejected-gate.mjs": "0fe453a7f9dfac6e742a28a2ef4d95bd6c32e21fcf0f7963afd967a9fad447f4",
+      "scripts/cron-probe/replacement/scenarios.mjs": "6aa246dd857312b5ca3fd9cccd97323ed1f975b7df44c739bb04e81f41e129db",
       "scripts/cron-probe/retirement/applications.mjs": "f7e1bb185266e4849d7105479c134b8ae21067fe6e913f721ef199a69eb60cbf",
       "scripts/cron-probe/retirement/controller.mjs": "ea73cdf0729bbf68cd54648282c0bcf67549d27ff60ed03a52053bff09611bb7",
       "scripts/cron-probe/retirement/dual.mjs": "5b732d2d7cdc37eae6e4e83d61fbe3fb81da767760fa12165e55d534000ea65d",
@@ -679,20 +737,22 @@
       "scripts/cron-probe/sealed/build.mjs": "a623b35afbc6716788266e5d8d46bf470dd164014d136aaa5a911262c7ecbd4e",
       "scripts/cron-probe/sealed/client.mjs": "4eaba677d0471b55acba8b39cd19f602fe8c0d1200c9ceef5e22ddfd619bb746",
       "scripts/cron-probe/sealed/controller.mjs": "f10bde7181a2ed433a7f70c632dde3637378d37a3b9038c40ab1684362fa456c",
-      "scripts/cron-probe/sealed/fixture.mjs": "8f5552b5d09f6f18af2f800c6765a24bfb5e127a9c3cf6c5aaf49ce5fddcf954",
+      "scripts/cron-probe/sealed/defaults.mjs": "be71c93eb191b3ee0469db936f9d1cdd0788baf8e6971651693ab3bb3bd7aefe",
+      "scripts/cron-probe/sealed/fixture.mjs": "126f136ec8ce3e6795a6f79e92b70a32960148a93c342ca7d6b85e9c5b9ea76b",
       "scripts/cron-probe/sealed/layers.mjs": "1a228544e0b144b4a4dbb2d0a540f331cb9ab14f92d6d055f8f3c90cbeba045f",
       "scripts/cron-probe/sealed/negatives.mjs": "64245c7b5ed8bfeb43201aaeb4d53b66c57676bcbc5e0f4e6bec8a505d4185fc",
-      "scripts/cron-probe/sealed/observe.mjs": "23d14228c0cebdedde5fbb8d43efe80bd5a44a8cee72fc9ac84fc4c563b1d82e",
+      "scripts/cron-probe/sealed/observe.mjs": "5437866b298522c861a6afba10b5ad1484c1e73a2518f47b74d5f5a8341c9ff1",
       "scripts/cron-probe/sealed/postflight.mjs": "1bf0800a1d4941949c5f1150c1868cd3bcd23fc0f3d5ba2bc164bd24e03aa444",
-      "scripts/cron-probe/sealed/programs.mjs": "122d138b9880b4e314729a8c4fd94d02ab038e79dff442922af7dbc35e164812",
+      "scripts/cron-probe/sealed/programs.mjs": "b18cab678807450e70798d3c6558e5aa23476d44213e81ed6ca2b8f1310709b7",
       "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
       "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
       "scripts/cron-recovery.mjs": "0dd742e7604d770325e2ee221ba9df3b971b88f42504722a38f0dd50bac0c0e0",
       "scripts/cron-replacement.mjs": "32281c2ff06fe6321c4288c0b7b0da57c1dc8bbe9c0ac520731cfd42d47a00d8",
       "scripts/cron-retirement.mjs": "9332b0bb1dc33a244c98c1b5be7d8fc7d9defb67b849ac70e1e9f71e12375bfe",
       "scripts/cron-sealed-activation.mjs": "8d5727b51d71d33c116c16d87a4a4e5c480f5c4fd9724669adc55a90d5233283",
+      "scripts/cron-sealed-failures.mjs": "a3e6bb03fe4c3f816233b226ab667f64a49388a2a9fe5333d9d2d27bd11d3d5d",
       "scripts/cron-sealed-recovery.mjs": "fce412acca64579ad1eb2d9ffe9f729a27e57539ad409a3b2766660df78cba69",
-      "scripts/cron-sealed-replacement.mjs": "4c4e6bf637203d0556c4bbb35b51ca227d9ef5476033c9ffc01780c54720e855",
+      "scripts/cron-sealed-replacement.mjs": "8b2e6087edee718bd41b4824f9ee4e10b75504cb18efd03df543874d33492015",
       "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
       "scripts/http.mjs": "cbb8ef8feb9bfcaf8074f5828cb75f5b3502d81858045c1eeed66e59b334fa2a",
       "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
@@ -703,9 +763,9 @@
     }
   },
   "artifacts": {
-    "old": "dba47ffa8b7858e75f4596069805ddbb6dd823e822a8a77347ee96eceaaa7148",
-    "new": "0daef83def02e1d904290a880875fc5dde41db5006c18fe06686b103918d5410",
-    "final": "214686cb18c38c7248dc23b0cfd46c8fee37a1c775e3aec5a9df6c40c97fbbff"
+    "old": "51444c7f50f5015671ac8cf133f6f2a77e50f77fddbb354a27a6691ae08e21a8",
+    "new": "dffa1fdee73db17ce6adf2e061394d1d2b1ae864848e156187bf7f9849a29dba",
+    "final": "274b012d969e48120aa68b71e29634cde69374e24585d531d64616d6225f0dbe"
   },
   "offlineBuilds": {
     "old": {
@@ -757,7 +817,7 @@
       },
       "ordinaryAdmission": "rejected",
       "voidPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
-      "artifactDigest": "dba47ffa8b7858e75f4596069805ddbb6dd823e822a8a77347ee96eceaaa7148",
+      "artifactDigest": "51444c7f50f5015671ac8cf133f6f2a77e50f77fddbb354a27a6691ae08e21a8",
       "generatedDeclarations": {
         "d1_databases": [
           {
@@ -833,7 +893,7 @@
       },
       "ordinaryAdmission": "rejected",
       "voidPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
-      "artifactDigest": "0daef83def02e1d904290a880875fc5dde41db5006c18fe06686b103918d5410",
+      "artifactDigest": "dffa1fdee73db17ce6adf2e061394d1d2b1ae864848e156187bf7f9849a29dba",
       "generatedDeclarations": {
         "d1_databases": [
           {
@@ -909,7 +969,7 @@
       },
       "ordinaryAdmission": "rejected",
       "voidPatchSha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
-      "artifactDigest": "214686cb18c38c7248dc23b0cfd46c8fee37a1c775e3aec5a9df6c40c97fbbff",
+      "artifactDigest": "274b012d969e48120aa68b71e29634cde69374e24585d531d64616d6225f0dbe",
       "generatedDeclarations": {
         "d1_databases": [
           {
@@ -937,8 +997,8 @@
     }
   },
   "migrationOverlap": {
-    "scheduledTime": 1792591560000,
-    "completionAfterScheduledMs": 2344,
+    "scheduledTime": 1792599780000,
+    "completionAfterScheduledMs": 2520,
     "migrationApplied": [
       {
         "name": "0003_compatible.sql"
@@ -948,53 +1008,53 @@
     "oldCallbackCompletedBeforePublication": true
   },
   "publication": {
-    "scheduledTime": 1792591620000,
-    "swapAfterScheduledMs": 8650,
-    "publishReplyToSwapMs": 28,
+    "scheduledTime": 1792599840000,
+    "swapAfterScheduledMs": 8595,
+    "publishReplyToSwapMs": 25,
     "heartbeatOffsetsMs": [
       {
-        "job": "inventory",
-        "ms": -55
+        "job": "advisory",
+        "ms": -110
       },
       {
-        "job": "advisory",
-        "ms": -55
+        "job": "inventory",
+        "ms": -110
       }
     ],
-    "quietUntil": 1792591643033,
-    "exactFutureWakeMs": 1792591680000,
+    "quietUntil": 1792599863030,
+    "exactFutureWakeMs": 1792599900000,
     "retainedUnfinishedJobs": [
       "advisory"
     ],
     "maintenancePlan": {
-      "adoptedAt": 1792591563023,
+      "adoptedAt": 1792599783156,
       "intervalMs": 30000,
-      "quietUntil": 1792591643033,
-      "predictedTickAt": 1792591653023,
-      "releaseAt": 1792591628000
+      "quietUntil": 1792599863030,
+      "predictedTickAt": 1792599873156,
+      "releaseAt": 1792599848000
     },
     "generationFreedAfterFixtureDeadline": true,
-    "generationFreedAfterScheduledMs": 33027,
+    "generationFreedAfterScheduledMs": 33159,
     "quietObservationBeforeActualFree": true,
     "rowsUnchangedAfterActualFree": true,
     "noProgressOrRetryDuringQuietWindow": true,
     "savedSiblingResultRetained": true
   },
   "lostReply": {
-    "scheduledTime": 1792591680000,
-    "persistedRetryDueMs": 1792591684033,
+    "scheduledTime": 1792599900000,
+    "persistedRetryDueMs": 1792599904032,
     "attempts": 4,
     "occurrences": [
       {
         "job": "advisory",
-        "scheduled_time": 1792591680000,
+        "scheduled_time": 1792599900000,
         "attempts": 2,
         "duplicates": 1,
         "status": "complete"
       },
       {
         "job": "inventory",
-        "scheduled_time": 1792591680000,
+        "scheduled_time": 1792599900000,
         "attempts": 2,
         "duplicates": 1,
         "status": "complete"
@@ -1010,13 +1070,13 @@
     "savedResultsChecked": true
   },
   "heldMinute": {
-    "start": 1792591741754,
-    "boundary": 1792591800000,
-    "end": 1792591803269
+    "start": 1792599961744,
+    "boundary": 1792600020000,
+    "end": 1792600023278
   },
   "rejectedGate": {
     "durationMs": 20000,
-    "expiredAfterDeadlineMs": 18,
+    "expiredAfterDeadlineMs": 25,
     "cleanupGateHintOmitted": true,
     "cleanupStartedBeforeDeadline": true,
     "gateReleaseFileAbsent": true,
@@ -1026,9 +1086,9 @@
     "brokerExitCode": 1
   },
   "independentAudit": {
-    "migrationCompletionMs": 2344,
-    "publicationSwapMs": 8650,
-    "generationFreedAfterScheduledMs": 33027,
+    "migrationCompletionMs": 2520,
+    "publicationSwapMs": 8595,
+    "generationFreedAfterScheduledMs": 33159,
     "lateCleanupAfterHeldCallbackExpiryChecked": true,
     "rowsUnchangedBeforeAndAfterActualFree": true,
     "retryAttempts": 4,
@@ -1037,7 +1097,7 @@
     "noOwnedContainersOrNetworks": true,
     "shutdownAndRuntimeLogsChecked": true,
     "sourcePinsChecked": true,
-    "archiveSha256": "9f92b1caa8b79425c44fd5adb830f00d2b942103d6375a1ae28d2b42fa1a018b"
+    "archiveSha256": "1b3fa4caaa26e235002f30f5c13e81bdf9000405910e597ef10f8173bd1009a9"
   },
   "negativeIndependentAudit": {
     "actualBrokerExitCode": 1,
@@ -1049,20 +1109,26 @@
     "noOwnedContainersOrNetworks": true,
     "retainedArtifactsIndependentlyHashed": 3,
     "sourcePinsChecked": true,
-    "archiveSha256": "4583e5fe3fabdd91f539fec16c3961bc0b813aa4dd1dc059b8d4a5b42d69c025"
+    "archiveSha256": "846b19c6c77966e2a3b8e666a082f38c92cdab97e796b13e4bfbe95bb7b2180c"
+  },
+  "negativeImageAudit": {
+    "addedLayersVerified": 2,
+    "immutableProgramsVerified": 9,
+    "productionSourceFilesVerified": 57,
+    "imageConfigDigestVerified": true
   },
   "negativeIdentityAudit": {
     "fixtureArtifacts": {
       "final": {
-        "digest": "f1c89ed81f879e5f1e0762af678998c0a66d254aa66801d54a76078288293c1d",
+        "digest": "c6e405e330353ab296b1e62e98b5fef0a3927f7dbd065481eecd5e156148cfb4",
         "files": 8
       },
       "new": {
-        "digest": "6cd9e3f8e34dc7450d15860a9f7e55b8c18be9dd86ddc7f5501715839ee27967",
+        "digest": "6f7753447ab17ae7bc982b913d6603eb20579368611a1ecd6184cbd49e15aca5",
         "files": 8
       },
       "old": {
-        "digest": "84ec2700bdd4dd53e70c04d1640d1e140781a88fef59869fb1565116e83c3197",
+        "digest": "fedafdca1b69005774f6aea00b2f76888bf943ef541a2e15bfc152fe7d731df6",
         "files": 7
       }
     },
@@ -1071,22 +1137,22 @@
   },
   "imageAudit": {
     "addedLayersVerified": 2,
-    "immutableProgramsVerified": 8,
+    "immutableProgramsVerified": 9,
     "productionSourceFilesVerified": 57,
     "imageConfigDigestVerified": true
   },
   "identityAudit": {
     "fixtureArtifacts": {
       "final": {
-        "digest": "214686cb18c38c7248dc23b0cfd46c8fee37a1c775e3aec5a9df6c40c97fbbff",
+        "digest": "274b012d969e48120aa68b71e29634cde69374e24585d531d64616d6225f0dbe",
         "files": 8
       },
       "new": {
-        "digest": "0daef83def02e1d904290a880875fc5dde41db5006c18fe06686b103918d5410",
+        "digest": "dffa1fdee73db17ce6adf2e061394d1d2b1ae864848e156187bf7f9849a29dba",
         "files": 8
       },
       "old": {
-        "digest": "dba47ffa8b7858e75f4596069805ddbb6dd823e822a8a77347ee96eceaaa7148",
+        "digest": "51444c7f50f5015671ac8cf133f6f2a77e50f77fddbb354a27a6691ae08e21a8",
         "files": 7
       }
     },
@@ -1094,8 +1160,15 @@
     "alteredCallerNonceRefused": 4
   },
   "shutdown": {
-    "earliest": "2026-10-21T14:04:07.279071Z",
+    "earliest": "2026-10-21T16:21:22.474173798Z",
     "exits": [
+      {
+        "service": "slot-2-b",
+        "running": false,
+        "code": 0,
+        "restartCount": 0,
+        "oomKilled": false
+      },
       {
         "service": "slot-1-a",
         "running": false,
@@ -1118,13 +1191,6 @@
         "oomKilled": false
       },
       {
-        "service": "slot-2-b",
-        "running": false,
-        "code": 0,
-        "restartCount": 0,
-        "oomKilled": false
-      },
-      {
         "service": "slot-1-b",
         "running": false,
         "code": 0,
@@ -1139,16 +1205,16 @@
         "oomKilled": false
       },
       {
-        "service": "minio",
+        "service": "workerd",
         "running": false,
-        "code": 0,
+        "code": 1,
         "restartCount": 0,
         "oomKilled": false
       },
       {
-        "service": "workerd",
+        "service": "minio",
         "running": false,
-        "code": 1,
+        "code": 0,
         "restartCount": 0,
         "oomKilled": false
       }

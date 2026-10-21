@@ -11,19 +11,20 @@ import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const exec = promisify(execFile);
 const offlineImage = 'sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf';
-export async function offlineReplacement(project, directory) {
+export async function offlineFixture(project, directory, cron = '* * * * *') {
+  assert.ok(['* * * * *', '*/3 * * * *'].includes(cron), 'Unknown offline fixture schedule');
   const image = offlineImage;
   assert.match(image, /^sha256:[a-f0-9]{64}$/);
   await checkBuildBase(image);
   const output = resolve(directory); await mkdir(output, { mode: 0o700 });
   const mounts = [[resolve(project), '/source/project'], [output, '/results', false],
-    [fileURLToPath(new URL('./offline-worker.mjs', import.meta.url)), '/app/scripts/cron-probe/replacement/offline-worker.mjs']];
+    [fileURLToPath(new URL('./offline-worker.mjs', import.meta.url)), '/app/scripts/cron-probe/release/offline-worker.mjs']];
   for (const name of ['cli', 'runtime', 'platform']) for (const path of ['src', 'package.json']) mounts.push([resolve(`packages/${name}/${path}`), `/app/packages/${name}/${path}`]);
   for (const name of ['scripts/native-build.mjs', 'scripts/cron-probe/native.mjs', 'package.json', 'pnpm-workspace.yaml', 'pnpm-lock.yaml']) mounts.push([resolve(name), `/app/${name}`]);
   const name = `fogd-m11c-offline-${randomBytes(5).toString('hex')}`;
   const args = ['run', '--rm', '--pull', 'never', '--name', name, '--network', 'none', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--memory', '2g', '--cpus', '2',
-    '-e', 'VOID_REMOTE=0', '-e', 'WRANGLER_SEND_METRICS=false', ...mounts.flatMap(([source, target, readonly = true]) => ['--mount', `type=bind,src=${source},dst=${target}${readonly ? ',readonly' : ''}`]),
-    '--entrypoint', '/usr/local/bin/node', image, '/app/scripts/cron-probe/replacement/offline-worker.mjs'];
+    '-e', `FOGD_FIXTURE_CRON=${cron}`, '-e', 'VOID_REMOTE=0', '-e', 'WRANGLER_SEND_METRICS=false', ...mounts.flatMap(([source, target, readonly = true]) => ['--mount', `type=bind,src=${source},dst=${target}${readonly ? ',readonly' : ''}`]),
+    '--entrypoint', '/usr/local/bin/node', image, '/app/scripts/cron-probe/release/offline-worker.mjs'];
   await build(args, name, join(output, 'build.log'));
   const result = JSON.parse(await readFile(join(output, 'offline.json'), 'utf8'));
   assert.equal(result.network, 'none'); assert.equal(result.ordinaryAdmission, 'rejected');
@@ -39,7 +40,7 @@ async function build(args, name, log) {
   await writeFile(log, stdout + stderr, { mode: 0o600 });
   const remaining = (await execute('docker', ['ps', '-aq', '--filter', `name=^/${name}$`])).trim();
   if (remaining) { await execute('docker', ['rm', '-f', name]); failed = true; }
-  assert.equal(failed, false, 'Offline replacement build failed; inspect its private build.log');
+  assert.equal(failed, false, 'Offline fixture build failed; inspect its private build.log');
 }
 async function checkBuildBase(image) {
   const paths = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'patches/void@1.1.11.patch', 'examples/refresh/package.json', ...['cli', 'runtime', 'platform'].map(name => `packages/${name}/package.json`)];
