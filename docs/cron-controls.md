@@ -53,9 +53,26 @@ rejection of the hold owner.
 ## Experimental recovery protocol
 
 The controller has snapshot preparation and recovery acknowledgment controls.
-Full-installation cron backup/restore remains unqualified and the ordinary CLI
-continues to refuse scheduled history. These controls alone do not make an
-archive safe to restore.
+Full-installation cron backup/restore has an experimental archive path for
+internally staged fixtures. Native recovery qualification remains open and ordinary
+cron admission stays closed. Controller checks alone do not establish that timers
+were held before the controller started.
+
+`fogd backup` inventories separate queue and cron apps before preparing either
+family. It requires identical pinned controller and replica images, pauses each
+active background app through its authenticated control, then stops every writer.
+The archive manifest carries `queueRecovery` and `cronRecovery` evidence as needed.
+Archived controller receipts must still match each preparation after shutdown;
+queue retention bounds continue to apply independently.
+
+`fogd restore` validates all evidence before loading images or creating target
+resources. Missing legacy cron preparation, changed approvals and mismatched image
+pins are refused. The target stays stopped, with fresh pending recovery IDs and
+paused routing for every active background app. Internally staged pending or
+rejected cron artifacts that never acquired runtime authority remain inert and
+require no recovery
+acknowledgment. Their history is preserved. Expansion, Kubernetes recovery and
+retirement continue to refuse scheduled history.
 
 POST to `/v1/apps/APP/dispatch/snapshot` with the active `deployment` and `digest`
 checks the stored artifact and selected secrets, records native status, pauses
@@ -63,15 +80,16 @@ dispatch and confirms the held approved generation. Its private receipt pins the
 schedule, secret revision, runtime version and control revision. Any subsequent
 dispatch journal operation invalidates that preparation. The returned JSON
 contains only the receipt ID. Failed preparation can leave dispatch operator-paused;
-inspect status before explicitly resuming. Replica and control observations are not an atomic
-fence against independent runtime operators.
+inspect status before explicitly resuming. Replica and control observations are
+not an atomic fence against independent runtime operators.
 
 For controller metadata carrying a pending recovery receipt, startup keeps HTTP
 routing and dispatch paused. It checks that native dispatch was already held at
-the prepared revision before reconciling the pause. An active timer or mismatched hold revision observed at startup permanently
-disqualifies that restore, even if a later operation reaches the expected revision.
-Unavailable replicas leave recovery unconfirmed. Pending
-recovery blocks both resume and new approvals.
+the prepared revision before reconciling the pause. An active timer or mismatched
+hold revision observed at startup permanently disqualifies that restore, even if a
+later operation reaches the expected revision.
+Unavailable replicas leave recovery unconfirmed. Pending recovery blocks both
+resume and new approvals.
 
 The recorded dispatch view exposes the recovery ID, review fingerprint, findings
 and loss notice. After reconciling application records, acknowledge the current

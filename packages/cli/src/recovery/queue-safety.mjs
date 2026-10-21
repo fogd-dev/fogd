@@ -1,3 +1,5 @@
+import { hasCronHistory } from '@fogd/platform/cron-history';
+import { assertSnapshotStateShape } from './snapshot-state-validation.mjs';
 import { artifactOnlyQueueRequest, hasQueueLifecycle } from '@fogd/platform/queue-history';
 import { snapshotState } from './snapshot-state.mjs';
 
@@ -7,12 +9,10 @@ const hasQueueResources = value => record(value.resources) && Object.hasOwn(valu
 // This is a recovery qualification boundary, not the controller's state validator.
 // The capability also covers pending/rejected artifacts and survives their removal.
 export function assertQueueFreeRecovery(state) {
-  if (!record(state) || !record(state.apps) || !record(state.deployments) ||
-      (state.requirements !== undefined && !Array.isArray(state.requirements))) {
-    throw new Error('Cannot establish recovery support from controller metadata');
-  }
+  // Structural validation precedes capability-specific artifact inspection.
+  assertSnapshotStateShape(state);
+  if (hasCronHistory(state)) throw new Error('Scheduled history is not qualified for this recovery or transformation path');
   const apps = Object.values(state.apps), deployments = Object.values(state.deployments);
-  if ([...apps, ...deployments].some(value => !record(value))) throw new Error('Cannot establish recovery support from controller metadata');
   const declared = deployments.filter(hasQueueResources);
   const artifactOnly = declared.length > 0 && declared.every(request => artifactOnlyQueueRequest(state, request));
   if ((state.requirements?.includes('fogd-queue-activation-v1') && !artifactOnly) ||

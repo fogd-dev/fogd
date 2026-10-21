@@ -1,14 +1,23 @@
 import { artifactOnlyQueueRequest, hasQueueLifecycle } from '@fogd/platform/queue-history';
 import { validateRetiredQueue, queueRetirementCapability } from '@fogd/platform/queue-retirement';
-import { isDeepStrictEqual } from 'node:util';
+import { snapshotEvidence } from './snapshot-evidence.mjs';
+import { assertSnapshotState } from './snapshot-state-validation.mjs';
 import { snapshotTarget, matchingSnapshot, assertSnapshotAge, queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 import { assertQueueFreeRecovery } from './queue-safety.mjs';
-import { prepareSnapshotRequest } from '../platform.mjs';
 
 export function queueBackupApps(state) {
   const requirements = state?.requirements || [];
   if (!requirements.includes('fogd-queue-activation-v1')) { assertQueueFreeRecovery(state); return []; }
-  if (requirements.some(value => !['fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, 'fogd-retirement-v1', 'fogd-claim-intent-v1'].includes(value))) throw new Error('Unsupported snapshot capability');
+  assertSnapshotState(state, ['fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, 'fogd-retirement-v1', 'fogd-claim-intent-v1']);
+  return queueRecoveryApps(state);
+}
+
+// Family inventory; callers must validate the installation's other capabilities.
+export function queueRecoveryApps(state) {
+  if (!state.requirements?.includes('fogd-queue-activation-v1')) {
+    if (state.requirements?.some(value => [queueRecoveryCapability, queueRetirementCapability].includes(value)) || Object.values(state.apps).some(hasQueueLifecycle) || Object.values(state.deployments).some(value => Object.hasOwn(value.resources || {}, 'queues'))) throw new Error('Queue history requires its capability marker');
+    return [];
+  }
   const retired = Object.keys(state.apps).filter(name => validateRetiredQueue(state, name, state.apps[name]));
   const names = Object.keys(state.apps).filter(name => !state.apps[name].retirement && hasQueueLifecycle(state.apps[name]));
   const artifacts = Object.values(state.deployments).filter(request => artifactOnlyQueueRequest(state, request));
@@ -20,26 +29,8 @@ export function queueBackupApps(state) {
   }
   return names.sort();
 }
-export async function prepareQueueBackup(env, state, images, replicas) {
-  const names = queueBackupApps(state), expected = {};
-  if (names.length && replicas.some(name => images[name] !== images.controller)) throw new Error('Queued backup requires identical pinned controller and replica runtime images');
-  for (const name of names) {
-    const active = state.deployments[state.apps[name].active];
-    const receipt = await prepareSnapshotRequest(env, name, { deployment: active.id, digest: active.digest });
-    expected[name] = receipt.id;
-  }
-  return expected;
-}
+export const queueSnapshotProtocol = { name: 'Queue', recovery: 'queueRecovery', capability: queueRecoveryCapability, legacy: 'queued', field: 'queueSnapshot', match: matchingSnapshot, check: assertSnapshotAge };
+
 export function queueSnapshotEvidence(state, expected, now = Date.now()) {
-  const names = queueBackupApps(state);
-  if (!isDeepStrictEqual(names, Object.keys(expected).sort())) throw new Error('Queue inventory changed during backup');
-  if (!names.length) return null;
-  const apps = {};
-  for (const name of names) {
-    const receipt = state.apps[name].queueSnapshot;
-    if (!receipt || receipt.id !== expected[name]) throw new Error('Queue snapshot preparation changed during shutdown');
-    matchingSnapshot(state, name, receipt); assertSnapshotAge(receipt, now);
-    apps[name] = receipt;
-  }
-  return { schema: 1, apps };
+  return snapshotEvidence(state, queueBackupApps(state), expected, queueSnapshotProtocol, now);
 }

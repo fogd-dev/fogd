@@ -124,6 +124,7 @@ export class Controller {
         if (!this.available(release.app)) throw new Error('No available app slots');
         const changes = this.compatible(release, this.state.apps[release.app]);
         const request = { id, ...release, resourceChanges: changes, submitter, submittedAt: new Date().toISOString(), status: 'pending', step: 'submitted' };
+        requireCronCapability(this.state, request.resources);
         requireQueueCapability(this.state, request.resources);
         this.state.deployments[id] = request;
         await this.save(); this.quota.used += bytes; return request;
@@ -190,8 +191,8 @@ export class Controller {
     });
   }
   async prepareActivation(request, app, slot, selected) {
-    requireQueueCapability(this.state, request.resources);
     requireCronCapability(this.state, request.resources);
+    requireQueueCapability(this.state, request.resources);
     // Pin the approval before any backend effect, including a first slot claim.
     request.secretRevision = selected.revision;
     request.status = 'activating'; request.step = 'preparing-activation'; request.error = null;

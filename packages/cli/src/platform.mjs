@@ -92,9 +92,10 @@ async function adminSession(env = null) {
   return { env, headers, state: await api(env, '/v1/admin', { headers }) };
 }
 
-export async function prepareSnapshotRequest(env, app, input) {
+export async function prepareSnapshotRequest(env, app, input, surface = 'delivery') {
+  if (!['delivery', 'dispatch'].includes(surface)) throw new Error('Invalid snapshot control surface');
   const { headers, state: { csrf } } = await adminSession(env);
-  return api(env, `/v1/apps/${encodeURIComponent(app)}/delivery/snapshot`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(input) });
+  return api(env, `/v1/apps/${encodeURIComponent(app)}/${surface}/snapshot`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(input) });
 }
 
 export async function adminAcknowledgeRecovery(...args) { return acknowledgeRecovery('delivery', ...args); }

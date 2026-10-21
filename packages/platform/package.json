@@ -11,6 +11,8 @@
     "./retirement": "./src/retirement.mjs",
     "./queue-snapshot": "./src/queue-snapshot.mjs",
     "./queue-retirement": "./src/queue-retirement.mjs",
-    "./queue-history": "./src/queue-history.mjs"
+    "./queue-history": "./src/queue-history.mjs",
+    "./cron-snapshot": "./src/cron-snapshot.mjs",
+    "./cron-history": "./src/cron-history.mjs"
   }
 }

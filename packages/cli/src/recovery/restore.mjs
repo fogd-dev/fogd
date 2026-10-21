@@ -4,7 +4,11 @@ import { retirementCapability } from '@fogd/platform/retirement';
 import { join, resolve } from 'node:path';
 import { docker, json, composeArgs, projectContainers, projectName, stopped, volumeNames } from './docker.mjs';
 import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopology } from './bundle.mjs';
-import { restoredQueueState } from './queue-restore.mjs';
+import { restoredInstallationState } from './background-restore.mjs';
+import { assertPinnedSnapshotImages } from './snapshot-evidence.mjs';
+import { recoveryLayout } from './layout.mjs';
+import { cronCapability } from '@fogd/platform/cron-history';
+import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 
@@ -24,7 +28,9 @@ export async function restore(directory, project, output) {
   return restoreInstallation({ manifest, config, dir }, project, destination);
 }
 export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
-  const queueState = await restoredQueueState(dir, manifest, change);
+  const state = await restoredInstallationState(dir, manifest, change);
+  const background = Object.keys(state?.apps || {}).filter(name => state.apps[name].queueRecovery?.status === 'pending' || state.apps[name].cronRecovery?.status === 'pending');
+  assertPinnedSnapshotImages(background, manifest.images, recoveryLayout(config).replicas);
   const sourceVolumes = volumeNames(config), images = change?.images || manifest.images;
   if (change && !['retirement', 'expansion'].includes(change.kind)) throw new Error('Unknown installation transformation');
   if (Object.values(images).some(id => !Object.values(manifest.images).includes(id))) throw new Error('Transformation may only use snapshot images');
@@ -38,13 +44,13 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   await docker(['image', 'load'], { input: join(dir, 'images.tar') });
   const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
   if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
-  await requireStateRuntime(manifest.images.controller, queueState, change);
+  await requireStateRuntime(manifest.images.controller, state, change);
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
   await stopped(project, volumes.map(name => target.volumes[name].name));
   await restoreVolumes(dir, target, volumes, manifest.images.controller, change?.skipped);
-  if (queueState) await writeRetirement(target, manifest.images.controller, queueState);
+  if (state) await writeRecoveredState(target, manifest.images.controller, state);
   if (change) {
     await writeJson(join(destination, `${change.kind}.json`), change.evidence);
     await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
@@ -63,6 +69,8 @@ export function requiredCapabilities(state, change) {
   if (change?.kind === 'retirement') required.push(['retirement', 'retirementCapability', retirementCapability]);
   if (state?.requirements?.includes(queueRecoveryCapability)) required.push(['queue-snapshot', 'queueRecoveryCapability', queueRecoveryCapability]);
   if (state?.requirements?.includes(queueRetirementCapability)) required.push(['queue-retirement', 'queueRetirementCapability', queueRetirementCapability]);
+  if (state?.requirements?.includes(cronCapability)) required.push(['cron-dispatch', 'cronCapability', cronCapability]);
+  if (state?.requirements?.includes(cronRecoveryCapability)) required.push(['cron-snapshot', 'cronRecoveryCapability', cronRecoveryCapability]);
   return required;
 }
 async function requireStateRuntime(image, state, change) {
@@ -75,9 +83,9 @@ async function requireStateRuntime(image, state, change) {
   if (capability.trim() !== 'supported') throw new Error('Snapshot recovery capability differs from the CLI');
 }
 
-async function writeRetirement(target, image, state) {
+async function writeRecoveredState(target, image, state) {
   const code = "import {saveJson} from './packages/platform/src/store.mjs'; let input=''; for await(const part of process.stdin) input+=part; await saveJson('/data/state.json', JSON.parse(input));";
   await volumeHelper(image, target.volumes.controller.name, ['node', '--input-type=module', '-e', code], { readonly: false, inputText: JSON.stringify(state) });
   const output = await volumeHelper(image, target.volumes.controller.name, ['cat', '/data/state.json']);
-  if (JSON.stringify(JSON.parse(output)) !== JSON.stringify(state)) throw new Error('Retirement metadata verification failed');
+  if (JSON.stringify(JSON.parse(output)) !== JSON.stringify(state)) throw new Error('Restored controller metadata verification failed');
 }

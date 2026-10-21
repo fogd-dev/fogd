@@ -20,7 +20,7 @@ export async function stageRequest(controller, source, amend = async () => {}, {
   }
   const resources = { ...resourceIdentity(config), ...(config.triggers?.crons ? { crons: config.triggers.crons } : {}) };
   const request = { id, app: config.name, digest: await artifactDigest(artifact), resources, migrations, requiredSecrets, status: 'pending', step: 'submitted', submitter: 'qualification-fixture', submittedAt: new Date().toISOString() };
-  requireQueueCapability(controller.state, request.resources);
   requireCronCapability(controller.state, request.resources);
+  requireQueueCapability(controller.state, request.resources);
   controller.state.deployments[id] = request; await controller.save(); return request;
 }

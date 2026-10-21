@@ -5,11 +5,12 @@ import { mkdtemp, writeFile, rm, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { queueRetentionContract, queueExpiry } from '@fogd/platform/queue-snapshot';
-import { queueSnapshotEvidence, prepareQueueBackup } from '../src/recovery/queue-backup.mjs';
+import { prepareBackgroundBackup } from '../src/recovery/background-backup.mjs';
+import { queueSnapshotEvidence } from '../src/recovery/queue-backup.mjs';
 import { retireState, validateRetirementState } from '@fogd/platform/retirement';
 import { queueBackupApps } from '../src/recovery/queue-backup.mjs';
 import { assertQueueFreeRecovery } from '../src/recovery/queue-safety.mjs';
-import { restoredQueueState } from '../src/recovery/queue-restore.mjs';
+import { restoredInstallationState } from '../src/recovery/background-restore.mjs';
 import { execute } from '../src/recovery/execute.mjs';
 import { fingerprint } from '../src/recovery/bundle.mjs';
 import { config, services, volumes } from './fixtures/recovery-layout.mjs';
@@ -40,7 +41,7 @@ test('stopped evidence refuses stale identities, mutations, interrupted approval
   state.apps.imports.route = 'active'; state.apps.imports.delivery.desired = 'running';
   assert.throws(() => queueSnapshotEvidence(state, expected), /operator pause/);
   state.apps.imports.delivery.desired = 'paused';
-  await assert.rejects(prepareQueueBackup({}, state, { controller: 'image-a', replica: 'image-b' }, ['replica']), /identical pinned/);
+  await assert.rejects(prepareBackgroundBackup({}, state, { controller: 'image-a', replica: 'image-b' }, ['replica']), /identical pinned/);
 });
 
 test('offline restore writes a fresh pending receipt only for matching unexpired evidence', async t => {
@@ -52,18 +53,18 @@ test('offline restore writes a fresh pending receipt only for matching unexpired
   await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
   await writeFile(join(dir, 'state.json'), JSON.stringify(state));
   await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
-  const restored = await restoredQueueState(dir, manifest, null, receipt.at);
+  const restored = await restoredInstallationState(dir, manifest, null, receipt.at);
   const app = restored.apps.imports;
   assert.deepEqual(app.queueRecovery.previous, state.apps.imports.queueRecovery);
   assert.equal(app.queueSnapshot, undefined); assert.equal(app.queueRecovery.status, 'pending');
   assert.equal(app.route, 'paused'); assert.ok(restored.requirements.includes('fogd-queue-recovery-v1'));
-  const second = await restoredQueueState(dir, manifest, null, receipt.at);
+  const second = await restoredInstallationState(dir, manifest, null, receipt.at);
   assert.notEqual(app.queueRecovery.id, second.apps.imports.queueRecovery.id);
-  await assert.rejects(restoredQueueState(dir, manifest, null, receipt.expiresAt), /expired/);
-  await assert.rejects(restoredQueueState(dir, {}, null, receipt.at), /legacy queued/);
-  await assert.rejects(restoredQueueState(dir, manifest, { kind: 'expansion' }, receipt.at), /not qualified/);
+  await assert.rejects(restoredInstallationState(dir, manifest, null, receipt.expiresAt), /expired/);
+  await assert.rejects(restoredInstallationState(dir, {}, null, receipt.at), /legacy queued/);
+  await assert.rejects(restoredInstallationState(dir, manifest, { kind: 'expansion' }, receipt.at), /not qualified/);
   const tampered = structuredClone(manifest); tampered.queueRecovery.apps.imports.observation.backlogBytes++;
-  await assert.rejects(restoredQueueState(dir, tampered, null, receipt.at), /differs/);
+  await assert.rejects(restoredInstallationState(dir, tampered, null, receipt.at), /differs/);
 });
 
 
@@ -126,7 +127,7 @@ test('retirement restore preserves the tombstone and gates only surviving queues
   await writeFile(join(dir, 'state.json'), JSON.stringify(state));
   await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
   const change = { kind: 'retirement', state: retireState(state, 'imports', digest, evidence, { stopQueuedWork: true }) };
-  const restored = await restoredQueueState(dir, manifest, change);
+  const restored = await restoredInstallationState(dir, manifest, change);
   assert.deepEqual(restored.apps.imports, change.state.apps.imports);
   assert.equal(restored.apps.survivor.queueRecovery.status, 'pending');
   assert.equal(restored.apps.survivor.route, 'paused');
@@ -141,8 +142,8 @@ test('ordinary restore of only retired queues preserves audit without new recove
   const retired = retireState(state, 'imports', digest, evidence, { stopQueuedWork: true });
   await writeFile(join(dir, 'state.json'), JSON.stringify(retired));
   await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
-  assert.deepEqual(await restoredQueueState(dir, {}, null), retired);
-  await assert.rejects(restoredQueueState(dir, { queueRecovery: { schema: 1, apps: {} } }, null), /Unexpected/);
+  assert.deepEqual(await restoredInstallationState(dir, {}, null), retired);
+  await assert.rejects(restoredInstallationState(dir, { queueRecovery: { schema: 1, apps: {} } }, null), /Unexpected/);
   const missing = structuredClone(retired); missing.requirements = missing.requirements.filter(v => v !== 'fogd-queue-retirement-v1');
   assert.throws(() => queueBackupApps(missing), /capability/);
 });
@@ -158,7 +159,7 @@ test('non-queue retirement with queued survivors requires recovery but no queued
   await writeFile(join(dir, 'state.json'), JSON.stringify(state));
   await execute('tar', ['-cf', join(dir, 'controller.tar'), '-C', dir, './state.json']);
   const next = retireState(state, 'static', 'd'.repeat(64), { previous: { slot: 'two', prefix: 'old/static' }, replacement: { prefix: 'fresh/static' } });
-  const restored = await restoredQueueState(dir, manifest, { kind: 'retirement', state: next });
+  const restored = await restoredInstallationState(dir, manifest, { kind: 'retirement', state: next });
   assert.equal(restored.apps.imports.queueRecovery.status, 'pending');
   assert.equal(restored.apps.static.route, 'retired');
   assert.ok(!restored.requirements.includes('fogd-queue-retirement-v1'));

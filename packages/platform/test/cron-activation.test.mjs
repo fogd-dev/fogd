@@ -221,8 +221,8 @@ test('cron activation foundation keeps ordinary admission and unqualified lifecy
   assert.throws(() => translateConfig({ name: 'refresh', main: 'index.js', triggers: { crons: ['* * * * *'] } }, 'refresh'), /Unsupported binding\/config: triggers/);
   const f = await fixture(t), request = await f.request(); await approve(f.c, request);
   assert.throws(() => retirementApp(f.c.state, 'refresh', request.digest), /retirement is not qualified/);
-  assert.throws(() => assertQueueFreeRecovery(f.c.state), /unsupported recovery capability/);
-  assert.throws(() => queueBackupApps(f.c.state), /unsupported recovery capability/);
+  assert.throws(() => assertQueueFreeRecovery(f.c.state), /Scheduled history/);
+  assert.throws(() => queueBackupApps(f.c.state), /Scheduled history/);
   const resources = request.resources;
   const { crons, ...withoutCron } = resources;
   assert.throws(() => resourceChanges(resources, withoutCron), /removing cron dispatch/);

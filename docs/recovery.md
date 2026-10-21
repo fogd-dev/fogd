@@ -4,6 +4,11 @@ Queue apps use the [queued recovery protocol](queue-recovery.md):
 backup pauses delivery and restore requires explicit recovery acknowledgment.
 The [bounded Docker queue profile](queue-admission.md) requires explicit opt-in.
 
+Experimental scheduled-work archives use the [cron recovery protocol](cron-controls.md#experimental-recovery-protocol).
+Ordinary cron admission remains closed. Offline archive and controller tests do
+not qualify native fresh-volume startup, due timers or pending retries; those
+remain open under [M11c](m11c.md).
+
 Use `fogd backup` to stop the supported Docker stack and capture its complete state.
 Use `fogd restore` to recover that snapshot onto fresh volumes with the same images.
 This procedure needs exclusive operator access and enough disk space for the bucket,
