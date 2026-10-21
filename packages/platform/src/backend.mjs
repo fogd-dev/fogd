@@ -8,7 +8,7 @@ import { QueueRuntime } from './queue-runtime.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export class Backend {
-  constructor(env = process.env) { this.env = env; this.s3 = bucketClient(env);
+  constructor(env = process.env) { this.env = env; this.s3 = bucketClient(env); this.executable = '/usr/local/bin/celld';
     this.queues = new QueueRuntime({ run: (slot, args) => this.run(slot, args), inspect: node => this.deployment(node) });
   }
   async deployment(node) {
@@ -46,7 +46,7 @@ export class Backend {
   run(slot, args) {
     return new Promise((resolve, reject) => {
       let output = '', errors = '';
-      const child = spawn('celld', args, { env: { ...this.env, CELLD_BUCKET: `s3://${this.env.FOGD_BUCKET}/${slot.prefix}` }, stdio: ['ignore', 'pipe', 'pipe'] });
+      const child = spawn(this.executable, args, { env: { ...this.env, CELLD_BUCKET: `s3://${this.env.FOGD_BUCKET}/${slot.prefix}` }, stdio: ['ignore', 'pipe', 'pipe'] });
       const timer = setTimeout(() => child.kill('SIGKILL'), 180000);
       child.stdout.on('data', data => { output = (output + data).slice(-1024 * 1024); });
       child.stderr.on('data', data => { errors = (errors + data).slice(-16000); });
@@ -61,6 +61,13 @@ export class Backend {
     return data.version;
   }
   async bootstrap(slot, artifact, resources) {
+    if (Object.hasOwn(resources, 'crons')) {
+      if (typeof this.crons?.preflight !== 'function') {
+        const error = new Error('Cron bootstrap requires runtime identity verification');
+        error.code = 'CRON_RUNTIME_UNVERIFIED'; throw error;
+      }
+      await this.crons.preflight(slot);
+    }
     const source = JSON.parse(await readFile(join(artifact, 'wrangler.json'), 'utf8'));
     const dir = await mkdtemp(join(tmpdir(), 'fogd-bootstrap-'));
     try {

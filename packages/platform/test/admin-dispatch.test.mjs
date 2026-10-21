@@ -123,6 +123,7 @@ test('stale runtime replica blocks release through the admin API and a fresh exp
   const f = await fixture(t); await f.post('pause'); const model = f.backend.crons;
   const calls = []; let stale = true;
   f.backend.crons = new CronRuntime({
+    async verify() {},
     async run(slot, args) {
       const verb = args[1]; calls.push(verb);
       if (verb === 'resume') await model.resume(slot, 'refresh', f.active.version);

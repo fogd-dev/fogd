@@ -1,9 +1,8 @@
 // Qualify metadata before first deployment. Never issue a cron or deploy command.
 import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
-import { fixture } from './cron-probe/identity/fixture.mjs';
+import { fixture, finishFixture } from './cron-probe/identity/fixture.mjs';
 import { observe, identity, bucketSnapshot, protocol } from './cron-probe/identity/checks.mjs';
-import { execute } from '../packages/cli/src/recovery/execute.mjs';
 
 const probe = await fixture(process.argv[2], process.argv[3]);
 let failure;
@@ -58,15 +57,7 @@ try {
   throw error;
 } finally {
   try {
-    const retainedBefore = (await execute('docker', ['volume', 'ls', '-q', '--filter', `label=com.docker.compose.project=${probe.project}`])).trim().split('\n').filter(Boolean).sort();
-    try { await probe.save('logs', { logs: await probe.compose(['logs', '--no-color']) }); }
-    finally { await probe.compose(['down']); }
-    const containers = await execute('docker', ['ps', '-aq', '--filter', `label=com.docker.compose.project=${probe.project}`]);
-    assert.equal(containers.trim(), '');
-    const volumes = (await execute('docker', ['volume', 'ls', '-q', '--filter', `label=com.docker.compose.project=${probe.project}`])).trim().split('\n').filter(Boolean).sort();
-    assert.deepEqual(volumes, retainedBefore, 'Cleanup must retain every volume, including after partial setup');
-    if (!failure) assert.equal(volumes.length, 5);
-    await probe.save('cleanup', { stopped: true, retainedVolumes: volumes });
+    await finishFixture(probe, Boolean(failure));
   } catch (error) {
     if (failure) throw new AggregateError([failure, error], 'Identity probe and cleanup failed');
     throw error;

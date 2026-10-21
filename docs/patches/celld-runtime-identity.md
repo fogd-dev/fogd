@@ -71,13 +71,13 @@ They do not execute the upstream internal Rust suites.
 
 ## Remaining release binding
 
-fogd must still check a known qualified binary profile before bootstrap and every
-cron command, including info. That requires the CLI executable and every possible
-cron owner, expected node identities, storage scope and membership to agree.
-Failure before a command is a refusal; failure after a mutation can leave its
-outcome unknown. Startup and recovery must reject incompatible binaries before an
-active restored timer can boot. Process replacement between observation and use
-also needs an explicit lifecycle boundary.
+The [caller policy foundation](../cron-runtime-policy.md) verifies a supplied
+binary profile before bootstrap and every cron command, including info. Its
+bounded native profile covers app-free bootstrap and an empty held cron cell.
+A supplied profile is policy, not qualification of scheduled applications.
+Storage endpoint binding, immutable topology/runtime lifecycle and host-side
+preboot recovery checks remain open. A read-only observation is not an atomic
+fence against process replacement or a new fleet member.
 
 The `lab` metadata profile does not transfer previous cron lifecycle evidence to
 this new binary. Shipped-image packaging, release-build qualification and the

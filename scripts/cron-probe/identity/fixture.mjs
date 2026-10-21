@@ -4,13 +4,12 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 
-export async function fixture(outputArg, image) {
+export async function fixture(outputArg, image, { observerImage = 'fogd-runtime:cron-retirement-candidate6' } = {}) {
   assert.ok(outputArg && image, 'Supply a new private output directory and checked native build image');
   const output = resolve(outputArg), project = `fogd-m11c-identity-${randomUUID().slice(0, 8)}`;
   await mkdir(output, { mode: 0o700 });
   const bucket = { S3_ENDPOINT: 'http://minio:9000', AWS_REGION: 'us-east-1',
     AWS_ACCESS_KEY_ID: 'identity-probe', AWS_SECRET_ACCESS_KEY: randomUUID(), FOGD_BUCKET: 'identity-probe' };
-  const observerImage = 'fogd-runtime:cron-retirement-candidate6';
   const tags = { native: image, observer: observerImage, older: 'fogd-celld-cron-controls-build5:local', minio: 'fogd-minio:local' };
   const images = Object.fromEntries(await Promise.all(Object.entries(tags).map(async ([role, tag]) => {
     const id = (await execute('docker', ['image', 'inspect', '--format', '{{.Id}}', tag])).trim();
@@ -51,4 +50,18 @@ export async function fixture(outputArg, image) {
   const node = code => compose(['exec', '-T', 'observer', 'node', '--input-type=module', '-e', code]);
   const save = (name, value) => writeFile(join(output, `${name}.json`), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
   return { output, project, compose, node, save, images };
+}
+
+export async function finishFixture(probe, failed) {
+  const filter = `label=com.docker.compose.project=${probe.project}`;
+  const inventory = async () => (await execute('docker', ['volume', 'ls', '-q', '--filter', filter])).trim().split('\n').filter(Boolean).sort();
+  const before = await inventory();
+  try { await probe.save('logs', { logs: await probe.compose(['logs', '--no-color']) }); }
+  finally { await probe.compose(['down']); }
+  const volumes = await inventory();
+  assert.deepEqual(volumes, before, 'Cleanup must retain every volume, including after partial setup');
+  if (!failed) assert.equal(volumes.length, 5);
+  assert.equal((await execute('docker', ['ps', '-aq', '--filter', filter])).trim(), '');
+  assert.equal((await execute('docker', ['network', 'ls', '-q', '--filter', filter])).trim(), '');
+  await probe.save('cleanup', { stopped: true, retainedVolumes: volumes });
 }

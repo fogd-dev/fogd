@@ -1,0 +1,388 @@
+{
+  "project": "fogd-m11c-identity-44a08559",
+  "images": {
+    "native": {
+      "tag": "fogd-celld-identity-checks2:local",
+      "id": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    "observer": {
+      "tag": "fogd-runtime:cron-identity-candidate2",
+      "id": "sha256:2bbdbde9140283a44bdf2b657bfee0e63af87b534bf06bff6929c4f13ef8cf0e"
+    },
+    "older": {
+      "tag": "fogd-celld-cron-controls-build5:local",
+      "id": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc"
+    },
+    "minio": {
+      "tag": "fogd-minio:local",
+      "id": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+    }
+  },
+  "binary": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+  "processes": {
+    "a": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "b": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "older": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+  },
+  "runtime": [
+    {
+      "Service": "a",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "b",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "devstore",
+      "State": "exited",
+      "ExitCode": 1,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "disabled",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "init",
+      "State": "exited",
+      "ExitCode": 0,
+      "Image": "sha256:2bbdbde9140283a44bdf2b657bfee0e63af87b534bf06bff6929c4f13ef8cf0e"
+    },
+    {
+      "Service": "invalid",
+      "State": "exited",
+      "ExitCode": 1,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "minio",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+    },
+    {
+      "Service": "observer",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:2bbdbde9140283a44bdf2b657bfee0e63af87b534bf06bff6929c4f13ef8cf0e"
+    },
+    {
+      "Service": "older",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc"
+    }
+  ],
+  "refused": [
+    "cli",
+    "node",
+    "namespace",
+    "older-process",
+    "expired-foreign-lease"
+  ],
+  "before": [
+    {
+      "key": "slots/disabled/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/older/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/one/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    }
+  ],
+  "after": [
+    {
+      "key": "slots/disabled/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/older/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/one/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    }
+  ],
+  "calls": [
+    "verified",
+    "deploy",
+    "verified",
+    "cron:info",
+    "verified",
+    "cron:pause",
+    "verified",
+    "cron:info",
+    "verified",
+    "cron:info"
+  ],
+  "version": "9e1cea970d166163",
+  "held": {
+    "paused": true,
+    "revision": 0,
+    "nextAlarm": null,
+    "crons": []
+  },
+  "paused": {
+    "paused": true,
+    "revision": 0,
+    "nextAlarm": null,
+    "crons": []
+  },
+  "leaseInventory": [
+    {
+      "key": "a.json",
+      "node": "a",
+      "addr": "a:8081",
+      "processKeySha256": "c0f2a0c60d51dd25dfa8b5b288b99db66d167ada1b7746a3949cc9f0df182dcc"
+    },
+    {
+      "key": "b.json",
+      "node": "b",
+      "addr": "b:8081",
+      "processKeySha256": "900062c17fc715a8515c871c73e8c76a9a8b5b5c1a5d4a9f7560ad6e396ea913"
+    }
+  ],
+  "finalLeaseInventory": [
+    {
+      "key": "a.json",
+      "node": "a",
+      "addr": "a:8081",
+      "processKeySha256": "c0f2a0c60d51dd25dfa8b5b288b99db66d167ada1b7746a3949cc9f0df182dcc"
+    },
+    {
+      "key": "b.json",
+      "node": "b",
+      "addr": "b:8081",
+      "processKeySha256": "900062c17fc715a8515c871c73e8c76a9a8b5b5c1a5d4a9f7560ad6e396ea913"
+    }
+  ],
+  "postBootstrapForeignLeaseRefused": true,
+  "scope": "Candidate profile only: refuses bootstrap and info before any CLI call; then guarded app-free bootstrap and empty held cron controls. No scheduled application or ordinary admission qualification.",
+  "schema": 1,
+  "profile": "local Linux arm64 Docker; lab binary; explicit candidate identity profile; app-free fleet",
+  "baseCommit": "0f5190554decaeb67949e9022616bdc137454021",
+  "packageImage": "sha256:b52407ccf7f48a8729050e3ae816e67f2380b682660739367bb92f1b9ce82802",
+  "artifactDigests": {
+    "native": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "package": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "observer": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "older": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70"
+  },
+  "replicas": [
+    {
+      "node": "a",
+      "version": "9e1cea970d166163",
+      "generation": 2,
+      "cells": {
+        ".cron:identity-guard": 2
+      }
+    },
+    {
+      "node": "b",
+      "version": "9e1cea970d166163",
+      "generation": 2,
+      "cells": {}
+    }
+  ],
+  "productionSources": {
+    "packages/platform/src/activation.mjs": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+    "packages/platform/src/admin-capacity.mjs": "e779d72f40a3568ba5cf822fe3ce796b5dd4d384118bfc3b0d4bd5467bc7a238",
+    "packages/platform/src/admin-control-script.mjs": "495584a6889575ffc0019a8cd0441a2907dd530c5948c3d946949026b3774df8",
+    "packages/platform/src/admin-credentials.mjs": "2c762aa30fa1c0ce83f8daf7059946ed8e6a20ceb48e36ba545c6af4b6a90e5b",
+    "packages/platform/src/admin-delivery.mjs": "0104bde803db296b0d57520ad98a4a3cfabcc03557285559bfeeda6c67a1ab89",
+    "packages/platform/src/admin-dispatch.mjs": "395c768b6feb3ad49f55653f52aa9a614605c9315afaff1c323284dde41b9c27",
+    "packages/platform/src/admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
+    "packages/platform/src/admin-view.mjs": "784b508727f23437197cf31009344000113c97eb53aefdec43ca08bbbf0cd450",
+    "packages/platform/src/backend-runtime-identity.mjs": "874268375041a8946a8b367d44fddddbb7d24ad4049fd9b5c0793a3e1fe1ff54",
+    "packages/platform/src/backend.mjs": "e0c03d17d6c593fab3b3856625432d87e4657e6fa500496a701095ba5c88296e",
+    "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
+    "packages/platform/src/capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
+    "packages/platform/src/claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
+    "packages/platform/src/controller.mjs": "4cda646bd0ddf3e0123997f7513c0ea65cd0e1689dfe1aef220851eff10653d9",
+    "packages/platform/src/credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
+    "packages/platform/src/cron-activation.mjs": "50df429918c04b7490d70fe875a1108780528c01da8bcbaee96571fdb77bca3a",
+    "packages/platform/src/cron-dispatch.mjs": "6ac1cb769c3ed6dd93ff14226f1d83141d7d215701abfb38c3a748669dc8e34e",
+    "packages/platform/src/cron-history.mjs": "11d1dc96b8212ae5bfdd0cd84343ade17f3410b02afd32757b30c5e7d8d503f0",
+    "packages/platform/src/cron-recovery.mjs": "7c0ca759b55c957c4f01ac560494632e9a2809ad10c61a965cfdcf4361ae2233",
+    "packages/platform/src/cron-retirement.mjs": "36874b20884a60d227025b3f4b4c49c362ee390c69687a625fe9680f6bc45e8c",
+    "packages/platform/src/cron-runtime.mjs": "e87913e655e8e2d60e50ca178937e16ce138f3472fc0ec3e2846a877d0add553",
+    "packages/platform/src/cron-snapshot.mjs": "4ba23bd2b39c39fe2b8eae122fd89706e222ff2f5c380becf41dcc699e8d3746",
+    "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+    "packages/platform/src/deployment-http.mjs": "6cdbf3168f64295b0e2c2d400695119ff0ae550728dee600b9b20d65c65cdbc4",
+    "packages/platform/src/deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
+    "packages/platform/src/dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+    "packages/platform/src/http.mjs": "210d5c612026d160936aa1e7e27328c726d0096dc5256a2f3a4a37144cd9b575",
+    "packages/platform/src/main.mjs": "33f418a67c4c6faa860182928600d729f7ecbc5453307d39d57161015bd08c04",
+    "packages/platform/src/queue-activation.mjs": "23284caca3163c7f9ee70157f78d324842cfea5fb03dbd0169e3fcc4af52345d",
+    "packages/platform/src/queue-history.mjs": "d5aea93f441ae3561b1243e520401550a1cda241a8697c1ef8b7a4f66f1e90b5",
+    "packages/platform/src/queue-recovery.mjs": "bf1fba3d1c27f9e3b8a43457d1c4ceea8c149dee6a57dab008577ac7a45e09d4",
+    "packages/platform/src/queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+    "packages/platform/src/queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+    "packages/platform/src/queue-runtime.mjs": "570a10dabc87f9f01a06a8d0df4f91003c2b5308bb101afe7bb3ea47ae753f1d",
+    "packages/platform/src/queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+    "packages/platform/src/quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
+    "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
+    "packages/platform/src/resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
+    "packages/platform/src/retirement.mjs": "ab542cc36b0faf921aacd3f8fa3dba9cace505343ee2fba07f226dd9007d0919",
+    "packages/platform/src/runtime-identity.mjs": "3fe64103489ec04360534facfcd91b4cf3ec2310eedf68e19a9c736c1e7e1831",
+    "packages/platform/src/secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
+    "packages/platform/src/security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
+    "packages/platform/src/startup.mjs": "2abe860912da5f466a695fc0e8c2501030a56c534a10855bf254e827a9c6e518",
+    "packages/platform/src/store.mjs": "b0f11bbd640047a1661dbcbff7d05f198c546b89bbd5062f96b8b7a9d482a531",
+    "packages/runtime/src/artifact.mjs": "04257ca69e120cb1b5df9da1e7a42cb60618cd337f2d2fe97960684381f38f7d",
+    "packages/runtime/src/assets.mjs": "4eddd14ff6c344461674b8c6f42e3f0780d454a11ebe9d80448f1daa68d68eb1",
+    "packages/runtime/src/bucket.mjs": "d8619235d1b1ad8fa6cd0d999a6c8997ad1fe178f899ead57463eff0a778c03f",
+    "packages/runtime/src/deployment.mjs": "ec38b0083a7ec776a469eb89f4587b513cd8b83e9acf904d4f48f1026b43af1c",
+    "packages/runtime/src/files.mjs": "ba76bca333878955b4571b17079d27372e482cd6ea21d22cd892d1d5fc62b779",
+    "packages/runtime/src/gateway.js": "33dd151f608ad0bfdfa84719d4e1c966f7e6b9cc8f0d4e68b5b276e7a5839e1a",
+    "packages/runtime/src/import-tls.mjs": "10d734ae50daae56e74d4c8d202fceecde4e7bb9a9e99d986743ca98d463fd20",
+    "packages/runtime/src/init-bucket.mjs": "6154efa6dbedbecad7ba4c6ec155cb7046a75cf3f7daf727b9e82d314e17ded6",
+    "packages/runtime/src/manifest.mjs": "de8d2f22e5e98fe8c1744e97f3cdfa263bc9c9d36e585775f7276f34b58cb97b",
+    "packages/runtime/src/queues.mjs": "c4ad9681617dcdd2a7d66d9286648db0e02086e1c20139b7ff33cb2832fedbc9",
+    "packages/runtime/src/serve.mjs": "336f6ea199f2f8946c046d26a907750a13c6c87077bd1df8d507ea04a48f50e1",
+    "packages/runtime/src/transport.mjs": "d69aa1b2aadbdc7a4cba6cd2e04afdf86a36aeb9a68bfacd7d0683216457ce5b"
+  },
+  "nativeMetadataReceipt": {
+    "path": "docs/evidence/m11c-runtime-identity.json",
+    "sha256": "377deda02a65709497fc1c5a8147fce11a09628ff83847a2dd0cf686d40e065a",
+    "nativeSourceFilesUnchanged": 179,
+    "nativeRustChecksRerun": false,
+    "scope": "Native binary/source correspondence reused; historical metadata driver source pins do not describe the current helper revision."
+  },
+  "checks": {
+    "javascriptTestsPassed": 484,
+    "javascriptSyntaxPassMarkerVerified": true,
+    "embeddedProductionSourceFilesCompared": 56,
+    "allNativeArtifactsMatchRunningProcesses": true,
+    "newNativeCronApplicationQualified": false,
+    "ordinaryCronAdmissionOpened": false
+  },
+  "authorObservedExitCodes": {
+    "basis": "Terminal tool results observed by the author; curator independently verifies files/images and retained resources",
+    "nativeDriver": 0,
+    "javascriptTests": 0,
+    "javascriptCheck": 0,
+    "packageBuild": 0,
+    "runtimeBuild": 0
+  },
+  "cleanup": {
+    "stopped": true,
+    "retainedVolumes": [
+      "fogd-m11c-identity-44a08559_bucket",
+      "fogd-m11c-identity-44a08559_node-a",
+      "fogd-m11c-identity-44a08559_node-b",
+      "fogd-m11c-identity-44a08559_node-disabled",
+      "fogd-m11c-identity-44a08559_node-older"
+    ]
+  },
+  "mutationChecks": [
+    {
+      "mutation": "unguarded-command",
+      "exitCode": 1,
+      "failedTests": [
+        "\u2716 missing or refused identity policy blocks every cron command before dispatch (0.333375ms)",
+        "\u2716 fresh identity verification precedes each command, including confirmation reads (0.45125ms)",
+        "\u2716 identity refusal before mutation remains a refusal; after dispatch it leaves outcome unknown (0.107542ms)",
+        "\u2716 snapshot reports an unconfirmed observation when identity is refused without sending any command (0.083375ms)",
+        "\u2716 failing tests:",
+        "\u2716 missing or refused identity policy blocks every cron command before dispatch (0.333375ms)",
+        "\u2716 fresh identity verification precedes each command, including confirmation reads (0.45125ms)",
+        "\u2716 identity refusal before mutation remains a refusal; after dispatch it leaves outcome unknown (0.107542ms)",
+        "\u2716 snapshot reports an unconfirmed observation when identity is refused without sending any command (0.083375ms)"
+      ]
+    },
+    {
+      "mutation": "unguarded-bootstrap",
+      "exitCode": 1,
+      "failedTests": [
+        "\u2716 cron bootstrap refuses missing identity enforcement before publishing a real artifact (2.370042ms)",
+        "\u2716 failing tests:",
+        "\u2716 cron bootstrap refuses missing identity enforcement before publishing a real artifact (2.370042ms)"
+      ]
+    },
+    {
+      "mutation": "ignored-node-metadata",
+      "exitCode": 1,
+      "failedTests": [
+        "\u2716 runtime policy verifies the CLI, each native process and stable membership without status commands (1.794708ms)",
+        "\u2716 binary, node, namespace and exact metadata schema mismatches refuse the fleet (0.913208ms)",
+        "\u2716 policy snapshots its expected profile and repeats observations without cached authorization (0.178083ms)",
+        "\u2716 failing tests:",
+        "\u2716 runtime policy verifies the CLI, each native process and stable membership without status commands (1.794708ms)",
+        "\u2716 binary, node, namespace and exact metadata schema mismatches refuse the fleet (0.913208ms)",
+        "\u2716 policy snapshots its expected profile and repeats observations without cached authorization (0.178083ms)"
+      ]
+    },
+    {
+      "mutation": "unbounded-valid-json",
+      "exitCode": 1,
+      "failedTests": [
+        "\u2716 HTTP failures, malformed JSON and oversized metadata are refused (5.185667ms)",
+        "\u2716 oversized valid lease JSON cannot bypass the bounded inventory reader (2.136833ms)",
+        "\u2716 failing tests:",
+        "\u2716 HTTP failures, malformed JSON and oversized metadata are refused (5.185667ms)",
+        "\u2716 oversized valid lease JSON cannot bypass the bounded inventory reader (2.136833ms)"
+      ]
+    },
+    {
+      "mutation": "stalled-body-not-destroyed",
+      "exitCode": 1,
+      "failedTests": [
+        "\u2716 a stalled lease body is destroyed at the read deadline (6503.565167ms)",
+        "\u2716 failing tests:",
+        "\u2716 a stalled lease body is destroyed at the read deadline (6503.565167ms)"
+      ]
+    }
+  ],
+  "probeSources": {
+    "scripts/cron-runtime-guard.mjs": "6c9eaa029b7609a41888b31771fbebf59fa747a8af8fbdad4669782c019fd9d3",
+    "scripts/cron-runtime-identity.mjs": "853c40424874d54d46fa63d8f35491e3bf622ff11cde078159fee61bc6597479",
+    "scripts/cron-probe/identity/guard-controller.mjs": "61656839ca5d109d86b555828e20f0492bdeee9c9a2ad14cddf82ac5a5ca80db",
+    "scripts/cron-probe/identity/fixture.mjs": "721a0d1bb3f928e599799d2e17a85c4659f0afcd25e707c7a8da1e8b817bd59c",
+    "scripts/cron-probe/identity/checks.mjs": "ffa66679c75c9cef46a4e39d9ab1ffd694d4fcf015e5d7b1bf2eec0195bc14cc",
+    "docker/celld-cron-patched.Dockerfile": "c670f27b22cf20b41d7d0cddac2db4f24d32ec86b3cfd81d50658f326fa87018",
+    "docker/runtime.Dockerfile": "57b930e2c9a122ebaa560500f3a8cb338f60a38fd4fe42563890f1fdea73fba0"
+  },
+  "testSources": {
+    "packages/platform/test/runtime-identity.test.mjs": "9301e0fbe796b1a2bf35f1ced6d6cfd01427e6d2561fc9992c1fc4c2cbed7094",
+    "packages/platform/test/backend-runtime-identity.test.mjs": "091294e2966a24e416e07ce4d1d305bc4364afa6657818f26b11ae3c703ec1bd",
+    "packages/platform/test/backend-bootstrap.test.mjs": "8a8c777dc78e9348a3326952a46965302fda82a5b83322fdf75c1a8c3038f514",
+    "packages/platform/test/cron-runtime.test.mjs": "c0c97fb8a3a02e8d04f360b49763f6553f3fb8e5e2779e13890c60cedb9ced25",
+    "packages/platform/test/admin-dispatch.test.mjs": "a6cf04a7695a56f80036ae66a480e4c981c1f52afcb5a633f2646187f0685efa"
+  },
+  "rawEvidenceSha256": {
+    "guard.json": "d4a677376e40089c4f2154eb9066e0cb0f0242386c36c9235bfec2b92f334e28",
+    "logs.json": "c8ac133aacc6f2d5e0b2b8cfe893458734a4f64cbbfeabded3cdba588f927303",
+    "cleanup.json": "3c98e449def80206c57cb3d86a9bd944f579150c35e93ae30241eeff786d1b9b",
+    "compose.json": "3ba8579fef2f9f31512c0750b5922454138359045264016268e92cdd7ed47ce9"
+  },
+  "verificationToolSha256": "3587eb8e7f5216d4b0214bfd9890b13a0edc257ae38551f9eb71d028f1140140",
+  "logsSha256": {
+    "fogd-identity-guard-native3.log": "f8788fbf83451665c14c2b14f40c1b059b6b24b26ae8115be4e89559d6a536d5",
+    "fogd-identity-guard-final-check2.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-identity-guard-final-tests2.log": "5eac99d2a3d0d237124c11e1ca90881db24c9a1feed21914a95fa80e49f1a7a0",
+    "fogd-identity-guard-package-build2.log": "054ff85e2997d95904073a3b6ba7a689346945cd567ddcd2cb901977640e0355",
+    "fogd-identity-guard-runtime-build2.log": "822d70e823409b572af9c7eecff96338ff5123b91e50fe7461d55a247ab17ea0"
+  },
+  "supersededNativeRuns": "native1 omitted explicit older-process records; native2 omitted stored nonempty native lease/process-key evidence; native3 adds those records and a post-bootstrap foreign-lease refusal",
+  "openGates": [
+    "CLI/process replacement and new membership lifecycle boundary",
+    "remote storage endpoint/region binding",
+    "host-side validation before restored timers boot",
+    "shipping release build and qualified binary registry",
+    "scheduled application lifecycle requalification",
+    "ordinary scoped cron admission"
+  ]
+}

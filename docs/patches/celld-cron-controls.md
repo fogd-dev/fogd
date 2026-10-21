@@ -57,8 +57,10 @@ versions identify application code, not the runtime binary; the transport cannot
 detect an older runtime before its first command. On an older harness, even an
 info request can arm a timer. Runtime provenance and stopped replacement remain
 operator prerequisites. The separate [early identity candidate](celld-runtime-identity.md)
-provides metadata before first deployment, but the transport does not yet enforce
-it and previous cron receipts do not qualify that new binary.
+provides metadata before first deployment. The
+[caller policy](../cron-runtime-policy.md) now requires verification before every
+command and bootstrap, including info. Missing verification refuses the command;
+previous cron receipts do not qualify that new binary or guarded path.
 
 The [native transport profile](../evidence/m11c-cron-transport.json) exercises
 these checks on a fresh two-node fleet, including empty-bootstrap and unapproved

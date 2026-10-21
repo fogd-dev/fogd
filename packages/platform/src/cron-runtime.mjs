@@ -2,11 +2,26 @@ import { isDeepStrictEqual } from 'node:util';
 // Experimental M11c transport. The controller must serialize publication and
 // dispatch operations. Replica observations are not an atomic release fence.
 export class CronRuntime {
-  constructor({ run, inspect }) { Object.assign(this, { run, inspect }); }
+  constructor({ run, inspect, verify }) { Object.assign(this, { run, inspect, verify }); }
+  async preflight(slot) {
+    assertNodes(slot);
+    try {
+      if (typeof this.verify !== 'function') throw new Error('Missing runtime identity policy');
+      await this.verify(slot);
+    } catch {
+      const error = new Error('Cron runtime identity could not be verified; no command was sent');
+      error.code = 'CRON_RUNTIME_UNVERIFIED';
+      throw error;
+    }
+  }
   async #command(slot, script, verb) {
     return cronStatus(JSON.parse((await this.run(slot, ['cron', verb, script, '--json'])).trim()));
   }
-  async status(slot, script) { assertScript(script); return this.#command(slot, script, 'info'); }
+  async status(slot, script) {
+    assertScript(script);
+    await this.preflight(slot);
+    return this.#command(slot, script, 'info');
+  }
   async pause(slot, script) { assertScript(script); return this.#mutate(slot, script, 'pause'); }
   async resume(slot, script, version) {
     assertReplicas(slot, version);
@@ -37,6 +52,7 @@ export class CronRuntime {
     }
   }
   async #mutate(slot, script, verb) {
+    await this.preflight(slot);
     try {
       const reply = await this.#command(slot, script, verb);
       const observed = await this.status(slot, script);
@@ -79,5 +95,9 @@ function assertCronGeneration(states, version, script) {
 
 function assertReplicas(slot, version) {
   if (typeof version !== 'string' || !version) throw new Error('Approved runtime version required');
-  if (!Array.isArray(slot.nodes) || !slot.nodes.length || !slot.nodes.every(node => typeof node === 'string' && node.length > 0) || new Set(slot.nodes).size !== slot.nodes.length) throw new Error('Distinct replica nodes required');
+  assertNodes(slot);
+}
+
+function assertNodes(slot) {
+  if (!Array.isArray(slot?.nodes) || !slot.nodes.length || !slot.nodes.every(node => typeof node === 'string' && node.length > 0) || new Set(slot.nodes).size !== slot.nodes.length) throw new Error('Distinct replica nodes required');
 }

@@ -132,8 +132,11 @@ reports the actual native executable before first deployment. Its metadata profi
 passes four new Linux Rust tests and a disposable native drill with unchanged
 bucket contents. All 179 embedded source files match the applied patch stack.
 These tests do not execute upstream internal suites, and this new binary does not
-inherit earlier cron lifecycle qualification. Runtime-policy enforcement before
-bootstrap/commands and restored startup remains open.
+inherit earlier cron lifecycle qualification. The
+[caller policy foundation](cron-runtime-policy.md) verifies a supplied profile
+before bootstrap and every cron command, with native app-free refusal and held-cell
+evidence. Runtime lifecycle fencing, storage endpoint binding and host-side
+restored-start validation remain open.
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 

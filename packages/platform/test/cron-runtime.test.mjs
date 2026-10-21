@@ -9,6 +9,7 @@ function fixture() {
     { version: 'approved', generation: 7, cells: {}, draining: [{ version: 'old', generation: 6 }] }];
   const calls = [];
   const adapter = {
+    async verify() {},
     async run(_slot, args) {
       assert.deepEqual([args[0], ...args.slice(2)], ['cron', 'refresh', '--json']);
       const verb = args[1]; calls.push(verb);
@@ -182,4 +183,44 @@ test('repeated pause commands preserve the native control reply without extra mu
   const repeated = await f.runtime.pause(slot, 'refresh');
   assert.equal(first.revision, 2); assert.deepEqual(repeated, first);
   assert.deepEqual(f.calls, ['pause', 'info', 'pause', 'info']);
+});
+
+test('missing or refused identity policy blocks every cron command before dispatch', async () => {
+  for (const verify of [undefined, async () => { throw Error('private-credential'); }]) {
+    for (const verb of ['status', 'pause', 'resume']) {
+      const f = fixture(); f.adapter.verify = verify;
+      await assert.rejects(f.runtime[verb](slot, 'refresh', 'approved'), error =>
+        error.code === 'CRON_RUNTIME_UNVERIFIED' && !error.message.includes('private-credential') && !JSON.stringify(error).includes('private-credential'));
+      assert.deepEqual(f.calls, []);
+    }
+  }
+});
+
+test('fresh identity verification precedes each command, including confirmation reads', async () => {
+  const f = fixture(), run = f.adapter.run, ordering = [];
+  f.adapter.verify = async selected => { assert.equal(selected, slot); ordering.push('identity'); };
+  f.adapter.run = async (...args) => { ordering.push(args[1][1]); return run(...args); };
+  await f.runtime.resume(slot, 'refresh', 'approved');
+  assert.deepEqual(ordering, ['identity', 'info', 'identity', 'resume', 'identity', 'info']);
+});
+
+test('identity refusal before mutation remains a refusal; after dispatch it leaves outcome unknown', async () => {
+  for (const boundary of ['before', 'after']) {
+    const f = fixture(); let checked = 0;
+    f.adapter.verify = async () => {
+      if (++checked === (boundary === 'before' ? 2 : 3)) throw Error('runtime replaced');
+    };
+    await assert.rejects(f.runtime.resume(slot, 'refresh', 'approved'), {
+      code: boundary === 'before' ? 'CRON_RUNTIME_UNVERIFIED' : 'CRON_OUTCOME_UNKNOWN',
+    });
+    assert.equal(f.control.paused, boundary === 'before');
+    assert.equal(f.calls.filter(call => call === 'resume').length, boundary === 'before' ? 0 : 1);
+  }
+});
+
+test('snapshot reports an unconfirmed observation when identity is refused without sending any command', async () => {
+  const f = fixture(); delete f.adapter.verify;
+  await assert.rejects(f.runtime.snapshot(slot, 'refresh', 'approved'), error =>
+    error.code === 'CRON_SNAPSHOT_UNCONFIRMED' && error.cause.code === 'CRON_RUNTIME_UNVERIFIED');
+  assert.deepEqual(f.calls, []);
 });
