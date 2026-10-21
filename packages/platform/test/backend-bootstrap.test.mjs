@@ -44,7 +44,7 @@ test('cron bootstrap refuses missing identity enforcement before publishing a re
   const artifact = await mkdtemp(join(tmpdir(), 'fogd-bootstrap-refusal-'));
   t.after(() => rm(artifact, { recursive: true, force: true }));
   await writeFile(join(artifact, 'wrangler.json'), '{}');
-  for (const crons of [undefined, {}, { async preflight() { throw Error('runtime unverified'); } }]) {
+  for (const crons of [undefined, {}, { async preflight() {} }, { async preflightBootstrap() { throw Error('runtime unverified'); } }]) {
     const backend = Object.create(Backend.prototype); backend.crons = crons;
     let published = false; backend.publish = async () => { published = true; };
     await assert.rejects(backend.bootstrap({ id: 'slot-1' }, artifact, { crons: ['* * * * *'] }),
@@ -52,7 +52,7 @@ test('cron bootstrap refuses missing identity enforcement before publishing a re
     assert.equal(published, false);
   }
   const backend = Object.create(Backend.prototype), events = [], slot = { id: 'slot-1' };
-  backend.crons = { async preflight(selected) { assert.equal(selected, slot); events.push('verify'); } };
+  backend.crons = { async preflightBootstrap(selected) { assert.equal(selected, slot); events.push('verify'); } };
   backend.publish = async () => { events.push('publish'); return 'bootstrap-version'; };
   assert.equal(await backend.bootstrap(slot, artifact, { script: 'refresh', d1: [], crons: ['* * * * *'] }), 'bootstrap-version');
   assert.deepEqual(events, ['verify', 'publish']);

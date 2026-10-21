@@ -135,8 +135,13 @@ These tests do not execute upstream internal suites, and this new binary does no
 inherit earlier cron lifecycle qualification. The
 [caller policy foundation](cron-runtime-policy.md) verifies a supplied profile
 before bootstrap and every cron command, with native app-free refusal and held-cell
-evidence. Runtime lifecycle fencing, storage endpoint binding and host-side
-restored-start validation remain open.
+evidence. The
+[signed release-profile foundation](patches/celld-runtime-binding.md) adds
+storage-origin/region claims and fresh lease-key possession proofs. Its app-free
+qualification includes nine native Rust tests, 498 repository tests and separate
+bootstrap/live-lease command checks. Runtime lifecycle fencing, shipped-runtime
+selection, host-side restored-start validation and scheduled application
+qualification on this binary remain open.
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 

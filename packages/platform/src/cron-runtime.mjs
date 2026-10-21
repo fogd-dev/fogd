@@ -2,12 +2,14 @@ import { isDeepStrictEqual } from 'node:util';
 // Experimental M11c transport. The controller must serialize publication and
 // dispatch operations. Replica observations are not an atomic release fence.
 export class CronRuntime {
-  constructor({ run, inspect, verify }) { Object.assign(this, { run, inspect, verify }); }
-  async preflight(slot) {
+  constructor({ run, inspect, verify, verifyBootstrap }) { Object.assign(this, { run, inspect, verify, verifyBootstrap }); }
+  async preflight(slot) { return this.#verify(slot, this.verify); }
+  async preflightBootstrap(slot) { return this.#verify(slot, this.verifyBootstrap); }
+  async #verify(slot, verify) {
     assertNodes(slot);
     try {
-      if (typeof this.verify !== 'function') throw new Error('Missing runtime identity policy');
-      await this.verify(slot);
+      if (typeof verify !== 'function') throw new Error('Missing runtime identity policy');
+      await verify(slot);
     } catch {
       const error = new Error('Cron runtime identity could not be verified; no command was sent');
       error.code = 'CRON_RUNTIME_UNVERIFIED';

@@ -8,7 +8,7 @@ import { QueueRuntime } from './queue-runtime.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export class Backend {
-  constructor(env = process.env) { this.env = env; this.s3 = bucketClient(env); this.executable = '/usr/local/bin/celld';
+  constructor(env = process.env) { this.env = Object.freeze({ ...env }); this.s3 = bucketClient(this.env); this.executable = '/usr/local/bin/celld';
     this.queues = new QueueRuntime({ run: (slot, args) => this.run(slot, args), inspect: node => this.deployment(node) });
   }
   async deployment(node) {
@@ -62,11 +62,11 @@ export class Backend {
   }
   async bootstrap(slot, artifact, resources) {
     if (Object.hasOwn(resources, 'crons')) {
-      if (typeof this.crons?.preflight !== 'function') {
+      if (typeof this.crons?.preflightBootstrap !== 'function') {
         const error = new Error('Cron bootstrap requires runtime identity verification');
         error.code = 'CRON_RUNTIME_UNVERIFIED'; throw error;
       }
-      await this.crons.preflight(slot);
+      await this.crons.preflightBootstrap(slot);
     }
     const source = JSON.parse(await readFile(join(artifact, 'wrangler.json'), 'utf8'));
     const dir = await mkdtemp(join(tmpdir(), 'fogd-bootstrap-'));

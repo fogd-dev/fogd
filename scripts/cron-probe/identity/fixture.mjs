@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 
-export async function fixture(outputArg, image, { observerImage = 'fogd-runtime:cron-retirement-candidate6' } = {}) {
+export async function fixture(outputArg, image, { observerImage = 'fogd-runtime:cron-retirement-candidate6', configure = () => {} } = {}) {
   assert.ok(outputArg && image, 'Supply a new private output directory and checked native build image');
   const output = resolve(outputArg), project = `fogd-m11c-identity-${randomUUID().slice(0, 8)}`;
   await mkdir(output, { mode: 0o700 });
@@ -20,7 +20,7 @@ export async function fixture(outputArg, image, { observerImage = 'fogd-runtime:
   const native = (name, enabled = true, selected = images.native.id) => ({ image: selected, entrypoint: ['/out/celld'],
     command: ['--listen', '0.0.0.0:8080', '--internal-listen', '0.0.0.0:8081', '--advertise', `${name}:8081`],
     environment: { ...bucket, AWS_ENDPOINT_URL: bucket.S3_ENDPOINT, CELLD_BUCKET: `S3://identity-probe//slots///${['a', 'b'].includes(name) ? 'one' : name}/`,
-      CELLD_NODE: name, CELLD_WATCH: '/var/lib/celld/state',
+      CELLD_NODE: name, CELLD_CLOUD: '0', CELLD_WATCH: '/var/lib/celld/state',
       ...(enabled ? { CELLD_RUNTIME_IDENTITY_LISTEN: '0.0.0.0:8082' } : {}) },
     volumes: [`node-${name}:/var/lib/celld`], depends_on: { init: { condition: 'service_completed_successfully' } },
     mem_limit: '512m', cpus: 1 });
@@ -45,11 +45,13 @@ export async function fixture(outputArg, image, { observerImage = 'fogd-runtime:
     }
   }
   const file = join(output, 'compose.json');
-  await writeFile(file, JSON.stringify({ services, networks: { default: { ipam: { config: [{ subnet: process.env.FOGD_IDENTITY_PROBE_SUBNET || '10.252.225.0/24' }] } } }, volumes: Object.fromEntries(['bucket', 'node-a', 'node-b', 'node-disabled', 'node-older'].map(v => [v, {}])) }), { mode: 0o600 });
+  const config = { services, networks: { default: { ipam: { config: [{ subnet: process.env.FOGD_IDENTITY_PROBE_SUBNET || '10.252.225.0/24' }] } } }, volumes: Object.fromEntries(['bucket', 'node-a', 'node-b', 'node-disabled', 'node-older'].map(v => [v, {}])) };
+  await configure({ config, images, native, bucket });
+  await writeFile(file, JSON.stringify(config), { mode: 0o600 });
   const compose = args => execute('docker', ['compose', '-f', file, '-p', project, ...args]);
   const node = code => compose(['exec', '-T', 'observer', 'node', '--input-type=module', '-e', code]);
   const save = (name, value) => writeFile(join(output, `${name}.json`), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  return { output, project, compose, node, save, images };
+  return { output, project, compose, node, save, images, expectedVolumes: Object.keys(config.volumes).length };
 }
 
 export async function finishFixture(probe, failed) {
@@ -60,7 +62,7 @@ export async function finishFixture(probe, failed) {
   finally { await probe.compose(['down']); }
   const volumes = await inventory();
   assert.deepEqual(volumes, before, 'Cleanup must retain every volume, including after partial setup');
-  if (!failed) assert.equal(volumes.length, 5);
+  if (!failed) assert.equal(volumes.length, probe.expectedVolumes);
   assert.equal((await execute('docker', ['ps', '-aq', '--filter', filter])).trim(), '');
   assert.equal((await execute('docker', ['network', 'ls', '-q', '--filter', filter])).trim(), '');
   await probe.save('cleanup', { stopped: true, retainedVolumes: volumes });

@@ -4,20 +4,21 @@ import { Readable } from 'node:stream';
 import { GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { RuntimeIdentity } from './runtime-identity.mjs';
 import { CronRuntime } from './cron-runtime.mjs';
+import { storageOrigin } from './runtime-identity-proof.mjs';
 
 export function backendCronRuntime(backend, profile) {
   const identity = backendRuntimeIdentity(backend, profile);
   return new CronRuntime({ run: (slot, args) => backend.run(slot, args),
-    inspect: node => backend.deployment(node), verify: slot => identity.verify(slot) });
+    inspect: node => backend.deployment(node), verify: slot => identity.verify(slot), verifyBootstrap: slot => identity.bootstrap(slot) });
 }
 
 // Explicit experimental composition; the default Backend does not enable cron.
 export function backendRuntimeIdentity(backend, profile) {
   const expected = structuredClone(profile);
   return new RuntimeIdentity({ profile: expected,
-    async identify(host) {
+    async identify(host, challenge) {
       const signal = AbortSignal.timeout(5000);
-      const response = await fetch(`http://${host}:8082/runtime/identity`, { redirect: 'error', signal });
+      const response = await fetch(`http://${host}:8082/runtime/identity?challenge=${encodeURIComponent(challenge)}`, { redirect: 'error', signal });
       if (!response.ok) { await response.body?.cancel(); throw new Error('Runtime identity endpoint refused'); }
       return jsonBody(Readable.fromWeb(response.body), 2048, signal);
     },
@@ -27,7 +28,8 @@ export function backendRuntimeIdentity(backend, profile) {
       return hash.digest('hex');
     },
     async members(slot) {
-      if (backend.env.FOGD_BUCKET !== expected.bucket) throw new Error('Controller bucket mismatch');
+      if (backend.env.FOGD_BUCKET !== expected.bucket || storageOrigin(backend.env.S3_ENDPOINT) !== storageOrigin(expected.storage.endpoint) ||
+        backend.env.AWS_REGION !== expected.storage.region) throw new Error('Controller storage identity mismatch');
       const Bucket = backend.env.FOGD_BUCKET, Prefix = slot.prefix ? `${slot.prefix}/nodes/` : 'nodes/';
       const signal = AbortSignal.timeout(5000);
       const listed = await backend.s3.send(new ListObjectsV2Command({ Bucket, Prefix, MaxKeys: 256 }), { abortSignal: signal });
@@ -36,7 +38,7 @@ export function backendRuntimeIdentity(backend, profile) {
         if (typeof object.Key !== 'string' || !object.Key.startsWith(Prefix)) throw new Error('Invalid node inventory key');
         const result = await backend.s3.send(new GetObjectCommand({ Bucket, Key: object.Key }), { abortSignal: signal });
         const lease = await jsonBody(result.Body, 65536, signal);
-        return { key: object.Key.slice(Prefix.length), node: lease.node, addr: lease.addr, processKey: lease.probe_public_key };
+        return { key: object.Key.slice(Prefix.length), node: lease.node, addr: lease.addr, processKey: lease.probe_public_key, expiresMs: lease.expires_ms };
       }));
     },
   });

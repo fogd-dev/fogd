@@ -1,5 +1,9 @@
 # Early native runtime identity
 
+This page describes the historical schema 1 patch and lab qualification. The
+[signed schema 2 binding](celld-runtime-binding.md) extends it with storage-origin
+and lease-key claims; the current caller requires that protocol.
+
 The [identity patch](../../patches/celld-0.6.2-runtime-identity.patch) provides
 read-only process metadata before celld loads its first deployment. It does not
 enable cron admission or enforce a qualified-runtime policy in fogd.
@@ -75,10 +79,12 @@ The [caller policy foundation](../cron-runtime-policy.md) verifies a supplied
 binary profile before bootstrap and every cron command, including info. Its
 bounded native profile covers app-free bootstrap and an empty held cron cell.
 A supplied profile is policy, not qualification of scheduled applications.
-Storage endpoint binding, immutable topology/runtime lifecycle and host-side
-preboot recovery checks remain open. A read-only observation is not an atomic
-fence against process replacement or a new fleet member.
+The [schema 2 release-profile foundation](celld-runtime-binding.md) adds storage
+origin/region binding and signed lease-key possession checks. Immutable topology,
+runtime lifecycle fencing and host-side preboot recovery checks remain open.
+A read-only observation is not an atomic fence against replacement or a new member.
 
-The `lab` metadata profile does not transfer previous cron lifecycle evidence to
-this new binary. Shipped-image packaging, release-build qualification and the
-ordinary scoped admission gates in [M11c](../m11c.md) remain open.
+The historical `lab` metadata profile does not transfer previous cron lifecycle
+evidence to either new binary. The release-profile foundation has app-free
+evidence only; shipped-runtime selection, scheduled application qualification and
+ordinary scoped admission remain open [M11c](../m11c.md) gates.

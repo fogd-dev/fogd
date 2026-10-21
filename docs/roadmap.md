@@ -151,8 +151,12 @@ also covers the held survivor and both source schedules. Normal scoped cron
 admission and release-bound runtime qualification remain open. The
 [early identity primitive](patches/celld-runtime-identity.md) has bounded native
 metadata evidence. The [caller policy](cron-runtime-policy.md) now has native
-app-free refusal/bootstrap evidence. Runtime lifecycle fencing, restored preboot
-checks and scheduled application qualification on the new binary remain open.
+app-free refusal/bootstrap evidence. The
+[signed binding foundation](patches/celld-runtime-binding.md) adds storage-origin
+and region claims, fresh lease-key possession proofs and separate bootstrap/live
+command checks, with app-free evidence on a fat-LTO release build. Runtime
+lifecycle fencing, restored preboot checks, shipped-runtime selection and scheduled
+application qualification on this binary remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

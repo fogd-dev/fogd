@@ -1,0 +1,559 @@
+diff --git a/crates/celld/main.rs b/crates/celld/main.rs
+index 69d8945..1cb727d 100644
+--- a/crates/celld/main.rs
++++ b/crates/celld/main.rs
+@@ -3629,6 +3629,12 @@ async fn async_main(telemetry_config: Option<celld::telemetry::Config>) -> anyho
+         }
+         Action::Run(settings) => settings,
+     };
++    let identity_listen =
++        celld::env_vars::optional::<std::net::SocketAddr>("CELLD_RUNTIME_IDENTITY_LISTEN")?;
++    anyhow::ensure!(
++        identity_listen.is_none() || (settings.dev_store.is_none() && !settings.control_plane),
++        "CELLD_RUNTIME_IDENTITY_LISTEN requires standalone S3 storage, not the local development store or control plane"
++    );
+     // Operators need the applied worker count to verify CELLD_TOKIO_THREADS;
+     // a count of process threads also includes unrelated, lazily started
+     // thread pools, so it cannot stand in for this value.
+@@ -3743,17 +3749,24 @@ async fn async_main(telemetry_config: Option<celld::telemetry::Config>) -> anyho
+     });
+     let (fence_tx, mut fence_rx) = mpsc::unbounded_channel();
+     let node = std::env::var("CELLD_NODE").unwrap_or_else(|_| random_node_session_id());
+-    let identity_listen =
+-        celld::env_vars::optional::<std::net::SocketAddr>("CELLD_RUNTIME_IDENTITY_LISTEN")?;
+-    anyhow::ensure!(
+-        identity_listen.is_none() || settings.dev_store.is_none(),
+-        "CELLD_RUNTIME_IDENTITY_LISTEN requires S3 storage, not the local development store"
+-    );
+-    let _runtime_identity =
+-        celld::runtime_identity::start(identity_listen, &node, settings.bucket.as_deref()).await?;
+     let clean_reload_node = node.clone();
+     celld::control_plane::install_reexec_node_session_id(&node)?;
+     let probe_public_key = celld::peer_probe::install_signer()?;
++    let identity_endpoint = settings
++        .endpoint
++        .clone()
++        .or_else(celld::bucket::resolve_env_endpoint);
++    let _runtime_identity = celld::runtime_identity::start(
++        identity_listen,
++        celld::runtime_identity::IdentityContext {
++            node: &node,
++            bucket_spec: settings.bucket.as_deref(),
++            endpoint: identity_endpoint.as_deref(),
++            region: &settings.region,
++            probe_public_key: &probe_public_key,
++        },
++    )
++    .await?;
+     // Cold routes are object-store latency, not compute: the default is
+     // derived from the thread count but far above it. See
+     // `machine::default_max_activations` for the measurements.
+diff --git a/crates/celld/peer_probe.rs b/crates/celld/peer_probe.rs
+index 25dcb35..2d7e7e2 100644
+--- a/crates/celld/peer_probe.rs
++++ b/crates/celld/peer_probe.rs
+@@ -236,3 +236,80 @@ fn hex_nibble(value: u8) -> anyhow::Result<u8> {
+         _ => Err(anyhow!("hexadecimal must be lowercase ASCII")),
+     }
+ }
++
++// Distinct from peer-probe and operator-request domains: identity claims cannot
++// be replayed as routing or mutation authority.
++pub(crate) fn installed_public_key() -> anyhow::Result<String> {
++    Ok(INSTALLED_SIGNER
++        .get()
++        .context("peer probe signer is not installed")?
++        .public_key_hex())
++}
++
++pub(crate) fn runtime_identity_proof(
++    challenge: &str,
++    fields: &[String; 5],
++) -> anyhow::Result<(String, String)> {
++    let message = runtime_identity_payload(challenge, fields)?;
++    let signer = INSTALLED_SIGNER
++        .get()
++        .context("peer probe signer is not installed")?;
++    Ok((
++        signer.public_key_hex(),
++        encode_hex(&signer.key.sign(message.as_bytes()).to_bytes()),
++    ))
++}
++
++fn runtime_identity_payload(challenge: &str, fields: &[String; 5]) -> anyhow::Result<String> {
++    validate_challenge(challenge)?;
++    Ok(format!(
++        "cells-runtime-identity-v2\n{challenge}\n{}",
++        serde_json::to_string(fields)?
++    ))
++}
++
++#[cfg(test)]
++mod runtime_identity_tests {
++    use super::*;
++
++    #[test]
++    fn signature_matches_cross_language_vector_and_binds_claims() {
++        let signer = PeerProbeSigner::from_secret([7_u8; 32]);
++        let fields = [
++            "a".repeat(64),
++            "b".repeat(64),
++            "c".repeat(64),
++            "d".repeat(64),
++            "27a18c4142f414227b37507c1da6e90ee6d73565eea7686152c067e2ee262ba7".to_string(),
++        ];
++        let challenge = "1".repeat(64);
++        let message = runtime_identity_payload(&challenge, &fields).unwrap();
++        let signature = signer.key.sign(message.as_bytes());
++        assert_eq!(
++            signer.public_key_hex(),
++            "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c"
++        );
++        assert_eq!(encode_hex(&signature.to_bytes()), "22a4c58f8211ecfae6c372e79b911329965fedae6964414c40f5614dbf69985ca95b688635fd95dc877be9be685e658a164e40a29c1e6d604ef8fd0d3ba7a70a");
++        let public = signer.key.verifying_key();
++        public.verify(message.as_bytes(), &signature).unwrap();
++        let mut changed = fields.clone();
++        changed[3] = "f".repeat(64);
++        assert!(public
++            .verify(
++                runtime_identity_payload(&challenge, &changed)
++                    .unwrap()
++                    .as_bytes(),
++                &signature
++            )
++            .is_err());
++        assert!(public
++            .verify(
++                runtime_identity_payload(&"2".repeat(64), &fields)
++                    .unwrap()
++                    .as_bytes(),
++                &signature
++            )
++            .is_err());
++        assert!(runtime_identity_payload("invalid", &fields).is_err());
++    }
++}
+diff --git a/crates/celld/runtime_identity.rs b/crates/celld/runtime_identity.rs
+index 46d8652..b992141 100644
+--- a/crates/celld/runtime_identity.rs
++++ b/crates/celld/runtime_identity.rs
+@@ -15,6 +15,7 @@ use sha2::{Digest, Sha256};
+ use std::convert::Infallible;
+ use std::io::Read;
+ use std::net::SocketAddr;
++use std::sync::Arc;
+ use std::time::Duration;
+ use tokio::net::TcpListener;
+ use tokio::task::{JoinHandle, JoinSet};
+@@ -35,34 +36,59 @@ impl Drop for IdentityServer {
+     }
+ }
+ 
+-/// Opt-in process identity, including before the first deployment is loaded.
+-/// Digests identify inputs; qualification is the caller's separate policy.
+-/// Namespace form is `s3://bucket/prefix`, or `s3://bucket/` without a prefix.
++/// Resolved standalone S3 settings and this process's installed probe authority.
++pub struct IdentityContext<'a> {
++    pub node: &'a str,
++    pub bucket_spec: Option<&'a str>,
++    pub endpoint: Option<&'a str>,
++    pub region: &'a str,
++    pub probe_public_key: &'a str,
++}
++
++/// Opt-in identity before first deployment; callers separately qualify binaries.
++/// The storage digest covers [normalized namespace, resolved endpoint, region].
+ pub async fn start(
+     listen: Option<SocketAddr>,
+-    node: &str,
+-    bucket_spec: Option<&str>,
++    context: IdentityContext<'_>,
+ ) -> anyhow::Result<Option<IdentityServer>> {
+     let Some(listen) = listen else {
+         return Ok(None);
+     };
+-    anyhow::ensure!(!node.is_empty(), "runtime identity requires a node ID");
+-    let spec = bucket_spec.context("runtime identity requires a storage namespace")?;
+-    let (backend, bucket, prefix) = crate::bucket::split_spec(spec);
+     anyhow::ensure!(
+-        backend == crate::bucket::StorageBackend::S3 && !bucket.is_empty(),
+-        "runtime identity requires an S3 namespace"
++        !context.node.is_empty(),
++        "runtime identity requires a node ID"
++    );
++    let namespace = namespace(context.bucket_spec)?;
++    let storage = storage_digest(&namespace, context.endpoint, context.region)?;
++    let process_key = process_key_digest(context.probe_public_key)?;
++    anyhow::ensure!(
++        context.probe_public_key == crate::peer_probe::installed_public_key()?,
++        "runtime identity must use the installed probe authority"
+     );
+     let executable = tokio::task::spawn_blocking(executable_digest).await??;
+-    let payload = serde_json::to_vec(&serde_json::json!({
+-        "schema": 1,
+-        "binarySha256": executable,
+-        "nodeSha256": digest(node.as_bytes()),
+-        "namespaceSha256": digest(format!("s3://{bucket}/{}", prefix.trim_end_matches('/')).as_bytes()),
+-    }))?;
++    let node = digest(context.node.as_bytes());
++    let namespace = digest(namespace.as_bytes());
++    let fields = [
++        executable.clone(),
++        node.clone(),
++        namespace.clone(),
++        storage.clone(),
++        process_key.clone(),
++    ];
++    let payload = Arc::new(IdentityDocument {
++        fields,
++        value: serde_json::json!({
++            "schema": 2,
++            "binarySha256": executable,
++            "nodeSha256": node,
++            "namespaceSha256": namespace,
++            "storageSha256": storage,
++            "processKeySha256": process_key,
++        }),
++    });
+     let listener = TcpListener::bind(listen).await?;
+     let address = listener.local_addr()?;
+-    let task = tokio::spawn(serve(listener, Bytes::from(payload)));
++    let task = tokio::spawn(serve(listener, payload));
+     tracing::info!(event = "runtime_identity", listen = %address, "read-only runtime identity listening");
+     Ok(Some(IdentityServer {
+         task,
+@@ -71,6 +97,49 @@ pub async fn start(
+     }))
+ }
+ 
++fn namespace(spec: Option<&str>) -> anyhow::Result<String> {
++    let spec = spec.context("runtime identity requires a storage namespace")?;
++    let (backend, bucket, prefix) = crate::bucket::split_spec(spec);
++    anyhow::ensure!(
++        backend == crate::bucket::StorageBackend::S3 && !bucket.is_empty(),
++        "runtime identity requires an S3 namespace"
++    );
++    Ok(format!("s3://{bucket}/{}", prefix.trim_end_matches('/')))
++}
++
++fn storage_digest(namespace: &str, endpoint: Option<&str>, region: &str) -> anyhow::Result<String> {
++    let endpoint = endpoint.context("runtime identity requires an explicit S3 endpoint")?;
++    let url = url::Url::parse(endpoint).context("invalid runtime identity S3 endpoint")?;
++    anyhow::ensure!(
++        matches!(url.scheme(), "http" | "https")
++            && url.host_str().is_some()
++            && url.username().is_empty()
++            && url.password().is_none()
++            && url.query().is_none()
++            && url.fragment().is_none()
++            && url.path() == "/",
++        "runtime identity requires an HTTP(S) origin without credentials"
++    );
++    anyhow::ensure!(!region.is_empty(), "runtime identity requires a region");
++    let origin = url.origin().ascii_serialization();
++    Ok(digest(&serde_json::to_vec(&[
++        namespace,
++        origin.as_str(),
++        region,
++    ])?))
++}
++
++fn process_key_digest(key: &str) -> anyhow::Result<String> {
++    anyhow::ensure!(
++        key.len() == 64
++            && key
++                .bytes()
++                .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()),
++        "runtime identity requires the installed probe public key"
++    );
++    Ok(digest(key.as_bytes()))
++}
++
+ fn digest(bytes: &[u8]) -> String {
+     format!("{:x}", Sha256::digest(bytes))
+ }
+@@ -90,7 +159,33 @@ fn executable_digest() -> anyhow::Result<String> {
+     Ok(format!("{:x}", hash.finalize()))
+ }
+ 
+-async fn serve(listener: TcpListener, payload: Bytes) {
++struct IdentityDocument {
++    value: serde_json::Value,
++    fields: [String; 5],
++}
++
++impl IdentityDocument {
++    fn response(&self, query: Option<&str>) -> anyhow::Result<Bytes> {
++        let Some(query) = query else {
++            return Ok(Bytes::from(serde_json::to_vec(&self.value)?));
++        };
++        let mut pairs = url::form_urlencoded::parse(query.as_bytes());
++        let (name, challenge) = pairs.next().context("identity challenge missing")?;
++        anyhow::ensure!(
++            name == "challenge" && pairs.next().is_none(),
++            "unexpected identity query"
++        );
++        let (public_key, signature) =
++            crate::peer_probe::runtime_identity_proof(&challenge, &self.fields)?;
++        let mut value = self.value.clone();
++        value["challenge"] = challenge.as_ref().into();
++        value["publicKey"] = public_key.into();
++        value["signature"] = signature.into();
++        Ok(Bytes::from(serde_json::to_vec(&value)?))
++    }
++}
++
++async fn serve(listener: TcpListener, payload: Arc<IdentityDocument>) {
+     let mut connections = JoinSet::new();
+     loop {
+         let (stream, _) = match listener.accept().await {
+@@ -109,7 +204,7 @@ async fn serve(listener: TcpListener, payload: Bytes) {
+         connections.spawn(async move {
+             let service = service_fn(move |request: Request<hyper::body::Incoming>| {
+                 let body = body.clone();
+-                async move { Ok::<_, Infallible>(reply(&request, body)) }
++                async move { Ok::<_, Infallible>(reply(&request, &body)) }
+             });
+             let _ = tokio::time::timeout(
+                 REQUEST_TIMEOUT,
+@@ -124,7 +219,7 @@ async fn serve(listener: TcpListener, payload: Bytes) {
+     }
+ }
+ 
+-fn reply<B>(request: &Request<B>, identity: Bytes) -> Response<Full<Bytes>> {
++fn reply<B>(request: &Request<B>, identity: &IdentityDocument) -> Response<Full<Bytes>> {
+     let (status, body) = if request.uri().path() != PATH {
+         (
+             StatusCode::NOT_FOUND,
+@@ -135,13 +230,14 @@ fn reply<B>(request: &Request<B>, identity: Bytes) -> Response<Full<Bytes>> {
+             StatusCode::METHOD_NOT_ALLOWED,
+             Bytes::from_static(b"{\"error\":\"get_required\"}"),
+         )
+-    } else if request.uri().query().is_some() {
+-        (
+-            StatusCode::BAD_REQUEST,
+-            Bytes::from_static(b"{\"error\":\"query_not_allowed\"}"),
+-        )
+     } else {
+-        (StatusCode::OK, identity)
++        match identity.response(request.uri().query()) {
++            Ok(body) => (StatusCode::OK, body),
++            Err(_) => (
++                StatusCode::BAD_REQUEST,
++                Bytes::from_static(b"{\"error\":\"invalid_challenge\"}"),
++            ),
++        }
+     };
+     let mut response = Response::builder().status(status);
+     if status == StatusCode::METHOD_NOT_ALLOWED {
+@@ -159,9 +255,32 @@ fn reply<B>(request: &Request<B>, identity: Bytes) -> Response<Full<Bytes>> {
+ mod tests {
+     use super::*;
+ 
++    const PROBE_KEY: &str = "1111111111111111111111111111111111111111111111111111111111111111";
++    fn installed_key() -> &'static str {
++        static KEY: std::sync::OnceLock<String> = std::sync::OnceLock::new();
++        KEY.get_or_init(|| crate::peer_probe::install_signer().unwrap())
++    }
++    async fn start_test(
++        listen: Option<SocketAddr>,
++        node: &str,
++        bucket_spec: Option<&str>,
++    ) -> anyhow::Result<Option<IdentityServer>> {
++        start(
++            listen,
++            IdentityContext {
++                node,
++                bucket_spec,
++                endpoint: Some("http://storage:9000"),
++                region: "us-east-1",
++                probe_public_key: installed_key(),
++            },
++        )
++        .await
++    }
++
+     #[tokio::test]
+     async fn opt_in_reports_running_binary_and_normalized_namespace() {
+-        let server = start(
++        let server = start_test(
+             Some("127.0.0.1:0".parse().unwrap()),
+             "node-a",
+             Some("S3://fogd//slots///one/"),
+@@ -174,9 +293,17 @@ mod tests {
+         assert_eq!(response.status(), StatusCode::OK);
+         assert_eq!(response.headers()["cache-control"], "no-store");
+         let value: serde_json::Value = response.json().await.unwrap();
+-        assert_eq!(value.as_object().unwrap().len(), 4);
+-        assert_eq!(value["schema"], 1);
++        assert_eq!(value.as_object().unwrap().len(), 6);
++        assert_eq!(value["schema"], 2);
+         assert_eq!(value["nodeSha256"], digest(b"node-a"));
++        assert_eq!(
++            value["processKeySha256"],
++            digest(installed_key().as_bytes())
++        );
++        assert_eq!(
++            value["storageSha256"],
++            "de3a0c24af2cc86e0df49a965250cc160629dd18205e4bbbcb651f6ae2ffed2d"
++        );
+         assert_eq!(value["namespaceSha256"], digest(b"s3://fogd/slots/one"));
+         assert_eq!(
+             value["binarySha256"],
+@@ -186,18 +313,20 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn disabled_listener_and_invalid_context_do_not_start_a_server() {
+-        assert!(start(None, "", None).await.unwrap().is_none());
+-        assert!(start(
++        assert!(start_test(None, "", None).await.unwrap().is_none());
++        assert!(start_test(
+             Some("127.0.0.1:0".parse().unwrap()),
+             "",
+             Some("s3://fogd/one")
+         )
+         .await
+         .is_err());
+-        assert!(start(Some("127.0.0.1:0".parse().unwrap()), "node-a", None)
+-            .await
+-            .is_err());
+-        assert!(start(
++        assert!(
++            start_test(Some("127.0.0.1:0".parse().unwrap()), "node-a", None)
++                .await
++                .is_err()
++        );
++        assert!(start_test(
+             Some("127.0.0.1:0".parse().unwrap()),
+             "node-a",
+             Some("gs://fogd/one")
+@@ -208,7 +337,7 @@ mod tests {
+ 
+     #[tokio::test]
+     async fn endpoint_rejects_other_methods_paths_queries_and_closes_on_drop() {
+-        let server = start(Some("127.0.0.1:0".parse().unwrap()), "node-b", Some("fogd"))
++        let server = start_test(Some("127.0.0.1:0".parse().unwrap()), "node-b", Some("fogd"))
+             .await
+             .unwrap()
+             .unwrap();
+@@ -257,7 +386,7 @@ mod tests {
+     #[tokio::test]
+     async fn slow_headers_are_bounded_and_capacity_returns_after_timeout() {
+         use tokio::io::{AsyncReadExt, AsyncWriteExt};
+-        let server = start(Some("127.0.0.1:0".parse().unwrap()), "node-c", Some("fogd"))
++        let server = start_test(Some("127.0.0.1:0".parse().unwrap()), "node-c", Some("fogd"))
+             .await
+             .unwrap()
+             .unwrap();
+@@ -290,4 +419,111 @@ mod tests {
+             .unwrap();
+         assert_eq!(response.status(), StatusCode::OK);
+     }
++    #[test]
++    fn storage_identity_binds_endpoint_region_and_namespace() {
++        let reference =
++            storage_digest("s3://fogd/one", Some("http://storage:9000"), "us-east-1").unwrap();
++        assert_eq!(
++            reference,
++            digest(br#"["s3://fogd/one","http://storage:9000","us-east-1"]"#)
++        );
++        assert_eq!(
++            reference,
++            storage_digest("s3://fogd/one", Some("HTTP://STORAGE:9000/"), "us-east-1").unwrap()
++        );
++        assert_ne!(
++            reference,
++            storage_digest("s3://fogd/two", Some("http://storage:9000"), "us-east-1").unwrap()
++        );
++        assert_ne!(
++            reference,
++            storage_digest("s3://fogd/one", Some("http://other:9000"), "us-east-1").unwrap()
++        );
++        assert_ne!(
++            reference,
++            storage_digest("s3://fogd/one", Some("http://storage:9000"), "other-region").unwrap()
++        );
++        assert!(storage_digest("s3://fogd/one", None, "us-east-1").is_err());
++        assert!(storage_digest("s3://fogd/one", Some("http://storage:9000"), "").is_err());
++        for endpoint in [
++            "ftp://storage",
++            "http://user:private-value@storage",
++            "http://storage/path",
++            "http://storage/?secret=value",
++            "http://storage/#fragment",
++        ] {
++            let error = storage_digest("s3://fogd/one", Some(endpoint), "us-east-1")
++                .unwrap_err()
++                .to_string();
++            assert!(!error.contains("private-value") && !error.contains("secret=value"));
++        }
++    }
++
++    #[test]
++    fn process_identity_binds_the_installed_public_key() {
++        assert_eq!(
++            process_key_digest(PROBE_KEY).unwrap(),
++            digest(PROBE_KEY.as_bytes())
++        );
++        assert_ne!(
++            process_key_digest(PROBE_KEY).unwrap(),
++            process_key_digest(&"2".repeat(64)).unwrap()
++        );
++        assert!(process_key_digest("").is_err());
++        assert!(process_key_digest("not-a-probe-key").is_err());
++    }
++    #[tokio::test]
++    async fn challenged_identity_is_signed_by_the_installed_authority() {
++        let server = start_test(
++            Some("127.0.0.1:0".parse().unwrap()),
++            "node-a",
++            Some("fogd/one"),
++        )
++        .await
++        .unwrap()
++        .unwrap();
++        let challenge = "a".repeat(64);
++        let response: serde_json::Value = reqwest::get(format!(
++            "http://{}{PATH}?challenge={challenge}",
++            server.address
++        ))
++        .await
++        .unwrap()
++        .json()
++        .await
++        .unwrap();
++        assert_eq!(response.as_object().unwrap().len(), 9);
++        assert_eq!(response["challenge"], challenge);
++        assert_eq!(response["publicKey"], installed_key());
++        assert_eq!(response["signature"].as_str().unwrap().len(), 128);
++        for query in [
++            "challenge=bad",
++            "challenge=",
++            "challenge=a&challenge=b",
++            "other=value",
++        ] {
++            let response = reqwest::get(format!("http://{}{PATH}?{query}", server.address))
++                .await
++                .unwrap();
++            assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        }
++    }
++    #[tokio::test]
++    async fn context_cannot_claim_another_process_authority() {
++        let mut other = installed_key().as_bytes().to_vec();
++        other[0] = if other[0] == b'0' { b'1' } else { b'0' };
++        let other = String::from_utf8(other).unwrap();
++        assert!(start(
++            Some("127.0.0.1:0".parse().unwrap()),
++            IdentityContext {
++                node: "node-a",
++                bucket_spec: Some("fogd/one"),
++                endpoint: Some("http://storage:9000"),
++                region: "us-east-1",
++                probe_public_key: &other,
++            }
++        )
++        .await
++        .is_err());
++    }
+ }

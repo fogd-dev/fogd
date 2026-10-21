@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
+
+import { verifyIdentityProof, storageOrigin } from '../../../packages/platform/src/runtime-identity-proof.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 
@@ -9,21 +11,26 @@ export async function observe(probe, host, path = '/runtime/identity', method = 
     console.log(JSON.stringify({status:r.status,cache:r.headers.get('cache-control'),body:await r.text()}));}
     catch(error) {console.log(JSON.stringify({unavailable:true,code:error.cause?.code||error.name}));}`));
 }
-export async function identity(probe, host, expectedBinary) {
-  const response = await observe(probe, host);
+export async function identity(probe, host, expectedBinary, { endpoint = 'http://minio:9000', region = 'us-east-1', namespace = 's3://identity-probe/slots/one' } = {}) {
+  const challenge = randomBytes(32).toString('hex');
+  const response = await observe(probe, host, `/runtime/identity?challenge=${challenge}`);
   assert.equal(response.status, 200);
   assert.equal(response.cache, 'no-store');
-  const value = JSON.parse(response.body);
-  assert.deepEqual(value, { schema: 1, binarySha256: expectedBinary,
-    nodeSha256: hash(host), namespaceSha256: hash('s3://identity-probe/slots/one') });
-  return value;
+  const proof = JSON.parse(response.body), value = verifyIdentityProof(proof, challenge);
+  assert.deepEqual(value, { schema: 2, binarySha256: expectedBinary,
+    nodeSha256: hash(host), namespaceSha256: hash(namespace),
+    storageSha256: hash(JSON.stringify([namespace, storageOrigin(endpoint), region])),
+    processKeySha256: hash(proof.publicKey) });
+  return proof;
 }
-export async function bucketSnapshot(probe) {
+
+export async function bucketSnapshot(probe, endpoint) {
+  const target = endpoint === undefined ? 'process.env.S3_ENDPOINT' : JSON.stringify(endpoint);
   return JSON.parse(await probe.node(`import {createRequire} from 'node:module';
     import {createHash} from 'node:crypto';import {bucketClient} from './packages/runtime/src/bucket.mjs';
     const require=createRequire('/app/packages/platform/src/backend.mjs');
     const {ListObjectsV2Command,GetObjectCommand}=require('@aws-sdk/client-s3');
-    const client=bucketClient(), Bucket=process.env.FOGD_BUCKET;
+    const client=bucketClient({...process.env,S3_ENDPOINT:${target}}), Bucket=process.env.FOGD_BUCKET;
     const listing=await client.send(new ListObjectsV2Command({Bucket}));
     if(listing.IsTruncated)throw Error('Unexpected truncated fixture bucket');
     const rows=await Promise.all((listing.Contents||[]).map(async({Key})=>{

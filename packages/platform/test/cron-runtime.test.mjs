@@ -224,3 +224,21 @@ test('snapshot reports an unconfirmed observation when identity is refused witho
     error.code === 'CRON_SNAPSHOT_UNCONFIRMED' && error.cause.code === 'CRON_RUNTIME_UNVERIFIED');
   assert.deepEqual(f.calls, []);
 });
+
+test('bootstrap preflight is a separate callback and never falls back to ordinary verification', async () => {
+  const f = fixture(); let ordinary = 0, bootstrap = 0;
+  f.adapter.verify = async () => { ordinary++; };
+  await assert.rejects(f.runtime.preflightBootstrap(slot), { code: 'CRON_RUNTIME_UNVERIFIED' });
+  f.adapter.verifyBootstrap = async () => { bootstrap++; };
+  await f.runtime.preflightBootstrap(slot);
+  assert.equal(ordinary, 0); assert.equal(bootstrap, 1); assert.deepEqual(f.calls, []);
+});
+
+test('cron commands never use the bootstrap verifier', async () => {
+  for (const verb of ['status', 'pause', 'resume']) {
+    const f = fixture(); let bootstrap = 0; delete f.adapter.verify;
+    f.adapter.verifyBootstrap = async () => { bootstrap++; };
+    await assert.rejects(f.runtime[verb](slot, 'refresh', 'approved'), { code: 'CRON_RUNTIME_UNVERIFIED' });
+    assert.equal(bootstrap, 0); assert.deepEqual(f.calls, []);
+  }
+});
