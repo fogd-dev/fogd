@@ -56,7 +56,9 @@ Use it only with the qualified patched runtime on every replica. Deployment
 versions identify application code, not the runtime binary; the transport cannot
 detect an older runtime before its first command. On an older harness, even an
 info request can arm a timer. Runtime provenance and stopped replacement remain
-operator prerequisites.
+operator prerequisites. The separate [early identity candidate](celld-runtime-identity.md)
+provides metadata before first deployment, but the transport does not yet enforce
+it and previous cron receipts do not qualify that new binary.
 
 The [native transport profile](../evidence/m11c-cron-transport.json) exercises
 these checks on a fresh two-node fleet, including empty-bootstrap and unapproved

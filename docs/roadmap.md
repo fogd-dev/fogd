@@ -148,7 +148,10 @@ with the same executable sources as the retirement profile. The
 covers cron/queue survivors, isolated replacement capacity and zero-live restore.
 A [two-cron retirement/source-restore profile](retirement.md#retirement-beside-another-scheduled-app)
 also covers the held survivor and both source schedules. Normal scoped cron
-admission and release-bound runtime qualification remain open.
+admission and release-bound runtime qualification remain open. The
+[early identity primitive](patches/celld-runtime-identity.md) has bounded native
+metadata evidence; caller enforcement and cron qualification on the new binary
+remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

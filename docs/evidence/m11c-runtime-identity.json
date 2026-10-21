@@ -1,0 +1,428 @@
+{
+  "project": "fogd-m11c-identity-e3222757",
+  "images": {
+    "native": {
+      "tag": "fogd-celld-identity-checks2:local",
+      "id": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    "observer": {
+      "tag": "fogd-runtime:cron-retirement-candidate6",
+      "id": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+    },
+    "older": {
+      "tag": "fogd-celld-cron-controls-build5:local",
+      "id": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc"
+    },
+    "minio": {
+      "tag": "fogd-minio:local",
+      "id": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+    }
+  },
+  "binaries": {
+    "a": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+    "b": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6"
+  },
+  "identities": [
+    {
+      "binarySha256": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+      "namespaceSha256": "31b8ab989062c35d0b142d4b694ccf7e4cc31a63f0c48031913973e39418b86b",
+      "nodeSha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "schema": 1
+    },
+    {
+      "binarySha256": "4ae98353ce37d1f27de55c805ca2bb9d936e960fc996dbcf64f3c8a38225d1b6",
+      "namespaceSha256": "31b8ab989062c35d0b142d4b694ccf7e4cc31a63f0c48031913973e39418b86b",
+      "nodeSha256": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+      "schema": 1
+    }
+  ],
+  "negative": {
+    "disabled": {
+      "unavailable": true,
+      "code": "ECONNREFUSED"
+    },
+    "older": {
+      "unavailable": true,
+      "code": "ECONNREFUSED"
+    }
+  },
+  "http": {
+    "outcomes": [
+      {
+        "path": "/state",
+        "method": "GET",
+        "status": 404,
+        "cache": "no-store",
+        "body": "{\"error\":\"not_found\"}"
+      },
+      {
+        "path": "/runtime/identity",
+        "method": "POST",
+        "status": 405,
+        "cache": "no-store",
+        "body": "{\"error\":\"get_required\"}"
+      },
+      {
+        "path": "/runtime/identity?x=1",
+        "method": "GET",
+        "status": 400,
+        "cache": "no-store",
+        "body": "{\"error\":\"query_not_allowed\"}"
+      }
+    ],
+    "slow": {
+      "healthyStatus": 200,
+      "closedAfterMs": 5013.362169
+    }
+  },
+  "before": [
+    {
+      "key": "slots/disabled/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/older/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/one/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    }
+  ],
+  "after": [
+    {
+      "key": "slots/disabled/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/older/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    },
+    {
+      "key": "slots/one/wake/format.json",
+      "sha256": "0b0a51ca69f81b9b374767da7a28f0721a61251140339f82e3f9da3c55bb871b"
+    }
+  ],
+  "startupRefusals": {
+    "invalid": {
+      "state": "exited",
+      "exitCode": 1
+    },
+    "devstore": {
+      "state": "exited",
+      "exitCode": 1
+    }
+  },
+  "scope": "Early native metadata only; no deployments or cron commands. Does not qualify release binding, restored startup, mixed runtimes, or cron admission.",
+  "schema": 1,
+  "profile": "local Linux arm64 Docker; lab native build; never-deployed namespaces",
+  "baseCommit": "bdd828e2b520c35a343955e0e8107bfd2ac3d604",
+  "nativeSource": {
+    "baseCommit": "90b43017241f81189453d326d05948f388b34652",
+    "buildImage": "fogd-celld-identity-checks2:local",
+    "sourceFiles": {
+      "Cargo.lock": "d6a17422788aa910ba76bed9cf59ac15767f93fe107ebdb336954d0e9efe052b",
+      "Cargo.toml": "cd646722886788aa416f6c772fc1d2d5364ce629f1aa4610ad8a7010b914e029",
+      "crates/celld/Cargo.toml": "f09c37b96e516a0440abcca1e221c6b3282b9fbe318c6df55ea5d6fd274f6838",
+      "crates/celld/actor.rs": "c2d3858bd223f8fe954b7042c57f5e2cf5abd600964ccb17cee691a4ce78989d",
+      "crates/celld/actor/effects.rs": "6d0fa369ddea4e249c1d7639822d327f2b63f4b432995aa759b72c8c56a6cc16",
+      "crates/celld/actor/local_request.rs": "de26a9de3d736a0d46a6dfa6a77cf5545600cdea582b08086a1910ecaf1912c9",
+      "crates/celld/actor/production.rs": "43799293ced91cc97915c17a81115c1248b0724db75b4e0475f95b19059f6b70",
+      "crates/celld/assets.rs": "18b55117bd46f9e18d867ec97c1355e1cb424ca1573adf2a9f66c76e94c925b6",
+      "crates/celld/asyncrt.rs": "073e9bd606ae9bdd1e39b808c145c1e7424c9d1fd80a2b0e61a96dccb74163b2",
+      "crates/celld/bucket.rs": "5f65b6fad8f2d455d9be02ee9004ac19568244500bd9bb0dd1552ecf5f01ab46",
+      "crates/celld/cell_cli.rs": "07b0357041e4286ad9c3a58ab12df24a29faa9011cf97c913898bc11266734a8",
+      "crates/celld/cell_dispatch.rs": "a1e3ab12cc3b78850684fa6c9757c89e0882abdf990664ee1e7e6d600543d240",
+      "crates/celld/cell_host.rs": "158f65898225b778d2f4bb0922295999dea211c87ef3dafcf081bfb2f226bcdb",
+      "crates/celld/cell_runtime.rs": "71559dc0b89efb8687f07c6bba8fb9e55b49853510b3c5bdbf6718c9f4b65e58",
+      "crates/celld/clean_reload.rs": "32d97c35c0206399609a90b4052ce9f3b62cbe1390955f34b9edf2e897a90149",
+      "crates/celld/cli_options.rs": "ef1a111987016029de7ad921840c4afda82b100bd512024aa6cdf0fc3c12b6e0",
+      "crates/celld/cli_output.rs": "e5d6668d45b357db322d2fb331479a0c44fbccee730dd1ca1f2193d0b044825b",
+      "crates/celld/container.rs": "f901db47ff4de3dbae348bac49faa6d7b220cfd235319092f89911bf7f92935e",
+      "crates/celld/control_plane.rs": "13b4d6d2a9ee62a7db0ae6a3b02fccd17550d41f70de7ae6a12a9844f6d4fe30",
+      "crates/celld/cron_cli.rs": "a2b81d53a98b0dbde4eeb5190ef407df3aece201395a827d5aba84cf1012a027",
+      "crates/celld/d1_cli.rs": "bde32e1e5d3b9ab5d9078d76c35e5b42a5b6729a07843f9be89ea664d411fe39",
+      "crates/celld/dead_node_gc.rs": "4b243a98b988f1da8179148c539b870f0c7cb98bbf2d75387e01aa72ca89c8a7",
+      "crates/celld/deploy.rs": "7e018b7ae952e191bb3ca7a7e3b4bde2b94f4828ecf831baf04441b68a4f579c",
+      "crates/celld/deploy/python.rs": "731dea3ff77028de4bb8b1e8f2daeb6e050476dcc287d3bbc1dd93a85184863d",
+      "crates/celld/dev.rs": "829ea2e7f02ec22c8376bc23406ffb2a80cbd3165bfa59164a4d75e4fd98c313",
+      "crates/celld/docker.rs": "32db4c445aec1150ee650ea8377fb32919ef083535bf353bfa28438a3a03ab61",
+      "crates/celld/drain_token.rs": "183660ba52d4a05e6e23dab3ff1a15923f4627f2ee138bd430c57b0ad534ea36",
+      "crates/celld/engine_api.rs": "54096f2a0bd95f54e272a5fb4356d2e800fe7aeb8fda868159c21145e3be3f10",
+      "crates/celld/env_vars.rs": "1117f6aca574c0a75ec2f20cbe17db07f689ee707a399af6329543ccb1ad11a5",
+      "crates/celld/facet_streams.rs": "f0fbe483f88107c79d3c184b3f28292223a0b457f014c6a0b2c3276a3748111f",
+      "crates/celld/fleet.rs": "07dc5c50299635ea10d6d97c92875c89465abdd0713cfb2c55dfc8c8081d3559",
+      "crates/celld/generation.rs": "a8f354593f275b23132dd46b087b1d639dd2a2c9558847e500cf86185ae2ec6c",
+      "crates/celld/host_channels.rs": "8728299790c2dae8df3dfb91bb6acdcfadbcb0c14d093bdb267efb645a77b1b5",
+      "crates/celld/host_services.rs": "5c185157239da0160c46978a3e50246c5f515361838d8e2fe83f4fd712624042",
+      "crates/celld/http_streams.rs": "d6f0113085d6c9ac0fd707d788c82bed8e2ffe1b6448e88a21cddf4128aedc1e",
+      "crates/celld/js.rs": "554d0a0c8a316c3433a68aed3ead93252a7e4b084dc1d36a2f924f941f4d2bc6",
+      "crates/celld/js/atob_btoa.js": "60bfdc50d287742c19cb24b2fcfd75ad1c5a8af1b15be13ff189ee5519663743",
+      "crates/celld/js/bootstrap.rs": "37749ccd8c58eece4a98b48fbfdd6a397b8501bd1806ff2aec94478ec6b8a51d",
+      "crates/celld/js/byte_streams.js": "060bee31d5c7ba2519bc08bad4493dff600a3c9849551069bc13ce0a8aca081b",
+      "crates/celld/js/cache.js": "3aedac1988f4b3ec88740a6116079716bca5296117d92fa46454c8192602eefa",
+      "crates/celld/js/compression_streams.js": "be3c46f1d06d2909575024e97b5990745f88ac133b9ed7f1e01a8b89a312fbc8",
+      "crates/celld/js/container.rs": "2af3f40f284983e58f93d08f7fa51ab42676f741a74efe50192a3eed576bd86e",
+      "crates/celld/js/crypto.js": "bcd8e83a9ac832d8a375dd2358967ce76b5ca784b864f82a55ffc87b6a716684",
+      "crates/celld/js/crypto.rs": "151130269b188fc715d310ed65e0e8143c21b1ed202185b52a0d889e6015d8cb",
+      "crates/celld/js/event_source.js": "85bcac33e02bd84b81a9ad2cae2f17aebdbcbe9bebd05bc10cff3df350ee55b5",
+      "crates/celld/js/harness.js": "c23e45b327397c4449c116c35767160ec2e839f5cab565cff0c25acc33b70e94",
+      "crates/celld/js/headers.js": "021943cd8e7387456b79343381d757024e987ab1bdc550fd6ebbb6afe65d961d",
+      "crates/celld/js/html_rewriter.js": "869d5ea28c523143fd491bb7596438d3a96edbce51a2912afdce158f9e9ed5c5",
+      "crates/celld/js/html_rewriter.rs": "8c06eb22864f19e102db5d5bd78af8b78dd7d501cd8d2d15f1ac29d251fcff92",
+      "crates/celld/js/identity_transform_stream.js": "9e2cd66dad6c831e4fb716c05bf3d71d498efe9be1110dbce7a2e60b352a0f11",
+      "crates/celld/js/input_gate_lifecycle.rs": "80f2539d3f82ced04e537c111d94fa15c5271db1edfbe4884d02a411a4e36a81",
+      "crates/celld/js/message_channel.js": "c993131a37937039c8c4365262a80a689778eb5927ea5e88e0065a2987f6bdf5",
+      "crates/celld/js/modules.rs": "9a16938eb5b2b50d32df41957507245dbbd59b63c28f906c825230cb19315e32",
+      "crates/celld/js/node_assert.js": "ed2bc3b0b63bbd091510a1e3553819ff485e799a76c87bd16fd4b97453b1263b",
+      "crates/celld/js/node_async_hooks.js": "03792d25b8f5ee6a3abe263a3e3c6314ee8e2464ca68a61049caf65f0f7b00f0",
+      "crates/celld/js/node_buffer.js": "eaaf741e69dc7fdea355e323bbf00b5faf0a1a10ed51f539d705245d7a4408e5",
+      "crates/celld/js/node_crypto.js": "bb7f6ace0b37c9808811fcc9a165f2118936ed142008c7a0b426051d405593e2",
+      "crates/celld/js/node_diagnostics_channel.js": "81e8a154739c03cc4ff2ddb640ceb205f8d171ddb9969fbfe972022366659b32",
+      "crates/celld/js/node_events.js": "d773f5eb3d3f74982291ace80b15824ede984396600a4f1353bf3fcabad3cd1f",
+      "crates/celld/js/node_os.js": "1eee337e67afa7b023c6b1113b496ca8b315b16512b21c78707898e55d71413c",
+      "crates/celld/js/node_path.js": "e4a42b7584d8a78f34639cb725d8f715460e58c1ca0aa26d38b19c213b92876f",
+      "crates/celld/js/node_stream.js": "67335ada17cbed6591a95623fbc6a278414d24120c4828f339eb476944330624",
+      "crates/celld/js/node_test.js": "6d2122ebed8a30154ed9f68f3e03f702b39a00d23544e0526836e3d7a8f9abcf",
+      "crates/celld/js/node_timers.js": "ffa837a043b3be8364bbee1679fcee944817865a31368c75db0667cea54015d7",
+      "crates/celld/js/node_util.js": "8d12333aa18b89ff3bda0536a1f12f0adfb6dccca86fdd2a8b0fedfa4a2c7592",
+      "crates/celld/js/r2_ops.rs": "84edf15f358fb573d103cd6b69451bd277a730d7592dbb6d1ae38ad598d74795",
+      "crates/celld/js/services/kv.js": "6588b315acb0e8ca19728ed027972ac5adde877f54b245ee8879346df60746bf",
+      "crates/celld/js/set_immediate.js": "5cc0571b74c4fe272fac0f9ad9c023efcd37afbdc8ec8b84494e71c3a10a8569",
+      "crates/celld/js/sockets.js": "09913a3b1a392570bf8c97af3c9cff413a4ced0a07f082f4c87e353444018413",
+      "crates/celld/js/storage_ops.rs": "33aae2a9d2c25dd46b5ef33e343a20a923e0bd90117e1cf67afe2137e2dcc010",
+      "crates/celld/js/streams.js": "f77b1f59b2abdfeb73d770e0f12952df3a80a014c9fd9db1b277131b47cd054b",
+      "crates/celld/js/tcp.rs": "50ad7cf288e660afa77a4d40deff1a85eda50008c7359421b3fdad06a271d8db",
+      "crates/celld/js/text_encoding.js": "cf26ff67d3c2a6fcfe24131c4d859f234532248328d990fd84ccf68227b7adfb",
+      "crates/celld/js/text_encoding_streams.js": "40bf701bb8b2b65c1a337a8969f6ecbc8ec11ce3242a9eef5337f5b94e093f69",
+      "crates/celld/js/url.js": "f67b1782ce676157516147bcc0109a33b874221e305d4ec2afd22a284ebe38b6",
+      "crates/celld/js/url_pattern.js": "0b541c296d0e35f7cf3e1c914785fcec373091ef685711884dc2e06e12c6a04e",
+      "crates/celld/js/url_search_params.js": "b75c92388a536c43dcc65fa9695af003eefb0cc48bb18c238561bda9a1d82dfb",
+      "crates/celld/js/v8_strings.rs": "632db9db6f60ba4fb27a09e76c85ced1afa8b1e7fe1ed670b1592f982fd36ed7",
+      "crates/celld/js/websocket.rs": "e4f9511d7238fa5297fb16277d7eebd3b7aa4a42946056234dd3f02ca54d4133",
+      "crates/celld/js/writable_stream.js": "6b871978c796ffdb6eca104358332e3834aa4945d16fd019754bb28c7b2a3584",
+      "crates/celld/js/zlib.rs": "aef6319ab2447cffab5b0d003e8d9c3ec72ecfb1b8ac21c8d0a1b671a80cc473",
+      "crates/celld/kv_blob.rs": "ad91ee8ad74aade0828e29576ad6773823de8aa9481f0e2a8b1cb6763317ad6e",
+      "crates/celld/kv_cli.rs": "b3d0c6144114d60d676abd16140963e4460e692dafe90c9c88189ec1ae09aa22",
+      "crates/celld/lib.rs": "f8bbae30592cb532e22ebc2f9e6bf101a9f097c510ac2fbe391fe154e3e33fc2",
+      "crates/celld/local_store.rs": "4d644ac8aa83dc6c9efa8089f440b1f28326a435029636fd7114dfcb348b9f90",
+      "crates/celld/ltx_repl.rs": "55b02a3845bc295c9994053ff32c172907c02c971eecc8afe44d0378c005928e",
+      "crates/celld/ltx_replication.rs": "4220a00de7278ea4656aa85a79397f70cc1a84530592d51b7d123f02ab6432a5",
+      "crates/celld/machine.rs": "c16073dec36bd12baa32ce45d01de432f6fb724262d9326cd80910f425269c4f",
+      "crates/celld/main.rs": "64b305997e85eacf22c20c32b0ba153e70f1841878742206b63e5d8bb452054b",
+      "crates/celld/main/cli.rs": "94bd315e3a9520d7ed2eb94e35851b0e0f9abd57570b9d82dc6016e003b16a3c",
+      "crates/celld/main/peer_tunnel.rs": "d36b61f89e00318bc0cc70de298d9c772690eade51f8f6bf38ee55a91a9124c3",
+      "crates/celld/main/websocket.rs": "9d1522bcce245b08aa5237dfd30e8e8b908617b29529e9057e853506d6ea20b0",
+      "crates/celld/memory.rs": "fc03f9dc96d7c4f8dc0d28ce136c771ef149458c7ac98a847dd0bb3b42052377",
+      "crates/celld/node_log.rs": "5452430a786db78735fc4a868fe15477c92651b56d424698cca4708db26d5404",
+      "crates/celld/node_log/recovery_progress.rs": "c49baf7db603a44b33f3ab5221d908a87179f315a0d8f35be996f2edb1edbab7",
+      "crates/celld/operator_cell.rs": "b2a2b74c529e8adc8508db8b53230dc24ae2d418c5b9a4a7f36d58ad15223911",
+      "crates/celld/otlp.rs": "d191f63ef4f6620dd34f4b2412bee1324024ca454da63844f89ee9c2b6923de5",
+      "crates/celld/ownership_store.rs": "ce552b7529a028c5589869345e994073b0e998da7cc7e747fc3b92d6e18a2e51",
+      "crates/celld/peer_auth.rs": "e2f914b95937fe740b7ebbbd48eb81cce03ba356056bd9e1bc0cfb1f43f5a408",
+      "crates/celld/peer_probe.rs": "553ebdc74e7bd9e077cf490c33d81205052665343b922ae9f87746a0839f1f71",
+      "crates/celld/pool.rs": "db6c210d5b5528d3ff715aa8f851cc7fb2f5203656e700476dcbe48543eb48ca",
+      "crates/celld/protocol.rs": "8baad5b52e1b518778131f251ced3ac6c931439e1309e30cc2eca811c1d06e13",
+      "crates/celld/python/fatal.js": "b083aa98300e7c69d322c3dbef3001e7bd3b7f09fb33ed935ea55bc96b201b8e",
+      "crates/celld/python/shims.js": "d9a74f165790ac5d07bd45b6be1698b79aa4d980bf7fffec6d59d8d33d32adff",
+      "crates/celld/python/worker.js": "65582cc299bece667ab83e9a7b9750eba84cc417b61b728cdff9af94ba845bc2",
+      "crates/celld/python/worker.py": "2e34da3a7891b4dc8a044549179cc26e5789f04233a8f98a71a08f0b69a27aea",
+      "crates/celld/queue_batching.rs": "584a413e3afe3f7f2707f1280ab0ffdd8a0ecd490b56a5f3019aacaee07a1cdf",
+      "crates/celld/queue_cli.rs": "1ba010588d6d1a87fe8b4bd50ee3ead6d507644e0ea3501a9a0d55d8a527f004",
+      "crates/celld/queue_policy.rs": "e8c31770a6d58478fbda5b7bfd724d3e456bd6f1923a352e9822720979198839",
+      "crates/celld/r2_cli.rs": "8f0b8640687d1289da495d2d334110365c09e803b39ba9f985024fe97a608f1e",
+      "crates/celld/r2_store.rs": "ad9dbcc82f9d0d5bb0adbc368f96b439c4263a1afb34d92dcdbae3124aceefa3",
+      "crates/celld/replication.rs": "c0ae0f3faf958346735667c4e5bef93711904aa528601cdc2c8e8c361273f049",
+      "crates/celld/runtime.rs": "8ee9d4a8cdf1ef55a9a8b88f213d00aaccb0eaf15b0d13a9f28ed88abeeb0611",
+      "crates/celld/runtime_identity.rs": "db58aceab8be373411c22afe8e03ec90ab0e0a8bd41495faa0470ddf9327a17a",
+      "crates/celld/startup.rs": "ffa05d2803689560cb13a403692fe6d5fbad54c9ff27e62d2a906d7a74ad52dc",
+      "crates/celld/storage.rs": "99ce80c6e273234787ca38367210ebca43baa9df49286dc911cd179f52b6dc2d",
+      "crates/celld/storage/wake_record.rs": "d921714b8798d902cc8e52c6c9f61e2ab66e639e6dccc338849bb43e01c7f9e7",
+      "crates/celld/telemetry.rs": "61ae749a649397634ccfbc301902c6872a429c841eae3861eb08238c94ee8958",
+      "crates/celld/tokio_select.rs": "fb330def498ae57d6a86838f2c7f739a5417ccfe8d62618823cbf8c0c4d9075e",
+      "crates/celld/wake.rs": "e51326d1cd216c86ddc35c2346e0677ac2867c90a10cc35d23755b9a7a8bb813",
+      "crates/celld/wake_entry.rs": "0d1b86b2af3091e47428f6ce529132f3e2b395a1e27c4d18d98c13a3456b2420",
+      "crates/celld/wake_format.rs": "7f0cd53a2b8eb7c6c6a3384ad898083038836a65e0d868e16627c5e10d404adf",
+      "crates/celld/ws_client.rs": "2233a44d754da797488147b7d35f2f74a0ba9e7948519d941e17df0dc707fc7b",
+      "crates/celld/ws_registry.rs": "3eb886bfac47f54996eb6c0b8331dfca4b5fb9742579e82532ff52a13fc2e067",
+      "crates/logic/Cargo.toml": "7beb337c73cf0688b8e3a0327933f48793c54fe46a77196dc5774460902d66ba",
+      "crates/logic/alarm.rs": "d6d85d890d0d0dceda5f8521a11dc215d36832833a0706a8269630014b2a7346",
+      "crates/logic/cache.rs": "8bdbf0b1f06edcb1e9d1fd6ccfe4493f860b9cca5a3435079dfaba861eb19830",
+      "crates/logic/cell.rs": "ea9d8ae877d4427ad45106db82528a333ad481169952f39b6a361e05223df445",
+      "crates/logic/cron.rs": "c4b5e5e240ba249da6228b4cdc0f7060d3e64213a236ba47247ee5fdd3d257b2",
+      "crates/logic/dead_node_reconciliation.rs": "1fee003cfd8152511ae6d2fa8df53832f96557eb34ecc94cf485d81c75ed0406",
+      "crates/logic/drain.rs": "4204ab321ffc43fcb939672ee6ad0f2c60ee593aca6cabe815ecdea97fa0e248",
+      "crates/logic/durability.rs": "4e471cd4f01141f8eac80979bcdab9d0c958ec6617691dead4fde6f900b1d931",
+      "crates/logic/epoch_gc.rs": "1f23ea074c1d3d3841b5ede564623c9861136fb852ae0db6917e8628b1bbe650",
+      "crates/logic/format.rs": "3c1fef73d45c0ed0ed104f9431eb3bdf33325e62b82492ec5d04d5805c597d5d",
+      "crates/logic/gate.rs": "889c88f05b1c068e10947fc7f7d76aad97a5aa9434889945cdc9657f133c13a7",
+      "crates/logic/http.rs": "082dfdf4ca7826224f317b41d6aaaf3306feeb2f98a78a33a0630a058ad21519",
+      "crates/logic/isolate.rs": "79272429d00bf825a7d33e09962ca399eb10077edceebf96ef2c87ced12e8b4b",
+      "crates/logic/kv.rs": "a6330ace5fbda162245c816cace4e65778db80a354f1f36232c96042f9531520",
+      "crates/logic/lib.rs": "c42a7598a2eac11ddb5d8e81f24cab545314a7c0f7a7180125e6a771c12a246b",
+      "crates/logic/log_evict.rs": "bf972b31cd2c0fba3bb8ff1e98c147778d77138329b7670cea3b8cf1d832ad8f",
+      "crates/logic/log_tier.rs": "e7f535798208bba95eb7b55f2ffefcf800b4a3a3b9c1eaec471d70d84de460f3",
+      "crates/logic/output_gate.rs": "c5d3a6f524bfe47de933fc66fa67158a19ddb1b0fd3fc371e4f04a722ebacef1",
+      "crates/logic/peer.rs": "e6ad44bc07045cf76c3c746a61e429cea185f1181650d95982a5735a777309cf",
+      "crates/logic/pressure.rs": "7e76009b45633de9d582960e72692116947021afd17652fc15c345510fd4e78c",
+      "crates/logic/queue.rs": "ac0135726b1b034d146af3b4cc976f28b5ee764a246310ef8752098763d36f06",
+      "crates/logic/rebalance.rs": "f827a062eb0de5fdfbdb6955908e16012f8ea4fec8e4268a0cfc6b80b6f998fc",
+      "crates/logic/restore.rs": "75c64cbc160edf6bd628152ad915ae4d6207a921ec81ebe0063b9eceacae3c4a",
+      "crates/logic/routing.rs": "845cec9deba52f4942a22a0b18cf298e9d30cdfa7927050f5a6de4ef27c3a810",
+      "crates/logic/schedule.rs": "09559042beecc2439c9b0aa6b49e82522f3456abdda2eae040c6d99095c344e3",
+      "crates/logic/sqlite.rs": "60480d89d9a8a5b40013450ae71ba06ea3ddd7662dbea12b7d7e51edeb29a019",
+      "crates/logic/sweep.rs": "6291b13e2fb28438aa442338cc56bdb95bf5e652d19b56da24597c1348b968ca",
+      "crates/logic/types.rs": "492ab0cbcbd9d00ea60bc01a04fd09c35811533a10e801db2a863f814f159400",
+      "crates/logic/wake.rs": "7d8b8a0518b12f67a0bd62f19dcbc7c4c047081ac6f5943bd1fd719ebf84c97e",
+      "crates/ltx/Cargo.toml": "ff9bd92d83532c8fd19b1681331f8a774f713c11b8e9cea9d32eaf836fd6f381",
+      "crates/ltx/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "crates/ltx/LICENSE.pierrec-lz4": "81436a8a4ab6927ec69561e406f1f3d15aeff80fcbd0236847fbad725e72c88f",
+      "crates/ltx/README.md": "ca048adf266be29471c81d34577b88eb7545b44350575f51be69cd136e5be73c",
+      "crates/ltx/reference/ltx-format.md": "42deb04fd435a9c1f1498ff444fc1871c8d64278a32729ddf0670e471f4c2aff",
+      "crates/ltx/src/bundle.rs": "3a8d2399fc4bcfe7de6475d1768aaba88ab7f2cceb45bbd6a62a46e2eebeeedc",
+      "crates/ltx/src/client/bundle.rs": "dc27b00a90b378ccb0cb6c4b05a75648d38f8d6186ea61fa58aab161a7a5f4e9",
+      "crates/ltx/src/client/epochs.rs": "a84c20df2e0a43ad98540eeb0fd20f5aefc4aa8555c8ff3e5636391d8dcf4997",
+      "crates/ltx/src/client/file.rs": "94dca7b2e413194408bcd5fb3eda18cce0ee82e2c98fef814e21409ff09ae3f5",
+      "crates/ltx/src/client/mod.rs": "62df7b505ab992ddfd7a8c6492d9772eb23acaf7dfe39ea0122ba7739c8480bf",
+      "crates/ltx/src/client/object_store.rs": "c38c7b390b8de92fa33a01544aa05c88a05a408372943d0d45a85c50f129ad56",
+      "crates/ltx/src/codec.rs": "92e7a8aa643ecf9f325e4ad7dd4ec606ebe204dcb972f8f0755f8ece9733d5ca",
+      "crates/ltx/src/compaction_level.rs": "02b99b8532cd4da0ab40ad75a9e96ee85f95ceec82afbf3a7efff0b51299e2cc",
+      "crates/ltx/src/compactor.rs": "9f6bb57f1e1582597b5e0540b38b8b5cff983f1fe9c56d72b0256fe9bb79f852",
+      "crates/ltx/src/db.rs": "d6a9659a965969a1feeaab6f9902cdf7820555c48229820bcd11bdd73bcff3e4",
+      "crates/ltx/src/error.rs": "50f0f6a6c7ca6dbd3d5987ddde5c5896877e7031cd3f3190a288e9434e52f21b",
+      "crates/ltx/src/host.rs": "7fdd55ec2d75489254fa0056d0674bdd59dec0dd14aece0a4b742eb4137e81e9",
+      "crates/ltx/src/lib.rs": "61e11c216d3e4b8ed1cad67d05303e45f2cc9734ad55ae6f0a77b992f26ad84d",
+      "crates/ltx/src/ltx.rs": "0c35fe1af1f2bf4abd437a02a2d5875e3a3c75c5e43b57ff8b7b3e10251d6cce",
+      "crates/ltx/src/lz4_block.rs": "c9cd1c028dd9991a779b9b62c15127f9203edebd55553ce2718dc053a63e7872",
+      "crates/ltx/src/paged.rs": "c40c2c54872bdbd93ff81dda3837799857a22f0f391931633278ac52b1b3f977",
+      "crates/ltx/src/paged_vfs.rs": "9c2b916c4d54fcc6e30730c2329c79a426869325cea58184b2c6bdccde6c0c57",
+      "crates/ltx/src/replica.rs": "65fa24f88cdca87de607492456c39be29573896603f6600220e251c3e959bb77",
+      "crates/ltx/src/replica_compactor.rs": "537abb8a62b919864fc1a990abe4bd5a804e677e4eb4b80b99b1ac32c3db411b",
+      "crates/ltx/src/replica_url.rs": "eab0bc3ed348485d67f9ca2b21f4e21ffee9264b78ca07c7a1ee58555a5c2ac0",
+      "crates/ltx/src/wal.rs": "31c28dcde20393c937ade5eca74f768407d839c7dfe3fb76c65d689a8e267203"
+    },
+    "patches": {
+      "patches/celld-0.6.2-preaccept-attachment.patch": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd",
+      "patches/celld-0.6.2-cron-retry.patch": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19",
+      "patches/celld-0.6.2-cron-controls.patch": "0837791235505d4900f605c4253b08e198591fb708b676de213f60d2e600f0a8",
+      "patches/celld-0.6.2-runtime-identity.patch": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3"
+    },
+    "independentlyAppliedSourceMatches": true
+  },
+  "runtimeProcesses": [
+    {
+      "Service": "a",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "b",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "devstore",
+      "State": "exited",
+      "ExitCode": 1,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "disabled",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "init",
+      "State": "exited",
+      "ExitCode": 0,
+      "Image": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+    },
+    {
+      "Service": "invalid",
+      "State": "exited",
+      "ExitCode": 1,
+      "Image": "sha256:c81628544186c9ee4dac27af4d94b8b70fcc2480d72747e3b78d4e47c3772810"
+    },
+    {
+      "Service": "minio",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+    },
+    {
+      "Service": "observer",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+    },
+    {
+      "Service": "older",
+      "State": "running",
+      "ExitCode": 0,
+      "Image": "sha256:76673a6cf52ad702a68f36cca49822a717e762ae43023cf837c14a1ada4d3abc"
+    }
+  ],
+  "authorObservedExitCodes": {
+    "basis": "Terminal tool results observed by the author; the curator verifies files, image contents and retained resources independently",
+    "nativeBuild": 0,
+    "nativeDriver": 0,
+    "javascriptCheck": 0,
+    "javascriptTests": 0
+  },
+  "checks": {
+    "newLinuxRustTestsPassed": 4,
+    "upstreamInternalRustSuitesExecuted": false,
+    "clippyAllTargetsWarningsDenied": true,
+    "javascriptTestsPassed": 467,
+    "javascriptCheckPassMarkerVerified": true,
+    "embeddedSourceFilesCompared": 179,
+    "imageArtifactMatchesRunningBinary": true
+  },
+  "cleanup": {
+    "stopped": true,
+    "retainedVolumes": [
+      "fogd-m11c-identity-e3222757_bucket",
+      "fogd-m11c-identity-e3222757_node-a",
+      "fogd-m11c-identity-e3222757_node-b",
+      "fogd-m11c-identity-e3222757_node-disabled",
+      "fogd-m11c-identity-e3222757_node-older"
+    ]
+  },
+  "sourcePins": {
+    "scripts/cron-runtime-identity.mjs": "5a494900573125107cb3ab56b6000ee7f09495c13c5bdbb9a5cbac336b09a5dc",
+    "scripts/cron-probe/identity/fixture.mjs": "70afd69fcceb4e1d498684d69ab776d9dc0cd8fbc28eccd5f53e22fc4b3b30be",
+    "scripts/cron-probe/identity/checks.mjs": "ffa66679c75c9cef46a4e39d9ab1ffd694d4fcf015e5d7b1bf2eec0195bc14cc",
+    "docker/celld-cron-build.Dockerfile": "fa6b1ab7cd4b898ed98d4aa2e84ceb74cd7a4014059a134927afc77eeee7a504"
+  },
+  "rawEvidenceSha256": {
+    "logs.json": "3b10c8290367f8bb9c1c0a0eb044c2faa68269d35f94a0a6e2708a37db7152e1",
+    "cleanup.json": "35114be2c08debd9acc5cfd51d5d5f7b88bf88b2f66a5b99b24c9e347a934d0d",
+    "identity.json": "82b889d884bef58623a7c1863f4517e959093988528d80eabe7efccd618c2ca7",
+    "compose.json": "a766311a529c3320d815335a13ccc621b741b0675c0f293fe6b66475fbffe5d5"
+  },
+  "verificationToolSha256": "a8e763eb8da4f18ab35852ec7bc82928adf61f1dda9abb371402d6d384b3cd7b",
+  "logsSha256": {
+    "fogd-identity-build2.log": "eaadbe88f6b76a5c7dbf0824b8ec678f4eaae5fb3c7a35bfee249c638030e337",
+    "fogd-identity-js-check.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-identity-final-check.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-identity-js-tests.log": "4a0795276bb92f96400e8fc4a863cc61350363ddf05f18a77f1cde0cc8f749e3",
+    "fogd-identity-native4.log": "9acd646b7c809256463df8b8fee45490a2ac3cd1e5ba3f6f4d8e6f730688148c"
+  },
+  "excludedRuns": {
+    "native1": "address pool exhaustion before resource creation",
+    "native2": "invalid one-letter mount names; partial resources cleaned and volumes retained",
+    "native3": "MinIO storage reserve refusal; no identity acceptance"
+  },
+  "openGates": [
+    "caller enforcement before bootstrap and every cron command",
+    "local CLI and all possible owner identity/membership binding",
+    "storage endpoint policy and process replacement lifecycle",
+    "restored-start preflight",
+    "new native binary cron lifecycle requalification",
+    "shipped release build and packaging",
+    "ordinary scoped cron admission"
+  ]
+}

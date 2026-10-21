@@ -1,0 +1,330 @@
+diff --git a/crates/celld/lib.rs b/crates/celld/lib.rs
+index 5f1b5bf..3a4d210 100644
+--- a/crates/celld/lib.rs
++++ b/crates/celld/lib.rs
+@@ -93,6 +93,7 @@ pub mod r2_cli;
+ pub(crate) mod r2_store;
+ pub mod replication;
+ pub mod runtime;
++pub mod runtime_identity;
+ pub mod startup;
+ pub mod storage;
+ pub mod telemetry;
+diff --git a/crates/celld/main.rs b/crates/celld/main.rs
+index bcce50f..69d8945 100644
+--- a/crates/celld/main.rs
++++ b/crates/celld/main.rs
+@@ -3743,6 +3743,14 @@ async fn async_main(telemetry_config: Option<celld::telemetry::Config>) -> anyho
+     });
+     let (fence_tx, mut fence_rx) = mpsc::unbounded_channel();
+     let node = std::env::var("CELLD_NODE").unwrap_or_else(|_| random_node_session_id());
++    let identity_listen =
++        celld::env_vars::optional::<std::net::SocketAddr>("CELLD_RUNTIME_IDENTITY_LISTEN")?;
++    anyhow::ensure!(
++        identity_listen.is_none() || settings.dev_store.is_none(),
++        "CELLD_RUNTIME_IDENTITY_LISTEN requires S3 storage, not the local development store"
++    );
++    let _runtime_identity =
++        celld::runtime_identity::start(identity_listen, &node, settings.bucket.as_deref()).await?;
+     let clean_reload_node = node.clone();
+     celld::control_plane::install_reexec_node_session_id(&node)?;
+     let probe_public_key = celld::peer_probe::install_signer()?;
+diff --git a/crates/celld/runtime_identity.rs b/crates/celld/runtime_identity.rs
+new file mode 100644
+index 0000000..46d8652
+--- /dev/null
++++ b/crates/celld/runtime_identity.rs
+@@ -0,0 +1,293 @@
++// Copyright 2026 Deno Land Inc. Apache-2.0 license.
++
++// This process-startup adapter is outside the simulated execution domain.
++// It reads the running Linux executable, never node or application storage.
++#![allow(clippy::disallowed_methods)]
++
++use anyhow::Context;
++use bytes::Bytes;
++use http_body_util::Full;
++use hyper::server::conn::http1;
++use hyper::service::service_fn;
++use hyper::{Method, Request, Response, StatusCode};
++use hyper_util::rt::{TokioIo, TokioTimer};
++use sha2::{Digest, Sha256};
++use std::convert::Infallible;
++use std::io::Read;
++use std::net::SocketAddr;
++use std::time::Duration;
++use tokio::net::TcpListener;
++use tokio::task::{JoinHandle, JoinSet};
++
++const PATH: &str = "/runtime/identity";
++const MAX_CONNECTIONS: usize = 16;
++const REQUEST_TIMEOUT: Duration = Duration::from_secs(5);
++
++pub struct IdentityServer {
++    task: JoinHandle<()>,
++    #[cfg(test)]
++    address: SocketAddr,
++}
++
++impl Drop for IdentityServer {
++    fn drop(&mut self) {
++        self.task.abort();
++    }
++}
++
++/// Opt-in process identity, including before the first deployment is loaded.
++/// Digests identify inputs; qualification is the caller's separate policy.
++/// Namespace form is `s3://bucket/prefix`, or `s3://bucket/` without a prefix.
++pub async fn start(
++    listen: Option<SocketAddr>,
++    node: &str,
++    bucket_spec: Option<&str>,
++) -> anyhow::Result<Option<IdentityServer>> {
++    let Some(listen) = listen else {
++        return Ok(None);
++    };
++    anyhow::ensure!(!node.is_empty(), "runtime identity requires a node ID");
++    let spec = bucket_spec.context("runtime identity requires a storage namespace")?;
++    let (backend, bucket, prefix) = crate::bucket::split_spec(spec);
++    anyhow::ensure!(
++        backend == crate::bucket::StorageBackend::S3 && !bucket.is_empty(),
++        "runtime identity requires an S3 namespace"
++    );
++    let executable = tokio::task::spawn_blocking(executable_digest).await??;
++    let payload = serde_json::to_vec(&serde_json::json!({
++        "schema": 1,
++        "binarySha256": executable,
++        "nodeSha256": digest(node.as_bytes()),
++        "namespaceSha256": digest(format!("s3://{bucket}/{}", prefix.trim_end_matches('/')).as_bytes()),
++    }))?;
++    let listener = TcpListener::bind(listen).await?;
++    let address = listener.local_addr()?;
++    let task = tokio::spawn(serve(listener, Bytes::from(payload)));
++    tracing::info!(event = "runtime_identity", listen = %address, "read-only runtime identity listening");
++    Ok(Some(IdentityServer {
++        task,
++        #[cfg(test)]
++        address,
++    }))
++}
++
++fn digest(bytes: &[u8]) -> String {
++    format!("{:x}", Sha256::digest(bytes))
++}
++
++fn executable_digest() -> anyhow::Result<String> {
++    let mut file = std::fs::File::open("/proc/self/exe")
++        .context("cannot read the running Linux executable for identity")?;
++    let mut hash = Sha256::new();
++    let mut buffer = [0_u8; 16 * 1024];
++    loop {
++        let count = file.read(&mut buffer)?;
++        if count == 0 {
++            break;
++        }
++        hash.update(&buffer[..count]);
++    }
++    Ok(format!("{:x}", hash.finalize()))
++}
++
++async fn serve(listener: TcpListener, payload: Bytes) {
++    let mut connections = JoinSet::new();
++    loop {
++        let (stream, _) = match listener.accept().await {
++            Ok(connection) => connection,
++            Err(error) => {
++                tracing::warn!(event = "runtime_identity_accept_failed", %error);
++                tokio::time::sleep(Duration::from_millis(100)).await;
++                continue;
++            }
++        };
++        while connections.try_join_next().is_some() {}
++        if connections.len() >= MAX_CONNECTIONS {
++            continue;
++        }
++        let body = payload.clone();
++        connections.spawn(async move {
++            let service = service_fn(move |request: Request<hyper::body::Incoming>| {
++                let body = body.clone();
++                async move { Ok::<_, Infallible>(reply(&request, body)) }
++            });
++            let _ = tokio::time::timeout(
++                REQUEST_TIMEOUT,
++                http1::Builder::new()
++                    .timer(TokioTimer::new())
++                    .header_read_timeout(REQUEST_TIMEOUT)
++                    .keep_alive(false)
++                    .serve_connection(TokioIo::new(stream), service),
++            )
++            .await;
++        });
++    }
++}
++
++fn reply<B>(request: &Request<B>, identity: Bytes) -> Response<Full<Bytes>> {
++    let (status, body) = if request.uri().path() != PATH {
++        (
++            StatusCode::NOT_FOUND,
++            Bytes::from_static(b"{\"error\":\"not_found\"}"),
++        )
++    } else if request.method() != Method::GET {
++        (
++            StatusCode::METHOD_NOT_ALLOWED,
++            Bytes::from_static(b"{\"error\":\"get_required\"}"),
++        )
++    } else if request.uri().query().is_some() {
++        (
++            StatusCode::BAD_REQUEST,
++            Bytes::from_static(b"{\"error\":\"query_not_allowed\"}"),
++        )
++    } else {
++        (StatusCode::OK, identity)
++    };
++    let mut response = Response::builder().status(status);
++    if status == StatusCode::METHOD_NOT_ALLOWED {
++        response = response.header("Allow", "GET");
++    }
++    response
++        .header("Content-Type", "application/json")
++        .header("Cache-Control", "no-store")
++        .header("Connection", "close")
++        .body(Full::new(body))
++        .expect("static identity response headers")
++}
++
++#[cfg(all(test, target_os = "linux"))]
++mod tests {
++    use super::*;
++
++    #[tokio::test]
++    async fn opt_in_reports_running_binary_and_normalized_namespace() {
++        let server = start(
++            Some("127.0.0.1:0".parse().unwrap()),
++            "node-a",
++            Some("S3://fogd//slots///one/"),
++        )
++        .await
++        .unwrap()
++        .unwrap();
++        let url = format!("http://{}{PATH}", server.address);
++        let response = reqwest::get(&url).await.unwrap();
++        assert_eq!(response.status(), StatusCode::OK);
++        assert_eq!(response.headers()["cache-control"], "no-store");
++        let value: serde_json::Value = response.json().await.unwrap();
++        assert_eq!(value.as_object().unwrap().len(), 4);
++        assert_eq!(value["schema"], 1);
++        assert_eq!(value["nodeSha256"], digest(b"node-a"));
++        assert_eq!(value["namespaceSha256"], digest(b"s3://fogd/slots/one"));
++        assert_eq!(
++            value["binarySha256"],
++            digest(&std::fs::read(std::env::current_exe().unwrap()).unwrap())
++        );
++    }
++
++    #[tokio::test]
++    async fn disabled_listener_and_invalid_context_do_not_start_a_server() {
++        assert!(start(None, "", None).await.unwrap().is_none());
++        assert!(start(
++            Some("127.0.0.1:0".parse().unwrap()),
++            "",
++            Some("s3://fogd/one")
++        )
++        .await
++        .is_err());
++        assert!(start(Some("127.0.0.1:0".parse().unwrap()), "node-a", None)
++            .await
++            .is_err());
++        assert!(start(
++            Some("127.0.0.1:0".parse().unwrap()),
++            "node-a",
++            Some("gs://fogd/one")
++        )
++        .await
++        .is_err());
++    }
++
++    #[tokio::test]
++    async fn endpoint_rejects_other_methods_paths_queries_and_closes_on_drop() {
++        let server = start(Some("127.0.0.1:0".parse().unwrap()), "node-b", Some("fogd"))
++            .await
++            .unwrap()
++            .unwrap();
++        let base = format!("http://{}", server.address);
++        let client = reqwest::Client::new();
++        let value: serde_json::Value = client
++            .get(format!("{base}{PATH}"))
++            .send()
++            .await
++            .unwrap()
++            .json()
++            .await
++            .unwrap();
++        assert_eq!(value["namespaceSha256"], digest(b"s3://fogd/"));
++        let method_response = client.post(format!("{base}{PATH}")).send().await.unwrap();
++        assert_eq!(method_response.status(), StatusCode::METHOD_NOT_ALLOWED);
++        assert_eq!(method_response.headers()["allow"], "GET");
++        assert_eq!(
++            client
++                .get(format!("{base}/state"))
++                .send()
++                .await
++                .unwrap()
++                .status(),
++            StatusCode::NOT_FOUND
++        );
++        assert_eq!(
++            client
++                .get(format!("{base}{PATH}?x=1"))
++                .send()
++                .await
++                .unwrap()
++                .status(),
++            StatusCode::BAD_REQUEST
++        );
++        let address = server.address;
++        drop(server);
++        tokio::time::timeout(Duration::from_secs(2), async {
++            while tokio::net::TcpStream::connect(address).await.is_ok() {
++                tokio::task::yield_now().await;
++            }
++        })
++        .await
++        .expect("identity listener remains open after guard drop");
++    }
++    #[tokio::test]
++    async fn slow_headers_are_bounded_and_capacity_returns_after_timeout() {
++        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++        let server = start(Some("127.0.0.1:0".parse().unwrap()), "node-c", Some("fogd"))
++            .await
++            .unwrap()
++            .unwrap();
++        let mut slow = Vec::new();
++        for _ in 0..16 {
++            let mut stream = tokio::net::TcpStream::connect(server.address)
++                .await
++                .unwrap();
++            stream
++                .write_all(b"GET /runtime/identity HTTP/1.1\r\n")
++                .await
++                .unwrap();
++            slow.push(stream);
++        }
++        let mut overflow = tokio::net::TcpStream::connect(server.address)
++            .await
++            .unwrap();
++        let result = tokio::time::timeout(Duration::from_secs(2), overflow.read(&mut [0_u8; 1]))
++            .await
++            .expect("overflow connection was not closed");
++        assert!(matches!(result, Ok(0) | Err(_)));
++        for stream in &mut slow {
++            let result = tokio::time::timeout(Duration::from_secs(7), stream.read(&mut [0_u8; 1]))
++                .await
++                .expect("slow header connection was not closed");
++            assert!(matches!(result, Ok(0) | Err(_)));
++        }
++        let response = reqwest::get(format!("http://{}{PATH}", server.address))
++            .await
++            .unwrap();
++        assert_eq!(response.status(), StatusCode::OK);
++    }
++}

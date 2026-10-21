@@ -127,6 +127,13 @@ approval pins and final source preservation. [Retirement](retirement.md#experime
 has separate bounded cron/queue and [two-cron](retirement.md#retirement-beside-another-scheduled-app)
 profiles, including a held survivor and source restore of both schedules. Normal
 scoped cron admission and release-bound runtime qualification remain open.
+The [early identity candidate](patches/celld-runtime-identity.md) independently
+reports the actual native executable before first deployment. Its metadata profile
+passes four new Linux Rust tests and a disposable native drill with unchanged
+bucket contents. All 179 embedded source files match the applied patch stack.
+These tests do not execute upstream internal suites, and this new binary does not
+inherit earlier cron lifecycle qualification. Runtime-policy enforcement before
+bootstrap/commands and restored startup remains open.
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 
