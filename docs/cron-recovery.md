@@ -2,9 +2,11 @@
 
 Cron installation recovery uses a native persisted hold and a full stopped Docker
 archive. The [native evidence](evidence/m11c-cron-recovery.json) qualifies
-same-version recovery on local Linux arm64 Docker with two application fleets.
-Ordinary cron admission remains closed: the [M11c contract](m11c.md) also requires
-scoped admission, retirement and release-bound runtime qualification.
+same-version recovery on local Linux arm64 Docker with two application fleets at
+commit `63fb494`. Shared qualification helpers have changed; a full current-tree
+rerun remains required before admission. Ordinary cron admission remains closed:
+the [M11c contract](m11c.md) also requires scoped admission and release-bound runtime
+qualification. Retirement has a separate bounded profile below.
 
 ## Recovery contract
 
@@ -44,7 +46,9 @@ own [acknowledgment and delivery controls](queue-recovery.md). Missing or change
 preparation evidence is refused. Expansion and Kubernetes recovery continue to refuse
 scheduled history.
 [Experimental retirement](retirement.md#experimental-scheduled-app-retirement)
-has archive/controller coverage; native qualification remains open.
+has a bounded native cron/queue profile with isolated replacement capacity and
+zero-live restore. Docker backup, restore and retirement refuse scheduled history
+outside two application fleets, including pending and retired history.
 
 ## Native qualification
 

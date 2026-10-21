@@ -19,8 +19,24 @@ import { requiredCapabilities } from '../src/recovery/restore.mjs';
 import { assertQueueFreeRecovery } from '../src/recovery/queue-safety.mjs';
 import { execute } from '../src/recovery/execute.mjs';
 import { queueRetentionContract, queueExpiry } from '@fogd/platform/queue-snapshot';
+import { assertCronDockerTopology } from '../src/recovery/cron-backup.mjs';
+import { planExpansion } from '../src/recovery/expansion-plan.mjs';
+import { recoveryLayout } from '../src/recovery/layout.mjs';
 
 const evidence = { previous: { slot: 'two', prefix: 'old/refresh' }, replacement: { prefix: 'fresh/refresh' }, snapshot: { sha256: 'b'.repeat(64) } };
+test('unqualified three-fleet cron recovery stays closed for live, pending and retired history', () => {
+  const two = config(), three = config(), slots = JSON.parse(three.services.controller.environment.FOGD_SLOTS);
+  slots.push({ id: 'slot-3', prefix: 'slots/slot-3', nodes: ['slot-3-a', 'slot-3-b'] });
+  for (const name of ['controller', 'workerd']) three.services[name].environment.FOGD_SLOTS = JSON.stringify(slots);
+  const { state, retired } = retiredSource(), pending = structuredClone(state);
+  pending.apps = {}; pending.deployments[state.apps.refresh.active].status = 'pending';
+  for (const history of [state, pending, retired, { requirements: ['fogd-cron-retirement-v1'], apps: {}, deployments: {} }]) {
+    assert.doesNotThrow(() => assertCronDockerTopology(history, two));
+    assert.throws(() => assertCronDockerTopology(history, three), /requires two application fleets/);
+  }
+  assert.doesNotThrow(() => assertCronDockerTopology({ apps: {}, deployments: {} }, three));
+  assert.doesNotThrow(() => assertCronDockerTopology(null, three));
+});
 function retiredSource() {
   const { state } = cronSnapshotSource(), digest = state.deployments[state.apps.refresh.active].digest;
   return { state, digest, retired: retireState(state, 'refresh', digest, evidence, { stopScheduledWork: true }) };
@@ -90,6 +106,21 @@ test('the real retirement CLI parses scheduled acknowledgment and refuses mismat
   manifest.cronRecovery.apps.refresh.version = 'different-version';
   await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
   await assert.rejects(invoke(active.digest, ['--stop-scheduled-work']), error => error.stderr.includes('Cron snapshot evidence differs from archived controller metadata'));
+  await assert.rejects(access(output), /ENOENT/);
+});
+
+test('the real restore CLI refuses checksummed three-fleet cron history before Docker or target creation', async t => {
+  const { state, expected } = cronSnapshotSource(), manifest = backgroundSnapshotEvidence(state, expected), dir = await archive(t, state, manifest);
+  const images = Object.fromEntries(services.map(name => [name, 'sha256:' + 'a'.repeat(64)]));
+  const expanded = planExpansion(config(), { apps: {}, deployments: {} }, images), files = {};
+  for (const name of recoveryLayout(expanded.config).archives) {
+    if (name !== 'controller.tar') await writeFile(join(dir, name), name === 'compose.json' ? JSON.stringify(expanded.config) : 'unused');
+    files[name] = await fingerprint(join(dir, name));
+  }
+  Object.assign(manifest, { format: 'fogd-stopped-v1', sourceProject: 'original', files, images: expanded.images });
+  await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+  const output = join(dir, 'target');
+  await assert.rejects(promisify(execFile)(process.execPath, [fileURLToPath(new URL('../bin/fogd.js', import.meta.url)), 'restore', dir, '--project', 'fresh', '--output', output], { env: { ...process.env, DOCKER_HOST: 'unix:///nonexistent-fogd-topology-test.sock' } }), error => error.stderr.includes('Scheduled Docker recovery requires two application fleets'));
   await assert.rejects(access(output), /ENOENT/);
 });
 

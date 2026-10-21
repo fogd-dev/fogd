@@ -10,6 +10,7 @@ import { fingerprint, writeJson, validateTopology } from './bundle.mjs';
 import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEvidence } from './background-backup.mjs';
 import { snapshotState } from './snapshot-state.mjs';
 import { volumeHelper } from './volumes.mjs';
+import { assertCronDockerTopology } from './cron-backup.mjs';
 
 export async function backup(directory) {
   const env = await configEnv();
@@ -22,6 +23,7 @@ export async function backup(directory) {
   let state;
   try { state = JSON.parse(await volumeHelper(images.controller, config.volumes.controller.name, ['cat', '/data/state.json'])); }
   catch { throw new Error('Cannot read controller metadata for recovery'); }
+  assertCronDockerTopology(state, config);
   const background = backgroundBackupApps(state);
   assertPinnedSnapshotImages(Object.values(background).flat(), images, layout.replicas);
   const dir = resolve(directory); await mkdir(dir, { mode: 0o700 });

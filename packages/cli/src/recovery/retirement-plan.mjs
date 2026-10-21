@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { fleetLayout } from './layout.mjs';
 import { retirementApp, retireState, overlap, validateRetirementState } from '@fogd/platform/retirement';
+import { assertCronDockerTopology } from './cron-backup.mjs';
 
 export function planRetirement(config, state, app, digest, { id = randomUUID(), at = new Date().toISOString(), snapshot, stopQueuedWork = false, stopScheduledWork = false } = {}) {
+  assertCronDockerTopology(state, config);
   const assigned = retirementApp(state, app, digest, { stopQueuedWork, stopScheduledWork });
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error('Invalid retirement generation');
   const fleets = fleetLayout(config);

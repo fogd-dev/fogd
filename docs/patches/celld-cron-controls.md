@@ -66,9 +66,12 @@ containers. Lost-response and malformed-status cases are covered by the
 [transport tests](../../packages/platform/test/cron-runtime.test.mjs).
 
 Stop every replica before replacing the runtime. Mixed versions, rolling upgrades
-and rollback are unqualified: older runtimes ignore the hold. A held full snapshot
-and explicit recovery acknowledgment still need stopped-restore qualification.
-Do not boot uncontrolled historical snapshots and then try to pause them.
+and rollback are unqualified: older runtimes ignore the hold. The separate
+[stopped recovery profile](../cron-recovery.md) has bounded evidence at commit
+`63fb494`; its changed helpers require a current-tree rerun before admission.
+[Retirement](../retirement.md#experimental-scheduled-app-retirement) has a separate
+bounded native cron/queue profile. Do not boot uncontrolled historical snapshots
+and then try to pause them.
 
 The [source regression runner](../../scripts/celld-cron-regression.mjs) executes the
 actual patched class with modeled host primitives:

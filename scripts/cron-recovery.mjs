@@ -1,3 +1,4 @@
+import { runQualification } from './cron-probe/recovery/trial.mjs';
 import { assertNoReplay, skippedDue } from './cron-probe/recovery/oracles.mjs';
 import { provenance, verifyFinalProvenance, verifyRunner } from './cron-probe/recovery/provenance.mjs';
 import assert from 'node:assert/strict';
@@ -17,7 +18,6 @@ const identity = await provenance(image);
 const { config, runner } = await prepareRecoveryFixture(resolve(template), output, image, identity.image);
 const selected = JSON.parse(await readFile(join(output, 'environment.json'), 'utf8'));
 const source = await recoveryClient(output, config, selected); probes.push(source); source.identity = identity;
-let failure;
 const progress = async step => {
   console.log(step);
   await writeFile(join(output, 'progress.json'), JSON.stringify({ step, project: probes.at(-1).project }) + '\n', { mode: 0o600 });
@@ -81,7 +81,7 @@ async function olderA(point) {
   evidence.olderLoss = { olderCase: 'due-timer snapshot A, before pending-retry snapshot B', dueFate, resumed, lostImports: ['after-a', 'pending-b'], lostNativeAttemptIds: evidence.afterA.completed.map(row => row.id), resumedFuture: future, notice: evidence['older-a'].pending.refresh.recovery.notice };
   await retainAndDown(probe, null, 'older-a-complete');
 }
-try {
+await runQualification(probes, output, async () => {
   await progress('source: creating fresh private installation');
   const a = await firstSnapshot();
   const targetA = await restoreProfile(a, 'a');
@@ -91,20 +91,7 @@ try {
   evidence.snapshots = { a: a.manifest, b: b.manifest };
   evidence.sourcePreservation = { a: a.shutdown, b: b.shutdown };
   evidence.shutdowns = probes.map(probe => ({ project: probe.project, ...probe.shutdown }));
-} catch (error) {
-  failure = error;
-  await writeFile(join(output, 'failure.json'), JSON.stringify({ message: error.message, stack: error.stack }) + '\n', { mode: 0o600 });
-} finally {
-  for (const probe of probes) {
-    if (probe.closed) continue;
-    try { await retainAndDown(probe, null, 'cleanup'); }
-    catch (error) {
-      failure ||= error;
-      await writeFile(join(output, 'cleanup-failure.json'), JSON.stringify({ project: probe.project, message: error.message }) + '\n', { mode: 0o600 });
-    }
-  }
-}
-if (failure) throw failure;
+});
 await verifyFinalProvenance(identity); evidence.provenance = identity;
 await writeFile(join(output, 'recovery.json'), JSON.stringify(evidence, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 await progress('complete: all qualification projects stopped; volumes retained');

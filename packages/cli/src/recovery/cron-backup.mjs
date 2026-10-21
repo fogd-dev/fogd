@@ -1,6 +1,11 @@
 import { validateRetiredCron, cronRetirementCapability } from '@fogd/platform/cron-retirement';
-import { artifactOnlyCronRequest, hasCronLifecycle, cronCapability } from '@fogd/platform/cron-history';
+import { artifactOnlyCronRequest, hasCronLifecycle, hasCronHistory, cronCapability } from '@fogd/platform/cron-history';
 import { cronRecoveryCapability, cronRecoveryPending, cronSnapshotTarget, matchingCronSnapshot } from '@fogd/platform/cron-snapshot';
+import { fleetLayout } from './layout.mjs';
+
+export function assertCronDockerTopology(state, config) {
+  if (state && hasCronHistory(state) && fleetLayout(config).length !== 2) throw new Error('Scheduled Docker recovery requires two application fleets; other topologies remain unqualified. Retain the source and snapshot.');
+}
 
 // Family inventory; callers validate the complete installation's capabilities.
 export function cronRecoveryApps(state) {

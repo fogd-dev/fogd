@@ -36,13 +36,42 @@ export async function requireDaemonStopped(probe) {
     assert.ok(found); assert.equal(found.State.Running, false, `${name} must stay stopped during the cold observation`);
   }
 }
+export async function startReplicas(probe, unpublished = []) {
+  await requireDaemonStopped(probe);
+  const replicas = probe.slots.flatMap(slot => slot.nodes);
+  await probe.compose(['up', '-d', '--no-build', '--pull', 'never', 'minio', 'bucket-init', ...replicas]);
+  const expected = replicas.map(node => ({ node, status: unpublished.includes(node) ? 'awaiting-deployment' : 200 }));
+  let observed;
+  await expect.poll(async () => {
+    observed = await Promise.all(replicas.map(async node => {
+      try { return await replicaReadiness(probe, node, unpublished.includes(node)); }
+      catch { return { node, status: 0 }; }
+    }));
+    return observed;
+  }, { timeout: 120000 }).toEqual(expected);
+  return observed;
+}
+async function replicaReadiness(probe, node, unpublished) {
+  if (unpublished) {
+    const logs = await probe.compose(['logs', '--no-color', node]);
+    assert.match(logs, /event="awaiting_initial_deployment"/);
+    const count = await probe.compose(['exec', '-T', node, 'node', '--input-type=module', '-e', "import{readdir,readFile}from'node:fs/promises';let count=0;for(const id of (await readdir('/proc')).filter(id=>/^\\d+$/.test(id))){try{if((await readFile('/proc/'+id+'/comm','utf8')).trim()==='celld')count++}catch(error){if(error.code!=='ENOENT')throw error}}console.log(count);"]);
+    assert.equal(Number(count.trim()), 1, 'An unpublished node must have one live native celld process');
+    return { node, status: 'awaiting-deployment' };
+  }
+  const code = "const r=await fetch('http://127.0.0.1:8080/.well-known/celld/health',{signal:AbortSignal.timeout(3000)});console.log(r.status);";
+  return { node, status: Number((await probe.compose(['exec', '-T', node, 'node', '--input-type=module', '-e', code])).trim()) };
+}
 export async function rootState(probe) {
   return JSON.parse(await probe.compose(['run', '--rm', '--no-deps', '--entrypoint', 'node', 'controller', '--input-type=module', '-e', "import{readFile}from'node:fs/promises';console.log(await readFile('/var/lib/fogd/state.json','utf8')); "]));
 }
 export async function restoredClient(source, bundle, name, directory) {
-  assert.match(name, /^fogd-m11c-cron-recovery-/);
+  return installedClient(source, ['restore', bundle], name, directory);
+}
+export async function installedClient(source, args, name, directory) {
+  assert.match(name, /^fogd-m11c-cron-(?:recovery|retirement)-/);
   try {
-    await source.command(['restore', bundle, '--project', name, '--output', directory]);
+    await source.command([...args, '--project', name, '--output', directory]);
     const config = JSON.parse(await readFile(join(directory, 'compose.json'), 'utf8'));
     const target = await recoveryClient(directory, config, source.env); target.identity = source.identity;
     assert.notEqual(target.project, source.project);

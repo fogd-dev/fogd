@@ -12,6 +12,7 @@ import { cronCapability } from '@fogd/platform/cron-history';
 import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
+import { assertCronDockerTopology } from './cron-backup.mjs';
 
 async function requireFresh(project, config) {
   if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
@@ -30,6 +31,8 @@ export async function restore(directory, project, output) {
 }
 export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
   const state = await restoredInstallationState(dir, manifest, change);
+  assertCronDockerTopology(state, config);
+  if (change?.config) assertCronDockerTopology(state, change.config);
   const background = Object.keys(state?.apps || {}).filter(name => state.apps[name].queueRecovery?.status === 'pending' || state.apps[name].cronRecovery?.status === 'pending');
   assertPinnedSnapshotImages(background, manifest.images, recoveryLayout(config).replicas);
   const sourceVolumes = volumeNames(config), images = change?.images || manifest.images;

@@ -164,12 +164,13 @@ exit, and restart state. Neither probe waits through the four-day retention inte
 
 ## Experimental scheduled app retirement
 
-The cron retirement path is implemented for private M11c fixtures and remains
-unqualified on the native runtime. Ordinary cron admission stays closed. Archive
-and controller tests cover the stop acknowledgment, audit validation, survivor
-recovery and startup with only retired scheduled history. Native due-timer,
-pending-retry, retained-data and replacement isolation drills must pass before
-[M11c gate 8](m11c.md) closes.
+The [bounded native evidence](evidence/m11c-cron-retirement.json) qualifies scheduled
+retirement on same-version local Linux arm64 Docker with two application fleets.
+Ordinary cron admission stays closed. The profile uses a private qualification
+controller for live cron apps; the ordinary controller starts only after every live
+cron is retired. The runtime includes the experimental native dispatch-control
+candidate. This does not qualify release-bound runtime selection or retirement
+beside another live cron.
 
 An internally staged scheduled app requires `--stop-scheduled-work` in the same
 stopped snapshot workflow. This acknowledges that its old timer and retry identity
@@ -188,5 +189,45 @@ separate actions; follow the [cron recovery protocol](cron-recovery.md).
 
 Later backups validate retained cron audits without preparing their old schedules.
 Restore retains the capability requirement even when no live scheduled apps remain.
-Expansion and Kubernetes recovery still refuse all scheduled history, including
-retired apps. Retained old sources can run old schedules if restarted; keep them stopped.
+Docker backup, restore and retirement refuse scheduled history outside two app
+fleets, including pending and retired history. Expansion and Kubernetes recovery
+still refuse all scheduled history. Retained old sources can run old schedules if
+restarted; keep them stopped.
+
+The [qualification driver](../scripts/cron-retirement.mjs) creates a fresh private
+installation from an explicit resolved two-fleet M11c Compose template. It rotates
+credentials, fingerprints the runtime and executable sources, and uses the same
+loopback ports and private networks as the [recovery driver](cron-recovery.md).
+Use unused ports/networks and a new ignored output directory. The template and
+archives contain private material.
+
+```sh
+docker build -f docker/runtime.Dockerfile \
+  --build-arg CELLD_IMAGE=fogd-celld:cron-controls-candidate5 \
+  -t fogd-runtime:cron-retirement-candidate6 .
+node scripts/cron-retirement.mjs PRIVATE_TWO_FLEET_TEMPLATE_COMPOSE_JSON \
+  .fogd/NEW_RETIREMENT_EVIDENCE fogd-runtime:cron-retirement-candidate6
+```
+
+The profile retires a queued app beside a live cron, a cron with a pending retry
+beside queued work, a due replacement cron, and the last queued app. Each target
+has native-only and controller-running holds of at least 62 VM seconds. Surviving
+apps need explicit recovery acknowledgment and a separate resume. Queued survivor
+inputs must be accepted with no result and a real backlog in their snapshot;
+completion after restore uses GET only, without resubmitting input. Cron resume
+checks future native occurrences and unchanged old occurrence rows and counters.
+
+Replacement approvals check empty application rows, a fresh namespace and replica
+identities, retired-name and old-token refusal, and independent required secrets.
+Reuse means a different app name in the freed capacity; the private cron replacement
+uses the same refresh fixture code and database declaration in its new namespace.
+An ordinary restore of the stopped retry source separately checks that its handler
+ledger equals the pre-pause sample through both held intervals. It does not resume
+that audit copy or establish a universal callback drain.
+
+A final backup/restore with only retired history uses the ordinary controller and
+requires no live recovery receipts. Old bucket prefixes, artifact files, secret
+revisions and every original source volume remain unchanged. Accept a run only
+after observing its actual terminal exit, checking the private `retirement.json`
+and failure markers, and inspecting shutdown/log checks. Cleanup retains every
+volume. The public receipt records source hashes and the profile's limits.

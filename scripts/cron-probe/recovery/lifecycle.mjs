@@ -8,7 +8,7 @@ import { compareSourceVolumes } from './preservation.mjs';
 import { assertShutdown } from './oracles.mjs';
 import { waitForController } from './client.mjs';
 import { vmNow } from '../vm-time.mjs';
-import { data, native, operation } from './data.mjs';
+import { data, native } from './data.mjs';
 
 export async function bootstrap(probe, runner) {
   assert.equal((await projectContainers(probe.project)).length, 0, 'Use a fresh qualification project');
@@ -27,6 +27,7 @@ export async function bootstrap(probe, runner) {
   const release = await probe.submit(join(process.cwd(), 'examples/imports'), 'imports');
   assert.equal((await probe.decide(release)).status, 'active');
   const admin = await probe.api('/v1/admin');
+  probe.backgroundApps = { refresh: 'dispatch', imports: 'delivery' };
   probe.approvals = Object.fromEntries(['refresh', 'imports'].map(name => {
     const app = admin.apps[name], active = admin.deployments[app.active];
     assert.ok(Object.hasOwn(active, 'secretRevision'));
@@ -52,10 +53,12 @@ export async function snapshot(probe, directory, expectedAlarm, selected) {
   return { directory, before, manifest, prepared, approvals: probe.approvals, shutdown };
 }
 export async function retainAndDown(probe, bundle, label) {
-  assert.match(probe.project, /^fogd-m11c-cron-recovery-/);
+  assert.match(probe.project, /^fogd-m11c-cron-(?:recovery|retirement)-/);
   let failure, observed;
   if (probe.daemon) {
-    try { await operation(probe, 'refresh', 'pause'); await operation(probe, 'imports', 'pause'); } catch (error) { failure = error; }
+    try {
+      for (const [name, surface] of Object.entries(probe.backgroundApps || { refresh: 'dispatch', imports: 'delivery' })) await probe.command(['admin', surface, name, 'pause']);
+    } catch (error) { failure = error; }
   }
   await probe.compose(['stop', 'workerd', 'controller']);
   await probe.compose(['stop', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b']);

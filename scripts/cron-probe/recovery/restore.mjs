@@ -2,22 +2,15 @@ import { assertPausedRoute } from './oracles.mjs';
 import assert from 'node:assert/strict';
 import { data, native, operation } from './data.mjs';
 import { expect } from '../../guestbook-browser.mjs';
-import { requireDaemonStopped, waitForController, rootState } from './client.mjs';
+import { requireDaemonStopped, waitForController, rootState, startReplicas } from './client.mjs';
 import { vmNow, vmWaitUntil } from '../vm-time.mjs';
 import { cronRecords } from '../records.mjs';
 
-const replicas = ['slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'];
 export async function coldRestore(probe, expected, prepared, approvals) {
   probe.approvals = approvals;
   assert.ok(Number.isSafeInteger(prepared.beforePause.nextAlarm), 'Source snapshot must have observed an armed timer or retry');
   await requireDaemonStopped(probe);
-  await probe.compose(['up', '-d', '--no-build', '--pull', 'never', 'minio', 'bucket-init', ...replicas]);
-  await expect.poll(async () => Promise.all(replicas.map(async node => {
-    try {
-      const output = await probe.compose(['exec', '-T', node, 'node', '--input-type=module', '-e', "const r=await fetch('http://127.0.0.1:8080/.well-known/celld/health',{signal:AbortSignal.timeout(3000)});console.log(r.status);"]);
-      return { node, status: Number(output.trim()) };
-    } catch { return { node, status: 0 }; }
-  })), { timeout: 120000 }).toEqual(replicas.map(node => ({ node, status: 200 })));
+  await startReplicas(probe);
   const startedAt = await vmNow(probe), before = await data(probe);
   assert.deepEqual(before, expected, 'Fresh storage must contain exactly the stopped application state before controller startup');
   const recordsBefore = await cronRecords(probe, 'refresh');

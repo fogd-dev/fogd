@@ -1,0 +1,2157 @@
+{
+  "schema": 1,
+  "status": "qualified-bounded",
+  "scope": "Same-version local Linux arm64 Docker with two application fleets; privately staged native Void cron and normally submitted opt-in queues. Cron admission remains closed.",
+  "actualProcessExitCode": 0,
+  "retainedNamedVolumeCount": 49,
+  "privateEvidence": ".fogd/m11c-retirement-native4",
+  "provenance": {
+    "image": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+    "architecture": "arm64",
+    "os": "linux",
+    "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
+    "platform": {
+      "packages/platform/src/activation.mjs": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+      "packages/platform/src/admin-capacity.mjs": "e779d72f40a3568ba5cf822fe3ce796b5dd4d384118bfc3b0d4bd5467bc7a238",
+      "packages/platform/src/admin-control-script.mjs": "495584a6889575ffc0019a8cd0441a2907dd530c5948c3d946949026b3774df8",
+      "packages/platform/src/admin-credentials.mjs": "2c762aa30fa1c0ce83f8daf7059946ed8e6a20ceb48e36ba545c6af4b6a90e5b",
+      "packages/platform/src/admin-delivery.mjs": "0104bde803db296b0d57520ad98a4a3cfabcc03557285559bfeeda6c67a1ab89",
+      "packages/platform/src/admin-dispatch.mjs": "395c768b6feb3ad49f55653f52aa9a614605c9315afaff1c323284dde41b9c27",
+      "packages/platform/src/admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
+      "packages/platform/src/admin-view.mjs": "784b508727f23437197cf31009344000113c97eb53aefdec43ca08bbbf0cd450",
+      "packages/platform/src/backend.mjs": "ab1dc727a77215f522c369d6b758861d8948b96f77e61f4346b93ef0c74ee532",
+      "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
+      "packages/platform/src/capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
+      "packages/platform/src/claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
+      "packages/platform/src/controller.mjs": "4cda646bd0ddf3e0123997f7513c0ea65cd0e1689dfe1aef220851eff10653d9",
+      "packages/platform/src/credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
+      "packages/platform/src/cron-activation.mjs": "50df429918c04b7490d70fe875a1108780528c01da8bcbaee96571fdb77bca3a",
+      "packages/platform/src/cron-dispatch.mjs": "6ac1cb769c3ed6dd93ff14226f1d83141d7d215701abfb38c3a748669dc8e34e",
+      "packages/platform/src/cron-history.mjs": "11d1dc96b8212ae5bfdd0cd84343ade17f3410b02afd32757b30c5e7d8d503f0",
+      "packages/platform/src/cron-recovery.mjs": "7c0ca759b55c957c4f01ac560494632e9a2809ad10c61a965cfdcf4361ae2233",
+      "packages/platform/src/cron-retirement.mjs": "36874b20884a60d227025b3f4b4c49c362ee390c69687a625fe9680f6bc45e8c",
+      "packages/platform/src/cron-runtime.mjs": "0d4c50fe9df76db1e82b3eaf83fe33d45e3f0780f391a691a10f8c544c753a86",
+      "packages/platform/src/cron-snapshot.mjs": "4ba23bd2b39c39fe2b8eae122fd89706e222ff2f5c380becf41dcc699e8d3746",
+      "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+      "packages/platform/src/deployment-http.mjs": "6cdbf3168f64295b0e2c2d400695119ff0ae550728dee600b9b20d65c65cdbc4",
+      "packages/platform/src/deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
+      "packages/platform/src/dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+      "packages/platform/src/http.mjs": "210d5c612026d160936aa1e7e27328c726d0096dc5256a2f3a4a37144cd9b575",
+      "packages/platform/src/main.mjs": "33f418a67c4c6faa860182928600d729f7ecbc5453307d39d57161015bd08c04",
+      "packages/platform/src/queue-activation.mjs": "23284caca3163c7f9ee70157f78d324842cfea5fb03dbd0169e3fcc4af52345d",
+      "packages/platform/src/queue-history.mjs": "d5aea93f441ae3561b1243e520401550a1cda241a8697c1ef8b7a4f66f1e90b5",
+      "packages/platform/src/queue-recovery.mjs": "bf1fba3d1c27f9e3b8a43457d1c4ceea8c149dee6a57dab008577ac7a45e09d4",
+      "packages/platform/src/queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+      "packages/platform/src/queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+      "packages/platform/src/queue-runtime.mjs": "570a10dabc87f9f01a06a8d0df4f91003c2b5308bb101afe7bb3ea47ae753f1d",
+      "packages/platform/src/queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+      "packages/platform/src/quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
+      "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
+      "packages/platform/src/resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
+      "packages/platform/src/retirement.mjs": "ab542cc36b0faf921aacd3f8fa3dba9cace505343ee2fba07f226dd9007d0919",
+      "packages/platform/src/secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
+      "packages/platform/src/security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
+      "packages/platform/src/startup.mjs": "2abe860912da5f466a695fc0e8c2501030a56c534a10855bf254e827a9c6e518",
+      "packages/platform/src/store.mjs": "b0f11bbd640047a1661dbcbff7d05f198c546b89bbd5062f96b8b7a9d482a531",
+      "packages/runtime/src/artifact.mjs": "04257ca69e120cb1b5df9da1e7a42cb60618cd337f2d2fe97960684381f38f7d",
+      "packages/runtime/src/assets.mjs": "4eddd14ff6c344461674b8c6f42e3f0780d454a11ebe9d80448f1daa68d68eb1",
+      "packages/runtime/src/bucket.mjs": "d8619235d1b1ad8fa6cd0d999a6c8997ad1fe178f899ead57463eff0a778c03f",
+      "packages/runtime/src/deployment.mjs": "ec38b0083a7ec776a469eb89f4587b513cd8b83e9acf904d4f48f1026b43af1c",
+      "packages/runtime/src/files.mjs": "ba76bca333878955b4571b17079d27372e482cd6ea21d22cd892d1d5fc62b779",
+      "packages/runtime/src/gateway.js": "33dd151f608ad0bfdfa84719d4e1c966f7e6b9cc8f0d4e68b5b276e7a5839e1a",
+      "packages/runtime/src/import-tls.mjs": "10d734ae50daae56e74d4c8d202fceecde4e7bb9a9e99d986743ca98d463fd20",
+      "packages/runtime/src/init-bucket.mjs": "6154efa6dbedbecad7ba4c6ec155cb7046a75cf3f7daf727b9e82d314e17ded6",
+      "packages/runtime/src/manifest.mjs": "de8d2f22e5e98fe8c1744e97f3cdfa263bc9c9d36e585775f7276f34b58cb97b",
+      "packages/runtime/src/queues.mjs": "c4ad9681617dcdd2a7d66d9286648db0e02086e1c20139b7ff33cb2832fedbc9",
+      "packages/runtime/src/serve.mjs": "336f6ea199f2f8946c046d26a907750a13c6c87077bd1df8d507ea04a48f50e1",
+      "packages/runtime/src/transport.mjs": "d69aa1b2aadbdc7a4cba6cd2e04afdf86a36aeb9a68bfacd7d0683216457ce5b"
+    },
+    "probe": {
+      "docker/celld-supervisor.sh": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+      "docker/runtime.Dockerfile": "57b930e2c9a122ebaa560500f3a8cb338f60a38fd4fe42563890f1fdea73fba0",
+      "examples/imports/README.md": "f02101366bb6f6a854b5fefd2c352920eb4d98bbf819aa0bd97eb1b4f966d86b",
+      "examples/imports/db/migrations/0001_imports.sql": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680",
+      "examples/imports/db/schema.ts": "930caf87188c53629993824c2853f0ae035c47836138d7c39959627f566de49a",
+      "examples/imports/fogd.json": "7474e92ede55e9675747244f68c4f55e4f14aee8ec93a386f83955cf5a69f011",
+      "examples/imports/lib/input.mjs": "2ec28e405d7cb6722649861b37d2bc5b8dd23745b8f18e9c0187cc3211ddf808",
+      "examples/imports/lib/jobs.mjs": "93c83474963376c6cc011da49fbf528f119df690f4cbeb071a37dd66a3f50201",
+      "examples/imports/lib/page.mjs": "0108161a3bb82fb02794ae54fb42543f1d1bd1ff49f1a809b39c51a64938ce55",
+      "examples/imports/lib/process.mjs": "db5e10339d76415e4f7a0ebbc2149a0560299dc60d6795b7fd63f99126de510b",
+      "examples/imports/lib/results.mjs": "aac1c47cea8f88feb78a427bbc6f8d4f77115d800ba9800947f664a729afbcec",
+      "examples/imports/package.json": "9829b0f8d82d37f388903d8983955dc60c828c0c572d0d59fd9175025c43eca5",
+      "examples/imports/queues/imports.ts": "6576f8fdc3fc0c23357a74bbe2ece3c951efd3707c10592d95c43d055cbd01cd",
+      "examples/imports/routes/api/imports.ts": "061f809efd59aebff8f9ae97c793c993d0013981b540bc04547116a2080085e3",
+      "examples/imports/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+      "examples/imports/test/fixture.mjs": "1918ce21b01766be916151346d5a4490ce9a1d2c5896c08c952af2361fa6b8ac",
+      "examples/imports/test/jobs.test.mjs": "fca9d0ae500b3f3dfdb25c3b5e98b3c85e40bacb91c2658218b099aed0e22bb2",
+      "examples/imports/tsconfig.json": "6968e6d8e09397db2768797d4173e2b2b977f038df49deb58bd22dea368fb8cc",
+      "examples/imports/updates/v2/db/migrations/0002_processor.sql": "a820b0c7e3c1c6a36b37f10b7a94e5e12c0e22c146609e3ab020d28c3d04a60a",
+      "examples/imports/updates/v2/db/schema.ts": "c234d0a79e43b47d43bafab761c3d3dccd60466f7a4bcf113532c4358284f2f1",
+      "examples/imports/updates/v2/lib/results.mjs": "5d9f5cd1ba6aedd1a39faf88cb08ff52008a70f28bee723e3dcbb324db7c6943",
+      "examples/imports/vite.config.ts": "d4d96ab47ec182d6159309bf798dd73dd8abe2c7a4fc58ff2d2b80c100156e98",
+      "examples/imports/void.config.ts": "490088e818d8a0277394b978e81befca6d6591c2580fbdb433bbed4831635ed3",
+      "examples/refresh/README.md": "1f110cf700698f2a6addeb2dd5eb0173d46c6fef546818a640f5e901963f4087",
+      "examples/refresh/crons/advisory.ts": "ff8ba3dad263f2504bc372512cf1e2c75722b4dcdcea96812a529f263810d88d",
+      "examples/refresh/crons/inventory.ts": "8247d7077d9ddfd84cfb8541439b423c7f03bc1f455823e2b43986c110b30525",
+      "examples/refresh/db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+      "examples/refresh/db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+      "examples/refresh/env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+      "examples/refresh/fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+      "examples/refresh/lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+      "examples/refresh/lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+      "examples/refresh/lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+      "examples/refresh/package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+      "examples/refresh/routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+      "examples/refresh/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+      "examples/refresh/test/input.test.mjs": "e65db169fb844b360c2f056ba0a5caf9d4076661ceb9df35a0bd536b1f98240f",
+      "examples/refresh/test/refresh.test.mjs": "ac54dcd7eb93e523475a7aec2928e10aa3e0743145dcb446d80cd0d93c9709de",
+      "examples/refresh/tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+      "examples/refresh/vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+      "examples/refresh/void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+      "package.json": "427a154954a619934b3d0ba8b2150c30c0bb72bda6664481aef4c249418ca6e2",
+      "packages/cli/bin/fogd.js": "495e290e247e170b0ad57a8ea908b439a96e867cb697adbff2c38578727bf321",
+      "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
+      "packages/cli/src/bootstrap.mjs": "3673e5510feed3a8fa3d24ee28372be478c51f1b907d0e7133209d5b95dce0ad",
+      "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+      "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+      "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+      "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+      "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+      "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+      "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+      "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+      "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+      "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+      "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+      "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+      "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+      "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+      "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+      "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+      "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+      "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+      "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+      "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+      "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+      "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+      "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+      "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+      "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+      "packages/cli/src/local.mjs": "92eba0e5f90cc06955c0143ba7131cd90e8bbd21d2eacc8a1639fbac91dbe731",
+      "packages/cli/src/platform.mjs": "615af51e2962adde8dc55e02528e0551534e034a57ed8dd6d80d1812444628b5",
+      "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+      "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+      "packages/cli/src/recovery/backup.mjs": "7ca12732f9a1429941862fe5acf9b60a1c1f15537a8b9111c89039a2332d0952",
+      "packages/cli/src/recovery/bundle.mjs": "cbf7594d04c1758b105cefa895c6abd147db7644dc0b2dfb5d8c10a6d637d7aa",
+      "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
+      "packages/cli/src/recovery/docker.mjs": "79c59e5703c73e4df6419891926521256808bae86a9980b7e43f454d80249455",
+      "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+      "packages/cli/src/recovery/expand.mjs": "ed772cfae3e2e2ad46089b24a6096a45ee5facd6dba685b7931d74872a0e922d",
+      "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+      "packages/cli/src/recovery/inventory.mjs": "bea0f7110da25999cab19024de09825d19fdde3f3b3d92f8beba89fd5b866b12",
+      "packages/cli/src/recovery/layout-validation.mjs": "b823822c258b04266eccf20fc36be58485ec5658ee8c088bc5cca55d5102e52a",
+      "packages/cli/src/recovery/layout.mjs": "823fc5906e4591e3d11ca8e0d534c683afd3079bf1396d1e8929b95650fd2295",
+      "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+      "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+      "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+      "packages/cli/src/recovery/restore.mjs": "76f1e9c1087aab252cb4348a35b58e97a7c8540d0cad6f0e261142b87c2f6de4",
+      "packages/cli/src/recovery/retire.mjs": "a5013e26d0eea64755a2cc2648e690af88d496445f7d2ed576b930c6c4ce3934",
+      "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
+      "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+      "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+      "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+      "packages/cli/src/recovery/volumes.mjs": "75ce841f12c825b640571092bc5068aba4cb0f70d38743301f7b087446724603",
+      "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+      "packages/cli/src/tls.mjs": "e2139574e845b7b84078054a7285b0b9d27b950576c08769c884c250f87009e5",
+      "packages/platform/package.json": "b2473be96c832e7ec765922a355accf04953c3331d17d66302ea243f582286c6",
+      "packages/runtime/package.json": "629c692a946958a67fee2863c5f4b43df1e52ee699d7bedea3356a52110b2160",
+      "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
+      "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
+      "scripts/cron-probe/faults/build.mjs": "0d2501c16b08b7dce1e61d3236cff3012fd945225df66f5c09c1a2d8dca4c398",
+      "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+      "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+      "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+      "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
+      "scripts/cron-probe/recovery/client.mjs": "34d83dc5ea25748be83e7dd1df137bdce2a11635ca00df85028d7e1abc125498",
+      "scripts/cron-probe/recovery/commands.mjs": "10d51e3e1743d49ffb67040beec54c1bbc52590ec257308040285aab8230bdd1",
+      "scripts/cron-probe/recovery/controller.mjs": "9e28b7c480a1ef2907876e2254d9b4c1fb178c5b8e5c60b46c0c5e4e4e999a0e",
+      "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
+      "scripts/cron-probe/recovery/fixture.mjs": "30c26686ad7f4320706d12dbf22b362e71aa3d3b2b84c9e025e4097994db7afb",
+      "scripts/cron-probe/recovery/lifecycle.mjs": "f2f1fbd65c85bffcb67d6938f5043d12f38e9c32893804669212644eae2a0b05",
+      "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
+      "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
+      "scripts/cron-probe/recovery/provenance.mjs": "17b61899099d81a573ded7bf2542e2a77283a7ecf9fa55e56c6decc7cb4fd9ad",
+      "scripts/cron-probe/recovery/restore.mjs": "8daed844057fb7d930f44dc61d1ccb63bd8efad200bf75ff2e25d0808206759c",
+      "scripts/cron-probe/recovery/trial.mjs": "ea502d69e9be653aec3180dcbbc1073616bc59a3f82e89d01e1139230fe15a47",
+      "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+      "scripts/cron-probe/retirement/applications.mjs": "f7e1bb185266e4849d7105479c134b8ae21067fe6e913f721ef199a69eb60cbf",
+      "scripts/cron-probe/retirement/controller.mjs": "ea73cdf0729bbf68cd54648282c0bcf67549d27ff60ed03a52053bff09611bb7",
+      "scripts/cron-probe/retirement/oracles.mjs": "0550a487b635af2dfcec1e6f5e38d2a028788cd38514706a866e38bbe3f1d9f5",
+      "scripts/cron-probe/retirement/preservation.mjs": "0da8cf30f128a6d499fa0b70b74a67096e358ed7e4f8071b79601f27b45773d4",
+      "scripts/cron-probe/retirement/recovery.mjs": "3a979a9799409d941bfd6df72402458eda253254db3f36e1b1b7bd7138b0bdf7",
+      "scripts/cron-probe/retirement/replacement.mjs": "5823a80ef667cf9d5a5aa480876cb33d9d4e221066463446b04453a3cbefc2bc",
+      "scripts/cron-probe/retirement/transitions.mjs": "5e58d455aed543961518dcf01d1f4ccbf95f67cda1d0f40b2177965f5dd86af5",
+      "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+      "scripts/cron-recovery.mjs": "8c4358962c767894455b3700c6799e9b4cf9ce1bd582835f3377672b2704be5d",
+      "scripts/cron-retirement.mjs": "9332b0bb1dc33a244c98c1b5be7d8fc7d9defb67b849ac70e1e9f71e12375bfe",
+      "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
+      "scripts/http.mjs": "cbb8ef8feb9bfcaf8074f5828cb75f5b3502d81858045c1eeed66e59b334fa2a",
+      "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
+      "scripts/platform-client.mjs": "300ed24f6a7411dce4c8d07244ecb990852a54afb0863ebc82943f37c7f0bd00",
+      "scripts/queue-probe/controller-artifact.mjs": "ddb716f9f578cae64e5a5b4ab9930b5fdc0f09418673221c56eca5737b62da9c",
+      "scripts/queue-probe/prefix-fingerprints.mjs": "ee17354f649f7b62b2cd259be2421d535f7cda573a02866fa17fd5b5c8027b4f"
+    },
+    "git": {
+      "head": "9f69f4a8dd3511e7082f819cf2b6a589f8f76bd7",
+      "status": "M packages/cli/src/recovery/backup.mjs\n M packages/cli/src/recovery/cron-backup.mjs\n M packages/cli/src/recovery/restore.mjs\n M packages/cli/src/recovery/retirement-plan.mjs\n M packages/cli/test/cron-retirement.test.mjs\n M scripts/cron-probe/recovery/client.mjs\n M scripts/cron-probe/recovery/controller.mjs\n M scripts/cron-probe/recovery/fixture.mjs\n M scripts/cron-probe/recovery/lifecycle.mjs\n M scripts/cron-probe/recovery/provenance.mjs\n M scripts/cron-probe/recovery/restore.mjs\n M scripts/cron-recovery.mjs\n?? docs/evidence/m11c-cron-retirement.json\n?? packages/platform/test/cron-retirement-oracles.test.mjs\n?? scripts/cron-probe/recovery/commands.mjs\n?? scripts/cron-probe/recovery/trial.mjs\n?? scripts/cron-probe/retirement/\n?? scripts/cron-retirement.mjs"
+    },
+    "finalGit": {
+      "head": "9f69f4a8dd3511e7082f819cf2b6a589f8f76bd7",
+      "status": "M README.md\n M packages/cli/src/recovery/backup.mjs\n M packages/cli/src/recovery/cron-backup.mjs\n M packages/cli/src/recovery/restore.mjs\n M packages/cli/src/recovery/retirement-plan.mjs\n M packages/cli/test/cron-retirement.test.mjs\n M scripts/cron-probe/recovery/client.mjs\n M scripts/cron-probe/recovery/controller.mjs\n M scripts/cron-probe/recovery/fixture.mjs\n M scripts/cron-probe/recovery/lifecycle.mjs\n M scripts/cron-probe/recovery/provenance.mjs\n M scripts/cron-probe/recovery/restore.mjs\n M scripts/cron-recovery.mjs\n?? packages/platform/test/cron-retirement-oracles.test.mjs\n?? scripts/cron-probe/recovery/commands.mjs\n?? scripts/cron-probe/recovery/trial.mjs\n?? scripts/cron-probe/retirement/\n?? scripts/cron-retirement.mjs"
+    }
+  },
+  "retirements": [
+    {
+      "label": "a",
+      "retiredApp": "imports",
+      "selectedNativeAlarm": {
+        "app": "refresh",
+        "due": 1792554420000
+      },
+      "snapshotPauseCompletedAt": 1792554366033,
+      "newPrefixAndNodeIdentities": true,
+      "replicasUnpublishedBeforeApproval": [
+        {
+          "node": "slot-2-a",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-2-b",
+          "status": "awaiting-deployment"
+        }
+      ],
+      "cold": {
+        "startedAt": 1792554446124,
+        "endedAt": 1792554508270,
+        "durationMs": 62146,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "refresh"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324",
+          "beforeHold": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324",
+          "afterHold": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324"
+        },
+        "retiredPrefixes": {
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {
+          "refresh": {
+            "crons": [
+              "* * * * *"
+            ],
+            "nextAlarm": null,
+            "paused": true,
+            "revision": 4
+          }
+        }
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792554516743,
+        "endedAt": 1792554578881,
+        "durationMs": 62138,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "refresh"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324",
+          "beforeHold": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324",
+          "afterHold": "339594793bca54c61f15f1b2c66262bb5825bf8cb78c219c13aa0551bfa23324"
+        },
+        "retiredPrefixes": {
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {
+          "refresh": {
+            "crons": [
+              "* * * * *"
+            ],
+            "nextAlarm": null,
+            "paused": true,
+            "revision": 4
+          }
+        }
+      },
+      "survivors": {
+        "refresh": {
+          "recoveryId": "1ebd78c5-2c1f-4024-a821-33e8f6fc0601",
+          "sourceApprovalAndSecretPinPreserved": true,
+          "resumeRejectedBeforeAcknowledgment": true,
+          "acknowledgedWithoutResume": true
+        }
+      },
+      "retainedPrefixes": {
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        }
+      },
+      "retainedArtifactFiles": 10,
+      "retainedSecretRevisionFiles": 1,
+      "defaultController": false,
+      "operatorChangedControllerCommand": false,
+      "sourceVolumesCompared": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "snapshot": {
+        "sourceProject": "fogd-m11c-cron-retirement-4c118e",
+        "stoppedAt": "2026-10-21T03:46:33.860Z",
+        "completedAt": "2026-10-21T03:46:49.148Z",
+        "durationMs": 43050,
+        "images": {
+          "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+        },
+        "files": {
+          "bucket.tar": {
+            "bytes": 1126400,
+            "sha256": "c05bbd97b8f4ada7376f7cb48df8ec73652bafb30eeb979ea457547bf749481c"
+          },
+          "compose.json": {
+            "bytes": 14087,
+            "sha256": "116216cc17db89a0c383fae13bc4380d36efdc21b45e1ad27c8ac66649b6b0a3"
+          },
+          "controller.tar": {
+            "bytes": 1443840,
+            "sha256": "f122d56de9dfe44fa46fdde7afb53476a008b1f58a42158d5c37b99839fea26b"
+          },
+          "images.tar": {
+            "bytes": 915879936,
+            "sha256": "e823b8ffc9cfecd3da6ea0bc995221f70e3403f3161c265fa1f0f9f9a094ede2"
+          },
+          "slot-1-a.tar": {
+            "bytes": 10240,
+            "sha256": "2175ee1302064b66cccad3628d1d7983a220a1a936cd9bd792623bf49a2fe6d3"
+          },
+          "slot-1-b.tar": {
+            "bytes": 10240,
+            "sha256": "8c020701284c436137680583ad2166ccd3c5aeebe4761bb7c6951a78a901c46b"
+          },
+          "slot-2-a.tar": {
+            "bytes": 10240,
+            "sha256": "ae2cc9e5442b5dfe80cd3fef0642b1963660bccf39001bb2d9e567bae157bdea"
+          },
+          "slot-2-b.tar": {
+            "bytes": 10240,
+            "sha256": "390de39f9d6124e3b859978d4d399393eaf439031abccbcf0ebd717664ff7ab7"
+          },
+          "tls.tar": {
+            "bytes": 10240,
+            "sha256": "a5166e2d3b812af3c8cc7688f4705ae8350d7b4af584afc103da13bbe4da2026"
+          }
+        },
+        "exits": [
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "oomKilled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "b",
+      "retiredApp": "refresh",
+      "selectedNativeAlarm": {
+        "app": "refresh",
+        "due": 1792554748079
+      },
+      "snapshotPauseCompletedAt": 1792554735020,
+      "newPrefixAndNodeIdentities": true,
+      "replicasUnpublishedBeforeApproval": [
+        {
+          "node": "slot-1-a",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-1-b",
+          "status": "awaiting-deployment"
+        }
+      ],
+      "cold": {
+        "startedAt": 1792554824918,
+        "endedAt": 1792554887167,
+        "durationMs": 62249,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "replacement"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d",
+          "beforeHold": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d",
+          "afterHold": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792554895349,
+        "endedAt": 1792554957548,
+        "durationMs": 62199,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "replacement"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d",
+          "beforeHold": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d",
+          "afterHold": "9cd0d1c4c1dc8e911a030d9d03f941e9a688c96d6d3efb9d187d26ac8f4fb73d"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "survivors": {
+        "replacement": {
+          "recoveryId": "ab64dfbe-f0fa-4955-9e52-69c6e2aab95a",
+          "sourceApprovalAndSecretPinPreserved": true,
+          "resumeRejectedBeforeAcknowledgment": true,
+          "acknowledgedWithoutResume": true
+        }
+      },
+      "retainedPrefixes": {
+        "refresh": {
+          "objects": 28,
+          "bytes": 218513,
+          "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+        },
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        }
+      },
+      "retainedArtifactFiles": 13,
+      "retainedSecretRevisionFiles": 1,
+      "defaultController": false,
+      "operatorChangedControllerCommand": false,
+      "sourceVolumesCompared": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "snapshot": {
+        "sourceProject": "fogd-m11c-cron-retirement-4c118e-a",
+        "stoppedAt": "2026-10-21T03:52:55.508Z",
+        "completedAt": "2026-10-21T03:53:05.619Z",
+        "durationMs": 50594,
+        "images": {
+          "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+        },
+        "files": {
+          "bucket.tar": {
+            "bytes": 1474560,
+            "sha256": "7ac24681f3a396261462f6ff26b3417cbcf0b381d4b41a22016835b62ccf500d"
+          },
+          "compose.json": {
+            "bytes": 14611,
+            "sha256": "32425a45be783cb99ed7d92b127dcef30e26ac7f290901cda4026e5f8aa0c43b"
+          },
+          "controller.tar": {
+            "bytes": 1771520,
+            "sha256": "a84ca0a4322629cd04f34d00a3d609ba0b756dd5fc5fc7c5642ba24391091b4a"
+          },
+          "images.tar": {
+            "bytes": 915879936,
+            "sha256": "c00f8aff409e69a56f0a31e1bd1bccac154ae9fce802f46b95a46667594b3aa9"
+          },
+          "slot-1-a.tar": {
+            "bytes": 20480,
+            "sha256": "c6da99faffc5cdc254a453339e669158eba2796fee6c034c60ff2048a2397a41"
+          },
+          "slot-1-b.tar": {
+            "bytes": 30720,
+            "sha256": "9ec1cecf3cd5de627f319b42665029ecfd98ae36d9f8950cea4ca06706b41eb5"
+          },
+          "slot-2-a.tar": {
+            "bytes": 10240,
+            "sha256": "0664c884796518de406baf3c624a82d065f60ac831fe282b60973c1cbf59b174"
+          },
+          "slot-2-b.tar": {
+            "bytes": 10240,
+            "sha256": "76fb6b4dcca8ae99617ac23347cb900569a1d6ac9fe2a0b55074c40246b7b1e9"
+          },
+          "tls.tar": {
+            "bytes": 10240,
+            "sha256": "a5166e2d3b812af3c8cc7688f4705ae8350d7b4af584afc103da13bbe4da2026"
+          }
+        },
+        "exits": [
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "oomKilled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "c",
+      "retiredApp": "scheduled-next",
+      "selectedNativeAlarm": {
+        "app": "scheduled-next",
+        "due": 1792555080000
+      },
+      "snapshotPauseCompletedAt": 1792555023542,
+      "newPrefixAndNodeIdentities": true,
+      "replicasUnpublishedBeforeApproval": [
+        {
+          "node": "slot-1-a",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-1-b",
+          "status": "awaiting-deployment"
+        }
+      ],
+      "cold": {
+        "startedAt": 1792555099318,
+        "endedAt": 1792555161476,
+        "durationMs": 62158,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "replacement"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123",
+          "beforeHold": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123",
+          "afterHold": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          },
+          "scheduled-next": {
+            "objects": 23,
+            "bytes": 197532,
+            "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792555169251,
+        "endedAt": 1792555231321,
+        "durationMs": 62070,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [
+          "replacement"
+        ],
+        "rowFingerprints": {
+          "sourceSnapshot": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123",
+          "beforeHold": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123",
+          "afterHold": "6ad67ee527eb7d44ebf90712f48c1357c7b514380c43360cbab7a2fc35c82123"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          },
+          "scheduled-next": {
+            "objects": 23,
+            "bytes": 197532,
+            "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "survivors": {
+        "replacement": {
+          "recoveryId": "bd7edda5-ef95-4b81-bcef-e5373c0740bf",
+          "sourceApprovalAndSecretPinPreserved": true,
+          "resumeRejectedBeforeAcknowledgment": true,
+          "acknowledgedWithoutResume": true
+        }
+      },
+      "retainedPrefixes": {
+        "refresh": {
+          "objects": 28,
+          "bytes": 218513,
+          "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+        },
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        },
+        "scheduled-next": {
+          "objects": 23,
+          "bytes": 197532,
+          "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+        }
+      },
+      "retainedArtifactFiles": 20,
+      "retainedSecretRevisionFiles": 2,
+      "defaultController": true,
+      "operatorChangedControllerCommand": true,
+      "sourceVolumesCompared": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "snapshot": {
+        "sourceProject": "fogd-m11c-cron-retirement-4c118e-a-b",
+        "stoppedAt": "2026-10-21T03:57:31.051Z",
+        "completedAt": "2026-10-21T03:57:41.106Z",
+        "durationMs": 37559,
+        "images": {
+          "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+        },
+        "files": {
+          "bucket.tar": {
+            "bytes": 2467840,
+            "sha256": "d04221699a4384bc3b5d47eb0cd45184789bca8e27200230a8867b4fcadd37bc"
+          },
+          "compose.json": {
+            "bytes": 14895,
+            "sha256": "5f286bdee7fe5f681380e2c890a623e336e339c5e01cae4a0443c89f36b1f5c1"
+          },
+          "controller.tar": {
+            "bytes": 2324480,
+            "sha256": "f61157f6494d12bf3ecdb8b00ade144d872670192ee0a9c1e3420b3248e296ef"
+          },
+          "images.tar": {
+            "bytes": 915879936,
+            "sha256": "5e0dd3e90fd1d55d635901be693927e055a0bade6eb9ebe52096902b23e0d45c"
+          },
+          "slot-1-a.tar": {
+            "bytes": 10240,
+            "sha256": "f6cbbf6f9918741a62cc7f9d0d82dcd5ff1d46ded8579ecc193f153817cf1648"
+          },
+          "slot-1-b.tar": {
+            "bytes": 10240,
+            "sha256": "c42c79d3a9ac73968dcc714be3adfdbf9588049313e9156fb326ed61c7ec0e13"
+          },
+          "slot-2-a.tar": {
+            "bytes": 10240,
+            "sha256": "5951e95a84bff3cda19d503e98edc891218072bf40c8ae6dac967f3cb355b3c6"
+          },
+          "slot-2-b.tar": {
+            "bytes": 20480,
+            "sha256": "b0abcb5306a575367470d2d70846f7218bbb3f231a91d0091c0fcba0c316c6ed"
+          },
+          "tls.tar": {
+            "bytes": 10240,
+            "sha256": "a5166e2d3b812af3c8cc7688f4705ae8350d7b4af584afc103da13bbe4da2026"
+          }
+        },
+        "exits": [
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "oomKilled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "d",
+      "retiredApp": "replacement",
+      "selectedNativeAlarm": null,
+      "snapshotPauseCompletedAt": null,
+      "newPrefixAndNodeIdentities": true,
+      "replicasUnpublishedBeforeApproval": [
+        {
+          "node": "slot-1-a",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-1-b",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-2-a",
+          "status": "awaiting-deployment"
+        },
+        {
+          "node": "slot-2-b",
+          "status": "awaiting-deployment"
+        }
+      ],
+      "cold": {
+        "startedAt": 1792555311202,
+        "endedAt": 1792555373221,
+        "durationMs": 62019,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [],
+        "rowFingerprints": {
+          "sourceSnapshot": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "beforeHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "afterHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          },
+          "replacement": {
+            "objects": 29,
+            "bytes": 354194,
+            "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+          },
+          "scheduled-next": {
+            "objects": 23,
+            "bytes": 197532,
+            "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "controllerRunningHold": {
+        "startedAt": 1792555382395,
+        "endedAt": 1792555444597,
+        "durationMs": 62202,
+        "applicationRowsAndControlsUnchanged": true,
+        "survivorApps": [],
+        "rowFingerprints": {
+          "sourceSnapshot": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "beforeHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "afterHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "retiredPrefixes": {
+          "refresh": {
+            "objects": 28,
+            "bytes": 218513,
+            "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+          },
+          "imports": {
+            "objects": 23,
+            "bytes": 329717,
+            "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+          },
+          "replacement": {
+            "objects": 29,
+            "bytes": 354194,
+            "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+          },
+          "scheduled-next": {
+            "objects": 23,
+            "bytes": 197532,
+            "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+          }
+        },
+        "unpublishedNamespaceOnlyWakeFormat": true,
+        "heldNativeControls": {}
+      },
+      "survivors": {},
+      "retainedPrefixes": {
+        "refresh": {
+          "objects": 28,
+          "bytes": 218513,
+          "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+        },
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        },
+        "replacement": {
+          "objects": 29,
+          "bytes": 354194,
+          "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+        },
+        "scheduled-next": {
+          "objects": 23,
+          "bytes": 197532,
+          "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+        }
+      },
+      "retainedArtifactFiles": 20,
+      "retainedSecretRevisionFiles": 2,
+      "defaultController": true,
+      "operatorChangedControllerCommand": false,
+      "sourceVolumesCompared": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "snapshot": {
+        "sourceProject": "fogd-m11c-cron-retirement-4c118e-a-b-c",
+        "stoppedAt": "2026-10-21T04:01:02.111Z",
+        "completedAt": "2026-10-21T04:01:12.611Z",
+        "durationMs": 36997,
+        "images": {
+          "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+          "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
+        },
+        "files": {
+          "bucket.tar": {
+            "bytes": 2078720,
+            "sha256": "4c36bec446ff4e013dc9d8fa51893b0e2df3c61e029c6f46fd6b78b485e5cdfc"
+          },
+          "compose.json": {
+            "bytes": 14905,
+            "sha256": "8b692f418561dbf1d1f1f2c3071353f3bbbabb7e340543b328fc851c05f98437"
+          },
+          "controller.tar": {
+            "bytes": 2334720,
+            "sha256": "9f82299b75dbff6bd6469a94581b6d6a7855be687072da1df1bff9ec2dea09c1"
+          },
+          "images.tar": {
+            "bytes": 915879936,
+            "sha256": "a047f123ad0ac0c46afbb09706ebd5701957d1b977a77fefab15bc08a9397e83"
+          },
+          "slot-1-a.tar": {
+            "bytes": 10240,
+            "sha256": "0f575f9bac75c6d7c7225805406a8adeaac909c9fb0947a3d3d56c97c2fa1fb4"
+          },
+          "slot-1-b.tar": {
+            "bytes": 10240,
+            "sha256": "0f575f9bac75c6d7c7225805406a8adeaac909c9fb0947a3d3d56c97c2fa1fb4"
+          },
+          "slot-2-a.tar": {
+            "bytes": 10240,
+            "sha256": "99da9608e78f61ec1a6556c37e9b7bc292769fdcc74ea368f79691f37058e219"
+          },
+          "slot-2-b.tar": {
+            "bytes": 20480,
+            "sha256": "1b22b6fa82164b11632e1b21b564c0fabcdf31cdea95cbce33be0ff1b333628a"
+          },
+          "tls.tar": {
+            "bytes": 10240,
+            "sha256": "a5166e2d3b812af3c8cc7688f4705ae8350d7b4af584afc103da13bbe4da2026"
+          }
+        },
+        "exits": [
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "oomKilled": false
+          }
+        ]
+      }
+    }
+  ],
+  "futureDispatch": {
+    "initial": {
+      "resume": {
+        "requestedAt": 1792554339234,
+        "confirmedAt": 1792554339887,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792554360000,
+          "paused": false,
+          "revision": 3
+        }
+      },
+      "nativeRows": [
+        {
+          "id": "b472686c-f9b3-4b11-a3df-28765df9acfa",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792554360000,
+          "entered_at": 1792554360002,
+          "finished_at": 1792554360254,
+          "phase": "before-a",
+          "outcome": "success"
+        },
+        {
+          "id": "d88da63f-c60b-4182-8caa-204814684d00",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792554360000,
+          "entered_at": 1792554360002,
+          "finished_at": 1792554360218,
+          "phase": "before-a",
+          "outcome": "success"
+        }
+      ]
+    },
+    "cronSurvivor": {
+      "resume": {
+        "requestedAt": 1792554605372,
+        "confirmedAt": 1792554605657,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792554660000,
+          "paused": false,
+          "revision": 5
+        }
+      },
+      "nativeRows": [
+        {
+          "id": "636d55ef-d1fd-4b83-be27-6070470f9f6b",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792554660000,
+          "entered_at": 1792554660005,
+          "finished_at": 1792554660026,
+          "phase": "after-a",
+          "outcome": "success"
+        },
+        {
+          "id": "c74f9887-a5bf-499d-9e42-446f3ba0d258",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792554660000,
+          "entered_at": 1792554660005,
+          "finished_at": 1792554660026,
+          "phase": "after-a",
+          "outcome": "success"
+        }
+      ]
+    },
+    "scheduledReplacement": {
+      "resume": {
+        "requestedAt": 1792554969198,
+        "confirmedAt": 1792554969471,
+        "control": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": 1792555020000,
+          "paused": false,
+          "revision": 3
+        }
+      },
+      "nativeRows": [
+        {
+          "id": "5d60a1f8-247a-4412-b868-6fb80d23e8fb",
+          "job": "advisory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792555020000,
+          "entered_at": 1792555020004,
+          "finished_at": 1792555020023,
+          "phase": "new-cron",
+          "outcome": "success"
+        },
+        {
+          "id": "d167277d-6191-4089-9daa-346bcb52be84",
+          "job": "inventory",
+          "cron": "* * * * *",
+          "scheduled_time": 1792555020000,
+          "entered_at": 1792555020004,
+          "finished_at": 1792555020023,
+          "phase": "new-cron",
+          "outcome": "success"
+        }
+      ]
+    }
+  },
+  "pendingRetry": {
+    "scheduledTime": 1792554720000,
+    "dueAt": 1792554748079,
+    "observedAt": 1792554733152,
+    "nativeRows": [
+      {
+        "id": "979fe3fd-24e4-4986-857e-60d6251f9de8",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554720004,
+        "finished_at": 1792554720031,
+        "phase": "retry-b",
+        "outcome": "success"
+      },
+      {
+        "id": "a9cd0442-5abb-4ea3-84a1-5c3baa4a8d21",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554720004,
+        "finished_at": 1792554720017,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "31ffaf2a-26c5-42f7-9fa8-c6419ae35d39",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554724035,
+        "finished_at": 1792554724047,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "50f06fba-97c1-46e1-bd2f-d47f6acc41f6",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554724035,
+        "finished_at": 1792554724059,
+        "phase": "retry-b",
+        "outcome": "success"
+      },
+      {
+        "id": "2fb48594-9105-47a5-a1fc-f2f9294d15b6",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554732065,
+        "finished_at": 1792554732071,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "7abaeecc-6b4c-4fd8-bd13-81ccbee624a2",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792554720000,
+        "entered_at": 1792554732065,
+        "finished_at": 1792554732077,
+        "phase": "retry-b",
+        "outcome": "success"
+      }
+    ],
+    "fate": "Pause receipt observed before the selected retry deadline. An ordinary restore of the stopped source reproduces the pre-pause handler ledger without added rows or counters; after retirement the old namespace remains unused and its bytes stay unchanged."
+  },
+  "replacementIsolation": {
+    "queued": {
+      "queue": {
+        "backlogBytes": 0,
+        "backlogCount": 0,
+        "oldestMessageTimestamp": null,
+        "paused": true,
+        "stored": 0
+      },
+      "reusedSlot": "slot-2",
+      "oldScopedUploadRefused": true,
+      "retiredNameUploadRefused": true,
+      "emptyApplicationRows": true
+    },
+    "scheduled": {
+      "bootstrap": {
+        "slot": "slot-1",
+        "control": {
+          "paused": true,
+          "revision": 0,
+          "nextAlarm": null,
+          "crons": []
+        }
+      },
+      "requestedAt": 1792554963188,
+      "confirmedAt": 1792554967175,
+      "approvalDurationMs": 3987,
+      "reusedSlot": "slot-1",
+      "missingSecretRefused": true,
+      "oldSecretRevisionRefused": true,
+      "distinctSecretValuesAndRevisions": true,
+      "emptyApplicationRows": true,
+      "freshSeededConfiguration": {
+        "refresh_settings": [
+          {
+            "id": 1,
+            "mode": "retry-once"
+          }
+        ],
+        "cron_fault_control": [
+          {
+            "id": 1,
+            "phase": "startup",
+            "policy": "healthy"
+          }
+        ]
+      },
+      "oldScopedUploadRefused": true,
+      "retiredNameUploadRefused": true
+    }
+  },
+  "zeroLive": {
+    "nativeOnlyHold": {
+      "startedAt": 1792555497817,
+      "endedAt": 1792555560041,
+      "durationMs": 62224,
+      "applicationRowsAndControlsUnchanged": true,
+      "survivorApps": [],
+      "rowFingerprints": {
+        "sourceSnapshot": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "beforeHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "afterHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      "retiredPrefixes": {
+        "refresh": {
+          "objects": 28,
+          "bytes": 218513,
+          "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+        },
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        },
+        "replacement": {
+          "objects": 29,
+          "bytes": 354194,
+          "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+        },
+        "scheduled-next": {
+          "objects": 23,
+          "bytes": 197532,
+          "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+        }
+      },
+      "unpublishedNamespaceOnlyWakeFormat": true,
+      "heldNativeControls": {}
+    },
+    "controllerRunningHold": {
+      "startedAt": 1792555568993,
+      "endedAt": 1792555631195,
+      "durationMs": 62202,
+      "applicationRowsAndControlsUnchanged": true,
+      "survivorApps": [],
+      "rowFingerprints": {
+        "sourceSnapshot": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "beforeHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "afterHold": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      "retiredPrefixes": {
+        "refresh": {
+          "objects": 28,
+          "bytes": 218513,
+          "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+        },
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        },
+        "replacement": {
+          "objects": 29,
+          "bytes": 354194,
+          "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+        },
+        "scheduled-next": {
+          "objects": 23,
+          "bytes": 197532,
+          "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+        }
+      },
+      "unpublishedNamespaceOnlyWakeFormat": true,
+      "heldNativeControls": {}
+    },
+    "normalStartup": [
+      "node",
+      "packages/platform/src/main.mjs"
+    ],
+    "operatorChangedControllerCommand": false,
+    "noLiveRecoveryReceipts": true,
+    "retiredPrefixes": {
+      "refresh": {
+        "objects": 28,
+        "bytes": 218513,
+        "contentFingerprint": "d0f7026249a17c633e4f972c8bd260a68270454eaa5f88cadc4f3646879035a1"
+      },
+      "imports": {
+        "objects": 23,
+        "bytes": 329717,
+        "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+      },
+      "replacement": {
+        "objects": 29,
+        "bytes": 354194,
+        "contentFingerprint": "80310b98240fd3e5aa833ba7721236b3b2c7becdc48f24e8859eecc7d5baa027"
+      },
+      "scheduled-next": {
+        "objects": 23,
+        "bytes": 197532,
+        "contentFingerprint": "a3dd96c23793c78d139ec8cf42bd136148be8bc5a6386b2ce906674c45cfaacf"
+      }
+    }
+  },
+  "assertionBasis": "Control refusals, namespace allocation and recovery gates are assertions in the fingerprinted driver. The curator independently checks recorded hold data, source pins and prefix hashes. Row fingerprints are computed over retained private rows; an empty survivor set covers startup and retained-prefix isolation rather than live application rows. Manifest identifiers refer to private full manifests, not their public projections. Terminal exit codes are operator observations.",
+  "shutdowns": [
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e",
+      "earliest": "2026-10-21T03:45:08.676407753Z",
+      "exits": [
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a",
+      "earliest": "2026-10-21T03:47:07.480262044Z",
+      "exits": [
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b",
+      "earliest": "2026-10-21T03:53:24.199517844Z",
+      "exits": [
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b-c",
+      "earliest": "2026-10-21T03:57:59.218566721Z",
+      "exits": [
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b-c-d",
+      "earliest": "2026-10-21T04:01:30.290688055Z",
+      "exits": [
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ],
+      "preservation": {
+        "volumes": [
+          "bucket",
+          "controller",
+          "slot-1-a",
+          "slot-1-b",
+          "slot-2-a",
+          "slot-2-b",
+          "tls"
+        ],
+        "archivedEntriesCompared": true,
+        "completeNamesCompared": true
+      }
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-zero",
+      "earliest": "2026-10-21T04:04:37.419579877Z",
+      "exits": [
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ]
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-retry-audit",
+      "earliest": "2026-10-21T04:07:31.101975222Z",
+      "exits": [
+        {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "controller",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "workerd",
+          "running": false,
+          "code": 1,
+          "restartCount": 0,
+          "oomKilled": false
+        }
+      ]
+    }
+  ],
+  "finalSourcePreservation": [
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e",
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a",
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b",
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b-c",
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    },
+    {
+      "project": "fogd-m11c-cron-retirement-4c118e-a-b-c-d",
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    }
+  ],
+  "limits": [
+    "Stopped full-installation copies; same runtime image and two application fleets only",
+    "Retained source volumes and old namespaces can run old work if restarted; keep them stopped",
+    "Pause clears timer/retry identity and is not a callback drain or a missed-tick backlog",
+    "Independent local fixtures do not qualify hostile tenants, remote hosts, Kubernetes or three-fleet cron recovery",
+    "Live cron work used the archived private qualification controller; ordinary startup ran only after every live cron was retired",
+    "Operator explicitly selected the ordinary controller command after the last live cron was retired",
+    "Reuse means slot/capacity reuse under a different app name; the cron replacement reuses the refresh fixture code and refresh-db declaration on a fresh namespace",
+    "Retiring cron beside another live cron is not exercised; the bounded profile pairs cron with queued work",
+    "Gate 7 was qualified at commit 63fb494; a full current-tree recovery rerun remains required before normal cron admission",
+    "Normal scoped cron admission, release-bound runtime qualification and upstream Rust execution remain open; watchdogs do not qualify CPU limits"
+  ],
+  "queuedSurvivorVerification": "GET-only completion checks after recovery acknowledgment and separate resume; original inputs were POSTed once before the snapshot.",
+  "queuedSurvivorResults": {
+    "pendingQueueSurvivor": {
+      "id": "pending-b",
+      "status": "complete",
+      "labels": [
+        "KIWI",
+        "LIME"
+      ],
+      "snapshot": {
+        "case": "b",
+        "manifestSha256": "ced40c01bc1b6e0ed1288c88f9b7a9b6e26d79533b30927ae05d2d23654a56c7",
+        "jobStatus": "accepted",
+        "attempts": 0,
+        "resultCount": 0,
+        "backlogCount": 1
+      }
+    },
+    "finalQueueSurvivor": {
+      "id": "pending-c",
+      "status": "complete",
+      "labels": [
+        "MELON",
+        "PLUM"
+      ],
+      "snapshot": {
+        "case": "c",
+        "manifestSha256": "1517a9af97a66ae8c53c43fbcbc6374b8663d1fe1df247429a271c1e9a90923b",
+        "jobStatus": "accepted",
+        "attempts": 0,
+        "resultCount": 0,
+        "backlogCount": 1
+      }
+    }
+  },
+  "retrySourceLedgerAudit": {
+    "actualProcessExitCode": 0,
+    "sourceSnapshot": "ced40c01bc1b6e0ed1288c88f9b7a9b6e26d79533b30927ae05d2d23654a56c7",
+    "originalPauseCompletedAt": 1792554735020,
+    "originalRetryDueAt": 1792554748079,
+    "originalSourceStoppedAt": "2026-10-21T03:52:55.508Z",
+    "controllerCommand": [
+      "node",
+      "/var/lib/fogd/qualification/controller.mjs"
+    ],
+    "stoppedArchiveRowsEqualPrePauseSample": true,
+    "sourceLedgerFingerprint": "b3715bcf242f717bc66cc4b2218838e65aec4c9ab911e83182150a7c7f7ac235",
+    "cronLedgerFingerprint": "b3715bcf242f717bc66cc4b2218838e65aec4c9ab911e83182150a7c7f7ac235",
+    "originalSourceStoppedAfterRetryDeadline": true,
+    "rowCounts": {
+      "refresh_settings": 1,
+      "cron_fault_control": 1,
+      "cron_fault_attempts": 10,
+      "refresh_results": 5,
+      "refresh_occurrences": 5
+    },
+    "nativeOnlyHold": {
+      "startedAt": 1792555670511,
+      "endedAt": 1792555732512,
+      "durationMs": 62001,
+      "applicationRowsAndControlsUnchanged": true,
+      "survivorApps": [
+        "refresh",
+        "replacement"
+      ],
+      "rowFingerprints": {
+        "sourceSnapshot": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b",
+        "beforeHold": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b",
+        "afterHold": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b"
+      },
+      "retiredPrefixes": {
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        }
+      },
+      "unpublishedNamespaceOnlyWakeFormat": true,
+      "heldNativeControls": {
+        "refresh": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 8
+        }
+      }
+    },
+    "controllerRunningHold": {
+      "startedAt": 1792555741012,
+      "endedAt": 1792555803231,
+      "durationMs": 62219,
+      "applicationRowsAndControlsUnchanged": true,
+      "survivorApps": [
+        "refresh",
+        "replacement"
+      ],
+      "rowFingerprints": {
+        "sourceSnapshot": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b",
+        "beforeHold": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b",
+        "afterHold": "af220b69f40488c531a9c9df3c6807ead23bbde6f95265b40c1f621a4ed28d9b"
+      },
+      "retiredPrefixes": {
+        "imports": {
+          "objects": 23,
+          "bytes": 329717,
+          "contentFingerprint": "81d7b2a4ddfa1f8b01f8d5b5c1a02474229892890fc826862d818e937893444b"
+        }
+      },
+      "unpublishedNamespaceOnlyWakeFormat": true,
+      "heldNativeControls": {
+        "refresh": {
+          "crons": [
+            "* * * * *"
+          ],
+          "nextAlarm": null,
+          "paused": true,
+          "revision": 8
+        }
+      }
+    },
+    "sourceVolumesCompared": [
+      "bucket",
+      "controller",
+      "slot-1-a",
+      "slot-1-b",
+      "slot-2-a",
+      "slot-2-b",
+      "tls"
+    ],
+    "retainedNamedVolumeCount": 7,
+    "integratedWithMainDriver": true,
+    "limit": "Archived ledger equality measures handler outcomes across pause and shutdown; it does not establish a universal callback drain or an observation-only dispatch fence."
+  },
+  "oldCronLedgerBoundary": {
+    "scheduledTimesThrough": 1792554605371,
+    "sourceSnapshot": "2263616b3fcaddb300306bbd5881b704ea640b51e5700e932a7702075b6c9e2c",
+    "laterSnapshot": "ced40c01bc1b6e0ed1288c88f9b7a9b6e26d79533b30927ae05d2d23654a56c7",
+    "tables": {
+      "cron_fault_attempts": {
+        "sourceRows": 2,
+        "laterRows": 2,
+        "sourceFingerprint": "5f03857711bb8c40a3bd1eed7f1e10006c89ff9c953f0830e5a5296087044a44",
+        "laterFingerprint": "5f03857711bb8c40a3bd1eed7f1e10006c89ff9c953f0830e5a5296087044a44"
+      },
+      "refresh_results": {
+        "sourceRows": 2,
+        "laterRows": 2,
+        "sourceFingerprint": "4a1eb7faea4196ba7d4155ffe05e23238325475d2c04ce03eff2dc1c2aa7d287",
+        "laterFingerprint": "4a1eb7faea4196ba7d4155ffe05e23238325475d2c04ce03eff2dc1c2aa7d287"
+      },
+      "refresh_occurrences": {
+        "sourceRows": 2,
+        "laterRows": 2,
+        "sourceFingerprint": "32f912829a732583157b692db34ec4e7420a45cf3d9fae6f00be716d76c221c3",
+        "laterFingerprint": "32f912829a732583157b692db34ec4e7420a45cf3d9fae6f00be716d76c221c3"
+      }
+    }
+  },
+  "sourceVolumeComparisonBasis": "Fingerprint-pinned driver assertions compare every archived source entry and complete names after shutdown; manifest archive hashes and compared volume names are published for each case.",
+  "totalRetainedNamedVolumeCount": 49,
+  "privateValuesAndVersionsAbsent": true
+}

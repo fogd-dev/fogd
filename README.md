@@ -144,8 +144,10 @@ pnpm test
 pnpm build
 ```
 
-CPU, memory, V8 heap, resident-cell, request-body, upload, and pending-request limits
-are enforced where the runtimes support them. These are not per-request CPU quotas.
+Container CPU and memory limits bound the services. V8 heap, resident-cell,
+request-body, upload, and pending-request limits apply at their supported layers.
+fogd does not map per-worker `cpu_ms`, and pinned celld rejects top-level `limits`.
+Handler watchdog evidence does not establish a per-request CPU quota.
 MinIO and the controller remain single points of failure. Public/homelab deployment
 still needs TLS, private peer networking, scoped storage credentials, coordinated
 backups, and an operator-provisioned slot on each host.
@@ -380,8 +382,12 @@ owner loss; see the [evidence](docs/evidence/m11c-cron-retry-positive.json). Thi
 not a supported deployment mode: ordinary `fogd deploy` still rejects cron
 declarations. Private activation, operator controls and the ordinary Void
 [failure profile](docs/cron-failures.md) have bounded native evidence. Scoped
-admission, retirement and release-bound runtime qualification remain open.
-[Stopped cron recovery](docs/cron-recovery.md) qualifies same-version local Linux
+admission and release-bound runtime qualification remain open. The
+[bounded retirement profile](docs/retirement.md#experimental-scheduled-app-retirement)
+covers cron/queue survivors, fresh capacity reuse and zero-live restore.
+[Stopped cron recovery](docs/cron-recovery.md) qualified same-version local Linux
 arm64 Docker with two application fleets, due timers, pending retries and an
-older snapshot. [Compatible replacement](docs/cron-replacement.md) now has bounded
+older snapshot at commit `63fb494`; its changed helpers require a full current-tree
+rerun before admission. Retirement beside another live cron remains untested.
+[Compatible replacement](docs/cron-replacement.md) now has bounded
 migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.

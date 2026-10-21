@@ -140,9 +140,13 @@ terminal retries, owner takeover and autonomous overdue work after downtime.
 The bounded [replacement profile](cron-replacement.md) covers old work through
 compatible migration, lost completion near publication, unfinished application
 status and new-code native retries. The [stopped cron recovery profile](cron-recovery.md)
-qualifies same-version local Linux arm64 Docker with two application fleets, due
-timers, pending retries and an older snapshot. Normal scoped cron admission,
-retirement and release-bound runtime qualification remain open.
+qualified same-version local Linux arm64 Docker with two application fleets, due
+timers, pending retries and an older snapshot at commit `63fb494`; changed shared
+helpers require a full current-tree rerun before admission. The
+[bounded retirement profile](retirement.md#experimental-scheduled-app-retirement)
+covers cron/queue survivors, isolated replacement capacity and zero-live restore.
+Retiring cron beside another live cron, normal scoped cron admission and
+release-bound runtime qualification remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
