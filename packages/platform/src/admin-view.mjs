@@ -1,3 +1,4 @@
+import { cronRecoveryView } from './cron-recovery.mjs';
 import { cronUpdateNotice } from './cron-dispatch.mjs';
 import { capacity } from './capacity.mjs';
 
@@ -15,7 +16,8 @@ export function adminState(controller) {
 
 function adminApp(app) {
   const visible = { ...app };
-  delete visible.queueSnapshot;
+  delete visible.queueSnapshot; delete visible.cronSnapshot;
+  if (app.cronRecovery) visible.cronRecovery = cronRecoveryView(app.cronRecovery);
   if (app.retirement?.queue) {
     const { stopQueuedWork, prepared } = app.retirement.queue;
     visible.retirement = { ...app.retirement, queue: { stopQueuedWork, queue: prepared.queue,

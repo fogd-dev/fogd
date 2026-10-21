@@ -1,3 +1,4 @@
+import { validateCronRecoveryState, recoverCronSnapshots } from './cron-recovery.mjs';
 import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
 import { validateRecoveryState, recoverQueueSnapshots } from './queue-recovery.mjs';
 import { activateRelease } from './activation.mjs';
@@ -59,6 +60,7 @@ export class Controller {
     validateQueueState(this.state);
     validateCronState(this.state, this.backend.crons);
     validateRecoveryState(this.state);
+    validateCronRecoveryState(this.state);
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); interruptCronActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }
@@ -67,6 +69,7 @@ export class Controller {
     await recoverQueueHolds(this);
     await recoverCronHolds(this);
     await recoverQueueSnapshots(this);
+    await recoverCronSnapshots(this);
   }
   assertStorage() {
     if (this.#storageFailed) {

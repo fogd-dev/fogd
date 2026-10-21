@@ -1,0 +1,4 @@
+// Each rendered control family scopes its own buttons and recovery acceptance.
+export function controlScript(surface, csrf, recoveryPrompt) {
+  return `<script>for(const b of document.querySelectorAll('button[data-${surface}]'))b.onclick=async()=>{const action=b.dataset[${JSON.stringify(surface)}];if(action==='acknowledge-recovery'&&!confirm(${JSON.stringify(recoveryPrompt)}))return;b.disabled=true;try{const r=await fetch('/v1/apps/'+encodeURIComponent(b.dataset.app)+'/${surface}/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({deployment:b.dataset.deployment,digest:b.dataset.digest,...(action==='acknowledge-recovery'?{recovery:b.dataset.recovery,review:b.dataset.review,acceptPossibleLoss:true}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script>`;
+}

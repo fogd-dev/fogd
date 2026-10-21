@@ -1,8 +1,9 @@
+import { cronRecoveryPending } from './cron-snapshot.mjs';
 import { CronDispatch, initialCronDispatch, validateCronDispatch, cronCapability, cronScript, requireCronCapability } from './cron-dispatch.mjs';
 
 export function dispatchFor(controller, app, slot) {
   return new CronDispatch({ state: app.dispatch, slot, runtime: controller.backend.crons, clock: controller.clock,
-    persist: async state => { controller.assertStorage(); app.dispatch = state; await controller.save(); } });
+    persist: async state => { controller.assertStorage(); delete app.cronSnapshot; app.dispatch = state; await controller.save(); } });
 }
 
 export function validateCronState(state, runtime) {
@@ -75,6 +76,7 @@ function requireCronRuntime(runtime) {
 }
 
 export function assertCronDecision(app, request, action, replaces, runtime) {
+  if (action !== 'reject' && cronRecoveryPending(app)) throw new Error('Acknowledge restored cron recovery before approving another artifact');
   if (request.resources.crons && action !== 'reject') requireCronRuntime(runtime);
   if (request.resources.crons && replaces !== undefined) throw new Error('Replacing a held cron activation is not qualified; retry the original artifact');
   if (!app?.dispatch?.hold) return;

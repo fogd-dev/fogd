@@ -77,7 +77,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
 
 function errorStatus(error) {
   if (error.code === 'CONTROLLER_STORAGE_UNCERTAIN') return 503;
-  if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED'].includes(error.code)) return 502;
+  if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED', 'CRON_SNAPSHOT_UNCONFIRMED', 'CRON_RECOVERY_UNCONFIRMED'].includes(error.code)) return 502;
   return 400;
 }
 

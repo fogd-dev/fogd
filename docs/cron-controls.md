@@ -50,6 +50,52 @@ proves a drain. A held artifact can only retry its original activation. The page
 retains rejection for unrelated submissions while preventing replacement or
 rejection of the hold owner.
 
+## Experimental recovery protocol
+
+The controller has snapshot preparation and recovery acknowledgment controls.
+Full-installation cron backup/restore remains unqualified and the ordinary CLI
+continues to refuse scheduled history. These controls alone do not make an
+archive safe to restore.
+
+POST to `/v1/apps/APP/dispatch/snapshot` with the active `deployment` and `digest`
+checks the stored artifact and selected secrets, records native status, pauses
+dispatch and confirms the held approved generation. Its private receipt pins the
+schedule, secret revision, runtime version and control revision. Any subsequent
+dispatch journal operation invalidates that preparation. The returned JSON
+contains only the receipt ID. Failed preparation can leave dispatch operator-paused;
+inspect status before explicitly resuming. Replica and control observations are not an atomic
+fence against independent runtime operators.
+
+For controller metadata carrying a pending recovery receipt, startup keeps HTTP
+routing and dispatch paused. It checks that native dispatch was already held at
+the prepared revision before reconciling the pause. An active timer or mismatched hold revision observed at startup permanently
+disqualifies that restore, even if a later operation reaches the expected revision.
+Unavailable replicas leave recovery unconfirmed. Pending
+recovery blocks both resume and new approvals.
+
+The recorded dispatch view exposes the recovery ID, review fingerprint, findings
+and loss notice. After reconciling application records, acknowledge the current
+findings through the admin page or CLI:
+
+```sh
+fogd admin dispatch refresh recover DEPLOYMENT_ID ARTIFACT_SHA256 RECOVERY_ID REVIEW_SHA256 --accept-possible-loss
+```
+
+Acknowledgment checks the exact active approval and repeats runtime verification.
+Changed findings require a fresh review fingerprint. It restores HTTP routing;
+scheduled dispatch stays paused until a separate exact-artifact resume. The HTTP
+action is `acknowledge-recovery`, with `deployment`, `digest`, `recovery`, `review`
+and `acceptPossibleLoss: true`; authentication and CSRF requirements match other
+mutations.
+
+Pausing clears pending timer and retry identity. Resume schedules a future
+occurrence. An older snapshot can lose acknowledged results or replay external
+effects; application idempotency and reconciliation remain necessary. The
+[controller tests](../packages/platform/test/cron-recovery.test.mjs) cover these
+metadata and runtime-transport boundaries. Fresh-storage native startup, due timer,
+pending retry, older-snapshot and idempotent native pause qualification remain open under
+[M11c gate 7](m11c.md).
+
 ## Native qualification
 
 The [bounded evidence](evidence/m11c-cron-operators.json) records the qualified

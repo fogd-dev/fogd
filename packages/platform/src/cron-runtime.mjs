@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 // Experimental M11c transport. The controller must serialize publication and
 // dispatch operations. Replica observations are not an atomic release fence.
 export class CronRuntime {
@@ -8,8 +9,7 @@ export class CronRuntime {
   async status(slot, script) { assertScript(script); return this.#command(slot, script, 'info'); }
   async pause(slot, script) { assertScript(script); return this.#mutate(slot, script, 'pause'); }
   async resume(slot, script, version) {
-    if (typeof version !== 'string' || !version) throw new Error('Approved runtime version required');
-    if (!Array.isArray(slot.nodes) || !slot.nodes.length || !slot.nodes.every(node => typeof node === 'string' && node.length > 0) || new Set(slot.nodes).size !== slot.nodes.length) throw new Error('Distinct replica nodes required');
+    assertReplicas(slot, version);
     // On the qualified patched runtime a cold cron cell starts held. Do not use
     // this transport on stock or mixed runtime versions; even info is unsafe.
     const status = await this.status(slot, script);
@@ -21,6 +21,20 @@ export class CronRuntime {
     const states = await Promise.all(slot.nodes.map(node => this.inspect(node)));
     assertCronGeneration(states, version, script);
     return this.#mutate(slot, script, 'resume');
+  }
+  async snapshot(slot, script, version) {
+    try {
+      assertReplicas(slot, version);
+      const before = await this.status(slot, script);
+      if (!before.paused || before.nextAlarm !== null) throw new Error('Snapshot requires a held schedule');
+      assertCronGeneration(await Promise.all(slot.nodes.map(node => this.inspect(node))), version, script);
+      const after = await this.status(slot, script);
+      if (!isDeepStrictEqual(before, after)) throw new Error('Cron control changed during snapshot observation');
+      return after;
+    } catch (cause) {
+      const error = new Error('Cron snapshot could not confirm the held approved runtime', { cause });
+      error.code = 'CRON_SNAPSHOT_UNCONFIRMED'; throw error;
+    }
   }
   async #mutate(slot, script, verb) {
     try {
@@ -61,4 +75,9 @@ function assertCronGeneration(states, version, script) {
     }
   }
   if (residents.length !== 1 || residents[0] !== `.cron:${script}`) throw new Error('Expected exactly one resident cron cell for the approved script');
+}
+
+function assertReplicas(slot, version) {
+  if (typeof version !== 'string' || !version) throw new Error('Approved runtime version required');
+  if (!Array.isArray(slot.nodes) || !slot.nodes.length || !slot.nodes.every(node => typeof node === 'string' && node.length > 0) || new Set(slot.nodes).size !== slot.nodes.length) throw new Error('Distinct replica nodes required');
 }

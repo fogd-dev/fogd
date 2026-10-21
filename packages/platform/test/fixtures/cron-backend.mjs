@@ -9,12 +9,14 @@ import { claimBackend } from './claim-backend.mjs';
 // It asserts the hold at every operation that could load code or write D1.
 export function cronBackend(dir, after = () => {}, before = () => {}) {
   const path = join(dir, 'cron-runtime.json');
-  const read = () => readJson(path, { version: null, paused: true, events: [], schemaReady: false, crons: [] });
+  const read = () => readJson(path, { version: null, paused: true, revision: 0, events: [], schemaReady: false, crons: [] });
   async function effect(event, changes = {}) {
     before(event);
     const previous = await read(), next = { ...previous, ...changes, events: [...previous.events, event] };
+    if (typeof changes.paused === 'boolean' && changes.paused !== previous.paused) next.revision++;
     await saveJson(path, next); after(event); return next;
   }
+  const status = state => ({ paused: state.paused, revision: state.revision, nextAlarm: state.paused ? null : 60000, crons: state.crons });
   return { ...claimBackend(dir),
     hasDeployment: async () => Boolean((await read()).version),
     async bootstrap() {
@@ -44,7 +46,11 @@ export function cronBackend(dir, after = () => {}, before = () => {}) {
         assert.equal(state.version, version); assert.equal(state.schemaReady, true); assert.ok(state.crons.length);
         await effect('resume', { paused: false }); return { paused: false };
       },
-      async status() { const state = await read(); return { paused: state.paused }; },
+      async status() { return status(await read()); },
+      async snapshot(_, script, version) {
+        const state = await read(); assert.equal(script, 'refresh'); assert.equal(state.version, version); assert.equal(state.paused, true);
+        await effect('snapshot'); return status(state);
+      },
     },
   };
 }

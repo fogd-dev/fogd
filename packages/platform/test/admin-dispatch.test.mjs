@@ -166,3 +166,63 @@ test('a queued resume rechecks the activation hold after acquiring the controlle
   await changing;
   assert.equal((await response).status, 400); assert.deepEqual((await f.runtime()).events, events);
 });
+
+test('snapshot and recovery controls require admin mutation authorization on the external listener', async t => {
+  const f = await fixture(t), input = { deployment: f.active.id, digest: f.active.digest };
+  const internal = server(f.c, f.credentials, { role: 'internal' }); await new Promise(resolve => internal.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => internal.close(resolve)));
+  const before = (await f.runtime()).events.length;
+  for (const action of ['snapshot', 'acknowledge-recovery']) {
+    for (const Authorization of ['', 'Bearer deploy', 'Bearer gateway']) {
+      assert.equal((await f.post(action, input, { Authorization })).status, 401);
+    }
+    assert.equal((await f.post(action, input, { 'X-Fogd-CSRF': '' })).status, 403);
+    assert.equal((await f.post(action, input, { Origin: 'https://evil.test' })).status, 403);
+    assert.equal((await fetch(`http://127.0.0.1:${internal.address().port}${f.path}/${action}`, {
+      method: 'POST', headers: { ...f.auth, 'Content-Type': 'application/json' }, body: JSON.stringify(input),
+    })).status, 404);
+  }
+  assert.equal((await f.runtime()).events.length, before);
+  assert.equal((await f.post('snapshot', { ...input, digest: 'a'.repeat(64) })).status, 400);
+  const response = await f.post('snapshot', input); assert.equal(response.status, 200);
+  assert.deepEqual(Object.keys(await response.json()), ['id']);
+  assert.equal((await f.runtime()).paused, true);
+});
+
+test('scheduled recovery CLI and page require current findings and explicit loss acceptance without resuming timers', async t => {
+  const { randomUUID } = await import('node:crypto');
+  const { recoverCronSnapshots } = await import('../src/cron-recovery.mjs');
+  const { cronRecoveryCapability } = await import('../src/cron-snapshot.mjs');
+  const f = await fixture(t), input = { deployment: f.active.id, digest: f.active.digest };
+  assert.equal((await f.post('snapshot', input)).status, 200);
+  const app = f.c.state.apps.refresh;
+  app.cronRecovery = { id: randomUUID(), status: 'pending', snapshot: 'a'.repeat(64), prepared: structuredClone(app.cronSnapshot) };
+  app.route = 'paused'; f.c.state.requirements.push(cronRecoveryCapability);
+  await f.c.exclusive(() => recoverCronSnapshots(f.c));
+  const state = await f.status(), recovery = state.recovery;
+  assert.equal(state.resumeAllowed, false); assert.equal(recovery.checkError, null);
+  const page = await (await fetch(f.origin + '/', { headers: f.auth })).text();
+  assert.match(page, /Acknowledge recovery/); assert.match(page, /Pausing clears pending timer and retry identity/);
+  assert.ok(page.includes(`data-recovery="${recovery.id}" data-review="${recovery.review}"`));
+  assert.ok(!page.includes('data-dispatch="resume"'));
+  assert.ok(!page.includes(f.active.version)); assert.ok(!page.includes('private-refresh-value'));
+  const args = ['recover', f.active.id, f.active.digest, recovery.id, recovery.review];
+  await assert.rejects(f.cli(args), /accept-possible-loss/);
+  await assert.rejects(f.cli([...args, '--accept-possible-loss', 'extra']), /Too many/);
+  assert.equal(app.cronRecovery.status, 'pending');
+  const acknowledged = JSON.parse((await f.cli([...args, '--accept-possible-loss'])).stdout);
+  assert.equal(acknowledged.recovery.status, 'acknowledged');
+  assert.equal(acknowledged.desired, 'paused'); assert.equal((await f.runtime()).paused, true);
+  assert.equal(f.c.route('refresh.localhost').state, 'active');
+  assert.ok(!JSON.stringify(acknowledged).includes(f.active.version));
+});
+
+test('failed snapshot observations expose safe errors and do not manufacture preparation evidence', async t => {
+  const f = await fixture(t), input = { deployment: f.active.id, digest: f.active.digest };
+  f.backend.crons.status = async () => { throw Error('private-refresh-value at private-runtime-address'); };
+  const response = await f.post('snapshot', input);
+  assert.equal(response.status, 502);
+  const text = await response.text();
+  assert.doesNotMatch(text, /private-refresh-value|private-runtime-address/);
+  assert.equal(f.c.state.apps.refresh.cronSnapshot, undefined);
+});

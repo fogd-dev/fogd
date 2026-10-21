@@ -97,15 +97,22 @@ export async function prepareSnapshotRequest(env, app, input) {
   return api(env, `/v1/apps/${encodeURIComponent(app)}/delivery/snapshot`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(input) });
 }
 
-export async function adminAcknowledgeRecovery(app, deployment, digest, recovery, review, accept) {
-  if (!app || !deployment || !/^[a-f0-9]{64}$/.test(digest || '') || !recovery || !/^[a-f0-9]{64}$/.test(review || '') || accept !== '--accept-possible-loss') throw new Error('Usage: fogd admin recover APP ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss');
+export async function adminAcknowledgeRecovery(...args) { return acknowledgeRecovery('delivery', ...args); }
+
+async function acknowledgeRecovery(surface, app, deployment, digest, recovery, review, accept, ...extra) {
+  const command = surface === 'dispatch' ? 'dispatch APP recover' : 'recover APP';
+  if (!app || !deployment || !/^[a-f0-9]{64}$/.test(digest || '') || !recovery || !/^[a-f0-9]{64}$/.test(review || '') || accept !== '--accept-possible-loss' || extra.length) throw new Error(`Usage: fogd admin ${command} ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss`);
   const { env, headers, state } = await adminSession();
-  const result = await api(env, `/v1/apps/${encodeURIComponent(app)}/delivery/acknowledge-recovery`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest, recovery, review, acceptPossibleLoss: true }) });
+  const result = await api(env, `/v1/apps/${encodeURIComponent(app)}/${surface}/acknowledge-recovery`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json', 'X-Fogd-CSRF': state.csrf }, body: JSON.stringify({ deployment, digest, recovery, review, acceptPossibleLoss: true }) });
   console.log(JSON.stringify(result, null, 2));
 }
 
 export async function adminDelivery(app, action = 'status', deployment, digest) { return adminBackground('delivery', app, action, deployment, digest); }
-export async function adminDispatch(app, action = 'status', deployment, digest) { return adminBackground('dispatch', app, action, deployment, digest); }
+export async function adminDispatch(app, action = 'status', ...args) {
+  if (action === 'recover') return acknowledgeRecovery('dispatch', app, ...args);
+  if (args.length > 2) throw new Error('Too many dispatch arguments');
+  return adminBackground('dispatch', app, action, ...args);
+}
 
 async function adminBackground(surface, app, action, deployment, digest) {
   if (!app || !['status', 'observe', 'pause', 'resume'].includes(action)) throw new Error(`Usage: fogd admin ${surface} APP [status|observe|pause|resume ID SHA]`);

@@ -154,3 +154,32 @@ test('repeating a confirmed resume preserves the revision and existing alarm', a
   assert.equal(observed.revision, 2);
   assert.equal(observed.nextAlarm, 60000);
 });
+
+test('cron snapshot confirms held approved replicas with stable observations and no control mutation', async () => {
+  const f = fixture();
+  assert.deepEqual(await f.runtime.snapshot(slot, 'refresh', 'approved'), f.control);
+  assert.deepEqual(f.calls, ['info', 'a', 'b', 'info']);
+});
+
+test('cron snapshot refuses active, changing, stale or unreachable native state without control mutation', async () => {
+  for (const change of [
+    f => { f.control.paused = false; },
+    f => { f.control.nextAlarm = 60000; },
+    f => { f.states[1].version = 'old'; },
+    f => { f.states[0].cells['.cron:refresh'] = 3; },
+    f => { f.adapter.inspect = async () => { throw Error('private endpoint'); }; },
+    f => { const inspect = f.adapter.inspect; f.adapter.inspect = async node => { f.control.revision++; return inspect(node); }; },
+  ]) {
+    const f = fixture(); change(f);
+    await assert.rejects(f.runtime.snapshot(slot, 'refresh', 'approved'), error => error.code === 'CRON_SNAPSHOT_UNCONFIRMED' && !error.message.includes('private'));
+    assert.ok(!f.calls.includes('pause')); assert.ok(!f.calls.includes('resume'));
+  }
+});
+
+test('repeated pause commands preserve the native control reply without extra mutations', async () => {
+  const f = fixture();
+  const first = await f.runtime.pause(slot, 'refresh');
+  const repeated = await f.runtime.pause(slot, 'refresh');
+  assert.equal(first.revision, 2); assert.deepEqual(repeated, first);
+  assert.deepEqual(f.calls, ['pause', 'info', 'pause', 'info']);
+});

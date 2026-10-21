@@ -1,9 +1,10 @@
-import { randomUUID, createHash } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
+import { recoveryReview } from './recovery-review.mjs';
 import { deliveryFor } from './queue-activation.mjs';
 import { queueRecoveryCapability, queueRetentionContract, snapshotTarget, validateSnapshot, validateQueueObservation, queueExpiry, assertSnapshotAge, assertRetentionContract } from './queue-snapshot.mjs';
 
 export const recoveryPending = app => Boolean(app?.queueRecovery && app.queueRecovery.status !== 'acknowledged');
-export const recoveryReview = receipt => createHash('sha256').update(JSON.stringify({ first: receipt.firstObservation || null, observed: receipt.observation || null, diagnoses: receipt.diagnoses || [], checkError: receipt.checkError || null })).digest('hex');
+export { recoveryReview };
 function activeInput(active, input) {
   if (input.deployment !== active.id || input.digest !== active.digest) throw new Error('Active deployment/digest changed; inspect delivery before recovery');
 }
