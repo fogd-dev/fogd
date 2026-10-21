@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fingerprint } from '../../../packages/cli/src/recovery/bundle.mjs';
 import { installedClient } from '../recovery/client.mjs';
 import { retainAndDown } from '../recovery/lifecycle.mjs';
 import { appData } from './applications.mjs';
@@ -12,6 +13,8 @@ export async function snapshot(probe, directory, label, alarm = null) {
   if (alarm) assert.ok(alarm.due > await vmNow(probe));
   await probe.command(['backup', directory]); probe.daemon = false;
   const manifest = JSON.parse(await readFile(join(directory, 'manifest.json'), 'utf8'));
+  probe.snapshotFingerprints ||= new Map();
+  probe.snapshotFingerprints.set(directory, await fingerprint(join(directory, 'manifest.json')));
   for (const [name, image] of Object.entries(manifest.images)) if (name !== 'minio') assert.equal(image, probe.identity.image);
   if (alarm) {
     const prepared = manifest.cronRecovery.apps[alarm.app];
@@ -22,11 +25,10 @@ export async function snapshot(probe, directory, label, alarm = null) {
   const shutdown = await retainAndDown(probe, directory, label);
   return { directory, before, manifest, shutdown, alarm, approvals: structuredClone(probe.approvals) };
 }
-export async function retirement(source, point, name, directory, suffix) {
+export async function retirement(source, point, name, directory, suffix, install = installLegacyRetirement) {
   const active = source.approvals[name], surface = source.backgroundApps[name];
   if (surface === 'delivery') assert.ok(point.manifest.queueRecovery.apps[name].observation.backlogCount >= 1, 'Queue retirement must retain real pending work');
-  const flag = surface === 'dispatch' ? '--stop-scheduled-work' : '--stop-queued-work';
-  const target = await installedClient(source, ['retire', point.directory, '--app', name, '--digest', active.digest, flag], `${source.project}-${suffix}`, directory);
+  const target = await install(source, { kind: 'retire', bundle: point.directory, app: name, digest: active.digest, surface, project: `${source.project}-${suffix}`, directory });
   try {
     const plan = JSON.parse(await readFile(join(directory, 'retirement.json'), 'utf8'));
     assert.equal(plan.app, name); assert.equal(plan.digest, active.digest);
@@ -39,4 +41,9 @@ export async function retirement(source, point, name, directory, suffix) {
     catch (cleanup) { throw new AggregateError([error, cleanup], `Retirement validation and cleanup failed for ${target.project}`, { cause: error }); }
     throw error;
   }
+}
+
+async function installLegacyRetirement(source, request) {
+  const flag = request.surface === 'dispatch' ? '--stop-scheduled-work' : '--stop-queued-work';
+  return installedClient(source, ['retire', request.bundle, '--app', request.app, '--digest', request.digest, flag], request.project, request.directory);
 }

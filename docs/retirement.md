@@ -4,6 +4,9 @@ Retirement creates a fresh Docker installation from a stopped snapshot. The reti
 name becomes permanent history; a differently named app can use its freed fleet.
 The other app keeps its data and native sessions. Plan whole-installation downtime
 and enough disk for a full restore. Kubernetes retirement is not supported.
+Scheduled history remains refused by ordinary CLI retirement. The separate
+[guarded release profile](cron-sealed-retirement.md) records its experimental
+retirement and restore evidence.
 
 ## Prepare and retire
 

@@ -7,6 +7,10 @@ programs and approved artifacts built offline. Ordinary scoped cron admission,
 scheduled CLI restore and scheduled retirement remain closed. The other slot's two replicas remain running. The receipt's source fingerprints identify the
 executed qualification revision; reproduction requires matching those files.
 
+Reproduction of this receipt requires a separate checkout of
+[77cd27c](https://github.com/fogd-dev/fogd/tree/77cd27cf6d4837e6b37aa642aaa3ded68022f46f).
+Current shared qualification helpers have changes outside this historical receipt.
+
 ## Reproduce the profile
 
 With the local images identified in the receipt available, run the

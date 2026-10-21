@@ -19,9 +19,10 @@ export async function recover(probe, point, plan = null, ordinary = false) {
     assert.deepEqual(audit.prepared, point.manifest[cron ? 'cronRecovery' : 'queueRecovery'].apps[plan.app]);
     assert.equal(state.deployments[app.active].status, 'retired');
   }
-  const ordinaryCommand = ['node', 'packages/platform/src/main.mjs'];
+  const ordinaryCommand = probe.runtimeProfile ? ['packages/platform/src/main.mjs'] : ['node', 'packages/platform/src/main.mjs'];
   const operatorChangedControllerCommand = ordinary && !isDeepStrictEqual(probe.config.services.controller.command, ordinaryCommand);
-  if (ordinary) {
+  if (ordinary && probe.runtimeProfile) assert.deepEqual(probe.config.services.controller.command, ordinaryCommand, 'Ordinary command must be independently checked before target creation');
+  if (ordinary && !probe.runtimeProfile) {
     probe.config.services.controller.command = ['node', 'packages/platform/src/main.mjs'];
     await writeFile(probe.file, JSON.stringify(probe.config, null, 2) + '\n', { mode: 0o600 });
   }
@@ -32,6 +33,7 @@ export async function recover(probe, point, plan = null, ordinary = false) {
   const unpublishedSlots = probe.slots.filter(slot => !Object.values(probe.approvals).some(active => active.slot === slot.id));
   const readiness = await startReplicas(probe, unpublishedSlots.flatMap(slot => slot.nodes));
   if (plan) await assertFreshReplicaIdentities(probe, plan);
+  await probe.verifyColdRuntime?.();
   const freshReplicas = readiness.filter(value => unpublishedSlots.some(slot => slot.nodes.includes(value.node)));
   const expected = Object.fromEntries(Object.keys(probe.backgroundApps).map(name => [name, point.before[name]]));
   const cold = await quietInterval(probe, expected, point.manifest, retained, point.alarm?.due);

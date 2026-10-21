@@ -9,7 +9,9 @@ function releasePrograms(contract) {
     'release-controller.mjs': '../release/controller.mjs', 'release-policy.mjs': '../release/policy.mjs', 'release-contract.mjs': contract,
     'update-audit.mjs': '../release/update-audit.mjs', 'minute.mjs': '../minute.mjs' };
 }
+const retirement = { ...shared, 'backend.mjs': '../retirement/sealed-backend.mjs', 'controller.mjs': '../retirement/sealed-controller.mjs', 'retirement-policy.mjs': '../retirement/policy.mjs', 'minute.mjs': '../minute.mjs' };
 const profiles = {
+  retirement, 'retirement-dual': retirement,
   recovery: { ...shared, 'controller.mjs': './controller.mjs' },
   activation: { ...shared, 'controller.mjs': '../activation/idle.mjs',
     'interruption-controller.mjs': '../activation/controller.mjs', 'interruption-policy.mjs': '../activation/policy.mjs',

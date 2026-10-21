@@ -6,6 +6,10 @@ interruption and lost-reply retries on the signed release runtime. Its
 Linux arm64 Docker layout and source fingerprints. Normal cron admission remains
 closed; ordinary CLI scheduled restore and retirement remain refused.
 
+Reproduction of this receipt requires a separate checkout of
+[77cd27c](https://github.com/fogd-dev/fogd/tree/77cd27cf6d4837e6b37aa642aaa3ded68022f46f).
+Current shared qualification helpers have changes outside this historical receipt.
+
 ## Run the private qualification
 
 Use a Linux arm64 Docker engine with the checked runtime, storage and offline SDK

@@ -7,6 +7,8 @@ import { buildSealedRuntime } from './build.mjs';
 import { artifactDigest } from '../../../packages/runtime/src/artifact.mjs';
 import { stageFaultRefresh } from '../faults/build.mjs';
 import { prepareActivation } from '../activation/artifacts.mjs';
+import { retirementPolicy } from '../retirement/policy.mjs';
+import { prepareRetirement } from '../retirement/artifacts.mjs';
 import { prepareFailures } from '../faults/artifacts.mjs';
 import { prepareReplacement } from '../replacement/artifacts.mjs';
 import { composeLiteral, writeJson } from '../../../packages/cli/src/recovery/bundle.mjs';
@@ -17,6 +19,8 @@ const kinds = {
   recovery: { prepare: prepareRecovery, ports: [8950, 8951], networks: [235, 236, 237] },
   activation: { prepare: prepareActivation, ports: [8952, 8953], networks: [238, 239, 240] },
   replacement: { prepare: prepareReplacement, ports: [8954, 8955], networks: [241, 242, 243] },
+  retirement: { prepare: output => prepareRetirement(output, 'full'), retirementMode: 'full', ports: [8958, 8959], networks: [247, 248, 249] },
+  'retirement-dual': { prepare: output => prepareRetirement(output, 'dual'), retirementMode: 'dual', ports: [8960, 8961], networks: [250, 251, 252] },
   failures: { prepare: prepareFailures, ports: [8956, 8957], networks: [244, 245, 246] },
 };
 export async function sealedFixture(directory, { kind = 'recovery' } = {}) {
@@ -33,8 +37,9 @@ export async function sealedFixture(directory, { kind = 'recovery' } = {}) {
     fleets: JSON.parse(config.services.controller.environment.FOGD_SLOTS).map(fleet => ({ ...fleet,
       nodes: fleet.nodes.map(host => ({ host, id: config.services[host].environment.CELLD_NODE })),
     })) };
-  const prepared = await selectedKind.prepare(output);
-  assert.ok(Object.keys(prepared.policy).every(key => ['expectedArtifactSha256', 'interruption', 'releases'].includes(key)), 'Fixture policy cannot override runtime identity');
+  const prepared = await selectedKind.prepare(output, identity);
+  assert.ok(Object.keys(prepared.policy).every(key => ['expectedArtifactSha256', 'interruption', 'releases', 'retirementArtifacts'].includes(key)), 'Fixture policy cannot override runtime identity');
+  if (selectedKind.retirementMode) prepared.policy.retirement = retirementPolicy(identity.fleets, prepared.ids, selectedKind.retirementMode);
   const { runner, artifact } = prepared;
   const built = await buildSealedRuntime(output, project, receipt, { ...identity, ...prepared.policy }, kind);
   for (const [name, service] of Object.entries(config.services)) if (name !== 'minio') service.image = built.image;

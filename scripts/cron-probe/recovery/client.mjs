@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { readFile, writeFile, access } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { execute } from '../../../packages/cli/src/recovery/execute.mjs';
 import { composeArgs, projectContainers } from '../../../packages/cli/src/recovery/docker.mjs';
 import { platformClient } from '../../platform-client.mjs';
+import { requireFreshTarget, cleanupNewTarget } from './target.mjs';
 import { expect } from '../../guestbook-browser.mjs';
 import { stackRoot } from '../../../packages/cli/src/local.mjs';
 
@@ -33,7 +34,7 @@ export async function waitForController(probe) {
 export async function requireDaemonStopped(probe) {
   const containers = await projectContainers(probe.project);
   for (const name of ['controller', 'workerd']) {
-    const found = containers.find(value => value.Config.Labels['com.docker.compose.service'] === name);
+    const found = containers.find(value => value.Config.Labels['com.docker.compose.service'] === name && String(value.Config.Labels['com.docker.compose.oneoff']).toLowerCase() !== 'true');
     assert.ok(found); assert.equal(found.State.Running, false, `${name} must stay stopped during the cold observation`);
   }
 }
@@ -71,6 +72,7 @@ export async function restoredClient(source, bundle, name, directory) {
 }
 export async function installedClient(source, args, name, directory) {
   assert.match(name, /^fogd-m11c-cron-(?:recovery|retirement)-/);
+  await requireFreshTarget(name, directory, source.config);
   try {
     await source.command([...args, '--project', name, '--output', directory]);
     const config = JSON.parse(await readFile(join(directory, 'compose.json'), 'utf8'));
@@ -79,17 +81,8 @@ export async function installedClient(source, args, name, directory) {
     for (const name of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[name].name, source.config.volumes[name].name);
     return target;
   } catch (error) {
-    try { await cleanupPartialRestore(source, name, directory); }
+    try { await cleanupNewTarget(name, directory, source.config); }
     catch (cleanup) { throw new AggregateError([error, cleanup], `Restore and partial cleanup failed for ${name}`, { cause: error }); }
     throw error;
   }
-}
-async function cleanupPartialRestore(source, name, directory) {
-  for (const file of ['compose.json', 'compose.pending.json']) {
-    const path = join(directory, file);
-    try { await access(path); } catch { continue; }
-    await execute('docker', [...composeArgs(path, name), 'down'], { env: source.env });
-    break;
-  }
-  assert.equal((await projectContainers(name)).length, 0, 'Partial restore needs explicit target cleanup; volumes must be retained');
 }
