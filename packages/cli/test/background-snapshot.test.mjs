@@ -109,9 +109,10 @@ test('expired queue evidence also blocks a combined restore before either family
   assert.equal(state.apps.refresh.cronRecovery, undefined);
 });
 
-test('scheduled history still refuses expansion, retirement and queue-only recovery paths', async t => {
+test('scheduled history refuses expansion, unplanned retirement and queue-only recovery paths', async t => {
   const { state, expected } = cronSnapshotSource(), manifest = backgroundSnapshotEvidence(state, expected), dir = await archive(t, state, manifest);
-  for (const kind of ['retirement', 'expansion']) await assert.rejects(restoredInstallationState(dir, manifest, { kind }), /not qualified for installation transformations/);
+  await assert.rejects(restoredInstallationState(dir, manifest, { kind: 'expansion' }), /not qualified for installation transformations/);
+  await assert.rejects(restoredInstallationState(dir, manifest, { kind: 'retirement' }), /requires a validated retirement plan/);
   assert.throws(() => assertQueueFreeRecovery(state), /Scheduled history/);
   assert.throws(() => queueBackupApps(state), /Scheduled history/);
 });

@@ -160,3 +160,33 @@ Its source comparisons cover the two apps retired during that run. The optional
 compares an earlier retained stopped source with the final target. It starts only the
 source bucket for reads, then stops it, and checks every target service's running,
 exit, and restart state. Neither probe waits through the four-day retention interval.
+
+
+## Experimental scheduled app retirement
+
+The cron retirement path is implemented for private M11c fixtures and remains
+unqualified on the native runtime. Ordinary cron admission stays closed. Archive
+and controller tests cover the stop acknowledgment, audit validation, survivor
+recovery and startup with only retired scheduled history. Native due-timer,
+pending-retry, retained-data and replacement isolation drills must pass before
+[M11c gate 8](m11c.md) closes.
+
+An internally staged scheduled app requires `--stop-scheduled-work` in the same
+stopped snapshot workflow. This acknowledges that its old timer and retry identity
+will not execute in the replacement fleet. The flag is refused for other apps;
+`--stop-queued-work` remains specific to queues. Every live background app needs
+matching snapshot preparation, completed activation and acknowledged prior recovery.
+The snapshot runtime must include the cron-retirement capability; upgrade before
+backup if it does not.
+
+Retirement retains the old dispatch journal, snapshot and prior recovery as a
+private audit, with no operational cron journal or recovery gate on the tombstone.
+The replacement receives a different name, disjoint bucket prefix, new replica
+identities and empty replica volumes. Surviving cron and queue apps receive pending
+recovery receipts and paused routes. Acknowledgment and dispatch resume remain
+separate actions; follow the [cron recovery protocol](cron-recovery.md).
+
+Later backups validate retained cron audits without preparing their old schedules.
+Restore retains the capability requirement even when no live scheduled apps remain.
+Expansion and Kubernetes recovery still refuse all scheduled history, including
+retired apps. Retained old sources can run old schedules if restarted; keep them stopped.

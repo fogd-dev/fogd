@@ -41,8 +41,10 @@ fogd admin dispatch refresh resume DEPLOYMENT_ID ARTIFACT_SHA256
 Acknowledgment restores HTTP routing and leaves scheduled dispatch paused. The
 separate resume requires the same active approval. A surviving queue app has its
 own [acknowledgment and delivery controls](queue-recovery.md). Missing or changed
-preparation evidence is refused. Expansion, Kubernetes recovery and retirement
-continue to refuse scheduled history.
+preparation evidence is refused. Expansion and Kubernetes recovery continue to refuse
+scheduled history.
+[Experimental retirement](retirement.md#experimental-scheduled-app-retirement)
+has archive/controller coverage; native qualification remains open.
 
 ## Native qualification
 

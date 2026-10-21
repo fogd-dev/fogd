@@ -11,12 +11,13 @@ import { fingerprint } from './bundle.mjs';
 
 export async function restoredInstallationState(dir, manifest, change, now = Date.now()) {
   const source = await snapshotState(dir); assertSnapshotStateShape(source);
-  if (change && hasCronHistory(source)) throw new Error('Scheduled history is not qualified for installation transformations; retain the source and snapshot');
+  if (change && change.kind !== 'retirement' && hasCronHistory(source)) throw new Error('Scheduled history is not qualified for installation transformations; retain the source and snapshot');
   if (change && change.kind !== 'retirement') { assertQueueFreeRecovery(source); return null; }
+  if (change?.kind === 'retirement' && !change.state) throw new Error('Retirement requires a validated retirement plan');
   const inventory = validateBackgroundEvidence(source, manifest, now);
   const state = structuredClone(change?.state || source);
   const queues = inventory.queueRecovery.filter(name => !state.apps[name].retirement);
-  const crons = inventory.cronRecovery;
+  const crons = inventory.cronRecovery.filter(name => !state.apps[name].retirement);
   if (queues.length || crons.length) {
     const snapshot = (await fingerprint(join(dir, 'manifest.json'))).sha256;
     if (queues.length) applyRecovery(state, queues, manifest.queueRecovery, snapshot, queueSnapshotProtocol);

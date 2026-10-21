@@ -220,7 +220,7 @@ test('operator pause reconciles a lost activation resume without releasing its a
 test('cron activation foundation keeps ordinary admission and unqualified lifecycle paths closed', async t => {
   assert.throws(() => translateConfig({ name: 'refresh', main: 'index.js', triggers: { crons: ['* * * * *'] } }, 'refresh'), /Unsupported binding\/config: triggers/);
   const f = await fixture(t), request = await f.request(); await approve(f.c, request);
-  assert.throws(() => retirementApp(f.c.state, 'refresh', request.digest), /retirement is not qualified/);
+  assert.throws(() => retirementApp(f.c.state, 'refresh', request.digest), /requires --stop-scheduled-work/);
   assert.throws(() => assertQueueFreeRecovery(f.c.state), /Scheduled history/);
   assert.throws(() => queueBackupApps(f.c.state), /Scheduled history/);
   const resources = request.resources;

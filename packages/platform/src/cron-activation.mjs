@@ -1,3 +1,4 @@
+import { validateRetiredCron } from './cron-retirement.mjs';
 import { cronRecoveryPending } from './cron-snapshot.mjs';
 import { CronDispatch, initialCronDispatch, validateCronDispatch, cronCapability, cronScript, requireCronCapability } from './cron-dispatch.mjs';
 
@@ -9,14 +10,22 @@ export function dispatchFor(controller, app, slot) {
 export function validateCronState(state, runtime) {
   const declarations = [...Object.values(state.apps), ...Object.values(state.deployments)].filter(record => Object.hasOwn(record.resources || {}, 'crons'));
   if (declarations.length && !state.requirements?.includes(cronCapability)) throw new Error('Cron declarations require their capability marker');
-  if (declarations.length) requireCronRuntime(runtime);
+  const retired = Object.keys(state.apps).filter(name => validateRetiredCron(state, name, state.apps[name]));
+  if (requiresCronRuntime(state, retired)) requireCronRuntime(runtime);
   declarations.forEach(record => cronScript(record.resources));
   for (const [name, app] of Object.entries(state.apps)) {
+    if (retired.includes(name)) continue;
     if (app.resources?.crons && app.active && !app.dispatch) throw new Error('Active scheduled app is missing its dispatch journal');
     if (!app.dispatch && !app.cronBootstrap) continue;
     if (!state.requirements?.includes(cronCapability)) throw new Error('Cron state requires its capability marker');
     validateAppCron(state, name, app);
   }
+}
+
+function requiresCronRuntime(state, retired) {
+  const hasCrons = record => Object.hasOwn(record.resources || {}, 'crons');
+  return Object.entries(state.apps).some(([name, app]) => !retired.includes(name) && hasCrons(app)) ||
+    Object.values(state.deployments).some(request => !retired.includes(request.app) && hasCrons(request));
 }
 
 function validateAppCron(state, name, app) {

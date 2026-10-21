@@ -72,8 +72,10 @@ pins are refused. The target stays stopped, with fresh pending recovery IDs and
 paused routing for every active background app. Internally staged pending or
 rejected cron artifacts that never acquired runtime authority remain inert and
 require no recovery
-acknowledgment. Their history is preserved. Expansion, Kubernetes recovery and
-retirement continue to refuse scheduled history.
+acknowledgment. Their history is preserved. Expansion and Kubernetes recovery continue to refuse
+scheduled history.
+[Experimental retirement](retirement.md#experimental-scheduled-app-retirement)
+has archive/controller coverage; native qualification remains open.
 
 POST to `/v1/apps/APP/dispatch/snapshot` with the active `deployment` and `digest`
 checks the stored artifact and selected secrets, records native status, pauses

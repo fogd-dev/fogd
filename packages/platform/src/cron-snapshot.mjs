@@ -47,3 +47,14 @@ export function matchingCronSnapshot(state, name, receipt) {
   if (app.route !== 'active' || app.dispatch.desired !== 'paused' || app.dispatch.observed !== 'paused' || app.dispatch.operation) throw new Error('Cron snapshot requires active routing and confirmed operator pause');
   return app;
 }
+
+export function validateCronRecoveryState(state) {
+  for (const app of Object.values(state.apps)) {
+    if (app.cronSnapshot) validateCronSnapshot(app.cronSnapshot);
+    const receipt = app.cronRecovery;
+    if (!receipt) continue;
+    if (!state.requirements?.includes(cronRecoveryCapability) || !/^[a-f0-9-]{36}$/.test(receipt.id) || !['pending','acknowledged'].includes(receipt.status) || !/^[a-f0-9]{64}$/.test(receipt.snapshot) || !app.dispatch) throw new Error('Invalid restored cron recovery state');
+    validateCronSnapshot(receipt.prepared);
+    if (receipt.status === 'pending' && (app.route !== 'paused' || app.dispatch.desired !== 'paused' || app.dispatch.hold || app.uncertain)) throw new Error('Unresolved cron recovery must keep routing and dispatch paused');
+  }
+}

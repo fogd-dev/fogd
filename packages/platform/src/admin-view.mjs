@@ -16,12 +16,18 @@ export function adminState(controller) {
 
 function adminApp(app) {
   const visible = { ...app };
+  if (app.retirement) visible.retirement = retirementIdentity(app.retirement);
   delete visible.queueSnapshot; delete visible.cronSnapshot;
   if (app.cronRecovery) visible.cronRecovery = cronRecoveryView(app.cronRecovery);
   if (app.retirement?.queue) {
     const { stopQueuedWork, prepared } = app.retirement.queue;
-    visible.retirement = { ...app.retirement, queue: { stopQueuedWork, queue: prepared.queue,
+    visible.retirement = { ...retirementIdentity(app.retirement), queue: { stopQueuedWork, queue: prepared.queue,
       snapshot: { id: prepared.id, at: prepared.at, backlogCount: prepared.observation.backlogCount } } };
+  }
+  if (app.retirement?.cron) {
+    const { stopScheduledWork, prepared } = app.retirement.cron;
+    visible.retirement = { ...retirementIdentity(app.retirement), cron: { stopScheduledWork, crons: prepared.crons,
+      snapshot: { id: prepared.id, at: prepared.at, revision: prepared.observation.revision } } };
   }
   if (app.queueRecovery) {
     const { id, status, diagnosis, checkError, checkedAt, acknowledgedAt } = app.queueRecovery;
@@ -33,4 +39,9 @@ function adminApp(app) {
     visible[field] = state;
   }
   return visible;
+}
+
+function retirementIdentity(retirement) {
+  const { id, at, app, digest, snapshot, previous, replacement, deployment } = retirement;
+  return { id, at, app, digest, snapshot, previous, replacement, deployment };
 }

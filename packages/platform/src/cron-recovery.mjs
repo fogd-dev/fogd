@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { randomUUID } from 'node:crypto';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { dispatchFor } from './cron-activation.mjs';
-import { cronRecoveryCapability, cronRecoveryNotice, cronRecoveryPending, cronSnapshotTarget, validateCronSnapshot, validateCronObservation } from './cron-snapshot.mjs';
+import { cronRecoveryNotice, cronRecoveryPending, cronSnapshotTarget, validateCronSnapshot, validateCronObservation } from './cron-snapshot.mjs';
 import { recoveryReview } from './recovery-review.mjs';
 
 function activeInput(active, input) {
@@ -34,16 +34,8 @@ export async function prepareCronSnapshot(controller, name, input) {
     error.code = 'CRON_SNAPSHOT_UNCONFIRMED'; throw error;
   }
 }
-export function validateCronRecoveryState(state) {
-  for (const app of Object.values(state.apps)) {
-    if (app.cronSnapshot) validateCronSnapshot(app.cronSnapshot);
-    const receipt = app.cronRecovery;
-    if (!receipt) continue;
-    if (!state.requirements?.includes(cronRecoveryCapability) || !/^[a-f0-9-]{36}$/.test(receipt.id) || !['pending','acknowledged'].includes(receipt.status) || !/^[a-f0-9]{64}$/.test(receipt.snapshot) || !app.dispatch) throw new Error('Invalid restored cron recovery state');
-    validateCronSnapshot(receipt.prepared);
-    if (receipt.status === 'pending' && (app.route !== 'paused' || app.dispatch.desired !== 'paused' || app.dispatch.hold || app.uncertain)) throw new Error('Unresolved cron recovery must keep routing and dispatch paused');
-  }
-}
+export { validateCronRecoveryState } from './cron-snapshot.mjs';
+
 function diagnose(receipt, text) {
   receipt.diagnoses = [...new Set([...(receipt.diagnoses || []), text])]; receipt.diagnosis = receipt.diagnoses.join('; ');
 }

@@ -2,6 +2,7 @@ import { DispatchControl, initialControl, validateControl } from './dispatch-con
 
 export const cronUpdateNotice = 'An update can interrupt scheduled work already in flight. Pause does not drain it. Check the application for unfinished work; do not rely on automatic replay.';
 export const cronCapability = 'fogd-cron-activation-v1';
+export const cronRetirementCapability = 'fogd-cron-retirement-v1';
 const contract = { identity: 'script', pattern: /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/, noun: 'cron dispatch', title: 'Cron dispatch', outcomeCode: 'CRON_OUTCOME_UNKNOWN', validate: validateCronDispatch };
 
 export function initialCronDispatch(script, activation) { return initialControl(script, activation, contract); }

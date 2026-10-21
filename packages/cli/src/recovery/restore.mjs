@@ -7,6 +7,7 @@ import { verifyBundle, restoredConfig, composeLiteral, writeJson, validateTopolo
 import { restoredInstallationState } from './background-restore.mjs';
 import { assertPinnedSnapshotImages } from './snapshot-evidence.mjs';
 import { recoveryLayout } from './layout.mjs';
+import { cronRetirementCapability } from '@fogd/platform/cron-retirement';
 import { cronCapability } from '@fogd/platform/cron-history';
 import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
@@ -71,6 +72,7 @@ export function requiredCapabilities(state, change) {
   if (state?.requirements?.includes(queueRetirementCapability)) required.push(['queue-retirement', 'queueRetirementCapability', queueRetirementCapability]);
   if (state?.requirements?.includes(cronCapability)) required.push(['cron-dispatch', 'cronCapability', cronCapability]);
   if (state?.requirements?.includes(cronRecoveryCapability)) required.push(['cron-snapshot', 'cronRecoveryCapability', cronRecoveryCapability]);
+  if (state?.requirements?.includes(cronRetirementCapability)) required.push(['cron-retirement', 'cronRetirementCapability', cronRetirementCapability]);
   return required;
 }
 async function requireStateRuntime(image, state, change) {

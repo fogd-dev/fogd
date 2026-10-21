@@ -1,5 +1,6 @@
 import { queueRecoveryApps, queueSnapshotProtocol } from './queue-backup.mjs';
 import { cronRecoveryApps, cronSnapshotProtocol } from './cron-backup.mjs';
+import { cronRetirementCapability } from '@fogd/platform/cron-retirement';
 import { cronCapability } from '@fogd/platform/cron-history';
 import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
@@ -13,7 +14,7 @@ const families = [
   { key: 'cronRecovery', surface: 'dispatch', apps: cronRecoveryApps, protocol: cronSnapshotProtocol },
 ];
 export function backgroundBackupApps(state) {
-  assertSnapshotState(state, ['fogd-retirement-v1', 'fogd-claim-intent-v1', 'fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability]);
+  assertSnapshotState(state, ['fogd-retirement-v1', 'fogd-claim-intent-v1', 'fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability]);
   return Object.fromEntries(families.map(family => [family.key, family.apps(state)]));
 }
 export async function prepareBackgroundBackup(env, state, images, replicas) {

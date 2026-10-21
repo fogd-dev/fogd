@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { fleetLayout } from './layout.mjs';
 import { retirementApp, retireState, overlap, validateRetirementState } from '@fogd/platform/retirement';
 
-export function planRetirement(config, state, app, digest, { id = randomUUID(), at = new Date().toISOString(), snapshot, stopQueuedWork = false } = {}) {
-  const assigned = retirementApp(state, app, digest, { stopQueuedWork });
+export function planRetirement(config, state, app, digest, { id = randomUUID(), at = new Date().toISOString(), snapshot, stopQueuedWork = false, stopScheduledWork = false } = {}) {
+  const assigned = retirementApp(state, app, digest, { stopQueuedWork, stopScheduledWork });
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error('Invalid retirement generation');
   const fleets = fleetLayout(config);
   const slots = fleets.map(({ replicas, ...slot }) => slot);
@@ -24,7 +24,7 @@ export function planRetirement(config, state, app, digest, { id = randomUUID(), 
   slot.prefix = prefix;
   for (const name of ['controller', 'workerd']) next.services[name].environment.FOGD_SLOTS = JSON.stringify(slots);
   const evidence = { id, at, app, digest, snapshot, previous, replacement: { prefix, nodes: services.map(name => next.services[name].environment.CELLD_NODE) } };
-  const retired = retireState(state, app, digest, evidence, { stopQueuedWork });
+  const retired = retireState(state, app, digest, evidence, { stopQueuedWork, stopScheduledWork });
   validateRetirementState(retired, slots);
   return { kind: 'retirement', config: next, state: retired, skipped: services, evidence };
 }
