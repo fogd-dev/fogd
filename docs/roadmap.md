@@ -170,6 +170,13 @@ selected publication/resume/durable-release controller kills and paused-update
 recovery on that binary. Remaining lifecycle gates, runtime selection and normal
 scoped cron admission remain open.
 
+The [guarded release replacement profile](cron-sealed-replacement.md) checks
+compatible migration overlap, unfinished work after publication, original-occurrence
+lost-reply retries and offline-built artifacts on the signed runtime's native
+defaults. Its refusal regression preserves the prior approval and journal pause
+after an unreleased publication gate expires. Runtime selection, remaining failure
+and retirement qualification, and ordinary scoped admission remain open.
+
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

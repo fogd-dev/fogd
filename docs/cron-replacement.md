@@ -1,6 +1,6 @@
 # Qualify scheduled release replacement
 
-The [replacement profile](evidence/m11c-cron-replacement.json) measures compatible
+The historical [replacement profile](evidence/m11c-cron-replacement.json) measures compatible
 migration overlap, lost completion around publication, and native retries for
 ordinary Void jobs. Cron admission remains closed. Stopped recovery, retirement
 and release-bound runtime qualification remain separate [M11c gates](m11c.md).
@@ -40,7 +40,16 @@ Operator dispatch status and deployment inspection include an interruption notic
 The approval card displays it beside the deployment being reviewed. Runtime
 observations remain separate from application outcomes.
 
-## Reproduce the private profile
+## Historical reproduction
+
+This receipt's complete source map matches commit
+`d9b28e957de8e3b6babbb79cfdffb6946ab06a9e`. Use that revision and its recorded
+runtime for historical reproduction. Current `scripts/cron-replacement.mjs`
+refuses execution and points to the [sealed replacement profile](cron-sealed-replacement.md).
+The historical receipt does not qualify the signed release binary or native
+default timing. The commands below apply only to that pinned revision.
+
+### Run at the pinned revision
 
 Prepare a [disposable installation](queue-qualification.md#prepare-a-disposable-installation)
 with current controller sources and the qualified [cron control candidate](patches/celld-cron-controls.md)

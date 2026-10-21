@@ -403,3 +403,10 @@ their pinned sources. The [guarded release activation profile](docs/cron-sealed-
 also checks selected controller SIGKILL cuts, explicit retry and paused updates
 with immutable programs. The remaining release-runtime lifecycle, runtime selection
 and ordinary cron admission remain open.
+
+The [guarded release replacement profile](docs/cron-sealed-replacement.md) checks
+compatible migration overlap, unfinished work after publication, original-occurrence
+lost-reply retries and offline-built artifacts on the signed runtime's native
+defaults. Its refusal regression preserves the prior approval and journal pause
+after an unreleased publication gate expires. Runtime selection, remaining failure
+and retirement qualification, and ordinary scoped admission remain open.

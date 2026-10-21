@@ -14,7 +14,7 @@ export async function runQualification(probes, output, run) {
       try { await retainAndDown(probe, null, 'cleanup'); }
       catch (error) {
         failure ||= error;
-        await writeFile(join(output, 'cleanup-failure.json'), JSON.stringify({ project: probe.project, message: error.message }) + '\n', { mode: 0o600 });
+        await writeFile(join(output, `${probe.project}-installation-cleanup-failure.json`), JSON.stringify({ project: probe.project, message: error.message }) + '\n', { mode: 0o600, flag: 'wx' });
       }
     }
   }

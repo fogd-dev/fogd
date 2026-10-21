@@ -7,6 +7,7 @@ import { buildSealedRuntime } from './build.mjs';
 import { artifactDigest } from '../../../packages/runtime/src/artifact.mjs';
 import { stageFaultRefresh } from '../faults/build.mjs';
 import { prepareActivation } from '../activation/artifacts.mjs';
+import { prepareReplacement } from '../replacement/artifacts.mjs';
 import { composeLiteral, writeJson } from '../../../packages/cli/src/recovery/bundle.mjs';
 import { cronRestoreConfig } from '../../../packages/cli/src/runtime/cron-preboot.mjs';
 import { verifyCronRuntimeImage, verifyCronStorageImage } from '../../../packages/cli/src/runtime/cron-image.mjs';
@@ -14,6 +15,7 @@ import { verifyCronRuntimeImage, verifyCronStorageImage } from '../../../package
 const kinds = {
   recovery: { prepare: prepareRecovery, ports: [8950, 8951], networks: [235, 236, 237] },
   activation: { prepare: prepareActivation, ports: [8952, 8953], networks: [238, 239, 240] },
+  replacement: { prepare: prepareReplacement, ports: [8954, 8955], networks: [241, 242, 243] },
 };
 export async function sealedFixture(directory, { kind = 'recovery' } = {}) {
   assert.ok(Object.hasOwn(kinds, kind));
@@ -30,7 +32,7 @@ export async function sealedFixture(directory, { kind = 'recovery' } = {}) {
       nodes: fleet.nodes.map(host => ({ host, id: config.services[host].environment.CELLD_NODE })),
     })) };
   const prepared = await selectedKind.prepare(output);
-  assert.ok(Object.keys(prepared.policy).every(key => ['expectedArtifactSha256', 'interruption'].includes(key)), 'Fixture policy cannot override runtime identity');
+  assert.ok(Object.keys(prepared.policy).every(key => ['expectedArtifactSha256', 'interruption', 'replacement'].includes(key)), 'Fixture policy cannot override runtime identity');
   const { runner, artifact } = prepared;
   const built = await buildSealedRuntime(output, project, receipt, { ...identity, ...prepared.policy }, kind);
   for (const [name, service] of Object.entries(config.services)) if (name !== 'minio') service.image = built.image;

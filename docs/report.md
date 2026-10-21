@@ -159,6 +159,13 @@ Independent acceptance verifies native signatures, image layers and all three
 retained artifacts. This is direct controller qualification; normal admission and
 the external admin/TLS activation flow remain open.
 
+The [guarded release replacement profile](cron-sealed-replacement.md) checks
+compatible migration overlap, unfinished work after publication, original-occurrence
+lost-reply retries and offline-built artifacts on the signed runtime's native
+defaults. Its refusal regression preserves the prior approval and journal pause
+after an unreleased publication gate expires. Runtime selection, remaining failure
+and retirement qualification, and ordinary scoped admission remain open.
+
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 
