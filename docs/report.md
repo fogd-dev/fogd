@@ -107,8 +107,9 @@ original occurrence after owner loss in a two-node runtime probe. The
 [watchdog evidence](evidence/m11c-cron-timeout.json) records its terminal callback
 set and actual future dispatch. The [native hold candidate](patches/celld-cron-controls.md)
 passes bootstrap/adoption and restart checks, including a callback that finishes
-while its sibling is suppressed. These are runtime experiments. Upstream Rust
-tests/clippy and CPU-exhaustion qualification remain open. An internally staged
+while its sibling is suppressed. These are runtime experiments. Native
+[clippy passes](evidence/m11c-cron-rust-checks.json); actual upstream Rust test
+execution and CPU-exhaustion qualification remain open. An internally staged
 [activation coordinator](cron-activation.md) has file-backed interruption tests and
 a native D1/secret bootstrap, lost-resume reload and paused-update profile. The
 [Void refresh fixture](../examples/refresh/README.md) also passes its bounded native
@@ -119,9 +120,14 @@ simulated lost reply. Offline builds cover ordinary Void and fogd. The
 pause and artifact-pinned resume with native lost-reply reconciliation. Selected
 [native controller SIGKILL cuts](cron-activation.md#native-process-interruptions)
 cover publication, resume and durable release, including a paused update and
-explicit artifact-pinned retries. Normal scoped cron admission and full recovery
-tests remain unqualified. Workflows/general alarms, remote infrastructure and M12
-portability follow their own acceptance contracts.
+explicit artifact-pinned retries. [Stopped recovery](cron-recovery.md) qualifies
+due timers, pending retries and an older snapshot in a same-version local two-fleet
+Docker profile. Its full rerun independently verifies queued input, restored
+approval pins and final source preservation. [Retirement](retirement.md#experimental-scheduled-app-retirement)
+has a separate bounded cron/queue profile. Normal scoped cron admission,
+retirement beside another live cron and release-bound runtime qualification remain
+open. Workflows/general alarms, remote infrastructure and M12 portability follow
+their own acceptance contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.
 Current acceptance documents and `docs/evidence/` contain the scoped proof; an

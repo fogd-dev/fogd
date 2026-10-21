@@ -67,8 +67,8 @@ containers. Lost-response and malformed-status cases are covered by the
 
 Stop every replica before replacing the runtime. Mixed versions, rolling upgrades
 and rollback are unqualified: older runtimes ignore the hold. The separate
-[stopped recovery profile](../cron-recovery.md) has bounded evidence at commit
-`63fb494`; its changed helpers require a current-tree rerun before admission.
+[stopped recovery profile](../cron-recovery.md) has a full bounded rerun with the
+same executable source fingerprints as the cron/queue retirement profile.
 [Retirement](../retirement.md#experimental-scheduled-app-retirement) has a separate
 bounded native cron/queue profile. Do not boot uncontrolled historical snapshots
 and then try to pause them.

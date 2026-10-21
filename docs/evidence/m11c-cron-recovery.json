@@ -2,10 +2,10 @@
   "schema": 1,
   "status": "qualified-bounded",
   "scope": "Experimental local two-fleet stopped Docker recovery with one native Void cron app and an opt-in queue survivor; ordinary cron admission remains closed",
-  "privateEvidence": ".fogd/m11c-recovery-qualified3",
+  "privateEvidence": ".fogd/m11c-recovery-current1",
   "actualProcessExitCode": 0,
   "provenance": {
-    "image": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+    "image": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
     "architecture": "arm64",
     "os": "linux",
     "binary": "b09c1cf0dabeac77a8d5bd96afb0ec24de22e6e452ae8ef97079d289b481eb70",
@@ -17,19 +17,20 @@
       "packages/platform/src/admin-delivery.mjs": "0104bde803db296b0d57520ad98a4a3cfabcc03557285559bfeeda6c67a1ab89",
       "packages/platform/src/admin-dispatch.mjs": "395c768b6feb3ad49f55653f52aa9a614605c9315afaff1c323284dde41b9c27",
       "packages/platform/src/admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
-      "packages/platform/src/admin-view.mjs": "aea65eae58aa1eabb92ecd3f531c69a29cef037dbc3ef32d6c80208e08ac8c5f",
+      "packages/platform/src/admin-view.mjs": "784b508727f23437197cf31009344000113c97eb53aefdec43ca08bbbf0cd450",
       "packages/platform/src/backend.mjs": "ab1dc727a77215f522c369d6b758861d8948b96f77e61f4346b93ef0c74ee532",
       "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
       "packages/platform/src/capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
       "packages/platform/src/claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
       "packages/platform/src/controller.mjs": "4cda646bd0ddf3e0123997f7513c0ea65cd0e1689dfe1aef220851eff10653d9",
       "packages/platform/src/credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
-      "packages/platform/src/cron-activation.mjs": "eb5cf6b616dfb08aaac2f639c092712066b3ffe1ef877efff531de712ff12f0e",
-      "packages/platform/src/cron-dispatch.mjs": "2ef1288f566e0fdae78df2e6bae352030109337ce9ddfb2b6d876e15e7229b29",
-      "packages/platform/src/cron-history.mjs": "7e26d87a56aefe1b602fc080fe19d01d45f963e66b4b2841f3660eb99e751a6c",
-      "packages/platform/src/cron-recovery.mjs": "12b4ea4a376360a652cfebc3b8a6eaddebe8d865c10b65b3cafb152eeac0771c",
+      "packages/platform/src/cron-activation.mjs": "50df429918c04b7490d70fe875a1108780528c01da8bcbaee96571fdb77bca3a",
+      "packages/platform/src/cron-dispatch.mjs": "6ac1cb769c3ed6dd93ff14226f1d83141d7d215701abfb38c3a748669dc8e34e",
+      "packages/platform/src/cron-history.mjs": "11d1dc96b8212ae5bfdd0cd84343ade17f3410b02afd32757b30c5e7d8d503f0",
+      "packages/platform/src/cron-recovery.mjs": "7c0ca759b55c957c4f01ac560494632e9a2809ad10c61a965cfdcf4361ae2233",
+      "packages/platform/src/cron-retirement.mjs": "36874b20884a60d227025b3f4b4c49c362ee390c69687a625fe9680f6bc45e8c",
       "packages/platform/src/cron-runtime.mjs": "0d4c50fe9df76db1e82b3eaf83fe33d45e3f0780f391a691a10f8c544c753a86",
-      "packages/platform/src/cron-snapshot.mjs": "8b08a23b02849d33cc15fa53641174a1286dc703bae7f04da6f59cace59d4c8d",
+      "packages/platform/src/cron-snapshot.mjs": "4ba23bd2b39c39fe2b8eae122fd89706e222ff2f5c380becf41dcc699e8d3746",
       "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
       "packages/platform/src/deployment-http.mjs": "6cdbf3168f64295b0e2c2d400695119ff0ae550728dee600b9b20d65c65cdbc4",
       "packages/platform/src/deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
@@ -46,7 +47,7 @@
       "packages/platform/src/quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
       "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
       "packages/platform/src/resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
-      "packages/platform/src/retirement.mjs": "a5db0e2ccf9246738e0e618ce616ed274f3396e4dc8605d960f3939ee30b1ac2",
+      "packages/platform/src/retirement.mjs": "ab542cc36b0faf921aacd3f8fa3dba9cace505343ee2fba07f226dd9007d0919",
       "packages/platform/src/secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
       "packages/platform/src/security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
       "packages/platform/src/startup.mjs": "2abe860912da5f466a695fc0e8c2501030a56c534a10855bf254e827a9c6e518",
@@ -137,11 +138,11 @@
       "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
       "packages/cli/src/local.mjs": "92eba0e5f90cc06955c0143ba7131cd90e8bbd21d2eacc8a1639fbac91dbe731",
       "packages/cli/src/platform.mjs": "615af51e2962adde8dc55e02528e0551534e034a57ed8dd6d80d1812444628b5",
-      "packages/cli/src/recovery/background-backup.mjs": "8511b8e9e865fb9f27c55ae175ce2f5f203260aca392741e91cd73cc9b5cfa34",
-      "packages/cli/src/recovery/background-restore.mjs": "b034658f8132873ecb8ced9ecd18c6363a1d0a93d6ec2358c0aa2f36e4d814d1",
-      "packages/cli/src/recovery/backup.mjs": "9c6627d3cd5802923d6e87f726746efe6386400c160b78208ad609f7875dea52",
+      "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+      "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+      "packages/cli/src/recovery/backup.mjs": "7ca12732f9a1429941862fe5acf9b60a1c1f15537a8b9111c89039a2332d0952",
       "packages/cli/src/recovery/bundle.mjs": "cbf7594d04c1758b105cefa895c6abd147db7644dc0b2dfb5d8c10a6d637d7aa",
-      "packages/cli/src/recovery/cron-backup.mjs": "5849d22ab828cd5c8c37670de3a1deb06950c39bca92536eec31056f41bd5c9f",
+      "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
       "packages/cli/src/recovery/docker.mjs": "79c59e5703c73e4df6419891926521256808bae86a9980b7e43f454d80249455",
       "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
       "packages/cli/src/recovery/expand.mjs": "ed772cfae3e2e2ad46089b24a6096a45ee5facd6dba685b7931d74872a0e922d",
@@ -152,16 +153,16 @@
       "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
       "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
       "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
-      "packages/cli/src/recovery/restore.mjs": "c89f45b2835cfe778c4c0422ef2ec2214d798fcc9cb695cd1bdf7ee46f9e36c7",
-      "packages/cli/src/recovery/retire.mjs": "4a53f337ba6d318f046f45a58210b6f612d3eaac82806e1a8bd342e83ebf2b86",
-      "packages/cli/src/recovery/retirement-plan.mjs": "fe8ec02684a35ee43fcfbd36fc9de13194fc0bbe245ff0144cd964920ab19825",
+      "packages/cli/src/recovery/restore.mjs": "76f1e9c1087aab252cb4348a35b58e97a7c8540d0cad6f0e261142b87c2f6de4",
+      "packages/cli/src/recovery/retire.mjs": "a5013e26d0eea64755a2cc2648e690af88d496445f7d2ed576b930c6c4ce3934",
+      "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
       "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
       "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
       "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
       "packages/cli/src/recovery/volumes.mjs": "75ce841f12c825b640571092bc5068aba4cb0f70d38743301f7b087446724603",
       "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
       "packages/cli/src/tls.mjs": "e2139574e845b7b84078054a7285b0b9d27b950576c08769c884c250f87009e5",
-      "packages/platform/package.json": "1c00cb4239ab1c3ea4f8e76fc1fc4b178cf7da664b31a819ac4df0cc7c43b60c",
+      "packages/platform/package.json": "b2473be96c832e7ec765922a355accf04953c3331d17d66302ea243f582286c6",
       "packages/runtime/package.json": "629c692a946958a67fee2863c5f4b43df1e52ee699d7bedea3356a52110b2160",
       "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
       "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
@@ -170,39 +171,50 @@
       "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
       "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
       "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
-      "scripts/cron-probe/recovery/client.mjs": "1eacf99e0cd8d4ada3ef1100953a35e5b4efaa9fb5df9bc402f5fef56bd24d89",
-      "scripts/cron-probe/recovery/controller.mjs": "0840e224da96bd15d67fd047d23f1b4657e25479bef5fd94600b99547ebec266",
+      "scripts/cron-probe/recovery/client.mjs": "34d83dc5ea25748be83e7dd1df137bdce2a11635ca00df85028d7e1abc125498",
+      "scripts/cron-probe/recovery/commands.mjs": "10d51e3e1743d49ffb67040beec54c1bbc52590ec257308040285aab8230bdd1",
+      "scripts/cron-probe/recovery/controller.mjs": "9e28b7c480a1ef2907876e2254d9b4c1fb178c5b8e5c60b46c0c5e4e4e999a0e",
       "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
-      "scripts/cron-probe/recovery/fixture.mjs": "14fd6651121f472ebfe8fc46d5c809211252017aa654533b4f1606bfa14a57d7",
-      "scripts/cron-probe/recovery/lifecycle.mjs": "f1979b26b570579c364ce4d6274ffb8b02e1d67807e032a145ab74a99de77e0d",
+      "scripts/cron-probe/recovery/fixture.mjs": "30c26686ad7f4320706d12dbf22b362e71aa3d3b2b84c9e025e4097994db7afb",
+      "scripts/cron-probe/recovery/lifecycle.mjs": "f2f1fbd65c85bffcb67d6938f5043d12f38e9c32893804669212644eae2a0b05",
       "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
       "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
-      "scripts/cron-probe/recovery/provenance.mjs": "9763a2766fc9f20a640fb4701623d0183bc6907370bb46911849b244f600950d",
-      "scripts/cron-probe/recovery/restore.mjs": "18bc3b15be50b6ef54612de7d2cdcbca0e019639976deb3eabf6229856e900ae",
+      "scripts/cron-probe/recovery/provenance.mjs": "17b61899099d81a573ded7bf2542e2a77283a7ecf9fa55e56c6decc7cb4fd9ad",
+      "scripts/cron-probe/recovery/restore.mjs": "8daed844057fb7d930f44dc61d1ccb63bd8efad200bf75ff2e25d0808206759c",
+      "scripts/cron-probe/recovery/trial.mjs": "ea502d69e9be653aec3180dcbbc1073616bc59a3f82e89d01e1139230fe15a47",
       "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+      "scripts/cron-probe/retirement/applications.mjs": "f7e1bb185266e4849d7105479c134b8ae21067fe6e913f721ef199a69eb60cbf",
+      "scripts/cron-probe/retirement/controller.mjs": "ea73cdf0729bbf68cd54648282c0bcf67549d27ff60ed03a52053bff09611bb7",
+      "scripts/cron-probe/retirement/oracles.mjs": "0550a487b635af2dfcec1e6f5e38d2a028788cd38514706a866e38bbe3f1d9f5",
+      "scripts/cron-probe/retirement/preservation.mjs": "0da8cf30f128a6d499fa0b70b74a67096e358ed7e4f8071b79601f27b45773d4",
+      "scripts/cron-probe/retirement/recovery.mjs": "3a979a9799409d941bfd6df72402458eda253254db3f36e1b1b7bd7138b0bdf7",
+      "scripts/cron-probe/retirement/replacement.mjs": "5823a80ef667cf9d5a5aa480876cb33d9d4e221066463446b04453a3cbefc2bc",
+      "scripts/cron-probe/retirement/transitions.mjs": "5e58d455aed543961518dcf01d1f4ccbf95f67cda1d0f40b2177965f5dd86af5",
       "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
-      "scripts/cron-recovery.mjs": "8f86d940dee4ddca5bc5b9f99883fc29f19e3281bab944e69966bc88f71c247b",
+      "scripts/cron-recovery.mjs": "8c4358962c767894455b3700c6799e9b4cf9ce1bd582835f3377672b2704be5d",
+      "scripts/cron-retirement.mjs": "9332b0bb1dc33a244c98c1b5be7d8fc7d9defb67b849ac70e1e9f71e12375bfe",
       "scripts/guestbook-browser.mjs": "fa41dba03f94c3f4163c8a20508fb687446d69a1fb1036829c05e3c069713363",
       "scripts/http.mjs": "cbb8ef8feb9bfcaf8074f5828cb75f5b3502d81858045c1eeed66e59b334fa2a",
       "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a",
       "scripts/platform-client.mjs": "300ed24f6a7411dce4c8d07244ecb990852a54afb0863ebc82943f37c7f0bd00",
-      "scripts/queue-probe/controller-artifact.mjs": "ddb716f9f578cae64e5a5b4ab9930b5fdc0f09418673221c56eca5737b62da9c"
+      "scripts/queue-probe/controller-artifact.mjs": "ddb716f9f578cae64e5a5b4ab9930b5fdc0f09418673221c56eca5737b62da9c",
+      "scripts/queue-probe/prefix-fingerprints.mjs": "ee17354f649f7b62b2cd259be2421d535f7cda573a02866fa17fd5b5c8027b4f"
     },
     "git": {
-      "head": "78c4da4be5ec3c10971f00545f078766e8389f83",
-      "status": "M packages/platform/src/main.mjs\n?? packages/platform/src/startup.mjs\n?? packages/platform/test/cron-recovery-oracles.test.mjs\n?? packages/platform/test/startup.test.mjs\n?? scripts/cron-probe/recovery/\n?? scripts/cron-recovery.mjs"
+      "head": "7d08edbc55848aaf3efd8a54aebccbb92edf37f4",
+      "status": ""
     },
     "finalGit": {
-      "head": "78c4da4be5ec3c10971f00545f078766e8389f83",
-      "status": "M packages/platform/src/main.mjs\n?? docs/cron-recovery.md\n?? packages/platform/src/startup.mjs\n?? packages/platform/test/cron-recovery-oracles.test.mjs\n?? packages/platform/test/startup.test.mjs\n?? scripts/cron-probe/recovery/\n?? scripts/cron-recovery.mjs"
+      "head": "7d08edbc55848aaf3efd8a54aebccbb92edf37f4",
+      "status": ""
     }
   },
   "cases": {
     "a": {
       "nativeOnlyHold": {
-        "startedAt": 1792545631348,
-        "endedAt": 1792545693377,
-        "durationMs": 62029,
+        "startedAt": 1792556322786,
+        "endedAt": 1792556384827,
+        "durationMs": 62041,
         "controllerAndGatewayStopped": true,
         "control": {
           "crons": [
@@ -214,9 +226,9 @@
         }
       },
       "controllerRunningHold": {
-        "startedAt": 1792545704152,
-        "endedAt": 1792545766355,
-        "durationMs": 62203,
+        "startedAt": 1792556395794,
+        "endedAt": 1792556458019,
+        "durationMs": 62225,
         "control": {
           "crons": [
             "* * * * *"
@@ -227,26 +239,62 @@
         }
       },
       "applicationDataUnchangedDuringHolds": true,
+      "coldRowFingerprintBasis": "One row fingerprint matched against the live pre-pause source sample and two independent restored cold queries; final postflight compares stopped source volume bytes with the archives.",
+      "coldRowFingerprints": {
+        "sourcePrePauseSample": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73",
+        "beforeHold": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73",
+        "afterHold": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73"
+      },
+      "sourceSnapshotManifestSha256": "24e0c9759b2af30dfabab5bdfe3a187b5e537e316b96843fe7ef4ef95daaaf8a",
+      "controllerRunningHoldRowBasis": "Fingerprint-pinned driver compares the complete source rows before and after the held interval; only its final native control is stored in the raw runningHold record.",
       "states": {
         "refresh": {
-          "recoveryId": "7d96e332-f431-4954-a252-52c356325f3f",
-          "review": "1c2d46f06c5001c2dbb8c02a0168735bd02d9b894f78f221b87fe76cce49310a",
+          "recoveryId": "cdc41418-c4e5-4fe4-9318-eb5400d295f4",
+          "review": "8af117ca0035f61208baaa476046c71b7dbb5cf12d224663664c5dde74f19680",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "restoredApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": []
         },
         "imports": {
-          "recoveryId": "2722f0e1-b5aa-4e0c-8a59-6ebb9146110c",
-          "review": "5ca500a695c80a9057c9d593cbc7840abb7105dca8799b6a977140a2a4f6781c",
+          "recoveryId": "5b6397cc-4e05-4707-b06e-2a47ce224b97",
+          "review": "d198c5bb7af6ac315ac925a8b02cc89556c620c31f5adaa5069ef32c31515ac4",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "restoredApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": null
         }
       }
     },
     "b": {
       "nativeOnlyHold": {
-        "startedAt": 1792545988329,
-        "endedAt": 1792546050550,
-        "durationMs": 62221,
+        "startedAt": 1792556681586,
+        "endedAt": 1792556743788,
+        "durationMs": 62202,
         "controllerAndGatewayStopped": true,
         "control": {
           "crons": [
@@ -258,9 +306,9 @@
         }
       },
       "controllerRunningHold": {
-        "startedAt": 1792546061295,
-        "endedAt": 1792546123403,
-        "durationMs": 62108,
+        "startedAt": 1792556754471,
+        "endedAt": 1792556816664,
+        "durationMs": 62193,
         "control": {
           "crons": [
             "* * * * *"
@@ -271,26 +319,62 @@
         }
       },
       "applicationDataUnchangedDuringHolds": true,
+      "coldRowFingerprintBasis": "One row fingerprint matched against the live pre-pause source sample and two independent restored cold queries; final postflight compares stopped source volume bytes with the archives.",
+      "coldRowFingerprints": {
+        "sourcePrePauseSample": "1d1b96b05612a0a6e17f35ff1a943954b7dbabf7d2fcb3bc44d55f7c5f665160",
+        "beforeHold": "1d1b96b05612a0a6e17f35ff1a943954b7dbabf7d2fcb3bc44d55f7c5f665160",
+        "afterHold": "1d1b96b05612a0a6e17f35ff1a943954b7dbabf7d2fcb3bc44d55f7c5f665160"
+      },
+      "sourceSnapshotManifestSha256": "210c9d32a39db165e8ce63c17c2d7b3ed27b064292ad98400b96beadb6167f6e",
+      "controllerRunningHoldRowBasis": "Fingerprint-pinned driver compares the complete source rows before and after the held interval; only its final native control is stored in the raw runningHold record.",
       "states": {
         "refresh": {
-          "recoveryId": "268483c9-a0c4-40ad-818b-51ee8f185826",
-          "review": "94fbe0ad447cfdb1df26c45babef1d1c85c6d484ada8a4db4face4f64ff65d16",
+          "recoveryId": "23c136b3-1e5b-45e4-9881-2a3e8a8d24a2",
+          "review": "bfa77c56fc822b83dcd3a422e0c06c064943e0e842d93111e7dabb8c0b335670",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "restoredApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": []
         },
         "imports": {
-          "recoveryId": "5e5b7cd1-4118-4e76-b227-1f08d953e100",
-          "review": "674867066d422b19c47a5abe4cf854162c7145337d127e9522dcf6a07c3a1e30",
+          "recoveryId": "4c959cfe-b4a1-48be-873e-774e7df3678f",
+          "review": "bfa34816dc5a5377c8e564918062051dd7eb1090b2a2f49ea1e51802f716d5c5",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "restoredApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": null
         }
       }
     },
     "older-a": {
       "nativeOnlyHold": {
-        "startedAt": 1792546275640,
-        "endedAt": 1792546337773,
-        "durationMs": 62133,
+        "startedAt": 1792556942153,
+        "endedAt": 1792557004244,
+        "durationMs": 62091,
         "controllerAndGatewayStopped": true,
         "control": {
           "crons": [
@@ -302,9 +386,9 @@
         }
       },
       "controllerRunningHold": {
-        "startedAt": 1792546348198,
-        "endedAt": 1792546410413,
-        "durationMs": 62215,
+        "startedAt": 1792557014882,
+        "endedAt": 1792557077071,
+        "durationMs": 62189,
         "control": {
           "crons": [
             "* * * * *"
@@ -315,18 +399,54 @@
         }
       },
       "applicationDataUnchangedDuringHolds": true,
+      "coldRowFingerprintBasis": "One row fingerprint matched against the live pre-pause source sample and two independent restored cold queries; final postflight compares stopped source volume bytes with the archives.",
+      "coldRowFingerprints": {
+        "sourcePrePauseSample": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73",
+        "beforeHold": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73",
+        "afterHold": "2c06c214de183174c6385b6adbe219084b440717010160f6b6be2c3ae4810b73"
+      },
+      "sourceSnapshotManifestSha256": "24e0c9759b2af30dfabab5bdfe3a187b5e537e316b96843fe7ef4ef95daaaf8a",
+      "controllerRunningHoldRowBasis": "Fingerprint-pinned driver compares the complete source rows before and after the held interval; only its final native control is stored in the raw runningHold record.",
       "states": {
         "refresh": {
-          "recoveryId": "c6244a6e-e3b5-4d98-8f83-424bc7f09e66",
-          "review": "e440b4a24da0e039e8e536eb41a3da496ef2b9a35aa2eeea76f56c2f3d7519c4",
+          "recoveryId": "d57e41a1-cd63-4529-b640-c2e480db99e1",
+          "review": "be8bd78332b7f27d94f7f327ff098760420f00bb5a91f1cf29aee0a95638f563",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "restoredApproval": {
+            "slot": "slot-1",
+            "deployment": "cf11a878-bfe0-4d49-af0d-15b8195aad4a",
+            "digest": "ffb501743930206c98bfef9a177f91aac5bb7a5839009a4d2e095789cbc25a7b",
+            "secretRevision": "76aa2df9-a6c9-4c04-ad77-84e38b3eff93"
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": []
         },
         "imports": {
-          "recoveryId": "2ff60180-0b5a-4c17-bffb-547fcaccb71a",
-          "review": "5fe3e0b93f70d36d5f5e618dc4f96f437f7dd27234474a47aef75a9ce7ece469",
+          "recoveryId": "7d2ac31a-3ae3-4355-a078-4aa8cfa6b717",
+          "review": "7411d23964bbe16cd6dbc6e885968c2666bfdc2ffc4e17681b84511e3156486e",
           "routingInitiallyPaused": true,
-          "acknowledgedWithoutResume": true
+          "acknowledgedWithoutResume": true,
+          "sourceApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "restoredApproval": {
+            "slot": "slot-2",
+            "deployment": "fb0e0ff6-2b1a-4c89-976e-7ce90b0a66f5",
+            "digest": "46a8f9d0f14a00d59b45e3963320a623d56b18731173af2680d5eb0a614eeb95",
+            "secretRevision": null
+          },
+          "privateRuntimeVersionMatchesSource": true,
+          "recoveryDiagnoses": null
         }
       }
     }
@@ -334,40 +454,40 @@
   "futureDispatch": {
     "a": {
       "resume": {
-        "requestedAt": 1792545785179,
-        "confirmedAt": 1792545785480,
+        "requestedAt": 1792556463256,
+        "confirmedAt": 1792556463548,
         "control": {
           "crons": [
             "* * * * *"
           ],
-          "nextAlarm": 1792545840000,
+          "nextAlarm": 1792556520000,
           "paused": false,
           "revision": 5
         }
       },
       "dueFate": {
-        "scheduledTime": 1792545600000,
-        "resumeRequestedAt": 1792545785179,
+        "scheduledTime": 1792556280000,
+        "resumeRequestedAt": 1792556463256,
         "outcome": "skipped; resume schedules future work"
       },
       "nativeRows": [
         {
-          "id": "3ac22c9c-7b2a-4279-90fc-f95ec95beef2",
+          "id": "83ede72b-91f3-45e0-9fff-143607fcc72c",
           "job": "advisory",
           "cron": "* * * * *",
-          "scheduled_time": 1792545840000,
-          "entered_at": 1792545840003,
-          "finished_at": 1792545840023,
+          "scheduled_time": 1792556520000,
+          "entered_at": 1792556520004,
+          "finished_at": 1792556520031,
           "phase": "after-a",
           "outcome": "success"
         },
         {
-          "id": "e6fc662d-f8ba-47cf-8551-61455bb12b0b",
+          "id": "c37fdcb3-73b3-4c14-8827-27407c68ec08",
           "job": "inventory",
           "cron": "* * * * *",
-          "scheduled_time": 1792545840000,
-          "entered_at": 1792545840003,
-          "finished_at": 1792545840023,
+          "scheduled_time": 1792556520000,
+          "entered_at": 1792556520004,
+          "finished_at": 1792556520031,
           "phase": "after-a",
           "outcome": "success"
         }
@@ -375,35 +495,35 @@
     },
     "b": {
       "resume": {
-        "requestedAt": 1792546145408,
-        "confirmedAt": 1792546145708,
+        "requestedAt": 1792556825346,
+        "confirmedAt": 1792556825646,
         "control": {
           "crons": [
             "* * * * *"
           ],
-          "nextAlarm": 1792546200000,
+          "nextAlarm": 1792556880000,
           "paused": false,
           "revision": 9
         }
       },
       "nativeRows": [
         {
-          "id": "301a5c3d-a839-4405-ad5f-23da4730dcad",
-          "job": "inventory",
+          "id": "38fb91b2-f45c-4b46-8057-ea098dfac661",
+          "job": "advisory",
           "cron": "* * * * *",
-          "scheduled_time": 1792546200000,
-          "entered_at": 1792546200003,
-          "finished_at": 1792546200028,
+          "scheduled_time": 1792556880000,
+          "entered_at": 1792556880002,
+          "finished_at": 1792556880023,
           "phase": "after-b",
           "outcome": "success"
         },
         {
-          "id": "e44154a9-dda7-439e-a0f6-e4bff24cbea9",
-          "job": "advisory",
+          "id": "822e6541-3fbc-4f88-bff6-f5b0dbffe2f1",
+          "job": "inventory",
           "cron": "* * * * *",
-          "scheduled_time": 1792546200000,
-          "entered_at": 1792546200003,
-          "finished_at": 1792546200028,
+          "scheduled_time": 1792556880000,
+          "entered_at": 1792556880002,
+          "finished_at": 1792556880023,
           "phase": "after-b",
           "outcome": "success"
         }
@@ -416,40 +536,40 @@
     },
     "older-a": {
       "resume": {
-        "requestedAt": 1792546413064,
-        "confirmedAt": 1792546413357,
+        "requestedAt": 1792557079752,
+        "confirmedAt": 1792557080040,
         "control": {
           "crons": [
             "* * * * *"
           ],
-          "nextAlarm": 1792546440000,
+          "nextAlarm": 1792557120000,
           "paused": false,
           "revision": 5
         }
       },
       "dueFate": {
-        "scheduledTime": 1792545600000,
-        "resumeRequestedAt": 1792546413064,
+        "scheduledTime": 1792556280000,
+        "resumeRequestedAt": 1792557079752,
         "outcome": "skipped; resume schedules future work"
       },
       "nativeRows": [
         {
-          "id": "51bd0b58-005e-4b1d-99ea-12a578edd49a",
-          "job": "inventory",
+          "id": "236be073-7940-4321-9e95-ebd92b5d2570",
+          "job": "advisory",
           "cron": "* * * * *",
-          "scheduled_time": 1792546440000,
-          "entered_at": 1792546440002,
-          "finished_at": 1792546440028,
+          "scheduled_time": 1792557120000,
+          "entered_at": 1792557120003,
+          "finished_at": 1792557120020,
           "phase": "older-a",
           "outcome": "success"
         },
         {
-          "id": "7532f87d-a53a-4aef-adca-22605d27ee93",
-          "job": "advisory",
+          "id": "f0734bc7-1530-47e4-9489-b70a079f6d5a",
+          "job": "inventory",
           "cron": "* * * * *",
-          "scheduled_time": 1792546440000,
-          "entered_at": 1792546440002,
-          "finished_at": 1792546440028,
+          "scheduled_time": 1792557120000,
+          "entered_at": 1792557120003,
+          "finished_at": 1792557120020,
           "phase": "older-a",
           "outcome": "success"
         }
@@ -461,91 +581,97 @@
       "crons": [
         "* * * * *"
       ],
-      "nextAlarm": 1792545928086,
+      "nextAlarm": 1792556608074,
       "paused": false,
       "revision": 7
     },
     "wake": {
-      "key": "slots/slot-1/wake/entries/2026-10-21T01:25/.cron:refresh/0000000000000002-000000000000000c",
+      "key": "slots/slot-1/wake/entries/2026-10-21T04:23/.cron:refresh/0000000000000002-000000000000000b",
       "cell": ".cron:refresh",
-      "due_ms": 1792545928086,
+      "due_ms": 1792556608074,
       "format": 2,
-      "identity": "0000000000000002-000000000000000c"
+      "identity": "0000000000000002-000000000000000b"
     },
-    "observedAt": 1792545912705,
+    "observedAt": 1792556593217,
     "nativeRows": [
       {
-        "id": "c78eb1fa-a930-462a-abe5-2b33b90faeb2",
+        "id": "20ae2146-0e11-4f99-9bc9-6ff9d84b50b9",
         "job": "inventory",
         "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545900003,
-        "finished_at": 1792545900028,
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556580003,
+        "finished_at": 1792556580028,
         "phase": "retry-b",
         "outcome": "success"
       },
       {
-        "id": "fe180c84-3359-4813-9cb4-90aba7d48006",
+        "id": "2b038c14-6273-429f-a721-177a1897cc94",
         "job": "advisory",
         "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545900003,
-        "finished_at": 1792545900016,
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556580003,
+        "finished_at": 1792556580013,
         "phase": "retry-b",
         "outcome": "thrown"
       },
       {
-        "id": "5119600a-079b-45d5-a919-e0aae61ecce3",
-        "job": "advisory",
-        "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545904032,
-        "finished_at": 1792545904039,
-        "phase": "retry-b",
-        "outcome": "thrown"
-      },
-      {
-        "id": "b45ecd99-3068-47da-be92-6da4b604e5fe",
+        "id": "8ce22539-8746-45aa-b719-ffdae32b839a",
         "job": "inventory",
         "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545904032,
-        "finished_at": 1792545904051,
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556584035,
+        "finished_at": 1792556584052,
         "phase": "retry-b",
         "outcome": "success"
       },
       {
-        "id": "191afe26-8d14-45e5-b79e-2fed66ec3d97",
-        "job": "inventory",
-        "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545912057,
-        "finished_at": 1792545912081,
-        "phase": "retry-b",
-        "outcome": "success"
-      },
-      {
-        "id": "ac5c59e5-3986-4923-823a-1364b192efdd",
+        "id": "afcfbee2-1aa7-4794-a44e-a72703240ab7",
         "job": "advisory",
         "cron": "* * * * *",
-        "scheduled_time": 1792545900000,
-        "entered_at": 1792545912057,
-        "finished_at": 1792545912068,
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556584035,
+        "finished_at": 1792556584043,
         "phase": "retry-b",
         "outcome": "thrown"
+      },
+      {
+        "id": "7c7115cb-1e62-4f1d-a935-39d61cee4690",
+        "job": "advisory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556592058,
+        "finished_at": 1792556592063,
+        "phase": "retry-b",
+        "outcome": "thrown"
+      },
+      {
+        "id": "b2b05e02-d6ff-4aa5-82f2-6e4938b7d603",
+        "job": "inventory",
+        "cron": "* * * * *",
+        "scheduled_time": 1792556580000,
+        "entered_at": 1792556592058,
+        "finished_at": 1792556592072,
+        "phase": "retry-b",
+        "outcome": "success"
       }
     ],
     "resume": {
-      "requestedAt": 1792545843398,
-      "confirmedAt": 1792545843704,
+      "requestedAt": 1792556523358,
+      "confirmedAt": 1792556523656,
       "control": {
         "crons": [
           "* * * * *"
         ],
-        "nextAlarm": 1792545900000,
+        "nextAlarm": 1792556580000,
         "paused": false,
         "revision": 7
       }
+    },
+    "fate": {
+      "scheduledTime": 1792556580000,
+      "retryDueAt": 1792556608074,
+      "outcome": "pause clears retry identity; separate resume schedules future work",
+      "oldRowsValidationBasis": "Executed assertNoReplay compares all attempts, results and occurrence counters through resume requestedAt-1; the complete post-resume tables are not stored in this raw record."
     }
   },
   "olderLoss": {
@@ -555,14 +681,19 @@
       "pending-b"
     ],
     "lostNativeAttemptIds": [
-      "3ac22c9c-7b2a-4279-90fc-f95ec95beef2",
-      "e6fc662d-f8ba-47cf-8551-61455bb12b0b"
+      "83ede72b-91f3-45e0-9fff-143607fcc72c",
+      "c37fdcb3-73b3-4c14-8827-27407c68ec08"
     ],
-    "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging."
+    "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging.",
+    "afterBForkNote": "B-branch attempts are absent in older A; they were created after forking the B restore and were never part of the A archive.",
+    "absentAfterBForkAttemptIds": [
+      "38fb91b2-f45c-4b46-8057-ea098dfac661",
+      "822e6541-3fbc-4f88-bff6-f5b0dbffe2f1"
+    ]
   },
   "sourcePreservation": {
     "a": {
-      "earliest": "2026-10-21T01:18:11.190019921Z",
+      "earliest": "2026-10-21T04:17:02.497112583Z",
       "exits": [
         {
           "service": "slot-1-a",
@@ -572,14 +703,14 @@
           "oomKilled": false
         },
         {
-          "service": "controller",
+          "service": "slot-2-b",
           "running": false,
           "code": 0,
           "restartCount": 0,
           "oomKilled": false
         },
         {
-          "service": "slot-2-b",
+          "service": "controller",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -607,16 +738,16 @@
           "oomKilled": false
         },
         {
-          "service": "workerd",
+          "service": "minio",
           "running": false,
-          "code": 1,
+          "code": 0,
           "restartCount": 0,
           "oomKilled": false
         },
         {
-          "service": "minio",
+          "service": "workerd",
           "running": false,
-          "code": 0,
+          "code": 1,
           "restartCount": 0,
           "oomKilled": false
         }
@@ -636,22 +767,8 @@
       }
     },
     "b": {
-      "earliest": "2026-10-21T01:20:13.015488505Z",
+      "earliest": "2026-10-21T04:18:23.503075176Z",
       "exits": [
-        {
-          "service": "slot-1-a",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "slot-1-b",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
         {
           "service": "controller",
           "running": false,
@@ -660,7 +777,7 @@
           "oomKilled": false
         },
         {
-          "service": "slot-2-a",
+          "service": "slot-1-a",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -674,7 +791,28 @@
           "oomKilled": false
         },
         {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
           "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -684,13 +822,6 @@
           "service": "workerd",
           "running": false,
           "code": 1,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "minio",
-          "running": false,
-          "code": 0,
           "restartCount": 0,
           "oomKilled": false
         }
@@ -712,8 +843,8 @@
   },
   "shutdowns": [
     {
-      "project": "fogd-m11c-cron-recovery-64bc73",
-      "earliest": "2026-10-21T01:18:11.190019921Z",
+      "project": "fogd-m11c-cron-recovery-225937",
+      "earliest": "2026-10-21T04:17:02.497112583Z",
       "exits": [
         {
           "service": "slot-1-a",
@@ -723,14 +854,14 @@
           "oomKilled": false
         },
         {
-          "service": "controller",
+          "service": "slot-2-b",
           "running": false,
           "code": 0,
           "restartCount": 0,
           "oomKilled": false
         },
         {
-          "service": "slot-2-b",
+          "service": "controller",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -758,16 +889,16 @@
           "oomKilled": false
         },
         {
-          "service": "workerd",
+          "service": "minio",
           "running": false,
-          "code": 1,
+          "code": 0,
           "restartCount": 0,
           "oomKilled": false
         },
         {
-          "service": "minio",
+          "service": "workerd",
           "running": false,
-          "code": 0,
+          "code": 1,
           "restartCount": 0,
           "oomKilled": false
         }
@@ -787,23 +918,9 @@
       }
     },
     {
-      "project": "fogd-m11c-cron-recovery-64bc73-a",
-      "earliest": "2026-10-21T01:20:13.015488505Z",
+      "project": "fogd-m11c-cron-recovery-225937-a",
+      "earliest": "2026-10-21T04:18:23.503075176Z",
       "exits": [
-        {
-          "service": "slot-1-a",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "slot-1-b",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
         {
           "service": "controller",
           "running": false,
@@ -812,7 +929,7 @@
           "oomKilled": false
         },
         {
-          "service": "slot-2-a",
+          "service": "slot-1-a",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -826,7 +943,28 @@
           "oomKilled": false
         },
         {
+          "service": "slot-1-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
           "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -836,13 +974,6 @@
           "service": "workerd",
           "running": false,
           "code": 1,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "minio",
-          "running": false,
-          "code": 0,
           "restartCount": 0,
           "oomKilled": false
         }
@@ -862,25 +993,11 @@
       }
     },
     {
-      "project": "fogd-m11c-cron-recovery-64bc73-b",
-      "earliest": "2026-10-21T01:26:09.131368045Z",
+      "project": "fogd-m11c-cron-recovery-225937-b",
+      "earliest": "2026-10-21T04:24:23.37347526Z",
       "exits": [
         {
-          "service": "slot-2-b",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
           "service": "slot-1-b",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "slot-2-a",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -901,7 +1018,28 @@
           "oomKilled": false
         },
         {
+          "service": "slot-2-b",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
           "service": "bucket-init",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -911,31 +1049,17 @@
           "service": "workerd",
           "running": false,
           "code": 1,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "minio",
-          "running": false,
-          "code": 0,
           "restartCount": 0,
           "oomKilled": false
         }
       ]
     },
     {
-      "project": "fogd-m11c-cron-recovery-64bc73-older-a",
-      "earliest": "2026-10-21T01:30:57.612446346Z",
+      "project": "fogd-m11c-cron-recovery-225937-older-a",
+      "earliest": "2026-10-21T04:28:43.011232755Z",
       "exits": [
         {
           "service": "slot-1-a",
-          "running": false,
-          "code": 0,
-          "restartCount": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "controller",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -949,7 +1073,7 @@
           "oomKilled": false
         },
         {
-          "service": "slot-1-b",
+          "service": "controller",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -957,6 +1081,13 @@
         },
         {
           "service": "slot-2-a",
+          "running": false,
+          "code": 0,
+          "restartCount": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-1-b",
           "running": false,
           "code": 0,
           "restartCount": 0,
@@ -988,56 +1119,56 @@
   ],
   "snapshots": {
     "a": {
-      "sourceProject": "fogd-m11c-cron-recovery-64bc73",
-      "stoppedAt": "2026-10-21T01:19:32.944Z",
-      "completedAt": "2026-10-21T01:19:54.694Z",
-      "durationMs": 49379,
+      "sourceProject": "fogd-m11c-cron-recovery-225937",
+      "stoppedAt": "2026-10-21T04:17:55.674Z",
+      "completedAt": "2026-10-21T04:18:05.713Z",
+      "durationMs": 37417,
       "images": {
-        "bucket-init": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "controller": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
         "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
-        "slot-1-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-1-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-2-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-2-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "workerd": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5"
+        "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
       },
       "files": {
         "bucket.tar": {
-          "bytes": 1054720,
-          "sha256": "da1ad787e04a12c9960300003f7b4918aa15676b7e04c923f77f1adffc4d20f8"
+          "bytes": 911360,
+          "sha256": "d6945e22f34310aadb7ec429df257c7c163e46f1fafd280e4f6218622d351d5f"
         },
         "compose.json": {
           "bytes": 14063,
-          "sha256": "e271a050edd26219b451f1d572e319ac3ae90d8e78208acb15d06cdc508b43b3"
+          "sha256": "f5845e27d6049e2807a76850aee65457e3243dfcc9d25b2998cbcf00909b10a9"
         },
         "controller.tar": {
           "bytes": 1443840,
-          "sha256": "edd38fa8cf8cceb12f02439c00d2bc9753cffda40deb2bb6ed01187720a32aab"
+          "sha256": "d4826e72dc4d5fd037681be8edaa9a834ee6ee2171a5561feaf43bd1b56547ea"
         },
         "images.tar": {
-          "bytes": 915859968,
-          "sha256": "d86f4b1e90836ce21db19b04ccbf0cc73a7117d84b1e387524649e93ab3152ee"
+          "bytes": 915879936,
+          "sha256": "88e64335e786a9e04f9dfca66413a61c4b77c3daff7ae9d86bcfea409f76da77"
         },
         "slot-1-a.tar": {
           "bytes": 10240,
-          "sha256": "9993378f1d36a8a3aba1187209df510fb8d83e1fe82a42b76dccd00c8f635432"
+          "sha256": "e7c9a8578dfc747b35498392c0f3c41ede7dc0214f0756cb78868549ab18fed0"
         },
         "slot-1-b.tar": {
           "bytes": 10240,
-          "sha256": "c01d2a696cbfde4fa263419e150b3845f21bf75d5f4a8f15d458df43ed528fde"
+          "sha256": "8d296d3c62146580487eb8402dfbfa2b531665c01ba92f47063134413bede1b6"
         },
         "slot-2-a.tar": {
           "bytes": 10240,
-          "sha256": "9dd29d46ae73a880cf9886a52829455e2b55da2f366095e9f76ff7e38b6731d2"
+          "sha256": "c29076878589ca8ebc852f025b1d06962603e76aef09939d6b0b60ec776deba8"
         },
         "slot-2-b.tar": {
           "bytes": 10240,
-          "sha256": "3bda5bf4b2ebee0f836d62f2e97c74a2eac3967fadfc5f7bc1c6e2e97d728c2d"
+          "sha256": "60e5607e6371387c47b39449edcc684052e25e59b9bf75a12e1ecad79449b7a1"
         },
         "tls.tar": {
           "bytes": 10240,
-          "sha256": "7c0c419286c8b70cf81e6a5fbc2a5783c4b0bf0a98d3d3aa8bff0452e908dd41"
+          "sha256": "3c01b686d059af6d3d28eaab8c7d8667d971788e1473b485dfb2d6357c239d62"
         }
       },
       "exits": [
@@ -1047,12 +1178,12 @@
           "oomKilled": false
         },
         {
-          "service": "controller",
+          "service": "slot-2-b",
           "exitCode": 0,
           "oomKilled": false
         },
         {
-          "service": "slot-2-b",
+          "service": "controller",
           "exitCode": 0,
           "oomKilled": false
         },
@@ -1072,88 +1203,78 @@
           "oomKilled": false
         },
         {
-          "service": "workerd",
-          "exitCode": 1,
+          "service": "minio",
+          "exitCode": 0,
           "oomKilled": false
         },
         {
-          "service": "minio",
-          "exitCode": 0,
+          "service": "workerd",
+          "exitCode": 1,
           "oomKilled": false
         }
       ]
     },
     "b": {
-      "sourceProject": "fogd-m11c-cron-recovery-64bc73-a",
-      "stoppedAt": "2026-10-21T01:25:41.267Z",
-      "completedAt": "2026-10-21T01:25:51.252Z",
-      "durationMs": 36648,
+      "sourceProject": "fogd-m11c-cron-recovery-225937-a",
+      "stoppedAt": "2026-10-21T04:23:55.527Z",
+      "completedAt": "2026-10-21T04:24:05.407Z",
+      "durationMs": 50292,
       "images": {
-        "bucket-init": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "controller": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
+        "bucket-init": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "controller": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
         "minio": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
-        "slot-1-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-1-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-2-a": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "slot-2-b": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5",
-        "workerd": "sha256:e07adafe71ca308098697219e0433e1818e281cae35b5e3138160e47106682f5"
+        "slot-1-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-1-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-2-a": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "slot-2-b": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43",
+        "workerd": "sha256:a827e234ed21fcf21502d6f1a5ce4a511b207549059964697b6d34ec305b9f43"
       },
       "files": {
         "bucket.tar": {
-          "bytes": 983040,
-          "sha256": "4020529da30f8f0a50f3c2286f35e8b8ac5fb274f44595e6fdfd74781dce243d"
+          "bytes": 972800,
+          "sha256": "c79bb769c2dba499d4159b8ae313143ecbb0874af6db3972277f2bf9521595d5"
         },
         "compose.json": {
           "bytes": 14325,
-          "sha256": "110b56d7d2558adff98aefe1466f2ac7e1224e49d503987bccd5e64a07323502"
+          "sha256": "65ddadad07a64346153e3001cea54ed5ad6246d3d8747db20c5d6f86a86c92bb"
         },
         "controller.tar": {
           "bytes": 1443840,
-          "sha256": "73fa7d3fbb0eef39799778a379c3ecb285bac41d9880a68382d6c5db1f09ebd3"
+          "sha256": "57b71e099204b692d536423997a909c0e4a1487d42c2738719e7ac50b9e2ec52"
         },
         "images.tar": {
-          "bytes": 915859968,
-          "sha256": "2abe447f08e59118e6c0adbd956293fec1af0a231cf9b91ff49ed7dd8460d66a"
+          "bytes": 915879936,
+          "sha256": "99470216b1ee14973b2a2975951fb0bdf3a6e77f375b0df98b951a3451e666de"
         },
         "slot-1-a.tar": {
           "bytes": 10240,
-          "sha256": "fc9f64af354f979273ac92d206967fa116f048b4ddb5e667642d0d1c9ed2d370"
+          "sha256": "4ddfa13a750a1479c80e82504d41531ac5511258c1fa81025a70450004c83709"
         },
         "slot-1-b.tar": {
           "bytes": 10240,
-          "sha256": "86f225439e3ff2df6c4e613f5b505d08fb8d7ad5f9c55ee99e14200ce527e1a0"
+          "sha256": "676a41992c846d26fdbfd2260468995546eb0d8c8c151d1358d28cb00899af70"
         },
         "slot-2-a.tar": {
-          "bytes": 10240,
-          "sha256": "712ca78bed9ee2e3de466cdeabbf149e77c974eb11cd32940e7f469f85be3db2"
+          "bytes": 20480,
+          "sha256": "7a0288601d573fa2e108e796e2569bd3e742712df8c49c33092fd3bbada1fbcf"
         },
         "slot-2-b.tar": {
           "bytes": 10240,
-          "sha256": "05d50d5d2a153c0940e8d152254a8dad661acba99e4ece31916a8bb272789fd4"
+          "sha256": "f840c7377d42e213d569000f4245bc36d80527621c4d9eca8acdce87e2a1b819"
         },
         "tls.tar": {
           "bytes": 10240,
-          "sha256": "7c0c419286c8b70cf81e6a5fbc2a5783c4b0bf0a98d3d3aa8bff0452e908dd41"
+          "sha256": "3c01b686d059af6d3d28eaab8c7d8667d971788e1473b485dfb2d6357c239d62"
         }
       },
       "exits": [
-        {
-          "service": "slot-1-a",
-          "exitCode": 0,
-          "oomKilled": false
-        },
-        {
-          "service": "slot-1-b",
-          "exitCode": 0,
-          "oomKilled": false
-        },
         {
           "service": "controller",
           "exitCode": 0,
           "oomKilled": false
         },
         {
-          "service": "slot-2-a",
+          "service": "slot-1-a",
           "exitCode": 0,
           "oomKilled": false
         },
@@ -1163,18 +1284,28 @@
           "oomKilled": false
         },
         {
+          "service": "slot-1-b",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "slot-2-a",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
           "service": "bucket-init",
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        {
+          "service": "minio",
           "exitCode": 0,
           "oomKilled": false
         },
         {
           "service": "workerd",
           "exitCode": 1,
-          "oomKilled": false
-        },
-        {
-          "service": "minio",
-          "exitCode": 0,
           "oomKilled": false
         }
       ]
@@ -1184,7 +1315,69 @@
     "Same-version local Docker profile with preserved identities and all volumes; no live snapshot or topology transformation",
     "Older case restores due-timer snapshot A from before retry snapshot B",
     "Pausing clears timer/retry identity; no retained missed-tick backlog or arbitrary external-effect exactly-once guarantee",
-    "Scoped cron admission, retirement and release-bound runtime qualification remain open"
+    "Scoped cron admission, retirement beside another live cron, native CPU exhaustion, upstream Rust test execution and release-bound runtime qualification remain open; cron/queue retirement has separate bounded evidence"
   ],
+  "queuedSurvivor": {
+    "id": "pending-b",
+    "snapshotManifestSha256": "210c9d32a39db165e8ce63c17c2d7b3ed27b064292ad98400b96beadb6167f6e",
+    "snapshotStatus": "accepted",
+    "snapshotAttempts": 0,
+    "snapshotResultCount": 0,
+    "snapshotBacklogCount": 1,
+    "completedStatus": "complete",
+    "completedAttempts": 1,
+    "completedLabels": [
+      "KIWI",
+      "LIME"
+    ],
+    "completionVerification": "GET only after acknowledgment and separate resume; no input resubmission"
+  },
+  "relatedRetirementQualification": {
+    "receipt": "docs/evidence/m11c-cron-retirement.json",
+    "receiptSha256": "9df2d49d10007d3704bfacc35c57595fdcca987209b09e026bb6b46daa6d435f",
+    "sameRuntimeImage": true,
+    "samePlatformAndHostProbeSourcePins": true
+  },
+  "finalSourcePreservation": {
+    "a": {
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    },
+    "b": {
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true
+    }
+  },
+  "retainedNamedVolumeCount": 28,
+  "allOwnedContainersRemoved": true,
+  "acceptanceTools": {
+    "postflight": {
+      "path": "acceptance/postflight.mjs",
+      "sha256": "bbd395d26e5d209e93283458cc33dc49ac55f8b8eec5df7277683361f76d92ec"
+    },
+    "curator": {
+      "path": "acceptance/curator.py",
+      "sha256": "fae3f29cfdb7eb9558d5eb380ea47aac4aefddc26bb9b926cfda6d801d564c4b"
+    }
+  },
+  "assertionBasis": "Cold source/before/after rows, queued snapshot state, selected future rows, source/target approval pins and archive hashes are independently checked by the curator. Runtime operations, warm-hold row comparisons, paused route/resume refusals and old-ledger checks after resume are assertions in the fingerprint-pinned driver whose terminal exit0 was independently observed. Row fingerprints cover retained private data; manifest identifiers cover full private manifests rather than their public projections. Postflight independently reads stopped volumes and compares both original sources after the entire drill.",
   "privateValuesAndVersionsAbsent": true
 }

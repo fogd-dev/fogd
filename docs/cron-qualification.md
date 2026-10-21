@@ -120,8 +120,8 @@ The [ordinary Void failure profile](cron-failures.md) separately qualifies owner
 loss, `noRetry`, counted terminal retries and downtime. Selected native controller
 interruptions have [separate evidence](evidence/m11c-cron-interruptions.json).
 [Compatible replacement](cron-replacement.md) has a separate migration and
-publication profile. [Stopped recovery](cron-recovery.md) has a bounded profile
-at commit `63fb494`; a full current-tree rerun remains required before admission.
+publication profile. [Stopped recovery](cron-recovery.md) has a full bounded rerun
+with due timers, pending retries, queued input and an older snapshot.
 [Retirement](retirement.md#experimental-scheduled-app-retirement) has a separate
 bounded native cron/queue profile. Ordinary cron admission remains closed. Inspect
 runner exit, cleanup and selected service logs before accepting a result; the evidence

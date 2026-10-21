@@ -385,9 +385,10 @@ declarations. Private activation, operator controls and the ordinary Void
 admission and release-bound runtime qualification remain open. The
 [bounded retirement profile](docs/retirement.md#experimental-scheduled-app-retirement)
 covers cron/queue survivors, fresh capacity reuse and zero-live restore.
-[Stopped cron recovery](docs/cron-recovery.md) qualified same-version local Linux
-arm64 Docker with two application fleets, due timers, pending retries and an
-older snapshot at commit `63fb494`; its changed helpers require a full current-tree
-rerun before admission. Retirement beside another live cron remains untested.
+[Stopped cron recovery](docs/cron-recovery.md) qualifies same-version local Linux
+arm64 Docker with two application fleets, due timers, pending retries and an older
+snapshot. Its full rerun also verifies queued input, source/target approval pins
+and retained source volumes after the entire drill. Retirement beside another live
+cron remains untested.
 [Compatible replacement](docs/cron-replacement.md) now has bounded
 migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.

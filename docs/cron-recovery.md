@@ -2,11 +2,11 @@
 
 Cron installation recovery uses a native persisted hold and a full stopped Docker
 archive. The [native evidence](evidence/m11c-cron-recovery.json) qualifies
-same-version recovery on local Linux arm64 Docker with two application fleets at
-commit `63fb494`. Shared qualification helpers have changed; a full current-tree
-rerun remains required before admission. Ordinary cron admission remains closed:
-the [M11c contract](m11c.md) also requires scoped admission and release-bound runtime
-qualification. Retirement has a separate bounded profile below.
+same-version recovery on local Linux arm64 Docker with two application fleets.
+The full rerun uses the same runtime and executable source fingerprints as the
+bounded cron/queue retirement profile. Ordinary cron admission remains closed:
+the [M11c contract](m11c.md) also requires scoped admission, retirement beside
+another live cron and release-bound runtime qualification.
 
 ## Recovery contract
 
@@ -72,12 +72,13 @@ then run the driver with the resolved JSON template:
 ```sh
 docker build -f docker/runtime.Dockerfile \
   --build-arg CELLD_IMAGE=fogd-celld:cron-controls-candidate5 \
-  -t fogd-runtime:cron-recovery-candidate5 .
+  -t fogd-runtime:cron-recovery-candidate6 .
 node scripts/cron-recovery.mjs PRIVATE_TEMPLATE_COMPOSE_JSON \
-  .fogd/NEW_RECOVERY_EVIDENCE fogd-runtime:cron-recovery-candidate5
+  .fogd/NEW_RECOVERY_EVIDENCE fogd-runtime:cron-recovery-candidate6
 ```
 
-The driver requires the recorded native binary hash and exact controller/runtime
+The driver records the image's immutable digest; the example uses a local tag for
+the build. It requires the recorded native binary hash and exact controller/runtime
 source files in the image. It fingerprints host CLI code, probe helpers, both
 application sources and build inputs, then checks they remain unchanged through
 completion. It records the base commit and dirty worktree state.
@@ -104,5 +105,20 @@ Before accepting a run, inspect its actual terminal exit code, `recovery.json`,
 failure markers and complete service logs. A printed pass alone is insufficient.
 The driver checks shutdown exits and restart counts, scans logs after stop,
 compares source archive contents and complete file names, and removes disposable
-containers and networks while retaining their volumes. Workerd's wrapper can exit
-1 after forwarding SIGTERM; critical storage/controller processes must exit 0.
+containers and networks while retaining their volumes. The accepted rerun also
+has an independent postflight check: both original sources still match their
+archives after the entire drill, all restored approval/secret/version pins match
+their source, recovery acknowledgments persist, and all 28 named volumes remain.
+That postflight check reads stopped volumes without starting native replicas.
+
+Check `pending-b` in the B source-data record, `OUTPUT/a/b-snapshot.json`, where
+`OUTPUT` is the private evidence directory. Its status must be `accepted`, with
+zero attempts, no result rows and at least one message in the prepared queue
+backlog. The restored completion in `recovery.json` must contain `KIWI` and `LIME`.
+The waiter uses GET only after explicit delivery resume; resubmitting the input
+would invalidate this check. Cold source/before/after row fingerprints and public
+approval pins are in the receipt. Warm-hold row checks and old-ledger comparisons
+after resume are assertions in the fingerprinted driver; the raw record stores
+native control and selected future rows rather than complete tables for those
+observations. Workerd's wrapper can exit 1 after forwarding SIGTERM; critical
+storage/controller processes must exit 0.
