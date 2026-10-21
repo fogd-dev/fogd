@@ -27,10 +27,16 @@ export async function retirement(source, point, name, directory, suffix) {
   if (surface === 'delivery') assert.ok(point.manifest.queueRecovery.apps[name].observation.backlogCount >= 1, 'Queue retirement must retain real pending work');
   const flag = surface === 'dispatch' ? '--stop-scheduled-work' : '--stop-queued-work';
   const target = await installedClient(source, ['retire', point.directory, '--app', name, '--digest', active.digest, flag], `${source.project}-${suffix}`, directory);
-  const plan = JSON.parse(await readFile(join(directory, 'retirement.json'), 'utf8'));
-  assert.equal(plan.app, name); assert.equal(plan.digest, active.digest);
-  assert.notEqual(plan.previous.prefix, plan.replacement.prefix);
-  assert.ok(plan.replacement.nodes.every(node => !plan.previous.nodes.includes(node)));
-  for (const service of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[service].name, source.config.volumes[service].name);
-  return { target, plan };
+  try {
+    const plan = JSON.parse(await readFile(join(directory, 'retirement.json'), 'utf8'));
+    assert.equal(plan.app, name); assert.equal(plan.digest, active.digest);
+    assert.notEqual(plan.previous.prefix, plan.replacement.prefix);
+    assert.ok(plan.replacement.nodes.every(node => !plan.previous.nodes.includes(node)));
+    for (const service of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[service].name, source.config.volumes[service].name);
+    return { target, plan };
+  } catch (error) {
+    try { await retainAndDown(target, null, 'retirement-validation-failure'); }
+    catch (cleanup) { throw new AggregateError([error, cleanup], `Retirement validation and cleanup failed for ${target.project}`, { cause: error }); }
+    throw error;
+  }
 }

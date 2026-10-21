@@ -388,7 +388,7 @@ covers cron/queue survivors, fresh capacity reuse and zero-live restore.
 [Stopped cron recovery](docs/cron-recovery.md) qualifies same-version local Linux
 arm64 Docker with two application fleets, due timers, pending retries and an older
 snapshot. Its full rerun also verifies queued input, source/target approval pins
-and retained source volumes after the entire drill. Retirement beside another live
-cron remains untested.
+and retained source volumes after the entire drill. [Two-cron retirement](docs/retirement.md#retirement-beside-another-scheduled-app)
+also covers a held cron survivor and a full source restore with both schedules held.
 [Compatible replacement](docs/cron-replacement.md) now has bounded
 migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.

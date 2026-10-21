@@ -122,8 +122,8 @@ interruptions have [separate evidence](evidence/m11c-cron-interruptions.json).
 [Compatible replacement](cron-replacement.md) has a separate migration and
 publication profile. [Stopped recovery](cron-recovery.md) has a full bounded rerun
 with due timers, pending retries, queued input and an older snapshot.
-[Retirement](retirement.md#experimental-scheduled-app-retirement) has a separate
-bounded native cron/queue profile. Ordinary cron admission remains closed. Inspect
+[Retirement](retirement.md#experimental-scheduled-app-retirement) has separate
+bounded cron/queue and two-cron profiles. Ordinary cron admission remains closed. Inspect
 runner exit, cleanup and selected service logs before accepting a result; the evidence
 rejects the earlier gateway
 harness and storage-exhaustion trials.

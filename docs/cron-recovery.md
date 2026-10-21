@@ -3,10 +3,12 @@
 Cron installation recovery uses a native persisted hold and a full stopped Docker
 archive. The [native evidence](evidence/m11c-cron-recovery.json) qualifies
 same-version recovery on local Linux arm64 Docker with two application fleets.
-The full rerun uses the same runtime and executable source fingerprints as the
-bounded cron/queue retirement profile. Ordinary cron admission remains closed:
-the [M11c contract](m11c.md) also requires scoped admission, retirement beside
-another live cron and release-bound runtime qualification.
+The recorded rerun uses the same runtime and executable source fingerprints as the
+initial cron/queue retirement profile. A later [two-cron profile](retirement.md#retirement-beside-another-scheduled-app)
+adds a qualifier and validation-failure cleanup while preserving the same production
+runtime sources. Each receipt identifies its executed qualification-helper versions.
+Ordinary cron admission remains closed: the [M11c contract](m11c.md) also requires
+scoped admission and release-bound runtime qualification.
 
 ## Recovery contract
 

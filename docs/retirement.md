@@ -169,8 +169,9 @@ retirement on same-version local Linux arm64 Docker with two application fleets.
 Ordinary cron admission stays closed. The profile uses a private qualification
 controller for live cron apps; the ordinary controller starts only after every live
 cron is retired. The runtime includes the experimental native dispatch-control
-candidate. This does not qualify release-bound runtime selection or retirement
-beside another live cron.
+candidate. A [two-cron profile](evidence/m11c-cron-retirement-dual.json) also qualifies
+retiring one schedule while another survives and restoring the full source with
+both schedules held. Release-bound runtime selection remains unqualified.
 
 An internally staged scheduled app requires `--stop-scheduled-work` in the same
 stopped snapshot workflow. This acknowledges that its old timer and retry identity
@@ -231,3 +232,41 @@ revisions and every original source volume remain unchanged. Accept a run only
 after observing its actual terminal exit, checking the private `retirement.json`
 and failure markers, and inspecting shutdown/log checks. Cleanup retains every
 volume. The public receipt records source hashes and the profile's limits.
+
+### Retirement beside another scheduled app
+
+The [two-cron evidence](evidence/m11c-cron-retirement-dual.json) covers two independently
+approved instances of the refresh fixture. After retiring the initial queued app,
+the second cron uses its own secret revision and fresh namespace in the freed
+fleet. Both schedules run before backup. Their pause receipts must confirm the
+same minute-aligned alarm and both holds before its deadline.
+
+```sh
+node scripts/cron-probe/retirement/dual.mjs PRIVATE_TWO_FLEET_TEMPLATE_COMPOSE_JSON \
+  .fogd/NEW_DUAL_RETIREMENT_EVIDENCE fogd-runtime:cron-retirement-candidate6
+```
+
+Retiring the original cron leaves the second held through native-only startup,
+controller initialization and explicit recovery acknowledgment. A separate resume
+must produce future native work without changing older attempts, results or
+occurrence counters. A full restore of the pre-retirement source then checks both
+complete ledgers through cold and controller-running holds. The imported queue's
+retired namespace remains unchanged across every phase.
+
+The accepted run has six held intervals of at least 62 VM seconds and four projects
+with 28 retained named volumes. Independent postflight reads validate current
+approval, secret and runtime-version pins, persisted acknowledgments, retired
+audits and the unchanged scoped credential store. Actual private secret values
+and materialized runtime versions stay out of the public receipt.
+
+A separate validation-failure check deliberately changes the plan digest after a
+fresh stopped target is created. The retirement helper must remove that target's
+containers, retain its seven volumes and preserve the original source. The receipt
+pins the checked helper and fault probe. Its private evidence is retained at
+`.fogd/m11c-retirement-cleanup1`; the exact fault code is in `acceptance/fault.mjs`.
+Both this path and the full qualification preserve every volume.
+
+The two-cron receipt adds the qualifier and cleanup guard to the earlier helper
+versions. Its production runtime sources and native binary match the earlier
+recovery and retirement profiles; each receipt retains its own complete source
+fingerprints. Ordinary scoped cron admission remains closed.

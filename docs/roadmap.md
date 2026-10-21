@@ -146,8 +146,9 @@ survivor input, source/target approval pins and final source-volume preservation
 with the same executable sources as the retirement profile. The
 [bounded retirement profile](retirement.md#experimental-scheduled-app-retirement)
 covers cron/queue survivors, isolated replacement capacity and zero-live restore.
-Retiring cron beside another live cron, normal scoped cron admission and
-release-bound runtime qualification remain open.
+A [two-cron retirement/source-restore profile](retirement.md#retirement-beside-another-scheduled-app)
+also covers the held survivor and both source schedules. Normal scoped cron
+admission and release-bound runtime qualification remain open.
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

@@ -75,8 +75,9 @@ require no recovery
 acknowledgment. Their history is preserved. Expansion and Kubernetes recovery continue to refuse
 scheduled history.
 [Experimental retirement](retirement.md#experimental-scheduled-app-retirement)
-has a bounded native cron/queue profile with isolated replacement capacity and
-zero-live restore. Docker backup, restore and retirement refuse scheduled history
+has bounded native cron/queue and [two-cron](retirement.md#retirement-beside-another-scheduled-app)
+profiles with isolated replacement capacity, held survivors and zero-live restore.
+Docker backup, restore and retirement refuse scheduled history
 outside two application fleets, including pending and retired history.
 
 POST to `/v1/apps/APP/dispatch/snapshot` with the active `deployment` and `digest`

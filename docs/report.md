@@ -124,9 +124,10 @@ explicit artifact-pinned retries. [Stopped recovery](cron-recovery.md) qualifies
 due timers, pending retries and an older snapshot in a same-version local two-fleet
 Docker profile. Its full rerun independently verifies queued input, restored
 approval pins and final source preservation. [Retirement](retirement.md#experimental-scheduled-app-retirement)
-has a separate bounded cron/queue profile. Normal scoped cron admission,
-retirement beside another live cron and release-bound runtime qualification remain
-open. Workflows/general alarms, remote infrastructure and M12 portability follow
+has separate bounded cron/queue and [two-cron](retirement.md#retirement-beside-another-scheduled-app)
+profiles, including a held survivor and source restore of both schedules. Normal
+scoped cron admission and release-bound runtime qualification remain open.
+Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 
 The [historical report](report-history.md) preserves detailed checkpoint narratives.

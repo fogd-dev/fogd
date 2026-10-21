@@ -69,8 +69,9 @@ Stop every replica before replacing the runtime. Mixed versions, rolling upgrade
 and rollback are unqualified: older runtimes ignore the hold. The separate
 [stopped recovery profile](../cron-recovery.md) has a full bounded rerun with the
 same executable source fingerprints as the cron/queue retirement profile.
-[Retirement](../retirement.md#experimental-scheduled-app-retirement) has a separate
-bounded native cron/queue profile. Do not boot uncontrolled historical snapshots
+[Retirement](../retirement.md#experimental-scheduled-app-retirement) has separate
+bounded native cron/queue and two-cron profiles, including held survivors and a full
+source restore with both schedules held. Do not boot uncontrolled historical snapshots
 and then try to pause them.
 
 The [source regression runner](../../scripts/celld-cron-regression.mjs) executes the
