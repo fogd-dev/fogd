@@ -164,6 +164,13 @@ exit, and restart state. Neither probe waits through the four-day retention inte
 
 ## Experimental scheduled app retirement
 
+The following receipts and commands describe historical pinned profiles. Current
+normal CLI retirement and restore refuse all cron history, including retired or
+pending schedules. `--stop-scheduled-work` does not bypass the
+[independent preboot policy](cron-runtime-preboot.md). Reproduce these drivers with
+their recorded sources; the guarded release runtime still needs lifecycle and
+recovery qualification before ordinary admission.
+
 The [bounded native evidence](evidence/m11c-cron-retirement.json) qualifies scheduled
 retirement on same-version local Linux arm64 Docker with two application fleets.
 Ordinary cron admission stays closed. The profile uses a private qualification

@@ -14,6 +14,7 @@
     "./queue-history": "./src/queue-history.mjs",
     "./cron-snapshot": "./src/cron-snapshot.mjs",
     "./cron-retirement": "./src/cron-retirement.mjs",
-    "./cron-history": "./src/cron-history.mjs"
+    "./cron-history": "./src/cron-history.mjs",
+    "./runtime-identity-proof": "./src/runtime-identity-proof.mjs"
   }
 }

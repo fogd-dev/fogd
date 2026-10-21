@@ -13,6 +13,9 @@ import { cronRecoveryCapability } from '@fogd/platform/cron-snapshot';
 import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { queueRecoveryCapability } from '@fogd/platform/queue-snapshot';
 import { assertCronDockerTopology } from './cron-backup.mjs';
+import { cronRestoreConfig } from '../runtime/cron-preboot.mjs';
+import { verifyCronRuntimeImage, verifyCronStorageImage } from '../runtime/cron-image.mjs';
+import { hasCronHistory } from '@fogd/platform/cron-history';
 
 async function requireFresh(project, config) {
   if ((await projectContainers(project)).length) throw new Error('Restore target project already has containers');
@@ -29,7 +32,8 @@ export async function restore(directory, project, output) {
   const { manifest, config } = await verifyBundle(dir);
   return restoreInstallation({ manifest, config, dir }, project, destination);
 }
-export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null) {
+export async function restoreInstallation({ manifest, config, dir }, project, destination, change = null, runtimeProfile = null) {
+  const policy = runtimeProfile && structuredClone(runtimeProfile);
   const state = await restoredInstallationState(dir, manifest, change);
   assertCronDockerTopology(state, config);
   if (change?.config) assertCronDockerTopology(state, change.config);
@@ -39,16 +43,15 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   if (change && !['retirement', 'expansion'].includes(change.kind)) throw new Error('Unknown installation transformation');
   if (Object.values(images).some(id => !Object.values(manifest.images).includes(id))) throw new Error('Transformation may only use snapshot images');
   if (project === manifest.sourceProject) throw new Error('Restore requires a different project from its source');
-  const target = restoredConfig(change?.config || config, project, images);
-  validateTopology(target);
+  const base = restoredConfig(change?.config || config, project, images);
+  validateTopology(base);
+  const target = cronRestoreConfig(state, base, policy);
   const volumes = volumeNames(target);
+  if (change) await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   await requireFresh(project, target);
-  await mkdir(destination, { mode: 0o700 });
   const started = Date.now(), file = join(destination, 'compose.pending.json');
-  await docker(['image', 'load'], { input: join(dir, 'images.tar') });
-  const loaded = await json(['image', 'inspect', ...new Set(Object.values(manifest.images))]);
-  if (Object.values(manifest.images).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
-  await requireStateRuntime(manifest.images.controller, state, change);
+  await loadRestoreImages(dir, manifest.images, images.controller, state, change, policy);
+  await mkdir(destination, { mode: 0o700 });
   await writeJson(file, composeLiteral(target));
   const command = composeArgs(file, project);
   await docker([...command, 'create', '--pull', 'never']);
@@ -68,6 +71,13 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   console.log(`Restore complete, still stopped. Start with: docker compose -f ${join(destination, 'compose.json')} -p ${project} up -d --pull never`);
 }
 
+async function loadRestoreImages(dir, snapshotImages, controller, state, change, policy) {
+  await docker(['image', 'load'], { input: join(dir, 'images.tar') });
+  const loaded = await json(['image', 'inspect', ...new Set(Object.values(snapshotImages))]);
+  if (Object.values(snapshotImages).some(id => !loaded.some(image => image.Id === id))) throw new Error('Restored image identity mismatch');
+  await requireStateRuntime(controller, state, change, policy);
+}
+
 export function requiredCapabilities(state, change) {
   const required = [];
   if (change?.kind === 'retirement') required.push(['retirement', 'retirementCapability', retirementCapability]);
@@ -78,7 +88,11 @@ export function requiredCapabilities(state, change) {
   if (state?.requirements?.includes(cronRetirementCapability)) required.push(['cron-retirement', 'cronRetirementCapability', cronRetirementCapability]);
   return required;
 }
-async function requireStateRuntime(image, state, change) {
+async function requireStateRuntime(image, state, change, runtimeProfile) {
+  if (state && hasCronHistory(state)) {
+    await verifyCronStorageImage(runtimeProfile.storageImage);
+    await verifyCronRuntimeImage(runtimeProfile);
+  }
   const required = requiredCapabilities(state, change);
   if (!required.length) return;
   const code = `const required = ${JSON.stringify(required)}; for (const [file, key, expected] of required) { const module = await import('./packages/platform/src/' + file + '.mjs'); if(module[key] !== expected) throw new Error('Capability mismatch'); } console.log('supported');`;

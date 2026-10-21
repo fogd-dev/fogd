@@ -2,7 +2,7 @@ import { parseArgs } from 'node:util';
 import { join, resolve } from 'node:path';
 import { verifyBundle, fingerprint } from './bundle.mjs';
 import { snapshotState } from './snapshot-state.mjs';
-import { stopped, projectName, volumeNames } from './docker.mjs';
+import { projectName } from './docker.mjs';
 import { restoreInstallation } from './restore.mjs';
 import { planExpansion } from './expansion-plan.mjs';
 import { assertQueueFreeRecovery } from './queue-safety.mjs';
@@ -14,7 +14,6 @@ export async function expand(directory, project, output) {
   const state = await snapshotState(dir);
   assertQueueFreeRecovery(state);
   const plan = planExpansion(bundle.config, state, bundle.manifest.images, { snapshot: await fingerprint(join(dir, 'manifest.json')) });
-  await stopped(bundle.manifest.sourceProject, volumeNames(bundle.config).map(name => bundle.config.volumes[name].name));
   await restoreInstallation({ ...bundle, dir }, project, destination, plan);
   console.log(`Expanded into ${project} with three fleets. Source and target remain stopped; original applications and authority are preserved.`);
 }

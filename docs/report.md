@@ -142,6 +142,14 @@ qualification includes nine native Rust tests, 498 repository tests and separate
 bootstrap/live-lease command checks. Runtime lifecycle fencing, shipped-runtime
 selection, host-side restored-start validation and scheduled application
 qualification on this binary remain open.
+The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
+runtime/storage launch policy before experimental restore creates application
+containers. Its app-free native profile checks image/program identity and
+read-only startup. Normal CLI cron restore and retirement refuse all scheduled
+history. Full scheduled recovery on the sealed layout, a qualified-runtime
+registry and ordinary admission remain open; historical receipts retain their
+pinned-source scope.
+
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.
 

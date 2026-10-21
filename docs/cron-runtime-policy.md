@@ -102,3 +102,9 @@ release binary and ordinary scoped admission remain open [M11c gates](m11c.md).
 Historical receipts identify their executed source versions. Reproduce those
 profiles with their pinned sources; they do not qualify the current guarded path
 or transfer application lifecycle evidence to the new native binary.
+
+The [host preboot foundation](cron-runtime-preboot.md) adds independent image and
+launch checks for experimental restore, with app-free read-only startup evidence.
+It does not close the restored-schedule or full runtime lifecycle gates. Normal
+CLI restore and retirement refuse all scheduled history until a qualified policy
+is available.

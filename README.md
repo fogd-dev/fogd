@@ -392,3 +392,9 @@ and retained source volumes after the entire drill. [Two-cron retirement](docs/r
 also covers a held cron survivor and a full source restore with both schedules held.
 [Compatible replacement](docs/cron-replacement.md) now has bounded
 migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.
+
+The [preboot foundation](docs/cron-runtime-preboot.md) checks runtime images and
+launch topology before experimental restore creates application containers. Its
+native evidence is app-free. Current normal CLI restore and retirement refuse all
+scheduled history; the recovery and retirement profiles above require their
+historical pinned sources. Ordinary cron admission remains closed.

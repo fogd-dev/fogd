@@ -157,6 +157,14 @@ and region claims, fresh lease-key possession proofs and separate bootstrap/live
 command checks, with app-free evidence on a fat-LTO release build. Runtime
 lifecycle fencing, restored preboot checks, shipped-runtime selection and scheduled
 application qualification on this binary remain open.
+The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
+runtime/storage launch policy before experimental restore creates application
+containers. Its app-free native profile checks image/program identity and
+read-only startup. Normal CLI cron restore and retirement refuse all scheduled
+history. Full scheduled recovery on the sealed layout, a qualified-runtime
+registry and ordinary admission remain open; historical receipts retain their
+pinned-source scope.
+
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture

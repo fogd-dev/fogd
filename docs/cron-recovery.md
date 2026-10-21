@@ -1,5 +1,12 @@
 # Experimental stopped recovery for scheduled apps
 
+Current CLI restore and retirement refuse all scheduled history before Docker
+access. The [preboot foundation](cron-runtime-preboot.md) requires an independent
+launch policy that only an internal qualification caller can supply. The native
+recovery profiles below are historical evidence; reproduce them with their pinned
+sources. Their scripts do not qualify the current guarded path. Ordinary cron
+admission remains closed.
+
 Cron installation recovery uses a native persisted hold and a full stopped Docker
 archive. The [native evidence](evidence/m11c-cron-recovery.json) qualifies
 same-version recovery on local Linux arm64 Docker with two application fleets.
@@ -49,8 +56,9 @@ preparation evidence is refused. Expansion and Kubernetes recovery continue to r
 scheduled history.
 [Experimental retirement](retirement.md#experimental-scheduled-app-retirement)
 has a bounded native cron/queue profile with isolated replacement capacity and
-zero-live restore. Docker backup, restore and retirement refuse scheduled history
-outside two application fleets, including pending and retired history.
+zero-live restore. The historical Docker backup, restore and retirement profile is limited to two
+application fleets, including pending and retired history. Current restore and
+retirement additionally require the independent preboot policy described above.
 
 ## Native qualification
 
