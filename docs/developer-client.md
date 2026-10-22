@@ -1,0 +1,96 @@
+# Deploy with the standalone developer client
+
+Use the developer bundle to submit a supported Void application to an existing
+fogd installation without a fogd checkout or Docker. You need Node.js 24.21 or newer,
+your application's existing Void/Vite dependencies, the controller endpoint, and a
+deploy token issued by its operator. An operator must approve each exact artifact
+before it runs. The client cannot install, administer, or approve applications.
+
+## Get a bundle from the operator
+
+The operator exports public client code and its cached JavaScript dependency:
+
+```sh
+node packages/cli/bin/fogd.js client export /absolute/path/to/new-client
+```
+
+The destination's parent must exist; export refuses an existing destination.
+The bundle contains no runtime images, installation configuration, environment
+files, credentials, or application state. No dependency installation, Docker
+command, or registry access occurs during export or verification.
+
+Transfer the entire directory. Retain the printed `manifestSha256` and
+`bootstrapSha256` through a trusted channel separate from the bundle. Before
+running any transferred JavaScript, check the verifier's bytes against that
+independently retained bootstrap hash:
+
+```sh
+shasum -a 256 /absolute/path/to/client/verify-client.mjs
+```
+
+Only after the hashes match, verify all bundle members using the retained manifest
+hash:
+
+```sh
+node /absolute/path/to/client/verify-client.mjs /absolute/path/to/client MANIFEST_SHA256
+```
+
+A verifier and manifest received together cannot establish trust by themselves.
+Alternatively, an already trusted operator checkout can verify the bundle with
+`fogd client verify DIRECTORY --expected-manifest SHA`. Corrupt, missing,
+unexpected, and linked members refuse verification. Keep a verified bundle read-only
+and under your control after verification; the launcher does not reauthenticate
+its files on every invocation.
+
+## Submit your application
+
+Set the installation endpoint and your scoped deploy credential in your shell.
+The operator supplies these values and the trusted certificate when required.
+For a private certificate authority, set `NODE_EXTRA_CA_CERTS` before starting Node;
+putting it in a client profile alone does not configure Node's TLS trust.
+
+```sh
+export FOGD_SERVER=https://fogd.example.test
+export FOGD_DEPLOY_TOKEN=YOUR_SCOPED_TOKEN
+# For a private CA:
+export NODE_EXTRA_CA_CERTS=/absolute/path/to/ca.pem
+
+cd /absolute/path/to/your-void-app
+node /absolute/path/to/client/fogd.mjs deploy --name my-app
+node /absolute/path/to/client/fogd.mjs status SUBMISSION_ID
+```
+
+These are example endpoint and credential values; replace them with your
+installation's values. You can instead put `FOGD_SERVER` and `FOGD_DEPLOY_TOKEN` in
+a private file selected by `FOGD_ENV_FILE`. Process environment values take
+precedence. The client requires an explicit endpoint and deploy token, even when
+you also have operator credentials. [Submission status](submission-status.md)
+describes the public fields and failure explanations available to that credential.
+
+The application builds with its own installed toolchain and offline Void target.
+Deploy credentials and the recognized operator, storage, and Cloudflare credential
+environment variables are filtered from the build subprocess. This is a convenience
+boundary for trusted application code; it does not sandbox build plugins or stop
+them reading files accessible to your account. Application dependencies are a
+separate prerequisite; the developer bundle does not install or contain them.
+
+## Keep your local builds
+
+The bundle can remain read-only. Local artifact copies and submission receipts go
+under `FOGD_CLIENT_HOME`, defaulting to `$XDG_STATE_HOME/fogd-client` or
+`~/.local/state/fogd-client`, with the cache inside `.fogd/build-cache` there.
+Operator `FOGD_HOME` is ignored by this client. An optional default profile lives
+at the client home's `.env`; `FOGD_ENV_FILE` selects another file. Help and status
+do not create a state directory.
+
+An interrupted upload can leave a build marked uncertain. Retain its files and
+inspect the controller before resubmitting; upload failure does not prove the
+server rejected the request. No build copies are pruned automatically. The
+operator CLI's [build retention commands](build-retention.md) can inspect a client
+cache when explicitly pointed at its home with `FOGD_HOME`.
+
+The repeatable local scenario is
+`node scripts/cron-probe/selected/client-bundle.mjs .fogd/client-native-NEW`.
+It uses cached images and application dependencies, a fresh local project, and
+private credentials; it retains all qualification volumes. Its scope is local
+Linux arm64 Docker runtime behavior, not second-machine or hosted execution.

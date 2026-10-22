@@ -19,6 +19,11 @@ scoped logs remain open.
 [Local build retention](docs/build-retention.md) provides explicit keep, plan, prune,
 and offline resume commands; controller artifacts and application data stay intact.
 
+Developers deploying into an existing installation can use the
+[standalone developer client](docs/developer-client.md): deploy and status without
+a fogd checkout, Docker, or operator images. The operator exports it with
+`fogd client export DIRECTORY` and supplies a scoped deploy credential.
+
 Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
 [roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).
 They include optional Filecoin storage and recovery as future work. See the

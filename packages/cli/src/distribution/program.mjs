@@ -16,13 +16,16 @@ export async function programInputs(root) {
     if (name !== 'cli') for (const [path, source] of [...files]) if (path.startsWith(`${base}/`)) files.set(path.replace('packages/', 'node_modules/@fogd/'), source);
   }
   files.set('packages/cli/bin/fogd.js', join(root, 'packages/cli/bin/fogd.js'));
+  for (const [path, source] of await ignoreInputs(root)) files.set(path, source);
+  if ([...files.keys()].some(path => !publicProgramPath(path))) throw new Error('Unexpected file in public operator source inputs');
+  return files;
+}
+export async function ignoreInputs(root) {
   const runtime = await readTransferMetadata(join(root, 'packages/runtime/package.json'));
   const library = await realpath(dirname(createRequire(join(root, 'packages/runtime/package.json')).resolve('ignore/package.json')));
   const metadata = await readTransferMetadata(join(library, 'package.json'));
   if (metadata.name !== 'ignore' || metadata.version !== runtime.dependencies.ignore || metadata.license !== 'MIT') throw new Error('Cached operator dependency differs from the declared package');
-  for (const name of ignoreFiles) files.set(`node_modules/ignore/${name}`, join(library, name));
-  if ([...files.keys()].some(path => !publicProgramPath(path))) throw new Error('Unexpected file in public operator source inputs');
-  return files;
+  return new Map(ignoreFiles.map(name => [`node_modules/ignore/${name}`, join(library, name)]));
 }
 export async function programInventory(inputs) {
   const files = {};

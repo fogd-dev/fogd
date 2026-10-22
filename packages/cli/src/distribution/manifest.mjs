@@ -1,8 +1,8 @@
 import { isDeepStrictEqual } from 'node:util';
 
-export { transferFormat } from './bootstrap.mjs';
+export { transferFormat, ignoreFiles } from './bootstrap.mjs';
 import { transferFormat, validTransferFingerprint } from './bootstrap.mjs';
-export const ignoreFiles = ['LICENSE-MIT', 'README.md', 'index.d.ts', 'index.js', 'legacy.js', 'package.json'];
+import { ignoreFiles } from './bootstrap.mjs';
 export const operatorFiles = ['package.json', 'compose.yaml', '.env.example', 'docs/offline-installation.md'];
 export function publicProgramPath(path) {
   if (typeof path !== 'string' || path.length > 240 || !/^[A-Za-z0-9@._/-]+$/.test(path) || path.split('/').some(part => !part || part === '.' || part === '..')) return false;

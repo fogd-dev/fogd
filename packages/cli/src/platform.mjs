@@ -1,4 +1,3 @@
-import { submitManagedBuild } from './build-cache/lifecycle.mjs';
 import { adminInspect } from './inspect-command.mjs';
 import { assertSharedStorageConfiguration } from './shared-storage.mjs';
 import { resolvedCompose } from './compose/config.mjs';
@@ -7,14 +6,12 @@ import { transportPolicy } from '@fogd/runtime/transport';
 import { prepareEnvironment } from './bootstrap.mjs';
 import { checkInstalledTLS } from './tls.mjs';
 import { readSecretInput } from './secret-input.mjs';
-import { deployCapabilities } from './deploy-capabilities.mjs';
 import { selectedInstallation } from './runtime/installation.mjs';
 import { docker } from './recovery/docker.mjs';
 import { requestedRuntime } from './runtime/catalog.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { join } from 'node:path';
-import { manifest } from '@fogd/runtime/manifest';
-import { buildArtifact, artifactProject, requireDocker, configEnv, configPath, compose, stackRoot, serverOrigin as origin } from './local.mjs';
+import { requireDocker, configEnv, configPath, compose, stackRoot, serverOrigin as origin } from './local.mjs';
 
 export async function up(shared = false, selection = {}) {
   requestedRuntime(selection);
@@ -39,16 +36,7 @@ async function api(env, path, options = {}) {
   if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
   return data;
 }
-export async function deploy(project, name) {
-  const env = await configEnv();
-  if (!env.FOGD_DEPLOY_TOKEN) throw new Error('Set FOGD_DEPLOY_TOKEN (local operators: run fogd up first)');
-  const { app } = await artifactProject(project, name);
-  const capabilities = await deployCapabilities(origin(env), env.FOGD_DEPLOY_TOKEN, app);
-  const release = await buildArtifact(project, app, capabilities);
-  const { result, receiptSaved } = await submitManagedBuild(stackRoot, release, origin(env), async () => api(env, '/v1/deployments', { method: 'POST', headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify(await manifest(release.outputDir, release)) }));
-  if (!receiptSaved) console.warn('Controller returned a submission ID, but the local build receipt could not be confirmed. Keep its output; use the returned submission ID rather than submitting again.');
-  console.log(JSON.stringify({ id: result.id, app: result.app, digest: result.digest, status: result.status, admin: origin(env), localBuildId: release.localBuildId }, null, 2));
-}
+export { deploy } from './deploy-command.mjs';
 export { status } from './status-command.mjs';
 export async function admin(action, id, digest, secretRevision) {
   if (action === 'inspect') return adminInspect(id, digest, secretRevision);

@@ -163,6 +163,12 @@ No speed or availability target is established by an unmeasured guess.
 
 ## Operator workflow and costs
 
+The [standalone developer client](developer-client.md) lets developers submit and
+inspect their releases using an endpoint and scoped deploy token. Its image-free
+bundle has a separate state home and can run outside the checkout. Operators keep
+installation and approval authority; this does not complete second-machine
+installation acceptance.
+
 Link installation, deploy/approval, diagnosis, backup, recovery, and upgrade from one
 operator entry point as these increments ship. Record required downtime, loss
 boundaries, and commands that require a stopped installation. A fresh operator must

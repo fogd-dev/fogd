@@ -50,7 +50,9 @@ these current gaps:
   interruption; broader counts and loads remain open.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
-  boundaries alongside the supported commands.
+  boundaries alongside the supported commands. The [standalone developer client](developer-client.md)
+  supplies deployment and scoped status outside the checkout without operator images;
+  app dependencies and operator approval remain prerequisites.
 
 The contract supplies acceptance conditions for each increment. These are product
 priorities, not newly qualified capabilities. Exact-artifact approval and
