@@ -34,7 +34,10 @@ export async function inventory(config) {
   if (containers.length !== services.length) throw new Error('Unexpected project containers');
   for (const name of volumeNames(config)) {
     const [volume] = await json(['volume', 'inspect', config.volumes[name].name]);
-    if (volume.Labels?.['com.docker.compose.project'] !== config.name || volume.Labels?.['com.docker.compose.volume'] !== name || volume.Driver !== 'local' || Object.keys(volume.Options || {}).length) throw new Error('Volume is not owned local project storage');
+    assertOwnedLocalVolume(config, name, volume);
   }
   return images;
+}
+export function assertOwnedLocalVolume(config, name, volume) {
+  if (volume?.Labels?.['com.docker.compose.project'] !== config.name || volume.Labels?.['com.docker.compose.volume'] !== name || volume.Driver !== 'local' || Object.keys(volume.Options || {}).length) throw new Error('Volume is not owned local project storage');
 }

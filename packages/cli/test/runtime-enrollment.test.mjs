@@ -10,9 +10,9 @@ import { freshRuntimePlan } from '../src/runtime/selection-plan.mjs';
 import { runtimeCli } from './fixtures/runtime-cli.mjs';
 
 const exec = promisify(execFile);
-async function fixture(t) {
+async function fixture(t, admission = 'candidate') {
   const root = await mkdtemp(join(tmpdir(), 'fogd-enrollment-')); t.after(() => rm(root, { recursive: true, force: true }));
-  const client = await runtimeCli(root, 'candidate');
+  const client = await runtimeCli(root, admission);
   const bin = join(root, 'bin'), driver = join(root, 'docker.mjs'), log = join(root, 'calls.jsonl'); await mkdir(bin);
   await writeFile(join(bin, 'docker'), '#!/bin/sh\nexec "$FOGD_TEST_NODE" "$FOGD_TEST_DRIVER" "$@"\n', { mode: 0o700 });
   await writeFile(driver, `import{readFileSync,appendFileSync}from'node:fs';const args=process.argv.slice(2),entry=JSON.parse(readFileSync(process.env.FOGD_TEST_CATALOG))[0];appendFileSync(process.env.FOGD_TEST_LOG,JSON.stringify(args)+'\\n');
@@ -27,12 +27,15 @@ async function fixture(t) {
       else if(code.includes('readRuntimePolicy')&&process.env.FOGD_TEST_POLICY)console.log(readFileSync(process.env.FOGD_TEST_POLICY,'utf8'));
       else process.exit(98);
     }else if(args[0]==='compose'){if(args.includes('config'))console.log(readFileSync(process.env.FOGD_TEST_SOURCE,'utf8'));else process.exit(91);}
+    else if(args[0]==='network'&&args[1]==='ls'&&args.length===3&&args[2]==='-q'&&process.env.FOGD_TEST_NETWORKS)console.log(JSON.parse(process.env.FOGD_TEST_NETWORKS).map(n=>n.Id).join('\\n'));
+    else if(args[0]==='network'&&args[1]==='inspect'){if(process.env.FOGD_TEST_NETWORK_FAILURE)process.exit(97);console.log(process.env.FOGD_TEST_INSPECT_NETWORKS||process.env.FOGD_TEST_NETWORKS||'[]');}
     else if(args[0]==='network'&&args.includes('--filter')&&process.env.FOGD_TEST_ORPHAN)console.log('orphaned-network');
     else if(args[0]==='ps'&&args.includes('label=com.docker.compose.project='+(process.env.FOGD_TEST_RUNNING_PROJECT||'source'))&&process.env.FOGD_TEST_SOURCE_RUNNING)console.log('running-source');
     else if(args[0]==='inspect'&&args.includes('running-source'))console.log(JSON.stringify([{State:process.env.FOGD_TEST_SOURCE_RESTARTING?{Running:false,Restarting:true}:{Running:true}}]));
     else if(args[0]==='ps'&&args.includes('volume='+process.env.FOGD_TEST_WRITER_VOLUME))console.log('aliased-writer');
     else if(args[0]==='ps'&&args.includes('-aq')&&process.env.FOGD_TEST_CONTAINER)console.log('existing-container');
     else if(args[0]==='inspect'&&process.env.FOGD_TEST_CONTAINER)console.log(JSON.stringify([{Image:entry.image,State:{Running:false}}]));
+    else if(args[0]==='volume'&&args[1]==='inspect')console.log(JSON.stringify(args.slice(2).map(Name=>({Name,Driver:'local',Options:{},Labels:{'com.docker.compose.project':process.env.FOGD_TEST_FOREIGN_VOLUME?'foreign':'original','com.docker.compose.volume':Name.slice('original_'.length)}}))));
     else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING)console.log(process.env.FOGD_TEST_EXISTING);
     else if(!['ps','volume','network'].includes(args[0]))process.exit(99);`);
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'installation.env'),
@@ -68,6 +71,82 @@ test('existing data refuses fresh internal enrollment before writing host state'
   assert.equal(calls.some(args => args[0] === 'compose'), false);
   await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
   await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
+
+const networks = { control: '10.253.180.0/24', 'fleet-1': '10.253.181.0/24', 'fleet-2': '10.253.182.0/24' };
+const occupied = subnet => JSON.stringify([{ Id: 'a'.repeat(64), IPAM: { Config: [{ Subnet: subnet }] } }]);
+test('public qualified startup reads the plan and inventories Docker before create', async t => {
+  const f = await fixture(t, 'qualified'), file = join(f.root, 'networks.json'); await writeFile(file, JSON.stringify(networks));
+  await assert.rejects(exec(process.execPath, [f.cli, 'up', '--runtime', f.entry.id, '--network-plan', file], { env: { ...f.env, FOGD_TEST_NETWORKS: occupied('172.17.0.0/16') } }), /docker command failed \(91\)/);
+  const recorded = await calls(f), inspect = recorded.findIndex(args => args[0] === 'network' && args[1] === 'inspect'), create = recorded.findIndex(args => args[0] === 'compose' && args.includes('create'));
+  assert.ok(inspect >= 0 && create > inspect);
+  const config = JSON.parse(await readFile(join(f.root, '.fogd/installations/original/compose.json')));
+  assert.deepEqual(config.networks.control.ipam.config, [{ subnet: networks.control }]);
+});
+for (const [networkInventory, inspection] of [
+  [JSON.stringify([{ Id: 'private-invalid-id' }]), undefined],
+  [occupied('172.17.0.0/16'), '[]'],
+  [occupied('172.17.0.0/16'), JSON.stringify([{ Id: 'b'.repeat(64), IPAM: { Config: [] } }])],
+]) test('malformed or incomplete Docker network inventory refuses without an enrollment fence', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.invoke({ runtime: f.entry.id, candidateEnrollment: true, networks }, { FOGD_TEST_NETWORKS: networkInventory, ...(inspection ? { FOGD_TEST_INSPECT_NETWORKS: inspection } : {}) }), /Cannot verify Docker network inventory|inspection did not cover/);
+  await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
+  assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
+});
+
+test('explicit maintenance resolves only the enrolled configuration and requires every retained volume', async t => {
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry), directory = join(f.root, '.fogd/installations/original');
+  await mkdir(directory, { recursive: true, mode: 0o700 }); await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
+  const code = `import{maintenanceConfiguration}from ${JSON.stringify(f.module('maintenance.mjs'))};console.log(JSON.stringify(await maintenanceConfiguration({FOGD_COMPOSE_FILE:'/private/wrong-template'},'original')));`;
+  const env = { ...f.env, FOGD_TEST_EXISTING: Object.values(plan.config.volumes).map(volume => volume.name).join('\n') };
+  assert.deepEqual(JSON.parse((await exec(process.execPath, ['--input-type=module', '-e', code], { env })).stdout), plan.config);
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...env, FOGD_TEST_EXISTING: 'original_runtime-policy' } }), /storage is incomplete/);
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...env, FOGD_TEST_FOREIGN_VOLUME: '1' } }), /not owned local project storage/);
+  assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
+test('explicit backup cannot fall back from an unknown installation to the profile template', async t => {
+  const f = await fixture(t), output = join(f.root, 'must-not-exist');
+  await assert.rejects(exec(process.execPath, [f.cli, 'backup', output, '--installation', 'missing'], { env: f.env }), /Cannot read the enrolled installation configuration/);
+  await assert.rejects(access(output), { code: 'ENOENT' }); await assert.rejects(access(f.log), { code: 'ENOENT' });
+});
+test('explicit certificate import cannot bootstrap the profile or fall back from an unknown installation', async t => {
+  const f = await fixture(t), cert = join(f.root, 'cert.pem'), key = join(f.root, 'key.pem');
+  await exec('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '1', '-subj', '/CN=localhost']);
+  await assert.rejects(exec(process.execPath, [f.cli, 'tls', 'import', cert, key, '--installation', 'missing'], { env: f.env }), /Cannot read the enrolled installation configuration/);
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' }); await assert.rejects(access(f.log), { code: 'ENOENT' });
+});
+test('fresh selected enrollment checks Docker overlap before creating its durable fence or containers', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.invoke({ runtime: f.entry.id, candidateEnrollment: true, networks }, { FOGD_TEST_NETWORKS: occupied('10.253.0.0/16') }), /overlaps an existing Docker subnet/);
+  await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
+  assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
+});
+test('unreadable Docker network inventory refuses before enrollment writes', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.invoke({ runtime: f.entry.id, candidateEnrollment: true, networks }, { FOGD_TEST_NETWORKS: occupied('172.17.0.0/16'), FOGD_TEST_NETWORK_FAILURE: '1' }), /docker command failed \(97\)/);
+  await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
+  assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
+});
+test('unused explicit subnets reach create with the plan sealed into the saved configuration', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.invoke({ runtime: f.entry.id, candidateEnrollment: true, networks }, { FOGD_TEST_NETWORKS: occupied('172.17.0.0/16') }), /docker command failed \(91\)/);
+  const config = JSON.parse(await readFile(join(f.root, '.fogd/installations/original/compose.json')));
+  assert.deepEqual(Object.fromEntries(Object.entries(config.networks).map(([name, value]) => [name, value.ipam.config[0].subnet])), networks);
+  assert.equal((await calls(f)).filter(args => args[0] === 'compose').length, 1);
+});
+test('installed startup accepts only its original network plan and skips overlap checks against its own networks', async t => {
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry, networks), policy = join(f.root, 'policy.json');
+  await writeFile(policy, JSON.stringify(plan.policy));
+  const selection = { runtime: f.entry.id, candidateEnrollment: true, networks };
+  const extra = { FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy, FOGD_TEST_NETWORKS: occupied(networks.control) };
+  const result = JSON.parse((await f.invoke(selection, extra)).stdout);
+  assert.deepEqual(result.policy, plan.policy);
+  const file = join(f.root, '.fogd/installations/original/compose.json'), before = await readFile(file);
+  await assert.rejects(f.invoke({ ...selection, networks: { ...networks, control: '10.253.183.0/24' } }, extra), /Network plan differs from the installed policy/);
+  assert.deepEqual(await readFile(file), before);
+  assert.equal((await calls(f)).some(args => args[0] === 'network' && args[1] === 'inspect'), false);
+  assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
 });
 
 test('a failed first create durably fences the ordinary legacy fallback', async t => {

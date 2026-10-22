@@ -1,4 +1,5 @@
 import { recoveryOptions } from '../runtime/recovery-options.mjs';
+import { assertDockerNetworkAvailability } from '../runtime/network-availability.mjs';
 import { parseArgs } from 'node:util';
 import { requestedRecoveryRuntime, selectedRecoveryPlan } from '../runtime/recovery-selection.mjs';
 import { authorizeInstalledPolicy, verifyRuntimeFamily } from '../runtime/catalog.mjs';
@@ -52,6 +53,7 @@ export async function restoreInstallation({ manifest, config, dir }, project, de
   const volumes = volumeNames(target);
   if (change || selected) await stopped(manifest.sourceProject, sourceVolumes.map(name => config.volumes[name].name));
   await requireFresh(project, target);
+  if (selected) await assertDockerNetworkAvailability(policy?.networks);
   const started = Date.now(), file = join(destination, 'compose.pending.json');
   await prepareRestoreRuntime({ manifest, config, dir }, images.controller, state, change, policy, target, selected, destination);
   await writeJson(file, composeLiteral(target));

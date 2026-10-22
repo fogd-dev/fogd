@@ -84,14 +84,22 @@ export FOGD_ENV_FILE=/private/operator.env
 node packages/cli/bin/fogd.js up --shared --runtime celld-cron-v2-linux-arm64
 ```
 
+If Docker needs explicit bridge placement, supply
+[`--network-plan FILE`](operator-guide.md#choose-private-subnets-when-needed) on
+this first call. Use unused subnets; the CLI refuses overlap with existing Docker
+networks before enrollment writes. It does not check host routes or migrate an
+installed network plan. The [operator guide](operator-guide.md) connects this
+installation path with developer access, diagnosis and stopped recovery.
+
 The first call creates stopped services and refuses the missing TLS keypair. Import
-a certificate/key valid for the admin and app names, then repeat startup:
+a certificate/key valid for the admin and app names, then start the enrolled project:
 
 ```sh
-node packages/cli/bin/fogd.js tls import /private/server-chain.pem /private/server-key.pem
-node packages/cli/bin/fogd.js up --shared --runtime celld-cron-v2-linux-arm64
+node packages/cli/bin/fogd.js tls import /private/server-chain.pem /private/server-key.pem --installation PROJECT
+node packages/cli/bin/fogd.js up --installation PROJECT
 ```
 
+Use the project name from your operator file in place of `PROJECT`.
 Clients of a private CA need `NODE_EXTRA_CA_CERTS` pointing at the issuer. Set
 `FOGD_SERVER` to the certificate-valid admin endpoint. Issue an app-scoped submitter
 credential, then use the ordinary build/deploy and exact digest approval workflow:

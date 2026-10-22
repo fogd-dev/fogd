@@ -57,14 +57,20 @@ Enroll a fresh Compose project with the cached family:
 fogd up --shared --runtime celld-cron-v2-linux-arm64
 ```
 
+Fresh enrollment accepts `--network-plan FILE` with the same bounded private-subnet
+format used by selected recovery below. It checks overlap against existing Docker
+subnets before reserving enrollment. Installed startup accepts only its original
+plan; it cannot move networks. `up --installation PROJECT` uses the saved placement
+without reading a plan. See the [operator guide](operator-guide.md#choose-private-subnets-when-needed).
+
 Enrollment creates stopped services and installs the independent policy. A shared
 installation needs a valid TLS keypair before startup. On a fresh installation, the first enrollment command reports an installed TLS
-keypair error after creating stopped services. Import the keypair, then repeat the
-public start command:
+keypair error after creating stopped services. Import the keypair, then start the
+enrolled project:
 
 ```sh
-fogd tls import CERT KEY
-fogd up --shared --runtime celld-cron-v2-linux-arm64
+fogd tls import CERT KEY --installation PROJECT
+fogd up --installation PROJECT
 ```
 
 Use a fresh Compose project and retain its operator environment, as described in
@@ -73,6 +79,12 @@ fresh enrollment. These commands resolve the installed policy and use pinned ima
 without building. Startup reports the family, current catalog
 admission status and storage identity digest. Record that digest separately from
 backups for future independent recovery checks.
+
+Use the project name from the operator file in place of `PROJECT`. Explicit
+`backup DIRECTORY --installation PROJECT` and `tls import CERT KEY --installation PROJECT`
+read that project's canonical host configuration and refuse missing retained
+storage. They do not fall back to the profile's original project after recovery.
+Keep the matching admin endpoint and TLS trust selected for background controls.
 
 Deployment negotiates capabilities before building. Scheduled submissions require
 an app-scoped deploy token and an enabled controller; team-wide tokens cannot

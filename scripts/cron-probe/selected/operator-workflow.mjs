@@ -1,0 +1,110 @@
+import assert from 'node:assert/strict';
+import { readFile, writeFile, access, chmod } from 'node:fs/promises';
+import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { selectedHostTrial } from './selected-trial.mjs';
+import { copyFixture } from './project-copy.mjs';
+import { httpsClient, waitFor } from './https.mjs';
+import { expectRefusal } from './evidence.mjs';
+import { scanPublicSurfaces } from './privacy.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
+import { publicTarget } from './public-target.mjs';
+import { projectContainers } from '../../../packages/cli/src/recovery/docker.mjs';
+import { verifyBundle } from '../../../packages/cli/src/recovery/bundle.mjs';
+import { snapshotState } from '../../../packages/cli/src/recovery/snapshot-state.mjs';
+import { runtimePolicyIdentity } from '../../../packages/platform/src/runtime-policy.mjs';
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+
+await selectedHostTrial(process.argv[2], 'Operator workflow on a new local selected installation: public network-plan enrollment without editing Compose, overlap refusal before enrollment, immutable installed placement, scoped deployment and exact approval, recorded diagnosis, stopped backup and fresh-volume recovery. Same-engine exercise, not second-machine or human-usability acceptance.', async context => {
+  const { source: host, evidence } = context, request = await httpsClient(host);
+  await waitFor('operator workflow controller', async () => (await request('/v1/admin')).status === 200);
+  const template = await readFile(new URL('../../../compose.yaml', import.meta.url));
+  assert.deepEqual(await readFile(host.env.FOGD_COMPOSE_FILE), template);
+  await assert.rejects(access(join(host.output, 'public-compose.yaml')), { code: 'ENOENT' });
+  evidence.enrollment = { publicArguments: ['up', '--shared', '--runtime', host.entry.id, '--network-plan', 'network-plan.json'], identity: runtimePolicyIdentity(host.policy), networks: host.policy.networks, actualNetworks: host.enrollment.networks, templateSha256: hash(template), templateUnmodified: true };
+  context.phase = 'network-plan-refusals';
+  evidence.networkRefusals = await networkRefusals(host);
+  const token = (await host.json(['admin', 'issue-token', 'workflow-builder', 'baseline'])).token;
+  const fixture = { tokens: { builder: token }, secret: token };
+  context.phase = 'operator-deploy-and-diagnose';
+  const project = await copyFixture(host, 'guestbook', 'workflow-guestbook');
+  const migration = join(project, 'db/migrations/20261016160656_complete_ser_duncan.sql');
+  await writeFile(migration, (await readFile(migration, 'utf8')) + "\nINSERT INTO messages(id,text,created_at) VALUES(1,'operator-workflow-row','2026-10-22 12:00:00');\n");
+  const release = await host.json(['deploy', '--name', 'baseline'], { env: { ...host.env, FOGD_DEPLOY_TOKEN: token }, cwd: project });
+  assert.equal(release.status, 'pending'); evidence.release = release;
+  await host.json(['admin', 'approve', release.id, release.digest]);
+  evidence.inspection = await host.json(['admin', 'inspect', 'baseline']);
+  assert.deepEqual(evidence.inspection.active, { id: release.id, digest: release.digest });
+  evidence.beforeBackup = await rows(request);
+  evidence.sourcePrivacy = await scanPublicSurfaces(host, request, [release], token, [], evidence);
+  context.phase = 'operator-stopped-backup';
+  const bundle = join(host.output, 'stopped-backup');
+  await host.command(['backup', bundle, '--installation', host.project], { timeout: 300000 });
+  const verified = await verifyBundle(bundle), saved = await snapshotState(bundle);
+  assert.equal(saved.apps.baseline.active, release.id);
+  assert.deepEqual(verified.config.networks, host.config.networks);
+  evidence.backup = { stoppedAt: verified.manifest.stoppedAt, completedAt: verified.manifest.completedAt, files: verified.manifest.files, active: saved.apps.baseline.active };
+  evidence.sourceShutdown = await stopSelectedHost(host, { alreadyStopped: true }); host.closed = true;
+  context.phase = 'operator-selected-restore';
+  const point = { bundle, manifest: verified.manifest, retiredHistory: {}, approvals: { baseline: release } };
+  const target = await publicTarget(host, point, join(host.output, 'recovery'), context.installations);
+  await target.command(['up', '--installation', target.project]);
+  const restored = await httpsClient(target);
+  await waitFor('restored operator application', async () => { const observed = await rows(restored); assert.deepEqual(observed, evidence.beforeBackup); return true; });
+  evidence.afterRestore = await rows(restored);
+  evidence.restore = { project: target.project, networks: target.policy.networks, actualNetworks: target.networks, identity: runtimePolicyIdentity(target.policy), initialServices: target.initialServices };
+  assert.equal(evidence.restore.identity, evidence.enrollment.identity);
+  assert.notDeepEqual(target.policy.networks, host.policy.networks);
+  evidence.sourceExclusion = await expectRefusal(host, ['up', '--installation', host.project], /Related installation.*not confirmed stopped/);
+  evidence.restoredInspection = await target.json(['admin', 'inspect', 'baseline']);
+  assert.deepEqual(evidence.restoredInspection.active, evidence.inspection.active);
+  evidence.targetPrivacy = await scanPublicSurfaces(target, restored, [release], token, [], evidence);
+  context.phase = 'recovered-installation-maintenance';
+  const maintenanceEnv = { ...target.env, COMPOSE_PROJECT_NAME: host.project, FOGD_COMPOSE_FILE: host.env.FOGD_COMPOSE_FILE };
+  evidence.runningTLSRefusal = await expectRefusal({ command: args => target.command(args, { env: maintenanceEnv }) }, ['tls', 'import', host.env.NODE_EXTRA_CA_CERTS, join(host.output, 'private-key.pem'), '--installation', target.project], /Project still has running containers/);
+  const recoveredBundle = join(target.output, 'recovered-backup');
+  await target.command(['backup', recoveredBundle, '--installation', target.project], { env: maintenanceEnv, timeout: 300000 });
+  const maintained = await verifyBundle(recoveredBundle), maintainedState = await snapshotState(recoveredBundle);
+  assert.equal(maintained.manifest.sourceProject, target.project); assert.equal(maintained.config.name, target.project);
+  assert.equal(maintainedState.apps.baseline.active, release.id);
+  evidence.recoveredBackup = { project: maintained.manifest.sourceProject, files: maintained.manifest.files, active: maintainedState.apps.baseline.active };
+  evidence.certificate = await renewTargetCertificate(host, target, maintenanceEnv);
+  await target.command(['up', '--installation', target.project]);
+  const renewed = await httpsClient(target);
+  await waitFor('renewed target certificate and application', async () => { const observed = await rows(renewed); assert.deepEqual(observed, evidence.beforeBackup); return true; });
+  evidence.afterCertificateRenewal = await rows(renewed);
+  await assert.rejects(restored('/api/messages', { app: 'baseline' }), error => ['DEPTH_ZERO_SELF_SIGNED_CERT', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'SELF_SIGNED_CERT_IN_CHAIN'].includes(error.code));
+  evidence.targetShutdown = await stopSelectedHost(target); target.closed = true;
+  assert.equal(evidence.sourceShutdown.retainedVolumes.length, 8); assert.equal(evidence.targetShutdown.retainedVolumes.length, 8);
+  return fixture;
+});
+
+async function renewTargetCertificate(host, target, env) {
+  const cert = join(target.output, 'renewed-certificate.pem'), key = join(target.output, 'renewed-key.pem');
+  await target.run('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '2', '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost,DNS:baseline.localhost,IP:127.0.0.1']);
+  await chmod(key, 0o600);
+  const old = hash(await readFile(host.env.NODE_EXTRA_CA_CERTS)), next = hash(await readFile(cert)); assert.notEqual(old, next);
+  await target.command(['tls', 'import', cert, key, '--installation', target.project], { env });
+  target.env.NODE_EXTRA_CA_CERTS = cert;
+  return { oldCertificateSha256: old, renewedCertificateSha256: next, selectedProject: target.project };
+}
+
+async function networkRefusals(host) {
+  const canonical = join(host.env.FOGD_HOME, '.fogd/installations', host.project, 'compose.json');
+  const before = await readFile(canonical), settings = await readFile(host.env.FOGD_ENV_FILE);
+  const containers = (await projectContainers(host.project)).map(value => value.Id).sort();
+  const networks = host.policy.networks, changed = { ...networks, control: networks['fleet-1'], 'fleet-1': networks.control };
+  const file = join(host.output, 'changed-network-plan.json'); await writeFile(file, JSON.stringify(changed), { flag: 'wx', mode: 0o600 });
+  const mismatch = await expectRefusal(host, ['up', '--shared', '--runtime', host.entry.id, '--network-plan', file], /Network plan differs from the installed policy/);
+  const overlapProject = `${host.project}-overlap`;
+  const overlap = await expectRefusal({ command: args => host.command(args, { env: { ...host.env, COMPOSE_PROJECT_NAME: overlapProject } }) }, ['up', '--shared', '--runtime', host.entry.id, '--network-plan', join(host.output, 'network-plan.json')], /overlaps an existing Docker subnet/);
+  await assert.rejects(access(join(host.env.FOGD_HOME, '.fogd/installations', overlapProject)), { code: 'ENOENT' });
+  assert.deepEqual(await projectContainers(overlapProject), []);
+  assert.deepEqual(await readFile(canonical), before); assert.deepEqual(await readFile(host.env.FOGD_ENV_FILE), settings);
+  assert.deepEqual((await projectContainers(host.project)).map(value => value.Id).sort(), containers);
+  return { mismatch, overlap, configurationUnchanged: true, existingContainersUnchanged: true, overlapFenceAbsent: true };
+}
+async function rows(request) {
+  const result = await request('/api/messages', { app: 'baseline' }); assert.equal(result.status, 200);
+  const data = result.json(); assert.equal(data.length, 1); assert.equal(data[0].text, 'operator-workflow-row'); return data;
+}

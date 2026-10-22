@@ -76,6 +76,8 @@ async function dockerHarness(dir, profile) {
   await writeFile(driver, `import {appendFileSync,readFileSync,writeFileSync,existsSync} from 'node:fs';import{runtimePolicyIdentity}from ${JSON.stringify(new URL('../../platform/src/runtime-policy.mjs', import.meta.url).href)};function requireState(){return readFileSync(process.env.FOGD_TEST_STATE,'utf8')} const args=process.argv.slice(2);appendFileSync(process.env.FOGD_TEST_LOG,JSON.stringify(args)+'\\n');
     if(args[0]==='ps'&&args.includes('label=com.docker.compose.project=original')&&(process.env.FOGD_TEST_RUNNING_SOURCE==='before'||(process.env.FOGD_TEST_RUNNING_SOURCE==='final'&&existsSync(process.env.FOGD_TEST_LOG+'.created'))))console.log('running-source');
     else if(args[0]==='inspect'&&args.includes('running-source'))console.log(JSON.stringify([{State:{Running:true}}]));
+    else if(args[0]==='network'&&args[1]==='ls'&&args.length===3&&args[2]==='-q'&&process.env.FOGD_TEST_OVERLAP)console.log('a'.repeat(64));
+    else if(args[0]==='network'&&args[1]==='inspect'&&process.env.FOGD_TEST_OVERLAP)console.log(JSON.stringify([{Id:'a'.repeat(64),IPAM:{Config:[{Subnet:'10.0.0.0/8'}]}}]));
     else if(args[0]==='info')console.log(JSON.stringify({OSType:'linux',Architecture:'aarch64'}));
     else if(args[0]==='image'&&args[1]==='inspect')console.log(JSON.stringify(args.slice(2).map(Id=>({Id,Os:'linux',Architecture:'arm64',Config:{WorkingDir:'/app',Env:Id===${JSON.stringify(profile.storageImage)}?['PATH=/usr/local/bin:/usr/bin:/bin']:['PATH=/usr/local/bin:/usr/bin:/bin','NODE_VERSION=26.2.0']}}))));
     else if(args[0]==='run') {
@@ -105,8 +107,12 @@ test('public recovery commands install independent network plans into the target
     await writeFile(networkFile, JSON.stringify(networks));
     const args = [cli.cli, command, dir, '--project', 'fresh', '--output', h.output, '--runtime', entry.id, '--expected-identity', runtimePolicyIdentity(plan.policy), '--network-plan', networkFile];
     if (command === 'retire') args.push('--app', 'refresh', '--digest', f.receipt.digest, '--stop-scheduled-work');
-    await exec(process.execPath, args, { env: { ...process.env, FOGD_HOME: dir, PATH: `${h.bin}:${process.env.PATH}`, FOGD_TEST_NODE: process.execPath,
-      FOGD_TEST_DRIVER: h.driver, FOGD_TEST_LOG: h.log, FOGD_TEST_SUCCESS: '1', FOGD_TEST_STATE: join(dir, 'state.json'), FOGD_TEST_CATALOG: cli.catalog } });
+    const env = { ...process.env, FOGD_HOME: dir, PATH: `${h.bin}:${process.env.PATH}`, FOGD_TEST_NODE: process.execPath,
+      FOGD_TEST_DRIVER: h.driver, FOGD_TEST_LOG: h.log, FOGD_TEST_SUCCESS: '1', FOGD_TEST_STATE: join(dir, 'state.json'), FOGD_TEST_CATALOG: cli.catalog };
+    await assert.rejects(exec(process.execPath, args, { env: { ...env, FOGD_TEST_OVERLAP: '1' } }), /overlaps an existing Docker subnet/);
+    await assert.rejects(access(h.output), { code: 'ENOENT' });
+    await assert.rejects(access(join(dir, '.fogd/installations/fresh')), { code: 'ENOENT' });
+    await exec(process.execPath, args, { env });
     const installed = JSON.parse(await readFile(h.log + '.policy')), config = JSON.parse(await readFile(join(h.output, 'compose.json')));
     assert.deepEqual(installed.networks, networks);
     for (const [name, subnet] of Object.entries(networks)) assert.deepEqual(config.networks[name].ipam.config, [{ subnet }]);

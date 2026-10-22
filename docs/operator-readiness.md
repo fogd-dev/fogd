@@ -173,6 +173,9 @@ Link installation, deploy/approval, diagnosis, backup, recovery, and upgrade fro
 operator entry point as these increments ship. Record required downtime, loss
 boundaries, and commands that require a stopped installation. A fresh operator must
 be able to follow the supported path without relying on private qualification files.
+The [operator guide](operator-guide.md) provides that entry point and the public
+startup network-plan option removes qualification-time Compose editing. Independent
+human usability and second-machine acceptance remain open.
 
 The maintainers bear the cost of packaging, compatibility checks, diagnostics, and
 retention safety. Operators still maintain host capacity, certificates, and backups.

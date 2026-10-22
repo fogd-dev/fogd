@@ -76,3 +76,24 @@ test('real restore and retire parse and reject invalid placement before bundle, 
     for (const path of [join(f.root, 'output'), join(f.root, '.fogd')]) await assert.rejects(access(path), { code: 'ENOENT' });
   }
 });
+
+test('real startup refuses bad placement and family combinations before private configuration or Docker', async t => {
+  const f = await fixture(t); await writeFile(f.plan, '{private-value');
+  for (const args of [
+    ['up', '--network-plan', f.plan],
+    ['up', '--runtime', 'unknown-family', '--network-plan', f.plan],
+    ['up', '--runtime', f.entry.id, '--network-plan', f.plan],
+    ['up', '--installation', 'existing', '--network-plan', f.plan],
+  ]) {
+    await assert.rejects(exec(process.execPath, [f.cli, ...args], { env: { ...process.env, PATH: '', FOGD_HOME: f.root, FOGD_ENV_FILE: join(f.root, 'private.env') } }), error =>
+      error.code === 1 && /explicit runtime|Unknown shipped|Cannot read network plan|omit.*--network-plan/.test(error.stderr) && !/private-value|docker could not start/.test(error.stderr));
+    await assert.rejects(access(join(f.root, 'private.env')), { code: 'ENOENT' });
+    await assert.rejects(access(join(f.root, '.fogd')), { code: 'ENOENT' });
+  }
+});
+
+test('startup reads the same bounded plan as recovery and preserves runtime admission', async t => {
+  const f = await fixture(t); await writeFile(f.plan, JSON.stringify(networks));
+  const code = `import{startupOptions}from ${JSON.stringify(f.module('startup-options.mjs'))};console.log(JSON.stringify(await startupOptions(${JSON.stringify({ runtime: f.entry.id, 'network-plan': f.plan })})));`;
+  assert.deepEqual(JSON.parse((await exec(process.execPath, ['--input-type=module', '-e', code])).stdout), { runtime: f.entry.id, networks });
+});

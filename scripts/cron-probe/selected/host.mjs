@@ -16,7 +16,7 @@ import { expectRefusal } from './evidence.mjs';
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const enrollmentMethods = {
   candidate: { intent: 'enrolled', run: enrollCandidate, start: host => ['up', '--installation', host.project] },
-  public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id] },
+  public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id, '--network-plan', join(host.output, 'network-plan.json')] },
 };
 
 export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo) {
@@ -60,12 +60,9 @@ async function enrollCandidate(host, networks) {
 
 async function enrollPublic(host, networks) {
   assert.equal(host.entry.admission, 'qualified');
-  const template = await readFile(host.env.FOGD_COMPOSE_FILE, 'utf8'), marker = 'networks:\n  control:\n  fleet-1:\n  fleet-2:\n';
-  assert.equal(template.split(marker).length, 2);
-  const placement = 'networks:\n' + Object.entries(networks).map(([name, subnet]) => `  ${name}:\n    ipam:\n      config:\n        - subnet: ${subnet}\n`).join('');
-  const file = join(host.output, 'public-compose.yaml'); await writeFile(file, template.replace(marker, placement), { mode: 0o600, flag: 'wx' });
-  host.env.FOGD_COMPOSE_FILE = file;
-  host.enrollment.tlsRefusal = await expectRefusal(host, ['up', '--runtime', host.entry.id], /Installed TLS keypair could not be validated/);
+  const file = join(host.output, 'network-plan.json');
+  await writeFile(file, JSON.stringify(networks, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
+  host.enrollment.tlsRefusal = await expectRefusal(host, ['up', '--shared', '--runtime', host.entry.id, '--network-plan', file], /Installed TLS keypair could not be validated/);
   const containers = await projectContainers(host.project); assert.equal(containers.length, 8);
   host.enrollment.initialServices = containers.map(container => {
     assert.equal(container.State.Running, false); assert.equal(container.State.Restarting, false); assert.equal(container.State.Paused, false); assert.equal(container.RestartCount, 0);
@@ -92,7 +89,7 @@ async function createTLS(host) {
   const cert = join(host.output, 'certificate.pem'), key = join(host.output, 'private-key.pem');
   await host.run('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '2', '-subj', '/CN=localhost',
     '-addext', 'subjectAltName=DNS:localhost,DNS:baseline.localhost,DNS:refresh.localhost,DNS:imports.localhost,DNS:replacement.localhost,DNS:scheduled-next.localhost,IP:127.0.0.1']);
-  await chmod(key, 0o600); await host.command(['tls', 'import', cert, key]);
+  await chmod(key, 0o600); await host.command(['tls', 'import', cert, key, '--installation', host.project]);
 }
 export async function cleanupSelectedHost(host) {
   // Only this newly generated qualification project is in scope. Data stays.

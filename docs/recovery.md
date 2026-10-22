@@ -17,6 +17,14 @@ This procedure needs exclusive operator access and enough disk space for the buc
 all replica disks, controller state, and exported images. It qualifies replacement
 on the local Docker environment, not cross-version upgrades or live backups.
 
+For selected installations, `fogd backup DIRECTORY --installation PROJECT` reads
+the enrolled configuration directly. Use the recovered project name for later
+backups and `fogd tls import CERT KEY --installation PROJECT` while stopped;
+the original operator profile can still name the stale source. These explicit
+commands refuse missing enrollment or storage. Keep `FOGD_SERVER` and client TLS
+trust pointed at the intended installation for background controls. The
+[operator guide](operator-guide.md) connects enrollment, maintenance and recovery.
+
 ## Create a snapshot
 
 Run from the fogd checkout with the same configuration used to start the installation:

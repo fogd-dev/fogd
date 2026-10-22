@@ -1,5 +1,5 @@
 import { assertPinnedSnapshotImages } from './snapshot-evidence.mjs';
-import { resolvedCompose } from '../compose/config.mjs';
+import { maintenanceConfiguration } from '../runtime/maintenance.mjs';
 import { recoveryLayout } from './layout.mjs';
 import { inventory } from './inventory.mjs';
 import { mkdir } from 'node:fs/promises';
@@ -14,10 +14,11 @@ import { assertCronDockerTopology } from './cron-backup.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { selectedInstallation } from '../runtime/installation.mjs';
 
-export async function backup(directory) {
-  const env = await configEnv();
-  requireDocker(env);
-  const raw = await resolvedCompose(env), selected = await selectedInstallation(raw);
+export async function backup(directory, installation) {
+  const profile = await configEnv();
+  requireDocker(profile);
+  const raw = await maintenanceConfiguration(profile, installation), selected = await selectedInstallation(raw);
+  const env = installation === undefined ? profile : { ...profile, ...raw.services.controller.environment };
   const file = selected?.file || resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
   const config = selected?.config || raw;
   if (selected) console.log(`Record independently for recovery: runtime ${selected.entry.id}; installation identity ${runtimePolicyIdentity(selected.policy)}`);

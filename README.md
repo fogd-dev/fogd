@@ -24,6 +24,10 @@ Developers deploying into an existing installation can use the
 a fogd checkout, Docker, or operator images. The operator exports it with
 `fogd client export DIRECTORY` and supplies a scoped deploy credential.
 
+Operators can follow the [install-to-recovery guide](docs/operator-guide.md) for
+the selected cached runtime, private configuration, developer access, approval,
+diagnosis, backups and recovery.
+
 Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
 [roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).
 They include optional Filecoin storage and recovery as future work. See the
