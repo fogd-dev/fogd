@@ -130,17 +130,20 @@ identity does not authenticate those exposure settings.
 
 The [selected recovery receipt](evidence/m11c-selected-runtime-recovery.json)
 covers a previously paused schedule through ordinary installed startup, reviewed
-acknowledgment, separate resume and autonomous future jobs. The
-[selected recovery matrix](cron-selected-recovery.md) extends that bounded local
-Linux arm64 two-fleet evidence to armed timers, persisted retries, original queued
-input and older snapshots. It checks cold native holds, acknowledged holds,
-separate resume, loss boundaries and full old occurrence rows after future success. The
-[selected retirement receipt](evidence/m11c-selected-runtime-retirement.json)
-covers zero-live backup/restore, unchanged retained-prefix contents and a scoped
+acknowledgment, separate resume and autonomous future jobs. The [selected recovery
+matrix](cron-selected-recovery.md) extends that bounded local Linux arm64
+two-fleet evidence to armed timers, persisted retries, original queued input and
+older snapshots. It checks cold native holds, acknowledged holds, separate resume,
+loss boundaries and full old occurrence rows after future success. The [selected
+retirement receipt](evidence/m11c-selected-runtime-retirement.json) covers
+zero-live backup/restore, unchanged retained-prefix contents and a scoped
 replacement using the fresh slot. The [selected sequential retirement
-profile](cron-selected-retirement.md) adds active cron/queue survivors, a persisted
-retry, fresh scheduled capacity and zero-live history. Selected retirement beside another live cron and the
-complete acceptance audit remain open.
+profile](cron-selected-retirement.md) adds active cron/queue survivors, a
+persisted retry, fresh scheduled capacity and zero-live history. The [selected
+dual-cron profile](cron-selected-retirement-dual.md) covers retirement beside
+another simultaneously live cron and both held source restores. Its expanded
+source/import audit retains all 40 volumes. The complete M11c acceptance audit
+remains open.
 
 Full frozen-runtime acceptance and promotion to a qualified catalog entry remain
 [M11c gates](m11c.md). Expansion and other topologies remain refused for scheduled

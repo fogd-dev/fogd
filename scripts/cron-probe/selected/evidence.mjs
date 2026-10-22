@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 export async function sourceInventory() {
-  const execute = promisify(execFile), scope = ['packages', 'examples/refresh', 'examples/imports', 'scripts/cron-probe', 'scripts/native-build.mjs', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'];
+  const execute = promisify(execFile), scope = ['packages', 'examples/refresh', 'examples/imports', 'scripts', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'];
   const [{ stdout }, { stdout: removed }] = await Promise.all([
     execute('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', ...scope], { cwd: repo }),
     execute('git', ['ls-files', '--deleted', '-z', '--', ...scope], { cwd: repo }),

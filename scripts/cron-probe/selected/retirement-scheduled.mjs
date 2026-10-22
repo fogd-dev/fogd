@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
+import { assertFreshCron } from './retirement-cron-state.mjs';
+import { retiredAuthorityRefusals } from './retirement-authority.mjs';
 import { privateFaultProject } from './background-fixtures.mjs';
 import { controllerState, nativeObservation, vmTime } from './observations.mjs';
 import { rows } from './recovery-ledger.mjs';
 import { expectRefusal } from './evidence.mjs';
-import { scopedClient } from './https.mjs';
 import { verifiedObservationKeys } from './failure-authority.mjs';
 import { nativeProcesses } from './recovery-fence.mjs';
 
@@ -22,15 +23,7 @@ export async function scheduledReplacement(host, fixture, request, warmKeys) {
   assert.notEqual(revision, old.secretRevision);
   const before = await controllerState(host); assert.equal(before.apps[app], undefined);
   const oldRevision = await expectRefusal(host, ['admin', 'approve', submitted.id, submitted.digest, old.secretRevision], /Select the current secret revision/);
-  const retiredToken = await expectRefusal(host, ['admin', 'issue-token', 'retired-cron-refusal', old.app], /permanently retired/);
-  const retiredApproval = await expectRefusal(host, ['admin', 'approve', old.id, old.digest, old.secretRevision], /permanently retired/);
-  const oldClient = await scopedClient(host, fixture.tokens.refresh);
-  const artifact = await request(`/v1/deployments/${submitted.id}/artifact`); assert.equal(artifact.status, 200);
-  const scopeRefusal = await oldClient('/v1/deployments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: artifact.text });
-  assert.equal(scopeRefusal.status, 400); assert.match(scopeRefusal.json().error, /outside its app scope/);
-  const retiredArtifact = await request(`/v1/deployments/${old.id}/artifact`); assert.equal(retiredArtifact.status, 200);
-  const nameRefusal = await oldClient('/v1/deployments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: retiredArtifact.text });
-  assert.equal(nameRefusal.status, 400); assert.match(nameRefusal.json().error, /permanently retired/);
+  const authority = await retiredAuthorityRefusals(host, request, old, fixture.tokens.refresh, submitted);
   assert.deepEqual(await controllerState(host), before);
   // Leave enough of the minute to approve and confirm pause without a first tick.
   while (await vmTime(host) % 60000 > 10000) await new Promise(resolve => setTimeout(resolve, 1000));
@@ -43,14 +36,8 @@ export async function scheduledReplacement(host, fixture, request, warmKeys) {
   const fresh = await nativeObservation(host, active.slot, active.id, { persistedRecords: true, captureProofs: true });
   const keys = verifiedObservationKeys(host.policy, active.slot, fresh); assert.deepEqual(keys, warmKeys[active.slot]);
   assert.deepEqual(await nativeProcesses(host), host.nativeBaseline);
-  assert.equal(fresh.status.paused, true); assert.equal(fresh.status.nextAlarm, null); assert.deepEqual(fresh.cronRecords.wakes, []);
-  assert.equal(fresh.databases.length, 1);
-  for (const table of ['cron_fault_attempts', 'refresh_occurrences', 'refresh_results']) {
-    assert.ok(Object.hasOwn(fresh.databases[0].data, table)); assert.deepEqual(rows(fresh, table), []);
-  }
-  assert.deepEqual(rows(fresh, 'refresh_settings'), [{ id: 1, mode: 'retry-once' }]);
-  assert.deepEqual(rows(fresh, 'cron_fault_control'), [{ id: 1, policy: 'healthy', phase: 'startup' }]);
-  return { active, fresh, keys, requestedAt, confirmedAt, missingSecret, missingConfiguration, oldRevision, retiredToken, retiredApproval, scopeRefusal: scopeRefusal.json(), nameRefusal: nameRefusal.json(), distinctSecretValues: true };
+  assertFreshCron(fresh);
+  return { active, fresh, keys, requestedAt, confirmedAt, missingSecret, missingConfiguration, oldRevision, retiredToken: authority.retiredCredential, retiredApproval: authority.retiredApproval, scopeRefusal: authority.oldScope, nameRefusal: authority.retiredName, distinctSecretValues: true };
 }
 
 export function assertNewSchedule(observed, since) {

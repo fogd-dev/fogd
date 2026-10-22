@@ -751,5 +751,16 @@
     "remote or three-fleet scheduled recovery",
     "Workflows and general Durable Object alarms",
     "hosted Cloudflare execution"
-  ]
+  ],
+  "sourceInventoryCoverage": {
+    "recordedFiles": 485,
+    "completeExecutedImportArchive": false,
+    "omittedStaticImports": [
+      "scripts/guestbook-browser.mjs",
+      "scripts/queue-probe/prefix-fingerprints.mjs"
+    ],
+    "recordedFileHashesVerified": true,
+    "independentArchiveToVolumeComparisonsRemainRecorded": true,
+    "expandedInventoryAndImportCheck": "m11c-selected-runtime-retirement-dual.json"
+  }
 }

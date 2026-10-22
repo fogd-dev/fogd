@@ -198,14 +198,13 @@ scheduled restore and retirement, including zero-live history, remain refused.
 Runtime selection, the external admin/TLS flow and ordinary scoped admission retain
 their acceptance gates.
 
-The [selected cron activation profile](cron-selected-activation.md)
-checks the normal HTTPS CLI flow, first migration hold, selected controller kills,
-explicit retry and paused updates on the frozen product image. The
-[selected recovery matrix](cron-selected-recovery.md) adds armed-timer, pending-retry
-and older-snapshot recovery with an original queued survivor, held native startup
-and reviewed acknowledgment before separate resume. Selected retirement beside another live cron and the
-complete audit still need selected-image evidence before M11c can permit public
-admission.
+The [selected cron activation profile](cron-selected-activation.md) checks the
+normal HTTPS CLI flow, first migration hold, selected controller kills, explicit
+retry and paused updates on the frozen product image. The [selected recovery
+matrix](cron-selected-recovery.md) adds armed-timer, pending-retry and
+older-snapshot recovery with an original queued survivor, held native startup and
+reviewed acknowledgment before separate resume. The complete M11c audit remains
+required before public admission.
 
 The [selected failure profile](cron-selected-failures.md) adds ordinary offline
 Void/fogd artifacts, scoped HTTPS approval, native `noRetry`, original-occurrence
@@ -213,25 +212,33 @@ owner-loss recovery, counted sparse failure and full-slot downtime on the frozen
 candidate. Its quiet interval, failed-work browser state and final held minute
 have independent source, signature, artifact, state and cleanup audits. The
 [earlier diagnostics](cron-selected-failure-diagnostics.md) retain their bounded
-receipt scopes. Selected retirement beside another live cron and the complete M11c acceptance
-audit remain open. Catalog enrollment
+receipt scopes. The complete M11c acceptance audit remains open. Catalog enrollment
 and ordinary cron admission stay closed.
 
-The [selected replacement profile](cron-selected-replacement.md) qualifies compatible
-migration overlap, interrupted callbacks through native generation release,
-original-occurrence lost-acknowledgment retries and visible unfinished work through
-ordinary offline artifacts and scoped HTTPS approval. A final held minute preserves
-all ledgers. Independent audits verify retained controller artifacts, signed runtime
-identities, source files and cleanup. Selected retirement beside another live cron and the complete M11c
-acceptance audit remain open before public cron admission.
+The [selected replacement profile](cron-selected-replacement.md) qualifies
+compatible migration overlap, interrupted callbacks through native generation
+release, original-occurrence lost-acknowledgment retries and visible unfinished
+work through ordinary offline artifacts and scoped HTTPS approval. A final held
+minute preserves all ledgers. Independent audits verify retained controller
+artifacts, signed runtime identities, source files and cleanup. The complete M11c
+acceptance audit remains open before public cron admission.
 
 The [selected sequential retirement profile](cron-selected-retirement.md) adds
 active-cron and queued survivors, retirement of a persisted retry, fresh queue and
 cron capacity, and zero-live recovery on the frozen candidate. The replacement
 cron has a different expression and separately pinned configuration. Independent
 audits verify raw signatures, retained controller state, every source snapshot and
-restored retired-prefix bytes. All 64 volumes remain. Selected retirement beside another live cron and the
-complete M11c acceptance audit remain open; public admission stays closed.
+restored retired-prefix bytes. All 64 volumes remain. The complete M11c acceptance
+audit remains open; public admission stays closed.
+
+The [selected dual-cron retirement profile](cron-selected-retirement-dual.md)
+qualifies retirement beside another simultaneously live cron while retaining
+earlier queued retirement history. Both source schedules are held before a shared
+deadline; the survivor stays held before controller startup and after
+acknowledgment, then resumes separately without observed old-occurrence replay.
+Independent audits verify expanded source/import inventories, signed identities,
+all source snapshots, restored retired prefixes and all 40 retained volumes.
+The complete M11c acceptance audit remains open; public admission stays closed.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

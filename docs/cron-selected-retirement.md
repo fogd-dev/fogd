@@ -1,12 +1,13 @@
 # Selected-runtime sequential retirement
 
-The [selected sequential retirement receipt](evidence/m11c-selected-runtime-retirement-chain.json)
-qualifies this bounded profile on the frozen local Linux arm64 Docker candidate.
-The complete run and independent audit both exit zero. Selected retirement beside another live cron and the
-complete M11c acceptance audit remain open. Public candidate enrollment and ordinary
-cron admission stay closed.
+The [selected sequential retirement
+receipt](evidence/m11c-selected-runtime-retirement-chain.json) qualifies this
+bounded profile on the frozen local Linux arm64 Docker candidate. The complete run
+and independent audit both exit zero. The complete M11c acceptance audit remains
+open. Public candidate enrollment and ordinary cron admission stay closed.
 
-No retirement in this chain runs beside another live cron.
+No retirement in this chain runs beside another live cron. The separate
+[selected dual-cron profile](cron-selected-retirement-dual.md) covers that case.
 
 This profile exercises successive retirements on the frozen local Linux arm64
 candidate through ordinary scoped HTTPS deployment and approval. Each retirement
@@ -107,12 +108,18 @@ artifacts, diagnostics and the actual receipt bytes are scanned for credentials
 and app-secret values.
 
 The recorded run takes 1,882.970 seconds. Independent acceptance verifies 485
-executed sources, 82 signatures and 82 altered-signature refusals, eight retained
+recorded source files, 82 signatures and 82 altered-signature refusals, eight retained
 controller volumes and 64 retained volumes in total. It compares 1,932 complete
 source-volume entries and 15 restored retired-prefix subtrees with their archives.
 All 959 tests, syntax checks and the quality gate pass. Five weakened oracle
 variants fail their tests. Backup confirms pause 8.693 seconds before the selected retry is due. The raw receipt scans 24 credential and app-secret values before and after
 writing its final bytes.
+
+The historical source inventory omits the imported queue-prefix fingerprint
+helper and shared browser helper. Its 485 archived file hashes and independent archive-to-volume comparisons
+remain valid within that recorded scope. The [dual-cron profile](cron-selected-retirement-dual.md)
+adds both helpers to its expanded inventory and checks the driver and CLI static
+import graphs. The earlier inventory is not a complete executed-import archive.
 
 ## Run and retain
 
