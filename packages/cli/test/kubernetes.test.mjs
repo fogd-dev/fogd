@@ -65,3 +65,9 @@ test('Kubernetes rendering never enables the Docker-only queue admission opt-in'
   const controller = manifests(selected).items.find(r => r.kind === 'StatefulSet' && r.metadata.name === 'controller');
   assert.equal(controller.spec.template.spec.containers[0].env.some(e => e.name === 'FOGD_QUEUE_APPS' && e.value === '1'), false);
 });
+
+test('Kubernetes settings refuse the development storage password before rendering private state', () => {
+  const env = { FOGD_PROFILE: 'shared', FOGD_TLS: '1', FOGD_KUBE_NAMESPACE: 'fogd-test', FOGD_ADMIN_USER: 'operator',
+    FOGD_ADMIN_PASSWORD: 'private-admin', FOGD_GATEWAY_TOKEN: 'private-gateway', FOGD_BUCKET_USER: 'fogd-local', FOGD_BUCKET_PASSWORD: 'fogd-local-development-only' };
+  assert.throws(() => kubeSettings(env, {}), /Shared storage requires/);
+});

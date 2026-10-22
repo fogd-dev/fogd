@@ -27,8 +27,9 @@ The bounded [M11c acceptance](m11c-acceptance.md) and public-selector release ch
 are complete. Additional cron qualification work needs an identified acceptance gap
 or a reproducible defect; broader topology and runtime admission remain gated.
 
-Before selecting another binding milestone, define an operator-readiness slice
-under G2 and G3. It should address these current gaps:
+Before selecting another binding milestone, implement the proposed
+[operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses
+these current gaps:
 
 - **Installability:** a supported runtime must have a documented, reproducible path
   onto another supported machine. A local image digest and receipts alone do not
@@ -45,8 +46,8 @@ under G2 and G3. It should address these current gaps:
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands.
 
-Each item needs its own acceptance conditions before implementation. These are
-product priorities, not newly qualified capabilities. Exact-artifact approval and
+The contract supplies acceptance conditions for each increment. These are product
+priorities, not newly qualified capabilities. Exact-artifact approval and
 the existing recovery boundaries remain in force.
 
 ## Milestones and acceptance gates

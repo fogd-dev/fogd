@@ -1,3 +1,4 @@
+import { assertSharedStorageConfiguration } from './shared-storage.mjs';
 import { resolvedCompose } from './compose/config.mjs';
 import { checkFleetSelection } from './compose/selection.mjs';
 import { transportPolicy } from '@fogd/runtime/transport';
@@ -18,6 +19,7 @@ export async function up(shared = false, selection = {}) {
   const env = await prepareEnvironment(shared);
   requireDocker(env);
   const raw = await resolvedCompose(env);
+  assertSharedStorageConfiguration(raw);
   await checkFleetSelection(raw);
   const policy = transportPolicy(env);
   const selected = await selectedInstallation(raw, selection), config = selected?.config || raw;

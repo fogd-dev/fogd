@@ -44,6 +44,8 @@ limits](cron-runtime-policy.md).
 
 ## Deploy and operate
 
+Set explicit private storage credentials as described in the
+[shared installation guide](shared-installation.md) before enrollment.
 Public selection uses `fogd up --shared --runtime FAMILY` only for a qualified
 catalog family. A candidate name is refused before credential or Docker changes.
 There is no public candidate enrollment flag. Internal qualification uses known catalog families without promoting an

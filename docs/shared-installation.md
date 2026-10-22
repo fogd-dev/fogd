@@ -12,7 +12,9 @@ qualification uses a private CA; it does not establish a two-host deployment.
    prefixes, and ports for that installation. Set `FOGD_BASE_DOMAIN` to the app domain.
    Choose `FOGD_BIND_ADDRESS` for the intended interface; its default is loopback.
    Set `FOGD_PROFILE=shared`, `FOGD_TLS=1`, and `FOGD_DEPLOY_TOKEN=`. Set a private bucket
-   password before initial startup. Keep this file mode 0600.
+   password before initial startup. Shared CLI startup and TLS import refuse missing
+   storage credentials or the development password before writing generated settings.
+   Keep this file mode 0600.
 2. Select that installation and import the certificate while it is stopped:
 
    ```sh
@@ -45,6 +47,24 @@ qualification uses a private CA; it does not establish a two-host deployment.
 precedence. CLI Compose calls suppress implicit `.env` loading, so another checkout
 configuration cannot supply missing settings. Direct `docker compose` calls do not
 read `FOGD_ENV_FILE`; pass `--env-file "$FOGD_ENV_FILE"` explicitly.
+
+## Existing development storage credentials
+
+The CLI does not rotate storage credentials. A shared installation using the
+example development password is refused by startup and TLS import; its environment
+and stored data remain unchanged. This includes startup through
+`fogd up --installation PROJECT`, which checks the installed configuration.
+
+Keep the installation stopped and retain a private stopped backup and the original
+configuration. Migrating an existing account requires a deliberate storage maintenance
+procedure that updates the storage server and every consumer together. fogd does not
+yet provide that procedure. Changing only `FOGD_BUCKET_PASSWORD` in an environment
+file does not update every consumer or an enrolled installation's saved credentials.
+Backups preserve the original credentials. Restoring such a backup does not bypass
+the startup refusal; fogd has not qualified a maintenance procedure for restarting
+it with changed credentials. Retain the original backup and configuration.
+Use a fresh installation with explicit private credentials for new shared work.
+Direct Docker commands bypass these host CLI checks.
 
 ## Rotate a certificate or upgrade from HTTP
 

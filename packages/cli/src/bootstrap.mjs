@@ -1,5 +1,6 @@
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
+import { assertSharedStorageCredentials } from './shared-storage.mjs';
 import { requireDocker, configEnv, configPath } from './local.mjs';
 
 export async function prepareEnvironment(shared = false) {
@@ -11,6 +12,7 @@ export async function prepareEnvironment(shared = false) {
       env[key] = value;
     }
   }
+  assertSharedStorageCredentials(env.FOGD_PROFILE, env.FOGD_BUCKET_USER, env.FOGD_BUCKET_PASSWORD);
   const names = ['FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN'];
   if (env.FOGD_PROFILE !== 'shared') names.push('FOGD_DEPLOY_TOKEN');
   for (const name of names) {

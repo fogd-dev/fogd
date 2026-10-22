@@ -26,6 +26,7 @@ export async function selectedHost(directory, enrollment = 'candidate') {
   const project = `fogd-selected-activation-${randomBytes(8).toString('hex')}`, adminPort = await loopbackPort(), gatewayPort = await loopbackPort();
   assert.notEqual(adminPort, gatewayPort);
   const env = selectedEnvironment(output, project, adminPort, gatewayPort), run = commandRunner(output, env);
+  await writeFile(env.FOGD_ENV_FILE, `FOGD_BUCKET_USER=${env.FOGD_BUCKET_USER}\nFOGD_BUCKET_PASSWORD=${env.FOGD_BUCKET_PASSWORD}\n`, { mode: 0o600, flag: 'wx' });
   const networks = await privateNetworks();
   await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
   const host = { output, project, entry, env, run, adminPort, gatewayPort, enrollment: { method: enrollment },
@@ -79,6 +80,8 @@ function selectedEnvironment(output, project, adminPort, gatewayPort) {
     NODE_EXTRA_CA_CERTS: join(output, 'certificate.pem') };
   for (const name of ['FOGD_COMPOSE_FILE', 'FOGD_CELLD_IMAGE', 'FOGD_RUNTIME_IMAGE', 'FOGD_BUCKET_ENDPOINT', 'FOGD_BUCKET_REGION',
     'FOGD_CELLD_CPUS', 'FOGD_CELLD_MEMORY', 'FOGD_CELLD_HEAP_MB', 'FOGD_RESTART_DELAY_SECONDS', 'FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN', 'FOGD_SLOT_1_A_ID', 'FOGD_SLOT_1_B_ID', 'FOGD_SLOT_2_A_ID', 'FOGD_SLOT_2_B_ID']) delete env[name];
+  env.FOGD_BUCKET_USER = `fogd-probe-${randomBytes(8).toString('hex')}`;
+  env.FOGD_BUCKET_PASSWORD = randomBytes(32).toString('hex');
   env.FOGD_COMPOSE_FILE = join(repo, 'compose.yaml');
   return env;
 }

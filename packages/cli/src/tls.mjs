@@ -1,3 +1,4 @@
+import { assertSharedStorageConfiguration } from './shared-storage.mjs';
 import { resolvedCompose } from './compose/config.mjs';
 import { checkFleetSelection } from './compose/selection.mjs';
 import { readFile } from 'node:fs/promises';
@@ -11,6 +12,7 @@ import { selectedInstallation } from './runtime/installation.mjs';
 async function installation(env) {
   requireDocker(env);
   const config = await resolvedCompose(env);
+  assertSharedStorageConfiguration(config);
   await checkFleetSelection(config);
   if (!config.volumes?.tls?.name) throw new Error('This installation needs the TLS-volume configuration before certificate import');
   return config;

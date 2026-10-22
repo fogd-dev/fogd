@@ -1,3 +1,4 @@
+import { assertSharedStorageCredentials } from '../shared-storage.mjs';
 import { transportPolicy, validateKeypair } from '@fogd/runtime/transport';
 
 function configuredImages(env, pullPolicy) {
@@ -17,6 +18,7 @@ export function kubeSettings(env, keypair) {
   const namespace = env.FOGD_KUBE_NAMESPACE;
   if (!namespace || namespace.length > 63 || !/^[a-z](?:[a-z0-9-]*[a-z0-9])?$/.test(namespace)) throw new Error('Set FOGD_KUBE_NAMESPACE to a DNS label');
   for (const key of ['FOGD_ADMIN_USER', 'FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN', 'FOGD_BUCKET_USER', 'FOGD_BUCKET_PASSWORD']) if (!env[key]) throw new Error(`${key} is required`);
+  assertSharedStorageCredentials(env.FOGD_PROFILE, env.FOGD_BUCKET_USER, env.FOGD_BUCKET_PASSWORD);
   const pullPolicy = env.FOGD_KUBE_LOCAL_IMAGES === '1' ? 'Never' : 'IfNotPresent';
   const images = configuredImages(env, pullPolicy);
   const { cert, key } = validateKeypair(keypair);
