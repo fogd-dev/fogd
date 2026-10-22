@@ -1,8 +1,9 @@
+import { controllerGet, boundedJson } from './client-http.mjs';
 import { appName } from '@fogd/runtime/artifact';
 
 export async function deployCapabilities(origin, token, app) {
   appName(app);
-  const get = path => fetch(`${origin}${path}`, { headers: { Authorization: `Bearer ${token}` }, redirect: 'error', signal: AbortSignal.timeout(15000) });
+  const get = path => controllerGet(origin, path, `Bearer ${token}`);
   const response = await get(`/v1/capabilities?app=${encodeURIComponent(app)}`);
   if (response.status === 401 && response.headers.get('www-authenticate')?.startsWith('Basic realm="fogd admin"')) {
     await response.body?.cancel();
@@ -25,14 +26,4 @@ export async function deployCapabilities(origin, token, app) {
   return { cronApps: result.cronApps };
 }
 
-async function capabilityJson(response) {
-  try {
-    let size = 0; const chunks = [];
-    for await (const chunk of response.body) {
-      size += chunk.length;
-      if (size > 4096) throw new Error();
-      chunks.push(chunk);
-    }
-    return JSON.parse(Buffer.concat(chunks));
-  } catch { throw new Error('Server returned invalid deployment capabilities'); }
-}
+const capabilityJson = response => boundedJson(response, { limit: 4096, invalid: 'Server returned invalid deployment capabilities' });

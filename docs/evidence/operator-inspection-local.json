@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "scope": "Owner-only inspection of controller-recorded state on the frozen local Linux arm64 two-fleet Docker family. No live runtime health or application-outcome inference.",
+  "family": "celld-cron-v2-linux-arm64",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "command": "fogd admin inspect APP",
+  "probe": "scripts/cron-probe/selected/inspection.mjs",
+  "application": {
+    "pendingRouting": "unassigned",
+    "failedRouting": "paused",
+    "failedStage": "migrating",
+    "rawSqlMarkerWithheld": true,
+    "correctionArtifactDiffers": true,
+    "correctedRelease": {
+      "id": "6ed65d0f-b0b9-46c8-a3cd-a5d44f4c994d",
+      "digest": "4add3bd433151b8b355e9dc838c7d89c58c58c38779a1667e02f785090e22362"
+    },
+    "correctedApplicationStatus": 200,
+    "cronRelease": {
+      "id": "746b15c1-b70a-4752-b2a7-65457455476b",
+      "digest": "7bcc62a2f7ee4365a5da50deac583d2dc4738fdc0649d85bf6c72b9abb47a27e"
+    },
+    "cronRecordedPauseConfirmed": true,
+    "cronObservationMatchesWireISOTime": true,
+    "secretRevisionSelected": true,
+    "allFourControllerSnapshotsUnchangedByInspection": true,
+    "runtimeHealth": "not-observed",
+    "applicationOutcomes": "not-observed"
+  },
+  "privacy": {
+    "publicSurfaces": {
+      "adminJSON": true,
+      "adminHTML": true,
+      "scopedStatuses": 3,
+      "decodedArtifacts": 3,
+      "privateDiagnosticsChecked": 2,
+      "completeReceiptChecked": true
+    },
+    "completePrivateReceiptChecked": true,
+    "postWriteReceiptChecked": true,
+    "publicReceiptContainsNoRawAdminState": true
+  },
+  "cleanup": {
+    "ownedContainersAndNetworksAbsent": true,
+    "retainedVolumes": 8,
+    "unrelatedResourcesUnchanged": true,
+    "baselineHealth": {
+      "ok": true
+    }
+  },
+  "validation": {
+    "syntax": {
+      "exitCode": 0,
+      "logSha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412"
+    },
+    "tests": {
+      "exitCode": 0,
+      "tests": 1135,
+      "pass": 1135,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "94825f2d13a95cefc1e5d539281691136bbdab5dfe22ccbe22eebf5681db92f8"
+    },
+    "quality": {
+      "exitCode": 0,
+      "logSha256": "5164e3026f1a883c6152e43432ebe8edabba58f49b80eb62a2c714eb8c9559ae"
+    },
+    "focusedTests": 60,
+    "review": "Claude: no remaining source blockers; final native receipt independently verified after review."
+  },
+  "provenance": {
+    "baseHead": "7836520df738656d9c3461e731caf149766e807a",
+    "recordedSourceFiles": 662,
+    "archivedSourcesMatchExecutedSources": true,
+    "allRecordedSourcesMatchIntroducingCommitRequired": true,
+    "runnerSha256": "720be3269a72e139d66687d1eade5b2023108beaa3999cff6119b71f75103354",
+    "privateReceiptSha256": "b40f3da0e79d3ae835c53a69042bc67e71b63808020f51fea8ab8789334f57db",
+    "postWritePrivacySha256": "d6c29bedd5cc95caac2563b67b606dd65fc3902632d403566af2967af075319f",
+    "dependencyBoundary": "Copied tracked guestbook and refresh fixtures reused prepared cached builder dependencies. Those dependency bytes were not exhaustively inventoried; no dependency install or runtime build was performed."
+  },
+  "earlierRuns": {
+    "native2": "Failed harness privacy input; not accepted. Evidence and all eight volumes retained.",
+    "native3": "Corrected harness passed before the final reference/transport hardening; not the final-source acceptance run."
+  },
+  "notQualified": [
+    "App-scoped submitter diagnostics and logs",
+    "Live runtime health or current application business outcomes",
+    "Unreachable-runtime observation",
+    "Second-machine or separate-engine installation",
+    "Other runtime architectures and topologies",
+    "Per-worker CPU limits or CPU-exhaustion behavior"
+  ]
+}

@@ -159,7 +159,9 @@ held due/retry/older recovery, and retirement have bounded evidence. The ordinar
 public CLI selectors use the same frozen image and recorded source bytes. Default
 installations, other topologies, Workflows, and general Durable Object alarms remain
 outside this admission. Next, define and implement the
-[operator-readiness slice](#immediate-priorities) before another binding milestone.
+[operator-readiness slice](#immediate-priorities) before another binding milestone. Owner application
+[inspection](application-inspection.md) connects recorded release and control state;
+live outcome observation and scoped logs remain open.
 
 ## Opportunities to explore later
 

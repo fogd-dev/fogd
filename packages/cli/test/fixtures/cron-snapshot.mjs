@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
-export function cronSnapshotSource() {
-  const deployment = randomUUID(), id = randomUUID(), version = 'private-cron-runtime-version', digest = 'c'.repeat(64), at = Date.now();
+export function cronSnapshotSource({ deployment = randomUUID(), id = randomUUID(), at = Date.now() } = {}) {
+  const version = 'private-cron-runtime-version', digest = 'c'.repeat(64);
   const resources = { script: 'refresh', crons: ['* * * * *'], r2: [], d1: [], durable: { bindings: [] } };
   const receipt = { schema: 1, id, deployment, digest, version, script: 'refresh', slot: 'two', at, completedAt: at,
     secretRevision: null, crons: resources.crons,

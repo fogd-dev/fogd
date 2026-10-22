@@ -37,7 +37,7 @@ No Cloudflare account, credentials or API calls are used by these qualifications
 | Capacity and retirement, M10 | Qualified Docker layouts through three app fleets, capacity reporting, stopped expansion/retirement and retained-state isolation; [capacity](capacity.md), [expansion](expansion.md), [retirement](retirement.md) |
 | Background queues, M11a | Bounded Docker opt-in, disabled by default; native Void import flow, activation controls, retries, duplicate handling and recovery; [acceptance](m11a-acceptance.md) |
 | Live sessions, M11b | Bounded native WebSocket/SSE lifecycle, lost-ack reconciliation, owner/gateway failures, compatible replacement, movement and stopped restore; [acceptance](m11b-acceptance.md). Pinned Void patches and the opt-in celld candidate are required |
-| Scheduled work, M11c | Bounded native profiles, sealed recovery, guarded activation, replacement and failure profiles have evidence; cron admission remains closed. [Contract](m11c.md), [recovery](cron-sealed-recovery.md), [activation](cron-sealed-activation.md), [replacement](cron-sealed-replacement.md), [failures](cron-sealed-failures.md) |
+| Scheduled work, M11c | Qualified opt-in on the frozen local Linux arm64 two-fleet Docker family; default admission stays closed. Scoped upload, exact approval, dispatch controls, failures/retries, replacement, held recovery and retirement: [acceptance](m11c-acceptance.md) |
 | Broader portability, M12 | Offline ordinary Void/fogd builds and bounded logical transfer already exist. General target migration and non-Void Workers import remain open |
 
 ## How the system is arranged
@@ -86,7 +86,7 @@ explicitly in the [artifact adapter](../packages/runtime/src/artifact.mjs).
   in celld's bucket. The supported auth flow does not cover every provider or
   production identity operation. Runtime limits and admission quotas do not provide
   per-request billing or isolation for arbitrary untrusted code.
-- Cron admission, Workflows, general DO alarm lifecycle, AI/dispatch bindings and
+- Cron outside the qualified opt-in family, Workflows, general DO alarm lifecycle, AI/dispatch bindings and
   broader resource APIs remain open. Offline builds do not prove hosted Cloudflare
   behavior or a completed migration path. Filecoin integration remains deferred.
 
@@ -99,93 +99,27 @@ coordinated stopped recovery and explicit opt-ins for capabilities requiring ext
 lifecycle controls. Void's integrated SDK experience remains the first development
 path; compatibility is verified through concrete app and failure scenarios.
 
-M11c keeps native Void/celld scheduling and adds durable dispatch controls instead
-of a fogd scheduler. Its first app-free D1 bootstrap foundation passes tests. The
-[native retry negative control](evidence/m11c-cron-retry-negative.json) confirms a
-runtime defect. A source-pinned candidate preserves the failed expression and
-original occurrence after owner loss in a two-node runtime probe. The
-[watchdog evidence](evidence/m11c-cron-timeout.json) records its terminal callback
-set and actual future dispatch. The [native hold candidate](patches/celld-cron-controls.md)
-passes bootstrap/adoption and restart checks, including a callback that finishes
-while its sibling is suppressed. These are runtime experiments. Native
-[clippy passes](evidence/m11c-cron-rust-checks.json); actual upstream Rust test
-execution and CPU-exhaustion qualification remain open. An internally staged
-[activation coordinator](cron-activation.md) has file-backed interruption tests and
-a native D1/secret bootstrap, lost-resume reload and paused-update profile. The
-[Void refresh fixture](../examples/refresh/README.md) also passes its bounded native
-workerd flow: two jobs share an expression, use separate ledgers when that expression
-retries, retain a visible prior success during failure and deduplicate after a
-simulated lost reply. Offline builds cover ordinary Void and fogd. The
-[operator controls](cron-controls.md) add authenticated recorded status, observe,
-pause and artifact-pinned resume with native lost-reply reconciliation. Selected
-[native controller SIGKILL cuts](cron-activation.md#native-process-interruptions)
-cover publication, resume and durable release, including a paused update and
-explicit artifact-pinned retries. [Stopped recovery](cron-recovery.md) qualifies
-due timers, pending retries and an older snapshot in a same-version local two-fleet
-Docker profile. Its full rerun independently verifies queued input, restored
-approval pins and final source preservation. [Retirement](retirement.md#experimental-scheduled-app-retirement)
-has separate bounded cron/queue and [two-cron](retirement.md#retirement-beside-another-scheduled-app)
-profiles, including a held survivor and source restore of both schedules. Normal
-scoped cron admission and release-bound runtime qualification remain open.
-The [early identity candidate](patches/celld-runtime-identity.md) independently
-reports the actual native executable before first deployment. Its metadata profile
-passes four new Linux Rust tests and a disposable native drill with unchanged
-bucket contents. All 179 embedded source files match the applied patch stack.
-These tests do not execute upstream internal suites, and this new binary does not
-inherit earlier cron lifecycle qualification. The
-[caller policy foundation](cron-runtime-policy.md) verifies a supplied profile
-before bootstrap and every cron command, with native app-free refusal and held-cell
-evidence. The
-[signed release-profile foundation](patches/celld-runtime-binding.md) adds
-storage-origin/region claims and fresh lease-key possession proofs. Its app-free
-qualification includes nine native Rust tests, 498 repository tests and separate
-bootstrap/live-lease command checks. General runtime lifecycle fencing,
-shipped-runtime selection and the remaining scheduled lifecycle qualification on
-this binary remain open.
-The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
-runtime/storage launch policy before experimental restore creates application
-containers. Its app-free native profile checks image/program identity and
-read-only startup. Normal CLI cron restore and retirement refuse all scheduled
-history. The [sealed scheduled recovery profile](cron-sealed-recovery.md) qualifies
-due/retry/older snapshots, explicit acknowledgment/resume and a queued survivor on
-this release binary and layout. Independent acceptance checks verify native
-signatures, the approved artifact and all retained source files. A qualified-runtime
-registry, the remaining release-runtime lifecycle and ordinary admission remain
-open; historical receipts retain their pinned-source scope.
-The [guarded activation profile](cron-sealed-activation.md) adds four actual
-controller SIGKILL cuts with hold-only restart and explicit approval retry. It
-checks durable approval/secret pins, paused updates and retained business results.
-Independent acceptance verifies native signatures, image layers and all three
-retained artifacts. This is direct controller qualification; normal admission and
-the external admin/TLS activation flow remain open.
+M11c uses native Void/celld scheduling with durable dispatch controls. The
+[acceptance audit](m11c-acceptance.md) records all nine gates on the frozen local
+Linux arm64 two-fleet Docker family. Ordinary public CLI selectors support scoped
+HTTPS upload, exact artifact/secret-revision approval, confirmed pause, native
+failure/retry handling, compatible replacement, held stopped recovery and retirement.
+Default installations keep scheduled admission closed. Confirmed pause does not
+drain callbacks already running. Per-worker CPU limits and CPU-exhaustion
+qualification remain open.
 
-The [guarded release replacement profile](cron-sealed-replacement.md) checks
-compatible migration overlap, unfinished work after publication, original-occurrence
-lost-reply retries and offline-built artifacts on the signed runtime's native
-defaults. Its refusal regression preserves the prior approval and journal pause
-after an unreleased publication gate expires.
+The [runtime installation guide](runtime-selection.md) records the cached image,
+source pins and build-provenance limits. [Offline transfer](offline-installation.md)
+provides a matching operator program and images; its evidence uses another project
+on the same classic overlay2 engine. A separate engine or second machine remains
+unqualified. Earlier experiment receipts retain their own source and runtime scope;
+they do not expand the accepted family.
 
-The [guarded failure profile](cron-sealed-failures.md) checks native `noRetry`,
-counted terminal failure, owner loss before a persisted retry and downtime of both replicas in the app slot.
-It measures the advisory waker-role transition and original-occurrence recovery on
-the signed runtime's default election timing. Offline-built minute and sparse
-artifacts pass the same immutable release broker as replacement. Independent
-acceptance checks retained state, image contents, signed process identities and
-autonomous future-wake persistence before the first post-restart replica request.
-Runtime selection, the external admin/TLS flow and
-ordinary scoped admission remain open. Earlier activation, recovery and retirement
-receipts retain the source revisions identified in their guides.
-
-The [guarded release retirement profile](cron-sealed-retirement.md) checks stopped
-retirement, fresh capacity reuse and held restore on the signed runtime. It preserves
-cron and queued survivors, retires a persisted retry, and restores zero-live history
-before stock controller startup. A separate two-cron profile holds both source
-schedules before a shared deadline, retires one app and separately resumes its
-survivor. Independent audits check image contents, signed process identities,
-retained artifacts, controller histories and all retained volumes. Ordinary CLI
-scheduled restore and retirement, including zero-live history, remain refused.
-Runtime selection, the external admin/TLS flow and ordinary scoped admission retain
-their acceptance gates.
+[Operator readiness](operator-readiness.md) now takes priority over another binding:
+private shared storage credentials, installation transfer, application diagnostics,
+deliberate retention and serving/capacity measurements. The owner can
+[inspect recorded application state](application-inspection.md); scoped logs and
+live health/outcome observation remain open.
 
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.

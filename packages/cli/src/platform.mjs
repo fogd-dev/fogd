@@ -1,3 +1,4 @@
+import { adminInspect } from './inspect-command.mjs';
 import { assertSharedStorageConfiguration } from './shared-storage.mjs';
 import { resolvedCompose } from './compose/config.mjs';
 import { checkFleetSelection } from './compose/selection.mjs';
@@ -12,7 +13,7 @@ import { requestedRuntime } from './runtime/catalog.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { join } from 'node:path';
 import { manifest } from '@fogd/runtime/manifest';
-import { buildArtifact, artifactProject, requireDocker, configEnv, configPath, compose, stackRoot } from './local.mjs';
+import { buildArtifact, artifactProject, requireDocker, configEnv, configPath, compose, stackRoot, serverOrigin as origin } from './local.mjs';
 
 export async function up(shared = false, selection = {}) {
   requestedRuntime(selection);
@@ -31,7 +32,6 @@ export async function up(shared = false, selection = {}) {
   if (selected) console.log(`Runtime ${selected.entry.id} (${selected.entry.admission}); installation identity ${runtimePolicyIdentity(selected.policy)}`);
   console.log(`Stack started. Admin: ${origin(env)} (user ${env.FOGD_ADMIN_USER || 'admin'}, password in ${configPath()}).\nRun fogd deploy in a Void app; an admin must approve its digest.`);
 }
-const origin = env => env.FOGD_SERVER || `${env.FOGD_TLS === '1' ? 'https' : 'http'}://127.0.0.1:${env.FOGD_ADMIN_PORT || 8788}`;
 async function api(env, path, options = {}) {
   const response = await fetch(`${origin(env)}${path}`, { ...options, signal: AbortSignal.timeout(900000) });
   const data = await response.json();
@@ -55,6 +55,7 @@ export async function status(id) {
   console.log(JSON.stringify(result, null, 2));
 }
 export async function admin(action, id, digest, secretRevision) {
+  if (action === 'inspect') return adminInspect(id, digest, secretRevision);
   const { env, headers, state } = await adminSession();
   if (action === 'capacity') {
     showCapacity(state, [id, digest, secretRevision]); return;

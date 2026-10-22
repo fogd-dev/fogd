@@ -54,8 +54,9 @@ an offline Cloudflare-target build/configuration without changing supported app
 logic. Identify unsupported assumptions and label hosted execution unverified.
 The current prohibition on Cloudflare credentials/API calls remains in force.
 
-Today: sample apps and local failure checks provide a starting point. A guided
-curriculum, logical data migration, and managed-target handoff are not implemented.
+Today: sample apps and local failure checks provide a starting point. M7b covers
+a bounded logical message/attachment transfer. A guided curriculum, general data
+migration, and managed-target handoff remain open.
 
 ### U1: A teammate launches a useful team application
 
@@ -72,8 +73,10 @@ rejected artifact executes; approved pages, assets, login/session flows, records
 and attachments work from another machine. The app's authentication provider and
 credential policy must be chosen before declaring this scenario supported.
 
-Today: the API/D1/R2/DO path works in samples. A complete browser/login application,
-remote access, asset behavior, and independent teammate onboarding remain unqualified.
+Today: the guestbook covers browser forms, assets, D1/R2/DO and updates; the
+accounts fixture covers a bounded native password flow. An actual team pilot,
+remote access and independent teammate onboarding remain unqualified. See the
+[implemented capability report](report.md).
 
 ### U2: An approver can understand and control a release
 
@@ -87,8 +90,9 @@ result without administrator credentials; the audit record ties actor, artifact,
 decision, and outcome together. A concurrent or stale approval cannot silently
 replace a newer release. Credentials never appear in downloadable artifacts/logs.
 
-Today: a shared team token and admin Basic auth enforce an initial separation;
-per-person identity, scoped status access, and a durable actor audit are future work.
+Today: [scoped deploy credentials and app-scoped status](deploy-access.md) separate
+submission from admin Basic-auth approval. Per-person identity and a durable actor
+audit remain future work.
 
 ### U3: An existing application gains a new capability
 
@@ -103,8 +107,8 @@ transition from an app without storage to one with storage, retaining old record
 
 Today: M7b qualifies adding R2 attachments to the deployed guestbook while
 retaining D1 records. Existing resource identities remain fixed; approved additions
-stay reserved after failures. D1/DO additions, renames, deletions, and retirement
-remain unsupported. See the [growth and transfer guide](../examples/guestbook/TRANSFER.md).
+stay reserved after failures. D1/DO additions, renames and resource deletions remain
+unsupported. [App retirement](retirement.md) has a separate stopped recovery path. See the [growth and transfer guide](../examples/guestbook/TRANSFER.md).
 
 ### U4: A failed update can be diagnosed and recovered
 
@@ -117,8 +121,9 @@ cannot forget applied SQL or replay ambiguous writes; code rollback is permitted
 only when its resource/schema contract is compatible. Schema rollback is a separate,
 explicit data operation. Inject a process crash at each externally visible stage.
 
-Today: SQL failure, explicit retry/correction, version adoption, and interrupted
-activation have coverage. Rollback tooling and incident-oriented diagnostics do not.
+Today: SQL failure, explicit retry/correction, version adoption and interrupted
+activation have coverage. Owners can [inspect recorded release/control state](application-inspection.md).
+Rollback tooling, scoped logs and live health/outcome observation remain open.
 
 ### U5: An operator deploys on team Kubernetes or a homelab
 
@@ -169,8 +174,8 @@ alone is not a background-event deployment gate.
 
 Today: bounded Docker queue applications have a [supported opt-in](queue-admission.md),
 including activation, duplicate handling, operator recovery, stopped restore and
-retirement evidence. Workflows remain unsupported; scheduled effects need their
-own lifecycle contract.
+retirement evidence. Scheduled work has a separate [qualified opt-in lifecycle](m11c-acceptance.md)
+on the frozen local two-fleet family. Workflows remain unsupported.
 
 ### U8: Colleagues collaborate on live application state
 
@@ -197,11 +202,13 @@ credentials and resources are scoped to the intended app; retention/export/delet
 are explicit; slot reuse cannot inherit another app's data or authority. An approved
 resource-intensive app cannot silently exhaust unrelated app capacity.
 
-Today: two permanent slots, scoped deploy credentials, admission limits, and an
+Today: the default has two slots; [Docker expansion](expansion.md) qualifies three
+fleets through stopped recovery. Scoped deploy credentials, admission limits and an
 admin capacity report exist. Retained artifact quotas include historical releases.
-Docker retirement releases a fleet through a stopped snapshot and fresh installation,
-with a permanently retired app name and retained old data. Automated placement,
-scoped runtime storage credentials, capacity expansion, and measured density remain open.
+[Retirement](retirement.md) releases a fleet through a stopped snapshot and fresh
+installation, retaining old data and permanently retiring the name. Bounded
+[read measurements](capacity-measurement.md) exist; automated placement, scoped
+runtime storage credentials and maximum app density remain open.
 
 ### U10: A developer brings an existing Workers application
 

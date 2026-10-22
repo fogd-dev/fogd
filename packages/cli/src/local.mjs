@@ -20,6 +20,7 @@ export async function configEnv() {
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   return { ...local, ...process.env };
 }
+export const serverOrigin = env => env.FOGD_SERVER || `${env.FOGD_TLS === '1' ? 'https' : 'http'}://127.0.0.1:${env.FOGD_ADMIN_PORT || 8788}`;
 export function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     let output = '';

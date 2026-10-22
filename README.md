@@ -1,6 +1,7 @@
 # fogd
 
-Run Void apps on hardware you own. workerd routes requests; celld runs each app
+**Cloudflare you can control and touch.** Run Void apps on hardware you own.
+workerd routes requests; celld runs each app
 with D1, R2, and Durable Objects; MinIO stores fleet state. Teammates submit builds
 with `fogd deploy`, and an admin approves the exact artifact before it runs.
 
@@ -9,6 +10,9 @@ installation, with two celld replicas each. It is
 for trusted, reviewed application code. Compare fogd, celld, workerd, Void, and hosted
 Cloudflare in the [feature table](docs/features.md). Read [the report](docs/report.md) for tested
 behavior, limitations, and the decisions behind it.
+
+Owners can [inspect an application's recorded release and control state](docs/application-inspection.md)
+with `fogd admin inspect APP`. Live health and scoped application logs remain open.
 
 Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
 [roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).
@@ -396,4 +400,5 @@ due/retry/older recovery, surviving apps, fresh capacity after retirement, and t
 ordinary public CLI selectors. It does not qualify other architectures, three-fleet
 or Kubernetes scheduled recovery, Workflows, general Durable Object alarms, or
 per-worker CPU limits. Cached runtime availability and build-provenance limits are
-explicit in the installation guide.
+explicit in the installation guide. Transfer has same-engine evidence only; a
+second-machine installation remains unqualified.

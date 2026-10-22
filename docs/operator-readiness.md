@@ -2,7 +2,9 @@
 
 Status: shared storage credential admission and offline transfer commands are
 implemented. Transfer has same-engine evidence; second-machine and other image-store
-acceptance remain open. The remaining increments are proposed. This advances G2 and G3 in the
+acceptance remain open. Owner inspection implements part of application diagnosis;
+scoped logs and live observation remain open. Retention and serving measurements
+remain proposed. This advances G2 and G3 in the
 [vision](vision.md): **Cloudflare you can control and touch.** It does not add
 another application binding. The [roadmap](roadmap.md) places this work before
 further binding milestones.
@@ -90,6 +92,13 @@ architecture; each case refuses without starting services. Compare source resour
 before and after transfer. Image identity must equal the qualified catalog pins.
 
 ### 3. Diagnose an application
+
+The owner can use [`fogd admin inspect APP`](application-inspection.md) to connect
+recorded routing, release history, activation progress, ownership/migration
+references, and background controls. This read-only view withholds private errors
+and never infers live runtime health or application outcomes. Submitter diagnostics,
+queue status labels in the frozen runtime, and a scoped logging interface remain
+open; this command implements part of this increment.
 
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown
