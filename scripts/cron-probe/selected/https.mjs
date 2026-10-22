@@ -34,7 +34,7 @@ async function transport(host, authorization) {
 export async function waitFor(label, observe, timeout = 120000) {
   const deadline = Date.now() + timeout; let last;
   while (Date.now() < deadline) {
-    try { const result = await observe(); if (result) return result; } catch (error) { if (error.code === 'FOGD_QUIET_WINDOW') throw error; last = error; }
+    try { const result = await observe(); if (result) return result; } catch (error) { if (['FOGD_QUIET_WINDOW', 'FOGD_SELECTION_EXPIRED'].includes(error.code)) throw error; last = error; }
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
   throw new Error(`Observation did not complete: ${label}`, { cause: last });

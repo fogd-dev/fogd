@@ -137,8 +137,10 @@ input and older snapshots. It checks cold native holds, acknowledged holds,
 separate resume, loss boundaries and full old occurrence rows after future success. The
 [selected retirement receipt](evidence/m11c-selected-runtime-retirement.json)
 covers zero-live backup/restore, unchanged retained-prefix contents and a scoped
-replacement using the fresh slot. Active cron/queue survivor and pending-retry
-retirement remain unqualified on this image.
+replacement using the fresh slot. The [selected sequential retirement
+profile](cron-selected-retirement.md) adds active cron/queue survivors, a persisted
+retry, fresh scheduled capacity and zero-live history. Selected retirement beside another live cron and the
+complete acceptance audit remain open.
 
 Full frozen-runtime acceptance and promotion to a qualified catalog entry remain
 [M11c gates](m11c.md). Expansion and other topologies remain refused for scheduled

@@ -18,8 +18,8 @@ export async function nativeObservation(host, slotId, deployment, { captureProof
   return nativeProgram(host, slotId, 'native-observer.mjs', { deployment, captureProofs, persistedRecords });
 }
 
-export async function setFaultPolicy(host, slotId, deployment, policy, phase) {
-  return nativeProgram(host, slotId, 'native-policy.mjs', { deployment, policy, phase });
+export async function setFaultPolicy(host, slotId, deployment, policy, phase, app = 'refresh') {
+  return nativeProgram(host, slotId, 'native-policy.mjs', { deployment, policy, phase, app });
 }
 
 export async function setFailurePolicy(host, active, phase) {

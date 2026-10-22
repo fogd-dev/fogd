@@ -50,8 +50,10 @@ try {
   assert.deepEqual(JSON.parse(Buffer.from(pendingInput.imports.queuePeek.messages[0].bodyBase64, 'base64').toString('utf8')), { id: 'pending-b' });
   await setFaultPolicy(targetA, fixture.approvals.refresh.slot, fixture.approvals.refresh.id, 'terminal', 'retry-b');
   const retryResume = await resumeCron(targetA, fixture.approvals.refresh); phase = 'pending-native-retry';
-  const retry = await pendingRetry(targetA, fixture.approvals.refresh);
-  assert.ok(retry.scheduledTime > retryResume.requestedAt); evidence.pendingRetry = { ...retry, resumed: retryResume, pendingInput };
+  const retry = await pendingRetry(targetA, fixture.approvals.refresh, retryResume.requestedAt);
+  assert.ok(retry.scheduledTime > retryResume.requestedAt);
+  assert.ok(rows(retry.observed, 'cron_fault_attempts').filter(row => row.phase === 'retry-b').every(row => row.scheduled_time >= retryResume.requestedAt));
+  evidence.pendingRetry = { ...retry, resumed: retryResume, pendingInput };
   phase = 'snapshot-b'; const b = await normalSnapshot(targetA, fixture, join(source.output, 'snapshot-b'), retry.wake.due_ms, installations);
   assertRetainedInput(b, pendingInput.imports);
   evidence.snapshotB = b; await save('snapshot-b-evidence.json', b);

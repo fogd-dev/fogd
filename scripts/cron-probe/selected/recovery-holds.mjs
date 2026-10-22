@@ -7,6 +7,7 @@ import { recoveryFence, neverStartedIngress, nativeProcesses } from './recovery-
 import { httpsClient, waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
 import { heldDataInterval } from './recovery-interval.mjs';
+import { backgroundSurfaces, assertBackgroundHeld, backgroundRoute } from './recovery-held-state.mjs';
 
 export async function coldRecovery(target, point, installations) {
   const fence = await recoveryFence(target, installations);
@@ -17,9 +18,9 @@ export async function coldRecovery(target, point, installations) {
   await target.compose(['up', '-d', '--no-deps', '--no-build', '--pull', 'never', 'minio', 'bucket-init', ...nodes]);
   const before = await waitFor('cold native state matches the stopped snapshot', async () => recoveredData(target, point.approvals));
   assert.deepEqual(applicationData(before), point.before); assertHeld(before, point);
-  const processes = await nativeProcesses(target), startedAt = await vmTime(target);
+  const processes = await waitFor('restored native processes', () => nativeProcesses(target)), startedAt = await vmTime(target);
   target.nativeBaseline = processes;
-  await heldUntil(target, point, Math.max(startedAt + 62000, point.prepared.beforePause.nextAlarm + 2000), true);
+  await heldUntil(target, point, Math.max(startedAt + 62000, ...Object.values(point.manifest.cronRecovery?.apps || {}).map(value => (value.beforePause.nextAlarm || 0) + 2000)), true);
   const after = await recoveredData(target, point.approvals); assert.deepEqual(applicationData(after), point.before); assertHeld(after, point);
   assert.deepEqual(await nativeProcesses(target), processes);
   return { fence, artifacts, beforeIngress, afterIngress: await neverStartedIngress(target), before, after, processes, startedAt, endedAt: await vmTime(target) };
@@ -32,11 +33,11 @@ export async function acknowledgeRecovery(target, point, installations, request)
   assert.deepEqual(await nativeProcesses(target), target.nativeBaseline);
   await waitFor('restored admin', async () => (await request('/v1/admin')).status === 200);
   const pending = {}, acknowledged = {}, attempts = {};
-  for (const app of ['refresh', 'imports']) {
-    const surface = app === 'refresh' ? 'dispatch' : 'delivery', active = point.approvals[app];
+  for (const [app, surface] of Object.entries(backgroundSurfaces(point))) {
+    const active = point.approvals[app];
     pending[app] = await target.json(['admin', surface, app, 'status']);
     assertPendingRecovery(pending[app], active);
-    const route = await request(app === 'refresh' ? '/api/refresh' : '/api/imports', { app }); assert.equal(route.status, 503);
+    const route = await request(backgroundRoute(surface), { app }); assert.equal(route.status, 503);
     await expectRefusal(target, ['admin', surface, app, 'resume', active.id, active.digest], /Resume requires a completed activation/);
     const result = await acknowledgeApp(target, app, surface, active); acknowledged[app] = result.acknowledged; attempts[app] = result.attempts;
     assert.equal(acknowledged[app].desired, 'paused'); assert.equal(acknowledged[app].observed, 'paused'); assert.equal(acknowledged[app].recovery.status, 'acknowledged');
@@ -47,11 +48,10 @@ export async function acknowledgeRecovery(target, point, installations, request)
     assert.equal(recovered.id, active.id); assert.equal(recovered.digest, active.digest); assert.equal(recovered.secretRevision, active.secretRevision);
   }
   const before = await recoveredData(target, point.approvals); assert.deepEqual(applicationData(before), point.before); assertHeld(before, point);
-  for (const app of ['refresh', 'imports']) assert.equal((await request(app === 'refresh' ? '/api/refresh' : '/api/imports', { app })).status, 200);
+  for (const [app, surface] of Object.entries(backgroundSurfaces(point))) assert.equal((await request(backgroundRoute(surface), { app })).status, 200);
   const startedAt = await vmTime(target); await heldUntil(target, point, startedAt + 62000, false);
   const after = await recoveredData(target, point.approvals); assert.deepEqual(applicationData(after), point.before); assertHeld(after, point);
-  assert.deepEqual(acknowledged.refresh.recovery.observation, after.refresh.status);
-  assert.deepEqual(acknowledged.imports.recovery.observation, after.imports.status);
+  for (const app of Object.keys(point.approvals)) assert.deepEqual(acknowledged[app].recovery.observation, after[app].status);
   assert.deepEqual(await nativeProcesses(target), target.nativeBaseline);
   return { fence, pending, acknowledged, attempts, before, after, startedAt, endedAt: await vmTime(target) };
 }
@@ -59,15 +59,11 @@ export async function acknowledgeRecovery(target, point, installations, request)
 async function heldUntil(target, point, until, cold) {
   return heldDataInterval(target, { approvals: point.approvals, before: point.before, until,
     beforeRead: cold ? () => neverStartedIngress(target) : undefined,
-    verify: async observed => { assertHeld(observed, point); if (!cold) await guardedHeld(target, observed); },
+    verify: async observed => { assertHeld(observed, point); if (!cold) await guardedHeld(target, observed, point); },
   });
 }
 function assertHeld(observed, point) {
-  assert.equal(observed.refresh.status.paused, true); assert.equal(observed.refresh.status.nextAlarm, null);
-  assert.equal(observed.refresh.status.revision, point.prepared.observation.revision); assert.deepEqual(observed.refresh.cronRecords.wakes, []);
-  assert.equal(observed.imports.status.paused, true);
-  assert.equal(observed.imports.status.backlogCount, point.manifest.queueRecovery.apps.imports.observation.backlogCount);
-  assert.deepEqual(observed.imports.queuePeek.messages, point.queueMessages);
+  assertBackgroundHeld(observed, point, backgroundSurfaces(point));
 }
 export function assertPendingRecovery(status, active) {
   assert.equal(status.recovery.status, 'pending'); assert.equal(status.resumeAllowed, false); assert.equal(status.observed, 'paused');
@@ -92,8 +88,8 @@ export async function acknowledgeApp(target, app, surface, active) {
   }
 }
 
-async function guardedHeld(target, observed) {
-  for (const [app, surface] of [['refresh', 'dispatch'], ['imports', 'delivery']]) {
+async function guardedHeld(target, observed, point) {
+  for (const [app, surface] of Object.entries(backgroundSurfaces(point))) {
     const guarded = await target.json(['admin', surface, app, 'status']);
     assert.equal(guarded.desired, 'paused'); assert.equal(guarded.observed, 'paused');
     assert.deepEqual(guarded.recovery.observation, observed[app].status);

@@ -12,11 +12,13 @@ import { controllerFiles } from '../retirement/preservation.mjs';
 import { verifiedObservationKeys } from './failure-authority.mjs';
 import { assertUnassignedNamespace } from './retirement-policy.mjs';
 import { verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
+import { assertArchivedPrefix } from './retirement-bucket.mjs';
+import { backgroundSurfaces, assertBackgroundHeld, backgroundRoute } from './recovery-held-state.mjs';
 
 export async function heldRetirement(target, point, installations) {
   const approvals = Object.fromEntries(Object.entries(point.approvals).filter(([name]) => name !== target.retiredApp));
   const before = Object.fromEntries(Object.entries(point.before).filter(([name]) => name !== target.retiredApp));
-  const surfaces = Object.fromEntries(Object.keys(approvals).map(name => [name, point.manifest.cronRecovery?.apps[name] ? 'dispatch' : 'delivery']));
+  const surfaces = backgroundSurfaces(point, approvals);
   const evidence = { fence: await recoveryFence(target, installations), approvals, surfaces };
   await stopped(target.project, Object.values(target.config.volumes).map(volume => volume.name));
   evidence.beforeIngress = await neverStartedIngress(target); evidence.artifacts = await approvedArtifacts(target, point.approvals);
@@ -24,6 +26,8 @@ export async function heldRetirement(target, point, installations) {
   await target.compose(['up', '-d', '--no-deps', '--no-build', '--pull', 'never', 'minio', 'bucket-init']);
   const restoredState = await controllerState(target);
   assertRetirements(restoredState);
+  evidence.sourceArchivePrefixes = {};
+  for (const app of Object.values(restoredState.apps)) if (app.retirement) evidence.sourceArchivePrefixes[app.retirement.app] = await assertArchivedPrefix(target, point, app.retirement.previous.prefix);
   const freshFleet = target.policy.fleets.find(fleet => fleet.id === target.retirement.previous.slot); assert.ok(freshFleet);
   evidence.unassignedBefore = await prefixFingerprints(target.compose, freshFleet.prefix, false); assert.deepEqual(evidence.unassignedBefore, []);
   evidence.retainedBefore = await waitFor('retained namespace bytes before native startup', () => retained(false));
@@ -47,7 +51,7 @@ export async function heldRetirement(target, point, installations) {
   for (const [name, active] of Object.entries(approvals)) {
     const surface = surfaces[name], pending = await target.json(['admin', surface, name, 'status']);
     assertPendingRecovery(pending, active); evidence.pending[name] = pending;
-    const path = surface === 'dispatch' ? '/api/refresh' : '/api/imports';
+    const path = backgroundRoute(surface);
     evidence.pendingRoutes[name] = (await request(path, { app: name })).status; assert.equal(evidence.pendingRoutes[name], 503);
     await expectRefusal(target, ['admin', surface, name, 'resume', active.id, active.digest], /Resume requires a completed activation/);
     evidence.acknowledged[name] = await acknowledgeApp(target, name, surface, active);
@@ -86,7 +90,7 @@ export async function heldRetirement(target, point, installations) {
   }
 
   async function fleetIdentity(fleet) {
-    const observed = await nativeObservation(target, fleet.id, undefined, { captureProofs: true });
+    const observed = await waitFor('retirement fleet identity', () => nativeObservation(target, fleet.id, undefined, { captureProofs: true }));
     if (fleet.id === target.retirement.previous.slot) { assert.equal(observed.count, 0); assert.equal(observed.truncated, false); assert.deepEqual(observed.keys, []); }
     return observed;
   }
@@ -106,14 +110,6 @@ export async function heldRetirement(target, point, installations) {
   }
 
   function verifyHeld(observed) {
-    for (const [name, surface] of Object.entries(surfaces)) {
-      assert.equal(observed[name].status.paused, true);
-      if (surface === 'dispatch') {
-        assert.equal(observed[name].status.nextAlarm, null); assert.equal(observed[name].status.revision, point.manifest.cronRecovery.apps[name].observation.revision);
-      } else {
-        assert.equal(observed[name].status.backlogCount, point.manifest.queueRecovery.apps[name].observation.backlogCount);
-        assert.deepEqual(observed[name].queuePeek.messages, point.sourceObservation[name].queuePeek.messages);
-      }
-    }
+    assertBackgroundHeld(observed, point, surfaces);
   }
 }

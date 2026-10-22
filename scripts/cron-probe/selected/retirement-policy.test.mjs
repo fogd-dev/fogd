@@ -48,6 +48,11 @@ test('retirement expectation refuses an earlier retirement generation', () => {
   const history = { original: { id: '11111111-1111-4111-8111-111111111111', previous: { prefix: 'original-prefix', nodes: ['original-node'] }, replacement: { prefix: 'retirement-generations/11111111-1111-4111-8111-111111111111', nodes: ['earlier-node'] } } };
   assert.throws(() => expectedRetirementPolicy(source, networks, active, plan, history), { code: 'ERR_ASSERTION' });
 });
+test('retirement expectation refuses a nested prefix from earlier retained history', () => {
+  const { source, networks, active, plan } = fixture();
+  const history = { original: { id: '22222222-2222-4222-8222-222222222222', previous: { prefix: 'retirement-generations/11111111-1111-4111-8111-111111111111/retained', nodes: ['original-node'] }, replacement: { prefix: 'earlier-replacement', nodes: ['earlier-node'] } } };
+  assert.throws(() => expectedRetirementPolicy(source, networks, active, plan, history), { code: 'ERR_ASSERTION' });
+});
 test('retirement expectation refuses a node identity from retained history', () => {
   const { source, networks, active, plan } = fixture();
   const history = { original: { id: '22222222-2222-4222-8222-222222222222', previous: { prefix: 'original-prefix', nodes: ['slot-1-a-11111111-1111-4111-8111-111111111111'] }, replacement: { prefix: 'earlier-replacement', nodes: ['earlier-node'] } } };

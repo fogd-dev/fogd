@@ -42,7 +42,7 @@ export async function scanPublicSurfaces(host, request, submissions, token, appS
 
 export async function scanOutputFiles(installations, fixture, receipt, rawSurfaces = []) {
   const host = installations[0], settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
-  const secrets = [fixture.secret, ...Object.values(fixture.tokens), settings.FOGD_ADMIN_PASSWORD, settings.FOGD_GATEWAY_TOKEN,
+  const secrets = [fixture.secret, ...(fixture.secrets || []), ...Object.values(fixture.tokens), settings.FOGD_ADMIN_PASSWORD, settings.FOGD_GATEWAY_TOKEN,
     ...installations.flatMap(value => { const env = value.config.services.controller.environment; return [env.AWS_ACCESS_KEY_ID, env.AWS_SECRET_ACCESS_KEY]; })];
   const surfaces = [JSON.stringify(receipt), ...rawSurfaces], files = [];
   for (const installation of installations) {

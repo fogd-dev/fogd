@@ -68,6 +68,8 @@ export async function loadRecoveryTarget(source, target, destination, expectedPo
   assert.deepEqual(relation.volumes, Object.keys(source.config.volumes).sort().map(name => source.config.volumes[name].name));
   for (const name of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[name].name, source.config.volumes[name].name);
   Object.assign(target, await createdRuntime(target, snapshotImages));
+  // Later backups must use the restored namespace and node bindings, not the source template.
+  target.env.FOGD_COMPOSE_FILE = join(canonical, 'compose.json');
   target.compose = args => target.run('docker', [...composeArgs(join(canonical, 'compose.json'), project), ...args]);
 }
 

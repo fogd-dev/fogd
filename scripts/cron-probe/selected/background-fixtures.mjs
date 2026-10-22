@@ -25,10 +25,10 @@ export async function privateFaultProject(host, name, cron = '* * * * *') {
   return project;
 }
 export async function approveRefresh(host, submitted, secret) {
-  assert.equal(submitted.app, 'refresh'); assert.equal(submitted.status, 'pending');
-  const revision = (await host.json(['admin', 'secrets', 'refresh'], { inputText: JSON.stringify({ REFRESH_TOKEN: secret }) })).revision;
+  assert.ok(['refresh', 'scheduled-next'].includes(submitted.app)); assert.equal(submitted.status, 'pending');
+  const revision = (await host.json(['admin', 'secrets', submitted.app], { inputText: JSON.stringify({ REFRESH_TOKEN: secret }) })).revision;
   await host.command(['admin', 'approve', submitted.id, submitted.digest, revision]);
-  const paused = await host.json(['admin', 'dispatch', 'refresh', 'pause']); assert.equal(paused.observed, 'paused');
+  const paused = await host.json(['admin', 'dispatch', submitted.app, 'pause']); assert.equal(paused.observed, 'paused');
   const initialPauseAt = Date.parse(paused.observedAt); assert.ok(Number.isSafeInteger(initialPauseAt));
   return { ...await approved(host, submitted), initialPauseAt };
 }
