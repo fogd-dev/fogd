@@ -1,7 +1,8 @@
 # Operator readiness: run the cloud you own
 
-Status: shared storage credential admission is implemented; the remaining increments
-are proposed. This advances G2 and G3 in the
+Status: shared storage credential admission and offline transfer commands are
+implemented. Transfer has same-engine evidence; second-machine and other image-store
+acceptance remain open. The remaining increments are proposed. This advances G2 and G3 in the
 [vision](vision.md): **Cloudflare you can control and touch.** It does not add
 another application binding. The [roadmap](roadmap.md) places this work before
 further binding milestones.
@@ -59,6 +60,13 @@ preserved across repeated bootstrap calls. Document the migration limitation bef
 changing this behavior.
 
 ### 2. Install on another supported machine
+
+The [offline transfer guide](offline-installation.md) documents the implemented
+export, authenticated bootstrap, verification, and import commands. The
+[local transfer evidence](evidence/operator-transfer-local.json) covers a transferred
+CLI outside the checkout, fresh private-credential enrollment, scoped app deployment,
+and saved data after a full installation stop/start on the same classic `overlay2`
+engine. This does not complete the separate-machine acceptance condition below.
 
 Provide an operator path for transferring the qualified runtime and storage images,
 matching CLI source, runtime catalog, and required configuration instructions to a

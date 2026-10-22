@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { execute } from '../../recovery/execute.mjs';
+import { imageArchiveReader, parseImageMetadata as parse } from '../../recovery/image-metadata.mjs';
 
 const sha = input => createHash('sha256').update(input).digest('hex');
 const canonical = tag => !tag.includes('/') ? `docker.io/library/${tag}` : /[.:]|^localhost$/.test(tag.split('/')[0]) ? tag : `docker.io/${tag}`;
-function parse(input) { try { return JSON.parse(input); } catch { throw new Error('Unreadable image archive metadata'); } }
 export function imageTags(manifest, expected) {
   if (Object.keys(expected).some(tag => !/^[a-zA-Z0-9][a-zA-Z0-9._/:@-]*$/.test(tag))) throw new Error('Invalid snapshot image reference');
   const tags = {};
@@ -20,7 +20,7 @@ export function imageTags(manifest, expected) {
   return tags;
 }
 export async function verifyImageArchive(archive, expected) {
-  const read = path => execute('tar', ['-xOf', archive, path]);
+  const read = imageArchiveReader(archive);
   const tags = imageTags(parse(await read('manifest.json')), expected);
   for (const [tag, path] of Object.entries(tags)) if (`sha256:${sha(await read(path))}` !== expected[tag]) throw new Error('Image configuration bytes differ from their recorded identity');
   const names = (await execute('tar', ['-tf', archive])).trim().split('\n');

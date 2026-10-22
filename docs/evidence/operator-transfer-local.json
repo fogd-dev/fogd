@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "scope": "Same-engine transfer of the qualified operator software on Linux arm64 Docker with classic overlay2. Second-machine and other image-store acceptance remain open.",
+  "family": "celld-cron-v2-linux-arm64",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "software": {
+    "format": "fogd-runtime-transfer-v1",
+    "manifestSha256": "342dc0e5755501854386398ce70d22f7a83094ad2d86507e5c93810d28a215e4",
+    "bootstrapSha256": "f113e90aed7d9a19d3bf81bd2090f820bcf08725d39fc857cbc261ff5d7d65ef",
+    "manifestFiles": 223,
+    "operatorProgramFiles": 221,
+    "imageProgramSourcePins": 63,
+    "independentlyHashedFiles": 223
+  },
+  "import": {
+    "exitCode": 0,
+    "bootstrapAuthenticatedByHostTool": true,
+    "outsideCheckout": true,
+    "dockerCommandCount": 7,
+    "resourceInventoryUnchanged": true,
+    "store": "classic overlay2"
+  },
+  "application": {
+    "exitCode": 0,
+    "durationMs": 85962,
+    "fixture": "examples/guestbook",
+    "copiedSourceFiles": 27,
+    "sourceInventorySha256": "b8c49cf829af641da864a0581595983a1cde922a053ab486da8c7841f8fad8d8",
+    "artifactDigest": "90d4434934823dd21b4f2acab8b0d132d6ae4dfd15055efefee0ac65ed695e17",
+    "pendingBeforeExactApproval": true,
+    "freshNativeIdentity": true,
+    "savedRowsBeforeFullStop": 1,
+    "savedRowsAfterFullStopStart": 1,
+    "savedRowsIdentical": true,
+    "browserFormAndReloadChecked": true,
+    "privateSurfaces": {
+      "adminJSON": true,
+      "adminHTML": true,
+      "scopedStatuses": 1,
+      "decodedArtifacts": 1,
+      "privateDiagnosticsChecked": 10,
+      "completeReceiptChecked": true
+    }
+  },
+  "cleanup": {
+    "ownedContainersAndNetworksAbsent": true,
+    "retainedVolumes": 8,
+    "unrelatedResourceInventoryUnchanged": true,
+    "existingBaselineHealth": {
+      "ok": true
+    }
+  },
+  "validation": {
+    "check": {
+      "exitCode": 0,
+      "logSha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412"
+    },
+    "tests": {
+      "exitCode": 0,
+      "logSha256": "5219bed3d222fbafa2b33c656af81419f07c2b1981abffbfc9208c84941c2a85",
+      "tests": 1080,
+      "pass": 1080,
+      "fail": 0,
+      "skipped": 0
+    },
+    "quality": {
+      "exitCode": 0,
+      "logSha256": "7c5761736054253f6259f16a22a8d30eb11d885ebfb155401b67f6b11882f6ff"
+    }
+  },
+  "provenance": {
+    "baseHead": "f5972886575ff0263c18277629ad0634c3b1f200",
+    "worktreeSourcesRecorded": 654,
+    "allRecordedSourcesMatchIntroducingCommitRequired": true,
+    "builderDependencyBoundary": "Prepared guestbook builder reused cached Void/Vite dependencies. Their bytes were not exhaustively inventoried. The operator bundle vendors only its declared pure-JavaScript ignore dependency and no app artifacts.",
+    "privateWorkflowSha256": "7b2ee6c032013a12b0577dd23541a3e093ed13985efb13546bc3408dc41b0a55",
+    "importExecutionSha256": "0e88b7197fedc71c17fc40b9bcd29898f17c8324075e903b6464e1ca2b28f1f4",
+    "importRunnerSha256": "efba610014e7acc7ee0acc2598b15bc1c20436e5550da07df210c9dbbb56eb9f",
+    "applicationRunnerSha256": "11080869ef5bf94618d29f3b931fd943e105846350066c5ab8b3e79790e548d2",
+    "auditorAndWriterSha256": "e68a81a9dab7a9c8439a0a3d8d4e3090d0ff179767345a84d7d93981aad58bc1"
+  },
+  "notQualified": [
+    "Separate Docker engine or remote machine",
+    "Isolated empty image store",
+    "Containerd image store and other storage modes",
+    "Another architecture",
+    "Dependency installation, native rebuild or registry publication",
+    "Transfer of application state or credential migration"
+  ]
+}

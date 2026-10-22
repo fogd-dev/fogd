@@ -65,6 +65,11 @@ For low-level experiments without the approval controller, `compose.local.yaml`
 preserves the original single-app topology. Use a separate Compose project and
 port; it is an operator-only diagnostic path. The default stack always uses approval.
 
+To transfer the qualified runtime and matching operator CLI without a registry,
+follow the [offline installation guide](docs/offline-installation.md). The commands
+preserve fresh installation identity and use the cached image pins; second-machine
+acceptance remains open.
+
 ## Milestone 3: storage, Durable Objects, migrations, recovery
 
 Deploy the second example and approve its digest in the admin page:

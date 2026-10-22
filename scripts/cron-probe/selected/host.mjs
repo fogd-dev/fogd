@@ -12,20 +12,21 @@ import { privateNetworks, loopbackPort } from './resources.mjs';
 import { commandRunner, commandJson } from './commands.mjs';
 import { expectRefusal } from './evidence.mjs';
 
-const repo = fileURLToPath(new URL('../../../', import.meta.url)), cli = join(repo, 'packages/cli/bin/fogd.js');
+const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const enrollmentMethods = {
   candidate: { intent: 'enrolled', run: enrollCandidate, start: host => ['up', '--installation', host.project] },
   public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id] },
 };
 
-export async function selectedHost(directory, enrollment = 'candidate') {
+export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo) {
+  const cli = join(programRoot, 'packages/cli/bin/fogd.js');
   const method = enrollmentMethods[enrollment]; if (!method) throw new Error('Unknown qualification enrollment method');
   const output = resolve(directory); await mkdir(output, { mode: 0o700 });
   await mkdir(join(output, 'host'), { mode: 0o700 });
   const entry = runtimeFamily('celld-cron-v2-linux-arm64', method.intent); await verifyRuntimeFamily(entry);
   const project = `fogd-selected-activation-${randomBytes(8).toString('hex')}`, adminPort = await loopbackPort(), gatewayPort = await loopbackPort();
   assert.notEqual(adminPort, gatewayPort);
-  const env = selectedEnvironment(output, project, adminPort, gatewayPort), run = commandRunner(output, env);
+  const env = selectedEnvironment(output, project, adminPort, gatewayPort, programRoot), run = commandRunner(output, env);
   await writeFile(env.FOGD_ENV_FILE, `FOGD_BUCKET_USER=${env.FOGD_BUCKET_USER}\nFOGD_BUCKET_PASSWORD=${env.FOGD_BUCKET_PASSWORD}\n`, { mode: 0o600, flag: 'wx' });
   const networks = await privateNetworks();
   await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
@@ -57,7 +58,7 @@ async function enrollCandidate(host, networks) {
 
 async function enrollPublic(host, networks) {
   assert.equal(host.entry.admission, 'qualified');
-  const template = await readFile(join(repo, 'compose.yaml'), 'utf8'), marker = 'networks:\n  control:\n  fleet-1:\n  fleet-2:\n';
+  const template = await readFile(host.env.FOGD_COMPOSE_FILE, 'utf8'), marker = 'networks:\n  control:\n  fleet-1:\n  fleet-2:\n';
   assert.equal(template.split(marker).length, 2);
   const placement = 'networks:\n' + Object.entries(networks).map(([name, subnet]) => `  ${name}:\n    ipam:\n      config:\n        - subnet: ${subnet}\n`).join('');
   const file = join(host.output, 'public-compose.yaml'); await writeFile(file, template.replace(marker, placement), { mode: 0o600, flag: 'wx' });
@@ -73,7 +74,7 @@ async function enrollPublic(host, networks) {
   });
 }
 
-function selectedEnvironment(output, project, adminPort, gatewayPort) {
+function selectedEnvironment(output, project, adminPort, gatewayPort, programRoot) {
   const env = { ...process.env, FOGD_HOME: join(output, 'host'), FOGD_ENV_FILE: join(output, 'operator.env'), COMPOSE_PROJECT_NAME: project,
     FOGD_PROFILE: 'shared', FOGD_TLS: '1', FOGD_DEPLOY_TOKEN: '', FOGD_BIND_ADDRESS: '127.0.0.1', FOGD_ADMIN_PORT: String(adminPort),
     FOGD_HTTP_PORT: String(gatewayPort), FOGD_BASE_DOMAIN: 'localhost', FOGD_QUEUE_APPS: '1', FOGD_SERVER: `https://localhost:${adminPort}`,
@@ -82,7 +83,7 @@ function selectedEnvironment(output, project, adminPort, gatewayPort) {
     'FOGD_CELLD_CPUS', 'FOGD_CELLD_MEMORY', 'FOGD_CELLD_HEAP_MB', 'FOGD_RESTART_DELAY_SECONDS', 'FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN', 'FOGD_SLOT_1_A_ID', 'FOGD_SLOT_1_B_ID', 'FOGD_SLOT_2_A_ID', 'FOGD_SLOT_2_B_ID']) delete env[name];
   env.FOGD_BUCKET_USER = `fogd-probe-${randomBytes(8).toString('hex')}`;
   env.FOGD_BUCKET_PASSWORD = randomBytes(32).toString('hex');
-  env.FOGD_COMPOSE_FILE = join(repo, 'compose.yaml');
+  env.FOGD_COMPOSE_FILE = join(programRoot, 'compose.yaml');
   return env;
 }
 async function createTLS(host) {

@@ -55,8 +55,7 @@ export function authorizeInstalledPolicy(input) {
 }
 export async function verifyRuntimeFamily(entry, run) {
   entry = validateRuntimeFamily(entry);
-  const host = JSON.parse(await (run || docker)(['info', '--format', '{{json .}}'], { timeoutMs: 15000 }));
-  if (host.OSType !== 'linux' || !['aarch64', 'arm64'].includes(host.Architecture)) throw new Error('Shipped runtime requires a Linux arm64 Docker host');
+  await verifyRuntimeHost(run);
   await verifyCronStorageImage(entry.storageImage, run);
   await verifyCronRuntimeImage(entry, run);
   try {
@@ -64,4 +63,10 @@ export async function verifyRuntimeFamily(entry, run) {
     const actual = JSON.parse(await runtimeInspector(entry.image, code, run));
     if (!isDeepStrictEqual(actual, entry.sourceFiles)) throw new Error('Runtime source inventory differs');
   } catch { throw new Error('Shipped runtime source verification failed; no application runtime was started'); }
+}
+
+export async function verifyRuntimeHost(run = docker) {
+  const host = JSON.parse(await run(['info', '--format', '{{json .}}'], { timeoutMs: 15000 }));
+  if (host.OSType !== 'linux' || !['aarch64', 'arm64'].includes(host.Architecture)) throw new Error('Shipped runtime requires a Linux arm64 Docker host');
+  return host;
 }

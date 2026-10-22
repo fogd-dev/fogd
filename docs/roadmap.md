@@ -33,7 +33,9 @@ these current gaps:
 
 - **Installability:** a supported runtime must have a documented, reproducible path
   onto another supported machine. A local image digest and receipts alone do not
-  provide that path.
+  provide that path. The [offline transfer commands](offline-installation.md) now
+  have same-engine installation and app-persistence evidence; isolated-store and
+  second-machine acceptance remain open.
 - **Everyday operation:** provide scoped application diagnostics and an artifact
   retention policy that preserves active releases, held operations, and recovery
   references. Enforce shared-installation storage credential requirements without
