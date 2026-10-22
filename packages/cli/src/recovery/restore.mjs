@@ -1,3 +1,4 @@
+import { recoveryOptions } from '../runtime/recovery-options.mjs';
 import { parseArgs } from 'node:util';
 import { requestedRecoveryRuntime, selectedRecoveryPlan } from '../runtime/recovery-selection.mjs';
 import { authorizeInstalledPolicy, verifyRuntimeFamily } from '../runtime/catalog.mjs';
@@ -106,9 +107,9 @@ function showRestoredInstallation(destination, project, policy) {
 }
 
 export async function restoreCommand(args) {
-  const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { project: { type: 'string' }, output: { type: 'string' }, runtime: { type: 'string' }, 'expected-identity': { type: 'string' } } });
-  if (positionals.length !== 1 || !values.project || !values.output) throw new Error('Usage: fogd restore BUNDLE --project NEW --output DIR [--runtime FAMILY --expected-identity SHA256]');
-  return restore(positionals[0], values.project, values.output, { runtime: values.runtime, expectedIdentity: values['expected-identity'] });
+  const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { project: { type: 'string' }, output: { type: 'string' }, runtime: { type: 'string' }, 'expected-identity': { type: 'string' }, 'network-plan': { type: 'string' } } });
+  if (positionals.length !== 1 || !values.project || !values.output) throw new Error('Usage: fogd restore BUNDLE --project NEW --output DIR [--runtime FAMILY --expected-identity SHA256 [--network-plan FILE]]');
+  return restore(positionals[0], values.project, values.output, await recoveryOptions(values));
 }
 
 async function restoreSnapshotData(dir, target, image, state, skipped, policy) {

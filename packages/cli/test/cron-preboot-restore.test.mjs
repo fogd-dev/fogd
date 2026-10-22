@@ -17,6 +17,7 @@ import { runtimeFamilies } from '../src/runtime/catalog.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { recoveryLayout } from '../src/recovery/layout.mjs';
 import { sealRuntimeConfig } from '../src/runtime/cron-preboot.mjs';
+import { runtimeCli } from './fixtures/runtime-cli.mjs';
 
 const exec = promisify(execFile);
 async function pendingBundle(t, source = config()) {
@@ -90,6 +91,33 @@ async function dockerHarness(dir, profile) {
     else if(!['ps','volume','network','image','compose'].includes(args[0]))process.exit(99);`);
   return { bin, driver, log, output };
 }
+
+test('public recovery commands install independent network plans into the target policy and configuration', async t => {
+  for (const command of ['restore', 'retire']) await t.test(command, async t => {
+    const entry = { ...runtimeFamilies()[0], admission: 'qualified' }, { source } = prebootFixture(), f = cronSnapshotSource();
+    f.state.apps.refresh.slot = 'slot-2'; f.receipt.slot = 'slot-2';
+    for (const [name, service] of Object.entries(source.services)) service.image = name === 'minio' ? entry.storageImage : entry.image;
+    const plan = freshRuntimePlan(source, entry), { dir, manifest } = await archiveBundle(t, f.state, { cronRecovery: { schema: 1, apps: { refresh: f.receipt } } }, plan.config);
+    manifest.images = Object.fromEntries(Object.entries(plan.config.services).map(([name, service]) => [name, service.image]));
+    await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest));
+    const cli = await runtimeCli(dir, 'qualified'), h = await dockerHarness(dir, plan.policy), networkFile = join(dir, 'networks.json');
+    const networks = { control: '10.253.180.0/24', 'fleet-1': '10.253.181.0/24', 'fleet-2': '10.253.182.0/24' };
+    await writeFile(networkFile, JSON.stringify(networks));
+    const args = [cli.cli, command, dir, '--project', 'fresh', '--output', h.output, '--runtime', entry.id, '--expected-identity', runtimePolicyIdentity(plan.policy), '--network-plan', networkFile];
+    if (command === 'retire') args.push('--app', 'refresh', '--digest', f.receipt.digest, '--stop-scheduled-work');
+    await exec(process.execPath, args, { env: { ...process.env, FOGD_HOME: dir, PATH: `${h.bin}:${process.env.PATH}`, FOGD_TEST_NODE: process.execPath,
+      FOGD_TEST_DRIVER: h.driver, FOGD_TEST_LOG: h.log, FOGD_TEST_SUCCESS: '1', FOGD_TEST_STATE: join(dir, 'state.json'), FOGD_TEST_CATALOG: cli.catalog } });
+    const installed = JSON.parse(await readFile(h.log + '.policy')), config = JSON.parse(await readFile(join(h.output, 'compose.json')));
+    assert.deepEqual(installed.networks, networks);
+    for (const [name, subnet] of Object.entries(networks)) assert.deepEqual(config.networks[name].ipam.config, [{ subnet }]);
+    const restored = JSON.parse(await readFile(join(h.output, 'restored.json')));
+    assert.equal(restored.identitySha256, runtimePolicyIdentity(installed));
+    assert.equal(restored.runtimeFamily, entry.id);
+    const calls = (await readFile(h.log, 'utf8')).trim().split('\n').map(JSON.parse);
+    assert.equal(calls.some(args => args[0] === 'image' && args[1] === 'load'), false);
+    assert.equal(calls.some(args => args.includes('--build') || args.includes('start') || args.includes('up')), false);
+  });
+});
 test('checked internal policy refuses a wrong native digest after image load but before compose create', async t => {
   for (const installed of [false, true]) await t.test(installed ? 'installed runtime without app history' : 'legacy scheduled history', async t => {
     const f = installed ? runtimeInstallation() : prebootFixture();

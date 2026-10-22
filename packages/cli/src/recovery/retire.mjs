@@ -1,3 +1,4 @@
+import { recoveryOptions } from '../runtime/recovery-options.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { requestedRecoveryRuntime, selectedRecoveryPlan, retiredRuntimePolicy } from '../runtime/recovery-selection.mjs';
 import { parseArgs } from 'node:util';
@@ -29,7 +30,7 @@ export async function retire(directory, app, digest, project, output, stopQueued
 }
 
 export async function retirementCommand(args) {
-  const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { runtime: { type: 'string' }, 'expected-identity': { type: 'string' }, 'stop-scheduled-work': { type: 'boolean' }, 'stop-queued-work': { type: 'boolean' }, app: { type: 'string' }, digest: { type: 'string' }, project: { type: 'string' }, output: { type: 'string' } } });
-  if (positionals.length !== 1 || ['app', 'digest', 'project', 'output'].some(name => !values[name])) throw new Error('Usage: fogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR [--stop-queued-work] [--stop-scheduled-work] [--runtime FAMILY --expected-identity SHA256]');
-  await retire(positionals[0], values.app, values.digest, values.project, values.output, values['stop-queued-work'], values['stop-scheduled-work'], { runtime: values.runtime, expectedIdentity: values['expected-identity'] });
+  const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { runtime: { type: 'string' }, 'expected-identity': { type: 'string' }, 'network-plan': { type: 'string' }, 'stop-scheduled-work': { type: 'boolean' }, 'stop-queued-work': { type: 'boolean' }, app: { type: 'string' }, digest: { type: 'string' }, project: { type: 'string' }, output: { type: 'string' } } });
+  if (positionals.length !== 1 || ['app', 'digest', 'project', 'output'].some(name => !values[name])) throw new Error('Usage: fogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR [--stop-queued-work] [--stop-scheduled-work] [--runtime FAMILY --expected-identity SHA256 [--network-plan FILE]]');
+  await retire(positionals[0], values.app, values.digest, values.project, values.output, values['stop-queued-work'], values['stop-scheduled-work'], await recoveryOptions(values));
 }

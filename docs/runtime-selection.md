@@ -84,8 +84,31 @@ image inventory and separately expected identity to match. It verifies the cache
 catalog programs before image-provided helpers. Selected recovery skips the image
 archive, so it cannot replace cached image tags. Network placement comes from the
 independent target selection; omitted placement uses ordinary bridge allocation.
-Snapshot subnets cannot select target placement. Internal qualification can choose
-separate private subnets without changing logical storage identity.
+Snapshot subnets cannot select target placement. Use `--network-plan FILE` with
+either selected recovery command to choose separate private subnets without
+changing logical storage identity. The operator-supplied file must be a regular
+JSON file of at most 4096 bytes with exactly three distinct `10.x.x.0/24` subnets:
+
+```json
+{
+  "control": "10.253.180.0/24",
+  "fleet-1": "10.253.181.0/24",
+  "fleet-2": "10.253.182.0/24"
+}
+```
+
+Choose subnets that do not overlap existing networks or host routes; the example
+does not establish that these addresses are free on your host. For example:
+
+```sh
+fogd restore BUNDLE --project NEW --output DIR \
+  --runtime FAMILY --expected-identity SHA256 --network-plan networks.json
+```
+
+Family admission and expected-identity syntax are checked before reading this
+file. Its contents select network placement only; they cannot select a runtime
+image or authorize a different source identity. The current catalog candidate
+still refuses ordinary recovery, including when a network plan is supplied.
 
 Stopped backup inventories every managed volume, including the policy volume,
 but archives application and operator data only. Restore copies those archives,
@@ -120,10 +143,15 @@ resume. A late initial runtime check can change recovery findings: inspect the n
 status and acknowledge its current review digest rather than replaying an old one.
 
 Local source project and volume writers must be stopped before selected recovery
-and finalization. Host recovery metadata also checks related sources, descendants and sibling
-restores before subsequent selected operations. Keep using the same `FOGD_HOME`
-and its private installation state for these checks; they do not inventory other
-checkouts or remote hosts. These are local observations, not an atomic writer fence.
+and finalization. Host recovery metadata also checks related sources, descendants,
+and sibling restores before startup, TLS import, and backup. The check includes
+running writers on each related installation's volumes, even under another project
+label. It reads current names from any enrolled peer's private configuration; an
+unreadable related configuration refuses the operation. A stopped incomplete peer
+can supply volume names for exclusion without being authorized to start.
+Keep using the same `FOGD_HOME` and its private installation state for these checks;
+they do not inventory other checkouts or remote hosts. These are local observations,
+not an atomic writer fence.
 The operator must keep source copies on every host stopped and prevent concurrent
 starts. The output reports the ingress bind and TLS mode for review; the storage
 identity does not authenticate those exposure settings.
