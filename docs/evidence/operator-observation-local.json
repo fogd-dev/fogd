@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "scope": "Local Docker-owner native readiness using disk metadata and qualified fleet identity; no application availability or controller storage-health claim.",
+  "runner": "scripts/cron-probe/selected/observation.mjs",
+  "privateEvidence": ".fogd/observation-native3",
+  "runtime": {
+    "family": "celld-cron-v2-linux-arm64",
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "hostNode": "v26.2.0"
+  },
+  "resultSha256": "2e863b0b62684f6862b58ef1a34b9638e3047ccf046438673ff1d180dc0b7a95",
+  "sourceFilesVerified": 708,
+  "rawObservationInventorySha256": "1e7be49698cc4e4a428f91ad8087140f23187cc267efd745cdb0c130b9a88a0c",
+  "checks": {
+    "rawObservations": 11,
+    "readinessCounts": {
+      "confirmed": 4,
+      "not-observed": 1,
+      "uncertain": 6
+    },
+    "controllerSnapshotsUnchanged": 11,
+    "nativeHealthBoundary": {
+      "before": {
+        "hits": 0
+      },
+      "after": {
+        "hits": 0
+      },
+      "appHTTPStatus": 503,
+      "nativeHealthStatuses": [
+        200,
+        200
+      ]
+    },
+    "retainedVolumes": 8,
+    "preExistingResourceCounts": {
+      "containers": 183,
+      "volumes": 2356,
+      "networks": 71
+    }
+  },
+  "phases": {
+    "pending": "not-observed",
+    "active": "confirmed",
+    "stoppedReplica": "uncertain",
+    "recoveredReplica": "confirmed",
+    "stoppedController": "uncertain",
+    "recoveredController": "confirmed",
+    "control": "confirmed"
+  },
+  "privacy": {
+    "rawObservationAttemptsScanned": 11,
+    "finalReceiptAndLogsScanned": true,
+    "networkedObserverDataMounts": false,
+    "appSecretsOrAdminGatewayDeployCredentialsSentToNetworkedObserver": false,
+    "storageCredentialsViaStdin": true
+  },
+  "failedAttempts": [
+    {
+      "privateEvidence": ".fogd/observation-native1",
+      "phase": "stopped-replica",
+      "reason": "Qualification harness called an unavailable Compose helper after active observation passed; no complete qualification accepted."
+    }
+  ],
+  "limits": [
+    "One shared local Docker engine; no separate-machine, remote Fogd API or Kubernetes observation acceptance.",
+    "Native health and approved version matches do not establish gateway, controller API, storage persistence or application outcomes.",
+    "Only disk-recorded controller changes are compared; memory-only controller storage failure can remain invisible.",
+    "Observer uses transient private-network containers and readonly metadata readers; no data volumes mounted into networked observer.",
+    "No process logs, app requests, reloads, SQL or background-control requests made by the operator command.",
+    "No application worker CPU limit or performance claim; observer container budgets are independent."
+  ],
+  "artifactChecks": {
+    "controllerArtifactsVerified": 2,
+    "controlArtifactDigest": "b85cb6063a12c1a0895c5cb90b7ecff2b75ca77c84ae5d5592d67d5578c1c18a",
+    "controlWorkerSha256": "de79f8928c4722695429df6f2ff0340428af99947fda3280f9d3dee658998856",
+    "controlWorkerEqualsStagedSource": true
+  },
+  "earlierPassingAttempt": {
+    "privateEvidence": ".fogd/observation-native2",
+    "scope": "Before worker-core unit seam, shared bootstrap predicate and final reason classification; final native3 supersedes it."
+  }
+}

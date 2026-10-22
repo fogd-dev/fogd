@@ -11,7 +11,7 @@ for (const [status, expected] of Object.entries({ rejected: 'terminal-copy', sup
 for (const phase of ['building', 'staged', 'uploading', 'uncertain', 'failed']) test(`${phase} copies never qualify for deletion`, () => {
   assert.equal(retentionReason({ ...record, phase }, snapshot('superseded'), origin), 'unfinished-or-unconfirmed');
 });
-for (const details of [{ active: submission }, { uncertain: submission }, { claim: {} }, { quarantined: true }, { retirement: {} }, { queueRecovery: {} }, { cronRecovery: {} }, { deliveryRecoveryError: 'private' }, { dispatchRecoveryError: 'private' }, { delivery: { hold: submission } }, { dispatch: { operation: 'pause' } }, { queueBootstrap: { phase: 'intent' } }, { cronBootstrap: { phase: 'intent' } }]) test(`controller reference ${JSON.stringify(details)} protects a terminal copy`, () => {
+for (const details of [{ active: submission }, { uncertain: submission }, { claim: {} }, { quarantined: true }, { retirement: {} }, { queueRecovery: {} }, { queueRecovery: { status: 'acknowledged' } }, { cronRecovery: {} }, { deliveryRecoveryError: 'private' }, { dispatchRecoveryError: 'private' }, { delivery: { hold: submission } }, { dispatch: { operation: 'pause' } }, { queueBootstrap: { phase: 'intent' } }, { cronBootstrap: { phase: 'intent' } }]) test(`controller reference ${JSON.stringify(details)} protects a terminal copy`, () => {
   assert.equal(retentionReason(record, snapshot('superseded', details), origin), 'controller-or-recovery-reference');
 });
 test('completed bootstrap and ordinary running controls do not pin superseded bytes', () => {

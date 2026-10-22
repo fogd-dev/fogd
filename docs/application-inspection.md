@@ -25,7 +25,8 @@ state. A pending-only app has an unassigned route and no active release.
 An active approval is separate from a running application. `runtimeHealth` and
 `applicationOutcomes` remain `not-observed`, even when a background journal has a
 recorded successful observation. Check the app's own endpoint and saved results for
-its current behavior.
+its current behavior. Local Docker owners can also [observe native replicas](application-observation.md)
+without treating their readiness as application health.
 
 `uncertainMigration` and `ownershipClaim` identify the original release when those
 operations remain unresolved. A failed migration can have a known ledger outcome;

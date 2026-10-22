@@ -118,8 +118,10 @@ they do not expand the accepted family.
 [Operator readiness](operator-readiness.md) now takes priority over another binding:
 private shared storage credentials, installation transfer, application diagnostics,
 deliberate retention and serving/capacity measurements. The owner can
-[inspect recorded application state](application-inspection.md); scoped logs and
-live health/outcome observation remain open.
+[inspect recorded application state](application-inspection.md), submitters can
+[diagnose their releases](submission-status.md), and local Docker owners can
+[observe native replicas](application-observation.md). Scoped logs, live controller
+storage health, and application outcomes remain open.
 
 Workflows/general alarms, remote infrastructure and M12 portability follow
 their own acceptance contracts.

@@ -13,7 +13,9 @@ behavior, limitations, and the decisions behind it.
 
 Owners can [inspect an application's recorded release and control state](docs/application-inspection.md)
 with `fogd admin inspect APP`; submitters can [diagnose their releases](docs/submission-status.md)
-with `fogd status ID`. Live health and scoped application logs remain open.
+with `fogd status ID`. Local Docker owners can [observe native replicas](docs/application-observation.md)
+with `fogd observe APP --installation PROJECT`. Application-health diagnosis and
+scoped logs remain open.
 [Local build retention](docs/build-retention.md) provides explicit keep, plan, prune,
 and offline resume commands; controller artifacts and application data stay intact.
 

@@ -3,7 +3,8 @@
 Status: shared storage credential admission and offline transfer commands are
 implemented. Transfer has same-engine evidence; second-machine and other image-store
 acceptance remain open. Owner inspection implements part of application diagnosis;
-scoped logs and live observation remain open. A bounded two-fleet serving probe
+local native observation has failure/recovery evidence; scoped logs and broader
+live application/controller diagnosis remain open. A bounded two-fleet serving probe
 covers uploads, peer activation and controller interruption. Host build-cache
 retention has local interruption and restore evidence; controller artifact retention
 and broader serving/capacity acceptance remain open. This advances G2 and G3 in the
@@ -101,8 +102,11 @@ references, and background controls. The [submitter status command](submission-s
 now bounds reads, verifies submission identity and limits output to public fields
 and fixed explanations, with [local evidence](evidence/operator-submitter-status-local.json)
 for failed SQL, correction and credential boundaries. Both views report recorded
-state and withhold private errors. Queue status labels in the frozen runtime, scoped
-logs, and live health remain open; these commands implement part of this increment.
+state and withhold private errors. [Local native observation](application-observation.md)
+checks approved versions, signed runtime identity and replica health without app
+requests. It does not establish controller storage health or application outcomes.
+Queue status labels in the frozen runtime, scoped logs, and broader live diagnosis
+remain open; these commands implement part of this increment.
 
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown
