@@ -1,10 +1,8 @@
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { readFile, writeFile, mkdir, symlink, copyFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { copyFixture } from './project-copy.mjs';
 import { selectedTrial } from './selected-trial.mjs';
 import { httpsClient, waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
@@ -12,7 +10,6 @@ import { approveRefresh } from './background-fixtures.mjs';
 import { scanPublicSurfaces, assertNoSecrets } from './privacy.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
 
-const repo = fileURLToPath(new URL('../../../', import.meta.url));
 await selectedTrial(process.argv[2], 'Owner application inspection: failed SQL, corrected approval, and recorded cron pause on the frozen local two-fleet image. No live health or application-outcome inference.', async context => {
   const { source: host, evidence } = context, request = await httpsClient(host);
   await waitFor('inspection owner API', async () => (await request('/v1/admin')).status === 200);
@@ -28,18 +25,6 @@ await selectedTrial(process.argv[2], 'Owner application inspection: failed SQL, 
   return fixture;
 }, 'public');
 
-async function copyFixture(host, name) {
-  const project = join(host.output, `${name}-source`); await mkdir(project);
-  const prefix = `examples/${name}/`, execute = promisify(execFile);
-  const tracked = (await execute('git', ['ls-files', '-z', '--', `examples/${name}`], { cwd: repo })).stdout.split('\0').filter(Boolean);
-  assert.ok(tracked.length > 0);
-  for (const path of tracked) {
-    const target = join(project, path.slice(prefix.length));
-    await mkdir(dirname(target), { recursive: true }); await copyFile(join(repo, path), target);
-  }
-  await symlink(join(repo, `examples/${name}/node_modules`), join(project, 'node_modules'), 'dir');
-  return project;
-}
 async function inspectWithoutMutation(host, request, name) {
   const snapshot = async () => {
     const response = await request('/v1/admin'); assert.equal(response.status, 200);

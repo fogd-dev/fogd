@@ -46,7 +46,7 @@ export async function scanOutputFiles(installations, fixture, receipt, rawSurfac
     ...installations.flatMap(value => { const env = value.config.services.controller.environment; return [env.AWS_ACCESS_KEY_ID, env.AWS_SECRET_ACCESS_KEY]; })];
   const surfaces = [JSON.stringify(receipt), ...rawSurfaces], files = [];
   for (const installation of installations) {
-    const names = (await readdir(installation.output)).filter(name => name === 'runtime.log' || name === 'preparation-peer.log' || /^command-failure-.*\.json$/.test(name));
+    const names = (await readdir(installation.output)).filter(name => name === 'runtime.log' || name === 'runtime-failure.log' || name === 'preparation-peer.log' || /^(?:command-failure-|observer-).*\.json$/.test(name));
     assert.ok(names.includes('runtime.log'));
     for (const name of names) {
       const text = await readFile(join(installation.output, name), 'utf8'); files.push({ project: installation.project, name });

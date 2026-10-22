@@ -3,8 +3,9 @@
 Status: shared storage credential admission and offline transfer commands are
 implemented. Transfer has same-engine evidence; second-machine and other image-store
 acceptance remain open. Owner inspection implements part of application diagnosis;
-scoped logs and live observation remain open. Retention and serving measurements
-remain proposed. This advances G2 and G3 in the
+scoped logs and live observation remain open. A bounded two-fleet serving probe
+covers uploads, peer activation and controller interruption. Retention and broader
+serving/capacity acceptance remain open. This advances G2 and G3 in the
 [vision](vision.md): **Cloudflare you can control and touch.** It does not add
 another application binding. The [roadmap](roadmap.md) places this work before
 further binding milestones.
@@ -128,6 +129,12 @@ retry. Concurrent approval and backup must not lose a referenced artifact. Verif
 protected bytes and restore the retained recovery point after pruning.
 
 ### 5. Measure serving and capacity
+
+The [paired serving guide](serving-measurement.md) supplies a repeatable local
+two-fleet read workload during maximum-size uploads, peer activation and controller
+interruption. It compares the complete gateway path with one direct replica and
+retains raw errors and resource counters. It does not complete the broader app-count,
+write-load or density acceptance below.
 
 Measure end-to-end latency, throughput, memory, and failure behavior across the
 currently supported app counts, with idle apps, active traffic, and concurrent

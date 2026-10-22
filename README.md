@@ -310,7 +310,9 @@ retirement/reuse are qualified locally. Kubernetes remains at two fleets.
 
 The [measurement guide](docs/capacity-measurement.md) records paired two/three-fleet
 observations with the same paced workload per existing app. These are shared-VM
-measurements, not a maximum app density or production sizing recommendation.
+measurements, not a maximum app density or production sizing recommendation. The
+[paired serving probe](docs/serving-measurement.md) measures another app's reads
+during maximum-size uploads, peer activation and controller interruption.
 
 ## M11a: opt-in queued work
 

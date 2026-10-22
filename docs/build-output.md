@@ -95,3 +95,12 @@ submitted build commands are refused. Local builds filter inherited managed Void
 deployment flags as well as platform credentials. No Cloudflare deployment mode or
 internal auth proxy token is injected. The offline verifier covers accounts and its
 required-secret metadata alongside the base and attachment guestbook fixtures.
+
+## Native asset size limits
+
+Artifact admission bounds total decoded bytes; native publication can impose a
+smaller per-file asset limit. The qualified `celld-cron-v2-linux-arm64` family
+refuses an individual asset above 25 MiB. The [serving measurement](serving-measurement.md)
+observed this refusal with a single oversized padding file, then published the
+same total 32 MiB using smaller files. The current adapter does not preflight that
+per-file native limit; a total-size-admitted artifact can fail during publication.

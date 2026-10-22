@@ -1,3 +1,4 @@
+import { captureFailureLogs } from './failure-logs.mjs';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import { mkdir, readFile, chmod, writeFile } from 'node:fs/promises';
@@ -49,7 +50,7 @@ export async function selectedHost(directory, enrollment = 'candidate', programR
     await host.command(method.start(host));
     await writeFile(join(output, 'identity.json'), JSON.stringify({ family: entry.id, identitySha256: runtimePolicyIdentity(host.policy) }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
     return host;
-  } catch (error) { await cleanupSelectedHost(host); throw error; }
+  } catch (error) { await captureFailureLogs(host); await cleanupSelectedHost(host); throw error; }
 }
 
 async function enrollCandidate(host, networks) {

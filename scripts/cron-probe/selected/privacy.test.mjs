@@ -27,13 +27,18 @@ test('ordinary text and canonical artifact bytes pass when all private values ar
   assert.deepEqual(assertArtifactNoSecrets({ files: [{ path: 'worker/index.js', data: 'b3JkaW5hcnkgc3RhdHVz' }, { path: 'wrangler.json', data: 'e30=' }] }, ['secret-value']), { valuesChecked: 3, credentialValuesChecked: 1, filesChecked: 2 });
 });
 
-test('private values in a retained peer shutdown log cannot pass the output scan', async t => {
+for (const [name, content] of [
+  ['preparation-peer.log', 'peer log contains application-private-test-value'],
+  ['runtime-failure.log', 'failed runtime contains application-private-test-value'],
+  ['observer-uploads.json', '{"stdout":"application-private-test-value","stderr":""}'],
+  ['observer-activation.json', '{"stdout":"","stderr":"application-private-test-value"}'],
+]) test(`private values in retained ${name} cannot pass the output scan`, async t => {
   const output = await mkdtemp(join(tmpdir(), 'fogd-private-peer-log-')); t.after(() => rm(output, { recursive: true, force: true }));
   const file = join(output, 'operator.env'), secret = 'application-private-test-value';
   await Promise.all([
     writeFile(file, 'FOGD_ADMIN_PASSWORD=admin-private-test-value\nFOGD_GATEWAY_TOKEN=gateway-private-test-value\n'),
     writeFile(join(output, 'runtime.log'), 'ordinary final shutdown'),
-    writeFile(join(output, 'preparation-peer.log'), `peer log contains ${secret}`),
+    writeFile(join(output, name), content),
   ]);
   const host = { output, project: 'test', env: { FOGD_ENV_FILE: file }, config: { services: { controller: { environment: { AWS_ACCESS_KEY_ID: 'storage-user-test-value', AWS_SECRET_ACCESS_KEY: 'storage-private-test-value' } } } } };
   await assert.rejects(scanOutputFiles([host], { secret, tokens: { refresh: 'deploy-private-test-value' } }, {}), error => {

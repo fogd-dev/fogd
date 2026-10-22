@@ -43,7 +43,9 @@ these current gaps:
 - **Capacity and serving:** measure latency, throughput, memory, and controller-loss
   behavior across declared app counts and concurrent uploads. Use those results to
   decide app density and routing architecture; caching needs an explicit approval
-  and pause contract.
+  and pause contract. The [paired serving probe](serving-measurement.md) now
+  exercises local two-fleet reads during uploads, peer activation and controller
+  interruption; broader counts and loads remain open.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands.

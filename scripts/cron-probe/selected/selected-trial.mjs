@@ -1,3 +1,4 @@
+import { captureFailureLogs } from './failure-logs.mjs';
 import assert from 'node:assert/strict';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -7,7 +8,16 @@ import { sourceInventory, sourceState } from './evidence.mjs';
 import { scanOutputFiles } from './privacy.mjs';
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
-export async function selectedTrial(output, scope, scenario, enrollment = 'candidate') {
+export function selectedTrial(output, scope, scenario, enrollment = 'candidate') {
+  return selectedHostTrial(output, scope, async context => {
+    const { source, evidence } = context;
+    evidence.defaults = await checkedNativeDefaults();
+    evidence.sourceTiming = await verifyNativeTimingEnvironment({ ...source, slots: source.policy.fleets.map(fleet => ({ nodes: fleet.nodes.map(node => node.host) })) });
+    return scenario(context);
+  }, enrollment);
+}
+
+export async function selectedHostTrial(output, scope, scenario, enrollment = 'public') {
   const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output, enrollment);
   const installations = [source], evidence = {};
   const context = { source, installations, evidence, phase: 'source-fixtures' }; let failure;
@@ -18,8 +28,6 @@ export async function selectedTrial(output, scope, scenario, enrollment = 'candi
     for (const path of Object.keys(sources)) {
       const target = join(source.output, 'executed-source', path); await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(path, target);
     }
-    evidence.defaults = await checkedNativeDefaults();
-    evidence.sourceTiming = await verifyNativeTimingEnvironment({ ...source, slots: source.policy.fleets.map(fleet => ({ nodes: fleet.nodes.map(node => node.host) })) });
     const fixture = await scenario(context);
     const receipt = { scope: scope, provenance, sources, family: source.entry.id, image: source.entry.image, sourcePolicy: source.policy, evidence };
     receipt.finalPrivacy = await scanOutputFiles(installations, fixture, receipt);
@@ -30,6 +38,8 @@ export async function selectedTrial(output, scope, scenario, enrollment = 'candi
     console.log('PASS-selected-qualification');
   } catch (error) {
     failure = error;
+    evidence.failureLogs = [];
+    for (const host of installations.filter(host => !host.closed)) evidence.failureLogs.push({ project: host.project, ...await captureFailureLogs(host) });
     try { await save('failure.json', { phase: context.phase, name: error.name, message: error.message, cause: error.cause?.message, evidence }); }
     catch (recordError) { console.error('Could not retain failure record:', recordError.message); }
     throw error;

@@ -15,19 +15,21 @@ export async function scopedClient(host, token) {
 
 async function transport(host, authorization) {
   const ca = await readFile(host.env.NODE_EXTRA_CA_CERTS || join(host.output, 'certificate.pem'));
-  return (path, { app, method = 'GET', body, headers = {} } = {}) => new Promise((resolve, reject) => {
+  return (path, { app, method = 'GET', body, headers = {}, maxResponseBytes = 4 * 1024 ** 2, timeoutMs = 10000 } = {}) => new Promise((resolve, reject) => {
+    if (!Number.isSafeInteger(maxResponseBytes) || maxResponseBytes < 1 || maxResponseBytes > 64 * 1024 ** 2) { reject(new Error('Invalid HTTPS observation limit')); return; }
+    if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) { reject(new Error('Invalid HTTPS observation timeout')); return; }
     host.access?.({ kind: 'http', app: app || null, method, path });
     const req = request({ hostname: app ? `${app}.localhost` : 'localhost', port: app ? host.gatewayPort : host.adminPort, path, method, ca,
       headers: app ? headers : { ...headers, Authorization: authorization },
       lookup: (_, options, callback) => callback(null, options.all ? [{ address: '127.0.0.1', family: 4 }] : '127.0.0.1', 4),
     }, response => {
-      let text = '';
+      let text = '', bytes = 0;
       response.setEncoding('utf8');
-      response.on('data', part => { text += part; if (text.length > 4 * 1024 * 1024) req.destroy(new Error('HTTPS observation exceeds limit')); });
+      response.on('data', part => { text += part; bytes += Buffer.byteLength(part); if (bytes > maxResponseBytes) req.destroy(new Error('HTTPS observation exceeds limit')); });
       response.on('end', () => resolve({ status: response.statusCode, text, json: () => JSON.parse(text) }));
       response.on('error', reject);
     });
-    req.setTimeout(10000, () => req.destroy(new Error('HTTPS observation timed out'))); req.on('error', reject); req.end(body);
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('HTTPS observation timed out'))); req.on('error', reject); req.end(body);
   });
 }
 
