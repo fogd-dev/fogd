@@ -8,9 +8,14 @@ import { join } from 'node:path';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 export async function sourceInventory() {
-  const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'packages', 'examples/refresh', 'examples/imports', 'scripts/cron-probe', 'scripts/native-build.mjs', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'], { cwd: repo });
+  const execute = promisify(execFile), scope = ['packages', 'examples/refresh', 'examples/imports', 'scripts/cron-probe', 'scripts/native-build.mjs', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'];
+  const [{ stdout }, { stdout: removed }] = await Promise.all([
+    execute('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', ...scope], { cwd: repo }),
+    execute('git', ['ls-files', '--deleted', '-z', '--', ...scope], { cwd: repo }),
+  ]);
+  const deleted = new Set(removed.split('\0').filter(Boolean));
   const selected = (await readdir(new URL('./', import.meta.url))).filter(name => name.endsWith('.mjs')).map(name => `scripts/cron-probe/selected/${name}`);
-  const paths = [...new Set([...stdout.split('\0').filter(Boolean), ...selected])].sort();
+  const paths = [...new Set([...stdout.split('\0').filter(Boolean), ...selected])].filter(name => !deleted.has(name)).sort();
   return Object.fromEntries(await Promise.all(paths.map(async name => [name, createHash('sha256').update(await readFile(join(repo, name))).digest('hex')])));
 }
 

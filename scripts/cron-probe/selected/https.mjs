@@ -4,9 +4,19 @@ import { parseEnv } from 'node:util';
 import { join } from 'node:path';
 
 export async function httpsClient(host) {
-  const ca = await readFile(host.env.NODE_EXTRA_CA_CERTS || join(host.output, 'certificate.pem')), settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
-  const authorization = 'Basic ' + Buffer.from(`${host.config.services.controller.environment.FOGD_ADMIN_USER}:${settings.FOGD_ADMIN_PASSWORD}`).toString('base64');
+  const settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
+  return transport(host, 'Basic ' + Buffer.from(`${host.config.services.controller.environment.FOGD_ADMIN_USER}:${settings.FOGD_ADMIN_PASSWORD}`).toString('base64'));
+}
+
+export async function scopedClient(host, token) {
+  if (typeof token !== 'string' || !token || /[\s\x00-\x1f\x7f]/.test(token)) throw new Error('Invalid scoped credential');
+  return transport(host, `Bearer ${token}`);
+}
+
+async function transport(host, authorization) {
+  const ca = await readFile(host.env.NODE_EXTRA_CA_CERTS || join(host.output, 'certificate.pem'));
   return (path, { app, method = 'GET', body, headers = {} } = {}) => new Promise((resolve, reject) => {
+    host.access?.({ kind: 'http', app: app || null, method, path });
     const req = request({ hostname: app ? `${app}.localhost` : 'localhost', port: app ? host.gatewayPort : host.adminPort, path, method, ca,
       headers: app ? headers : { ...headers, Authorization: authorization },
       lookup: (_, options, callback) => callback(null, options.all ? [{ address: '127.0.0.1', family: 4 }] : '127.0.0.1', 4),
@@ -24,7 +34,7 @@ export async function httpsClient(host) {
 export async function waitFor(label, observe, timeout = 120000) {
   const deadline = Date.now() + timeout; let last;
   while (Date.now() < deadline) {
-    try { const result = await observe(); if (result) return result; } catch (error) { last = error; }
+    try { const result = await observe(); if (result) return result; } catch (error) { if (error.code === 'FOGD_QUIET_WINDOW') throw error; last = error; }
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
   throw new Error(`Observation did not complete: ${label}`, { cause: last });

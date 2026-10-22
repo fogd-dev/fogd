@@ -9,7 +9,7 @@ import { recoveryLayout } from '../../../packages/cli/src/recovery/layout.mjs';
 import { recoveredData, applicationData } from './recovery-fixtures.mjs';
 import { recoveryFence, nativeProcesses } from './recovery-fence.mjs';
 import { vmTime } from './observations.mjs';
-import { stopRecovery } from './recovery-stop.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
 
 export async function normalSnapshot(host, fixture, bundle, expectedAlarm, installations) {
   const fence = await recoveryFence(host, installations), native = await nativeProcesses(host);
@@ -34,7 +34,7 @@ export async function normalSnapshot(host, fixture, bundle, expectedAlarm, insta
   const archived = await snapshotState(bundle);
   assert.deepEqual(archived.apps.refresh.cronSnapshot, prepared);
   assert.equal(archived.apps.imports.queueSnapshot.id, verified.manifest.queueRecovery.apps.imports.id);
-  const shutdown = await stopRecovery(host, { alreadyStopped: true }); host.closed = true;
+  const shutdown = await stopSelectedHost(host, { alreadyStopped: true }); host.closed = true;
   const point = { bundle, before: applicationData(before), sourceObservation: before, approvals: fixture.approvals, manifest: verified.manifest, prepared,
     queueMessages: before.imports.queuePeek.messages, fence, native, requestedAt, preparationLatencyMs: prepared.completedAt - requestedAt, policy, shutdown };
   return point;

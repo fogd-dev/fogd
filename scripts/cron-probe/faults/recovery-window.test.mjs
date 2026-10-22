@@ -89,3 +89,19 @@ test('a cut after its retry deadline fails qualification', () => {
   const input = fixture(); input.killedAt = 1007500; input.bucket.at = 1007600;
   assert.throws(() => ownerRecoveryWindow(input), /precede the persisted retry deadline/);
 });
+
+test('selected native identity IDs can differ from Docker hostnames', () => {
+  const input = fixture(); input.owner = 'owner-id'; input.survivor = 'survivor-id';
+  input.bucket.waker.node = 'owner-id'; input.bucket.leases[0] = { host: 'docker-owner', node: 'owner-id', expires_ms: 1004000, missing: false };
+  assert.equal(ownerRecoveryWindow(input).nodeLeaseExpiry, 1004000);
+});
+test('unavailable observations remain evidence without hiding successful role brackets', () => {
+  const observations = trail(); observations.splice(1, 0, { startedAt: 1175000, error: { code: 'READ_UNAVAILABLE' } });
+  assert.deepEqual(ownerRoleTrail(ownerRecoveryWindow(fixture()), observations, 'a', 'b'), { claimNotBefore: 1171000, claimNoLaterThan: 1180000, leaseWrittenAt: 1180000, observedAt: 1185000, lastKilledRoleSampleStartedAt: 1171000 });
+  assert.deepEqual(observations[1], { startedAt: 1175000, error: { code: 'READ_UNAVAILABLE' } });
+});
+
+test('duplicate node identities cannot choose an arbitrary lease expiry', () => {
+  const input = fixture(); input.bucket.leases.push({ host: 'other-host', node: 'a', expires_ms: 1009000, missing: false });
+  assert.throws(() => ownerRecoveryWindow(input), /one unambiguous killed node lease/);
+});

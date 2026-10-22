@@ -39,3 +39,20 @@ export async function scanPublicSurfaces(host, request, submissions, token, appS
   assertNoSecrets(surfaces, secrets);
   return { adminJSON: true, adminHTML: true, scopedStatuses: submissions.length, decodedArtifacts: submissions.length, privateDiagnosticsChecked: diagnostics.length, completeReceiptChecked: true };
 }
+
+export async function scanOutputFiles(installations, fixture, receipt, rawSurfaces = []) {
+  const host = installations[0], settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
+  const secrets = [fixture.secret, ...Object.values(fixture.tokens), settings.FOGD_ADMIN_PASSWORD, settings.FOGD_GATEWAY_TOKEN,
+    ...installations.flatMap(value => { const env = value.config.services.controller.environment; return [env.AWS_ACCESS_KEY_ID, env.AWS_SECRET_ACCESS_KEY]; })];
+  const surfaces = [JSON.stringify(receipt), ...rawSurfaces], files = [];
+  for (const installation of installations) {
+    const names = (await readdir(installation.output)).filter(name => name === 'runtime.log' || name === 'preparation-peer.log' || /^command-failure-.*\.json$/.test(name));
+    assert.ok(names.includes('runtime.log'));
+    for (const name of names) {
+      const text = await readFile(join(installation.output, name), 'utf8'); files.push({ project: installation.project, name });
+      if (name.endsWith('.log')) surfaces.push(text);
+      else { const diagnostic = JSON.parse(text); surfaces.push(diagnostic.stdout || '', diagnostic.stderr || ''); }
+    }
+  }
+  return { ...assertNoSecrets(surfaces, secrets), files, finalReceiptChecked: true };
+}

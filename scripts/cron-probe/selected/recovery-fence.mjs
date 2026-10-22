@@ -38,6 +38,7 @@ export async function neverStartedIngress(host) {
 }
 
 export async function nativeProcesses(host) {
+  host.access?.({ kind: 'replica-process-inventory' });
   const containers = await projectContainers(host.project), result = [];
   const code = "import{readdir,readFile}from'node:fs/promises';const found=[];for(const pid of(await readdir('/proc')).filter(name=>/^\\d+$/.test(name))){try{if((await readFile('/proc/'+pid+'/comm','utf8')).trim()!=='celld')continue;const stat=await readFile('/proc/'+pid+'/stat','utf8');found.push({pid,start:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]});}catch(error){if(error.code!=='ENOENT')throw error;}}if(found.length!==1)throw Error('Expected one native process');console.log(JSON.stringify(found[0]));";
   for (const fleet of host.policy.fleets) for (const node of fleet.nodes) {

@@ -9,7 +9,7 @@ import { readPolicyVolume } from '../../../packages/cli/src/runtime/policy-volum
 import { commandRunner } from './commands.mjs';
 import { recoveryTarget } from './recovery-target.mjs';
 import { coldRecovery, acknowledgeRecovery } from './recovery-holds.mjs';
-import { stopRecovery } from './recovery-stop.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
 import { cleanupSelectedHost } from './host.mjs';
 
 if (process.argv.length !== 4) throw new Error('Usage: node scripts/cron-probe/selected/recovery-cold-smoke.mjs SOURCE_SMOKE_OUTPUT NEW_OUTPUT');
@@ -32,7 +32,7 @@ try {
   target = await recoveryTarget(source, bundle, output, [source], verified.manifest.images);
   phase = 'cold-native-hold'; const cold = await coldRecovery(target, point, [source, target]);
   phase = 'normal-startup-and-acknowledged-hold'; const acknowledged = await acknowledgeRecovery(target, point, [source, target]);
-  phase = 'clean-shutdown'; const shutdown = await stopRecovery(target); completed = true;
+  phase = 'clean-shutdown'; const shutdown = await stopSelectedHost(target); completed = true;
   await writeFile(join(output, 'result.json'), JSON.stringify({ scope: 'Selected cold restore and explicit acknowledgment smoke; no pending-retry/older acceptance', project: target.project, sourceProject: source.project, initialServices: target.initialServices, cold, acknowledged, shutdown }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
   console.log('PASS-selected-cold-recovery-smoke');
 } catch (error) {

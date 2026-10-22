@@ -44,7 +44,7 @@ function selectedEnvironment(output, project, adminPort, gatewayPort) {
     FOGD_HTTP_PORT: String(gatewayPort), FOGD_BASE_DOMAIN: 'localhost', FOGD_QUEUE_APPS: '1', FOGD_SERVER: `https://localhost:${adminPort}`,
     NODE_EXTRA_CA_CERTS: join(output, 'certificate.pem') };
   for (const name of ['FOGD_COMPOSE_FILE', 'FOGD_CELLD_IMAGE', 'FOGD_RUNTIME_IMAGE', 'FOGD_BUCKET_ENDPOINT', 'FOGD_BUCKET_REGION',
-    'FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN', 'FOGD_SLOT_1_A_ID', 'FOGD_SLOT_1_B_ID', 'FOGD_SLOT_2_A_ID', 'FOGD_SLOT_2_B_ID']) delete env[name];
+    'FOGD_CELLD_CPUS', 'FOGD_CELLD_MEMORY', 'FOGD_CELLD_HEAP_MB', 'FOGD_RESTART_DELAY_SECONDS', 'FOGD_ADMIN_PASSWORD', 'FOGD_GATEWAY_TOKEN', 'FOGD_SLOT_1_A_ID', 'FOGD_SLOT_1_B_ID', 'FOGD_SLOT_2_A_ID', 'FOGD_SLOT_2_B_ID']) delete env[name];
   env.FOGD_COMPOSE_FILE = join(repo, 'compose.yaml');
   return env;
 }

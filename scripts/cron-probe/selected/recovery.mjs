@@ -6,16 +6,16 @@ import { recoveryFixtures, importJob, recoveredData } from './recovery-fixtures.
 import { normalSnapshot, preserveSource } from './recovery-snapshot.mjs';
 import { recoveryTarget } from './recovery-target.mjs';
 import { coldRecovery, acknowledgeRecovery } from './recovery-holds.mjs';
-import { stopRecovery } from './recovery-stop.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
 import { armedTimer, pendingRetry, resumeCron, observeNoReplay } from './recovery-work.mjs';
 import { setFaultPolicy, nativeObservation, vmTime } from './observations.mjs';
 import { sourceInventory, sourceState } from './evidence.mjs';
 import { httpsClient, waitFor } from './https.mjs';
-import { scanPublicSurfaces } from './privacy.mjs';
+import { scanPublicSurfaces, scanOutputFiles } from './privacy.mjs';
 import { verifyBundle } from '../../../packages/cli/src/recovery/bundle.mjs';
 import { rows, assertRetainedInput } from './recovery-ledger.mjs';
 import { nativeProcesses } from './recovery-fence.mjs';
-import { recordRequests, retainedInstallations, scanRecoveryOutputs } from './recovery-evidence.mjs';
+import { recordRequests, retainedInstallations } from './recovery-evidence.mjs';
 
 if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/recovery.mjs PRIVATE_OUTPUT_DIRECTORY');
 const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(process.argv[2]);
@@ -68,7 +68,7 @@ try {
   evidence.afterB = { resumed: afterBResume, work: await observeNoReplay(targetB, fixture.approvals.refresh, b, afterBResume.requestedAt, 'after-b'), pendingInputCompletedWithoutPost: true, consumed };
   assert.equal(journal.slice(bRequestStart).filter(entry => entry.method === 'POST').length, 0);
   evidence.afterB.firstAppReadAt = await vmTime(targetB); assert.equal((await requestB('/api/refresh', { app: 'refresh' })).status, 200);
-  evidence.b.identities = await identities(targetB); evidence.b.shutdown = await stopRecovery(targetB); targetB.closed = true;
+  evidence.b.identities = await identities(targetB); evidence.b.shutdown = await stopSelectedHost(targetB); targetB.closed = true;
   evidence.afterB.applicationRequestWindow = journal.slice(bRequestStart);
   assert.ok(evidence.afterB.applicationRequestWindow.every(entry => entry.method !== 'POST'));
   const older = await restoreProfile(source, a, 'older-a'), olderRequest = older.request;
@@ -91,10 +91,10 @@ try {
   const receipt = { scope: 'Selected candidate due, retry and older stopped recovery through normal HTTPS workflows; full M11c remains open', provenance, sources, family: source.entry.id, image: source.entry.image, approvals: fixture.approvals, journal, evidence };
   receipt.privacy = [];
   for (const app of ['refresh', 'imports']) receipt.privacy.push(await scanPublicSurfaces(older, olderRequest, [fixture.approvals[app]], fixture.tokens[app], [fixture.secret], receipt));
-  evidence['older-a'].shutdown = await stopRecovery(older); older.closed = true;
+  evidence['older-a'].shutdown = await stopSelectedHost(older); older.closed = true;
   evidence.sourcePreservation = { a: await preserveSource(source, a), b: await preserveSource(targetA, b) };
   evidence.retainedVolumes = await retainedInstallations(installations);
-  receipt.finalPrivacy = await scanRecoveryOutputs(installations, fixture, receipt);
+  receipt.finalPrivacy = await scanOutputFiles(installations, fixture, receipt);
   assert.deepEqual(await sourceInventory(), sources); assert.deepEqual(await sourceState(), provenance);
   await save('result.json', receipt); console.log('PASS-selected-recovery-full');
 } catch (error) {

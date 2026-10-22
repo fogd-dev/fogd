@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { assertNoSecrets, assertArtifactNoSecrets } from './privacy.mjs';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { assertNoSecrets, assertArtifactNoSecrets, scanOutputFiles } from './privacy.mjs';
 
 test('ordinary surfaces reject a private value without exposing it in the failure', () => {
   assert.throws(() => assertNoSecrets(['prefix secret-value suffix'], ['secret-value']), error => {
@@ -22,4 +25,18 @@ test('malformed or incomplete artifact manifests cannot qualify privacy', () => 
 test('ordinary text and canonical artifact bytes pass when all private values are absent', () => {
   assert.deepEqual(assertNoSecrets(['ordinary status'], ['secret-value']), { valuesChecked: 1, credentialValuesChecked: 1 });
   assert.deepEqual(assertArtifactNoSecrets({ files: [{ path: 'worker/index.js', data: 'b3JkaW5hcnkgc3RhdHVz' }, { path: 'wrangler.json', data: 'e30=' }] }, ['secret-value']), { valuesChecked: 3, credentialValuesChecked: 1, filesChecked: 2 });
+});
+
+test('private values in a retained peer shutdown log cannot pass the output scan', async t => {
+  const output = await mkdtemp(join(tmpdir(), 'fogd-private-peer-log-')); t.after(() => rm(output, { recursive: true, force: true }));
+  const file = join(output, 'operator.env'), secret = 'application-private-test-value';
+  await Promise.all([
+    writeFile(file, 'FOGD_ADMIN_PASSWORD=admin-private-test-value\nFOGD_GATEWAY_TOKEN=gateway-private-test-value\n'),
+    writeFile(join(output, 'runtime.log'), 'ordinary final shutdown'),
+    writeFile(join(output, 'preparation-peer.log'), `peer log contains ${secret}`),
+  ]);
+  const host = { output, project: 'test', env: { FOGD_ENV_FILE: file }, config: { services: { controller: { environment: { AWS_ACCESS_KEY_ID: 'storage-user-test-value', AWS_SECRET_ACCESS_KEY: 'storage-private-test-value' } } } } };
+  await assert.rejects(scanOutputFiles([host], { secret, tokens: { refresh: 'deploy-private-test-value' } }, {}), error => {
+    assert.equal(error.message.includes(secret), false); return /Private value appeared/.test(error.message);
+  });
 });

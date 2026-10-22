@@ -9,7 +9,9 @@ export function ownerRecoveryWindow({ bucket, owner, survivor, killedAt, retryDu
   assert.ok(bucket.at >= killedAt, 'Post-kill observation predates the cut');
   assert.ok(killedAt < retryDue, 'Cut must precede the persisted retry deadline');
   assert.ok(bucket.waker && [owner, survivor].includes(bucket.waker.node), 'Qualification requires a known post-kill waker role');
-  const roleExpiry = bucket.waker.expires_ms, lease = bucket.leases.find(row => row.host === owner);
+  const matches = bucket.leases.filter(row => row.node === owner);
+  assert.equal(matches.length, 1, 'Qualification requires one unambiguous killed node lease');
+  const roleExpiry = bucket.waker.expires_ms, lease = matches[0];
   assert.ok(lease && !lease.missing && lease.node === owner, 'Qualification requires the killed node lease before GC');
   for (const time of [roleExpiry, lease.expires_ms]) assert.ok(Number.isSafeInteger(time) && time >= 0, 'Lease expiry must be a safe nonnegative timestamp');
   if (bucket.waker.node === owner) assert.ok(roleExpiry <= killedAt + defaults.wakerLeaseTtlMs, 'Killed waker expiry exceeds the native TTL');
@@ -36,14 +38,15 @@ export function survivorRoleObservation(window, bucket, survivor) {
 }
 
 export function ownerRoleTrail(window, observations, owner, survivor) {
-  const first = observations.findIndex(row => row.bucket.waker?.node === survivor);
+  const samples = observations.filter(row => row.bucket);
+  const first = samples.findIndex(row => row.bucket.waker?.node === survivor);
   assert.ok(first > 0, 'Survivor role observation requires a preceding killed-owner sample');
-  for (const [index, row] of observations.entries()) {
+  for (const [index, row] of samples.entries()) {
     assert.ok(row.bucket.waker && [owner, survivor].includes(row.bucket.waker.node), 'Unknown role in owner recovery trail');
     if (index < first) assert.equal(row.bucket.waker.expires_ms, window.roleExpiry, 'Killed owner role changed after the post-kill read');
     else assert.equal(row.bucket.waker.node, survivor, 'Waker role returned to the killed node');
   }
-  const previous = observations[first - 1], sample = observations[first];
+  const previous = samples[first - 1], sample = samples[first];
   assert.equal(previous.bucket.waker.node, owner);
   const transfer = survivorRoleObservation(window, sample.bucket, survivor);
   assert.ok(sample.bucket.at - transfer.leaseWrittenAt < window.tickMs, 'First survivor sample missed the claiming tick');

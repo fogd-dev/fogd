@@ -1,0 +1,61 @@
+import assert from 'node:assert/strict';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { selectedHost, cleanupSelectedHost } from './host.mjs';
+import { backgroundFixtures, importJob } from './background-fixtures.mjs';
+import { FailureAccess } from './failure-access.mjs';
+import { failureObserver } from './failure-observer.mjs';
+import { prepareOwnerWaker } from './failure-waker-preparation.mjs';
+import { selectedOwnerLoss } from './failure-owner-case.mjs';
+import { failureDiagnosticReceipt } from './failure-receipt.mjs';
+import { beginFailurePhase, firstFailureOccurrence, assertHealthyOccurrence } from './failure-phases.mjs';
+import { nativeObservation, vmTime } from './observations.mjs';
+import { nativeProcesses } from './recovery-fence.mjs';
+import { rows } from './recovery-ledger.mjs';
+import { sourceInventory, sourceState } from './evidence.mjs';
+import { waitFor } from './https.mjs';
+import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
+
+if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/failure-owner-smoke.mjs NEW_PRIVATE_OUTPUT');
+const provenance = await sourceState(), sources = await sourceInventory(), defaults = await checkedNativeDefaults(), host = await selectedHost(process.argv[2]);
+const clockNode = host.policy.fleets[1].nodes[0].host, access = new FailureAccess(clockNode), clock = () => vmTime(host, clockNode);
+access.install(host);
+const evidence = {}; let phase = 'fixtures', native, storage;
+const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
+try {
+  const fixture = await backgroundFixtures(host), active = fixture.approvals.refresh;
+  assert.equal(active.slot, host.policy.fleets[0].id);
+  host.nativeBaseline = await nativeProcesses(host);
+  evidence.timingEnvironment = await verifyNativeTimingEnvironment({ ...host, slots: host.policy.fleets.map(fleet => ({ nodes: fleet.nodes.map(node => node.host) })) });
+  const configured = await fixture.request('/api/refresh', { app: 'refresh', method: 'POST', headers: { Origin: `https://refresh.localhost:${host.gatewayPort}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'healthy' }) });
+  assert.equal(configured.status, 200); assert.deepEqual(configured.json(), { mode: 'healthy' });
+  const imported = fixture.approvals.imports;
+  await importJob(fixture.request, 'owner-control', 'kiwi\nlime');
+  evidence.untouchedBefore = await waitFor('completed untouched-fleet business rows', async () => {
+    const observed = await nativeObservation(host, imported.slot, imported.id, { persistedRecords: true, captureProofs: true });
+    return rows(observed, 'import_jobs').some(row => row.id === 'owner-control' && row.status === 'complete') && rows(observed, 'import_results').filter(row => row.job_id === 'owner-control').length === 2 && observed;
+  });
+  native = await failureObserver(host, active); storage = await failureObserver(host, active, 'storage');
+  evidence.readers = [native.inspect, storage.inspect];
+  phase = 'paused-waker-preparation'; evidence.preparation = {};
+  await prepareOwnerWaker({ host, active, clock, native, storage, defaults, evidence: evidence.preparation });
+  phase = 'owner-loss'; evidence.ownerLoss = {};
+  await selectedOwnerLoss({ host, active, clock, native, storage, defaults, evidence: evidence.ownerLoss });
+  evidence.untouchedAfter = await nativeObservation(host, imported.slot, imported.id, { persistedRecords: true, captureProofs: true });
+  assert.deepEqual(evidence.untouchedAfter.databases, evidence.untouchedBefore.databases);
+  await native.close(); native = null; await storage.close(); storage = null;
+  phase = 'healthy-after-owner-loss'; evidence.healthy = await beginFailurePhase(host, active, 'owner-loss-future', clock);
+  evidence.healthy.first = await firstFailureOccurrence(host, active, evidence.healthy); assertHealthyOccurrence(evidence.healthy.first);
+  const paused = await host.json(['admin', 'dispatch', 'refresh', 'pause']); assert.equal(paused.observed, 'paused');
+  evidence.finalPauseAt = Date.parse(paused.observedAt);
+  const final = await nativeObservation(host, active.slot, active.id, { persistedRecords: true });
+  assert.equal(final.status.paused, true); assert.equal(final.status.nextAlarm, null);
+  const attempts = rows(final, 'cron_fault_attempts'); assert.ok(attempts.every(row => !['pending', 'rejected'].includes(row.outcome) && row.entered_at < evidence.finalPauseAt));
+  for (const interval of [{ start: active.initialPauseAt, end: evidence.ownerLoss.phase.held.end }, evidence.healthy.held]) assert.ok(attempts.every(row => row.entered_at < interval.start || row.entered_at >= interval.end));
+  assert.ok(!access.events.some(event => event.refused));
+  phase = 'shutdown';
+  await failureDiagnosticReceipt(host, fixture, { scope: 'Diagnostic selected native owner-loss only on online-built minute artifact, with recorded paused peer-restart preparation when needed; sparse terminal, downtime, ordinary offline builds and UI failure gates remain unqualified', provenance, sources, defaults, evidence, final, accesses: access.events });
+  console.log('PASS-selected-failure-owner-smoke-only');
+} catch (error) {
+  await writeFile(join(host.output, 'failure.json'), JSON.stringify({ phase, name: error.name, message: error.message, evidence }, null, 2) + '\n', { mode: 0o600, flag: 'wx' }); throw error;
+} finally { clearInterval(heartbeat); if (!host.closed) await cleanupSelectedHost(host); }
