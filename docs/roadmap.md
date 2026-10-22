@@ -1,9 +1,9 @@
 # Proposed roadmap
 
-**Discussion draft.** Build toward the [vision](vision.md): make owned infrastructure
-an integrated platform for building, deploying, and running applications, with
-freedom to choose where they live. Milestones below advance reusable capabilities.
-The FilOz demo-hosting use case is a candidate first pilot, not the north star.
+**Product goal: Cloudflare you can control and touch.** Build toward the
+[vision](vision.md): an application cloud you own and run on your infrastructure.
+Homelabs and team infrastructure are places to use it. The capability milestones
+below support that product; later scopes and sequencing remain proposals.
 M7a–M7c and M8 are locally qualified; M9 has experimental local Kubernetes evidence.
 Later milestones remain proposals.
 
@@ -20,6 +20,34 @@ SDK/framework paths, shared remote operation, broader resource evolution, and
 shared-operation recovery policy remain gaps. M8a qualifies stopped local backup/restore. M7b qualifies R2 additions and one bounded
 logical transfer profile. See [report.md](report.md) for exact evidence.
 Do not infer product support from the runtimes' feature lists.
+
+## Immediate priorities
+
+Finish the bounded M11c acceptance audit and public-selector release check. Keep
+cron admission closed until its gates pass. Additional cron qualification work
+needs an identified acceptance gap or a reproducible defect.
+
+Before selecting another binding milestone, define an operator-readiness slice
+under G2 and G3. It should address these current gaps:
+
+- **Installability:** a supported runtime must have a documented, reproducible path
+  onto another supported machine. A local image digest and receipts alone do not
+  provide that path.
+- **Everyday operation:** provide scoped application diagnostics and an artifact
+  retention policy that preserves active releases, held operations, and recovery
+  references. Enforce shared-installation storage credential requirements without
+  silently changing credentials on existing data.
+- **Capacity and serving:** measure latency, throughput, memory, and controller-loss
+  behavior across declared app counts and concurrent uploads. Use those results to
+  decide app density and routing architecture; caching needs an explicit approval
+  and pause contract.
+- **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
+  and upgrade procedures easy to find. Record the current downtime and loss
+  boundaries alongside the supported commands.
+
+Each item needs its own acceptance conditions before implementation. These are
+product priorities, not newly qualified capabilities. Exact-artifact approval and
+the existing recovery boundaries remain in force.
 
 ## Milestones and acceptance gates
 
