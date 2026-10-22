@@ -203,8 +203,8 @@ checks the normal HTTPS CLI flow, first migration hold, selected controller kill
 explicit retry and paused updates on the frozen product image. The
 [selected recovery matrix](cron-selected-recovery.md) adds armed-timer, pending-retry
 and older-snapshot recovery with an original queued survivor, held native startup
-and reviewed acknowledgment before separate resume. Replacement, active-survivor
-retirement and the complete audit still need selected-image evidence before M11c
+and reviewed acknowledgment before separate resume. Active-survivor retirement
+and the complete audit still need selected-image evidence before M11c
 can permit public admission.
 
 The [selected failure profile](cron-selected-failures.md) adds ordinary offline
@@ -213,9 +213,18 @@ owner-loss recovery, counted sparse failure and full-slot downtime on the frozen
 candidate. Its quiet interval, failed-work browser state and final held minute
 have independent source, signature, artifact, state and cleanup audits. The
 [earlier diagnostics](cron-selected-failure-diagnostics.md) retain their bounded
-receipt scopes. Selected compatible replacement, active-survivor and pending-retry
-retirement, and the complete M11c acceptance audit remain open. Catalog enrollment
+receipt scopes. Selected active-survivor, pending-retry and two-cron retirement,
+and the complete M11c acceptance audit remain open. Catalog enrollment
 and ordinary cron admission stay closed.
+
+The [selected replacement profile](cron-selected-replacement.md) qualifies compatible
+migration overlap, interrupted callbacks through native generation release,
+original-occurrence lost-acknowledgment retries and visible unfinished work through
+ordinary offline artifacts and scoped HTTPS approval. A final held minute preserves
+all ledgers. Independent audits verify retained controller artifacts, signed runtime
+identities, source files and cleanup. Active-survivor, pending-retry and two-cron
+retirement and the complete M11c acceptance audit remain open before public cron
+admission.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

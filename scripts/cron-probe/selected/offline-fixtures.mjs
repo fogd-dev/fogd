@@ -27,6 +27,11 @@ export async function offlineFixtureSet(host, projects) {
 export async function approveOffline(host, fixture, name) {
   const submitted = await submitOffline(host, fixture, name);
   const active = await approveRefresh(host, submitted, fixture.secret);
+  return recordOfflineApproval(host, fixture, name, active);
+}
+export async function recordOfflineApproval(host, fixture, name, active) {
+  assert.ok(Object.hasOwn(fixture.builds, name)); assert.equal(active.app, 'refresh');
+  assert.equal(active.digest, fixture.builds[name].verification.release.digest);
   const artifact = await fixture.request(`/v1/deployments/${active.id}/artifact`); assert.equal(artifact.status, 200); assert.deepEqual(artifact.json(), fixture.builds[name].payload);
   fixture.approvals.refresh = active; fixture.submissions.refresh.push(active);
   if (!fixture.approvals.imports) {

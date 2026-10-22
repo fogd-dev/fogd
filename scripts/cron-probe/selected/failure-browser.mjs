@@ -3,12 +3,9 @@ import { join } from 'node:path';
 import { chromium, expect } from '../../guestbook-browser.mjs';
 import { beginFailurePhase, firstFailureOccurrence, assertHealthyOccurrence, pauseFailureWork } from './failure-phases.mjs';
 import { rows } from './recovery-ledger.mjs';
+import { setRefreshSource as setFailureSource } from './refresh-client.mjs';
 
-export async function setFailureSource(host, fixture, mode) {
-  assert.ok(['healthy', 'offline'].includes(mode));
-  const response = await fixture.request('/api/refresh', { app: 'refresh', method: 'POST', headers: { Origin: `https://refresh.localhost:${host.gatewayPort}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode }) });
-  assert.equal(response.status, 200); assert.deepEqual(response.json(), { mode });
-}
+export { setFailureSource };
 export async function selectedFailureBrowser({ host, fixture, active, clock, evidence }) {
   evidence.initialPause = await pauseFailureWork(host, active, clock);
   await setFailureSource(host, fixture, 'offline');
@@ -31,8 +28,9 @@ export async function selectedFailureBrowser({ host, fixture, active, clock, evi
   evidence.recovered = await browserState(host, 'healthy', recovered);
   evidence.heldIntervals = [{ start: evidence.initialPause.heldAt, end: evidence.phase.held.end }, { start: evidence.failedPause.heldAt, end: evidence.healthy.held.end }];
 }
-export async function browserState(host, name, saved) {
-  assert.ok(['baseline', 'failed', 'healthy'].includes(name)); assert.ok(saved && Number.isSafeInteger(saved.saved_at));
+export async function browserState(host, name, saved, replacement) {
+  assert.ok(['baseline', 'failed', 'healthy', 'replacement'].includes(name)); assert.ok(saved && Number.isSafeInteger(saved.saved_at));
+  assert.equal(name === 'replacement', replacement !== undefined);
   host.access?.({ kind: 'browser', app: 'refresh', name });
   const browser = await chromium.launch(), errors = [], responses = [], origin = `https://refresh.localhost:${host.gatewayPort}`;
   try {
@@ -49,6 +47,17 @@ export async function browserState(host, name, saved) {
     if (name === 'failed') { await expect(advisory).toContainText('The local advisory source is unavailable.');  }
     await expect(advisory.locator('dd').nth(2)).toHaveText(saved.value);
     const date = await page.evaluate(value => new Date(value).toLocaleString(), saved.saved_at); await expect(advisory.locator('dd').nth(1)).toHaveText(date);
+    if (replacement) {
+      const { unfinished, inventory } = replacement;
+      assert.equal(unfinished.job, 'advisory'); assert.ok(Number.isSafeInteger(unfinished.scheduled_time)); assert.ok(inventory && Number.isSafeInteger(inventory.saved_at));
+      const inventoryView = page.getByRole('region', { name: 'inventory', exact: true });
+      await expect(inventoryView.locator('dd').nth(2)).toHaveText(inventory.value);
+      await expect(inventoryView.locator('dd').nth(1)).toHaveText(await page.evaluate(value => new Date(value).toLocaleString(), inventory.saved_at));
+      const time = await page.evaluate(value => new Date(value).toLocaleString(), unfinished.scheduled_time);
+      await expect(page.locator('#unfinished li')).toHaveCount(1);
+      await expect(page.getByRole('region', { name: 'Unfinished refreshes', exact: true })).toContainText(`advisory at ${time}: No completion recorded`);
+      await expect(page.locator('#unfinished-more')).toHaveText('');
+    }
     const screenshot = `${name}.png`; await page.screenshot({ path: join(host.output, screenshot), fullPage: true });
     const text = await page.locator('main').innerText(); assert.deepEqual(errors, []); assert.ok(responses.some(row => row.url === '/api/refresh' && row.status === 200));
     assert.ok(responses.every(row => row.status < 400)); return { screenshot, text, errors, responses };
