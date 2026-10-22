@@ -4,10 +4,12 @@ Queue apps use the [queued recovery protocol](queue-recovery.md):
 backup pauses delivery and restore requires explicit recovery acknowledgment.
 The [bounded Docker queue profile](queue-admission.md) requires explicit opt-in.
 
-Experimental scheduled-work archives use the [cron recovery protocol](cron-recovery.md).
-Its native profile qualifies same-version local Linux arm64 Docker recovery with
-two application fleets, including due timers, pending retries and an older snapshot.
-Ordinary cron admission remains closed under [M11c](m11c.md).
+Scheduled-work recovery requires the qualified selected runtime and its
+[independent installation policy](runtime-selection.md). The [M11c acceptance](m11c-acceptance.md)
+covers held same-version local Linux arm64 two-fleet Docker recovery, including due
+timers, pending retries and an older snapshot. Default installations keep cron
+admission closed. Earlier [experimental recovery receipts](cron-recovery.md) retain
+their original source and runtime scope.
 
 Use `fogd backup` to stop the supported Docker stack and capture its complete state.
 Use `fogd restore` to recover that snapshot onto fresh volumes with the same images.

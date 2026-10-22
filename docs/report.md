@@ -3,9 +3,9 @@
 fogd runs supported Void applications on infrastructure you control, with an
 integrated build/deploy workflow and operator approval. Today it has qualified
 local Docker flows for stateful apps, private configuration, recovery, bounded
-queues and live sessions. Kubernetes evidence is experimental and local. Remote
-infrastructure, scheduled app lifecycle, Workflows and broader portability remain
-open work.
+queues, live sessions and the qualified opt-in scheduled family. Kubernetes
+evidence is experimental and local. Remote infrastructure, scheduled work outside
+that family, Workflows and broader portability remain open work.
 
 The [north star](vision.md) is a complete application platform with the freedom to
 choose where applications live. FilOz demo hosting is one candidate first use case,

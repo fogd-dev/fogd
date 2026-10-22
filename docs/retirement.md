@@ -4,9 +4,10 @@ Retirement creates a fresh Docker installation from a stopped snapshot. The reti
 name becomes permanent history; a differently named app can use its freed fleet.
 The other app keeps its data and native sessions. Plan whole-installation downtime
 and enough disk for a full restore. Kubernetes retirement is not supported.
-Scheduled history remains refused by ordinary CLI retirement. The separate
-[guarded release profile](cron-sealed-retirement.md) records its experimental
-retirement and restore evidence.
+Scheduled history requires the qualified selected runtime and its independent
+[installation policy](runtime-selection.md); default installations refuse it.
+The [M11c acceptance](m11c-acceptance.md) records current scheduled retirement and
+restore evidence. Earlier experimental profiles below retain their pinned scope.
 
 ## Prepare and retire
 
@@ -173,12 +174,12 @@ The single-cron receipt pins commit
 checked against those Git revisions. Current shared qualification helpers have
 different fingerprints.
 
-The following receipts and commands describe historical pinned profiles. Current
-normal CLI retirement and restore refuse all cron history, including retired or
-pending schedules. `--stop-scheduled-work` does not bypass the
+The following receipts and commands describe historical pinned profiles. At these
+checkpoints, normal CLI retirement and restore refused all cron history, including
+retired or pending schedules. `--stop-scheduled-work` did not bypass the
 [independent preboot policy](cron-runtime-preboot.md). Reproduce these drivers with
-their recorded sources; the guarded release runtime still needs lifecycle and
-recovery qualification before ordinary admission.
+their recorded sources. The later [M11c acceptance](m11c-acceptance.md) qualifies
+ordinary selectors for the frozen family; these older receipts alone do not.
 
 The [bounded native evidence](evidence/m11c-cron-retirement.json) qualifies scheduled
 retirement on same-version local Linux arm64 Docker with two application fleets.
@@ -285,4 +286,5 @@ Both this path and the full qualification preserve every volume.
 The two-cron receipt adds the qualifier and cleanup guard to the earlier helper
 versions. Its production runtime sources and native binary match the earlier
 recovery and retirement profiles; each receipt retains its own complete source
-fingerprints. Ordinary scoped cron admission remains closed.
+fingerprints. These historical receipts did not open ordinary scoped cron admission;
+the later [M11c acceptance](m11c-acceptance.md) records that separate decision.

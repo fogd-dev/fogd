@@ -4,8 +4,8 @@
 [vision](vision.md): an application cloud you own and run on your infrastructure.
 Homelabs and team infrastructure are places to use it. The capability milestones
 below support that product; later scopes and sequencing remain proposals.
-M7a–M7c and M8 are locally qualified; M9 has experimental local Kubernetes evidence.
-Later milestones remain proposals.
+M7–M8 and M10–M11 have bounded local qualification; M9 has experimental local
+Kubernetes evidence. Broader operator readiness and later capabilities remain open.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
