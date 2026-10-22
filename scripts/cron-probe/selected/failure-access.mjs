@@ -5,7 +5,7 @@ export class FailureAccess {
   #quiet = false;
   constructor(clockNode, clock = Date.now) { this.clockNode = clockNode; this.clock = clock; this.events = []; }
   record(event) {
-    const permitted = !this.#quiet || event.kind === 'bucket-only' || event.kind === 'inspect' || (event.kind === 'clock' && event.node === this.clockNode);
+    const permitted = !this.#quiet || event.kind === 'bucket-only' || event.kind === 'inspect' || event.kind === 'replica-start' || (event.kind === 'clock' && event.node === this.clockNode);
     this.events.push({ ...event, quiet: this.#quiet, hostAt: this.clock(), ...(!permitted ? { refused: true } : {}) });
     if (permitted) return;
     const error = new Error('Native access is forbidden during the quiet window'); error.code = 'FOGD_QUIET_WINDOW'; throw error;

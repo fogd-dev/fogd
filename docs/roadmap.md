@@ -203,24 +203,19 @@ checks the normal HTTPS CLI flow, first migration hold, selected controller kill
 explicit retry and paused updates on the frozen product image. The
 [selected recovery matrix](cron-selected-recovery.md) adds armed-timer, pending-retry
 and older-snapshot recovery with an original queued survivor, held native startup
-and reviewed acknowledgment before separate resume. Failure/replacement,
-active-survivor retirement and the complete audit still need selected-image
-evidence before M11c can permit public admission. The bounded offline diagnostic
-below checks the build path separately.
+and reviewed acknowledgment before separate resume. Replacement, active-survivor
+retirement and the complete audit still need selected-image evidence before M11c
+can permit public admission.
 
-The [selected owner-loss diagnostic](cron-selected-failure-diagnostics.md) adds
-an audited original-occurrence retry after an owner cut under default native timing, with
-recorded paused peer preparation and preserved control data. It does not close
-the selected failure gate: sparse terminal failure, downtime, offline artifacts
-in the full failure profile and browser failure evidence remain open, alongside replacement and
-active-survivor retirement. Catalog and ordinary cron admission stay closed.
-
-The [ordinary offline build diagnostic](cron-selected-failure-diagnostics.md#ordinary-offline-build-diagnostic)
-checks network-disabled Void and normal fogd builds on the selected candidate,
-exact scoped upload, healthy minute/sparse native execution and preserved old rows
-through a paused update. Full selected failure and replacement qualification of
-those artifacts, browser failure evidence, retirement and the M11c acceptance
-audit remain open. This bounded evidence does not open cron admission.
+The [selected failure profile](cron-selected-failures.md) adds ordinary offline
+Void/fogd artifacts, scoped HTTPS approval, native `noRetry`, original-occurrence
+owner-loss recovery, counted sparse failure and full-slot downtime on the frozen
+candidate. Its quiet interval, failed-work browser state and final held minute
+have independent source, signature, artifact, state and cleanup audits. The
+[earlier diagnostics](cron-selected-failure-diagnostics.md) retain their bounded
+receipt scopes. Selected compatible replacement, active-survivor and pending-retry
+retirement, and the complete M11c acceptance audit remain open. Catalog enrollment
+and ordinary cron admission stay closed.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

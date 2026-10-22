@@ -10,7 +10,7 @@ import { waitFor } from './https.mjs';
 import { selectedFailureNodes, gracefullyStopFailureNode, stoppedFailureNode, restartFailureNode } from './failure-containers.mjs';
 import { ownerRoleTrail } from '../faults/recovery-window.mjs';
 import { preparationWindow } from './failure-waker-window.mjs';
-import { verifyFailureProof } from './failure-authority.mjs';
+import { verifiedObservationKeys } from './failure-authority.mjs';
 import { assertPreparedRuntime } from './failure-runtime-state.mjs';
 import { nativeLogFailure } from './shutdown.mjs';
 import { assertStoppedLease } from './failure-owner.mjs';
@@ -22,7 +22,7 @@ export async function prepareOwnerWaker({ host, active, clock, native, storage, 
     return rows(observed, 'cron_fault_attempts').every(row => row.outcome !== 'pending') && observed;
   }, 30000);
   evidence.before = before;
-  const keys = verifiedKeys(host, active, before), initial = await storage.observe('prepare-waker', { keys }); evidence.initial = initial;
+  const keys = verifiedObservationKeys(host.policy, active.slot, before), initial = await storage.observe('prepare-waker', { keys }); evidence.initial = initial;
   const nodes = await selectedFailureNodes(host, active.slot), owner = initial.bucket.owner.node;
   const keeper = nodes.find(node => node.node === owner), peer = nodes.find(node => node.node !== owner); assert.ok(keeper && peer);
   evidence.owner = owner; evidence.epoch = initial.bucket.owner.epoch; evidence.peer = peer; evidence.keeper = keeper;
@@ -35,7 +35,7 @@ export async function prepareOwnerWaker({ host, active, clock, native, storage, 
   evidence.after = await waitFor('complete paused membership after waker preparation', read, 90000);
   assert.equal(evidence.after.status.paused, true); assert.equal(evidence.after.status.nextAlarm, null);
   assert.deepEqual(evidence.after.databases, before.databases);
-  evidence.keys = verifiedKeys(host, active, evidence.after);
+  evidence.keys = verifiedObservationKeys(host.policy, active.slot, evidence.after);
   for (const node of nodes) {
     if (evidence.restarted && node.node === peer.node) assert.notEqual(evidence.keys[node.node], keys[node.node]);
     else assert.equal(evidence.keys[node.node], keys[node.node]);
@@ -56,11 +56,6 @@ export async function prepareOwnerWaker({ host, active, clock, native, storage, 
   assert.ok(evidence.settle[1].bucket.at - evidence.settle[0].bucket.at >= defaults.rebalanceTickMs);
   host.nativeBaseline = processes; host.ownerPreparation = evidence;
   return evidence;
-}
-function verifiedKeys(host, active, observed) {
-  return Object.fromEntries(observed.proofs.values.map(value => {
-    const authority = verifyFailureProof(host.policy, active.slot, value.node, value.proof, value.challenge); return [authority.node, authority.publicKey];
-  }));
 }
 async function acquireRole(context) {
   const { host, clock, storage, defaults, evidence, keys, owner, peer } = context;

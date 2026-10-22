@@ -1,20 +1,14 @@
 import assert from 'node:assert/strict';
+import { setTimeout as delay } from 'node:timers/promises';
 import { nativeObservation, setFailurePolicy } from './observations.mjs';
 import { waitFor } from './https.mjs';
 import { rows } from './recovery-ledger.mjs';
 
 export async function beginFailurePhase(host, active, phase, clock) {
-  const paused = await host.json(['admin', 'dispatch', 'refresh', 'pause']); assert.equal(paused.observed, 'paused');
-  const heldAt = Date.parse(paused.observedAt), confirmedAt = await clock(); assert.ok(Number.isSafeInteger(heldAt) && heldAt <= confirmedAt);
-  const quiescence = [];
-  await waitFor('no pending recorded callbacks after pause', async () => {
-    const observed = await nativeObservation(host, active.slot, active.id);
-    const pending = rows(observed, 'cron_fault_attempts').filter(row => row.outcome === 'pending');
-    quiescence.push({ at: await clock(), pending }); return pending.length === 0;
-  }, 30000);
+  const held = await pauseFailureWork(host, active, clock);
   const control = await setFailurePolicy(host, active, phase), requestedAt = await clock();
   const resumed = await host.json(['admin', 'dispatch', 'refresh', 'resume', active.id, active.digest]); assert.equal(resumed.observed, 'running');
-  return { phase, quiescence, held: { start: heldAt, end: requestedAt }, confirmedPauseAt: confirmedAt, control, resume: { requestedAt, returnedAt: await clock(), observed: resumed.observed } };
+  return { phase, quiescence: held.quiescence, held: { start: held.heldAt, end: requestedAt }, confirmedPauseAt: held.confirmedAt, control, resume: { requestedAt, returnedAt: await clock(), observed: resumed.observed } };
 }
 export async function firstFailureOccurrence(host, active, selected, cron = '* * * * *') {
   const value = await waitFor('both native jobs entered and finished', async () => {
@@ -43,4 +37,24 @@ export function assertHealthyOccurrence(value) {
   assert.ok(hasSuccessfulOccurrence(value.observed, value.time));
   assert.deepEqual(value.attempts.map(row => [row.job, row.outcome, row.no_retry_called]).sort(), [['advisory', 'success', 0], ['inventory', 'success', 0]]);
   for (const job of ['inventory', 'advisory']) assert.equal(rows(value.observed, 'refresh_occurrences').find(row => row.job === job && row.scheduled_time === value.time).attempts, 1);
+}
+
+export async function pauseFailureWork(host, active, clock) {
+  const paused = await host.json(['admin', 'dispatch', 'refresh', 'pause']); assert.equal(paused.observed, 'paused');
+  const heldAt = Date.parse(paused.observedAt), confirmedAt = await clock(); assert.ok(Number.isSafeInteger(heldAt) && heldAt <= confirmedAt);
+  const quiescence = [];
+  const observed = await waitFor('settled recorded callbacks after confirmed pause', async () => {
+    const value = await nativeObservation(host, active.slot, active.id, { persistedRecords: true });
+    const pending = rows(value, 'cron_fault_attempts').filter(row => row.outcome === 'pending');
+    quiescence.push({ at: await clock(), pending }); assert.equal(value.status.paused, true); assert.equal(value.status.nextAlarm, null);
+    return pending.length === 0 && value;
+  }, 30000);
+  return { paused, heldAt, confirmedAt, quiescence, observed };
+}
+
+export async function waitFailureTime(clock, deadline) {
+  assert.ok(Number.isSafeInteger(deadline) && deadline > 0);
+  let now = await clock();
+  while (now < deadline) { await delay(Math.min(1000, deadline - now)); now = await clock(); }
+  return now;
 }

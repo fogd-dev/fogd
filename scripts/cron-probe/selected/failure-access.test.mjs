@@ -32,3 +32,9 @@ for (const method of ['command', 'json']) test(`installed quiet guard blocks ${m
   assert.throws(() => host[method](['admin', 'dispatch', 'refresh', 'observe']), { code: 'FOGD_QUIET_WINDOW' });
   assert.equal(invoked, false);
 });
+
+test('quiet window permits a recorded Docker replica start without permitting native requests', () => {
+  const access = new FailureAccess('slot-2-a', () => 1000); access.beginQuiet(100);
+  access.record({ kind: 'replica-start', node: 'selected-node' });
+  assert.deepEqual(access.events.at(-1), { kind: 'replica-start', node: 'selected-node', quiet: true, hostAt: 1000 });
+});

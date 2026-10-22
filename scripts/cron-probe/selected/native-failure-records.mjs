@@ -38,7 +38,7 @@ export async function readFailureRecords(client, policy, fleet) {
     if (row?.cell !== cell) return null;
     const keyLastModifiedMs = entry.LastModified.getTime();
     assert.ok(Number.isSafeInteger(row.due_ms) && row.due_ms >= 0 && Number.isSafeInteger(keyLastModifiedMs));
-    return { key: entry.Key, keyLastModifiedMs, ...row };
+    return { ...row, key: entry.Key, keyLastModifiedMs };
   }));
   const wakes = rows.filter(Boolean);
   return { owner, waker, leases, wakes, at: Date.now() };

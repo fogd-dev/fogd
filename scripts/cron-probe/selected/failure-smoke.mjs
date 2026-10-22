@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
 import { backgroundFixtures } from './background-fixtures.mjs';
 import { FailureAccess } from './failure-access.mjs';
+import { assertNoRetry } from './failure-outcomes.mjs';
 import { retryControlReady, assertRetryControl } from './failure-retry.mjs';
 import { beginFailurePhase, firstFailureOccurrence, hasSuccessfulOccurrence, assertHealthyOccurrence } from './failure-phases.mjs';
 import { nativeObservation, vmTime } from './observations.mjs';
@@ -70,7 +71,3 @@ try {
   console.log('PASS-selected-failure-smoke-only');
 } catch (error) { await save('failure.json', { phase, name: error.name, message: error.message, evidence }); throw error; }
 finally { clearInterval(heartbeat); if (!host.closed) await cleanupSelectedHost(host); }
-
-function assertNoRetry(attempts) {
-  assert.deepEqual(attempts.map(row => [row.job, row.outcome, row.no_retry_called]).sort(), [['advisory', 'thrown', 1], ['inventory', 'success', 0]]);
-}

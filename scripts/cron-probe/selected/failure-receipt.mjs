@@ -12,7 +12,7 @@ export async function failureDiagnosticReceipt(host, fixture, record, rawSurface
   for (const fleet of host.policy.fleets) identities.push(await nativeObservation(host, fleet.id, undefined, { captureProofs: true }));
   const receipt = { ...record, family: host.entry.id, image: host.entry.image, policy: host.policy, approvals: fixture.approvals, identities, privacy: [] };
   for (const app of ['refresh', 'imports']) receipt.privacy.push(await scanPublicSurfaces(host, fixture.request, fixture.submissions?.[app] || [fixture.approvals[app]], fixture.tokens[app], [fixture.secret], receipt));
-  receipt.shutdown = await stopSelectedHost(host); host.closed = true;
+  receipt.shutdown = await stopSelectedHost(host); host.closed = true; assert.equal(receipt.shutdown.retainedVolumes.length, 8);
   receipt.finalPrivacy = await scanOutputFiles([host], fixture, receipt, rawSurfaces);
   assert.deepEqual(await sourceInventory(), record.sources); assert.deepEqual(await sourceState(), record.provenance);
   const file = join(host.output, 'result.json');

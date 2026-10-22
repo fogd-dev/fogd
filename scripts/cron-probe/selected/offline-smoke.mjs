@@ -1,16 +1,15 @@
 import assert from 'node:assert/strict';
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
-import { offlineFixtures, approveOffline } from './offline-fixtures.mjs';
+import { offlineFixtures, approveOffline, offlineSurfaces } from './offline-fixtures.mjs';
 import { nativeObservation, vmTime } from './observations.mjs';
 import { nativeProcesses } from './recovery-fence.mjs';
 import { beginFailurePhase, firstFailureOccurrence, assertHealthyOccurrence } from './failure-phases.mjs';
 import { assertOfflineLedger } from './offline-ledger.mjs';
 import { failureDiagnosticReceipt } from './failure-receipt.mjs';
 import { sourceInventory, sourceState } from './evidence.mjs';
-import { regularFiles, translateConfig } from '../../../packages/runtime/src/artifact.mjs';
-import { offlineSourceHashes } from '../offline-project.mjs';
+import { translateConfig } from '../../../packages/runtime/src/artifact.mjs';
 import { requestedRuntime } from '../../../packages/cli/src/runtime/catalog.mjs';
 
 if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/offline-smoke.mjs NEW_PRIVATE_OUTPUT');
@@ -41,13 +40,7 @@ try {
     const status = await host.json(['status', submitted.id], { env: { ...host.env, FOGD_DEPLOY_TOKEN: fixture.tokens.refresh } });
     assert.equal(status.status, index === 0 ? 'superseded' : 'active'); assert.equal(status.digest, submitted.digest); evidence.statuses.push(status);
   }
-  const surfaces = [await readFile(join(host.output, 'negotiated-capabilities.json'))];
-  for (const build of Object.values(fixture.builds)) {
-    for (const path of await regularFiles(build.output)) surfaces.push(await readFile(join(build.output, path)));
-  }
-  for (const { project } of Object.values(fixture.builds)) {
-    for (const path of Object.keys(await offlineSourceHashes(project))) surfaces.push(await readFile(join(project, path)));
-  }
+  const surfaces = await offlineSurfaces(host, fixture);
   phase = 'shutdown';
   await failureDiagnosticReceipt(host, fixture, { scope: 'Ordinary offline Void/fogd minute and sparse builds with exact scoped upload, paused update and native healthy execution only; full selected failure and replacement acceptance remain open', provenance, sources, evidence, final }, surfaces);
   console.log('PASS-selected-ordinary-offline-smoke-only');

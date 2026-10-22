@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { regularFiles } from '../../../packages/runtime/src/artifact.mjs';
+import { offlineSourceHashes } from '../offline-project.mjs';
 import { join } from 'node:path';
 import { backgroundCredentials, privateFaultProject, approveRefresh, approveImports } from './background-fixtures.mjs';
 import { negotiatedCapabilities, ordinaryOfflineBuild } from './offline-build.mjs';
@@ -25,4 +28,13 @@ export async function approveOffline(host, fixture, name) {
     fixture.approvals.imports = await approveImports(host, fixture.tokens.imports); fixture.submissions.imports.push(fixture.approvals.imports);
   }
   return active;
+}
+
+export async function offlineSurfaces(host, fixture) {
+  const surfaces = [await readFile(join(host.output, 'negotiated-capabilities.json'))];
+  for (const { project, output } of Object.values(fixture.builds)) {
+    for (const path of await regularFiles(output)) surfaces.push(await readFile(join(output, path)));
+    for (const path of Object.keys(await offlineSourceHashes(project))) surfaces.push(await readFile(join(project, path)));
+  }
+  return surfaces;
 }

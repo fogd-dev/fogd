@@ -12,7 +12,7 @@ export async function selectedFailureNodes(host, slotId) {
   const containers = await projectContainers(host.project), result = [];
   for (const node of fleet.nodes) {
     const matches = containers.filter(value => value.Config.Labels['com.docker.compose.service'] === node.host); assert.equal(matches.length, 1);
-    const container = matches[0]; assertContainer(host, node, container); assert.equal(container.State.Running, true);
+    const container = matches[0]; assertContainer(host, node, container); assert.equal(container.State.Running, true); assert.ok(!container.Config.Healthcheck, 'Fixture replicas must not receive Docker healthcheck requests');
     assert.equal(container.Config.Env.find(value => value.startsWith('CELLD_NODE=')), `CELLD_NODE=${node.id}`);
     const connection = container.NetworkSettings.Networks[network]; assert.ok(connection?.IPAddress && connection.EndpointID);
     assert.deepEqual(Object.keys(container.NetworkSettings.Networks), [network]);
@@ -21,7 +21,7 @@ export async function selectedFailureNodes(host, slotId) {
     assert.deepEqual(aliases.map(value => value.Id), [container.Id], 'Node DNS alias must resolve to exactly its selected container');
     const native = host.nativeBaseline.find(value => value.host === node.host); assert.ok(native); assert.equal(native.container, container.Id);
     result.push({ node: node.id, host: node.host, id: container.Id, image: container.Image, startedAt: container.State.StartedAt,
-      network, networkId: connection.NetworkID, endpoint: connection.EndpointID, address: connection.IPAddress, resources: { nanoCpus: container.HostConfig.NanoCpus, memoryBytes: container.HostConfig.Memory }, native });
+      healthcheck: container.Config.Healthcheck || null, network, networkId: connection.NetworkID, endpoint: connection.EndpointID, address: connection.IPAddress, resources: { nanoCpus: container.HostConfig.NanoCpus, memoryBytes: container.HostConfig.Memory }, native });
   }
   return result;
 }

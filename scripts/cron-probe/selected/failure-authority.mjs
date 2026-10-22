@@ -28,3 +28,13 @@ export function assertFailureLeases(policy, slotId, leases, keys, absentId, at) 
     if (node.id !== absentId) assert.ok(lease.expires_ms > at, 'Survivor lease is not current');
   }
 }
+
+export function verifiedObservationKeys(policy, slotId, observed) {
+  const fleet = policy.fleets.find(value => value.id === slotId); assert.ok(fleet);
+  const values = observed.proofs.values; assert.equal(values.length, fleet.nodes.length);
+  assert.deepEqual(values.map(value => value.node).sort(), fleet.nodes.map(node => node.id).sort());
+  return Object.fromEntries(values.map(value => {
+    const authority = verifyFailureProof(policy, slotId, value.node, value.proof, value.challenge);
+    return [authority.node, authority.publicKey];
+  }));
+}

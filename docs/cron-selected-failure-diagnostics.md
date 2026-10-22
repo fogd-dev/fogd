@@ -4,8 +4,8 @@ The selected owner-loss diagnostic checks a native retry after its owner exits
 on the frozen `celld-cron-v2-linux-arm64` candidate. It uses normal scoped HTTPS
 upload, exact artifact and secret approval, and the runtime's default timing.
 The [receipt](evidence/m11c-selected-runtime-owner-diagnostic.json) records one
-local Linux arm64 Docker run with two application fleets. Full
-[M11c failure acceptance](m11c.md) and ordinary cron admission remain open.
+local Linux arm64 Docker run with two application fleets. The separate [selected failure profile](cron-selected-failures.md) supplies full
+failure evidence on this image; ordinary cron admission remains closed.
 
 ## Reproduction
 
@@ -87,11 +87,11 @@ scoped status, operator surfaces, ordinary errors, peer and runtime logs, and th
 complete final receipt bytes. Read-only observer mounts do not make native SQL
 or status requests physically read-only: they can materialize resource cells.
 
-This diagnostic uses an online-built minute artifact. Selected `noRetry`, sparse
-terminal failure, full-slot downtime, and browser failed work remain open.
-The offline diagnostic below checks the build path separately; its artifacts still
-need the complete selected failure profile. Compatible replacement, active-survivor and pending-retry
-retirement, and the complete selected-runtime audit retain their M11c gates.
+This diagnostic uses an online-built minute artifact. The separate
+[selected failure profile](cron-selected-failures.md) covers native `noRetry`,
+sparse terminal failure, full-slot downtime and browser failed work. The offline
+diagnostic below retains its separate build-only scope. Compatible replacement,
+active-survivor and pending-retry retirement, and the complete selected-runtime audit retain their M11c gates.
 The evidence does not qualify CPU exhaustion, per-worker CPU quotas, remote
 hosting, Kubernetes scheduled recovery, Workflows or arbitrary Durable Object
 alarms.
@@ -142,7 +142,8 @@ uses the fixture parent directory; its sources and eight volumes remain private,
 and it has no accepted receipt.
 
 This diagnostic covers the ordinary offline build path, healthy native execution
-and a basic paused update. Its artifacts still need full selected failure and
-replacement qualification. Public candidate enrollment and ordinary cron admission
+and a basic paused update. The separate [selected failure profile](cron-selected-failures.md) exercises
+those artifact variants through failure; compatible replacement retains its own
+qualification gate. Public candidate enrollment and ordinary cron admission
 remain closed; scheduled retirement, browser failure evidence and the complete
 M11c acceptance audit retain their separate gates.
