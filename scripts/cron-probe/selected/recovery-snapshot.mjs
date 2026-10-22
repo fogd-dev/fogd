@@ -36,7 +36,8 @@ export async function normalSnapshot(host, fixture, bundle, expectedAlarm, insta
   assert.equal(archived.apps.imports.queueSnapshot.id, verified.manifest.queueRecovery.apps.imports.id);
   const shutdown = await stopSelectedHost(host, { alreadyStopped: true }); host.closed = true;
   const point = { bundle, before: applicationData(before), sourceObservation: before, approvals: fixture.approvals, manifest: verified.manifest, prepared,
-    queueMessages: before.imports.queuePeek.messages, fence, native, requestedAt, preparationLatencyMs: prepared.completedAt - requestedAt, policy, shutdown };
+    queueMessages: before.imports.queuePeek.messages, fence, native, requestedAt, preparationLatencyMs: prepared.completedAt - requestedAt, policy, shutdown,
+    retiredHistory: Object.fromEntries(Object.entries(archived.apps).filter(([, app]) => app.retirement).map(([name, app]) => [name, structuredClone(app.retirement)])) };
   return point;
 }
 

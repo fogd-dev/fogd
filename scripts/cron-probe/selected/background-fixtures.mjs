@@ -32,8 +32,8 @@ export async function approveRefresh(host, submitted, secret) {
   const initialPauseAt = Date.parse(paused.observedAt); assert.ok(Number.isSafeInteger(initialPauseAt));
   return { ...await approved(host, submitted), initialPauseAt };
 }
-export async function approveImports(host, token) {
-  const submitted = await host.json(['deploy', '--name', 'imports'], { env: { ...host.env, FOGD_DEPLOY_TOKEN: token }, cwd: join(repo, 'examples/imports') });
+export async function approveImports(host, token, app = 'imports') {
+  const submitted = await host.json(['deploy', '--name', app], { env: { ...host.env, FOGD_DEPLOY_TOKEN: token }, cwd: join(repo, 'examples/imports') });
   assert.equal(submitted.status, 'pending'); await host.command(['admin', 'approve', submitted.id, submitted.digest]);
   return approved(host, submitted);
 }
@@ -49,7 +49,7 @@ async function approved(host, submitted) {
   return { ...submitted, slot: app.slot, secretRevision: active.secretRevision, version: active.version };
 }
 
-export async function importJob(request, id, text) {
-  const response = await request('/api/imports', { app: 'imports', method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, text }) });
+export async function importJob(request, id, text, app = 'imports') {
+  const response = await request('/api/imports', { app, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, text }) });
   assert.equal(response.status, 202); return response.json();
 }

@@ -6,6 +6,7 @@ import { recoveredData, applicationData } from './recovery-fixtures.mjs';
 import { recoveryFence, neverStartedIngress, nativeProcesses } from './recovery-fence.mjs';
 import { httpsClient, waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
+import { heldDataInterval } from './recovery-interval.mjs';
 
 export async function coldRecovery(target, point, installations) {
   const fence = await recoveryFence(target, installations);
@@ -34,7 +35,7 @@ export async function acknowledgeRecovery(target, point, installations, request)
   for (const app of ['refresh', 'imports']) {
     const surface = app === 'refresh' ? 'dispatch' : 'delivery', active = point.approvals[app];
     pending[app] = await target.json(['admin', surface, app, 'status']);
-    assertPending(pending[app], active);
+    assertPendingRecovery(pending[app], active);
     const route = await request(app === 'refresh' ? '/api/refresh' : '/api/imports', { app }); assert.equal(route.status, 503);
     await expectRefusal(target, ['admin', surface, app, 'resume', active.id, active.digest], /Resume requires a completed activation/);
     const result = await acknowledgeApp(target, app, surface, active); acknowledged[app] = result.acknowledged; attempts[app] = result.attempts;
@@ -56,13 +57,10 @@ export async function acknowledgeRecovery(target, point, installations, request)
 }
 
 async function heldUntil(target, point, until, cold) {
-  while (await vmTime(target) < until) {
-    if (cold) await neverStartedIngress(target);
-    const observed = await recoveredData(target, point.approvals);
-    assert.deepEqual(applicationData(observed), point.before); assertHeld(observed, point);
-    if (!cold) await guardedHeld(target, observed);
-    await new Promise(resolve => setTimeout(resolve, 10000));
-  }
+  return heldDataInterval(target, { approvals: point.approvals, before: point.before, until,
+    beforeRead: cold ? () => neverStartedIngress(target) : undefined,
+    verify: async observed => { assertHeld(observed, point); if (!cold) await guardedHeld(target, observed); },
+  });
 }
 function assertHeld(observed, point) {
   assert.equal(observed.refresh.status.paused, true); assert.equal(observed.refresh.status.nextAlarm, null);
@@ -71,15 +69,15 @@ function assertHeld(observed, point) {
   assert.equal(observed.imports.status.backlogCount, point.manifest.queueRecovery.apps.imports.observation.backlogCount);
   assert.deepEqual(observed.imports.queuePeek.messages, point.queueMessages);
 }
-function assertPending(status, active) {
+export function assertPendingRecovery(status, active) {
   assert.equal(status.recovery.status, 'pending'); assert.equal(status.resumeAllowed, false); assert.equal(status.observed, 'paused');
   assert.deepEqual(status.active, { deployment: active.id, digest: active.digest });
 }
-async function acknowledgeApp(target, app, surface, active) {
+export async function acknowledgeApp(target, app, surface, active) {
   const attempts = [];
   for (let attempt = 0; attempt < 2; attempt++) {
-    const status = await target.json(['admin', surface, app, 'status']); assertPending(status, active);
-    const args = app === 'refresh' ? ['admin', 'dispatch', app, 'recover'] : ['admin', 'recover', app];
+    const status = await target.json(['admin', surface, app, 'status']); assertPendingRecovery(status, active);
+    const args = surface === 'dispatch' ? ['admin', 'dispatch', app, 'recover'] : ['admin', 'recover', app];
     try {
       const acknowledged = await target.json([...args, active.id, active.digest, status.recovery.id, status.recovery.review, '--accept-possible-loss']);
       attempts.push({ review: status.recovery.review, result: 'acknowledged' }); return { acknowledged, attempts };

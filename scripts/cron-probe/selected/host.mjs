@@ -51,7 +51,7 @@ function selectedEnvironment(output, project, adminPort, gatewayPort) {
 async function createTLS(host) {
   const cert = join(host.output, 'certificate.pem'), key = join(host.output, 'private-key.pem');
   await host.run('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '2', '-subj', '/CN=localhost',
-    '-addext', 'subjectAltName=DNS:localhost,DNS:baseline.localhost,DNS:refresh.localhost,DNS:imports.localhost,IP:127.0.0.1']);
+    '-addext', 'subjectAltName=DNS:localhost,DNS:baseline.localhost,DNS:refresh.localhost,DNS:imports.localhost,DNS:replacement.localhost,DNS:scheduled-next.localhost,IP:127.0.0.1']);
   await chmod(key, 0o600); await host.command(['tls', 'import', cert, key]);
 }
 export async function cleanupSelectedHost(host) {

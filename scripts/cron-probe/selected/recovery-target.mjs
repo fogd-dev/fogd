@@ -15,18 +15,8 @@ import { recoveryFence } from './recovery-fence.mjs';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url)), cli = join(repo, 'packages/cli/bin/fogd.js');
 export async function recoveryTarget(source, bundle, output, installations = [source], snapshotImages) {
-  await mkdir(output, { mode: 0o700 });
-  const project = `fogd-selected-recovery-${randomBytes(8).toString('hex')}`, destination = join(output, 'restored');
-  const env = { ...source.env, COMPOSE_PROJECT_NAME: project }, run = commandRunner(output, env);
-  const target = { output, project, sourceProject: source.project, env, run, entry: source.entry, adminPort: source.adminPort, gatewayPort: source.gatewayPort,
-    command: (args, options) => run(process.execPath, [cli, ...args], options),
-    json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
-  };
-  const identity = runtimePolicyIdentity(source.policy), networks = await privateNetworks(installations.flatMap(host => Object.values(host.policy.networks)));
-  const selector = { runtime: source.entry.id, candidateEnrollment: true, expectedIdentity: identity, networks };
-  await writeFile(join(output, 'selection.json'), JSON.stringify({ sourceProject: source.project, project, bundle, identity, networks }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  target.restoreFence = await recoveryFence(target, installations);
-  target.refusals = {};
+  const { target, destination, identity, networks, selector } = await recoveryTargetContext(source, bundle, output, installations);
+  const { project, run } = target;
   try {
     target.refusals.candidate = await expectRefusal(target, ['restore', bundle, '--project', project, '--output', destination, '--runtime', source.entry.id, '--expected-identity', identity], /candidate; ordinary enrollment remains closed/);
     await requireUnwritten(target, destination);
@@ -39,20 +29,7 @@ export async function recoveryTarget(source, bundle, output, installations = [so
     const restored = await run(process.execPath, ['--input-type=module', '-e', code], { timeout: 300000 });
     target.resolvedHome = JSON.parse(restored.split('\n').find(line => line.startsWith('{"resolvedHome":'))).resolvedHome;
     assert.equal(target.resolvedHome, source.env.FOGD_HOME);
-    const canonical = join(env.FOGD_HOME, '.fogd/installations', project);
-    target.config = composeResolved(JSON.parse(await readFile(join(canonical, 'compose.json'))));
-    assert.deepEqual(target.config, composeResolved(JSON.parse(await readFile(join(destination, 'compose.json')))));
-    target.policy = await readPolicyVolume(source.entry.image, target.config.volumes['runtime-policy'].name, target.config.services.controller.environment);
-    assert.equal(runtimePolicyIdentity(target.policy), identity); assert.deepEqual(target.policy.networks, networks);
-    assert.deepEqual(target.policy, { ...source.policy, networks });
-    const summary = JSON.parse(await readFile(join(destination, 'restored.json')));
-    assert.equal(summary.identitySha256, identity); assert.equal(summary.runtimeFamily, source.entry.id);
-    await assert.rejects(access(join(canonical, 'restore.pending.json')), { code: 'ENOENT' });
-    const relation = JSON.parse(await readFile(join(canonical, 'recovery-source.json'))); assert.equal(relation.sourceProject, source.project);
-    assert.deepEqual(relation.volumes, Object.keys(source.config.volumes).sort().map(name => source.config.volumes[name].name));
-    for (const name of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[name].name, source.config.volumes[name].name);
-    Object.assign(target, await createdRuntime(target, snapshotImages));
-    target.compose = args => run('docker', [...composeArgs(join(canonical, 'compose.json'), project), ...args]);
+    await loadRecoveryTarget(source, target, destination, { ...source.policy, networks }, snapshotImages);
     return target;
   } catch (error) {
     try { await cleanupSelectedHost(target); }
@@ -61,7 +38,40 @@ export async function recoveryTarget(source, bundle, output, installations = [so
   }
 }
 
-async function requireUnwritten(target, destination) {
+export async function recoveryTargetContext(source, bundle, output, installations) {
+  await mkdir(output, { mode: 0o700 });
+  const project = `fogd-selected-recovery-${randomBytes(8).toString('hex')}`, destination = join(output, 'restored');
+  const env = { ...source.env, COMPOSE_PROJECT_NAME: project }, run = commandRunner(output, env);
+  const target = { output, project, sourceProject: source.project, env, run, entry: source.entry, adminPort: source.adminPort, gatewayPort: source.gatewayPort,
+    command: (args, options) => run(process.execPath, [cli, ...args], options),
+    json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
+  };
+  const identity = runtimePolicyIdentity(source.policy), networks = await privateNetworks(installations.flatMap(host => Object.values(host.policy.networks)));
+  const selector = { runtime: source.entry.id, candidateEnrollment: true, expectedIdentity: identity, networks };
+  await writeFile(join(output, 'selection.json'), JSON.stringify({ sourceProject: source.project, project, bundle, identity, networks }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
+  target.restoreFence = await recoveryFence(target, installations);
+  target.refusals = {};
+  return { target, destination, identity, networks, selector };
+}
+
+export async function loadRecoveryTarget(source, target, destination, expectedPolicy, snapshotImages) {
+  const { project } = target;
+  const canonical = join(target.env.FOGD_HOME, '.fogd/installations', project);
+  target.config = composeResolved(JSON.parse(await readFile(join(canonical, 'compose.json'))));
+  assert.deepEqual(target.config, composeResolved(JSON.parse(await readFile(join(destination, 'compose.json')))));
+  target.policy = await readPolicyVolume(source.entry.image, target.config.volumes['runtime-policy'].name, target.config.services.controller.environment);
+  assert.equal(runtimePolicyIdentity(target.policy), runtimePolicyIdentity(expectedPolicy)); assert.deepEqual(target.policy, expectedPolicy);
+  const summary = JSON.parse(await readFile(join(destination, 'restored.json')));
+  assert.equal(summary.identitySha256, runtimePolicyIdentity(expectedPolicy)); assert.equal(summary.runtimeFamily, source.entry.id);
+  await assert.rejects(access(join(canonical, 'restore.pending.json')), { code: 'ENOENT' });
+  const relation = JSON.parse(await readFile(join(canonical, 'recovery-source.json'))); assert.equal(relation.sourceProject, source.project);
+  assert.deepEqual(relation.volumes, Object.keys(source.config.volumes).sort().map(name => source.config.volumes[name].name));
+  for (const name of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[name].name, source.config.volumes[name].name);
+  Object.assign(target, await createdRuntime(target, snapshotImages));
+  target.compose = args => target.run('docker', [...composeArgs(join(canonical, 'compose.json'), project), ...args]);
+}
+
+export async function requireUnwritten(target, destination) {
   await assert.rejects(access(destination), { code: 'ENOENT' });
   await assert.rejects(access(join(target.env.FOGD_HOME, '.fogd/installations', target.project)), { code: 'ENOENT' });
   for (const command of [['ps', '-aq'], ['volume', 'ls', '-q'], ['network', 'ls', '-q']]) {

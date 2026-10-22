@@ -11,8 +11,8 @@ export { importJob } from './background-fixtures.mjs';
 
 export async function recoveredData(host, approvals) {
   const values = {};
-  for (const name of ['refresh', 'imports']) {
-    const active = approvals[name];
+  for (const [name, active] of Object.entries(approvals)) {
+    if (active.app !== name) throw new Error('Approval name differs from the observed application');
     values[name] = await nativeObservation(host, active.slot, active.id, { persistedRecords: true });
   }
   return values;
