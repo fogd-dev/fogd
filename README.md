@@ -13,6 +13,8 @@ behavior, limitations, and the decisions behind it.
 
 Owners can [inspect an application's recorded release and control state](docs/application-inspection.md)
 with `fogd admin inspect APP`. Live health and scoped application logs remain open.
+[Local build retention](docs/build-retention.md) provides explicit keep, plan, prune,
+and offline resume commands; controller artifacts and application data stay intact.
 
 Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
 [roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).

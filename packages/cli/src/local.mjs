@@ -1,12 +1,12 @@
 import { devNull } from 'node:os';
 import { spawn } from 'node:child_process';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
-import { randomUUID } from 'node:crypto';
+import { stageManagedBuild } from './build-cache/lifecycle.mjs';
 import { buildEnvironment } from './build-env.mjs';
-import { stageArtifact, appName } from '@fogd/runtime/artifact';
+import { appName } from '@fogd/runtime/artifact';
 
 export const stackRoot = resolve(process.env.FOGD_HOME || fileURLToPath(new URL('../../../', import.meta.url)));
 export async function readJson(path, fallback) {
@@ -45,9 +45,5 @@ export async function buildArtifact(projectDir, nameOverride, capabilities) {
   const { project, settings, app } = await artifactProject(projectDir, nameOverride);
   const buildEnv = buildEnvironment();
   await run(process.execPath, [fileURLToPath(new URL('./build.mjs', import.meta.url)), project], { cwd: project, env: buildEnv });
-  const parent = join(stackRoot, '.fogd', 'releases', app);
-  await mkdir(parent, { recursive: true });
-  const outputDir = join(parent, randomUUID());
-  const release = await stageArtifact({ projectDir: project, outputDir, app, buildOutput: settings.buildOutput, migrationsDir: settings.migrationsDir, capabilities });
-  return { ...release, outputDir };
+  return stageManagedBuild(stackRoot, { app, project, settings, capabilities });
 }

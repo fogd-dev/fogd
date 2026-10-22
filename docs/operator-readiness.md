@@ -4,8 +4,9 @@ Status: shared storage credential admission and offline transfer commands are
 implemented. Transfer has same-engine evidence; second-machine and other image-store
 acceptance remain open. Owner inspection implements part of application diagnosis;
 scoped logs and live observation remain open. A bounded two-fleet serving probe
-covers uploads, peer activation and controller interruption. Retention and broader
-serving/capacity acceptance remain open. This advances G2 and G3 in the
+covers uploads, peer activation and controller interruption. Host build-cache
+retention has local interruption and restore evidence; controller artifact retention
+and broader serving/capacity acceptance remain open. This advances G2 and G3 in the
 [vision](vision.md): **Cloudflare you can control and touch.** It does not add
 another application binding. The [roadmap](roadmap.md) places this work before
 further binding milestones.
@@ -115,6 +116,13 @@ credentials, secret values, or private runtime controls. A withheld or unreachab
 runtime is reported as uncertain rather than healthy.
 
 ### 4. Retain releases deliberately
+
+The [host retention commands](build-retention.md) implement the local build-copy
+subset with [same-engine evidence](evidence/operator-retention-local.json) for an
+interrupted operator prune, offline resume, overlapping approval and backup, another
+deployment, and fresh-volume restore. Legacy and uncertain outputs remain kept.
+Controller artifacts and quota are unchanged; the full quota-fill and reclamation
+gate below remains open and needs a newly qualified server runtime.
 
 Provide an inspectable retention plan and an explicit execution command. Active
 releases, unfinished operations, recovery references, and operator-selected retained

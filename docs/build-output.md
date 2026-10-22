@@ -1,7 +1,10 @@
 # Void build artifacts
 
 fogd consumes a local Vite production build of a Void app. It never invokes the
-Cloudflare provisioning path in `void deploy`.
+Cloudflare provisioning path in `void deploy`. Managed host copies keep lifecycle
+metadata outside the uploaded artifact. See [local build retention](build-retention.md)
+for explicit keep, plan, prune, and resume commands; legacy release directories remain
+untouched.
 
 ## Starter provenance
 

@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "scope": "Host build-cache retention only; same-engine local Linux arm64 two-fleet qualified runtime. Controller artifact GC and quota-fill acceptance remain open.",
+  "runner": "scripts/cron-probe/selected/build-retention.mjs",
+  "runtime": {
+    "family": "celld-cron-v2-linux-arm64",
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "hostNode": "v26.2.0"
+  },
+  "privateEvidence": ".fogd/build-retention-native4",
+  "resultSha256": "9c458e8d009c83115f4be2d6c26e83799c51c2c19ffef6d28de90e551529f337",
+  "sourceInventorySha256": "5fecfe315cad0c5ecce7560c6a94e20a8f16b65afac70a9f88b5d9e057b6e0ed",
+  "sourceFilesVerified": 689,
+  "checks": {
+    "actualOperatorPruneOverTLS": true,
+    "actualTrashUnlinkBeforeSIGKILL": true,
+    "prunerExit": {
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    "remainingLogicalBytesAtInterruption": 1909681,
+    "approvedLogicalBytes": 1910563,
+    "offlineResumeAfterPlanLoss": {
+      "app": "baseline",
+      "id": "6377ec7b-8c58-4a8a-9390-aa8ca48cbc46",
+      "completed": true,
+      "resumed": true,
+      "logicalBytes": 1910563
+    },
+    "protectedCacheFilesVerified": 31,
+    "archivedRemovedCopyFilesVerified": 10,
+    "controllerArtifactDigestsVerified": 4,
+    "backupMemberHashesVerified": 9,
+    "approvalAndStoppedBackupWhilePrunerHeld": true,
+    "deployAndApproveAfterHostPrune": true,
+    "freshVolumeRestoreVersion": "pending-c",
+    "restoredRows": 1,
+    "expectedNativeLeasesFreshBeforeActivationAndAfterRestore": true,
+    "retainedVolumesThisRun": 16,
+    "existingResourcesPreserved": {
+      "containers": 183,
+      "volumes": 2356,
+      "networks": 71
+    }
+  },
+  "failedAttempts": [
+    {
+      "privateEvidence": ".fogd/build-retention-native1",
+      "phase": "deploy-after-host-prune",
+      "reason": "Migration reconciliation found no reachable native lease after restart; admin readiness was insufficient."
+    },
+    {
+      "privateEvidence": ".fogd/build-retention-native2",
+      "phase": "restore-retained-point",
+      "reason": "Immediate restored application check returned HTTP 503; application readiness needed an observation window."
+    }
+  ],
+  "earlierPassingAttempt": {
+    "privateEvidence": ".fogd/build-retention-native3",
+    "scope": "Earlier runner source; independently audited; superseded by final operator-command and native-lease checks."
+  },
+  "limits": [
+    "Single shared Docker engine with classic overlay2; no second-machine acceptance.",
+    "No controller artifact deletion, server quota reclamation, quota-fill test or application data deletion.",
+    "Host lock behavior tested on this macOS host; network filesystems and Windows unsupported.",
+    "No per-worker CPU-limit or performance claim.",
+    "Failed and passing run data, backups, archives and all volumes retained."
+  ]
+}

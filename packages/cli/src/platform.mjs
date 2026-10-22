@@ -1,3 +1,4 @@
+import { submitManagedBuild } from './build-cache/lifecycle.mjs';
 import { adminInspect } from './inspect-command.mjs';
 import { assertSharedStorageConfiguration } from './shared-storage.mjs';
 import { resolvedCompose } from './compose/config.mjs';
@@ -44,8 +45,9 @@ export async function deploy(project, name) {
   const { app } = await artifactProject(project, name);
   const capabilities = await deployCapabilities(origin(env), env.FOGD_DEPLOY_TOKEN, app);
   const release = await buildArtifact(project, app, capabilities);
-  const result = await api(env, '/v1/deployments', { method: 'POST', headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify(await manifest(release.outputDir, release)) });
-  console.log(JSON.stringify({ id: result.id, app: result.app, digest: result.digest, status: result.status, admin: origin(env) }, null, 2));
+  const { result, receiptSaved } = await submitManagedBuild(stackRoot, release, origin(env), async () => api(env, '/v1/deployments', { method: 'POST', headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify(await manifest(release.outputDir, release)) }));
+  if (!receiptSaved) console.warn('Controller returned a submission ID, but the local build receipt could not be confirmed. Keep its output; use the returned submission ID rather than submitting again.');
+  console.log(JSON.stringify({ id: result.id, app: result.app, digest: result.digest, status: result.status, admin: origin(env), localBuildId: release.localBuildId }, null, 2));
 }
 export async function status(id) {
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id || '')) throw new Error('Usage: fogd status <deployment-id>');
