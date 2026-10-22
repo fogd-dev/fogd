@@ -5,11 +5,11 @@ import { coldRecovery, acknowledgeRecovery } from './recovery-holds.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
 import { verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
-import { retirementTrial } from './retirement-trial.mjs';
+import { selectedTrial } from './selected-trial.mjs';
 import { firstRetirement } from './retirement-first.mjs';
 
 if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/retirement-survivor.mjs NEW_PRIVATE_OUTPUT');
-await retirementTrial(process.argv[2], 'Selected active-cron survivor retirement and fresh queue capacity diagnostic only. Pending-retry/two-cron/full retirement acceptance and public admission remain open.', async context => {
+await selectedTrial(process.argv[2], 'Selected active-cron survivor retirement and fresh queue capacity diagnostic only. Pending-retry/two-cron/full retirement acceptance and public admission remain open.', async context => {
   const { source, installations, evidence } = context;
   const { fixture, point, target } = await firstRetirement(context);
   context.phase = 'target-shutdown'; evidence.targetShutdown = await stopSelectedHost(target); target.closed = true;

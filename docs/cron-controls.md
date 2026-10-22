@@ -45,6 +45,15 @@ callbacks may already be running. An explicit confirmed pause reconciles the
 operator's intent. A failed metadata write returns 503 and stops further controller
 effects until durable state is reloaded.
 
+An unreachable expected member blocks pause confirmation. The saved intent remains
+`desired: paused`, with `operation: pause`, an unknown observation and no observation
+timestamp. Previously authorized native work can continue on the survivor. Restarting
+the controller preserves this unconfirmed state; it does not reconcile an ordinary
+operator pause automatically. Restore the member and explicitly retry pause before
+treating dispatch as stopped. The [selected outage profile](cron-selected-pause.md)
+checks this on the frozen candidate, including continued native work and the
+separate recorded HTTP route state.
+
 Pause prevents new callbacks only after runtime confirmation. Running callbacks
 and `waitUntil` work can finish; neither a null alarm nor a paused observation
 proves a drain. A held artifact can only retry its original activation. The page

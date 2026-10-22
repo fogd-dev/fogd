@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { retirementTrial } from './retirement-trial.mjs';
+import { selectedTrial } from './selected-trial.mjs';
 import { firstRetirement } from './retirement-first.mjs';
 import { retireStep, queuedInput, completeQueuedInput, retainedHistory, fleetProofs, preserveSnapshots } from './retirement-steps.mjs';
 import { scheduledReplacement, assertNewSchedule } from './retirement-scheduled.mjs';
@@ -12,7 +12,7 @@ import { rows } from './recovery-ledger.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
 
 if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/retirement-chain.mjs NEW_PRIVATE_OUTPUT');
-await retirementTrial(process.argv[2], 'Selected sequential retirement: active cron survivor, persisted cron retry, queued survivors, fresh scheduled capacity and zero-live recovery. Separate two-cron qualification and the full acceptance audit remain open; public admission stays closed.', async context => {
+await selectedTrial(process.argv[2], 'Selected sequential retirement: active cron survivor, persisted cron retry, queued survivors, fresh scheduled capacity and zero-live recovery. Separate two-cron qualification and the full acceptance audit remain open; public admission stays closed.', async context => {
   const { source, installations, evidence } = context;
   const a = await firstRetirement(context), { fixture } = a;
   const snapshots = [{ host: source, point: a.point }], refresh = fixture.approvals.refresh, replacement = evidence.replacement.active;

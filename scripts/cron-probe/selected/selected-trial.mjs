@@ -7,7 +7,7 @@ import { sourceInventory, sourceState } from './evidence.mjs';
 import { scanOutputFiles } from './privacy.mjs';
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
-export async function retirementTrial(output, scope, scenario) {
+export async function selectedTrial(output, scope, scenario) {
   const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output);
   const installations = [source], evidence = {};
   const context = { source, installations, evidence, phase: 'source-fixtures' }; let failure;
@@ -27,7 +27,7 @@ export async function retirementTrial(output, scope, scenario) {
     await save('result.json', receipt);
     const bytes = await readFile(join(source.output, 'result.json')), scan = await scanOutputFiles(installations, fixture, JSON.parse(bytes), [bytes]);
     await save('post-write-privacy.json', { sha256: createHash('sha256').update(bytes).digest('hex'), ...scan });
-    console.log('PASS-selected-retirement-qualification');
+    console.log('PASS-selected-qualification');
   } catch (error) {
     failure = error;
     try { await save('failure.json', { phase: context.phase, name: error.name, message: error.message, cause: error.cause?.message, evidence }); }
@@ -38,6 +38,6 @@ export async function retirementTrial(output, scope, scenario) {
     for (const host of installations.filter(host => !host.closed).reverse()) {
       try { await cleanupSelectedHost(host); } catch (error) { errors.push(error); }
     }
-    if (errors.length) throw new AggregateError([...(failure ? [failure] : []), ...errors], 'Retirement diagnostic cleanup failed');
+    if (errors.length) throw new AggregateError([...(failure ? [failure] : []), ...errors], 'Selected qualification cleanup failed');
   }
 }

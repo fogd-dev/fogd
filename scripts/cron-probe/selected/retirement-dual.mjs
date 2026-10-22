@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { retirementTrial } from './retirement-trial.mjs';
+import { selectedTrial } from './selected-trial.mjs';
 import { retireOriginalQueue } from './retirement-start.mjs';
 import { secondCron } from './retirement-second-cron.mjs';
 import { prefixFingerprints } from '../../queue-probe/prefix-fingerprints.mjs';
@@ -22,7 +22,7 @@ import { waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
 
 if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/retirement-dual.mjs NEW_PRIVATE_OUTPUT');
-await retirementTrial(process.argv[2], 'Selected retirement beside another live cron with retained queue history and held source restoration. Complete M11c acceptance and public admission remain open.', async context => {
+await selectedTrial(process.argv[2], 'Selected retirement beside another live cron with retained queue history and held source restoration. Complete M11c acceptance and public admission remain open.', async context => {
   const { source, installations, evidence } = context;
   const first = await retireOriginalQueue(context), { fixture } = first, host = first.target;
   const firstResumeAt = evidence.survivorResume.requestedAt, original = fixture.approvals.refresh;

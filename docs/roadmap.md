@@ -240,6 +240,15 @@ Independent audits verify expanded source/import inventories, signed identities,
 all source snapshots, restored retired prefixes and all 40 retained volumes.
 The complete M11c acceptance audit remains open; public admission stays closed.
 
+The [selected unreachable-member pause profile](cron-selected-pause.md) qualifies the
+unreachable-member operator-pause case for gate 3 on the frozen candidate. Pause
+refuses with persisted unknown state; native work continues through controller
+restart while the member remains stopped. Rejoin does not confirm the journal.
+Explicit pause retry then confirms a held minute with unchanged application rows.
+Independent checks verify source/import and image inventories, 15 signatures,
+retained controller state and all eight volumes. The complete acceptance audit and
+ordinary public-selector release check remain open; catalog admission stays closed.
+
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by
 policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
