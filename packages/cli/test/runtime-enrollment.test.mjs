@@ -30,6 +30,7 @@ async function fixture(t) {
     else if(args[0]==='network'&&args.includes('--filter')&&process.env.FOGD_TEST_ORPHAN)console.log('orphaned-network');
     else if(args[0]==='ps'&&args.includes('label=com.docker.compose.project='+(process.env.FOGD_TEST_RUNNING_PROJECT||'source'))&&process.env.FOGD_TEST_SOURCE_RUNNING)console.log('running-source');
     else if(args[0]==='inspect'&&args.includes('running-source'))console.log(JSON.stringify([{State:process.env.FOGD_TEST_SOURCE_RESTARTING?{Running:false,Restarting:true}:{Running:true}}]));
+    else if(args[0]==='ps'&&args.includes('volume='+process.env.FOGD_TEST_WRITER_VOLUME))console.log('aliased-writer');
     else if(args[0]==='ps'&&args.includes('-aq')&&process.env.FOGD_TEST_CONTAINER)console.log('existing-container');
     else if(args[0]==='inspect'&&process.env.FOGD_TEST_CONTAINER)console.log(JSON.stringify([{Image:entry.image,State:{Running:false}}]));
     else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING)console.log(process.env.FOGD_TEST_EXISTING);
@@ -81,6 +82,17 @@ test('a failed first create durably fences the ordinary legacy fallback', async 
 });
 
 async function calls(f) { return (await readFile(f.log, 'utf8')).trim().split('\n').map(JSON.parse); }
+
+async function recordRecovery(f, project, sourceProject) {
+  const directory = join(f.root, '.fogd/installations', project); await mkdir(directory, { recursive: true, mode: 0o700 });
+  const config = freshRuntimePlan(f.source, runtimeFamilies()[0]).config; config.name = project;
+  for (const [name, volume] of Object.entries(config.volumes)) volume.name = `${project}_${name}`;
+  for (const [name, network] of Object.entries(config.networks)) network.name = `${project}_${name}`;
+  await writeFile(join(directory, 'compose.json'), JSON.stringify(config), { mode: 0o600 });
+  await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project, sourceProject,
+    volumes: Object.keys(config.volumes).sort().map(name => `${sourceProject}_${name}`) }), { mode: 0o600 });
+  return directory;
+}
 
 test('an existing valid independent policy selects the sealed runtime without creating services', async t => {
   const f = await fixture(t), entry = runtimeFamilies()[0], plan = freshRuntimePlan(f.source, entry);
@@ -182,10 +194,7 @@ test('recorded recovery relationships exclude running descendants, siblings, cha
     [[['original', 'source']], 'source', true],
   ]) {
     const f = await fixture(t);
-    for (const [project, sourceProject] of records) {
-      const directory = join(f.root, '.fogd/installations', project); await mkdir(directory, { recursive: true, mode: 0o700 });
-      await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project, sourceProject, volumes: [sourceProject + '_bucket'] }), { mode: 0o600 });
-    }
+    for (const [project, sourceProject] of records) await recordRecovery(f, project, sourceProject);
     await assert.rejects(f.invoke({}, { FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: running, ...(restarting ? { FOGD_TEST_SOURCE_RESTARTING: '1' } : {}) }), error => /Project still has running containers/.test(error.stderr));
     assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
     await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
@@ -199,6 +208,64 @@ test('a running recorded installation outside the recovery family does not block
   const result = await f.invoke({}, { FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: 'other' });
   assert.equal(JSON.parse(result.stdout), null);
   assert.equal((await calls(f)).some(args => args.includes('label=com.docker.compose.project=other')), false);
+});
+
+test('startup refuses aliased writers on restored sibling and descendant volumes', async t => {
+  for (const [records, volumes] of [
+    [[['original', 'source'], ['sibling', 'source']], ['sibling_bucket', 'sibling_controller', 'sibling_slot-1-a', 'sibling_slot-1-b', 'sibling_slot-2-a', 'sibling_slot-2-b', 'sibling_runtime-policy']],
+    [[['descendant', 'original']], ['descendant_bucket']],
+    [[['middle', 'original'], ['descendant', 'middle']], ['descendant_bucket']],
+  ]) {
+    const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+    await writeFile(policy, JSON.stringify(plan.policy));
+    for (const [project, sourceProject] of records) await recordRecovery(f, project, sourceProject);
+    for (const volume of volumes) {
+      await assert.rejects(f.invoke({}, { FOGD_TEST_WRITER_VOLUME: volume, FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy }), error => /snapshot volume still has a running writer/.test(error.stderr));
+    }
+    assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
+  }
+});
+
+test('recovery exclusion permits the current installation to use its own volumes', async t => {
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+  await writeFile(policy, JSON.stringify(plan.policy));
+  for (const project of ['original', 'sibling']) await recordRecovery(f, project, 'source');
+  const result = JSON.parse((await f.invoke({}, { FOGD_TEST_WRITER_VOLUME: 'original_bucket', FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy })).stdout);
+  assert.deepEqual(result.config, plan.config);
+});
+
+test('a stopped incomplete sibling does not prevent using the current installation', async t => {
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+  await writeFile(policy, JSON.stringify(plan.policy));
+  await recordRecovery(f, 'original', 'source');
+  const sibling = await recordRecovery(f, 'sibling', 'source'), pending = join(sibling, 'restore.pending.json');
+  await writeFile(pending, '{}', { mode: 0o600 });
+  const result = JSON.parse((await f.invoke({}, { FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy })).stdout);
+  assert.deepEqual(result.config, plan.config);
+  assert.equal(await readFile(pending, 'utf8'), '{}');
+});
+
+test('an enrolled root source checks volumes added after the recorded snapshot', async t => {
+  const f = await fixture(t);
+  await recordRecovery(f, 'original', 'source');
+  const source = await recordRecovery(f, 'source', 'unused'), file = join(source, 'compose.json');
+  await rm(join(source, 'recovery-source.json'));
+  const config = JSON.parse(await readFile(file, 'utf8')); config.volumes.tls = { name: 'source_tls' };
+  await writeFile(file, JSON.stringify(config), { mode: 0o600 });
+  await assert.rejects(f.invoke({}, { FOGD_TEST_WRITER_VOLUME: 'source_tls' }), error => /snapshot volume still has a running writer/.test(error.stderr));
+  assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
+});
+
+test('related installations with missing or malformed volume configuration refuse before runtime effects', async t => {
+  for (const content of [null, '{private-value', '{"name":"sibling","volumes":{}}']) {
+    const f = await fixture(t);
+    await recordRecovery(f, 'original', 'source');
+    const sibling = await recordRecovery(f, 'sibling', 'source'), file = join(sibling, 'compose.json');
+    if (content === null) await rm(file);
+    else await writeFile(file, content, { mode: 0o600 });
+    await assert.rejects(f.invoke({}), error => /Related installation sibling is not confirmed stopped/.test(error.stderr) && !/private-value/.test(error.stderr));
+    assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
+  }
 });
 
 test('recovery source publication refuses replacement and cleans the staged file', async t => {

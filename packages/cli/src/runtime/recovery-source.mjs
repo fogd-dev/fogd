@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { open, readdir, link, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { installationDirectory } from './installation-state.mjs';
+import { hasRuntimeEnrollment, installationDirectory, readInstallationVolumeNames } from './installation-state.mjs';
 import { writeJson } from '../recovery/bundle.mjs';
 import { projectName, stopped, volumeNames } from '../recovery/docker.mjs';
 
@@ -28,8 +28,12 @@ export async function assertRecoverySourceStopped(project) {
   const records = await recoverySources(project), related = relatedProjects(project, records);
   for (const peer of related) {
     if (peer === project) continue;
-    const volumes = [...new Set(records.filter(record => record.sourceProject === peer).flatMap(record => record.volumes))];
-    try { await stopped(peer, volumes); }
+    try {
+      const sourceVolumes = records.filter(record => record.sourceProject === peer).flatMap(record => record.volumes);
+      const enrolled = records.some(record => record.project === peer) || await hasRuntimeEnrollment(peer);
+      const enrolledVolumes = enrolled ? await readInstallationVolumeNames(peer) : [];
+      await stopped(peer, [...new Set([...sourceVolumes, ...enrolledVolumes])]);
+    }
     catch (cause) { throw new Error(`Related installation ${peer} is not confirmed stopped: ${cause.message}`, { cause }); }
   }
 }

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { stackRoot } from '../local.mjs';
 import { composeLiteral, composeResolved, writeJson } from '../recovery/bundle.mjs';
-import { projectName } from '../recovery/docker.mjs';
+import { projectName, volumeNames } from '../recovery/docker.mjs';
 
 export const installationDirectory = project => join(stackRoot, '.fogd', 'installations', projectName(project));
 
@@ -38,8 +38,21 @@ async function syncDirectory(path) {
 
 
 export async function readRuntimeConfiguration(project) {
-  const dir = installationDirectory(project);
   await assertRuntimeReady(project);
+  return readEnrolledConfiguration(project);
+}
+
+// Recovery exclusion also inspects incomplete peers. Volume names can refuse
+// startup; returning them does not authorize starting an incomplete installation.
+export async function readInstallationVolumeNames(project) {
+  const config = await readEnrolledConfiguration(project);
+  const names = volumeNames(config).map(name => config.volumes[name]?.name);
+  if (names.some(name => typeof name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(name))) throw new Error('Cannot verify related installation volumes; keep its resources stopped');
+  return names;
+}
+
+async function readEnrolledConfiguration(project) {
+  const dir = installationDirectory(project);
   try {
     for (const parent of [join(stackRoot, '.fogd'), join(stackRoot, '.fogd', 'installations'), dir]) {
       const stat = await lstat(parent);
