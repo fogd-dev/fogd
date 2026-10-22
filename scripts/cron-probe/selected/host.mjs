@@ -21,6 +21,7 @@ const enrollmentMethods = {
 export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo) {
   const cli = join(programRoot, 'packages/cli/bin/fogd.js');
   const method = enrollmentMethods[enrollment]; if (!method) throw new Error('Unknown qualification enrollment method');
+  if (enrollment === 'candidate' && resolve(programRoot) !== resolve(repo)) throw new Error('Alternate operator programs require public enrollment; candidate qualification uses this checkout');
   const output = resolve(directory); await mkdir(output, { mode: 0o700 });
   await mkdir(join(output, 'host'), { mode: 0o700 });
   const entry = runtimeFamily('celld-cron-v2-linux-arm64', method.intent); await verifyRuntimeFamily(entry);

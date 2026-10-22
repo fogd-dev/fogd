@@ -181,3 +181,13 @@ test('extra platform source refuses export before image inspection or saving', a
   await assert.rejects(access(f.log), { code: 'ENOENT' });
   await assert.rejects(access(f.bundle), { code: 'ENOENT' });
 });
+
+test('alternate candidate program refuses before creating qualification state', async t => {
+  const f = await transferFixture(t), output = join(f.root, 'candidate-cohort');
+  const hostModule = new URL('../../../scripts/cron-probe/selected/host.mjs', import.meta.url).href;
+  const script = `import {selectedHost} from ${JSON.stringify(hostModule)}; await selectedHost(${JSON.stringify(output)}, 'candidate', ${JSON.stringify(f.source)});`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', script], { env: f.env, timeout: 20000 }), error =>
+    error.code === 1 && /Alternate operator programs require public enrollment/.test(error.stderr));
+  await assert.rejects(access(f.log), { code: 'ENOENT' });
+  await assert.rejects(access(output), { code: 'ENOENT' });
+});
