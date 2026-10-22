@@ -1,5 +1,9 @@
 # Selected-runtime sequential retirement
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The [selected sequential retirement
 receipt](evidence/m11c-selected-runtime-retirement-chain.json) qualifies this
 bounded profile on the frozen local Linux arm64 Docker candidate. The complete run

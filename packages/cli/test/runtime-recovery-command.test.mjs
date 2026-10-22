@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { runtimeFamilies } from '../src/runtime/catalog.mjs';
+import { runtimeCli } from './fixtures/runtime-cli.mjs';
 
 const exec = promisify(execFile), cli = fileURLToPath(new URL('../bin/fogd.js', import.meta.url));
 async function fixture(t) {
@@ -20,18 +21,18 @@ async function fixture(t) {
 }
 
 test('real restore and retirement commands refuse candidate or unpaired identity before bundle or Docker access', async t => {
-  const candidate = runtimeFamilies().find(entry => entry.admission === 'candidate'); assert.ok(candidate);
   for (const command of ['restore', 'retire']) {
     const f = await fixture(t), base = [command, f.bundle, '--project', 'new-project', '--output', f.output];
+    const client = await runtimeCli(f.root, 'candidate'), candidate = client.entry; assert.equal(candidate.admission, 'candidate');
     if (command === 'retire') base.push('--app', 'refresh', '--digest', 'a'.repeat(64), '--stop-scheduled-work');
-    for (const args of [
-      ['--runtime', candidate.id, '--expected-identity', 'a'.repeat(64)],
-      ['--expected-identity', 'a'.repeat(64)],
-      ['--runtime', candidate.id],
-      ['--runtime', 'unknown-family', '--expected-identity', 'a'.repeat(64)],
-      ['--candidate-enrollment'],
+    for (const [args, message] of [
+      [['--runtime', candidate.id, '--expected-identity', 'a'.repeat(64)], /candidate; ordinary enrollment remains closed/],
+      [['--expected-identity', 'a'.repeat(64)], /explicit runtime/],
+      [['--runtime', candidate.id], /candidate; ordinary enrollment remains closed/],
+      [['--runtime', 'unknown-family', '--expected-identity', 'a'.repeat(64)], /Unknown shipped/],
+      [['--candidate-enrollment'], /Unknown option/],
     ]) {
-      await assert.rejects(exec(process.execPath, [cli, ...base, ...args], { env: f.env }), error => error.code === 1 && /candidate|explicit runtime|Unknown shipped|Unknown option/.test(error.stderr));
+      await assert.rejects(exec(process.execPath, [client.cli, ...base, ...args], { env: f.env }), error => error.code === 1 && message.test(error.stderr));
       for (const path of [f.marker, f.output, f.env.FOGD_ENV_FILE, join(f.root, '.fogd')]) await assert.rejects(access(path), { code: 'ENOENT' });
     }
   }

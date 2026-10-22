@@ -1,22 +1,14 @@
 # Selected Docker runtime
 
-Runtime selection is an experimental foundation for approved scheduled apps.
-The shipped catalog contains a candidate; ordinary enrollment remains closed.
-A catalog entry records an immutable image and its checked programs. Qualification
-of the complete [M11c contract](m11c.md) is required before its admission status can
-permit a new public installation.
+The `celld-cron-v2-linux-arm64` family qualifies approved scheduled apps on local
+Linux arm64 Docker with two application fleets. The [acceptance audit](m11c-acceptance.md)
+records its exact scope. Default installations and unqualified families retain
+closed cron admission.
 
-The [foundation receipt](evidence/m11c-selected-runtime-foundation.json) records
-a local candidate run through ordinary TLS startup, scoped deployment, exact
-approval, autonomous native jobs, dispatch pause and stopped backup. Its independent
-audit checks source pins, timestamps, backup checksums and retained volumes. This
-bounded flow does not qualify the remaining failure and recovery gates.
-
-The [selected activation profile](cron-selected-activation.md) adds ordinary HTTPS
-approval with migration hold, controller interruption, explicit original retry and
-paused-update evidence on the same product image. It checks full job ledgers,
-decoded artifact privacy and fresh native signatures. The remaining M11c gates
-still control public catalog admission.
+The CLI requires the exact cached runtime and storage images listed in the
+[catalog](../packages/cli/src/runtime/catalog.json). It does not build or pull a
+replacement when those images are missing. Runtime distribution and the cached
+build's provenance limits are described below.
 
 ## Installation authority
 
@@ -54,13 +46,29 @@ limits](cron-runtime-policy.md).
 
 Public selection uses `fogd up --shared --runtime FAMILY` only for a qualified
 catalog family. A candidate name is refused before credential or Docker changes.
-There is no public candidate enrollment flag. Internal qualification can enroll
-only a known catalog candidate, with all image and topology checks retained.
+There is no public candidate enrollment flag. Internal qualification uses known catalog families without promoting an
+unqualified entry; all image and topology checks remain in force.
+
+Enroll a fresh Compose project with the cached family:
+
+```sh
+fogd up --shared --runtime celld-cron-v2-linux-arm64
+```
 
 Enrollment creates stopped services and installs the independent policy. A shared
-installation needs a valid TLS keypair before startup. After enrollment, ordinary
-`fogd tls import CERT KEY` and `fogd up --shared` resolve the installed policy and
-use its pinned image without building. Startup reports the family, current catalog
+installation needs a valid TLS keypair before startup. On a fresh installation, the first enrollment command reports an installed TLS
+keypair error after creating stopped services. Import the keypair, then repeat the
+public start command:
+
+```sh
+fogd tls import CERT KEY
+fogd up --shared --runtime celld-cron-v2-linux-arm64
+```
+
+Use a fresh Compose project and retain its operator environment, as described in
+[shared installation](shared-installation.md). Existing data cannot be adopted by
+fresh enrollment. These commands resolve the installed policy and use pinned images
+without building. Startup reports the family, current catalog
 admission status and storage identity digest. Record that digest separately from
 backups for future independent recovery checks.
 
@@ -74,7 +82,7 @@ Existing dispatch pause/resume controls retain their guarded native checks.
 
 Selected restore and retirement require both `--runtime FAMILY` and
 `--expected-identity SHA256`. The public commands accept qualified catalog entries
-only; the current candidate remains refused. Record the identity printed by `up`
+only; candidate families remain refused. Record the identity printed by `up`
 or backup separately from the snapshot. A hash supplied by a snapshot cannot
 establish independent identity. Keep using trusted operator-created backups:
 this digest binds storage and native identities, not every byte in the archive.
@@ -107,8 +115,8 @@ fogd restore BUNDLE --project NEW --output DIR \
 
 Family admission and expected-identity syntax are checked before reading this
 file. Its contents select network placement only; they cannot select a runtime
-image or authorize a different source identity. The current catalog candidate
-still refuses ordinary recovery, including when a network plan is supplied.
+image or authorize a different source identity. Candidate catalog entries still refuse ordinary recovery, including when a network
+plan is supplied.
 
 Stopped backup inventories every managed volume, including the policy volume,
 but archives application and operator data only. Restore copies those archives,
@@ -156,26 +164,10 @@ The operator must keep source copies on every host stopped and prevent concurren
 starts. The output reports the ingress bind and TLS mode for review; the storage
 identity does not authenticate those exposure settings.
 
-The [selected recovery receipt](evidence/m11c-selected-runtime-recovery.json)
-covers a previously paused schedule through ordinary installed startup, reviewed
-acknowledgment, separate resume and autonomous future jobs. The [selected recovery
-matrix](cron-selected-recovery.md) extends that bounded local Linux arm64
-two-fleet evidence to armed timers, persisted retries, original queued input and
-older snapshots. It checks cold native holds, acknowledged holds, separate resume,
-loss boundaries and full old occurrence rows after future success. The [selected
-retirement receipt](evidence/m11c-selected-runtime-retirement.json) covers
-zero-live backup/restore, unchanged retained-prefix contents and a scoped
-replacement using the fresh slot. The [selected sequential retirement
-profile](cron-selected-retirement.md) adds active cron/queue survivors, a
-persisted retry, fresh scheduled capacity and zero-live history. The [selected
-dual-cron profile](cron-selected-retirement-dual.md) covers retirement beside
-another simultaneously live cron and both held source restores. Its expanded
-source/import audit retains all 40 volumes. The complete M11c acceptance audit
-remains open.
-
-Full frozen-runtime acceptance and promotion to a qualified catalog entry remain
-[M11c gates](m11c.md). Expansion and other topologies remain refused for scheduled
-history.
+The [acceptance audit](m11c-acceptance.md) identifies the selected activation,
+replacement, failure, recovery, retirement, and public-selector evidence. Public
+selection was qualified using the same image and source pins as the lifecycle
+profiles. Expansion and other topologies remain refused for scheduled history.
 
 ## Cached build provenance
 

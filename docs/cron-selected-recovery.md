@@ -1,5 +1,9 @@
 # Selected runtime stopped recovery
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 This profile checks due timers, pending retries and an older snapshot on the
 `celld-cron-v2-linux-arm64` candidate. It uses normal scoped HTTPS deployment,
 exact approval, stopped CLI backup, independent restore selection and canonical

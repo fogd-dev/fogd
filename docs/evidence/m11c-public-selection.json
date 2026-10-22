@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "scope": "Native public selectors for the frozen local Linux arm64 runtime with two fleets, scoped HTTPS cron approval and stopped recovery/retirement. The release decision is recorded in the M11c acceptance audit.",
+  "family": "celld-cron-v2-linux-arm64",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "qualificationCatalogAdmission": "qualified",
+  "mainCatalogAdmissionDuringQualification": "candidate",
+  "catalogDifference": "admission only",
+  "terminalExitCode": 0,
+  "durationSeconds": 772.0216808749828,
+  "executionSource": {
+    "head": "0c282615a18503076322fe35e7fadf202c630e65",
+    "status": " M packages/cli/src/runtime/catalog.json\n M packages/cli/test/runtime-enrollment.test.mjs\n M packages/cli/test/runtime-recovery-command.test.mjs\n M packages/cli/test/runtime-recovery-selection.test.mjs\n M scripts/cron-probe/selected/host.mjs\n M scripts/cron-probe/selected/selected-trial.mjs\n?? scripts/cron-probe/selected/public-selection.mjs\n?? scripts/cron-probe/selected/public-target.mjs\n",
+    "node": "v26.2.0"
+  },
+  "sourceEvidence": {
+    "runnerSha256": "0063626b13bfaab8ea0c776faa641e820695ebdb7e9fb731c87e93d70f373a03",
+    "recordedFiles": 637,
+    "archivedRecordedFiles": 637,
+    "inventorySha256": "898d2693d4c829182fbeca2fae09c0776c61a64d470a0bba7ae45db0ed850064",
+    "staticImportedSources": 132,
+    "runtimeImageFilesVerified": 65,
+    "boundary": "Local source and lockfile fingerprints; copied cached node_modules bytes were not exhaustively inventoried."
+  },
+  "commands": {
+    "enrollment": "up --shared --runtime FAMILY",
+    "tls": "tls import CERT KEY",
+    "deployment": "scoped deploy and exact digest/secret-revision approval",
+    "restore": "restore BUNDLE --project NEW --output DIR --runtime FAMILY --expected-identity SHA256 --network-plan FILE",
+    "retirement": "retire BUNDLE --app refresh --digest SHA --stop-scheduled-work --project NEW --output DIR --runtime FAMILY --expected-identity SHA256 --network-plan FILE",
+    "coldControls": "No-build Compose starts only storage and native replicas before controller startup; these are qualification controls."
+  },
+  "approval": {
+    "artifactDigest": "435a6c067af893b09bca10f38cab2bb414ea1180aafb801c3047cd7198abd751",
+    "secretRevisionPinned": true,
+    "unpublishedMinuteBoundary": {
+      "before": 1792683301515,
+      "after": 1792683361500
+    },
+    "missingRevisionRefused": true,
+    "wrongRevisionRefused": true,
+    "outOfScopeTokenRefused": true,
+    "publicArtifactDeclaration": {
+      "sha256": "b0dc8a95c808ce6d46b27fa89590cf912a977ff95b71cc286686fb77cb5069ca",
+      "cronExpressions": [
+        "* * * * *"
+      ]
+    }
+  },
+  "futureJobs": {
+    "sourceReleaseObservedAt": 1792683371933,
+    "sourceScheduledTimes": {
+      "inventory": [
+        1792683420000
+      ],
+      "advisory": [
+        1792683420000
+      ]
+    },
+    "firstApplicationReadAt": 1792683426127,
+    "sourceRows": {
+      "inventory": {
+        "scheduled_time": 1792683420000,
+        "attempts": 2,
+        "duplicates": 1,
+        "initial_mode": "retry-once",
+        "savedRows": 1
+      },
+      "advisory": {
+        "scheduled_time": 1792683420000,
+        "attempts": 2,
+        "duplicates": 0,
+        "initial_mode": "retry-once",
+        "savedRows": 1
+      }
+    },
+    "restoredResumeRequestedAt": 1792683714497,
+    "restoredScheduledTimes": {
+      "inventory": [
+        1792683720000
+      ],
+      "advisory": [
+        1792683720000
+      ]
+    },
+    "oldRowsUnchangedAfterResume": true
+  },
+  "holds": {
+    "sourcePauseLastSampleMs": 66942,
+    "restoredPauseLastSampleMs": 66090,
+    "coldRecoveryLastSampleMs": 67859,
+    "acknowledgedRecoveryLastSampleMs": 67838,
+    "retirementColdMs": 71429,
+    "retirementWarmMs": 71045,
+    "applicationRowsAndHeldStatusUnchanged": true,
+    "noHeldWakeEntries": true
+  },
+  "retirement": {
+    "zeroLive": true,
+    "retiredApplicationHTTPStatus": 404,
+    "independentSourceAndTargetIdentityChecked": true,
+    "manifestFingerprintChecked": true,
+    "freshNamespacePhysicalKeysChecked": true,
+    "retainedPrefixPhysicalEntries": 90
+  },
+  "independentChecks": {
+    "signaturesVerified": 32,
+    "alteredSignaturesRejected": 32,
+    "retainedVolumes": 24,
+    "controllerArtifactsVerified": 3,
+    "sourceArchiveEntriesVerified": 315
+  },
+  "voidPackagePatch": {
+    "file": "patches/void@1.1.11.patch",
+    "sha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024"
+  },
+  "offlineDeclarations": [
+    {
+      "profile": "selected-failure-profile2",
+      "case": "minute",
+      "target": "fogd",
+      "sha256": "b0dc8a95c808ce6d46b27fa89590cf912a977ff95b71cc286686fb77cb5069ca",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-failure-profile2",
+      "case": "minute",
+      "target": "managed-offline",
+      "sha256": "e0f7eeaeca87ce5280388358637461786d10fcf5df6a192ffe2ff02482c460fa",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-failure-profile2",
+      "case": "sparse",
+      "target": "fogd",
+      "sha256": "6096e58832e0f3f8ec9603ae47516fcc18a0c5a28e0c67fe645e942307e826ae",
+      "cronExpressions": [
+        "*/3 * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-failure-profile2",
+      "case": "sparse",
+      "target": "managed-offline",
+      "sha256": "43aa828bbbe187c1c4941f6d4dd3ef6aaab1fc11c3f96d6294f4b7c91590e9b6",
+      "cronExpressions": [
+        "*/3 * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "old",
+      "target": "fogd",
+      "sha256": "b0dc8a95c808ce6d46b27fa89590cf912a977ff95b71cc286686fb77cb5069ca",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "old",
+      "target": "managed-offline",
+      "sha256": "e0f7eeaeca87ce5280388358637461786d10fcf5df6a192ffe2ff02482c460fa",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "new",
+      "target": "fogd",
+      "sha256": "b0dc8a95c808ce6d46b27fa89590cf912a977ff95b71cc286686fb77cb5069ca",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "new",
+      "target": "managed-offline",
+      "sha256": "e0f7eeaeca87ce5280388358637461786d10fcf5df6a192ffe2ff02482c460fa",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "final",
+      "target": "fogd",
+      "sha256": "b0dc8a95c808ce6d46b27fa89590cf912a977ff95b71cc286686fb77cb5069ca",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    },
+    {
+      "profile": "selected-replacement-profile4",
+      "case": "final",
+      "target": "managed-offline",
+      "sha256": "e0f7eeaeca87ce5280388358637461786d10fcf5df6a192ffe2ff02482c460fa",
+      "cronExpressions": [
+        "* * * * *"
+      ],
+      "network": "none",
+      "buildImage": "sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf"
+    }
+  ],
+  "validation": {
+    "mainTests": {
+      "tests": 1003,
+      "passed": 1003,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "d83fb3fb60b888845f8f2734b38d3ae5c0496a68602d2574e7294c8ad8e24aef"
+    },
+    "syntaxLogSha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "qualityLogSha256": "4abd0886a0be5539129f5e000ddcb1be84bc9e34e8d96a56227a64ca0e1fb95f"
+  },
+  "derivation": {
+    "rawReceiptSha256": "7a3f947718504cc654ffe201564adf2ac3edb09c2245f6d4a751418bf632595a",
+    "executionRecordSha256": "06eaeec480624be38ecfd1381c0599a292968b37070b9b674b591d4100463c07",
+    "independentAuditSha256": "1ffaa543da12bd6eb76bd05933d299218a34680e7eee6b6a3849df7f3cded3de",
+    "auditorSha256": "758a1c63404bf1cea73adfc67aa136ccff79d522997373ca413dcc454c3dcb9b",
+    "writerSha256": "df549500fc7d6ae8bbaa84712d913a3142434fa0e5f6f155623716f4a96d5f2d",
+    "scope": "Runtime summaries are gated by the identified independent audit; validation counts and log hashes are read from retained successful-check records."
+  },
+  "excluded": [
+    "Other architectures and remote hosts",
+    "Three fleets, expansion and Kubernetes scheduled recovery",
+    "Workflows and general Durable Object alarms",
+    "Per-worker CPU quota and CPU-exhaustion qualification",
+    "Atomic global fencing, callback drain and exactly-once external effects",
+    "Image distribution and exhaustive cached dependency inventory",
+    "Hosted Cloudflare execution"
+  ]
+}

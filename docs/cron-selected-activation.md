@@ -1,5 +1,9 @@
 # Scheduled activation on a selected runtime
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 This local Docker profile checks scheduled activation through the installed
 controller, HTTPS admin API and app-scoped CLI deployment on the frozen catalog
 image. The [first-activation receipt](evidence/m11c-selected-runtime-activation.json)

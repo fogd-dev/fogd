@@ -16,12 +16,12 @@ function fixture() {
   return { bundle, policy, selection: { runtime: entry.id, candidateEnrollment: true, expectedIdentity: runtimePolicyIdentity(policy) } };
 }
 
-test('recovery selection requires independent family and identity and cannot publicly enroll a candidate', () => {
+test('recovery selection requires independent family and identity', () => {
   const { bundle, selection } = fixture();
   assert.equal(selectedRecoveryPlan(bundle), null);
   assert.throws(() => requestedRecoveryRuntime({ expectedIdentity: selection.expectedIdentity }), /explicit runtime/);
   assert.throws(() => requestedRecoveryRuntime({ networks: {} }), /explicit runtime/);
-  assert.throws(() => requestedRecoveryRuntime({ runtime: selection.runtime }), /candidate/);
+  assert.equal(requestedRecoveryRuntime(selection).id, selection.runtime);
   for (const identity of [undefined, '', 'a'.repeat(63), 'A'.repeat(64)]) {
     assert.throws(() => requestedRecoveryRuntime({ ...selection, expectedIdentity: identity }), /independently recorded/);
   }

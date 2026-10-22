@@ -4,38 +4,72 @@ import { mkdir, readFile, chmod, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runtimeFamily, verifyRuntimeFamily } from '../../../packages/cli/src/runtime/catalog.mjs';
-import { docker } from '../../../packages/cli/src/recovery/docker.mjs';
+import { docker, json, projectContainers } from '../../../packages/cli/src/recovery/docker.mjs';
 import { composeResolved } from '../../../packages/cli/src/recovery/bundle.mjs';
 import { readPolicyVolume } from '../../../packages/cli/src/runtime/policy-volume.mjs';
 import { runtimePolicyIdentity } from '../../../packages/platform/src/runtime-policy.mjs';
 import { privateNetworks, loopbackPort } from './resources.mjs';
 import { commandRunner, commandJson } from './commands.mjs';
+import { expectRefusal } from './evidence.mjs';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url)), cli = join(repo, 'packages/cli/bin/fogd.js');
+const enrollmentMethods = {
+  candidate: { intent: 'enrolled', run: enrollCandidate, start: host => ['up', '--installation', host.project] },
+  public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id] },
+};
 
-export async function selectedHost(directory) {
+export async function selectedHost(directory, enrollment = 'candidate') {
+  const method = enrollmentMethods[enrollment]; if (!method) throw new Error('Unknown qualification enrollment method');
   const output = resolve(directory); await mkdir(output, { mode: 0o700 });
   await mkdir(join(output, 'host'), { mode: 0o700 });
-  const entry = runtimeFamily('celld-cron-v2-linux-arm64', 'enrolled'); await verifyRuntimeFamily(entry);
+  const entry = runtimeFamily('celld-cron-v2-linux-arm64', method.intent); await verifyRuntimeFamily(entry);
   const project = `fogd-selected-activation-${randomBytes(8).toString('hex')}`, adminPort = await loopbackPort(), gatewayPort = await loopbackPort();
   assert.notEqual(adminPort, gatewayPort);
   const env = selectedEnvironment(output, project, adminPort, gatewayPort), run = commandRunner(output, env);
   const networks = await privateNetworks();
-  await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  const code = `import{prepareEnvironment}from ${JSON.stringify(new URL('../../../packages/cli/src/bootstrap.mjs', import.meta.url).href)};import{resolvedCompose}from ${JSON.stringify(new URL('../../../packages/cli/src/compose/config.mjs', import.meta.url).href)};import{selectedInstallation}from ${JSON.stringify(new URL('../../../packages/cli/src/runtime/installation.mjs', import.meta.url).href)};const env=await prepareEnvironment(true);await selectedInstallation(await resolvedCompose(env),${JSON.stringify({ runtime: entry.id, candidateEnrollment: true, networks })});`;
-  const host = { output, project, entry, env, run, adminPort, gatewayPort,
+  await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
+  const host = { output, project, entry, env, run, adminPort, gatewayPort, enrollment: { method: enrollment },
     command: (args, options) => run(process.execPath, [cli, ...args], options),
     json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
   };
   try {
-    await run(process.execPath, ['--input-type=module', '-e', code]);
+    await method.run(host, networks);
     host.config = composeResolved(JSON.parse(await readFile(join(env.FOGD_HOME, '.fogd/installations', project, 'compose.json'))));
     host.policy = await readPolicyVolume(entry.image, host.config.volumes['runtime-policy'].name, host.config.services.controller.environment);
+    assert.deepEqual(host.policy.networks, networks);
+    host.enrollment.networks = await json(['network', 'inspect', ...Object.values(host.config.networks).map(network => network.name)]);
+    for (const [name, network] of Object.entries(host.config.networks)) {
+      const actual = host.enrollment.networks.find(value => value.Name === network.name); assert.ok(actual);
+      assert.deepEqual(actual.IPAM.Config.map(value => value.Subnet), [networks[name]]);
+    }
     await createTLS(host);
-    await host.command(['up', '--installation', project]);
+    await host.command(method.start(host));
     await writeFile(join(output, 'identity.json'), JSON.stringify({ family: entry.id, identitySha256: runtimePolicyIdentity(host.policy) }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
     return host;
   } catch (error) { await cleanupSelectedHost(host); throw error; }
+}
+
+async function enrollCandidate(host, networks) {
+  const code = `import{prepareEnvironment}from ${JSON.stringify(new URL('../../../packages/cli/src/bootstrap.mjs', import.meta.url).href)};import{resolvedCompose}from ${JSON.stringify(new URL('../../../packages/cli/src/compose/config.mjs', import.meta.url).href)};import{selectedInstallation}from ${JSON.stringify(new URL('../../../packages/cli/src/runtime/installation.mjs', import.meta.url).href)};const env=await prepareEnvironment(true);await selectedInstallation(await resolvedCompose(env),${JSON.stringify({ runtime: host.entry.id, candidateEnrollment: true, networks })});`;
+  await host.run(process.execPath, ['--input-type=module', '-e', code]);
+}
+
+async function enrollPublic(host, networks) {
+  assert.equal(host.entry.admission, 'qualified');
+  const template = await readFile(join(repo, 'compose.yaml'), 'utf8'), marker = 'networks:\n  control:\n  fleet-1:\n  fleet-2:\n';
+  assert.equal(template.split(marker).length, 2);
+  const placement = 'networks:\n' + Object.entries(networks).map(([name, subnet]) => `  ${name}:\n    ipam:\n      config:\n        - subnet: ${subnet}\n`).join('');
+  const file = join(host.output, 'public-compose.yaml'); await writeFile(file, template.replace(marker, placement), { mode: 0o600, flag: 'wx' });
+  host.env.FOGD_COMPOSE_FILE = file;
+  host.enrollment.tlsRefusal = await expectRefusal(host, ['up', '--runtime', host.entry.id], /Installed TLS keypair could not be validated/);
+  const containers = await projectContainers(host.project); assert.equal(containers.length, 8);
+  host.enrollment.initialServices = containers.map(container => {
+    assert.equal(container.State.Running, false); assert.equal(container.State.Restarting, false); assert.equal(container.State.Paused, false); assert.equal(container.RestartCount, 0);
+    assert.ok(container.State.StartedAt.startsWith('0001-'));
+    const service = container.Config.Labels['com.docker.compose.service'], expected = service === 'minio' ? host.entry.storageImage : host.entry.image;
+    assert.equal(container.Image, expected); assert.equal(container.Config.Image, expected);
+    return { service, image: container.Image, startedAt: container.State.StartedAt };
+  });
 }
 
 function selectedEnvironment(output, project, adminPort, gatewayPort) {

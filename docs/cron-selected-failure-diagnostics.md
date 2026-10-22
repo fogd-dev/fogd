@@ -1,5 +1,9 @@
 # Selected runtime failure diagnostics
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The selected owner-loss diagnostic checks a native retry after its owner exits
 on the frozen `celld-cron-v2-linux-arm64` candidate. It uses normal scoped HTTPS
 upload, exact artifact and secret approval, and the runtime's default timing.

@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, access, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
 import { freshRuntimePlan } from '../src/runtime/selection-plan.mjs';
-import { runtimeFamilies } from '../src/runtime/catalog.mjs';
+import { runtimeCli } from './fixtures/runtime-cli.mjs';
 
-const exec = promisify(execFile), cli = fileURLToPath(new URL('../bin/fogd.js', import.meta.url));
+const exec = promisify(execFile);
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-enrollment-')); t.after(() => rm(root, { recursive: true, force: true }));
+  const client = await runtimeCli(root, 'candidate');
   const bin = join(root, 'bin'), driver = join(root, 'docker.mjs'), log = join(root, 'calls.jsonl'); await mkdir(bin);
   await writeFile(join(bin, 'docker'), '#!/bin/sh\nexec "$FOGD_TEST_NODE" "$FOGD_TEST_DRIVER" "$@"\n', { mode: 0o700 });
   await writeFile(driver, `import{readFileSync,appendFileSync}from'node:fs';const args=process.argv.slice(2),entry=JSON.parse(readFileSync(process.env.FOGD_TEST_CATALOG))[0];appendFileSync(process.env.FOGD_TEST_LOG,JSON.stringify(args)+'\\n');
@@ -38,21 +38,21 @@ async function fixture(t) {
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'installation.env'),
     FOGD_TEST_NODE: process.execPath, FOGD_TEST_DRIVER: driver, FOGD_TEST_LOG: log,
     FOGD_TEST_SOURCE: join(root,'source.json'),
-    FOGD_TEST_CATALOG: fileURLToPath(new URL('../src/runtime/catalog.json', import.meta.url)) };
+    FOGD_TEST_CATALOG: client.catalog };
   const { source } = prebootFixture();
   for (const [name, service] of Object.entries(source.services)) service.image = name === 'minio' ? 'fogd-minio:local' : 'fogd-runtime:local';
   await writeFile(env.FOGD_TEST_SOURCE, JSON.stringify(source));
   const invoke = (selection, extra = {}) => exec(process.execPath, ['--input-type=module', '-e',
-    `import{selectedInstallation}from ${JSON.stringify(new URL('../src/runtime/installation.mjs', import.meta.url).href)};const selected=await selectedInstallation(${JSON.stringify(source)},${JSON.stringify(selection)});console.log(JSON.stringify(selected));`], { env: { ...env, ...extra }, timeout: 10000 });
-  return { root, source, env, log, invoke };
+    `import{selectedInstallation}from ${JSON.stringify(client.module('installation.mjs'))};const selected=await selectedInstallation(${JSON.stringify(source)},${JSON.stringify(selection)});console.log(JSON.stringify(selected));`], { env: { ...env, ...extra }, timeout: 10000 });
+  return { root, source, env, log, invoke, ...client };
 }
 
 test('public candidate, empty and unknown selections refuse before configuration or Docker side effects', async t => {
-  const f = await fixture(t), candidate = runtimeFamilies().find(entry => entry.admission === 'candidate');
-  assert.ok(candidate, 'The shipped candidate must exist for this gate');
-  for (const runtime of [candidate.id, '', 'unknown-family']) {
-    await assert.rejects(exec(process.execPath, [cli, 'up', `--runtime=${runtime}`], { env: f.env, timeout: 10000 }),
-      error => error.code === 1 && /candidate|nonempty|Unknown shipped/.test(error.stderr));
+  const f = await fixture(t), candidate = f.entry;
+  assert.equal(candidate.admission, 'candidate');
+  for (const [runtime, message] of [[candidate.id, /candidate; ordinary enrollment remains closed/], ['', /nonempty/], ['unknown-family', /Unknown shipped/]]) {
+    await assert.rejects(exec(process.execPath, [f.cli, 'up', `--runtime=${runtime}`], { env: f.env, timeout: 10000 }),
+      error => error.code === 1 && message.test(error.stderr));
     await assert.rejects(access(f.log), { code: 'ENOENT' });
     await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
   }
@@ -61,7 +61,7 @@ test('public candidate, empty and unknown selections refuse before configuration
 });
 
 test('existing data refuses fresh internal enrollment before writing host state', async t => {
-  const f = await fixture(t), candidate = runtimeFamilies().find(entry => entry.admission === 'candidate'); assert.ok(candidate);
+  const f = await fixture(t), candidate = f.entry; assert.ok(candidate);
   await assert.rejects(f.invoke({ runtime: candidate.id, candidateEnrollment: true }, { FOGD_TEST_EXISTING: 'original_bucket' }),
     error => error.code === 1 && /Target resources already exist/.test(error.stderr));
   const calls = (await readFile(f.log, 'utf8')).trim().split('\n').map(JSON.parse);
@@ -71,7 +71,7 @@ test('existing data refuses fresh internal enrollment before writing host state'
 });
 
 test('a failed first create durably fences the ordinary legacy fallback', async t => {
-  const f = await fixture(t), candidate = runtimeFamilies().find(entry => entry.admission === 'candidate'); assert.ok(candidate);
+  const f = await fixture(t), candidate = f.entry; assert.ok(candidate);
   await assert.rejects(f.invoke({ runtime: candidate.id, candidateEnrollment: true }), error => error.code === 1 && /docker command failed \(91\)/.test(error.stderr));
   await access(join(f.root, '.fogd/installations/original/compose.json'));
   await assert.rejects(f.invoke({}), error => error.code === 1 && /runtime policy is missing/.test(error.stderr));
@@ -85,7 +85,7 @@ async function calls(f) { return (await readFile(f.log, 'utf8')).trim().split('\
 
 async function recordRecovery(f, project, sourceProject) {
   const directory = join(f.root, '.fogd/installations', project); await mkdir(directory, { recursive: true, mode: 0o700 });
-  const config = freshRuntimePlan(f.source, runtimeFamilies()[0]).config; config.name = project;
+  const config = freshRuntimePlan(f.source, f.entry).config; config.name = project;
   for (const [name, volume] of Object.entries(config.volumes)) volume.name = `${project}_${name}`;
   for (const [name, network] of Object.entries(config.networks)) network.name = `${project}_${name}`;
   await writeFile(join(directory, 'compose.json'), JSON.stringify(config), { mode: 0o600 });
@@ -95,7 +95,7 @@ async function recordRecovery(f, project, sourceProject) {
 }
 
 test('an existing valid independent policy selects the sealed runtime without creating services', async t => {
-  const f = await fixture(t), entry = runtimeFamilies()[0], plan = freshRuntimePlan(f.source, entry);
+  const f = await fixture(t), entry = f.entry, plan = freshRuntimePlan(f.source, entry);
   const policy = join(f.root, 'policy.json'); await writeFile(policy, JSON.stringify(plan.policy));
   const result = JSON.parse((await f.invoke({}, { FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy })).stdout);
   assert.deepEqual(result.config, plan.config); assert.deepEqual(result.policy, plan.policy);
@@ -103,7 +103,7 @@ test('an existing valid independent policy selects the sealed runtime without cr
 });
 
 test('empty and invalid installed policies refuse with and without explicit internal selection', async t => {
-  const f = await fixture(t), entry = runtimeFamilies()[0], policy = join(f.root, 'invalid-policy.json');
+  const f = await fixture(t), entry = f.entry, policy = join(f.root, 'invalid-policy.json');
   for (const data of ['', '{}']) {
     await writeFile(policy, data);
     for (const selection of [{}, { runtime: entry.id, candidateEnrollment: true }]) {
@@ -124,7 +124,7 @@ test('catalog containers and orphaned project networks refuse a missing policy a
 
 test('ordinary CLI up refuses a durable enrollment fence before any compose mutation', async t => {
   const f = await fixture(t); await mkdir(join(f.root, '.fogd/installations/original'), { recursive: true });
-  await assert.rejects(exec(process.execPath, [cli, 'up'], { env: f.env, timeout: 10000 }),
+  await assert.rejects(exec(process.execPath, [f.cli, 'up'], { env: f.env, timeout: 10000 }),
     error => error.code === 1 && /runtime policy is missing/.test(error.stderr));
   const invoked = await calls(f);
   assert.ok(invoked.some(args => args[0] === 'compose' && args.includes('config')));
@@ -138,7 +138,7 @@ test('ordinary CLI TLS import refuses a durable fence before build or create', a
   for (const name of ['controller', 'workerd']) (f.source.services[name].volumes ||= []).push({ type: 'volume', source: 'tls', target: '/var/lib/fogd-tls', read_only: true });
   await writeFile(f.env.FOGD_TEST_SOURCE, JSON.stringify(f.source));
   await mkdir(join(f.root, '.fogd/installations/original'), { recursive: true });
-  await assert.rejects(exec(process.execPath, [cli, 'tls', 'import', cert, key], { env: f.env, timeout: 10000 }),
+  await assert.rejects(exec(process.execPath, [f.cli, 'tls', 'import', cert, key], { env: f.env, timeout: 10000 }),
     error => error.code === 1 && /runtime policy is missing/.test(error.stderr));
   assert.equal((await calls(f)).some(args => args[0] === 'compose' && !args.includes('config')), false);
 });
@@ -147,17 +147,17 @@ test('ordinary CLI TLS import refuses a durable fence before build or create', a
 test('a clean legacy project still reaches its ordinary build command', async t => {
   const f = await fixture(t);
   assert.equal(JSON.parse((await f.invoke({})).stdout), null);
-  await assert.rejects(exec(process.execPath, [cli, 'up'], { env: f.env, timeout: 10000 }),
+  await assert.rejects(exec(process.execPath, [f.cli, 'up'], { env: f.env, timeout: 10000 }),
     error => error.code === 1 && /exited 91/.test(error.stderr));
   assert.ok((await calls(f)).some(args => args[0] === 'compose' && args.includes('up') && args.includes('--build')));
 });
 
 test('ordinary installation startup uses the existing policy and pinned no-build path without writing credentials', async t => {
-  const f = await fixture(t), entry = runtimeFamilies()[0], plan = freshRuntimePlan(f.source, entry), policy = join(f.root, 'policy.json');
+  const f = await fixture(t), entry = f.entry, plan = freshRuntimePlan(f.source, entry), policy = join(f.root, 'policy.json');
   await writeFile(policy, JSON.stringify(plan.policy));
   const directory = join(f.root, '.fogd/installations/original'); await mkdir(directory, { recursive: true, mode: 0o700 });
   await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
-  await assert.rejects(exec(process.execPath, [cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy }, timeout: 10000 }),
+  await assert.rejects(exec(process.execPath, [f.cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy }, timeout: 10000 }),
     error => error.code === 1 && /docker command failed \(91\)/.test(error.stderr));
   const launch = (await calls(f)).filter(args => args[0] === 'compose');
   assert.equal(launch.length, 1); assert.deepEqual(launch[0].slice(-5), ['up', '-d', '--no-build', '--pull', 'never']);
@@ -167,17 +167,17 @@ test('ordinary installation startup uses the existing policy and pinned no-build
 
 
 test('an enrolled recovery target refuses startup while its recorded local source is running', async t => {
-  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), directory = join(f.root, '.fogd/installations/original');
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry), directory = join(f.root, '.fogd/installations/original');
   await mkdir(directory, { recursive: true, mode: 0o700 });
   await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
   await writeFile(join(directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project: 'original', sourceProject: 'source', volumes: ['source_bucket'] }), { mode: 0o600 });
-  await assert.rejects(exec(process.execPath, [cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_SOURCE_RUNNING: '1' }, timeout: 10000 }), error => /Project still has running containers/.test(error.stderr));
+  await assert.rejects(exec(process.execPath, [f.cli, 'up', '--installation', 'original'], { env: { ...f.env, FOGD_TEST_SOURCE_RUNNING: '1' }, timeout: 10000 }), error => /Project still has running containers/.test(error.stderr));
   assert.equal((await calls(f)).some(args => ['compose', 'run', 'image'].includes(args[0])), false);
   await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
 });
 
 test('a repeated explicit fresh enrollment retains the earlier failed-create fence', async t => {
-  const f = await fixture(t), selection = { runtime: runtimeFamilies()[0].id, candidateEnrollment: true };
+  const f = await fixture(t), selection = { runtime: f.entry.id, candidateEnrollment: true };
   await assert.rejects(f.invoke(selection), error => /command failed \(91\)/.test(error.stderr));
   const path = join(f.root, '.fogd/installations/original/compose.json'), before = await readFile(path, 'utf8');
   await assert.rejects(f.invoke(selection), error => /enrollment already exists/.test(error.stderr));
@@ -216,7 +216,7 @@ test('startup refuses aliased writers on restored sibling and descendant volumes
     [[['descendant', 'original']], ['descendant_bucket']],
     [[['middle', 'original'], ['descendant', 'middle']], ['descendant_bucket']],
   ]) {
-    const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+    const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry), policy = join(f.root, 'policy.json');
     await writeFile(policy, JSON.stringify(plan.policy));
     for (const [project, sourceProject] of records) await recordRecovery(f, project, sourceProject);
     for (const volume of volumes) {
@@ -227,7 +227,7 @@ test('startup refuses aliased writers on restored sibling and descendant volumes
 });
 
 test('recovery exclusion permits the current installation to use its own volumes', async t => {
-  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry), policy = join(f.root, 'policy.json');
   await writeFile(policy, JSON.stringify(plan.policy));
   for (const project of ['original', 'sibling']) await recordRecovery(f, project, 'source');
   const result = JSON.parse((await f.invoke({}, { FOGD_TEST_WRITER_VOLUME: 'original_bucket', FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_POLICY: policy })).stdout);
@@ -235,7 +235,7 @@ test('recovery exclusion permits the current installation to use its own volumes
 });
 
 test('a stopped incomplete sibling does not prevent using the current installation', async t => {
-  const f = await fixture(t), plan = freshRuntimePlan(f.source, runtimeFamilies()[0]), policy = join(f.root, 'policy.json');
+  const f = await fixture(t), plan = freshRuntimePlan(f.source, f.entry), policy = join(f.root, 'policy.json');
   await writeFile(policy, JSON.stringify(plan.policy));
   await recordRecovery(f, 'original', 'source');
   const sibling = await recordRecovery(f, 'sibling', 'source'), pending = join(sibling, 'restore.pending.json');

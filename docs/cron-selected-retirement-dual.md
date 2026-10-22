@@ -1,5 +1,9 @@
 # Selected-runtime retirement beside a live cron
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The [selected dual-cron receipt](evidence/m11c-selected-runtime-retirement-dual.json)
 qualifies retirement beside another simultaneously live cron on the frozen local
 Linux arm64 Docker candidate. The complete M11c acceptance audit remains open.

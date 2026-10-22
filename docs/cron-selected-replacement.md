@@ -1,5 +1,9 @@
 # Selected runtime scheduled replacement
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The [selected replacement receipt](evidence/m11c-selected-runtime-replacement.json)
 qualifies compatible updates and original-occurrence retries on the frozen local
 Linux arm64 Docker candidate. Three ordinary offline-built Void artifacts pass

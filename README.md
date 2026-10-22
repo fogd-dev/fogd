@@ -370,43 +370,25 @@ FOGD_ENV_FILE="$PWD/.fogd/sse-fixture/probe.env" \
 
 It temporarily stops the source stack, uses a fresh stack on the same ports, and
 restores the source after cleanup. It retains all volumes. Use a new output
-directory. Scheduled background work is the [next discovery slice](docs/m11c-discovery.md).
+directory. Scheduled background work has separate [M11c acceptance](docs/m11c-acceptance.md).
 
-## M11c in progress: scheduled work
+## M11c: approved scheduled work
 
-The [native cron probe](docs/cron-qualification.md) records timer invocations on
-two celld nodes without HTTP triggering. The [proposed contract](docs/m11c.md)
-requires migration-safe approval, dispatch controls, retry semantics and recovery. A
-patched celld build now preserves the original scheduled time through a single-node
-owner loss; see the [evidence](docs/evidence/m11c-cron-retry-positive.json). This is
-not a supported deployment mode: ordinary `fogd deploy` still rejects cron
-declarations. Private activation, operator controls and the ordinary Void
-[failure profile](docs/cron-failures.md) have bounded native evidence. Scoped
-admission and release-bound runtime qualification remain open. The
-[bounded retirement profile](docs/retirement.md#experimental-scheduled-app-retirement)
-covers cron/queue survivors, fresh capacity reuse and zero-live restore.
-[Stopped cron recovery](docs/cron-recovery.md) qualifies same-version local Linux
-arm64 Docker with two application fleets, due timers, pending retries and an older
-snapshot. Its full rerun also verifies queued input, source/target approval pins
-and retained source volumes after the entire drill. [Two-cron retirement](docs/retirement.md#retirement-beside-another-scheduled-app)
-also covers a held cron survivor and a full source restore with both schedules held.
-[Compatible replacement](docs/cron-replacement.md) now has bounded
-migration, publication and unfinished-work evidence. Handler watchdog evidence does not qualify CPU limits.
+Scheduled work is qualified on the cached `celld-cron-v2-linux-arm64` runtime for
+local Linux arm64 Docker with two application fleets. Select the family explicitly
+through the [runtime installation guide](docs/runtime-selection.md); default
+installations keep cron admission closed. The [acceptance audit](docs/m11c-acceptance.md)
+records the nine gates and their limits.
 
-The [preboot foundation](docs/cron-runtime-preboot.md) checks runtime images and
-launch topology before experimental restore creates application containers. Its
-native evidence is app-free. The [sealed scheduled recovery profile](docs/cron-sealed-recovery.md)
-qualifies due timers, pending retries, older snapshots and a queued survivor on the
-signed release executable and read-only layout. Current normal CLI restore and
-retirement refuse all scheduled history; the historical profiles above require
-their pinned sources. The [guarded release activation profile](docs/cron-sealed-activation.md)
-also checks selected controller SIGKILL cuts, explicit retry and paused updates
-with immutable programs. The remaining release-runtime lifecycle, runtime selection
-and ordinary cron admission remain open.
+The [refresh app](examples/refresh/README.md) runs while its page is closed and
+shows saved results, failures, and unfinished work. App-scoped deployment and exact
+artifact/secret-revision approval precede execution. Operators can confirm dispatch
+pause, recover a stopped snapshot held, acknowledge the loss boundary, and resume
+separately. Confirmed pause does not drain existing callbacks.
 
-The [guarded release replacement profile](docs/cron-sealed-replacement.md) checks
-compatible migration overlap, unfinished work after publication, original-occurrence
-lost-reply retries and offline-built artifacts on the signed runtime's native
-defaults. Its refusal regression preserves the prior approval and journal pause
-after an unreleased publication gate expires. Runtime selection, remaining failure
-and retirement qualification, and ordinary scoped admission remain open.
+Native qualification covers replica/controller interruptions, compatible updates,
+due/retry/older recovery, surviving apps, fresh capacity after retirement, and the
+ordinary public CLI selectors. It does not qualify other architectures, three-fleet
+or Kubernetes scheduled recovery, Workflows, general Durable Object alarms, or
+per-worker CPU limits. Cached runtime availability and build-provenance limits are
+explicit in the installation guide.

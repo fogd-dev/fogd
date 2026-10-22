@@ -1,5 +1,9 @@
 # Selected runtime scheduled failures
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The [selected failure receipt](evidence/m11c-selected-runtime-failures.json)
 qualifies native failure and downtime behavior on the frozen local Linux arm64
 Docker candidate, using ordinary offline-built Void artifacts and scoped HTTPS

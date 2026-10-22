@@ -35,7 +35,7 @@ with separate [D1](https://developers.cloudflare.com/d1/),
 | KV | No; adapter rejects it | Yes | Partial; client needs backend | SDK/config | Yes |
 | Queues | Partial; [Docker opt-in](queue-admission.md), default off | Yes | Partial; needs broker | SDK/config | Yes |
 | Workflows | No; adapter rejects them | Yes | Partial; needs execution backend | Config passthrough | Yes |
-| Cron scheduling | No; adapter rejects it | Yes; fleet scheduler | Partial; external scheduler | SDK/config | Yes |
+| Cron scheduling | Opt-in; [qualified local two-fleet runtime](m11c-acceptance.md), default off | Yes; fleet scheduler | Partial; external scheduler | SDK/config | Yes |
 | Static assets | Partial; native React pages, CSS and split client JS tested | Yes | Partial; configure asset service | Vite / Platform routing | Yes |
 | Cross-app service bindings / RPC | No; adapter rejects them | Partial; RPC boundary restrictions | Yes | Config passthrough | Yes |
 | Workers AI | No | No | Partial; client, no inference backend | SDK/config | Yes |

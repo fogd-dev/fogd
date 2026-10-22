@@ -7,8 +7,8 @@ import { sourceInventory, sourceState } from './evidence.mjs';
 import { scanOutputFiles } from './privacy.mjs';
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
-export async function selectedTrial(output, scope, scenario) {
-  const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output);
+export async function selectedTrial(output, scope, scenario, enrollment = 'candidate') {
+  const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output, enrollment);
   const installations = [source], evidence = {};
   const context = { source, installations, evidence, phase: 'source-fixtures' }; let failure;
   const save = (name, value) => writeFile(join(source.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });

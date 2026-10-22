@@ -1,5 +1,9 @@
 # Selected-runtime pause with an unreachable member
 
+This is a historical qualification profile. For current admission and scope, see
+the [M11c acceptance audit](m11c-acceptance.md). Reproduce it with the source
+revision identified below.
+
 The [selected pause receipt](evidence/m11c-selected-runtime-pause-unreachable.json)
 qualifies the unreachable-member part of M11c gate 3 on the frozen local Linux
 arm64 Docker candidate. A failed pause preserves unconfirmed intent while native

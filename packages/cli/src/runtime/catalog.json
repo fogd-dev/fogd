@@ -2,7 +2,7 @@
   {
     "schema": 1,
     "id": "celld-cron-v2-linux-arm64",
-    "admission": "candidate",
+    "admission": "qualified",
     "os": "linux",
     "architecture": "arm64",
     "parentImage": "sha256:1a12f8e86a6725f26b3f5bf92a1232c626df91c20019185b83d5c0e4dbeab5dc",

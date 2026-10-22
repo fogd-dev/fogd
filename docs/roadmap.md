@@ -9,7 +9,7 @@ Later milestones remain proposals.
 
 M7a is qualified locally, including a successful [fresh-agent onboarding test](onboarding.md).
 Human usability feedback is optional and does not block progress. See the [fixture guide](../examples/guestbook/README.md)
-and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11 background and collaborative applications is next.
+and [implementation report](report.md). M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11a queues, M11b live sessions, and M11c scheduled work have bounded local qualification. Workflows and general Durable Object alarms remain open.
 
 ## Current foundation
 
@@ -23,9 +23,9 @@ Do not infer product support from the runtimes' feature lists.
 
 ## Immediate priorities
 
-Finish the bounded M11c acceptance audit and public-selector release check. Keep
-cron admission closed until its gates pass. Additional cron qualification work
-needs an identified acceptance gap or a reproducible defect.
+The bounded [M11c acceptance](m11c-acceptance.md) and public-selector release check
+are complete. Additional cron qualification work needs an identified acceptance gap
+or a reproducible defect; broader topology and runtime admission remain gated.
 
 Before selecting another binding milestone, define an operator-readiness slice
 under G2 and G3. It should address these current gaps:
@@ -63,7 +63,7 @@ the existing recovery boundaries remain in force.
 | M12. Broader portability | Supported apps move between targets (G4) | Repeatable preflight, documented code/config differences, logical export/import, offline managed-target builds, and U10-driven non-Void Workers import as a separate conditional slice | Emulation of every Cloudflare control-plane API; claiming hosted tests were run |
 
 Milestone numbers continue the six completed prototype milestones. [M7a](next-milestone.md)
-records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11 background and collaborative applications is next. Later
+records the current qualification; M7b, M7c, M8a, M8b1, and M8b2 are locally qualified; M9a and M9b have experimental local Kubernetes evidence; M10a capacity reporting and M10b Docker retirement are qualified; M10c qualifies fresh three-fleet Docker installations, stopped expansion/recovery/retirement, and paired resource observations. M11a queues, M11b live sessions, and M11c scheduled work have bounded local qualification. Workflows and general Durable Object alarms remain open. Later
 milestones are capability groups to split
 into bounded specs, not promises of one large release each. Security and recovery
 needed for shared or valuable data cannot be deferred behind a pilot deadline.
@@ -149,154 +149,14 @@ cancellation with a version-pinned Void registration patch. Real publication sta
 [Stopped board/receipt recovery](evidence/m11b-restore.json) and explicit
 lower-revision reconciliation also pass. The [M11b acceptance audit](m11b-acceptance.md)
 qualifies the bounded local Docker slice, including two-app preapproval refusal.
-Next: the [M11c scheduled-work contract](m11c.md), informed by
-[source discovery](m11c-discovery.md) and the [native timer probe](cron-qualification.md).
-Native timer, retry-owner-loss and isolated watchdog probes pass their recorded
-profiles. The experimental [native hold](patches/celld-cron-controls.md) also has
-bootstrap/adoption and replica-restart evidence. An experimental controller
-transport checks approved replica/cell generations before resume and preserves
-uncertain mutation outcomes. Platform admission remains closed
-while the [experimental activation journal](cron-activation.md) is qualified through
-controller interruption and native bootstrap drills. Approval pins its artifact and
-secret revision before effects. The [Void refresh fixture](../examples/refresh/README.md)
-has bounded native workerd, sibling-retry and lost-reply evidence plus offline
-target builds. [Operator dispatch controls](cron-controls.md) provide recorded
-status and explicit observe, pause and artifact-pinned resume. Selected
-[controller SIGKILL cuts](cron-activation.md#native-process-interruptions) also pass
-their bounded native profile. The ordinary Void [failure profile](cron-failures.md) records `noRetry`, counted
-terminal retries, owner takeover and autonomous overdue work after downtime.
-The bounded [replacement profile](cron-replacement.md) covers old work through
-compatible migration, lost completion near publication, unfinished application
-status and new-code native retries. The [stopped cron recovery profile](cron-recovery.md)
-qualifies same-version local Linux arm64 Docker with two application fleets, due
-timers, pending retries and an older snapshot. The full rerun verifies queued
-survivor input, source/target approval pins and final source-volume preservation
-with the same executable sources as the retirement profile. The
-[bounded retirement profile](retirement.md#experimental-scheduled-app-retirement)
-covers cron/queue survivors, isolated replacement capacity and zero-live restore.
-A [retirement beside another live cron/source-restore profile](retirement.md#retirement-beside-another-scheduled-app)
-also covers the held survivor and both source schedules. Normal scoped cron
-admission and release-bound runtime qualification remain open. The
-[early identity primitive](patches/celld-runtime-identity.md) has bounded native
-metadata evidence. The [caller policy](cron-runtime-policy.md) now has native
-app-free refusal/bootstrap evidence. The
-[signed binding foundation](patches/celld-runtime-binding.md) adds storage-origin
-and region claims, fresh lease-key possession proofs and separate bootstrap/live
-command checks, with app-free evidence on a fat-LTO release build. General runtime
-lifecycle fencing, shipped-runtime selection and the remaining scheduled lifecycle
-qualification on this binary remain open.
-The [host preboot foundation](cron-runtime-preboot.md) now validates an independent
-runtime/storage launch policy before experimental restore creates application
-containers. Its app-free native profile checks image/program identity and
-read-only startup. Normal CLI cron restore and retirement refuse all scheduled
-history. The [sealed scheduled recovery profile](cron-sealed-recovery.md) qualifies
-due/retry/older snapshots and a queued survivor on this release binary and layout.
-A qualified-runtime registry, the remaining release-runtime lifecycle and ordinary
-admission remain open; historical receipts retain their pinned-source scope.
-The [guarded release activation profile](cron-sealed-activation.md) qualifies
-selected publication/resume/durable-release controller kills and paused-update
-recovery on that binary. Remaining lifecycle gates, runtime selection and normal
-scoped cron admission remain open.
-
-The [guarded release replacement profile](cron-sealed-replacement.md) checks
-compatible migration overlap, unfinished work after publication, original-occurrence
-lost-reply retries and offline-built artifacts on the signed runtime's native
-defaults. Its refusal regression preserves the prior approval and journal pause
-after an unreleased publication gate expires.
-
-The [guarded failure profile](cron-sealed-failures.md) checks native `noRetry`,
-counted terminal failure, owner loss before a persisted retry and downtime of both replicas in the app slot.
-It measures the advisory waker-role transition and original-occurrence recovery on
-the signed runtime's default election timing. Offline-built minute and sparse
-artifacts pass the same immutable release broker as replacement. Independent
-acceptance checks retained state, image contents, signed process identities and
-autonomous future-wake persistence before the first post-restart replica request.
-Runtime selection, the external admin/TLS flow and
-ordinary scoped admission remain open. Earlier activation, recovery and retirement
-receipts retain the source revisions identified in their guides.
-
-The [guarded release retirement profile](cron-sealed-retirement.md) checks stopped
-retirement, fresh capacity reuse and held restore on the signed runtime. It preserves
-cron and queued survivors, retires a persisted retry, and restores zero-live history
-before stock controller startup. A separate two-cron profile holds both source
-schedules before a shared deadline, retires one app and separately resumes its
-survivor. Independent audits check image contents, signed process identities,
-retained artifacts, controller histories and all retained volumes. Ordinary CLI
-scheduled restore and retirement, including zero-live history, remain refused.
-Runtime selection, the external admin/TLS flow and ordinary scoped admission retain
-their acceptance gates.
-
-The [selected cron activation profile](cron-selected-activation.md) checks the
-normal HTTPS CLI flow, first migration hold, selected controller kills, explicit
-retry and paused updates on the frozen product image. The [selected recovery
-matrix](cron-selected-recovery.md) adds armed-timer, pending-retry and
-older-snapshot recovery with an original queued survivor, held native startup and
-reviewed acknowledgment before separate resume. The complete M11c audit remains
-required before public admission.
-
-The [selected failure profile](cron-selected-failures.md) adds ordinary offline
-Void/fogd artifacts, scoped HTTPS approval, native `noRetry`, original-occurrence
-owner-loss recovery, counted sparse failure and full-slot downtime on the frozen
-candidate. Its quiet interval, failed-work browser state and final held minute
-have independent source, signature, artifact, state and cleanup audits. The
-[earlier diagnostics](cron-selected-failure-diagnostics.md) retain their bounded
-receipt scopes. The complete M11c acceptance audit remains open. Catalog enrollment
-and ordinary cron admission stay closed.
-
-The [selected replacement profile](cron-selected-replacement.md) qualifies
-compatible migration overlap, interrupted callbacks through native generation
-release, original-occurrence lost-acknowledgment retries and visible unfinished
-work through ordinary offline artifacts and scoped HTTPS approval. A final held
-minute preserves all ledgers. Independent audits verify retained controller
-artifacts, signed runtime identities, source files and cleanup. The complete M11c
-acceptance audit remains open before public cron admission.
-
-The [selected sequential retirement profile](cron-selected-retirement.md) adds
-active-cron and queued survivors, retirement of a persisted retry, fresh queue and
-cron capacity, and zero-live recovery on the frozen candidate. The replacement
-cron has a different expression and separately pinned configuration. Independent
-audits verify raw signatures, retained controller state, every source snapshot and
-restored retired-prefix bytes. All 64 volumes remain. The complete M11c acceptance
-audit remains open; public admission stays closed.
-
-The [selected dual-cron retirement profile](cron-selected-retirement-dual.md)
-qualifies retirement beside another simultaneously live cron while retaining
-earlier queued retirement history. Both source schedules are held before a shared
-deadline; the survivor stays held before controller startup and after
-acknowledgment, then resumes separately without observed old-occurrence replay.
-Independent audits verify expanded source/import inventories, signed identities,
-all source snapshots, restored retired prefixes and all 40 retained volumes.
-The complete M11c acceptance audit remains open; public admission stays closed.
-
-The [selected unreachable-member pause profile](cron-selected-pause.md) qualifies the
-unreachable-member operator-pause case for gate 3 on the frozen candidate. Pause
-refuses with persisted unknown state; native work continues through controller
-restart while the member remains stopped. Rejoin does not confirm the journal.
-Explicit pause retry then confirms a held minute with unchanged application rows.
-Independent checks verify source/import and image inventories, 15 signatures,
-retained controller state and all eight volumes. The complete acceptance audit and
-ordinary public-selector release check remain open; catalog admission stays closed.
-
-The [M11a acceptance audit](m11a-acceptance.md)
-closes bounded Docker queues as supported opt-in; default admission stays off by
-policy. Scheduled/workflow lifecycle remains open M11 work. The native Void imports fixture
-qualifies D1 bootstrap ordering, additive migration overlap, and reconciliation after
-killed consumers exhaust delivery. The qualified queue contract permits compatible
-handler overlap, not draining. Live collaboration remains a separate slice.
-Preserve secret revisions, controller metadata,
-bucket state, and every replica identity/log together. M9 retains the second
-deployment environment.
-
-Fresh-agent onboarding measures whether the written workflow can be executed
-without author assistance. It does not establish human usability. Human feedback
-can improve the product later and is not a milestone dependency.
-
-HTTP route pauses do not drain in-flight requests or existing Durable Object alarms.
-M7 uses a documented compatible migration contract; incompatible migrations and
-background activation require a stronger lifecycle protocol. Code rollback is safe
-only against a compatible resource/schema contract. Recovery work in M8 must account for controller metadata, bucket data, every
-replica log/identity, and the gateway configuration needed to reconstruct routing.
-Document what is backed up versus reproducibly generated, and cover all writers.
+The [M11c acceptance audit](m11c-acceptance.md) qualifies approved scheduled work
+on the frozen local Linux arm64 two-fleet Docker family. Scoped HTTPS upload,
+exact approval, dispatch pause, native failures/retries, compatible replacement,
+held due/retry/older recovery, and retirement have bounded evidence. The ordinary
+public CLI selectors use the same frozen image and recorded source bytes. Default
+installations, other topologies, Workflows, and general Durable Object alarms remain
+outside this admission. Next, define and implement the
+[operator-readiness slice](#immediate-priorities) before another binding milestone.
 
 ## Opportunities to explore later
 
