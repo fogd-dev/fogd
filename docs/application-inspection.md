@@ -67,8 +67,9 @@ a specific error; it does not mean the application is unhealthy. Controller/netw
 TLS and authentication failures also produce fixed explanations without response
 bodies. Received redirects are refused.
 
-This is an owner diagnostic view. Submitters continue to use `fogd status ID`, whose
-existing queue progress labels can still be `unknown` on the frozen runtime. Fixing
+This is an owner diagnostic view. Submitters use [`fogd status ID`](submission-status.md) with bounded reads and
+public-field filtering. Its existing queue progress labels can still be `unknown`
+on the frozen runtime. Fixing
 those labels, exposing app logs, and observing application outcomes remain separate
 [operator-readiness work](operator-readiness.md).
 

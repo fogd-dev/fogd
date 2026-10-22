@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "scope": "Read-only submitter status using the frozen local two-fleet runtime. No logs or live-health interface.",
+  "runner": "scripts/cron-probe/selected/submitter-status.mjs",
+  "privateEvidence": ".fogd/submitter-status-native4",
+  "runtime": {
+    "family": "celld-cron-v2-linux-arm64",
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "hostNode": "v26.2.0"
+  },
+  "resultSha256": "73bb3dc42c08adda74fc253ff9b36df23f6576197ae8baa0041fa933c944f61f",
+  "sourceFilesVerified": 694,
+  "checks": {
+    "statusesVerified": [
+      "pending",
+      "failed",
+      "active"
+    ],
+    "ownerSnapshotsUnchanged": 3,
+    "crossAppAndSameAppOtherSubmitterRefusals": 2,
+    "retainedVolumes": 8,
+    "preExistingResourceCounts": {
+      "containers": 183,
+      "volumes": 2356,
+      "networks": 71
+    }
+  },
+  "readBoundary": {
+    "redirects": "refused",
+    "timeoutMilliseconds": 15000,
+    "maximumResponseBytes": 65536,
+    "identity": "exact requested submission ID, valid app and string digest",
+    "output": "known public fields and fixed failure explanations"
+  },
+  "limits": [
+    "Existing frozen queue progress labels can remain unknown; original discarded steps are not reconstructed.",
+    "Recorded active status does not establish live runtime or application health.",
+    "No application logs, raw errors, private runtime controls, server changes, image build or additional runtime admission.",
+    "Same local Docker engine; no separate-machine or hosted acceptance."
+  ],
+  "earlierPassingAttempts": [
+    {
+      "privateEvidence": ".fogd/submitter-status-native1",
+      "scope": "Earlier source before strict string-digest guard; superseded by final run."
+    },
+    {
+      "privateEvidence": ".fogd/submitter-status-native2",
+      "scope": "Before dependency resolution and stronger pending/whole-receipt checks."
+    },
+    {
+      "privateEvidence": ".fogd/submitter-status-native3",
+      "scope": "Same production and runner source before the final pending unit assertion."
+    }
+  ]
+}

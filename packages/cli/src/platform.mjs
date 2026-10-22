@@ -49,13 +49,7 @@ export async function deploy(project, name) {
   if (!receiptSaved) console.warn('Controller returned a submission ID, but the local build receipt could not be confirmed. Keep its output; use the returned submission ID rather than submitting again.');
   console.log(JSON.stringify({ id: result.id, app: result.app, digest: result.digest, status: result.status, admin: origin(env), localBuildId: release.localBuildId }, null, 2));
 }
-export async function status(id) {
-  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id || '')) throw new Error('Usage: fogd status <deployment-id>');
-  const env = await configEnv();
-  if (!env.FOGD_DEPLOY_TOKEN) throw new Error('Set FOGD_DEPLOY_TOKEN');
-  const result = await api(env, `/v1/deployments/${id}`, { headers: { Authorization: `Bearer ${env.FOGD_DEPLOY_TOKEN}` } });
-  console.log(JSON.stringify(result, null, 2));
-}
+export { status } from './status-command.mjs';
 export async function admin(action, id, digest, secretRevision) {
   if (action === 'inspect') return adminInspect(id, digest, secretRevision);
   const { env, headers, state } = await adminSession();

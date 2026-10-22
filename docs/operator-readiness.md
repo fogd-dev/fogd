@@ -97,10 +97,12 @@ before and after transfer. Image identity must equal the qualified catalog pins.
 
 The owner can use [`fogd admin inspect APP`](application-inspection.md) to connect
 recorded routing, release history, activation progress, ownership/migration
-references, and background controls. This read-only view withholds private errors
-and never infers live runtime health or application outcomes. Submitter diagnostics,
-queue status labels in the frozen runtime, and a scoped logging interface remain
-open; this command implements part of this increment.
+references, and background controls. The [submitter status command](submission-status.md)
+now bounds reads, verifies submission identity and limits output to public fields
+and fixed explanations, with [local evidence](evidence/operator-submitter-status-local.json)
+for failed SQL, correction and credential boundaries. Both views report recorded
+state and withhold private errors. Queue status labels in the frozen runtime, scoped
+logs, and live health remain open; these commands implement part of this increment.
 
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown
