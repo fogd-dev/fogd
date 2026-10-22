@@ -129,8 +129,8 @@ and error. Reapprove the same digest to retry, or submit a correction. Applied S
 hashes and existing resource identities are immutable. R2 bindings can be added;
 approved additions stay reserved even after activation failure or rejection. D1
 and Durable Object declarations remain fixed.
-A successful activation supersedes older submissions; resubmit an old artifact if
-you deliberately want its code again. There is no automatic schema rollback.
+A successful activation supersedes the app's other pending, failed, and active
+submissions; resubmit an artifact if you deliberately want its code again. There is no automatic schema rollback.
 
 Run the end-to-end acceptance script on a **fresh stack** (before manually approving
 apps). It submits both examples, rejects a deployment, verifies auth and digest

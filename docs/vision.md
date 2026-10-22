@@ -1,8 +1,11 @@
 # Vision and product goals
 
-**North star:** Make infrastructure you control a complete platform for building,
-deploying, and running applications—with an integrated developer experience and
-the freedom to choose where they live.
+**North star: Cloudflare you can control and touch.**
+
+fogd is an application cloud you can own, run, inspect, and change on infrastructure
+you control. Your homelab and team infrastructure are places to run that cloud and
+host useful applications. The integrated developer experience, operational controls,
+and freedom to move code and data serve this product goal.
 
 This vision anchors planning. The goals and sequence below are proposals, not a
 claim that fogd v0 implements them. Current evidence lives in [features.md](features.md)
