@@ -53,4 +53,3 @@ export async function importJob(request, id, text) {
   const response = await request('/api/imports', { app: 'imports', method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, text }) });
   assert.equal(response.status, 202); return response.json();
 }
-

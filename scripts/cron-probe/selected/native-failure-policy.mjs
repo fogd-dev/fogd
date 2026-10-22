@@ -8,7 +8,7 @@ import { artifactDigest } from '/app/packages/runtime/src/artifact.mjs';
 let text = '';
 for await (const part of process.stdin) { text += part; if (text.length > 65536) throw new Error('Operator input exceeds limit'); }
 const { env, slotId, deployment, digest, version, phase } = JSON.parse(text);
-const policies = { baseline: 'healthy', 'retry-control': 'owner-loss', 'no-retry': 'no-retry', 'no-retry-future': 'healthy', 'owner-loss': 'owner-loss', 'owner-loss-future': 'healthy', terminal: 'terminal', 'terminal-future': 'healthy', downtime: 'healthy', 'ui-offline': 'healthy', 'ui-healthy': 'healthy' };
+const policies = { 'offline-minute': 'healthy', 'offline-sparse': 'healthy', baseline: 'healthy', 'retry-control': 'owner-loss', 'no-retry': 'no-retry', 'no-retry-future': 'healthy', 'owner-loss': 'owner-loss', 'owner-loss-future': 'healthy', terminal: 'terminal', 'terminal-future': 'healthy', downtime: 'healthy', 'ui-offline': 'healthy', 'ui-healthy': 'healthy' };
 assert.ok(Object.hasOwn(policies, phase)); assert.match(deployment, /^[a-f0-9-]{36}$/); assert.match(digest, /^[a-f0-9]{64}$/); assert.match(version, /^[a-f0-9]{16,64}$/);
 const installed = await installedRuntimePolicy(env), backend = selectedBackend(undefined, installed, env);
 const slot = JSON.parse(env.FOGD_SLOTS).find(value => value.id === slotId);

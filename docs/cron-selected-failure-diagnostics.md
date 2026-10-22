@@ -88,9 +88,61 @@ complete final receipt bytes. Read-only observer mounts do not make native SQL
 or status requests physically read-only: they can materialize resource cells.
 
 This diagnostic uses an online-built minute artifact. Selected `noRetry`, sparse
-terminal failure, full-slot downtime, ordinary offline builds, and browser failed
-work remain open. Compatible replacement, active-survivor and pending-retry
+terminal failure, full-slot downtime, and browser failed work remain open.
+The offline diagnostic below checks the build path separately; its artifacts still
+need the complete selected failure profile. Compatible replacement, active-survivor and pending-retry
 retirement, and the complete selected-runtime audit retain their M11c gates.
 The evidence does not qualify CPU exhaustion, per-worker CPU quotas, remote
 hosting, Kubernetes scheduled recovery, Workflows or arbitrary Durable Object
 alarms.
+
+## Ordinary offline build diagnostic
+
+The [offline receipt](evidence/m11c-selected-runtime-offline-diagnostic.json)
+checks ordinary Void and fogd builds for minute and three-minute schedules on the
+selected image. Both builds run in the pinned cached SDK container with Docker
+networking disabled. The selected worker calls the normal CLI `buildArtifact`
+API with capabilities negotiated through scoped HTTPS; it uses no private artifact
+adapter. Generated Void declarations, raw configuration, patched dependency
+identity, upload manifests and canonical artifacts remain in private evidence.
+
+Use the commit that introduces this offline receipt, with its recorded cached
+images and dependencies available, from the checkout root:
+
+```sh
+node scripts/cron-probe/selected/offline-smoke.mjs .fogd/selected-offline-UNIQUE
+```
+
+The output directory must be new. Source and capability hashes are checked before
+and after compilation. Docker inspection records the actual network, bind mounts,
+process environment names, build limits and terminal state. Only the results bind
+mount is writable; the container root filesystem remains writable build scratch.
+The build container has a two-CPU limit, not a per-worker native CPU quota. The
+normalized capability file contains no credentials and is readable inside a
+private parent directory. These checks make no general untrusted-build isolation
+claim.
+
+The exact built artifact passes scoped upload, download comparison and approval.
+A native minute occurrence completes before confirmed pause. A paused update uses
+the offline sparse artifact; its native occurrence falls on the three-minute grid.
+Every old minute row remains unchanged, and scoped statuses identify the old
+release as superseded and the sparse release as active. All retained rows must
+belong to the preserved old schedule or the expected new phase and grid, with one
+inventory/advisory pair per successful occurrence. An approval-boundary callback
+or unfinished job at the final snapshot invalidates this bounded run rather than
+being ignored.
+
+The accepted run exits zero in 175.7 seconds. Independent audits verify 443 host
+source hashes, both artifact file sets and digests, all four captured native
+signatures with altered-signature refusal, the shipped image programs, service
+exits, cleanup and all eight retained volumes. Privacy checks include every
+regular offline output file, known fixture input bytes, decoded uploads, scoped
+status and final receipt bytes. The first run exits one because its privacy scan
+uses the fixture parent directory; its sources and eight volumes remain private,
+and it has no accepted receipt.
+
+This diagnostic covers the ordinary offline build path, healthy native execution
+and a basic paused update. Its artifacts still need full selected failure and
+replacement qualification. Public candidate enrollment and ordinary cron admission
+remain closed; scheduled retirement, browser failure evidence and the complete
+M11c acceptance audit retain their separate gates.
