@@ -1,0 +1,3336 @@
+{
+  "schema": 1,
+  "scope": "Bounded selected-candidate stopped recovery of an armed timer, persisted retry, original queued survivor and older snapshot on local Linux arm64 Docker with two application fleets. Full M11c and public candidate enrollment remain unqualified.",
+  "terminalExitCode": 0,
+  "durationSeconds": 1268.5138962920755,
+  "family": "celld-cron-v2-linux-arm64",
+  "admission": "candidate",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "catalogSha256": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+  "executionSource": {
+    "head": "a78fc90aa4a9210c03a92b790d21d587e9fb206f",
+    "status": " M package.json\n M scripts/cron-probe/selected/evidence.mjs\n M scripts/cron-probe/selected/host.mjs\n M scripts/cron-probe/selected/https.mjs\n M scripts/cron-probe/selected/native-observer.mjs\n M scripts/cron-probe/selected/observations.mjs\n M scripts/cron-probe/selected/resources.mjs\n?? scripts/cron-probe/selected/native-policy.mjs\n?? scripts/cron-probe/selected/recovery-cold-smoke.mjs\n?? scripts/cron-probe/selected/recovery-evidence.mjs\n?? scripts/cron-probe/selected/recovery-fence.mjs\n?? scripts/cron-probe/selected/recovery-fixtures.mjs\n?? scripts/cron-probe/selected/recovery-holds.mjs\n?? scripts/cron-probe/selected/recovery-ledger.mjs\n?? scripts/cron-probe/selected/recovery-ledger.test.mjs\n?? scripts/cron-probe/selected/recovery-snapshot.mjs\n?? scripts/cron-probe/selected/recovery-source-smoke.mjs\n?? scripts/cron-probe/selected/recovery-stop.mjs\n?? scripts/cron-probe/selected/recovery-target.mjs\n?? scripts/cron-probe/selected/recovery-work.mjs\n?? scripts/cron-probe/selected/recovery.mjs\n",
+    "node": "v26.2.0"
+  },
+  "hostSourceFiles": {
+    "compose.yaml": "f024a947bdb40562e14a11c8f2c95833ed1224ee4119d0c0384b1961c4beb9d9",
+    "examples/imports/README.md": "f02101366bb6f6a854b5fefd2c352920eb4d98bbf819aa0bd97eb1b4f966d86b",
+    "examples/imports/db/migrations/0001_imports.sql": "e9d4d802fa6b62e12ca4d26f3ebec8500a6b59b716ae5ca3c98f425c00324680",
+    "examples/imports/db/schema.ts": "930caf87188c53629993824c2853f0ae035c47836138d7c39959627f566de49a",
+    "examples/imports/fogd.json": "7474e92ede55e9675747244f68c4f55e4f14aee8ec93a386f83955cf5a69f011",
+    "examples/imports/lib/input.mjs": "2ec28e405d7cb6722649861b37d2bc5b8dd23745b8f18e9c0187cc3211ddf808",
+    "examples/imports/lib/jobs.mjs": "93c83474963376c6cc011da49fbf528f119df690f4cbeb071a37dd66a3f50201",
+    "examples/imports/lib/page.mjs": "0108161a3bb82fb02794ae54fb42543f1d1bd1ff49f1a809b39c51a64938ce55",
+    "examples/imports/lib/process.mjs": "db5e10339d76415e4f7a0ebbc2149a0560299dc60d6795b7fd63f99126de510b",
+    "examples/imports/lib/results.mjs": "aac1c47cea8f88feb78a427bbc6f8d4f77115d800ba9800947f664a729afbcec",
+    "examples/imports/package.json": "9829b0f8d82d37f388903d8983955dc60c828c0c572d0d59fd9175025c43eca5",
+    "examples/imports/queues/imports.ts": "6576f8fdc3fc0c23357a74bbe2ece3c951efd3707c10592d95c43d055cbd01cd",
+    "examples/imports/routes/api/imports.ts": "061f809efd59aebff8f9ae97c793c993d0013981b540bc04547116a2080085e3",
+    "examples/imports/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+    "examples/imports/test/fixture.mjs": "1918ce21b01766be916151346d5a4490ce9a1d2c5896c08c952af2361fa6b8ac",
+    "examples/imports/test/jobs.test.mjs": "fca9d0ae500b3f3dfdb25c3b5e98b3c85e40bacb91c2658218b099aed0e22bb2",
+    "examples/imports/tsconfig.json": "6968e6d8e09397db2768797d4173e2b2b977f038df49deb58bd22dea368fb8cc",
+    "examples/imports/updates/v2/db/migrations/0002_processor.sql": "a820b0c7e3c1c6a36b37f10b7a94e5e12c0e22c146609e3ab020d28c3d04a60a",
+    "examples/imports/updates/v2/db/schema.ts": "c234d0a79e43b47d43bafab761c3d3dccd60466f7a4bcf113532c4358284f2f1",
+    "examples/imports/updates/v2/lib/results.mjs": "5d9f5cd1ba6aedd1a39faf88cb08ff52008a70f28bee723e3dcbb324db7c6943",
+    "examples/imports/vite.config.ts": "d4d96ab47ec182d6159309bf798dd73dd8abe2c7a4fc58ff2d2b80c100156e98",
+    "examples/imports/void.config.ts": "490088e818d8a0277394b978e81befca6d6591c2580fbdb433bbed4831635ed3",
+    "examples/refresh/README.md": "1f110cf700698f2a6addeb2dd5eb0173d46c6fef546818a640f5e901963f4087",
+    "examples/refresh/crons/advisory.ts": "ff8ba3dad263f2504bc372512cf1e2c75722b4dcdcea96812a529f263810d88d",
+    "examples/refresh/crons/inventory.ts": "8247d7077d9ddfd84cfb8541439b423c7f03bc1f455823e2b43986c110b30525",
+    "examples/refresh/db/migrations/0001_refresh.sql": "2ad8ce7b323354d415cb776b2fb4796801f7ae9115f95568048db4ea08ebc3be",
+    "examples/refresh/db/schema.ts": "45e700b5ddb8fd2f6f8b795ebf52bfde12826ab9dae8b9173427b4b288721b7e",
+    "examples/refresh/env.ts": "07893fc2855449827b8ea53b21e833c9d2dc9fd5d845ed9db8cea4dc4470ddb3",
+    "examples/refresh/fogd.json": "4ab25b99df12e9875f1341e75f98340ce2300c93e39be8c0e71ea583ca7a92cd",
+    "examples/refresh/lib/input.mjs": "02552fe08f886167e9df345f62b81452d53a330dba16a23d288fbdf4b350fa7e",
+    "examples/refresh/lib/page.mjs": "59bae38201a31c5d2b5d6944ff5e1bdf3ce1b9adc2e2eb519704d448eb45e64a",
+    "examples/refresh/lib/refresh.mjs": "2f474dd65b7add215030734cc93eb83ae95a4ed1f384747c5ed25c9d71abdd43",
+    "examples/refresh/package.json": "363e1a6e0c8a588d14cf7afdbf76f1bb884e71e6d6e6a6e760fa3d42d4f4d39b",
+    "examples/refresh/routes/api/refresh.ts": "30013f6c3a036ceebf1d8f5e5bd0ded982fa2d25ea205b015d1aed3c0fc9ec1d",
+    "examples/refresh/routes/index.ts": "21c8664c626c40088a633357f36e121f8f46aebdaf2eeac9f13c3bea2ded671d",
+    "examples/refresh/test/input.test.mjs": "e65db169fb844b360c2f056ba0a5caf9d4076661ceb9df35a0bd536b1f98240f",
+    "examples/refresh/test/refresh.test.mjs": "ac54dcd7eb93e523475a7aec2928e10aa3e0743145dcb446d80cd0d93c9709de",
+    "examples/refresh/tsconfig.json": "8f10854c6c82516ec1eb39e7524d5c7208eda365710220ab78c205dc8ec9606c",
+    "examples/refresh/vite.config.ts": "1e49757cce9ec36e5b0eb1d0e1de40a3237fbd294876dcbdcddf2415e83a97b6",
+    "examples/refresh/void.config.ts": "14c14056c5d5db2a42c711aebf3b8a76a8664a6c3ae76837994a6c0ff909a8a4",
+    "package.json": "4b8114384b4a40a76203fb52fdd627741bb129218dfef5a99ae4f4f9e506a2bc",
+    "packages/cli/bin/fogd.js": "cabcad033d99c2436b05444ff5816b1a1935e2ec4ce408e0df639d0478dde4a1",
+    "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
+    "packages/cli/src/bootstrap.mjs": "57073be3090df24ff9bb360c4d18c8aed6b7479461c1a057ce3772be34fef9f5",
+    "packages/cli/src/build-env.mjs": "6c64e9d818aadd97883abf918b1b7f8949fa5640c87348f258b95d3ffb44c99f",
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/cli/src/compose/add-fleet.mjs": "02a6b3e65d0d06a03ca00edf921cab91f70c0fa6dc613aa3fbfadfaf56d46e15",
+    "packages/cli/src/compose/config.mjs": "d7255af3c5e424e75bf68f38dc5fdf48abebbb8c74cf06479530e303083cba55",
+    "packages/cli/src/compose/render.mjs": "8c3b77068b22b5c7a5fe54438aab289f738bde58e2936cbbfb86cc9f9904b911",
+    "packages/cli/src/compose/selection.mjs": "c10a914a57c8ecb1b264933137a49e072e8462803830a15b56376474c2a46d2c",
+    "packages/cli/src/compose/template.mjs": "d8507284dca6472cb6c49ff27a3040d4603aed9d31993c0e7eec0dd7c69b4ed6",
+    "packages/cli/src/deploy-capabilities.mjs": "284e7eb90d2ec5c62d9803cafe5c44b0523d43898405a28940e05a86681a992b",
+    "packages/cli/src/kubernetes/commands.mjs": "aa406f245f955e92c015849863895ac4d6e5eac9aac6130343ccc54ded39dad6",
+    "packages/cli/src/kubernetes/config.mjs": "662429dcc6200f86f7a2e50dfa09ed04fb82c1107cec022820cfa867d0ee0c6c",
+    "packages/cli/src/kubernetes/recovery/backup.mjs": "2c3027a53e4cd7cd48698a80fb68ae2e446e5393319dfd027dee273629fa41e8",
+    "packages/cli/src/kubernetes/recovery/bundle.mjs": "11076d2e97826de75bb1e49b60050298f69b9a04677944302d12e50d0009f0d0",
+    "packages/cli/src/kubernetes/recovery/connection.mjs": "0db8e5ae12508f196acd02c01dae660f9ba4ade4feb5faa82e43823cb8011060",
+    "packages/cli/src/kubernetes/recovery/contract.mjs": "28af45cd4f357a7128ec0b18ec50012d2b3e7ae389af33f0e4547bd917c8cd1b",
+    "packages/cli/src/kubernetes/recovery/image-archive.mjs": "24c4b92b0ea952309e696f9d36cd24d50acf6d850a4eca6bab9ee5fe601f00a0",
+    "packages/cli/src/kubernetes/recovery/images.mjs": "10b892d8267d1dd93cc0ae8aef3ab38fd1cd6c7e4e7e84b107be9d7747659375",
+    "packages/cli/src/kubernetes/recovery/inventory.mjs": "8a2cece4f070d87404ad75983caad070cdab195ddf2db619e10334522826862b",
+    "packages/cli/src/kubernetes/recovery/pods.mjs": "c8e4fab6b6dd29a91e4df9bc9ff1d0a574f491f493089390fc2e8eb71ec550b3",
+    "packages/cli/src/kubernetes/recovery/private-config.mjs": "f653ee34b193eaffb63f97de79334c0d96dbecc6891ef3ce0488a979bc75dc3c",
+    "packages/cli/src/kubernetes/recovery/restore.mjs": "d91f3417ac0a8e90128e7e9203cb0ffb83fb5d1d31461aa17058c350e71a82da",
+    "packages/cli/src/kubernetes/recovery/shape.mjs": "32947a1f3ccfdd1919225a62ee67539a8bc04833e8d222181f1565baf440095d",
+    "packages/cli/src/kubernetes/recovery/stop-evidence.mjs": "54a915405add319a1e01e4169540e99c1a7e9abcb3a71ad8998edc08bc894227",
+    "packages/cli/src/kubernetes/recovery/storage.mjs": "53f1050fea9c6f9c32fc45c991e32d86c4787bc8075ebe21d0b2a39f0142d145",
+    "packages/cli/src/kubernetes/render.mjs": "3bce914719cd384a83928bc6a5af16445783726d52c2ebc6555c2a53848e3608",
+    "packages/cli/src/kubernetes/resources.mjs": "a2771789feb779cbbab306596a489a7a460c11052f9800d9448a9a496033ad24",
+    "packages/cli/src/kubernetes/workloads.mjs": "420aa0e4d03c8d250d21c4f2382c36a4b5d1102d141785396004bf08c39df1b7",
+    "packages/cli/src/local.mjs": "9ce356963c11d8f8ad9d0f82c9b57e14f1501f4f8ba40cb32275ba9b3bd00fd8",
+    "packages/cli/src/platform.mjs": "c0276d05eecb85f5647106eafc7aedcfaf68825e4c265415f3508c46250bb50e",
+    "packages/cli/src/recovery/background-backup.mjs": "fd3021bb2dc739d180fd6cf311d0c1afd3decb4d4a0532d5454568092f63ee71",
+    "packages/cli/src/recovery/background-restore.mjs": "7f8ec7b8fe11ee1f7537674a4d7030684ebc5187a05f845038cc395b44132a71",
+    "packages/cli/src/recovery/backup.mjs": "9918a6dd450886910cba1b644daec301c89839d1d97fc1ce77feba72b27fc63c",
+    "packages/cli/src/recovery/bundle.mjs": "bf123e3bb388439b03168ce2a87621b41b35590bfe0ed4f4f7bbe53b41da126e",
+    "packages/cli/src/recovery/container-isolation.mjs": "acc6c83e45ba66bdd02098063e55a4aefd43d65d74b7824a4cdfce6c8c2fe72b",
+    "packages/cli/src/recovery/cron-backup.mjs": "268463633d0c0febda0130b480162f09e5e84ab2fe2607720152e0c003dc6f73",
+    "packages/cli/src/recovery/docker.mjs": "f43143dfe9ed2e0e4e8e203834296cb857e561f65dd40fcba6914b5e5c06a488",
+    "packages/cli/src/recovery/execute.mjs": "f6395a919cd44e0106c990291b9992a711ea57d47d1b7f42452042d964335b1b",
+    "packages/cli/src/recovery/expand.mjs": "2b53829959c06ebe22ce8575fd01e982a2dc3e5a014202b570821df04fa1d6bc",
+    "packages/cli/src/recovery/expansion-plan.mjs": "74d1fc893aaacf144dc39295de940550d42a95785953cf17be3226e8ecd9325f",
+    "packages/cli/src/recovery/inventory.mjs": "b4989acd755e4fa4a2ff9e3d793a6840353e114a7eaf016797d221d965416295",
+    "packages/cli/src/recovery/layout-validation.mjs": "ff6b01cc67c598f5e7813989e52d11fc1353e6ee4421622805e74ad1c2b7e1c6",
+    "packages/cli/src/recovery/layout.mjs": "7284f2fe6ddd8a13dc31d5d964e73bdccc24958d2edbfc6a6cf84c68a5b75ffd",
+    "packages/cli/src/recovery/queue-backup.mjs": "967689461bd69e03b047e279fce70465ddd3958a8bacc92e5cbebb42957af548",
+    "packages/cli/src/recovery/queue-restore.mjs": "112b3577363078ac381478134ec650a8b2c3db2514f4eb462bd4b3c11d0c2752",
+    "packages/cli/src/recovery/queue-safety.mjs": "92f86faa958e8f8e5a8e08d8d12b07805e980806b4b3aa9b619d723df419e884",
+    "packages/cli/src/recovery/restore.mjs": "b8ebe2cc33247c2242208737f5d27bb9495472beacd2211bd84e2b7c6c77f8f7",
+    "packages/cli/src/recovery/retire.mjs": "5c3902db6bcde1c3e3ec7bb430f69162e913bf57a914d36ac310c19503dfbc0a",
+    "packages/cli/src/recovery/retirement-plan.mjs": "c23dda5ea22d88c34166a0f01b127d7569ce17cc620faf52227279354317c0c4",
+    "packages/cli/src/recovery/snapshot-evidence.mjs": "2b535e090ce416d11161857d1eff38562035dd7b23e2192b97f0a930f6d893fd",
+    "packages/cli/src/recovery/snapshot-state-validation.mjs": "599e87681ff7b6f23979a497d816fa55a0b029bda4a77186259fd62015162dae",
+    "packages/cli/src/recovery/snapshot-state.mjs": "27be43a5533c53c0a42e5523564ef921a9642a6182ded74ebf7827bcfbb9a9e7",
+    "packages/cli/src/recovery/volumes.mjs": "63d3aca2c94cef375be604a25ef0ffa2f562d151f1b9789b896cf81552c26de8",
+    "packages/cli/src/runtime/catalog.json": "eed6abd8936ee8863afc3008221d576b5b8a1d54ce34b7716792a5ed900f3677",
+    "packages/cli/src/runtime/catalog.mjs": "2752537065abb0c289776bfc6c124f1426cefd79d9dc2a863337a645dc5c1e44",
+    "packages/cli/src/runtime/cron-image.mjs": "2def74e4ffd8f726b194e3dcad38401d33ca9781de31c363307f36dab9062afa",
+    "packages/cli/src/runtime/cron-preboot.mjs": "354366ed2dca9adf67233d9a502b8f8ac6962ee530893ab8c08a871ac2732869",
+    "packages/cli/src/runtime/cron-shape.mjs": "fa2bf883083951fb5b24f6bd21b7145cee9e7e744f90dd6e3ac8961b2a0f7ca6",
+    "packages/cli/src/runtime/install-policy.mjs": "8458717d90143d3a967aa3e6f102a941b0c573849627a908a18e4558a931ea81",
+    "packages/cli/src/runtime/installation-state.mjs": "898b68b069d95ff20db420ddb4d244ec10500a6890a8b56bf76d1acb760b9b35",
+    "packages/cli/src/runtime/installation.mjs": "6ee30186f7164db5d60a59365af0cbb6ff7dc1397fe46ff4f1ffbd39bbf3c333",
+    "packages/cli/src/runtime/installed-policy.mjs": "6ce64ca97ed242603b16e7a741f769a3eafa7ecdcae947e59c1a38932ee884c5",
+    "packages/cli/src/runtime/policy-volume.mjs": "e66eca8be90546acbfee5cee9da1f84e7d482e8205ad693b74fa425a2f370902",
+    "packages/cli/src/runtime/program-inventory.mjs": "d4f70a413e1658a09f39bfea1fb637aac92ca8cdd956b041fddd370fa930f350",
+    "packages/cli/src/runtime/recovery-ingress.mjs": "5f47f14a7169838916c756e1b6623d138ffc3984622a91b690f43f99267e7c03",
+    "packages/cli/src/runtime/recovery-selection.mjs": "96acf86af87fbb1e81102b92df66abca6e4871124c3e0d7813850e9a0d129bb3",
+    "packages/cli/src/runtime/recovery-source.mjs": "d0a43c563c13419c4ae098fff91a699be4f2693dec5e8bbc9ec0f2340b8be7fa",
+    "packages/cli/src/runtime/selection-plan.mjs": "4bdcd12996d2c98dd599b973ac0e8ddb1d376eb226048675338bf6880745b0fa",
+    "packages/cli/src/runtime/start-installation.mjs": "75762d15a7767353f7ec3a8a39229a5188a3844fcf1b112f12b6a3ddb5290478",
+    "packages/cli/src/secret-input.mjs": "72e56ac04413f451ef2cc5258811a413036cf03d4701f39f78a8352812ca4112",
+    "packages/cli/src/tls.mjs": "6fe802b828e6962659e1ee0fa9a855c6f7272dca21d178a9904610bdf83e9028",
+    "packages/cli/test/background-snapshot.test.mjs": "142668d8dfa77d67b4a818071514a7bac5095f46e43ab5740f26dfe90a161714",
+    "packages/cli/test/build-env.test.mjs": "06d9617bd9d128405d520c5d08f038b95e60a450ddcfa237748509c448807622",
+    "packages/cli/test/capacity-load.test.mjs": "bd68466874aa3fa3407e32e821e6dd08b6de4ed38ab44aeb84f7b33a809f9d8d",
+    "packages/cli/test/capacity-metrics.test.mjs": "a18493012ee3f78f3bd3099cac81d5477197802f297f2abb5e546155eea9fe21",
+    "packages/cli/test/compose-template.test.mjs": "1bd32b86761afa81eb5381b842f21bb36ff13a54b2cfccef3fde420fbb603b95",
+    "packages/cli/test/container-isolation.test.mjs": "70164f60e2b32ddfb7cc82d675585ac880f1f84feb4fbb7d323c860ef4473b18",
+    "packages/cli/test/cron-preboot-restore.test.mjs": "3b51537e307ec4d687f4715c98e0776690eed527a8d5e5418ffd4d0dc58efa33",
+    "packages/cli/test/cron-preboot.test.mjs": "48ee799c439ccb8e798fe650be2cd851de6c98763d310f978824a48ceda29531",
+    "packages/cli/test/cron-retirement.test.mjs": "afe4d1b93425168c720cc842886a7e087fe4d11e03d7c625904fc7e2f5c0f471",
+    "packages/cli/test/deploy-capabilities.test.mjs": "d05a70e7d5fccc53c06d6723b8c076665cb52da5d8e83f848dfea421f18f3044",
+    "packages/cli/test/expansion.test.mjs": "b59f433745da94c91d6d604157385c64a91ee24bba478067c7b18b831d3a28fd",
+    "packages/cli/test/fixtures/cron-preboot.mjs": "a4242409bbb5f9716f41c5ee1805b5500059bfe523bc809de15013cbdb35b422",
+    "packages/cli/test/fixtures/cron-snapshot.mjs": "1203a815134bbc1aeecd7e9b9504122a8b1ed2a46357dc27772d618f19d49af1",
+    "packages/cli/test/fixtures/kubernetes.mjs": "286dafaeb1daf61a875a193fd75a4a6be83a2b5b0dde060583585444059a6f92",
+    "packages/cli/test/fixtures/recovery-layout.mjs": "1709f71518155a030fb9ec2ed4f0b609a1eca5777eb08ee3ffc0d8fdbf5ad245",
+    "packages/cli/test/fixtures/runtime-installation.mjs": "7164ccb12ed1652d8425c5b773902ddade3fef9459bcba3f5f6040dab2c1a933",
+    "packages/cli/test/kubernetes-recovery.test.mjs": "83bd2c27a07c31aad8ce42285be6d3b7be00a02a9794934a25d3242f0fba27c8",
+    "packages/cli/test/kubernetes.test.mjs": "b37351a9d7eddd9c0f49916999a3701eeae65fab9d982dcd879ac05f47c19f1c",
+    "packages/cli/test/queue-history.test.mjs": "feeeb3c766dd704fd0537dddbf5149cdc472bc62cb783be5746728629b236bcc",
+    "packages/cli/test/queue-recovery.test.mjs": "5dc97507757862f491bc0a958d1f42d0bde4cd8daa02d4399dd99d13190a16dc",
+    "packages/cli/test/queue-snapshot.test.mjs": "00d335f6bdb55059060313c477f187797ca4c1135e4b91c6124569c986ea887f",
+    "packages/cli/test/recovery.test.mjs": "6465a624c02b3b856343d186cdbab7a36691defcfe4d065cc735579130901378",
+    "packages/cli/test/retirement.test.mjs": "1011b739f1db87e5d3f23e081a873c0d7c0148963e0d1badc1e45218a3f38cb8",
+    "packages/cli/test/runtime-catalog.test.mjs": "e42a35fbae68aca812a91ac01f065178b8df95617cbc8a9925aa0163b839cc5f",
+    "packages/cli/test/runtime-enrollment.test.mjs": "ba35ad37ade2a206e151c6116f604c7fba3f9f0e5dd1c9b922678b1c9f520e20",
+    "packages/cli/test/runtime-recovery-command.test.mjs": "0cba17fc8289717c3355cddb3bf8c7e9c5fed6570c93a37f25a02f654f2cbf24",
+    "packages/cli/test/runtime-recovery-selection.test.mjs": "056241d9a6f8954fa4fe782601a8f8764360594688dd571f0f12c85552a16b88",
+    "packages/cli/test/runtime-recovery.test.mjs": "80036b3164cc5539b3155fadf0257f57425a94d7ca8594b81ab001f90c05d541",
+    "packages/cli/test/runtime-selection.test.mjs": "90831eabe4b2336321d5816083fcebb88ebcbc76a310ebc37992089bc4176119",
+    "packages/platform/package.json": "e10ef5668858381044f9cc7f1c79aacc1de5f0eb7931830bcb8000fba90d5985",
+    "packages/platform/src/activation.mjs": "daba3b4b39fe895b8aa5454e9030a2d4ec20a55de6b429f9506cdd4fe14e5e56",
+    "packages/platform/src/admin-capacity.mjs": "e779d72f40a3568ba5cf822fe3ce796b5dd4d384118bfc3b0d4bd5467bc7a238",
+    "packages/platform/src/admin-control-script.mjs": "495584a6889575ffc0019a8cd0441a2907dd530c5948c3d946949026b3774df8",
+    "packages/platform/src/admin-credentials.mjs": "2c762aa30fa1c0ce83f8daf7059946ed8e6a20ceb48e36ba545c6af4b6a90e5b",
+    "packages/platform/src/admin-delivery.mjs": "0104bde803db296b0d57520ad98a4a3cfabcc03557285559bfeeda6c67a1ab89",
+    "packages/platform/src/admin-dispatch.mjs": "395c768b6feb3ad49f55653f52aa9a614605c9315afaff1c323284dde41b9c27",
+    "packages/platform/src/admin-secrets.mjs": "05e6d91f9593488bcd597a56575a1f4c3ff0c617f6b6682ea1ba8c73354a3e26",
+    "packages/platform/src/admin-view.mjs": "784b508727f23437197cf31009344000113c97eb53aefdec43ca08bbbf0cd450",
+    "packages/platform/src/backend-runtime-identity.mjs": "5bacbcc9253a4ff70c52b22ccbc7f72fc559bcdce4d329bcacffeac161185b23",
+    "packages/platform/src/backend.mjs": "555ac244113c9b861003089f6897fa5833b43183adbef84a01459ea7b60ee7c9",
+    "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
+    "packages/platform/src/capacity.mjs": "5cfb9764c3e9e1e678b1216a312ad2bd389239b35fdac3d2af0abc091442da0e",
+    "packages/platform/src/claims.mjs": "c223ed010d09f592b790940f0a3654adbae2c30a8e6a8aee5e266c5a29e51caa",
+    "packages/platform/src/controller.mjs": "31834fd8bcfd716dd0a612897897b865ea08ba2389e61fd58ed678ed2c2267e4",
+    "packages/platform/src/credentials.mjs": "f5303240fb9d6e23e8e7a128374447e1b464fdca48b00ebdc6d70b8ee35d9b33",
+    "packages/platform/src/cron-activation.mjs": "5ba5e59fd40721f4026332033eb25d8eba812ee9a396e227c21a51b92997088e",
+    "packages/platform/src/cron-dispatch.mjs": "6ac1cb769c3ed6dd93ff14226f1d83141d7d215701abfb38c3a748669dc8e34e",
+    "packages/platform/src/cron-history.mjs": "11d1dc96b8212ae5bfdd0cd84343ade17f3410b02afd32757b30c5e7d8d503f0",
+    "packages/platform/src/cron-recovery.mjs": "7c0ca759b55c957c4f01ac560494632e9a2809ad10c61a965cfdcf4361ae2233",
+    "packages/platform/src/cron-retirement.mjs": "36874b20884a60d227025b3f4b4c49c362ee390c69687a625fe9680f6bc45e8c",
+    "packages/platform/src/cron-runtime.mjs": "ea98631c3b43ff9420eb2733e678e8e7fc96198e0b2dcafa3548b337c6af5aa9",
+    "packages/platform/src/cron-snapshot.mjs": "4ba23bd2b39c39fe2b8eae122fd89706e222ff2f5c380becf41dcc699e8d3746",
+    "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+    "packages/platform/src/deployment-http.mjs": "015d276b42352c1a63a77a8754554521f1df41d61d9605fb78b3d102308d1a7f",
+    "packages/platform/src/deployment-status.mjs": "628492e5ef033dc8226e8027c6d71f86e4bc525232c062db6339d27cb79a56b4",
+    "packages/platform/src/dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+    "packages/platform/src/http.mjs": "210d5c612026d160936aa1e7e27328c726d0096dc5256a2f3a4a37144cd9b575",
+    "packages/platform/src/import-runtime-policy.mjs": "543dbfa04d60eca6003ab7acf40788a29358c1e1c49e3c0ce082d51666c5323f",
+    "packages/platform/src/main.mjs": "33f418a67c4c6faa860182928600d729f7ecbc5453307d39d57161015bd08c04",
+    "packages/platform/src/queue-activation.mjs": "23284caca3163c7f9ee70157f78d324842cfea5fb03dbd0169e3fcc4af52345d",
+    "packages/platform/src/queue-history.mjs": "d5aea93f441ae3561b1243e520401550a1cda241a8697c1ef8b7a4f66f1e90b5",
+    "packages/platform/src/queue-recovery.mjs": "bf1fba3d1c27f9e3b8a43457d1c4ceea8c149dee6a57dab008577ac7a45e09d4",
+    "packages/platform/src/queue-replacement.mjs": "6de864ba992e77d999735de7b18c078822583fcc1f0c2cd0528f7d680928e58c",
+    "packages/platform/src/queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+    "packages/platform/src/queue-runtime.mjs": "570a10dabc87f9f01a06a8d0df4f91003c2b5308bb101afe7bb3ea47ae753f1d",
+    "packages/platform/src/queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+    "packages/platform/src/quota.mjs": "82763571eb57ba0da79fd65b9b7dfba5ae792a1522bfe5061eef4b9d9617ae54",
+    "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
+    "packages/platform/src/resources.mjs": "9bd6869ac3a1fb20ff61ed4d477e8997ac871b8a3689a8b26cff2aff1a8edd1b",
+    "packages/platform/src/retirement.mjs": "ab542cc36b0faf921aacd3f8fa3dba9cace505343ee2fba07f226dd9007d0919",
+    "packages/platform/src/runtime-identity-proof.mjs": "12b82639bae9b984deb0a7acacf34bd2ed9b272192e6d0430d169a2069534a55",
+    "packages/platform/src/runtime-identity.mjs": "2e04ad1f7a7346de3347af677f27b130b6ad6a63e9154c5fc68f7d0dbc90b0ec",
+    "packages/platform/src/runtime-policy-file.mjs": "53430615b0684b88dd22ebc93366b8f210bb91b5ca64474b5a0c9e7108496d7b",
+    "packages/platform/src/runtime-policy.mjs": "128097304ee62d7ef3ee0d6230ac7b1ebf204a83a03abed06ce8792c2acac406",
+    "packages/platform/src/secrets.mjs": "c27b5b6ea9794eabc6a050739c9a9aaf6933832a204d65beb7bfb12175a5a646",
+    "packages/platform/src/security.mjs": "00fc39b05f43469c30addb1d719bfbb2b4a9907e29a268fb0ce6b84c9710e75d",
+    "packages/platform/src/startup.mjs": "2b2ab9327ad30c51a12f0c475256b43cab65bb275f1215434cd4578517745892",
+    "packages/platform/src/store.mjs": "b0f11bbd640047a1661dbcbff7d05f198c546b89bbd5062f96b8b7a9d482a531",
+    "packages/platform/test/admin-control-script.test.mjs": "73ff0978e42a538ae1a8321bb47b892c98a14bc87d5a5a5867922ed6971a3b03",
+    "packages/platform/test/admin-delivery.test.mjs": "ced8e89cfc88f4ddd412899c29d4fbcac60112a72636b23815f364ec5147410f",
+    "packages/platform/test/admin-dispatch.test.mjs": "a6cf04a7695a56f80036ae66a480e4c981c1f52afcb5a633f2646187f0685efa",
+    "packages/platform/test/admin-view.test.mjs": "48d76769bae2762427d901ab2fca44ae6632ae31f8a60486f9706b5026841ae3",
+    "packages/platform/test/backend-bootstrap.test.mjs": "f01cc17eee30fb8e3631b0329f337b598bf64e7fb00c04c5f010665b8929dea9",
+    "packages/platform/test/backend-runtime-identity.test.mjs": "64e135e1ca6914d3309aea126c3e2ff7b8310d53845e2d8a0923e455c65b9515",
+    "packages/platform/test/capacity-http.test.mjs": "e6707e7b6e96b10871a90b996327bcbd766abf47b044445cb746e39213afb6f9",
+    "packages/platform/test/capacity.test.mjs": "bd856e1d15bcdf151da96e1d32c62a05bc3dd4f18b3b6986236868d63b495c9e",
+    "packages/platform/test/claims.test.mjs": "82ab7cbbaa985a1c0bc2c507e12034fa7d4c6444c4746b6771c9e69447980db7",
+    "packages/platform/test/credentials.test.mjs": "46614bd74544a69b6485b1859bc66409cc0e6213b8ad4a6fb64cb763e969cc70",
+    "packages/platform/test/cron-activation.test.mjs": "26abf3c0002cefd4e3e46f779afcffcd0983b8d1d7007953b39b3242a43e08fd",
+    "packages/platform/test/cron-admission.test.mjs": "622efb019d0c2491981d05be1d984099f0511a6f0bd9f59ce21eaa3d51149095",
+    "packages/platform/test/cron-archive-recovery.test.mjs": "c732de93cf1d2dc962244c6b239d104e8a72fbe5a388efe157837362ec019c9c",
+    "packages/platform/test/cron-recovery-oracles.test.mjs": "c6d8e1372401cec673f4b55d017ab5b897c47badffcaad75c61fd5acf88e70c7",
+    "packages/platform/test/cron-recovery.test.mjs": "ebd5dd0dc545b62c54a328a52f2ffc7b7fbfc799ffa008a59506905c4dfbef46",
+    "packages/platform/test/cron-retirement-oracles.test.mjs": "525a5b3a48e4013d8ca79afd03afed102e625c05677ea3d1ba6047b25c3ad08a",
+    "packages/platform/test/cron-retirement.test.mjs": "8e537c1cbd729e6686bea55a652b694e0930ec4c6b64a4386f6eeaed1296253f",
+    "packages/platform/test/cron-runtime.test.mjs": "33047c10fc159adbfcc89e322eb97b1a0a59ea9dad39d4188a020457c24b376e",
+    "packages/platform/test/cron-state.test.mjs": "cf61a01c75b1c0b61b96ee17070ed3eaaff66d0440feea889257ee7ccf646714",
+    "packages/platform/test/delivery-crash.test.mjs": "c7200ffb3e86052655c7e1757041e50681086b392026bc2cd657690482cc9ee3",
+    "packages/platform/test/delivery.test.mjs": "3b89f991a1daba20090e5ad1136dda683b244b08f714c965c96bd42ea48dcfdd",
+    "packages/platform/test/fixtures/claim-backend.mjs": "b962165bc1fee61fb9e3104287940e83e163a6db75152fb7592076886c465238",
+    "packages/platform/test/fixtures/claim-crash.mjs": "0e32c97e7a10b59a533a9e149483b744fdc7bc2b8d92601935a67e36aba04cc3",
+    "packages/platform/test/fixtures/cron-activation-crash.mjs": "e67f6e5dbd5c0ddca557cc15408850eb929c9558627148b4d90ae6ef46f43b67",
+    "packages/platform/test/fixtures/cron-backend.mjs": "8701a70cf25b0f6a614f29bb73f1669b07612197b45113e486748d9a5712404f",
+    "packages/platform/test/fixtures/cron-controller.mjs": "425c1cc8b9548aa0458c4c6dfc5f854ab17ec7897481aedbad355ec4b1b6f595",
+    "packages/platform/test/fixtures/delivery-crash.mjs": "9d858c8966980e59730fb9e6c82ca1cadbbd0b308fd5cbbade382401d5c67ab9",
+    "packages/platform/test/fixtures/queue-activation-crash.mjs": "a2aa2b82f524ec58453d3d9814833ce7aa797362a3f4dd4ff7b65fbab702f86a",
+    "packages/platform/test/fixtures/queue-backend.mjs": "b37cc308e506b3fba5a621f09bfc4f2c534176f1b803b3b2f6ee016e7066d191",
+    "packages/platform/test/fixtures/queue-controller.mjs": "fb14dcaf5946e68304d8d030ca318e4e740346544da99a34c2ca1389272e19bb",
+    "packages/platform/test/fixtures/queue-replacement-crash.mjs": "9a813a11aeb3f0af5ab7960bde93fd036c0c9a3539f5282909878a1d047cf313",
+    "packages/platform/test/fixtures/runtime-policy.mjs": "10d8be82e975c751a04d27229baca49130f8b252649900931250a42699888ade",
+    "packages/platform/test/fixtures/runtime-proof.mjs": "86a55988a8f775cfaa2cf80c378186a78643814ee60dbe5c2cc5c3eb6264b6b8",
+    "packages/platform/test/platform.test.mjs": "d6f3916b192c433c95c6185d45d6e553cf9dc6b01cb05b21ca1e004302552967",
+    "packages/platform/test/queue-activation.test.mjs": "c58759cbcb78136f28336956e8a70d05bda2d0579819b75255e5b301dc28d6d2",
+    "packages/platform/test/queue-recovery.test.mjs": "ef210a2d92da0bb2129ce683bcbcff9c525351d5203b86a932ebb250ff605595",
+    "packages/platform/test/queue-replacement.test.mjs": "d5e522a17a75c2450b5e0f645d0116972209d842629767b753b561ec3817de93",
+    "packages/platform/test/queue-runtime.test.mjs": "545f9aca4209b445ed9fd491b3425a4200622864d6c55a864b761a2aca7fa97d",
+    "packages/platform/test/quota.test.mjs": "15348b7ebe701496207f6a9b7b90a43fac78803030cd8b887b8947fd6200112a",
+    "packages/platform/test/resources.test.mjs": "80accc8f396f097d69d5590539d9470059d2233a709222d96ab236bf2b4c4a2c",
+    "packages/platform/test/retirement.test.mjs": "21546e9085bd231920da30e20ec122b980843b81e91dd52788a087debfa4ba09",
+    "packages/platform/test/runtime-backend.test.mjs": "ec70e8b8d14ebf512c5d087af1a246b58193e06ed08ce03f911cb485253fde83",
+    "packages/platform/test/runtime-identity-proof.test.mjs": "682f4e1038442e2e47a95442874803b1f28051f1addb216f5351fe5fcc7baae7",
+    "packages/platform/test/runtime-identity.test.mjs": "e5b4dad1c6e07bc3faf286154d97d49835861380eb2d3c6619c1c65839d01206",
+    "packages/platform/test/runtime-policy-file.test.mjs": "a1841f907197a8d7352961c521e70b06811744ce28360c49902de2cf98859d8e",
+    "packages/platform/test/runtime-policy.test.mjs": "97dacf1d388975460c1f661603a458f7b1a691cc7e3dfcb88820f90080b9d35f",
+    "packages/platform/test/startup.test.mjs": "f84df0efbbdcec52d87e8008793ed1aad1e3ea28e5524f0372de3f138af2cd4e",
+    "packages/runtime/package.json": "629c692a946958a67fee2863c5f4b43df1e52ee699d7bedea3356a52110b2160",
+    "packages/runtime/src/artifact.mjs": "9c26a044112c503788ec47a4d47ba673bcdd8a235a5ccb9087c8ce6f53c258d3",
+    "packages/runtime/src/assets.mjs": "4eddd14ff6c344461674b8c6f42e3f0780d454a11ebe9d80448f1daa68d68eb1",
+    "packages/runtime/src/bucket.mjs": "d8619235d1b1ad8fa6cd0d999a6c8997ad1fe178f899ead57463eff0a778c03f",
+    "packages/runtime/src/crons.mjs": "a487f481f5e227fe306ff02a352bb34c4a7ea4ae78be406d27284817076d6e18",
+    "packages/runtime/src/deployment.mjs": "ec38b0083a7ec776a469eb89f4587b513cd8b83e9acf904d4f48f1026b43af1c",
+    "packages/runtime/src/files.mjs": "ba76bca333878955b4571b17079d27372e482cd6ea21d22cd892d1d5fc62b779",
+    "packages/runtime/src/gateway.js": "33dd151f608ad0bfdfa84719d4e1c966f7e6b9cc8f0d4e68b5b276e7a5839e1a",
+    "packages/runtime/src/import-tls.mjs": "10d734ae50daae56e74d4c8d202fceecde4e7bb9a9e99d986743ca98d463fd20",
+    "packages/runtime/src/init-bucket.mjs": "6154efa6dbedbecad7ba4c6ec155cb7046a75cf3f7daf727b9e82d314e17ded6",
+    "packages/runtime/src/manifest.mjs": "972d84c890211f0068361cd2d16df149a7aff9daf8444c01d71dcc0573232f69",
+    "packages/runtime/src/queues.mjs": "c4ad9681617dcdd2a7d66d9286648db0e02086e1c20139b7ff33cb2832fedbc9",
+    "packages/runtime/src/serve.mjs": "336f6ea199f2f8946c046d26a907750a13c6c87077bd1df8d507ea04a48f50e1",
+    "packages/runtime/src/transport.mjs": "d69aa1b2aadbdc7a4cba6cd2e04afdf86a36aeb9a68bfacd7d0683216457ce5b",
+    "packages/runtime/test/artifact.test.mjs": "2415cd201b146792fbe5abe4a93d4c76a17b4f6c65780a8f0ccfed6227f23942",
+    "packages/runtime/test/crons.test.mjs": "b38406e80801965ebd75ba7950eddad5dc2ce345ac45d0831865b08c6c729963",
+    "packages/runtime/test/deployment.test.mjs": "fe20545712ff300039baa0290534fbec8a5b863a914471a798981061182b15d4",
+    "packages/runtime/test/gateway.test.mjs": "7db1b9aa6d050b581b13461cc96468307b999b5b02a415447e4fcc6c528ffb7f",
+    "packages/runtime/test/queues.test.mjs": "1012741ee15b6355d62aa049014df11b0119c5afb6fc5762ea93027c5f52009c",
+    "packages/runtime/test/transport.test.mjs": "1edb210f87849f9a90b200130063151a42af1ab0cfce79bfbbb1bcb2478a3366",
+    "pnpm-lock.yaml": "0114098dafa18a6e547704c62b7d3cd7203fee3590910715e194f52c214412f6",
+    "scripts/cron-probe/activation/artifacts.mjs": "58b0ba932012906e44bd0fd80cb9107c354a58f2c9aab147ca86555cdf014639",
+    "scripts/cron-probe/activation/client.mjs": "48a4c47d93de65b00ffaa7a0cc2d580e347806a9eb0d71cafc962ad6abbc3f41",
+    "scripts/cron-probe/activation/controller.mjs": "3792a432746e5fdf8f8d5bfc0677675bf73356927041b93091a26da249d9bcba",
+    "scripts/cron-probe/activation/idle.mjs": "d9d11de14591fa8a03a8217279e5f02b07a218be044274bec12e96251058d776",
+    "scripts/cron-probe/activation/policy.mjs": "14b7faf0a2373c29e46d586e7767f448da67c3c213ee2617ac7782e138934380",
+    "scripts/cron-probe/activation/policy.test.mjs": "8c98cf113daca0e164dc8ec82e2d2ba77fafa2e77b6a26894cdee1838aef5878",
+    "scripts/cron-probe/activation/postflight.mjs": "58d59c85f45db60ab4c0ec266d8639bce3d663309ff11a690852fde4a21531b4",
+    "scripts/cron-probe/activation/processes.mjs": "7ef0431185a2d303038d5f982ee6dba9e697d0167dfe4dfcac6888671e7e8406",
+    "scripts/cron-probe/activation/scenarios.mjs": "cb246871d23f62c58e19fa2c6ae40c788c8ea9bd14028450379c8b51c7e4a1e6",
+    "scripts/cron-probe/binding/fixture.mjs": "bb2ae93666105fa5232ce89c21396678524fff74c86549a3b8f172213cab2247",
+    "scripts/cron-probe/controller-update.mjs": "99a45a5df198fa6d05e00d9450edaf72b4f4e5e28476ced1c4e09561fe0db477",
+    "scripts/cron-probe/controller.mjs": "9a453fd6e91c8d1afed08dcbc2453a2c5b88075704da3159a77934cb4e4cc3b4",
+    "scripts/cron-probe/faults/0002_faults.sql": "77e2e899f51f369d8bc5fd79b3da0950c576198cd5af340fc6d9ac2e5748c381",
+    "scripts/cron-probe/faults/artifacts.mjs": "ea1b8520f9e7bce87bd9cf760fd512e4661ced352cf259fcb3224e368e1ac5be",
+    "scripts/cron-probe/faults/build.mjs": "ab1fbb46487901e42d2149bebfec9bf15c654b8efbe609f9bc24df42da5377f8",
+    "scripts/cron-probe/faults/client.mjs": "9a3cc737973c4eb0e5192d211782baef3544a9325534aafd131697b582df87a8",
+    "scripts/cron-probe/faults/contract.mjs": "1aec6810538ff6fa8ef0b699f58b0b591a202c8368e77ee9c02478b075de022e",
+    "scripts/cron-probe/faults/fault.mjs": "42072a58dab89e1108c6e07d0a908b3fc17bcc1d1a112b76bb512a76db4a873b",
+    "scripts/cron-probe/faults/fault.test.mjs": "559a85f9cb1782e6230a56e071ff9e3174ccb77d643a23f1cd3f9a576e684676",
+    "scripts/cron-probe/faults/observation.mjs": "49cce7d974775a352ce701e446d088a2638515059b2b012e688d6128665b7ed6",
+    "scripts/cron-probe/faults/policy.test.mjs": "88417e187c45ba7913d584ae99fe324996a522de5efd88af102b50775fd9388f",
+    "scripts/cron-probe/faults/postflight.mjs": "f95e29ec79229c3451c595c70c9b247acd6e555b1846eb1e1fa94d3ac66f439d",
+    "scripts/cron-probe/faults/recovery-window.mjs": "63f97ec3b24f2aa0de750792df2bd4ae70f42be29ce949512c28a1623a41e607",
+    "scripts/cron-probe/faults/recovery-window.test.mjs": "2d039f01dd50921b58ab4d0a724f71b8734887c863179bdb53e1f9675fd1eeaf",
+    "scripts/cron-probe/faults/recovery.mjs": "a366eae12de52df3cbab60e2722c62f776d717fc40eeea92f0d9f4ed1bc8c180",
+    "scripts/cron-probe/faults/scenarios.mjs": "ea9e4d35524961a93b6a6622e4aa0f3d08cf41ab0aa2efc03ec12ca0b737a076",
+    "scripts/cron-probe/gateway.mjs": "7adf9a04dae8b34f04d63687e02077d81f08bb3b149a20c6b2300b057b0ad10a",
+    "scripts/cron-probe/identity/checks.mjs": "615913a75e35c327bc488004ae0fb61c4255735718e4a0cc0e4ad6bf34674ed1",
+    "scripts/cron-probe/identity/fixture.mjs": "1aceab8e32b7d50cf84dd6e6f90491bd33a61911e81c9dc28df0919dacf41dcb",
+    "scripts/cron-probe/identity/guard-controller.mjs": "39f61f16fe3cc31827923c81a8628687f5d0c30a6e0bc0f6f93fadacb77785a5",
+    "scripts/cron-probe/interruption-controller.mjs": "78c67df01059b64fa6e84601d37e0e2b9b8f99124e01b8d4fca22fdd9c7d3d34",
+    "scripts/cron-probe/minute.mjs": "03c77a3ed849fd0a7ef0088fa037f362712c8bbc2801fadcb0993f68fbdd8684",
+    "scripts/cron-probe/native.mjs": "3252197a360c09f4d145f438aaf4277dfbf3446b66c46968d60816a6528b4b6c",
+    "scripts/cron-probe/operator-controller.mjs": "6d35a9ca7024c53f7a3e134c21cd5608254d61bc4d1354c2a31599e3d42bf0fd",
+    "scripts/cron-probe/preboot/fixture.mjs": "953bb34bcf583b7c4c9e77eef1f0f0b4fe381307dcf0ea334ffd0ca36ceeecf9",
+    "scripts/cron-probe/private-compose.mjs": "625553416c446167de0c03771d9badf2c1a78ba4dc28a3f8fcabdb34e4157026",
+    "scripts/cron-probe/records.mjs": "b08ac8208171dc02f2cb7a177c4378f2a9c1859032b0d9f30d449f49b662d1c3",
+    "scripts/cron-probe/recovery/client.mjs": "5c4cf5e7ea415095a8d9a1223010aeb544e7f83e3494829c1bb3eb0884883037",
+    "scripts/cron-probe/recovery/commands.mjs": "1efe808aabfed0fdf193964bbf0f8cbad5456a6194fc19b7e895f7f7b025e92f",
+    "scripts/cron-probe/recovery/controller.mjs": "9e28b7c480a1ef2907876e2254d9b4c1fb178c5b8e5c60b46c0c5e4e4e999a0e",
+    "scripts/cron-probe/recovery/data.mjs": "f5bfc4031b73f5ec5d1db3d20dec44284a71d2fa2fc80af2cb6f0454395419fd",
+    "scripts/cron-probe/recovery/fixture.mjs": "30c26686ad7f4320706d12dbf22b362e71aa3d3b2b84c9e025e4097994db7afb",
+    "scripts/cron-probe/recovery/lifecycle.mjs": "7e8553becdbf96d98eda878374130b50d859c9f046aebfa063c9c2b8e582e5fd",
+    "scripts/cron-probe/recovery/oracles.mjs": "9591ef9db312791f3bfdbf5247cceb1075c7f6f51ac6c80e83d2232ef34c69f4",
+    "scripts/cron-probe/recovery/preservation.mjs": "762bf308b48e1f227fa1b25ab94c2337e3c167bcfcedaf30f20f0f94df4fa285",
+    "scripts/cron-probe/recovery/provenance.mjs": "8ed91c00b094f749caf5d573d8dd77e65e32106dfce53a7267469b8390da5609",
+    "scripts/cron-probe/recovery/restore.mjs": "8daed844057fb7d930f44dc61d1ccb63bd8efad200bf75ff2e25d0808206759c",
+    "scripts/cron-probe/recovery/scenarios.mjs": "2737220f16aad2cc28af64537674df664d5ebf307175f85de6263b05fbb017c0",
+    "scripts/cron-probe/recovery/target.mjs": "4a1a943932d1dba87cfd349ec403bd93e5024e84691582f00836a56af228a1b4",
+    "scripts/cron-probe/recovery/trial.mjs": "e9b99d707ea583248033f404db15b406de36087d6de45646d83c7ec22935ba6a",
+    "scripts/cron-probe/refresh-project.mjs": "7fb6b6109e283741f63a98744bb6c6aea57ed9f9784ca56da77727c374dde9a8",
+    "scripts/cron-probe/release/artifacts.mjs": "ff401c525b25e43c2b68c90ae518f77fcae44c9b37f8062e7773efa32e295ea3",
+    "scripts/cron-probe/release/authority.test.mjs": "dc6b5990974f36cbb16a825f2e53c8d8866482444e72c244f34d0e0213df908a",
+    "scripts/cron-probe/release/cleanup.mjs": "8bf36e653fbcbee8785c471047ccb2e8b6a57e619a13ec92c34b01c9afafe759",
+    "scripts/cron-probe/release/client.mjs": "f86e52cd82ebc3af70d2b3f9285d35a77c43a4d91a2e8c7558c851dfd00bfab4",
+    "scripts/cron-probe/release/controller.mjs": "5cd2624a8a735b5fed26ca81465faa8b3b9a8c9ed127fec760d6f0819dd43eaa",
+    "scripts/cron-probe/release/offline-worker.mjs": "b765d1bfd77ef04fb024b6ebde70c5511576e1195250fba4c18034c8cce6e666",
+    "scripts/cron-probe/release/offline.mjs": "c9966da973251b396dd87ce3c88b9369afe54baf8bb3ddf8d4b32b5f815f8e89",
+    "scripts/cron-probe/release/policy.mjs": "11432d438d5f38627220ab15eb6eb0eaf60338c0c7437d50bf536bde8e704751",
+    "scripts/cron-probe/release/postflight.mjs": "e870c074aa13bc649a17babf38f4d06f7ad32ef46796e9c00f4fed0944673015",
+    "scripts/cron-probe/release/qualification.mjs": "bbfc5e3d297e28abfe4da75b731e36de0aaf57a09808ac181cf4f6ae25f3ef2a",
+    "scripts/cron-probe/release/read-records.mjs": "d0a832cf96352704dd6c84f5ff775563cd73905f8cf467cc971b58033ec60910",
+    "scripts/cron-probe/release/session.mjs": "44b2990d9deabf437addaa24e6dcc35f103287a539f54802de2932b4428de880",
+    "scripts/cron-probe/release/update-audit.mjs": "e77bba93c45b56508c7a1ff6e779b5713b6c8c10684d5067eccde553e6427e8b",
+    "scripts/cron-probe/replacement/0002_replacement.sql": "126348b21d04c63272adcd0dfe734daba46d800ea19cbda8471f8a7a6ac27c11",
+    "scripts/cron-probe/replacement/artifacts.mjs": "f6281064f5487ae0faaf635f31c88e7000ff8c8317152460b02953434c8e434b",
+    "scripts/cron-probe/replacement/build.mjs": "e8da4615c03e2be7c793065de8f766c631088ce2b73bac797809013415b9a300",
+    "scripts/cron-probe/replacement/client.mjs": "a227241282903896f9f21c772166f30f05d1aef49448c5fda814e19eecf5e78a",
+    "scripts/cron-probe/replacement/contract.mjs": "0625e24fe5933afdd866be2fb9a25381ae7af59ade7cb5bbad147d3bf1919e3c",
+    "scripts/cron-probe/replacement/job.mjs": "a9ec6073c59fce751f5f8bec6812d17d004de25bd545c6596d996aec14fe37f1",
+    "scripts/cron-probe/replacement/job.test.mjs": "3f99e0cd585dc083b62ce3c63b57ae71b1631cbbbc129f1ecd4c413282cd90fc",
+    "scripts/cron-probe/replacement/policy.test.mjs": "44888db78fa9643d8b4e6da3f8a287e7cb3e6d6e9cfb05d5d49d5cdbb83acf01",
+    "scripts/cron-probe/replacement/postflight.mjs": "b3c109d833c91a26b9f04982a9174a7f24b0265ef64ec283574613b67562af9a",
+    "scripts/cron-probe/replacement/reap-plan.mjs": "591a91f623879e42b3c2dab10582019066681fc53645ba9d37c29d666ca49945",
+    "scripts/cron-probe/replacement/reap-plan.test.mjs": "02ba9fc4734a470af8b3511cd45ca7c6ebc429bdb681aaac592a98f772396641",
+    "scripts/cron-probe/replacement/rejected-gate.mjs": "0fe453a7f9dfac6e742a28a2ef4d95bd6c32e21fcf0f7963afd967a9fad447f4",
+    "scripts/cron-probe/replacement/scenarios.mjs": "6aa246dd857312b5ca3fd9cccd97323ed1f975b7df44c739bb04e81f41e129db",
+    "scripts/cron-probe/retirement/applications.mjs": "f7e1bb185266e4849d7105479c134b8ae21067fe6e913f721ef199a69eb60cbf",
+    "scripts/cron-probe/retirement/artifacts.mjs": "24143aecd19877645d8eb61fc0dc0a506762509b8edb920b5b43ae8428d22b47",
+    "scripts/cron-probe/retirement/controller.mjs": "ea73cdf0729bbf68cd54648282c0bcf67549d27ff60ed03a52053bff09611bb7",
+    "scripts/cron-probe/retirement/dual-scenarios.mjs": "59e7ee40378af42a4e8b475eb956def42e70037354e7270e8a08ce75ea4b1afd",
+    "scripts/cron-probe/retirement/dual.mjs": "861febea0d712340325195ea5ecda206b6ba7123efa4953d7863222476202236",
+    "scripts/cron-probe/retirement/install.mjs": "cac54ac21be5ed3eebe5fe238b1bcf7c4c7c3c38d344d47105af5eff0b5492db",
+    "scripts/cron-probe/retirement/negatives.mjs": "f26cc607d03bd5947dc2fbb7f14d4dce3d0898e3e3a211b869195aa9f847154d",
+    "scripts/cron-probe/retirement/oracles.mjs": "0550a487b635af2dfcec1e6f5e38d2a028788cd38514706a866e38bbe3f1d9f5",
+    "scripts/cron-probe/retirement/ownership-check.mjs": "bd77132db46518cd6fb406d062e17791d5014dadf06d737d8fadba9cb3e10cf8",
+    "scripts/cron-probe/retirement/plan-compatibility.test.mjs": "af43ab8c473d540fa20f56918d6149829c8d787c3da8de1668755e32e91e371e",
+    "scripts/cron-probe/retirement/policy.mjs": "85ff8d4be14610f227b00b80b37aca87113d86832e62be245bf9498a7bf73d05",
+    "scripts/cron-probe/retirement/policy.test.mjs": "e51433cc2a40807a81ada50b427c0d4e03664db51bce111a4256c2ea19af0362",
+    "scripts/cron-probe/retirement/postflight.mjs": "4b3f232167589d90017d56247d08b926cb3c923115ac7721c21b6e1efab70e57",
+    "scripts/cron-probe/retirement/preservation.mjs": "0da8cf30f128a6d499fa0b70b74a67096e358ed7e4f8071b79601f27b45773d4",
+    "scripts/cron-probe/retirement/recovery.mjs": "eca024a763caa01d8eaaa3b0102417dfce4494b7943ee397e7c46047e26c7bdd",
+    "scripts/cron-probe/retirement/replacement.mjs": "5823a80ef667cf9d5a5aa480876cb33d9d4e221066463446b04453a3cbefc2bc",
+    "scripts/cron-probe/retirement/scenarios.mjs": "6b0f429a795790875ba626ed50dd3d68961b3bd3fff0a798c5bf0ff8ab252d2c",
+    "scripts/cron-probe/retirement/sealed-backend.mjs": "bdc037c6ac35e40bdd169da2c7033fca3363131bc694259716b53c00e7cb89c9",
+    "scripts/cron-probe/retirement/sealed-client.mjs": "55a9d7eb5954d0480112e9617b2d05ac9c58ae05f1bbf1053cd1c92d4caf8235",
+    "scripts/cron-probe/retirement/sealed-controller.mjs": "15ce35cd26cf4210d29eb993208274a109fc0c84c655f116efe4cd9cb9a4ae66",
+    "scripts/cron-probe/retirement/transitions.mjs": "b814e6157fb763677bdb5d2b57e4e4637b8c6cd414c26bed01cd74219a932c03",
+    "scripts/cron-probe/sealed/backend.mjs": "85246e06be5fcce9af5176363bebbaab51c6b0fabbeb7baa00e7dd03bcb2b00f",
+    "scripts/cron-probe/sealed/build.mjs": "a623b35afbc6716788266e5d8d46bf470dd164014d136aaa5a911262c7ecbd4e",
+    "scripts/cron-probe/sealed/client.mjs": "bd9032185b4ab676920ce9b5b72f6f6c17245ae131a3f8b1964f9ebce28796c3",
+    "scripts/cron-probe/sealed/controller.mjs": "e5d2473ec666eb7a2a79fcba048a575f28e94b964e4593b150a6c821f0b3ead0",
+    "scripts/cron-probe/sealed/defaults.mjs": "be71c93eb191b3ee0469db936f9d1cdd0788baf8e6971651693ab3bb3bd7aefe",
+    "scripts/cron-probe/sealed/diagnostics.mjs": "dd1a16b9b6b8f61a3a3e4ac411e7507ca5edc5524c166b6f069368dae8ceb841",
+    "scripts/cron-probe/sealed/fixture.mjs": "f664b4e669ab25b5e3e24900012ac6717acfe4642a91d5f08fde4a8e8896e473",
+    "scripts/cron-probe/sealed/layers.mjs": "1a228544e0b144b4a4dbb2d0a540f331cb9ab14f92d6d055f8f3c90cbeba045f",
+    "scripts/cron-probe/sealed/negatives.mjs": "64245c7b5ed8bfeb43201aaeb4d53b66c57676bcbc5e0f4e6bec8a505d4185fc",
+    "scripts/cron-probe/sealed/observe.mjs": "35b85ab3fde64b238d5aa1a3ff187be533c9c4e91e59dea42faedafb2edb412c",
+    "scripts/cron-probe/sealed/observer-command.mjs": "e8309e2baaaeed945749d6bc3ed49c2ea1b668d3ee69b284ddab490da2f94970",
+    "scripts/cron-probe/sealed/postflight.mjs": "1bf0800a1d4941949c5f1150c1868cd3bcd23fc0f3d5ba2bc164bd24e03aa444",
+    "scripts/cron-probe/sealed/programs.mjs": "377dfc0e6e98c0e556a345bc83606d4d0f77195f1cb1be1e49f98bf1221c4950",
+    "scripts/cron-probe/selected/activation-matrix.mjs": "91061590a9c34d7e12537358663d91a32056ee4db429848d1af37c6ce78e979d",
+    "scripts/cron-probe/selected/activation.mjs": "b6ceca06ae5d3d1dd471408a9c414d09e7b0aa08fe561191fa368433e5383a26",
+    "scripts/cron-probe/selected/commands.mjs": "8412df587a99da6287980151a59a7a41d04dba84214e98a5b90484ccbfaf46a1",
+    "scripts/cron-probe/selected/controller-debugger.mjs": "572c7aba60bfa0f8991cda5f077b4800e16b904464fab466aa34590b9cb21af5",
+    "scripts/cron-probe/selected/debugger-transport.mjs": "dbf5dc91aa47269c3d0244458547cea42a6426e54caa3bdfdddd5f0eb483f4e3",
+    "scripts/cron-probe/selected/debugger.test.mjs": "9306a576cf5cf5d764df8922a11c2907ebdb5f8f522761cdc9dca44cc87bb698",
+    "scripts/cron-probe/selected/evidence.mjs": "f73e8929c71ba1e0bfe300a6e23b4ef7147a12516fca30156762e80ff466e0dd",
+    "scripts/cron-probe/selected/fixture.mjs": "b8336b8cbe94b863230ae53b7614417ba68d2935512d70979879cd8cc6dd6651",
+    "scripts/cron-probe/selected/future-jobs.mjs": "ff17dbfe975199201f3ae94197b8284da02d4e7880b6833256bcc217f2bced62",
+    "scripts/cron-probe/selected/host.mjs": "5147c3b9a6d5414900ef6be19a0ef724bffe1b3bd582984c7ba99b5535f6ec79",
+    "scripts/cron-probe/selected/https.mjs": "03f08ee897ba078734219687b5876c1b56787d944a75015f5d7f2219db87c19f",
+    "scripts/cron-probe/selected/inspector-agent.mjs": "8138f0324ed1fd964b96914df128e279b44fa458a0d64e37b61ac3190d93d0de",
+    "scripts/cron-probe/selected/interruption.mjs": "91739250ea13f8233e3a2a6a2276885a9f06220310b86ebdcba46fc44dcf7d8a",
+    "scripts/cron-probe/selected/native-observer.mjs": "95e533474eb2fd390a7eb06531747ed461ab2ab45e1876a25a72da1c10a24f3b",
+    "scripts/cron-probe/selected/native-policy.mjs": "1d385dd125914bb10376c987829f98605ef12c170b9d73524dfd7d8cc6ec12a9",
+    "scripts/cron-probe/selected/observations.mjs": "470f5d3e66435f8657cd362d3599482efd33d457eede918bbe8776a1e3a4520a",
+    "scripts/cron-probe/selected/privacy.mjs": "3afeaff6265ecafeedae40e2feb8bb37aad3cbf2665d2f84fe6828239875fbff",
+    "scripts/cron-probe/selected/privacy.test.mjs": "d940c47085f9d24b41c1acc486770644a4c20d9fa0433fae29c2a7a1accc7c11",
+    "scripts/cron-probe/selected/recovery-cold-smoke.mjs": "749e10231d453abf94f407562271172a46e77e97a16a4668be3de754d51fcb7a",
+    "scripts/cron-probe/selected/recovery-evidence.mjs": "b9f5ed246349ac0d017ff2549054299c8d84336cbd451c81c8cf4bb1f6ab5e69",
+    "scripts/cron-probe/selected/recovery-fence.mjs": "3451db5744d4188cbbde5f187f708a092cf6e80e60eec2f3dd4a26171e0ba502",
+    "scripts/cron-probe/selected/recovery-fixtures.mjs": "e61d0cee0834b367ad06f92f042a43500228fa14f0901553f506a788b47cba2f",
+    "scripts/cron-probe/selected/recovery-holds.mjs": "ca55d874bf5c2a12d93be6b4c0d638717629aefa91f654a2ecbf7f1b060c25ee",
+    "scripts/cron-probe/selected/recovery-ledger.mjs": "4d31f575e3e2b08c1286de2dfe992b6b5774b6e0b44eec99c2e01af9accf374f",
+    "scripts/cron-probe/selected/recovery-ledger.test.mjs": "38d7f17205ca387a779fae33ce5ad896e7cd5ab890b110746673de54c527d493",
+    "scripts/cron-probe/selected/recovery-snapshot.mjs": "0488e7fc9a4b5386a33d47ca5afa9e4d46eebecabd1967b221c32f61c4721f93",
+    "scripts/cron-probe/selected/recovery-source-smoke.mjs": "7fe35083719a4a48358e0ff725666f54d7970c6fef798c39e07efb25895e23e8",
+    "scripts/cron-probe/selected/recovery-stop.mjs": "cad3f908a56eb83c7039302ed9a303801ebf38b096f492f9486ad2cc06249a23",
+    "scripts/cron-probe/selected/recovery-target.mjs": "797eda0bc709e7a1306ae5b8209af314ca840096075f1140d567dc487cf07037",
+    "scripts/cron-probe/selected/recovery-work.mjs": "737a6850d2252134d58de0fb77be66daa8fb7edfa71f043439f49828dd220d6b",
+    "scripts/cron-probe/selected/recovery.mjs": "724fd9321d8f63918c25da1c7f564e4e9b8867b790c75b30f2b25d08802a8ac9",
+    "scripts/cron-probe/selected/resources.mjs": "36577403090c467345acb41edebbb26193e29949d4f8e57bebfb3b0a972c1c56",
+    "scripts/cron-probe/selected/source-debugger.mjs": "1c544ec8903c09752f02091d70ea068610eedc83c62eb1e7859dacdbc0930cd6",
+    "scripts/cron-probe/sql.mjs": "40984efe64d297fb438e61ad32322ab07587f55053ad61132816bb47d55e2f5e",
+    "scripts/cron-probe/vm-time.mjs": "f48d13b231ef1ae23a8f0788f21ee31578e921678046a00661947ac6e32ab716",
+    "scripts/cron-probe/void-controller-session.mjs": "7753b722ee639129fad105a7ac9eb005cba6767aeac4749b61bb04e3eaf65504",
+    "scripts/cron-probe/void-controller.mjs": "4873b6f02f59601e80886b70ddcf35a8c9007cf40b9a7901c1039a87c2d18def",
+    "scripts/cron-probe/void-driver-session.mjs": "80f2684fc13c740edd8f9370b0ee675e57ad542f955dacc73ba93417b63b7f4f",
+    "scripts/native-build.mjs": "6040faf9305030d69340e062cc0af06ddc1b3113e09781ad8ad8e28bd7a5030a"
+  },
+  "rawResultSha256": "7d9320a04e1a6ff5dae55e945577f85f7dcd6c358da91524a78bdd531682463d",
+  "imageAudit": {
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "sourceFilesVerified": 63,
+    "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+    "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+    "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "verifierSha256": "b730acd8c9381b2d345e5eb7221d473f907565b24c11fb6ced14a2f99c1a1060"
+  },
+  "snapshots": {
+    "a": {
+      "sourceProject": "fogd-selected-activation-2492de8664f78cb2",
+      "requestedAt": 1792630683001,
+      "preparationLatencyMs": 2793,
+      "prepared": {
+        "schema": 1,
+        "id": "8f151029-fe3d-498c-baf5-c6b6b07cbb6b",
+        "at": 1792630685010,
+        "completedAt": 1792630685794,
+        "script": "refresh",
+        "slot": "slot-1",
+        "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+        "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+        "version": "fc4d467e08c8ed7f",
+        "secretRevision": "48e07083-5640-42e2-8b37-89322191e411",
+        "crons": [
+          "* * * * *"
+        ],
+        "beforePause": {
+          "paused": false,
+          "revision": 3,
+          "nextAlarm": 1792630740000,
+          "crons": [
+            "* * * * *"
+          ]
+        },
+        "observation": {
+          "paused": true,
+          "revision": 4,
+          "nextAlarm": null,
+          "crons": [
+            "* * * * *"
+          ]
+        }
+      },
+      "files": {
+        "bucket.tar": {
+          "bytes": 665600,
+          "sha256": "dd5c6270c6a1e62bb6eafece074532c088d77bbe8f319bee425de1f39d994fd8"
+        },
+        "compose.json": {
+          "bytes": 14688,
+          "sha256": "505d1d29f17350c8f9145cc1746cd9a228a10580fe9af852551f42e3cdf4f72b"
+        },
+        "controller.tar": {
+          "bytes": 512000,
+          "sha256": "43390d1d2e9deb7f270920e95654be46166c32a7e061f866b81aa696f8f6ce1d"
+        },
+        "images.tar": {
+          "bytes": 981728768,
+          "sha256": "f9922aaef9185fe320fd6a45dd13a37ded90a5e55ad45fa45c372e81b55e85e1"
+        },
+        "slot-1-a.tar": {
+          "bytes": 10240,
+          "sha256": "4c0cd2b43deac77df073db89e70f3d301790be518f6263532900a1435f633e4b"
+        },
+        "slot-1-b.tar": {
+          "bytes": 10240,
+          "sha256": "c91bf8aff1ceb52c7bd896b0ab7f3b9cc9dbf30d14be11bae79509bc5f6cc228"
+        },
+        "slot-2-a.tar": {
+          "bytes": 10240,
+          "sha256": "2dc40e5ab02e16387f08f7765efacc423d222821b532e5efcc1bfc76a1d16c80"
+        },
+        "slot-2-b.tar": {
+          "bytes": 10240,
+          "sha256": "ef02ca2ef93a58417926bcf1ebfc409cc865860e12e9221a30858eae8784f33c"
+        },
+        "tls.tar": {
+          "bytes": 10240,
+          "sha256": "59587fd380039c42424f936a12ec2d76071459f05005222865bd221d257bade4"
+        }
+      },
+      "queuePreparation": {
+        "schema": 1,
+        "id": "02817190-2eb0-4129-bea5-35a673b6058e",
+        "at": 1792630684982,
+        "completedAt": 1792630685002,
+        "queue": "imports-imports",
+        "slot": "slot-2",
+        "deployment": "283f51d5-25fe-4dbf-ba23-674f1cb6fc63",
+        "digest": "faa4f96ba48a1070fad841057ac74249e1f07a3b85c98f21ff5979d309e6f5ca",
+        "version": "453ed02313e2caaa",
+        "contract": {
+          "runtime": "celld 0.6.2",
+          "source": "90b43017241f81189453d326d05948f388b34652",
+          "image": "sha256:b85983dcf410bcf710bbc30f400d8654123cb2b541ca4d84d7e299009a6ee97a",
+          "retentionMs": 345600000,
+          "clockMarginMs": 60000
+        },
+        "observation": {
+          "paused": true,
+          "stored": 0,
+          "backlogCount": 0,
+          "backlogBytes": 0,
+          "oldestMessageTimestamp": null
+        },
+        "expiresAt": 1792976224982
+      },
+      "originalQueuedMessages": [],
+      "shutdown": {
+        "native": null,
+        "exits": [
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          }
+        ],
+        "earliest": "2026-10-22T00:57:14.330329209Z",
+        "retainedVolumes": [
+          "fogd-selected-activation-2492de8664f78cb2_bucket",
+          "fogd-selected-activation-2492de8664f78cb2_controller",
+          "fogd-selected-activation-2492de8664f78cb2_slot-1-a",
+          "fogd-selected-activation-2492de8664f78cb2_slot-1-b",
+          "fogd-selected-activation-2492de8664f78cb2_slot-2-a",
+          "fogd-selected-activation-2492de8664f78cb2_slot-2-b",
+          "fogd-selected-activation-2492de8664f78cb2_tls",
+          "fogd-selected-activation-2492de8664f78cb2_runtime-policy"
+        ]
+      }
+    },
+    "b": {
+      "sourceProject": "fogd-selected-recovery-204ca1d9c301cb9b",
+      "requestedAt": 1792631116535,
+      "preparationLatencyMs": 3054,
+      "prepared": {
+        "schema": 1,
+        "id": "d5f3382d-247a-4e99-bc54-a01155721490",
+        "at": 1792631118756,
+        "completedAt": 1792631119589,
+        "script": "refresh",
+        "slot": "slot-1",
+        "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+        "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+        "version": "fc4d467e08c8ed7f",
+        "secretRevision": "48e07083-5640-42e2-8b37-89322191e411",
+        "crons": [
+          "* * * * *"
+        ],
+        "beforePause": {
+          "paused": false,
+          "revision": 7,
+          "nextAlarm": 1792631128083,
+          "crons": [
+            "* * * * *"
+          ]
+        },
+        "observation": {
+          "paused": true,
+          "revision": 8,
+          "nextAlarm": null,
+          "crons": [
+            "* * * * *"
+          ]
+        }
+      },
+      "files": {
+        "bucket.tar": {
+          "bytes": 829440,
+          "sha256": "a52248f35a401046d1923e9da209c83e78c206ba6fe3dcf50e4e351a2151dc8d"
+        },
+        "compose.json": {
+          "bytes": 14664,
+          "sha256": "61f391c2fe708759245b1f3382637adec9df34cbc8eaee69bbdb1db4c0e1370c"
+        },
+        "controller.tar": {
+          "bytes": 512000,
+          "sha256": "35b2e95a91773abd9667e562b811389aee1b3925d55befba7da1a2b989e478f2"
+        },
+        "images.tar": {
+          "bytes": 981728768,
+          "sha256": "85d4ae3f16115727d91bbb05143b17e43d5c6b4b5a333c87e49abf794b00da02"
+        },
+        "slot-1-a.tar": {
+          "bytes": 10240,
+          "sha256": "60397f69d48f2dccbf37549f0c222ab0edf39f00c792bd6d2c99f49e143f41e6"
+        },
+        "slot-1-b.tar": {
+          "bytes": 20480,
+          "sha256": "ea92bb7c92dfa6f9a8723ddc3fd22e2f0d34a37dbc3d72a4a43c936d8cdb009f"
+        },
+        "slot-2-a.tar": {
+          "bytes": 10240,
+          "sha256": "3e3afca9bd298e6020ed9768dced4060459568451a96263205ee98b2db3e0cd7"
+        },
+        "slot-2-b.tar": {
+          "bytes": 20480,
+          "sha256": "c53c5406a8c8eadfd7d83f99c3f027636f3af11a545d81b75a5de071faef7e54"
+        },
+        "tls.tar": {
+          "bytes": 10240,
+          "sha256": "59587fd380039c42424f936a12ec2d76071459f05005222865bd221d257bade4"
+        }
+      },
+      "queuePreparation": {
+        "schema": 1,
+        "id": "ad24429c-278e-4a2a-8c52-247cc20a98ad",
+        "at": 1792631118729,
+        "completedAt": 1792631118748,
+        "queue": "imports-imports",
+        "slot": "slot-2",
+        "deployment": "283f51d5-25fe-4dbf-ba23-674f1cb6fc63",
+        "digest": "faa4f96ba48a1070fad841057ac74249e1f07a3b85c98f21ff5979d309e6f5ca",
+        "version": "453ed02313e2caaa",
+        "contract": {
+          "runtime": "celld 0.6.2",
+          "source": "90b43017241f81189453d326d05948f388b34652",
+          "image": "sha256:b85983dcf410bcf710bbc30f400d8654123cb2b541ca4d84d7e299009a6ee97a",
+          "retentionMs": 345600000,
+          "clockMarginMs": 60000
+        },
+        "observation": {
+          "paused": true,
+          "stored": 1,
+          "backlogCount": 1,
+          "backlogBytes": 18,
+          "oldestMessageTimestamp": 1792631054804
+        },
+        "expiresAt": 1792976594804
+      },
+      "originalQueuedMessages": [
+        {
+          "attempts": 0,
+          "bodyBase64": "eyJpZCI6InBlbmRpbmctYiJ9",
+          "contentType": "json",
+          "deadLetterSource": null,
+          "enqueuedAt": 1792631054804,
+          "id": "01a16123-21d4-7000-b45d-9db747f223d3",
+          "leasedUntil": null,
+          "size": 18,
+          "state": "visible",
+          "transferTarget": null,
+          "visibleAt": 1792631054804
+        }
+      ],
+      "shutdown": {
+        "native": null,
+        "exits": [
+          {
+            "service": "slot-1-b",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-2-a",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "controller",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-2-b",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "slot-1-a",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "bucket-init",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "minio",
+            "exitCode": 0,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          },
+          {
+            "service": "workerd",
+            "exitCode": 1,
+            "running": false,
+            "oomKilled": false,
+            "restartCount": 0
+          }
+        ],
+        "earliest": "2026-10-22T00:58:49.166993503Z",
+        "retainedVolumes": [
+          "fogd-selected-recovery-204ca1d9c301cb9b_bucket",
+          "fogd-selected-recovery-204ca1d9c301cb9b_controller",
+          "fogd-selected-recovery-204ca1d9c301cb9b_slot-1-a",
+          "fogd-selected-recovery-204ca1d9c301cb9b_slot-1-b",
+          "fogd-selected-recovery-204ca1d9c301cb9b_slot-2-a",
+          "fogd-selected-recovery-204ca1d9c301cb9b_slot-2-b",
+          "fogd-selected-recovery-204ca1d9c301cb9b_tls",
+          "fogd-selected-recovery-204ca1d9c301cb9b_runtime-policy"
+        ]
+      }
+    }
+  },
+  "selectedRetry": {
+    "scheduledTime": 1792631100000,
+    "wake": {
+      "key": "slots/slot-1/wake/entries/2026-10-22T01:05/.cron:refresh/0000000000000002-000000000000000e",
+      "cell": ".cron:refresh",
+      "due_ms": 1792631128083,
+      "format": 2,
+      "identity": "0000000000000002-000000000000000e"
+    },
+    "observedAt": 1792631113770,
+    "attempts": [
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631100004,
+        "finished_at": 1792631100010,
+        "id": "450bb04f-dbaf-420b-be34-f33097154e2f",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631100004,
+        "finished_at": 1792631100027,
+        "id": "bad3a67c-5559-4061-8a2a-02517c38cc24",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631104035,
+        "finished_at": 1792631104047,
+        "id": "7e46cd02-26eb-462f-bb8d-db036a2e94f5",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631104035,
+        "finished_at": 1792631104057,
+        "id": "f77cccfa-7fe7-497a-9a5a-a822f92dbb08",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631112063,
+        "finished_at": 1792631112067,
+        "id": "34509dab-b330-47ce-9d67-55b952f0275f",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "advisory",
+        "no_retry_called": 0,
+        "outcome": "thrown",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      },
+      {
+        "cron": "* * * * *",
+        "entered_at": 1792631112063,
+        "finished_at": 1792631112078,
+        "id": "ab6f1ef5-1c46-4202-b587-eccf977abec4",
+        "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+        "job": "inventory",
+        "no_retry_called": 0,
+        "outcome": "success",
+        "phase": "retry-b",
+        "policy": "terminal",
+        "scheduled_time": 1792631100000
+      }
+    ]
+  },
+  "sourcePolicy": {
+    "schema": 2,
+    "family": "celld-cron-v2-linux-arm64",
+    "admission": "candidate",
+    "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+    "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+    "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+    "controllerArgs": [
+      "packages/platform/src/main.mjs"
+    ],
+    "bucket": "fogd",
+    "storage": {
+      "endpoint": "http://minio:9000",
+      "region": "us-east-1"
+    },
+    "fleets": [
+      {
+        "id": "slot-1",
+        "prefix": "slots/slot-1",
+        "nodes": [
+          {
+            "host": "slot-1-a",
+            "id": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+          },
+          {
+            "host": "slot-1-b",
+            "id": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+          }
+        ]
+      },
+      {
+        "id": "slot-2",
+        "prefix": "slots/slot-2",
+        "nodes": [
+          {
+            "host": "slot-2-a",
+            "id": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+          },
+          {
+            "host": "slot-2-b",
+            "id": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+          }
+        ]
+      }
+    ],
+    "networks": {
+      "control": "10.253.150.0/24",
+      "fleet-1": "10.253.151.0/24",
+      "fleet-2": "10.253.152.0/24"
+    }
+  },
+  "cases": [
+    {
+      "case": "a",
+      "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+      "expectedIdentitySha256": "4a6fd34e65645c5d1358b413719c9d5ac6090262fd0eb634737f855894a66028",
+      "policy": {
+        "schema": 2,
+        "family": "celld-cron-v2-linux-arm64",
+        "admission": "candidate",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+        "controllerArgs": [
+          "packages/platform/src/main.mjs"
+        ],
+        "bucket": "fogd",
+        "storage": {
+          "endpoint": "http://minio:9000",
+          "region": "us-east-1"
+        },
+        "fleets": [
+          {
+            "id": "slot-1",
+            "prefix": "slots/slot-1",
+            "nodes": [
+              {
+                "host": "slot-1-a",
+                "id": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-1-b",
+                "id": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          },
+          {
+            "id": "slot-2",
+            "prefix": "slots/slot-2",
+            "nodes": [
+              {
+                "host": "slot-2-a",
+                "id": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-2-b",
+                "id": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          }
+        ],
+        "networks": {
+          "control": "10.253.153.0/24",
+          "fleet-1": "10.253.154.0/24",
+          "fleet-2": "10.253.155.0/24"
+        }
+      },
+      "refusals": {
+        "candidate": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "noSelector": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "wrongIdentity": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        }
+      },
+      "initialServices": [
+        {
+          "service": "slot-1-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-2-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "controller",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-2-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-1-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "bucket-init",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "minio",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "configuredImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+        },
+        {
+          "service": "workerd",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        }
+      ],
+      "sourceProjectsConfirmedStopped": [
+        "fogd-selected-activation-2492de8664f78cb2"
+      ],
+      "coldHeld": {
+        "startedAt": 1792630748115,
+        "endedAt": 1792630820133,
+        "durationMs": 72018,
+        "beforeIngress": [
+          {
+            "id": "dc5f7e91730269f4e4ba0b8de6058e2bff1fed9491d07ec1894672f51718c7d0",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "e0de29473ec7c59471636dfcb1e18d8c3bde8c142e276120cef63c751914a776",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "afterIngress": [
+          {
+            "id": "dc5f7e91730269f4e4ba0b8de6058e2bff1fed9491d07ec1894672f51718c7d0",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "e0de29473ec7c59471636dfcb1e18d8c3bde8c142e276120cef63c751914a776",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "approvedArtifacts": {
+          "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+          "283f51d5-25fe-4dbf-ba23-674f1cb6fc63": "faa4f96ba48a1070fad841057ac74249e1f07a3b85c98f21ff5979d309e6f5ca"
+        }
+      },
+      "acknowledgedHeld": {
+        "startedAt": 1792630828558,
+        "endedAt": 1792630900959,
+        "durationMs": 72401,
+        "recoveries": {
+          "refresh": {
+            "id": "f78350ad-0b6d-4766-8fab-4b2e471882b0",
+            "acknowledgmentAttempts": [
+              {
+                "review": "627b83552c6e5eaf559d39eda70833cf56298696e43aae11ebcaa4bd573f837f",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "revision": 4,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "desired": "paused",
+            "observed": "paused"
+          },
+          "imports": {
+            "id": "39491467-b59e-4c7a-942b-d347e2a83634",
+            "acknowledgmentAttempts": [
+              {
+                "review": "d702eaff2c6eb8ce2091c6634f5f924ec6abed005d81b5490a939ec89f0c0103",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "stored": 0,
+              "backlogCount": 0,
+              "backlogBytes": 0,
+              "oldestMessageTimestamp": null
+            },
+            "desired": "paused",
+            "observed": "paused"
+          }
+        }
+      },
+      "explicitResume": {
+        "requestedAt": 1792630902700,
+        "confirmedAt": 1792630903365,
+        "confirmed": {
+          "app": "refresh",
+          "schema": 1,
+          "script": "refresh",
+          "desired": "running",
+          "hold": null,
+          "observed": "running",
+          "observedAt": "2026-10-22T01:01:43.271Z",
+          "operation": null,
+          "effective": "running",
+          "recovery": {
+            "id": "f78350ad-0b6d-4766-8fab-4b2e471882b0",
+            "status": "acknowledged",
+            "review": "627b83552c6e5eaf559d39eda70833cf56298696e43aae11ebcaa4bd573f837f",
+            "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging.",
+            "diagnoses": [],
+            "checkError": null,
+            "checkedAt": 1792630826234,
+            "observation": {
+              "paused": true,
+              "revision": 4,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "firstObservation": {
+              "at": 1792630824636,
+              "observed": {
+                "paused": true,
+                "revision": 4,
+                "nextAlarm": null,
+                "crons": [
+                  "* * * * *"
+                ]
+              }
+            }
+          },
+          "bootstrap": "application",
+          "recoveryError": null,
+          "active": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db"
+          },
+          "approval": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+            "status": "active",
+            "step": "complete"
+          },
+          "updateNotice": "An update can interrupt scheduled work already in flight. Pause does not drain it. Check the application for unfinished work; do not rely on automatic replay.",
+          "applicationOutcomes": "not-observed",
+          "operationAllowed": true,
+          "resumeAllowed": true
+        }
+      },
+      "futureWork": {
+        "firstAppReadAt": 1792631052056,
+        "observationStartedAt": 1792630920367,
+        "observationEndedAt": 1792631051977,
+        "observationDurationMs": 131610,
+        "successfulAttempts": [
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792630920004,
+            "finished_at": 1792630920017,
+            "id": "01639ad5-5552-4717-8871-7c2ad18b1b22",
+            "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+            "job": "inventory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "after-a",
+            "policy": "healthy",
+            "scheduled_time": 1792630920000
+          },
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792630920004,
+            "finished_at": 1792630920017,
+            "id": "eaef1728-0db9-472c-95a1-3ba47989c136",
+            "instance": "59b81461-a060-49ca-8f51-52c4b7432d0d",
+            "job": "advisory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "after-a",
+            "policy": "healthy",
+            "scheduled_time": 1792630920000
+          }
+        ],
+        "completedOccurrences": [
+          {
+            "attempts": 1,
+            "completed_at": 1792630920013,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "advisory",
+            "last_attempt_at": 1792630920010,
+            "scheduled_time": 1792630920000,
+            "status": "complete"
+          },
+          {
+            "attempts": 1,
+            "completed_at": 1792630920013,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "inventory",
+            "last_attempt_at": 1792630920010,
+            "scheduled_time": 1792630920000,
+            "status": "complete"
+          }
+        ],
+        "businessResults": [
+          {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792630920013,
+            "scheduled_time": 1792630920000,
+            "value": "Extra collection available"
+          },
+          {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792630920013,
+            "scheduled_time": 1792630920000,
+            "value": "26 sample items available"
+          }
+        ]
+      },
+      "fullOldOccurrenceRowsUnchanged": true,
+      "emptyPersistedWakesWhileHeld": true,
+      "applicationDataAndMigrationsUnchangedWhileHeld": true,
+      "nativeProcessBaselineUnchanged": true
+    },
+    {
+      "case": "b",
+      "project": "fogd-selected-recovery-305be85ee3bf0205",
+      "expectedIdentitySha256": "4a6fd34e65645c5d1358b413719c9d5ac6090262fd0eb634737f855894a66028",
+      "policy": {
+        "schema": 2,
+        "family": "celld-cron-v2-linux-arm64",
+        "admission": "candidate",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+        "controllerArgs": [
+          "packages/platform/src/main.mjs"
+        ],
+        "bucket": "fogd",
+        "storage": {
+          "endpoint": "http://minio:9000",
+          "region": "us-east-1"
+        },
+        "fleets": [
+          {
+            "id": "slot-1",
+            "prefix": "slots/slot-1",
+            "nodes": [
+              {
+                "host": "slot-1-a",
+                "id": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-1-b",
+                "id": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          },
+          {
+            "id": "slot-2",
+            "prefix": "slots/slot-2",
+            "nodes": [
+              {
+                "host": "slot-2-a",
+                "id": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-2-b",
+                "id": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          }
+        ],
+        "networks": {
+          "control": "10.253.156.0/24",
+          "fleet-1": "10.253.157.0/24",
+          "fleet-2": "10.253.158.0/24"
+        }
+      },
+      "refusals": {
+        "candidate": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "noSelector": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "wrongIdentity": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        }
+      },
+      "initialServices": [
+        {
+          "service": "slot-1-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-2-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "controller",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-2-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-1-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "bucket-init",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "workerd",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "minio",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "configuredImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+        }
+      ],
+      "sourceProjectsConfirmedStopped": [
+        "fogd-selected-activation-2492de8664f78cb2",
+        "fogd-selected-recovery-204ca1d9c301cb9b"
+      ],
+      "coldHeld": {
+        "startedAt": 1792631182408,
+        "endedAt": 1792631254410,
+        "durationMs": 72002,
+        "beforeIngress": [
+          {
+            "id": "409d055c73f0c69f617641d32509062e1e3645ab633b8ce882775e9c1856ac48",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "1fad8bc390e960c8cb625bb00570f056c6d2af88934ecf758ad57be58f68f832",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "afterIngress": [
+          {
+            "id": "409d055c73f0c69f617641d32509062e1e3645ab633b8ce882775e9c1856ac48",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "1fad8bc390e960c8cb625bb00570f056c6d2af88934ecf758ad57be58f68f832",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "approvedArtifacts": {
+          "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+          "283f51d5-25fe-4dbf-ba23-674f1cb6fc63": "faa4f96ba48a1070fad841057ac74249e1f07a3b85c98f21ff5979d309e6f5ca"
+        }
+      },
+      "acknowledgedHeld": {
+        "startedAt": 1792631263087,
+        "endedAt": 1792631335649,
+        "durationMs": 72562,
+        "recoveries": {
+          "refresh": {
+            "id": "0ccad2d4-8d10-4161-901c-8b8880ef2e50",
+            "acknowledgmentAttempts": [
+              {
+                "review": "7ced5348633e088b35e3471b9b778ac269429f5b52cc9c2a0d1046d1146ef2a0",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "revision": 8,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "desired": "paused",
+            "observed": "paused"
+          },
+          "imports": {
+            "id": "52bd48b6-729f-4918-90eb-df9888a9735a",
+            "acknowledgmentAttempts": [
+              {
+                "review": "4a5458f8ea98e1902733ba29beaa4f617454a52ffd9fa46a727c9dad6e98952d",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "stored": 1,
+              "backlogCount": 1,
+              "backlogBytes": 18,
+              "oldestMessageTimestamp": 1792631054804
+            },
+            "desired": "paused",
+            "observed": "paused"
+          }
+        }
+      },
+      "explicitResume": {
+        "requestedAt": 1792631338738,
+        "confirmedAt": 1792631339420,
+        "confirmed": {
+          "app": "refresh",
+          "schema": 1,
+          "script": "refresh",
+          "desired": "running",
+          "hold": null,
+          "observed": "running",
+          "observedAt": "2026-10-22T01:08:59.331Z",
+          "operation": null,
+          "effective": "running",
+          "recovery": {
+            "id": "0ccad2d4-8d10-4161-901c-8b8880ef2e50",
+            "status": "acknowledged",
+            "review": "7ced5348633e088b35e3471b9b778ac269429f5b52cc9c2a0d1046d1146ef2a0",
+            "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging.",
+            "diagnoses": [],
+            "checkError": null,
+            "checkedAt": 1792631260733,
+            "observation": {
+              "paused": true,
+              "revision": 8,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "firstObservation": {
+              "at": 1792631259229,
+              "observed": {
+                "paused": true,
+                "revision": 8,
+                "nextAlarm": null,
+                "crons": [
+                  "* * * * *"
+                ]
+              }
+            }
+          },
+          "bootstrap": "application",
+          "recoveryError": null,
+          "active": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db"
+          },
+          "approval": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+            "status": "active",
+            "step": "complete"
+          },
+          "updateNotice": "An update can interrupt scheduled work already in flight. Pause does not drain it. Check the application for unfinished work; do not rely on automatic replay.",
+          "applicationOutcomes": "not-observed",
+          "operationAllowed": true,
+          "resumeAllowed": true
+        }
+      },
+      "futureWork": {
+        "firstAppReadAt": 1792631473993,
+        "observationStartedAt": 1792631342078,
+        "observationEndedAt": 1792631473919,
+        "observationDurationMs": 131841,
+        "successfulAttempts": [
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792631340003,
+            "finished_at": 1792631340015,
+            "id": "2af137c6-a027-4c2d-b1db-3005ab569d54",
+            "instance": "0e721b36-226b-434e-89e6-965ce452b78c",
+            "job": "advisory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "after-b",
+            "policy": "healthy",
+            "scheduled_time": 1792631340000
+          },
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792631340003,
+            "finished_at": 1792631340015,
+            "id": "c970e9ec-8f2b-443c-ac6c-a9b3340ee30c",
+            "instance": "0e721b36-226b-434e-89e6-965ce452b78c",
+            "job": "inventory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "after-b",
+            "policy": "healthy",
+            "scheduled_time": 1792631340000
+          }
+        ],
+        "completedOccurrences": [
+          {
+            "attempts": 1,
+            "completed_at": 1792631340012,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "advisory",
+            "last_attempt_at": 1792631340009,
+            "scheduled_time": 1792631340000,
+            "status": "complete"
+          },
+          {
+            "attempts": 1,
+            "completed_at": 1792631340012,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "inventory",
+            "last_attempt_at": 1792631340009,
+            "scheduled_time": 1792631340000,
+            "status": "complete"
+          }
+        ],
+        "businessResults": [
+          {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792631340012,
+            "scheduled_time": 1792631340000,
+            "value": "Collection on time"
+          },
+          {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792631340012,
+            "scheduled_time": 1792631340000,
+            "value": "26 sample items available"
+          }
+        ]
+      },
+      "fullOldOccurrenceRowsUnchanged": true,
+      "emptyPersistedWakesWhileHeld": true,
+      "applicationDataAndMigrationsUnchangedWhileHeld": true,
+      "nativeProcessBaselineUnchanged": true
+    },
+    {
+      "case": "older-a",
+      "project": "fogd-selected-recovery-d678148f17b60cd2",
+      "expectedIdentitySha256": "4a6fd34e65645c5d1358b413719c9d5ac6090262fd0eb634737f855894a66028",
+      "policy": {
+        "schema": 2,
+        "family": "celld-cron-v2-linux-arm64",
+        "admission": "candidate",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+        "controllerArgs": [
+          "packages/platform/src/main.mjs"
+        ],
+        "bucket": "fogd",
+        "storage": {
+          "endpoint": "http://minio:9000",
+          "region": "us-east-1"
+        },
+        "fleets": [
+          {
+            "id": "slot-1",
+            "prefix": "slots/slot-1",
+            "nodes": [
+              {
+                "host": "slot-1-a",
+                "id": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-1-b",
+                "id": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          },
+          {
+            "id": "slot-2",
+            "prefix": "slots/slot-2",
+            "nodes": [
+              {
+                "host": "slot-2-a",
+                "id": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              },
+              {
+                "host": "slot-2-b",
+                "id": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b"
+              }
+            ]
+          }
+        ],
+        "networks": {
+          "control": "10.253.159.0/24",
+          "fleet-1": "10.253.160.0/24",
+          "fleet-2": "10.253.161.0/24"
+        }
+      },
+      "refusals": {
+        "candidate": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "noSelector": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        },
+        "wrongIdentity": {
+          "code": 1,
+          "signal": null,
+          "expectedRefusalMatched": true
+        }
+      },
+      "initialServices": [
+        {
+          "service": "slot-2-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-2-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-1-b",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "controller",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "slot-1-a",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "bucket-init",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        },
+        {
+          "service": "minio",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+          "configuredImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+        },
+        {
+          "service": "workerd",
+          "startedAt": "0001-01-01T00:00:00Z",
+          "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+          "configuredImage": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9"
+        }
+      ],
+      "sourceProjectsConfirmedStopped": [
+        "fogd-selected-activation-2492de8664f78cb2",
+        "fogd-selected-recovery-204ca1d9c301cb9b",
+        "fogd-selected-recovery-305be85ee3bf0205"
+      ],
+      "coldHeld": {
+        "startedAt": 1792631527329,
+        "endedAt": 1792631599102,
+        "durationMs": 71773,
+        "beforeIngress": [
+          {
+            "id": "4cb36060b08e35886c132b1e983d0ce2aa7e39c6a46261ec490f2dee3a8a4df5",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "6bd34c6ce59be4452ee0b178b9ebff9ccf62d375f7a0becfa542df106b2be29a",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "afterIngress": [
+          {
+            "id": "4cb36060b08e35886c132b1e983d0ce2aa7e39c6a46261ec490f2dee3a8a4df5",
+            "service": "controller",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          },
+          {
+            "id": "6bd34c6ce59be4452ee0b178b9ebff9ccf62d375f7a0becfa542df106b2be29a",
+            "service": "workerd",
+            "startedAt": "0001-01-01T00:00:00Z",
+            "restartCount": 0
+          }
+        ],
+        "approvedArtifacts": {
+          "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+          "283f51d5-25fe-4dbf-ba23-674f1cb6fc63": "faa4f96ba48a1070fad841057ac74249e1f07a3b85c98f21ff5979d309e6f5ca"
+        }
+      },
+      "acknowledgedHeld": {
+        "startedAt": 1792631608136,
+        "endedAt": 1792631680907,
+        "durationMs": 72771,
+        "recoveries": {
+          "refresh": {
+            "id": "445365ef-86e3-41d6-be3c-8ea361675d28",
+            "acknowledgmentAttempts": [
+              {
+                "review": "14899e24288e11808acd44cfea01889e2f0ed0307000cbdaf224b3662c0eaa49",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "revision": 4,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "desired": "paused",
+            "observed": "paused"
+          },
+          "imports": {
+            "id": "3c75d53a-6a77-49aa-af79-897915c4a8d6",
+            "acknowledgmentAttempts": [
+              {
+                "review": "d38ba866f434808ddf60b02d046499a8c033e4105f8a4fcc337a92b2a3b91f9b",
+                "result": "acknowledged"
+              }
+            ],
+            "observation": {
+              "paused": true,
+              "stored": 0,
+              "backlogCount": 0,
+              "backlogBytes": 0,
+              "oldestMessageTimestamp": null
+            },
+            "desired": "paused",
+            "observed": "paused"
+          }
+        }
+      },
+      "explicitResume": {
+        "requestedAt": 1792631683227,
+        "confirmedAt": 1792631683956,
+        "confirmed": {
+          "app": "refresh",
+          "schema": 1,
+          "script": "refresh",
+          "desired": "running",
+          "hold": null,
+          "observed": "running",
+          "observedAt": "2026-10-22T01:14:43.862Z",
+          "operation": null,
+          "effective": "running",
+          "recovery": {
+            "id": "445365ef-86e3-41d6-be3c-8ea361675d28",
+            "status": "acknowledged",
+            "review": "14899e24288e11808acd44cfea01889e2f0ed0307000cbdaf224b3662c0eaa49",
+            "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging.",
+            "diagnoses": [],
+            "checkError": null,
+            "checkedAt": 1792631605768,
+            "observation": {
+              "paused": true,
+              "revision": 4,
+              "nextAlarm": null,
+              "crons": [
+                "* * * * *"
+              ]
+            },
+            "firstObservation": {
+              "at": 1792631604198,
+              "observed": {
+                "paused": true,
+                "revision": 4,
+                "nextAlarm": null,
+                "crons": [
+                  "* * * * *"
+                ]
+              }
+            }
+          },
+          "bootstrap": "application",
+          "recoveryError": null,
+          "active": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db"
+          },
+          "approval": {
+            "deployment": "841cb26b-a54d-48e7-8c3c-ee5bbbaf5e1d",
+            "digest": "7c90abcaf41356565b1ebca0db8c04314bd6fb24dd6f6c04a3751ea3e17c01db",
+            "status": "active",
+            "step": "complete"
+          },
+          "updateNotice": "An update can interrupt scheduled work already in flight. Pause does not drain it. Check the application for unfinished work; do not rely on automatic replay.",
+          "applicationOutcomes": "not-observed",
+          "operationAllowed": true,
+          "resumeAllowed": true
+        }
+      },
+      "futureWork": {
+        "firstAppReadAt": 1792631832854,
+        "observationStartedAt": 1792631701024,
+        "observationEndedAt": 1792631832774,
+        "observationDurationMs": 131750,
+        "successfulAttempts": [
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792631700003,
+            "finished_at": 1792631700037,
+            "id": "640192be-9aa6-4f1f-bf74-cb1746fd2fd8",
+            "instance": "9fd92072-47c0-4acd-9271-2ee1ba15053d",
+            "job": "inventory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "older-a",
+            "policy": "healthy",
+            "scheduled_time": 1792631700000
+          },
+          {
+            "cron": "* * * * *",
+            "entered_at": 1792631700003,
+            "finished_at": 1792631700038,
+            "id": "b7a0a5ed-4b22-4f4a-9900-312bd099252e",
+            "instance": "9fd92072-47c0-4acd-9271-2ee1ba15053d",
+            "job": "advisory",
+            "no_retry_called": 0,
+            "outcome": "success",
+            "phase": "older-a",
+            "policy": "healthy",
+            "scheduled_time": 1792631700000
+          }
+        ],
+        "completedOccurrences": [
+          {
+            "attempts": 1,
+            "completed_at": 1792631700032,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "advisory",
+            "last_attempt_at": 1792631700026,
+            "scheduled_time": 1792631700000,
+            "status": "complete"
+          },
+          {
+            "attempts": 1,
+            "completed_at": 1792631700031,
+            "cron": "* * * * *",
+            "duplicates": 0,
+            "error": null,
+            "initial_mode": "healthy",
+            "job": "inventory",
+            "last_attempt_at": 1792631700026,
+            "scheduled_time": 1792631700000,
+            "status": "complete"
+          }
+        ],
+        "businessResults": [
+          {
+            "cron": "* * * * *",
+            "job": "advisory",
+            "saved_at": 1792631700032,
+            "scheduled_time": 1792631700000,
+            "value": "Collection on time"
+          },
+          {
+            "cron": "* * * * *",
+            "job": "inventory",
+            "saved_at": 1792631700031,
+            "scheduled_time": 1792631700000,
+            "value": "25 sample items available"
+          }
+        ]
+      },
+      "fullOldOccurrenceRowsUnchanged": true,
+      "emptyPersistedWakesWhileHeld": true,
+      "applicationDataAndMigrationsUnchangedWhileHeld": true,
+      "nativeProcessBaselineUnchanged": true
+    }
+  ],
+  "queueRecovery": {
+    "originalMessage": {
+      "attempts": 0,
+      "bodyBase64": "eyJpZCI6InBlbmRpbmctYiJ9",
+      "contentType": "json",
+      "deadLetterSource": null,
+      "enqueuedAt": 1792631054804,
+      "id": "01a16123-21d4-7000-b45d-9db747f223d3",
+      "leasedUntil": null,
+      "size": 18,
+      "state": "visible",
+      "transferTarget": null,
+      "visibleAt": 1792631054804
+    },
+    "heldInputRows": [
+      {
+        "attempts": 0,
+        "created_at": "2026-10-22 01:04:14",
+        "delay_ms": 0,
+        "error": null,
+        "id": "pending-b",
+        "input_hash": "2ee62d6da16f5d0c8fa5c1d063c3431a8688591ca996232231786867ad7d46bd",
+        "mode": "normal",
+        "status": "accepted"
+      }
+    ],
+    "consumed": {
+      "slot": "slot-2",
+      "identityVerified": true,
+      "status": {
+        "paused": false,
+        "stored": 0,
+        "backlogCount": 0,
+        "backlogBytes": 0,
+        "oldestMessageTimestamp": null
+      },
+      "databases": [
+        {
+          "database": "imports-db",
+          "rows": [
+            {
+              "name": "_cf_ALARM"
+            },
+            {
+              "name": "_cf_FACETS"
+            },
+            {
+              "name": "_cf_KV"
+            },
+            {
+              "name": "_cf_METADATA"
+            },
+            {
+              "name": "_cf_WAKE"
+            },
+            {
+              "name": "_litestream_lock"
+            },
+            {
+              "name": "_litestream_seq"
+            },
+            {
+              "name": "d1_migrations"
+            },
+            {
+              "name": "import_jobs"
+            },
+            {
+              "name": "import_results"
+            },
+            {
+              "name": "sqlite_sequence"
+            }
+          ],
+          "migrations": [
+            {
+              "name": "0001_imports.sql"
+            }
+          ],
+          "data": {
+            "import_jobs": [
+              {
+                "attempts": 1,
+                "created_at": "2026-10-22 01:01:41",
+                "delay_ms": 0,
+                "error": null,
+                "id": "after-a",
+                "input_hash": "b6ec43df3b3a49e380eb6b54ed3d601fb21118bc0b93b776ee7b74c21de20fe3",
+                "mode": "normal",
+                "status": "complete"
+              },
+              {
+                "attempts": 1,
+                "created_at": "2026-10-22 00:57:48",
+                "delay_ms": 0,
+                "error": null,
+                "id": "before-a",
+                "input_hash": "e22559226f2a9d1bc76ca2adf0b08155312a4176e497a33764502014654b09b3",
+                "mode": "normal",
+                "status": "complete"
+              },
+              {
+                "attempts": 1,
+                "created_at": "2026-10-22 01:04:14",
+                "delay_ms": 0,
+                "error": null,
+                "id": "pending-b",
+                "input_hash": "2ee62d6da16f5d0c8fa5c1d063c3431a8688591ca996232231786867ad7d46bd",
+                "mode": "normal",
+                "status": "complete"
+              }
+            ],
+            "import_results": [
+              {
+                "job_id": "after-a",
+                "label": "MELON",
+                "position": 0
+              },
+              {
+                "job_id": "after-a",
+                "label": "PLUM",
+                "position": 1
+              },
+              {
+                "job_id": "before-a",
+                "label": "APPLE",
+                "position": 0
+              },
+              {
+                "job_id": "before-a",
+                "label": "PEAR",
+                "position": 1
+              },
+              {
+                "job_id": "pending-b",
+                "label": "KIWI",
+                "position": 0
+              },
+              {
+                "job_id": "pending-b",
+                "label": "LIME",
+                "position": 1
+              }
+            ]
+          }
+        }
+      ],
+      "stored": {
+        "pointer": {
+          "script_name": "imports",
+          "version": "453ed02313e2caaa",
+          "prefix": "deploy/imports/453ed02313e2caaa",
+          "rollout": {
+            "percent": 100
+          }
+        },
+        "manifestSha256": "b4124054ecde32cbef0951ecae07232f9af33857b76cdfc31c52affa4e841326",
+        "manifest": {
+          "script": "imports",
+          "version": "453ed02313e2caaa",
+          "crons": []
+        }
+      },
+      "replicas": [
+        {
+          "node": "slot-2-a",
+          "version": "453ed02313e2caaa",
+          "generation": 1
+        },
+        {
+          "node": "slot-2-b",
+          "version": "453ed02313e2caaa",
+          "generation": 1
+        }
+      ],
+      "queuePeek": {
+        "messages": []
+      }
+    },
+    "applicationHTTPSRequestWindow": [
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": null,
+        "path": "/v1/admin",
+        "at": 1792631258374
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": null,
+        "path": "/v1/admin",
+        "at": 1792631259377
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": "refresh",
+        "path": "/api/refresh",
+        "at": 1792631259535
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": "imports",
+        "path": "/api/imports",
+        "at": 1792631260891
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": "refresh",
+        "path": "/api/refresh",
+        "at": 1792631262965
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": "imports",
+        "path": "/api/imports",
+        "at": 1792631262990
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "method": "GET",
+        "app": "refresh",
+        "path": "/api/refresh",
+        "at": 1792631474008
+      }
+    ],
+    "producerResubmissionObserved": false,
+    "contract": "at-least-once; unique business rows do not imply one native invocation"
+  },
+  "olderLoss": {
+    "lostImports": [
+      "after-a",
+      "pending-b"
+    ],
+    "lostAttemptIDs": [
+      "01639ad5-5552-4717-8871-7c2ad18b1b22",
+      "eaef1728-0db9-472c-95a1-3ba47989c136",
+      "c1c278cc-c34e-4284-9b3a-0db6347fd28a",
+      "d3c567e9-1a6e-407d-ad28-b346400bf55a",
+      "1efdd4b8-b712-430a-aad5-007cd36bb4f3",
+      "62cfacbf-b4b5-4b56-8545-fc3ddcb79e6e",
+      "2af137c6-a027-4c2d-b1db-3005ab569d54",
+      "c970e9ec-8f2b-443c-ac6c-a9b3340ee30c",
+      "5239df97-9224-47d2-92cc-c2b3da19d4c2",
+      "bbd402dc-98f3-4326-9d0a-d55dd5db308c",
+      "0ae54a59-f94f-49f6-8d25-4ad79594b4bb",
+      "e2969bcf-f516-4914-94d8-a088845b41d0"
+    ],
+    "notice": "Pausing clears pending timer and retry identity. Resume schedules a future occurrence; unfinished work is not a retained backlog. An older snapshot can lose acknowledged results or replay external effects. Reconcile application records before acknowledging.",
+    "freshRecoveryIDs": true
+  },
+  "independentNativeProofs": [
+    {
+      "installation": "source",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-a",
+        "container": "49e8659f160cb83f80671b0eb24505b6310b1f6bddb097ba24216daaedc4ae72",
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "network": "b82c9394ddadc3679320af8485637faa6b5b98e5230c63bee7d8fb342b35a825",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179879522"
+      },
+      "host": "slot-1-a",
+      "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "12ce5adcd30ab9c722d2a9404b40c6cfb4a643bef86dcf85835ae95cd127bc9b",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "12ce5adcd30ab9c722d2a9404b40c6cfb4a643bef86dcf85835ae95cd127bc9b",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "c13640180701db22537cbaf654ae5b0e0371254cb155c826087f8f184a59a4ff",
+        "processKeySha256": "379b39cbd38a4554f6c3168b2b0d6b73a2e710361a7c30b7454d71368b0235a2",
+        "publicKey": "e75dd311b053c93db1f1bed90b8acd4721e5cedf2f0966e5eac710c2df198c37",
+        "schema": 2,
+        "signature": "3a5055d5f21fdc747bd97c902264de6f089ffc6745876b0eac8ff887e3aeb5febe1754d96e2cf1f55cebbd25a2d0c09d55ecd4a08ec9ec66415d486d8ec0e205",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "source",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-b",
+        "container": "61896e1e8fbbb5064f4fcf2b35d828e84ae41ff120ce61ef9677f5ad7f97db10",
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "network": "b82c9394ddadc3679320af8485637faa6b5b98e5230c63bee7d8fb342b35a825",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179879510"
+      },
+      "host": "slot-1-b",
+      "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "d0952274cc9cd4e977f5f265a196b84c953f6f8a9d8e8fd58632dd12e6306f97",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "d0952274cc9cd4e977f5f265a196b84c953f6f8a9d8e8fd58632dd12e6306f97",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "8c633c31383cd94cafa5a8447ae5e2aeec3d43c60940384897e348babfcffc19",
+        "processKeySha256": "fc5e8d409163a7c17d4d33275dd3d0f4450b57534f1b496b912a92becd85072d",
+        "publicKey": "36196a30cbb464e626250f9f3467732a4463bd03af317b9a50052333f81a8195",
+        "schema": 2,
+        "signature": "9d39c4217fbb960b478846d8c6dea328a96df9191567cf24d476ab880da64f274715dc3c791bebf58b527de38216ac9780b05b6d84ed84026df5b870a5515b0e",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "source",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-a",
+        "container": "9143b8dfc8ba31153dc0a813f68c524aab74b5c12e25e1b41647ae5231bf0f85",
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "network": "7174bda13675214082ddf3ffd4c0a5ce6f432e6bb007f999c509a9df7622a430",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179879504"
+      },
+      "host": "slot-2-a",
+      "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "0b0eab1c257f7965d6fe66b22455987f82ffc755d3ce01384564e2cb3099e7e9",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "0b0eab1c257f7965d6fe66b22455987f82ffc755d3ce01384564e2cb3099e7e9",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "37d5917cc2863296f3b582018bb0d072e5ddf1efb61401c34c78a71999be1796",
+        "processKeySha256": "dc810bb0ff74dc44b5e32ad3feafc257ccaadfdebb29f9b4c49b16f4a4d4fd9a",
+        "publicKey": "2bc36a3b79e55f68daa3075751e2b3775fc3d62a269d00d28eac44deb70baba6",
+        "schema": 2,
+        "signature": "6c6af5271c59c6d9d46e46320b1ee32638640d061d60078dfc2ecc6f161dff821dbc5770f9d4ddcd6e330db2ef8eb9cfb78e448fd688ebd54abe2f0795984502",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "source",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-b",
+        "container": "9c0e3141508621cd36520e81b12beb4aeb8e31f1e6b1eeec84323e5f0f2178c3",
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "network": "7174bda13675214082ddf3ffd4c0a5ce6f432e6bb007f999c509a9df7622a430",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179879517"
+      },
+      "host": "slot-2-b",
+      "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "aaf2058d682ed3f5ed5167804ff76ed582ca0ccb35e746c2d7e59d1770a39b80",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "aaf2058d682ed3f5ed5167804ff76ed582ca0ccb35e746c2d7e59d1770a39b80",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b10a01ae69aa44bbda4537c54967e26a37adf3651facadbe101b154422c6c2c5",
+        "processKeySha256": "c2fef93d7a14e78c0b2fea5ea2730db66dfcca2551fab7b264c8e8f1ec495dba",
+        "publicKey": "480e8175444372e9e0085794fc8f95b36ece2f4d06f2772aba1bd5ca5304dd1e",
+        "schema": 2,
+        "signature": "3879f24df527daeece09cb034b96abb7d5be89c22b0897543760b181403de2ec9ae913080809c4b23ace45e88b3168a59c2ab53a3ceced4c0c7db25c45684102",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-a",
+        "container": "8ae9dd6487992efd5ac6185aef5c0aad92be088a7907534328a3168c182dab71",
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "network": "81093059084e9477057c00e8f20313b7b4bbea978f07f44089b9661dcdf15225",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179888932"
+      },
+      "host": "slot-1-a",
+      "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "4475129b7a3894b5eaf80bb0842b03ed7d9129066b18237685ae7111f2a23d96",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "4475129b7a3894b5eaf80bb0842b03ed7d9129066b18237685ae7111f2a23d96",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "c13640180701db22537cbaf654ae5b0e0371254cb155c826087f8f184a59a4ff",
+        "processKeySha256": "eca84e6ea062d7673299d28993472d144f3a3199c727b8335c2f4d6708c3aad2",
+        "publicKey": "d043b2ad8f050275c90670af9ea87ee0be50f8d02b24ea1356c12974fcd4450e",
+        "schema": 2,
+        "signature": "062fb82633957849949cf04194b58b1c917a7fc372275a0a723451f484c556a0fa8d1b1b3106b8757f81d96a218f08989a1ae5b4dab65f29a940ec7c71cbd604",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-b",
+        "container": "85fd6ab0e0004fa4081446c3d3af9e3db4aa40c457bbaef6ace06d4616ecd4d2",
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "network": "81093059084e9477057c00e8f20313b7b4bbea978f07f44089b9661dcdf15225",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179888942"
+      },
+      "host": "slot-1-b",
+      "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "2c6b4dbdce6c2617ae4194c84cd315894288d34c90db724ce3f89d2a2b1f432b",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "2c6b4dbdce6c2617ae4194c84cd315894288d34c90db724ce3f89d2a2b1f432b",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "8c633c31383cd94cafa5a8447ae5e2aeec3d43c60940384897e348babfcffc19",
+        "processKeySha256": "ae4618ed54e5b89e2ed25120d227750bc9194ead9fdabec96baf6513118ca28b",
+        "publicKey": "7e6da7ccad2e8302d93afa7e64262d7ad3959447b9d37e62754ea7bee7b6887e",
+        "schema": 2,
+        "signature": "d981027ef8c83f5ec0186e03867839a48ba42d0d52c9c5c0162181324ef2d35cfe4db7da59dd41e2b7d4f1877b9f69d90b1b81feefc8d7936632c37cc395c601",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-a",
+        "container": "ab2ceb072a3b5a2eca21e91c61f479ee8d4631d114e892e7dd6bd1e1a9ee5924",
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "network": "254c1897ec0f4fe91acfaa93b5f9e9cfdb551bd9e6849bde4b8133e05ec2f69c",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179888936"
+      },
+      "host": "slot-2-a",
+      "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "a329d65f995c6b2dc3265959dda44885a1ee87062986eefcf3ab4a2f30b48d5c",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "a329d65f995c6b2dc3265959dda44885a1ee87062986eefcf3ab4a2f30b48d5c",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "37d5917cc2863296f3b582018bb0d072e5ddf1efb61401c34c78a71999be1796",
+        "processKeySha256": "dfd2745083e2414283392c9031be0de842085e6a8bd973f410c291b6be1f0f1f",
+        "publicKey": "8672e13401d766258ab9b94130e5d28216353596dfdf534ee880aa5da5a7c332",
+        "schema": 2,
+        "signature": "a60c66921457f85416c5aeb9ad776829941ed90fa455e50c5744aa06233686232a9c5805cc2667c7d410a362c3132b20f8c32a30293bb7e0e2baf874f5eacf0c",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-b",
+        "container": "63ca066853ea16c23415c1eab6342949e17555af0ca991911b5453ece10c419f",
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "network": "254c1897ec0f4fe91acfaa93b5f9e9cfdb551bd9e6849bde4b8133e05ec2f69c",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179888927"
+      },
+      "host": "slot-2-b",
+      "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "c96f5be2f13b2602bd715ce530426b1290adcc0149a14d793d7a7f361cb8b1e1",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "c96f5be2f13b2602bd715ce530426b1290adcc0149a14d793d7a7f361cb8b1e1",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b10a01ae69aa44bbda4537c54967e26a37adf3651facadbe101b154422c6c2c5",
+        "processKeySha256": "ad9702e24f615676c063cb2b854168fa593048dea3b8b1c2592896353077d599",
+        "publicKey": "0057ba1fa60f54d9920c829ced9eda3700f29fe72a43aafd5c5aced5e9c6dbc7",
+        "schema": 2,
+        "signature": "56e2df26777cd6634033fdc935fc5bce8873797e04aee54512049afcecf0189d78403dbb34e64d47d5f4c15214e06afc1fbf666adab2acd3c4053b6414779b09",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-a",
+        "container": "4a247b98db1bebade6b12793dda40da9199a1eb68e3f1dba6ec853a61fdf12f6",
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "network": "cb78c47a0f1d42131f2eff65a501c478fc6efa92f2502dcf44351601fd823676",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179932361"
+      },
+      "host": "slot-1-a",
+      "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "da38e9470d4ac59efff49a9e4f19d4efc57c9a75ff8d2a4c47e6fce0c1361fed",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "da38e9470d4ac59efff49a9e4f19d4efc57c9a75ff8d2a4c47e6fce0c1361fed",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "c13640180701db22537cbaf654ae5b0e0371254cb155c826087f8f184a59a4ff",
+        "processKeySha256": "9b3231631ead6632b80170fd8477d9cdd3fcd6af73e4876b85316a73b271fe6f",
+        "publicKey": "4435835ceea3c93761c7bfe5341c7483311d1b1becd0a8fe557e54f7cc2a7ac6",
+        "schema": 2,
+        "signature": "2157b2ab78515cc9e15c3446bdb7ef5b76dd8801b5d783c5a5f04b614f9ca3339fba085dd8e2f14d3e60267810c37f07bbbe6a7a00cdbd10dfb8133a9ddc7906",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-b",
+        "container": "9d05badd2cf14c6e0efe3957a3eb8780ca47dc3c804422296b4627247fa00951",
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "network": "cb78c47a0f1d42131f2eff65a501c478fc6efa92f2502dcf44351601fd823676",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179932370"
+      },
+      "host": "slot-1-b",
+      "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "97cfa0c25eb14302eda931cd9989757bb54bf5bb3ae3c6efa8ddad8860a5fea3",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "97cfa0c25eb14302eda931cd9989757bb54bf5bb3ae3c6efa8ddad8860a5fea3",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "8c633c31383cd94cafa5a8447ae5e2aeec3d43c60940384897e348babfcffc19",
+        "processKeySha256": "8b89c811bd2045065fb1779d914aa3c8c9272f0c2ee9f32779ff78b3eac5bd05",
+        "publicKey": "85099e1e332a7209753ee247a4dbfca16a46f5e467a12df29fd7d4ec3d60dd1f",
+        "schema": 2,
+        "signature": "06892a4f409ae5778b9ac7ab9996113c8c1afa291d1c9b82c0b328d8653fb996f98661ee28a1b956fd33959bb1c706aa742d95a7cf13c7d76a6b383a625f7f0c",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-a",
+        "container": "34334219e81b90a33e1f0c3ee30f78a94de77466facd0362b35c0cba21ff0d47",
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "network": "9fd31a398f6ef31627958c70f69e4777054f1f85adb3816d385dfefd39c103fa",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179932366"
+      },
+      "host": "slot-2-a",
+      "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "50c5b191e1ec5b3f1a59f0eeea115b782e2b14a60d4a78bc01d12d9cafa99adc",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "50c5b191e1ec5b3f1a59f0eeea115b782e2b14a60d4a78bc01d12d9cafa99adc",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "37d5917cc2863296f3b582018bb0d072e5ddf1efb61401c34c78a71999be1796",
+        "processKeySha256": "4170452ccd8dbc459a2fb42c8ff29d4e4164494fc929709ead4a176df3be9bb0",
+        "publicKey": "f51202da16df5e2ef5e51a132abbb598399b3d89263f98361913f7deae158f2b",
+        "schema": 2,
+        "signature": "503cbab923b02573bb2b5ffcce88cc35a3a6e557592fef4450a73f96354ac4dc53a708bc7e13fabfc12d3b1168c2934f0e0c01a62bbb8e01ec9f2c8a8074e702",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-b",
+        "container": "aad74c0c02c93948c703797bd21c5793cb651ea1a9fd0e277a0224a135eb2287",
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "network": "9fd31a398f6ef31627958c70f69e4777054f1f85adb3816d385dfefd39c103fa",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179932358"
+      },
+      "host": "slot-2-b",
+      "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "a65d7d636231e27aab3204f188c5af8717df1b655cc89a0a062610073c72f5f9",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "a65d7d636231e27aab3204f188c5af8717df1b655cc89a0a062610073c72f5f9",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b10a01ae69aa44bbda4537c54967e26a37adf3651facadbe101b154422c6c2c5",
+        "processKeySha256": "01a3decd462b0b6ffb5b88b82428b132757d6065bd317eff7729e10919a17051",
+        "publicKey": "fa4e7b8093623d0f4eccbcaa8b3bd6361edbde85b21767fc10f50bbce37e2371",
+        "schema": 2,
+        "signature": "d6babdab0cc0c97169b9d20c3ea141eb48fbb8bcbfb24475af3b00405eae7b8cc46838453ec8c07ab547c97b0f568b1c998ec3a891e3186dc55eef2a2269d80f",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-a",
+        "container": "99f1c7c226ff8143e3dcb1ca9a0038c25128045e1229f6412028b39616e02449",
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "network": "6ebf7af69a629c808b3f4a81092c1f2c89ffdb1d7087e2c835f37329032af260",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179966881"
+      },
+      "host": "slot-1-a",
+      "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "af6e97c8f331ddd52d70f55f923241c4068f754337e08893cdf601c3757cc317",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "af6e97c8f331ddd52d70f55f923241c4068f754337e08893cdf601c3757cc317",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "c13640180701db22537cbaf654ae5b0e0371254cb155c826087f8f184a59a4ff",
+        "processKeySha256": "e68f736254d91da8cac2eea0c3752e134b51ee893834cd914fe5079a7914d9ff",
+        "publicKey": "ac17f9cef17466d183883752833ef26282bb9810b5ac8177594d0721e99c9aa8",
+        "schema": 2,
+        "signature": "09039d41d054f0b6cad3564839893e96e13a6541adc498da50142cd9921245ffe118ee122b11e0cd99aff92c5f41f1c37dde15a790d60c45d5ce75f7a434a00d",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-1",
+      "physical": {
+        "host": "slot-1-b",
+        "container": "5c64e10ba1ac68c17ef39ed00a2554861e7519e539ec77f685fa5fb38d8d2905",
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "network": "6ebf7af69a629c808b3f4a81092c1f2c89ffdb1d7087e2c835f37329032af260",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179966875"
+      },
+      "host": "slot-1-b",
+      "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "4ef09d0a9b86618c5b274d8a42a8baafad183a8c4b8a31b2aafd31bb1b4a36b5",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "4ef09d0a9b86618c5b274d8a42a8baafad183a8c4b8a31b2aafd31bb1b4a36b5",
+        "namespaceSha256": "331f9be72d33c4a8a08c19d7e7b66c57e155e942727150213719ba04ee812d27",
+        "nodeSha256": "8c633c31383cd94cafa5a8447ae5e2aeec3d43c60940384897e348babfcffc19",
+        "processKeySha256": "8e070018082c4a77756eec1b474739c30cd3563d968f1aafdc7d9829eee49b0f",
+        "publicKey": "56e716850aee476e48f67c05d152d8a824ca992b03cb099d13d569da2a9014b3",
+        "schema": 2,
+        "signature": "bf0cdfbb6385d8cba38dbd90bf2fcf23ce70413c5739cdea0f95200b66a6d024487a8d65aaeb1e66b689df2be86117b1a30a9e27869d59fe70e420d16b5fc901",
+        "storageSha256": "17363165c91c6eab64786d9e8933a85522fcf34082ca16fc51ed62283bb02456"
+      }
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-a",
+        "container": "2bca21ae44c0008af2a0facbcc194330b8569fa25d1c11ed7ff6249ebd096e6c",
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "network": "372340b060f76fc19d9c575c4fe29748e1e3910cdd8716e5c4cb7df0de400f87",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179966873"
+      },
+      "host": "slot-2-a",
+      "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "46aec8ed420306168d545b5105c06c40e5f82723365c193a6a430bd74ea50ae7",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "46aec8ed420306168d545b5105c06c40e5f82723365c193a6a430bd74ea50ae7",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "37d5917cc2863296f3b582018bb0d072e5ddf1efb61401c34c78a71999be1796",
+        "processKeySha256": "76487cac09e6734a17c794b2168f4aa3ec3df62090b0c0b978720ae24344436d",
+        "publicKey": "9013341d9008c556804a594c03f5bedd8937dc741fb865d8caff0e82f5c73bc9",
+        "schema": 2,
+        "signature": "8eddadf8ba8a7116fc6d543dad09e42e25db96f40805151925aebcb2d66816b23a17067938c9a0df52c9e825a5540cc9b116c1042830e0b7fff5e36d922b190c",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-2",
+      "physical": {
+        "host": "slot-2-b",
+        "container": "0b3a97d280e778f2af0e212e84a6a502c408a2c181465cead03411aa2d66472e",
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "network": "372340b060f76fc19d9c575c4fe29748e1e3910cdd8716e5c4cb7df0de400f87",
+        "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+        "pid": "15",
+        "start": "179966877"
+      },
+      "host": "slot-2-b",
+      "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+      "challenge": "3156726c0edad13a7432023a16f02a70b83caf9a7f039627b86420a10ebb7391",
+      "proof": {
+        "binarySha256": "25a7978046d9621ea394fdaf1f38c3de95381c81ac431fef940aad6995ab2fad",
+        "challenge": "3156726c0edad13a7432023a16f02a70b83caf9a7f039627b86420a10ebb7391",
+        "namespaceSha256": "3feb60c6bcf17907821e976820497ea583e7df2ec33f465ad1509482d11b4f24",
+        "nodeSha256": "b10a01ae69aa44bbda4537c54967e26a37adf3651facadbe101b154422c6c2c5",
+        "processKeySha256": "7bb010084e1335d58359ccd28a2e4321b7381c0c246277a0f7c393a2479048d7",
+        "publicKey": "87cf232fbfda07c40f1d01b446f83d249ad6577841903ed1281ca5bba68bd4da",
+        "schema": 2,
+        "signature": "5a13179d468b7fb778d83d400e9cad43f3c9c6c14cc7faa611359e266d1ede82dc3fca1044f52a5939c8298831cce935a23aab2b2471943d369479e7a7ffda0e",
+        "storageSha256": "de52972aa8f75149e2051db601f7c9547e177eb586f960de7632b3d6c5db09e1"
+      }
+    }
+  ],
+  "nativeMembershipObservations": [
+    {
+      "installation": "source",
+      "fleet": "slot-1",
+      "observedAt": 1792630669976,
+      "before": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "e75dd311b053c93db1f1bed90b8acd4721e5cedf2f0966e5eac710c2df198c37",
+          "expiresMs": 1792630676941
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "36196a30cbb464e626250f9f3467732a4463bd03af317b9a50052333f81a8195",
+          "expiresMs": 1792630678712
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "e75dd311b053c93db1f1bed90b8acd4721e5cedf2f0966e5eac710c2df198c37",
+          "expiresMs": 1792630676941
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "36196a30cbb464e626250f9f3467732a4463bd03af317b9a50052333f81a8195",
+          "expiresMs": 1792630678712
+        }
+      ]
+    },
+    {
+      "installation": "source",
+      "fleet": "slot-2",
+      "observedAt": 1792630670713,
+      "before": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "2bc36a3b79e55f68daa3075751e2b3775fc3d62a269d00d28eac44deb70baba6",
+          "expiresMs": 1792630679201
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "480e8175444372e9e0085794fc8f95b36ece2f4d06f2772aba1bd5ca5304dd1e",
+          "expiresMs": 1792630678080
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "2bc36a3b79e55f68daa3075751e2b3775fc3d62a269d00d28eac44deb70baba6",
+          "expiresMs": 1792630679201
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "480e8175444372e9e0085794fc8f95b36ece2f4d06f2772aba1bd5ca5304dd1e",
+          "expiresMs": 1792630678080
+        }
+      ]
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-1",
+      "observedAt": 1792631052853,
+      "before": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "d043b2ad8f050275c90670af9ea87ee0be50f8d02b24ea1356c12974fcd4450e",
+          "expiresMs": 1792631061959
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "7e6da7ccad2e8302d93afa7e64262d7ad3959447b9d37e62754ea7bee7b6887e",
+          "expiresMs": 1792631062741
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "d043b2ad8f050275c90670af9ea87ee0be50f8d02b24ea1356c12974fcd4450e",
+          "expiresMs": 1792631061959
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "7e6da7ccad2e8302d93afa7e64262d7ad3959447b9d37e62754ea7bee7b6887e",
+          "expiresMs": 1792631062741
+        }
+      ]
+    },
+    {
+      "installation": "a",
+      "fleet": "slot-2",
+      "observedAt": 1792631053486,
+      "before": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "8672e13401d766258ab9b94130e5d28216353596dfdf534ee880aa5da5a7c332",
+          "expiresMs": 1792631061028
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "0057ba1fa60f54d9920c829ced9eda3700f29fe72a43aafd5c5aced5e9c6dbc7",
+          "expiresMs": 1792631063107
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "8672e13401d766258ab9b94130e5d28216353596dfdf534ee880aa5da5a7c332",
+          "expiresMs": 1792631061028
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "0057ba1fa60f54d9920c829ced9eda3700f29fe72a43aafd5c5aced5e9c6dbc7",
+          "expiresMs": 1792631063107
+        }
+      ]
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-1",
+      "observedAt": 1792631474794,
+      "before": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "4435835ceea3c93761c7bfe5341c7483311d1b1becd0a8fe557e54f7cc2a7ac6",
+          "expiresMs": 1792631481986
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "85099e1e332a7209753ee247a4dbfca16a46f5e467a12df29fd7d4ec3d60dd1f",
+          "expiresMs": 1792631483681
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "4435835ceea3c93761c7bfe5341c7483311d1b1becd0a8fe557e54f7cc2a7ac6",
+          "expiresMs": 1792631481986
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "85099e1e332a7209753ee247a4dbfca16a46f5e467a12df29fd7d4ec3d60dd1f",
+          "expiresMs": 1792631483681
+        }
+      ]
+    },
+    {
+      "installation": "b",
+      "fleet": "slot-2",
+      "observedAt": 1792631475421,
+      "before": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "f51202da16df5e2ef5e51a132abbb598399b3d89263f98361913f7deae158f2b",
+          "expiresMs": 1792631485323
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "fa4e7b8093623d0f4eccbcaa8b3bd6361edbde85b21767fc10f50bbce37e2371",
+          "expiresMs": 1792631484034
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "f51202da16df5e2ef5e51a132abbb598399b3d89263f98361913f7deae158f2b",
+          "expiresMs": 1792631485323
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "fa4e7b8093623d0f4eccbcaa8b3bd6361edbde85b21767fc10f50bbce37e2371",
+          "expiresMs": 1792631484034
+        }
+      ]
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-1",
+      "observedAt": 1792631833658,
+      "before": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "ac17f9cef17466d183883752833ef26282bb9810b5ac8177594d0721e99c9aa8",
+          "expiresMs": 1792631841554
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "56e716850aee476e48f67c05d152d8a824ca992b03cb099d13d569da2a9014b3",
+          "expiresMs": 1792631840467
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-a:8081",
+          "processKey": "ac17f9cef17466d183883752833ef26282bb9810b5ac8177594d0721e99c9aa8",
+          "expiresMs": 1792631841554
+        },
+        {
+          "key": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-1-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-1-b:8081",
+          "processKey": "56e716850aee476e48f67c05d152d8a824ca992b03cb099d13d569da2a9014b3",
+          "expiresMs": 1792631840467
+        }
+      ]
+    },
+    {
+      "installation": "older-a",
+      "fleet": "slot-2",
+      "observedAt": 1792631834307,
+      "before": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "9013341d9008c556804a594c03f5bedd8937dc741fb865d8caff0e82f5c73bc9",
+          "expiresMs": 1792631843460
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "87cf232fbfda07c40f1d01b446f83d249ad6577841903ed1281ca5bba68bd4da",
+          "expiresMs": 1792631842070
+        }
+      ],
+      "after": [
+        {
+          "key": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-a-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-a:8081",
+          "processKey": "9013341d9008c556804a594c03f5bedd8937dc741fb865d8caff0e82f5c73bc9",
+          "expiresMs": 1792631843460
+        },
+        {
+          "key": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b.json",
+          "node": "slot-2-b-e0929c5c-1e8a-4222-896b-ff258cdd8c1b",
+          "addr": "slot-2-b:8081",
+          "processKey": "87cf232fbfda07c40f1d01b446f83d249ad6577841903ed1281ca5bba68bd4da",
+          "expiresMs": 1792631842070
+        }
+      ]
+    }
+  ],
+  "independentAudit": {
+    "scope": "Independent selected-runtime due/retry/older stopped recovery audit; full M11c remains open",
+    "cases": 3,
+    "signatureProofsVerified": 16,
+    "distinctProcessKeys": 16,
+    "alteredSignaturesRejected": 16,
+    "retainedVolumes": [
+      "fogd-selected-activation-2492de8664f78cb2_bucket",
+      "fogd-selected-activation-2492de8664f78cb2_controller",
+      "fogd-selected-activation-2492de8664f78cb2_runtime-policy",
+      "fogd-selected-activation-2492de8664f78cb2_slot-1-a",
+      "fogd-selected-activation-2492de8664f78cb2_slot-1-b",
+      "fogd-selected-activation-2492de8664f78cb2_slot-2-a",
+      "fogd-selected-activation-2492de8664f78cb2_slot-2-b",
+      "fogd-selected-activation-2492de8664f78cb2_tls",
+      "fogd-selected-recovery-204ca1d9c301cb9b_bucket",
+      "fogd-selected-recovery-204ca1d9c301cb9b_controller",
+      "fogd-selected-recovery-204ca1d9c301cb9b_runtime-policy",
+      "fogd-selected-recovery-204ca1d9c301cb9b_slot-1-a",
+      "fogd-selected-recovery-204ca1d9c301cb9b_slot-1-b",
+      "fogd-selected-recovery-204ca1d9c301cb9b_slot-2-a",
+      "fogd-selected-recovery-204ca1d9c301cb9b_slot-2-b",
+      "fogd-selected-recovery-204ca1d9c301cb9b_tls",
+      "fogd-selected-recovery-305be85ee3bf0205_bucket",
+      "fogd-selected-recovery-305be85ee3bf0205_controller",
+      "fogd-selected-recovery-305be85ee3bf0205_runtime-policy",
+      "fogd-selected-recovery-305be85ee3bf0205_slot-1-a",
+      "fogd-selected-recovery-305be85ee3bf0205_slot-1-b",
+      "fogd-selected-recovery-305be85ee3bf0205_slot-2-a",
+      "fogd-selected-recovery-305be85ee3bf0205_slot-2-b",
+      "fogd-selected-recovery-305be85ee3bf0205_tls",
+      "fogd-selected-recovery-d678148f17b60cd2_bucket",
+      "fogd-selected-recovery-d678148f17b60cd2_controller",
+      "fogd-selected-recovery-d678148f17b60cd2_runtime-policy",
+      "fogd-selected-recovery-d678148f17b60cd2_slot-1-a",
+      "fogd-selected-recovery-d678148f17b60cd2_slot-1-b",
+      "fogd-selected-recovery-d678148f17b60cd2_slot-2-a",
+      "fogd-selected-recovery-d678148f17b60cd2_slot-2-b",
+      "fogd-selected-recovery-d678148f17b60cd2_tls"
+    ],
+    "snapshotHashesVerified": true,
+    "sourceInventoryVerified": true,
+    "oldOccurrencesUnchangedAfterResume": true,
+    "ownedContainersAndNetworksRemoved": true,
+    "runtimeLogSha256": {
+      "source": "8cf05d08ee2aa97fdb9626bffd76b394fbafdea620f06c4d08bf12277fc2a3cd",
+      "a": "bdf02fb597db07d5bbfce48f6126c80794b589bb79d3aef9a76f8b65d7cf8598",
+      "b": "0cf942c17babc74cfdf84ab971efe10df72d26c85160eb52b75a49a384aca768",
+      "older-a": "0851d11729300f2300558f8731301aaece71a18086816d59008ca820ebe53609"
+    },
+    "allServiceExitsVerified": true,
+    "independentRetainedPoliciesVerified": 4,
+    "allRetainedVolumeWritersStopped": true,
+    "verifierSha256": "fad10fdbbf8193c2e2350e85a3a38a05899173d7d82f323ef20a0f8c3f3d5630"
+  },
+  "sourcePreservation": {
+    "a": {
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true,
+      "independentPolicyUnchanged": true
+    },
+    "b": {
+      "volumes": [
+        "bucket",
+        "controller",
+        "slot-1-a",
+        "slot-1-b",
+        "slot-2-a",
+        "slot-2-b",
+        "tls"
+      ],
+      "archivedEntriesCompared": true,
+      "completeNamesCompared": true,
+      "independentPolicyUnchanged": true
+    }
+  },
+  "privacy": [
+    {
+      "adminJSON": true,
+      "adminHTML": true,
+      "scopedStatuses": 1,
+      "decodedArtifacts": 1,
+      "privateDiagnosticsChecked": 16,
+      "completeReceiptChecked": true
+    },
+    {
+      "adminJSON": true,
+      "adminHTML": true,
+      "scopedStatuses": 1,
+      "decodedArtifacts": 1,
+      "privateDiagnosticsChecked": 16,
+      "completeReceiptChecked": true
+    }
+  ],
+  "finalPrivacy": {
+    "valuesChecked": 115,
+    "credentialValuesChecked": 13,
+    "files": [
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-087e59c7-be38-443f-9734-83f2de36f2cf.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-41abfd61-5d2d-4ec5-bb81-6c6391df102f.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-66145703-5051-438f-9e6e-29b5caa75490.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-71f8220d-28ff-4c4c-b5e6-ad86d58a27a0.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-a815bb2c-5963-4ef4-8793-027d64d05245.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-c6e9aec2-33ac-4be3-995f-d63ba38fecd1.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "command-failure-cfb82fa6-f3a9-4a82-be33-df84949f2ee4.json"
+      },
+      {
+        "project": "fogd-selected-activation-2492de8664f78cb2",
+        "name": "runtime.log"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-0bd4fa78-3ce0-4c77-a784-f29d2b7c353a.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-1a469088-20c5-4404-81bf-398e98562ec9.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-308cf303-d44e-41d8-9331-12ab1dee4787.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-49893d1b-1531-4d44-95a0-bce3b8c02ca5.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-5cbf35aa-8f4d-456a-9f05-c4e9b90a886c.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-5f14b6a9-d1cc-4689-b521-7b0814c2df7d.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-64c91038-ddc2-4c31-b552-4296b35bb5c2.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-690d26fa-9bcf-41d0-8fa2-d25251a3606e.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-7389d0a1-c4fe-4d2c-8e1b-159a259710d6.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-b7364520-f1a0-4b4e-83af-c99d3757d6a9.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-b74e8344-c378-4677-aa9a-c8b60d39b775.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-bc6c3b17-06ff-4e51-ac64-0c8923aa660d.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-c644260f-7772-488c-82a3-e14771748d6f.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-d3b9bf16-f83f-44e9-acd7-63f656cc3ccf.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-d7741992-5cfa-41d3-b458-7382989375e0.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "command-failure-dc63989c-ad82-4950-8397-a792ab233316.json"
+      },
+      {
+        "project": "fogd-selected-recovery-204ca1d9c301cb9b",
+        "name": "runtime.log"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-02ba9c8c-baac-4acf-9f4e-0a125eed47e0.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-1cfa9d2b-c11d-4992-a1ae-9f090fe0a4a9.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-24242e21-40b6-49f3-8926-d6177d43eedf.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-27ccb7a9-d332-4308-ab3b-f19c03c1a864.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-4fc4699a-a9b6-4140-82a8-186471be590e.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-575b8ab7-b161-47a8-903d-df64f49cddc8.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-6ae80d63-cf6e-4c4e-bdf8-3d975a390c61.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-6b8c5b85-44df-44b8-b694-fb4f82ca1a42.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-831e44ab-0a02-40c3-b43f-dc9ae92930fb.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-8aa8bc2e-2753-4a79-9f04-05cf5cbb52db.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-8c3b89ee-11bc-4d0a-b0d7-f99a33351ead.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-8ddd38ca-4ffe-4f3e-aa9f-e04b50ece537.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-b31a549c-2ab6-48e0-881c-a844199d6eea.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-da3236b2-6159-481e-8f1d-cc945a40cd18.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-e0832dfd-3bbf-404d-8a36-1726c3bb456d.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "command-failure-e803a1a9-85bc-47ec-a2af-5ccf1cce83b3.json"
+      },
+      {
+        "project": "fogd-selected-recovery-305be85ee3bf0205",
+        "name": "runtime.log"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-109b442d-4bbd-45e0-b7ea-45444aeb385f.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-11032d34-f892-4c8d-91c0-822cd07bd297.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-21a85897-71b9-4447-add3-c8ebbe694be2.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-2cb1bf8f-9c22-4fb9-97c1-08cea827b260.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-4f125f98-8fda-4dbf-a650-52b7420ad035.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-527a8e17-cd88-4328-9650-0fba3035eb12.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-685052fe-4c32-48f7-a923-909a4bd48774.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-7ca64bec-f14d-4244-a24c-e230845ad99a.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-89c5bdcd-03c3-491b-8201-3d832735f6ea.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-89cdb3f2-a16d-4714-afa1-c087156974d3.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-9258172f-6fe7-4a03-9b7e-dbb18ff98f35.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-9cb83a6d-fbf1-49a6-8f24-400c83d1f899.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-cbcb475c-81cc-4c62-ad97-460ca27a8466.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-d14c7192-f6ec-491b-97f2-9d0b27fba6b5.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-d5fb2a55-2638-43fb-9850-66558a7b0453.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "command-failure-d63fc049-a4ec-4f46-9583-bfef239bd95f.json"
+      },
+      {
+        "project": "fogd-selected-recovery-d678148f17b60cd2",
+        "name": "runtime.log"
+      }
+    ],
+    "finalReceiptChecked": true
+  },
+  "remainingGates": [
+    "selected failure and replacement profiles",
+    "active-survivor and pending-retry retirement",
+    "ordinary offline builds",
+    "complete M11c acceptance audit"
+  ],
+  "limitations": [
+    "same-version local Linux arm64 Docker candidate and two-fleet topology only",
+    "no per-worker CPU quota or CPU-exhaustion qualification",
+    "logical runtime identity cannot distinguish a physical source from its clone; local source-volume exclusion and operator remote exclusion remain required",
+    "read-only observer mounts do not establish physically unchanged live S3 metadata",
+    "pause clears timer/retry identity; older snapshots can lose acknowledged results or replay external effects",
+    "no universal callback count, exactly-once external effects, general drain, Workflows or arbitrary Durable Object alarm qualification"
+  ]
+}

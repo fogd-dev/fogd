@@ -9,10 +9,10 @@ export async function loopbackPort() {
 }
 
 // Run setup sequentially: this observation is not an address-pool reservation.
-export async function privateNetworks() {
+export async function privateNetworks(excluded = []) {
   const ids = (await docker(['network', 'ls', '-q'])).trim().split('\n').filter(Boolean);
   const networks = ids.length ? await json(['network', 'inspect', ...ids]) : [];
-  const used = networks.flatMap(network => (network.IPAM?.Config || []).map(value => ipv4Range(value.Subnet)).filter(Boolean));
+  const used = [...networks.flatMap(network => (network.IPAM?.Config || []).map(value => ipv4Range(value.Subnet)).filter(Boolean)), ...excluded.map(ipv4Range)];
   for (let start = 150; start < 240; start += 3) {
     const subnets = [0, 1, 2].map(offset => `10.253.${start + offset}.0/24`);
     if (subnets.every(subnet => !used.some(range => overlaps(ipv4Range(subnet), range)))) {

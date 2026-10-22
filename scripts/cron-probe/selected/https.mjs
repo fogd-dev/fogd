@@ -4,11 +4,11 @@ import { parseEnv } from 'node:util';
 import { join } from 'node:path';
 
 export async function httpsClient(host) {
-  const ca = await readFile(join(host.output, 'certificate.pem')), settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
+  const ca = await readFile(host.env.NODE_EXTRA_CA_CERTS || join(host.output, 'certificate.pem')), settings = parseEnv(await readFile(host.env.FOGD_ENV_FILE, 'utf8'));
   const authorization = 'Basic ' + Buffer.from(`${host.config.services.controller.environment.FOGD_ADMIN_USER}:${settings.FOGD_ADMIN_PASSWORD}`).toString('base64');
-  return (path, { app, method = 'GET', body } = {}) => new Promise((resolve, reject) => {
+  return (path, { app, method = 'GET', body, headers = {} } = {}) => new Promise((resolve, reject) => {
     const req = request({ hostname: app ? `${app}.localhost` : 'localhost', port: app ? host.gatewayPort : host.adminPort, path, method, ca,
-      headers: app ? {} : { Authorization: authorization },
+      headers: app ? headers : { ...headers, Authorization: authorization },
       lookup: (_, options, callback) => callback(null, options.all ? [{ address: '127.0.0.1', family: 4 }] : '127.0.0.1', 4),
     }, response => {
       let text = '';

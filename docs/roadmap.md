@@ -200,9 +200,12 @@ their acceptance gates.
 
 The [selected cron activation profile](cron-selected-activation.md)
 checks the normal HTTPS CLI flow, first migration hold, selected controller kills,
-explicit retry and paused updates on the frozen product image. Failure/replacement,
-due/retry/older recovery, active-survivor retirement and offline builds still need
-their selected-image evidence before the M11c audit can permit public admission.
+explicit retry and paused updates on the frozen product image. The
+[selected recovery matrix](cron-selected-recovery.md) adds armed-timer, pending-retry
+and older-snapshot recovery with an original queued survivor, held native startup
+and reviewed acknowledgment before separate resume. Failure/replacement,
+active-survivor retirement and offline builds still need their selected-image
+evidence before the M11c audit can permit public admission.
 
 The [M11a acceptance audit](m11a-acceptance.md)
 closes bounded Docker queues as supported opt-in; default admission stays off by

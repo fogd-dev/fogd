@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 export async function sourceInventory() {
-  const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'packages', 'examples/refresh', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'], { cwd: repo });
+  const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'packages', 'examples/refresh', 'examples/imports', 'scripts/cron-probe', 'scripts/native-build.mjs', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'], { cwd: repo });
   const selected = (await readdir(new URL('./', import.meta.url))).filter(name => name.endsWith('.mjs')).map(name => `scripts/cron-probe/selected/${name}`);
   const paths = [...new Set([...stdout.split('\0').filter(Boolean), ...selected])].sort();
   return Object.fromEntries(await Promise.all(paths.map(async name => [name, createHash('sha256').update(await readFile(join(repo, name))).digest('hex')])));
@@ -22,8 +22,12 @@ export async function sourceState() {
 }
 
 export async function expectRefusal(host, args, message) {
+  return commandRefusal(host.command(args), message);
+}
+
+export async function commandRefusal(command, message) {
   let captured;
-  await assert.rejects(host.command(args), error => { captured = error; return Boolean(error.diagnosticFile); });
+  await assert.rejects(command, error => { captured = error; return Boolean(error.diagnosticFile); });
   const diagnostic = JSON.parse(await readFile(captured.diagnosticFile, 'utf8'));
   assert.equal(diagnostic.code, 1); assert.equal(diagnostic.signal, null);
   assert.match(diagnostic.stderr, message);

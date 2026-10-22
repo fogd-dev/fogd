@@ -130,8 +130,11 @@ identity does not authenticate those exposure settings.
 
 The [selected recovery receipt](evidence/m11c-selected-runtime-recovery.json)
 covers a previously paused schedule through ordinary installed startup, reviewed
-acknowledgment, separate resume and autonomous future jobs. Armed-timer, pending
-retry and older-snapshot restore remain unqualified on this product image. The
+acknowledgment, separate resume and autonomous future jobs. The
+[selected recovery matrix](cron-selected-recovery.md) extends that bounded local
+Linux arm64 two-fleet evidence to armed timers, persisted retries, original queued
+input and older snapshots. It checks cold native holds, acknowledged holds,
+separate resume, loss boundaries and full old occurrence rows after future success. The
 [selected retirement receipt](evidence/m11c-selected-runtime-retirement.json)
 covers zero-live backup/restore, unchanged retained-prefix contents and a scoped
 replacement using the fresh slot. Active cron/queue survivor and pending-retry
