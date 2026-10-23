@@ -90,7 +90,9 @@ checks all targets first and refuses changed contents, links, or unexpected file
 The receipt lists the releases and logical artifact bytes reclaimed. Quota
 accounting is recomputed from the remaining filesystem contents.
 
-Deployment records remain available. Artifact review returns HTTP 410 for pruned
+Deployment records remain available. [Owner inspection](application-inspection.md)
+marks recorded pruned releases and reports a pending controller prune without
+copying its private file manifest. Artifact review returns HTTP 410 for pruned
 releases. Retained app data, host build copies and backup bundles have separate
 lifecycles. A pruned release cannot be kept again; bytes that reappear under its ID
 stay protected for review.

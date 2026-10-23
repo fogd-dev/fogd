@@ -22,6 +22,18 @@ digest. `releases` includes only the requested app, including rejected and super
 submissions, ordered by recorded submission time, newest first. `routing` is the recorded route
 state. A pending-only app has an unassigned route and no active release.
 
+For a controller that supports artifact pruning, `artifactPruned: true` on a
+release records completed removal of its artifact bytes. The release identity and
+history remain available. An absent flag does not establish that bytes are present;
+this command does not read artifact files. Reappeared bytes still require separate
+retention review.
+
+`artifactRetention.pruningPending` identifies a global pending prune operation.
+The report explains how to inspect and explicitly resume it before controller
+changes. It does not disclose another app's prune targets or the private file
+manifest. Malformed pruning summaries fail inspection. These fields require the
+matching source CLI and server; the frozen catalog server has no pruning support.
+
 An active approval is separate from a running application. `runtimeHealth` and
 `applicationOutcomes` remain `not-observed`, even when a background journal has a
 recorded successful observation. Check the app's own endpoint and saved results for

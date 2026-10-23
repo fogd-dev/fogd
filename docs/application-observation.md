@@ -26,16 +26,19 @@ native state bodies are omitted.
 
 `nativeReadiness: confirmed` requires both expected replicas to answer native state
 and health checks, serve the approved version, and pass signed runtime identity and
-fresh fleet-membership verification. The selected controller record must match
-before and after probing, and its controller container must be running at both
-boundaries. `controllerRecord: matched-at-boundaries` does not establish an atomic
+fresh fleet-membership verification. The selected controller record, required
+capabilities and artifact-pruning state must match before and after probing, and
+its controller container must be running at both boundaries. `controllerRecord: matched-at-boundaries` does not establish an atomic
 snapshot or prove that nothing changed between those reads.
 
 An unreachable replica, an unverified identity, changed metadata, stopped controller,
 or failed observer makes readiness `uncertain`. Pending-only apps are `not-observed`.
 A recorded pause, quarantine, unresolved hold/recovery, retirement, or unsupported
-state prevents a confirmed result. These are diagnostic findings, not instructions
-to retry activation, resume work, or overwrite metadata.
+state prevents a confirmed result. Pending controller artifact pruning also
+prevents a native probe, with reason `controller-artifact-prune-pending`. Completed
+pruning of terminal history does not withhold the retained active release. These
+findings describe recorded state and native readiness. They do not authorize retry,
+resume or metadata replacement.
 
 Use `reason` to distinguish local scope, observer timeout/unavailability, controller
 uncertainty, identity failure, and replica readiness.

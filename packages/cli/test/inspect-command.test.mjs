@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access } from 'node:fs/promises';
 import { join } from 'node:path';
+import { pruningState, prunedId, pruneId } from '../../platform/test/fixtures/artifact-pruning.mjs';
 import { adminCliFixture } from './fixtures/admin-client.mjs';
 const id = '00000000-0000-4000-8000-000000000001', digest = 'a'.repeat(64);
 const state = { apps: { guestbook: { route: 'paused', uncertain: id } }, deployments: { [id]: { id, app: 'guestbook', digest, status: 'failed', step: 'migrating', error: 'private-sql-response' } }, csrf: 'private-csrf' };
@@ -50,4 +51,29 @@ test('administrator redirects are refused without forwarding credentials to anot
 test('a non-JSON content type is rejected even if its bytes look like controller state', async t => {
   const f = await fixture(t, (_, response) => { response.setHeader('Content-Type', 'text/html'); response.end(JSON.stringify(state)); });
   await assert.rejects(f.invoke(), error => error.code === 1 && /did not return JSON/.test(error.stderr) && error.stdout === '');
+});
+
+test('owner inspection identifies pruned history without exposing the prune receipt or another app', async t => {
+  const wire = pruningState(state, { summary: true, app: 'guestbook' });
+  const f = await fixture(t, (_, response) => response.end(JSON.stringify(wire))), result = await f.invoke(), report = JSON.parse(result.stdout);
+  assert.equal(report.releases.find(row => row.id === prunedId).artifactPruned, true);
+  assert.deepEqual(report.artifactRetention, { pruningPending: false });
+  assert.doesNotMatch(result.stdout, new RegExp(pruneId));
+  assert.equal(result.stdout.includes('private-artifact-path'), false);
+});
+
+test('pending owner inspection explains the global prune hold without disclosing another app target', async t => {
+  const wire = pruningState(state, { pending: true, summary: true, app: 'another-app' });
+  const f = await fixture(t, (_, response) => response.end(JSON.stringify(wire))), result = await f.invoke(), report = JSON.parse(result.stdout);
+  assert.deepEqual(report.artifactRetention, { pruningPending: true });
+  assert.ok(report.nextChecks.some(value => value.includes('artifact pruning is pending')));
+  assert.equal(report.releases.length, 1);
+  assert.doesNotMatch(result.stdout, new RegExp(`${prunedId}|${pruneId}|another-app|private-artifact-path|sha256`));
+  assert.equal(f.calls.length, 1);
+});
+
+test('malformed prune summaries refuse owner inspection without copying their contents', async t => {
+  const wire = pruningState(state, { pending: true, summary: true }); wire.artifactPruning.operation.approvedArtifactBytes++;
+  const f = await fixture(t, (_, response) => response.end(JSON.stringify(wire)));
+  await assert.rejects(f.invoke(), error => error.code === 1 && /pruning metadata is malformed/.test(error.stderr) && error.stdout === '' && !error.stderr.includes('private-'));
 });

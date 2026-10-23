@@ -41,6 +41,7 @@ else if (args[0] === 'run') {
   } else if (args.some(value => value.startsWith('fogd.observer.id='))) {
     if (process.env.FOGD_OBSERVE_HELPER_FAIL) { data.helperCreated = true; writeFileSync(path, JSON.stringify(data)); process.exit(7); }
     if (process.env.FOGD_OBSERVE_STATE_CHANGE) { data.state.apps.sample.route = 'paused'; writeFileSync(path, JSON.stringify(data)); }
+    if (process.env.FOGD_OBSERVE_REQUIREMENTS_CHANGE) { data.state.requirements = process.env.FOGD_OBSERVE_REQUIREMENTS_CHANGE === 'null' ? null : ['future-protocol']; writeFileSync(path, JSON.stringify(data)); }
     if (code.includes('checkGateway')) { output({ httpStatus: 503, headersMs: 7, reason: null, body: 'private-worker-extra' }); process.exit(0); }
     output({ identity: process.env.FOGD_OBSERVE_UNVERIFIED ? 'unconfirmed' : 'verified', replicas: ['slot-1-a', 'slot-1-b'].map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })), secrets: 'private-worker-extra' });
   } else process.exit(98);

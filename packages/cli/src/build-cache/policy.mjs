@@ -1,5 +1,5 @@
 import { uuid, digest, controllerOrigin } from './paths.mjs';
-import { object, supportedController, supportedApplication, applicationOperationPending } from '../controller-schema.mjs';
+import { object, supportedControllerView, supportedApplication, applicationOperationPending } from '../controller-schema.mjs';
 const phases = ['building', 'staged', 'failed', 'uploading', 'uncertain', 'submitted'];
 const recordFields = ['schema', 'app', 'id', 'phase', 'digest', 'server', 'submission'];
 export function validRecord(record, app, id) {
@@ -16,7 +16,8 @@ export function retentionReason(record, state, origin, kept = false) {
   if (kept) return 'operator-kept';
   if (record.phase !== 'submitted') return 'unfinished-or-unconfirmed';
   if (record.server !== origin) return 'different-controller';
-  if (!supportedController(state) || (Object.hasOwn(state.apps, record.app) && !supportedApplication(state.apps[record.app]))) return 'unsupported-controller-state';
+  if (!supportedControllerView(state) || (Object.hasOwn(state.apps, record.app) && !supportedApplication(state.apps[record.app]))) return 'unsupported-controller-state';
+  if (state.artifactPruning?.operation) return 'controller-or-recovery-reference';
   return submissionReason(record, state);
 }
 function submissionReason(record, state) {

@@ -1,4 +1,5 @@
 import { quarantineReason, recoveryReasons, controlRecoveryError } from './inspection-reasons.mjs';
+import { validateArtifactPruningSummary } from '@fogd/platform/artifact-prune-state';
 const statuses = ['pending', 'activating', 'active', 'failed', 'rejected', 'superseded', 'retired'];
 const steps = ['submitted', 'approved', 'preparing-activation', 'publishing', 'waiting-for-replicas', 'validating-application', 'checking-migration-ledger', 'migrating', 'complete',
   'queue-bootstrap-intent', 'publishing-queue-bootstrap', 'waiting-for-queue-bootstrap', 'pausing-delivery', 'queue-application-intent', 'releasing-delivery', 'transferring-delivery-hold',
@@ -8,6 +9,7 @@ const object = value => value && typeof value === 'object' && !Array.isArray(val
 
 export function applicationInspection(state, name) {
   if (!object(state?.apps) || !object(state?.deployments)) throw new Error('Controller returned unsupported application state');
+  const pruning = validateArtifactPruningSummary(state);
   const hasApp = Object.hasOwn(state.apps, name), app = hasApp ? state.apps[name] : null;
   if (hasApp && !object(app)) throw new Error('Controller returned unsupported application state');
   const entries = Object.entries(state.deployments).filter(([, value]) => value?.app === name);
@@ -23,13 +25,14 @@ export function applicationInspection(state, name) {
     routing: app ? choice(app.route, ['active', 'paused', 'retired']) : 'unassigned',
     retired: Boolean(app?.retirement), quarantined: Boolean(app?.quarantined), quarantineReason: quarantineReason(app), ownershipClaim: claimReference(app?.claim, releases), uncertainMigration: statusReference(app?.uncertain, releases, 'uncertain migration', ['failed', 'activating']),
     active: statusReference(app?.active, releases, 'active release', [app?.retirement ? 'retired' : 'active']), releases, controls };
+  if (pruning) report.artifactRetention = { pruningPending: pruning.operation !== null };
   return { ...report, nextChecks: nextChecks(report) };
 }
 
 function releaseView(value) {
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value.id || '') || !/^[a-f0-9]{64}$/.test(value.digest || '')) throw new Error('Controller returned an invalid deployment reference');
   return { id: value.id, digest: value.digest, submittedAt: recordedTime(value.submittedAt), status: choice(value.status, statuses), step: choice(value.step, steps),
-    hasPrivateDiagnostic: Boolean(value.error), secretRevisionSelected: Boolean(value.secretRevision) };
+    hasPrivateDiagnostic: Boolean(value.error), secretRevisionSelected: Boolean(value.secretRevision), ...(value.artifactPruned ? { artifactPruned: true } : {}) };
 }
 function recordedTime(value) {
   if (typeof value !== 'string') return null;
@@ -61,6 +64,7 @@ function controlView(surface, journal, recovery, releases, recoveryError) {
 }
 function nextChecks(report) {
   const checks = [
+    [report.artifactRetention?.pruningPending, 'Controller artifact pruning is pending. Inspect fogd admin artifacts status and explicitly resume it before controller changes.'],
     [report.retired, 'This name is retired. Inspect the retirement record before planning another installation or reuse.'],
     [report.quarantined, 'The fleet is quarantined. Reconcile its ownership and controller/storage backups before retrying activation.'],
     [report.ownershipClaim, 'An ownership claim is pending. Inspect its original approved release before retrying.'],

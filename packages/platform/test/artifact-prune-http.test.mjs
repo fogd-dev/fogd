@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { server } from '../src/http.mjs';
 import { fixture } from './fixtures/queue-controller.mjs';
 import { backgroundBackupApps } from '../../cli/src/recovery/background-backup.mjs';
+import { applicationInspection } from '../../cli/src/inspection.mjs';
+import { retentionReason } from '../../cli/src/build-cache/policy.mjs';
 
 const authorization = 'Basic ' + Buffer.from('admin:owner-password').toString('base64');
 async function serve(t, c) {
@@ -23,6 +25,7 @@ async function setup(t) {
   return { ...f, rejected, pinned, active };
 }
 const post = (csrf, input) => ({ method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify(input) });
+const localCopy = release => ({ schema: 1, id: '00000000-0000-4000-8000-000000000009', app: release.app, phase: 'submitted', submission: release.id, digest: release.digest, server: 'https://fogd.example' });
 
 test('owner pruning reclaims only reviewed terminal bytes and keeps history and protected data', async t => {
   const f = await setup(t), request = await serve(t, f.c), csrf = (await request('/v1/admin')).body.csrf;
@@ -37,6 +40,10 @@ test('owner pruning reclaims only reviewed terminal bytes and keeps history and 
   assert.equal((await request(`/v1/deployments/${f.rejected.id}/artifact`)).status, 410);
   assert.equal((await request(`/v1/deployments/${f.active.id}/artifact`)).status, 200);
   assert.equal((await request('/v1/admin/artifacts/prune')).body.last.id, response.body.id);
+  const owner = (await request('/v1/admin')).body, inspected = applicationInspection(owner, 'imports');
+  assert.equal(inspected.releases.find(row => row.id === f.rejected.id).artifactPruned, true);
+  assert.deepEqual(inspected.artifactRetention, { pruningPending: false });
+  assert.equal(retentionReason(localCopy(f.rejected), owner, 'https://fogd.example'), 'terminal-copy');
   assert.deepEqual(await request(`/v1/admin/artifacts/prune/${response.body.id}/resume`, post(csrf, {})), response);
   assert.deepEqual(f.events, events); assert.equal(f.c.route('imports.localhost').state, 'active');
 });
@@ -62,6 +69,10 @@ test('pending pruning remains inspectable and resumable while mutations and snap
   f.failWrite(null); const c = f.create(); await c.init();
   const request = await serve(t, c), admin = await request('/v1/admin'), csrf = admin.body.csrf;
   assert.doesNotMatch(JSON.stringify(admin.body.artifactPruning), /sha256|directories|files|worker\//);
+  const inspected = applicationInspection(admin.body, 'imports');
+  assert.deepEqual(inspected.artifactRetention, { pruningPending: true });
+  assert.ok(inspected.nextChecks.some(value => value.includes('artifact pruning is pending')));
+  assert.equal(retentionReason(localCopy(f.rejected), admin.body, 'https://fogd.example'), 'controller-or-recovery-reference');
   const status = await request('/v1/admin/artifacts/prune');
   assert.equal(status.status, 200); assert.ok(status.body.operation.id);
   assert.throws(() => backgroundBackupApps(c.state), { code: 'ARTIFACT_PRUNE_PENDING' });

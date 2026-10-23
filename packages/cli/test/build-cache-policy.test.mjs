@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { retentionReason, validRecord } from '../src/build-cache/policy.mjs';
+import { pruningState } from '../../platform/test/fixtures/artifact-pruning.mjs';
 const origin = 'https://owner.example', app = 'sample';
 const id = '00000000-0000-4000-8000-000000000001', submission = '00000000-0000-4000-8000-000000000002';
 const record = { schema: 1, app, id, phase: 'submitted', submission, digest: 'a'.repeat(64), server: origin };
@@ -34,4 +35,12 @@ test('operator retention and controller identity override terminal status', () =
 test('local records reject unsupported fields, malformed IDs and credential-bearing origins', () => {
   assert.equal(validRecord(record, app, id), true);
   for (const change of [{ phase: 'future' }, { schema: 2 }, { submission: 'not-an-id' }, { digest: 'bad' }, { server: 'https://user:secret@example.com' }, { unexpected: true }]) assert.equal(validRecord({ ...record, ...change }, app, id), false);
+});
+
+test('completed controller pruning permits independently eligible local build retention decisions', () => {
+  assert.equal(retentionReason(record, pruningState(snapshot('rejected')), origin), 'terminal-copy');
+});
+
+test('pending controller pruning keeps local copies until the controller operation is settled', () => {
+  assert.equal(retentionReason(record, pruningState(snapshot('rejected'), { pending: true, summary: true }), origin), 'controller-or-recovery-reference');
 });

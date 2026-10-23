@@ -1,9 +1,15 @@
-const requirements = new Set(['fogd-claim-intent-v1', 'fogd-retirement-v1', 'fogd-queue-activation-v1', 'fogd-queue-recovery-v1', 'fogd-queue-retirement-v1', 'fogd-cron-activation-v1', 'fogd-cron-recovery-v1', 'fogd-cron-retirement-v1']);
+import { artifactPruneCapability, validateArtifactPruning, validateArtifactPruningSummary } from '@fogd/platform/artifact-prune-state';
+const requirements = new Set([artifactPruneCapability, 'fogd-claim-intent-v1', 'fogd-retirement-v1', 'fogd-queue-activation-v1', 'fogd-queue-recovery-v1', 'fogd-queue-retirement-v1', 'fogd-cron-activation-v1', 'fogd-cron-recovery-v1', 'fogd-cron-retirement-v1']);
 const appFields = new Set(['slot', 'resources', 'migrations', 'active', 'route', 'uncertain', 'privateConfiguration', 'claim', 'quarantined', 'reason', 'retirement', 'delivery', 'dispatch', 'queueBootstrap', 'cronBootstrap', 'queueRecovery', 'cronRecovery', 'deliveryRecoveryError', 'dispatchRecoveryError']);
 export const object = value => value && typeof value === 'object' && !Array.isArray(value);
-export function supportedController(state) {
-  return object(state?.apps) && object(state?.deployments) && (state.requirements === undefined || (Array.isArray(state.requirements) && state.requirements.every(value => requirements.has(value))));
+function supportedControllerWith(state, validatePruning) {
+  if (!object(state?.apps) || !object(state?.deployments) || (state.requirements !== undefined && (!Array.isArray(state.requirements) || !state.requirements.every(value => requirements.has(value))))) return false;
+  try { validatePruning(state); return true; }
+  catch { return false; }
 }
+// Private disk state retains manifests; the authenticated owner view omits them.
+export const supportedController = state => supportedControllerWith(state, validateArtifactPruning);
+export const supportedControllerView = state => supportedControllerWith(state, validateArtifactPruningSummary);
 export function supportedApplication(app, extraFields = []) {
   return object(app) && Object.keys(app).every(key => appFields.has(key) || extraFields.includes(key));
 }

@@ -120,3 +120,17 @@ hashes, process exit evidence, protected-file inventories, live native lease che
 and observed application data. It neither prunes existing installations nor fills
 the controller artifact quota. The [receipt](evidence/operator-retention-local.json)
 records the exercised scope and failed attempts as well as the final passing run.
+
+## Controller artifact pruning
+
+Online planning and new prune decisions keep local build copies when the current
+controller view reports a pending artifact-prune operation. Complete that operation
+before reviewing another host-copy deletion. Completed pruning is a supported
+recorded state; otherwise eligible terminal host copies can still be reviewed under
+their own retention policy. Malformed controller pruning metadata keeps copies as
+unsupported state.
+
+An already-started offline host prune follows its saved approval and does not
+observe later controller changes. These source CLI rules preserve the separate
+[controller artifact lifecycle](controller-artifacts.md); removing a host copy does
+not modify controller artifacts or application data.

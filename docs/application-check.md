@@ -34,7 +34,9 @@ and routing state.
 
 `not-requested` means selection or scope checks prevented the networked helper
 from starting. Unknown applications refuse. A recorded paused, pending-only,
-retired or unresolved application does not receive a request.
+retired or unresolved application does not receive a request. Pending controller
+artifact pruning also prevents a request. Completed pruning does not withhold the
+retained active application.
 `uncertain` means a request might have been sent but the command could not confirm
 its result or observation boundaries. The report withholds sampled status and
 timing when those boundaries change. A timeout does not establish that application

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { observationSelection, observationReport } from '../src/observe/model.mjs';
 import { observationKey } from '../src/observe/fingerprint.mjs';
+import { pruningState } from '../../platform/test/fixtures/artifact-pruning.mjs';
 const id = '00000000-0000-4000-8000-000000000001', app = 'sample', digest = 'a'.repeat(64);
 const policy = { fleets: [{ id: 'slot-1', nodes: [{ host: 'slot-1-a' }, { host: 'slot-1-b' }] }] };
 const fresh = () => ({ apps: { [app]: { route: 'active', active: id, slot: 'slot-1' } }, deployments: { [id]: { id, app, digest, status: 'active', step: 'complete', version: 'private-version', error: 'private-error', secretRevision: 'private-revision' } }, credentials: 'private-credentials', secrets: 'private-secret-values' });
@@ -86,4 +87,30 @@ test('acknowledged recovery does not make native HTTP readiness permanently unce
 for (const unavailable of ['timeout', 'helper-failed', 'scope-unconfirmed']) test(`${unavailable} is distinguished from an unready application replica`, () => {
   const report = observationReport(observationSelection(fresh(), app, policy), context, { ...healthy(), unavailable });
   assert.equal(report.nativeReadiness, 'uncertain'); assert.equal(report.reason, unavailable === 'timeout' ? 'observer-timeout' : unavailable === 'scope-unconfirmed' ? 'local-scope-unconfirmed' : 'observer-unavailable');
+});
+
+test('completed artifact pruning does not make an unchanged active release unsupported', () => {
+  const state = pruningState(fresh());
+  assert.equal(observationSelection(state, app, policy).reason, null);
+  assert.equal(observationReport(observationSelection(state, app, policy), context, healthy()).nativeReadiness, 'confirmed');
+});
+
+test('pending artifact pruning withholds observation and participates in boundary comparison', () => {
+  const before = fresh(), pending = pruningState(before, { pending: true });
+  assert.equal(observationSelection(pending, app, policy).reason, 'controller-artifact-prune-pending');
+  assert.notEqual(observationKey(pending, app), observationKey(before, app));
+});
+
+test('malformed artifact pruning cannot confirm a local observation', () => {
+  const state = pruningState(fresh()); state.artifactPruning.last.reclaimedArtifactBytes++;
+  assert.throws(() => observationSelection(state, app, policy), /unsupported/);
+});
+test('newly unknown requirements change the observation boundary', () => {
+  const before = fresh(), after = fresh(); after.requirements = ['future-protocol'];
+  assert.notEqual(observationKey(before, app), observationKey(after, app));
+});
+
+for (const field of ['requirements', 'artifactPruning']) test(`an explicit null ${field} differs from absent controller metadata at a probe boundary`, () => {
+  const before = fresh(), after = fresh(); after[field] = null;
+  assert.notEqual(observationKey(before, app), observationKey(after, app));
 });

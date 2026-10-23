@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { rootCertificates } from 'node:tls';
 import { readFile, writeFile } from 'node:fs/promises';
 import { observationFixture } from './fixtures/observation-cli.mjs';
+import { pruningState } from '../../platform/test/fixtures/artifact-pruning.mjs';
 
 const helper = row => row.args[0] === 'run' && row.args.some(value => value.startsWith('fogd.observer.id='));
 async function fixture(t) {
@@ -90,4 +91,26 @@ test('an oversized CA file refuses before Docker', async t => {
   await assert.rejects(f.invoke(['sample', '--installation', f.project, '--path', '/health', '--ca', path], { FOGD_CHECK_TEST: '1' }),
     error => error.code === 1 && /bounded regular PEM file/.test(error.stderr) && error.stdout === '');
   assert.deepEqual(await f.calls(), []);
+});
+
+test('pending artifact pruning prevents an application GET', async t => {
+  const f = await fixture(t), data = JSON.parse(await readFile(f.data, 'utf8'));
+  await writeFile(f.data, JSON.stringify({ ...data, state: pruningState(data.state, { pending: true }) }));
+  const report = JSON.parse((await f.check()).stdout);
+  assert.deepEqual(report.ingressResponse, { state: 'not-requested', httpStatus: null, headersMs: null, reason: 'controller-artifact-prune-pending' });
+  assert.equal((await f.calls()).some(helper), false);
+});
+
+test('completed pruning still permits checking the retained active application', async t => {
+  const f = await fixture(t), data = JSON.parse(await readFile(f.data, 'utf8'));
+  await writeFile(f.data, JSON.stringify({ ...data, state: pruningState(data.state) }));
+  const report = JSON.parse((await f.check()).stdout);
+  assert.equal(report.ingressResponse.state, 'observed'); assert.equal(report.ingressResponse.httpStatus, 503);
+  assert.equal((await f.calls()).filter(helper).length, 1);
+});
+
+for (const value of ['1', 'null']) test(`controller requirements changed to ${value} during the GET withhold the sampled status`, async t => {
+  const f = await fixture(t), report = JSON.parse((await f.check('sample', { FOGD_OBSERVE_REQUIREMENTS_CHANGE: value })).stdout);
+  assert.deepEqual(report.ingressResponse, { state: 'uncertain', httpStatus: null, headersMs: null, reason: 'controller-record-unconfirmed' });
+  assert.equal(report.controllerRecord, 'changed');
 });

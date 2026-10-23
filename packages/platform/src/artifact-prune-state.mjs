@@ -53,6 +53,19 @@ function validateOperation(state, operation) {
   }
 }
 
+// The owner API omits file manifests. Validate its identity/byte summary against
+// deployment history without treating it as authority to delete or resume files.
+function validateOperationSummary(state, operation) {
+  if (!exactKeys(operation, 'approvedArtifactBytes,candidates,id,plan') || !isId(operation.id) || !isHash(operation.plan)) throw invalid();
+  const rows = operation.candidates;
+  if (!Array.isArray(rows) || !rows.length || new Set(rows.map(row => row?.id)).size !== rows.length) throw invalid();
+  for (const row of rows) {
+    validateArtifactRow(state, row);
+    if (Object.hasOwn(state.deployments[row.id], 'artifactPruned')) throw invalid();
+  }
+  if (approvedBytes(rows) !== operation.approvedArtifactBytes) throw invalid();
+}
+
 function validateReceipt(state, receipt) {
   if (!exactKeys(receipt, 'artifacts,id,plan,reclaimedArtifactBytes,schema') || receipt.schema !== 1 || !isId(receipt.id) || !isHash(receipt.plan)) throw invalid();
   const { artifacts } = receipt;
@@ -62,10 +75,14 @@ function validateReceipt(state, receipt) {
 }
 
 function validateReceiptRow(state, operation, row) {
-  if (!exactKeys(row, 'bytes,digest,id') || !isId(row.id) || !size(row.bytes)) throw invalid();
-  assertTerminal(state, row);
+  validateArtifactRow(state, row);
   const marker = state.deployments[row.id].artifactPruned;
   if (marker?.operation !== operation || marker.bytes !== row.bytes) throw invalid();
+}
+
+function validateArtifactRow(state, row) {
+  if (!exactKeys(row, 'bytes,digest,id') || !isId(row.id) || !size(row.bytes)) throw invalid();
+  assertTerminal(state, row);
 }
 
 // Capability, field and per-deployment markers must agree; an older runtime refuses the capability.
@@ -77,7 +94,7 @@ function pruningPresence(state) {
   return { present, marked };
 }
 
-export function validateArtifactPruning(state) {
+function validatePruningState(state, operationValidator) {
   if (!isMap(state)) throw invalid();
   const { present, marked } = pruningPresence(state);
   if (!present) return null;
@@ -85,11 +102,14 @@ export function validateArtifactPruning(state) {
   const pruning = state.artifactPruning;
   if (!exactKeys(pruning, 'last,operation,schema') || pruning.schema !== 1) throw invalid();
   for (const [id, record] of marked) validateMarker(state, id, record.artifactPruned);
-  if (pruning.operation !== null) validateOperation(state, pruning.operation);
+  if (pruning.operation !== null) operationValidator(state, pruning.operation);
   if (pruning.last !== null) validateReceipt(state, pruning.last);
   if (pruning.operation && pruning.operation.id === pruning.last?.id) throw invalid();
   return pruning;
 }
+
+export const validateArtifactPruning = state => validatePruningState(state, validateOperation);
+export const validateArtifactPruningSummary = state => validatePruningState(state, validateOperationSummary);
 
 // Cheap guard for ordinary controller work; full validation runs at load and before pruning.
 export function assertArtifactMutationAllowed(state) {
