@@ -1,3 +1,4 @@
+import { assertArtifactSnapshotReady } from './artifact-prune-state.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { routeRecordDigest } from './route-record-store.mjs';
@@ -16,6 +17,7 @@ const exact = (value, names) => value !== null && typeof value === 'object' && !
 // profile. It reads nothing and proves nothing about mounts or native runtimes.
 export function validateRouteSnapshot(state, observed, profile, domain = 'localhost') {
   try {
+    assertArtifactSnapshotReady(state);
     const expected = validateRuntimePolicy(profile);
     if (expected.schema !== 3 || expected.routing !== 'durable') throw refused();
     const policy = { installation: runtimePolicyIdentity(expected), slots: expected.fleets.map(fleet => fleet.id) };

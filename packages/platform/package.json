@@ -9,6 +9,7 @@
   },
   "exports": {
     "./artifact-pins": "./src/artifact-pins.mjs",
+    "./artifact-prune-state": "./src/artifact-prune-state.mjs",
     "./retirement": "./src/retirement.mjs",
     "./queue-snapshot": "./src/queue-snapshot.mjs",
     "./queue-retirement": "./src/queue-retirement.mjs",

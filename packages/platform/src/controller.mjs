@@ -21,6 +21,8 @@ import { Secrets } from './secrets.mjs';
 import { controllerRoutes, routingStartupError } from './controller-routes.mjs';
 import { resourceChanges } from './resources.mjs';
 import { setArtifactPin } from './artifact-pins.mjs';
+import { artifactPruneStatus, assertArtifactMutationAllowed } from './artifact-prune-state.mjs';
+import { pruneArtifacts, resumeArtifactPrune } from './artifact-prune.mjs';
 
 export class Controller {
   #persist;
@@ -50,8 +52,14 @@ export class Controller {
     this.bucketOwners = new Map();
     this.routes = controllerRoutes(this, routeAuthority);
   }
-  exclusive(task) {
-    const result = this.queue.then(() => { this.assertStorage(); return task(); });
+  // A pending prune blocks ordinary work here rather than in assertStorage, so saves and owner
+  // CSRF reads still work; only the prune operations opt in.
+  exclusive(task, { artifactPrune = false } = {}) {
+    const result = this.queue.then(() => {
+      this.assertStorage();
+      if (!artifactPrune) assertArtifactMutationAllowed(this.state);
+      return task();
+    });
     this.queue = result.catch(() => {});
     return result;
   }
@@ -268,6 +276,9 @@ export class Controller {
     return activateRelease(this, request, app, slot, selected);
   }
   setArtifactPin(id, digest, kept) { return setArtifactPin(this, id, digest, kept); }
+  pruneArtifacts(plan) { return this.exclusive(() => pruneArtifacts(this, plan), { artifactPrune: true }); }
+  resumeArtifactPrune(id) { return this.exclusive(() => resumeArtifactPrune(this, id), { artifactPrune: true }); }
+  artifactPruneStatus() { return this.exclusive(() => artifactPruneStatus(this.state), { artifactPrune: true }); }
   preflightIngress(input) { return this.exclusive(() => this.routes.preflight(input)); }
   decideRoute(name, action, input) { return this.exclusive(async () => {
     const result = await this.routes.decide(name, action, input);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, readdir, rm, realpath, lstat, chown } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir, rm, realpath, lstat, chown, cp } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -20,6 +20,7 @@ import { readRuntimePolicy } from '../../platform/src/runtime-policy-file.mjs';
 import { initializeFreshRouteStores } from '../../platform/src/fresh-route-enrollment.mjs';
 import { Controller } from '../../platform/src/controller.mjs';
 import { readRouteRecord } from '../../platform/src/route-record-store.mjs';
+import { planArtifactRetention } from '../../platform/src/artifact-retention.mjs';
 import { validateRouteSnapshot } from '../../platform/src/route-snapshot.mjs';
 import { durableBundleFixture } from './fixtures/durable-bundle.mjs';
 import { durableEnrollmentFixture } from './fixtures/durable-enrollment.mjs';
@@ -45,6 +46,10 @@ async function sourceBundle(t) {
   const request = { id, app: 'alpha', digest: await artifactDigest(artifact), resources: { script: 'alpha', d1: [], r2: [], durable: { bindings: [] } }, migrations: [], requiredSecrets: [], status: 'pending', step: 'submitted' };
   c.state.deployments[id] = request; await c.save(); await c.mutate(id, request.digest, 'approve');
   await c.setArtifactPin(id, request.digest, true);
+  const retiredId = randomUUID(); await cp(artifact, c.artifact(retiredId), { recursive: true });
+  c.state.deployments[retiredId] = { ...request, id: retiredId, status: 'rejected' }; await c.save();
+  const retention = await planArtifactRetention(c.state, join(c.dir, 'artifacts'));
+  const pruneReceipt = await c.pruneArtifacts(retention.plan);
   await writeFile(join(roots.controller, 'operator-secret.key'), 'source-private-value', { mode: 0o600 });
   // Use the actual producer's GNU tar flags, with ownership matching the host
   // helper identity. Native root ownership is a separate acceptance gate.
@@ -57,7 +62,7 @@ async function sourceBundle(t) {
   const observed = await readRouteRecord(join(roots.authority, 'routes.json'), policy);
   f.manifest.routeAuthority = validateRouteSnapshot(c.state, observed, f.policy);
   await writeFile(join(f.dir, 'manifest.json'), JSON.stringify(f.manifest));
-  return { ...f, c, owners, slots, routePolicy: policy, roots, request };
+  return { ...f, c, owners, slots, routePolicy: policy, roots, request, pruneReceipt };
 }
 async function fixture(t) {
   const source = await sourceBundle(t), p = source.policy;
@@ -115,6 +120,12 @@ test('stopped restore copies actual approved artifacts and private data before h
     routeAuthority: { path: join(target.rolePath('route-authority'), 'routes.json'), policy: f.source.routePolicy, verifyRuntime: async () => assert.fail('HTTP remains withheld') } });
   await controller.init(); assert.equal(controller.routingStartupComplete, true);
   assert.deepEqual(controller.state.artifactPins, state.artifactPins);
+  assert.deepEqual(controller.state.artifactPruning.last, f.source.pruneReceipt);
+  for (const row of f.source.pruneReceipt.artifacts) {
+    assert.deepEqual(controller.state.deployments[row.id].artifactPruned, { schema: 1, operation: f.source.pruneReceipt.id, bytes: row.bytes });
+    await assert.rejects(lstat(controller.artifact(row.id)), { code: 'ENOENT' });
+  }
+  assert.equal((await planArtifactRetention(controller.state, join(controller.dir, 'artifacts'))).reclaimableArtifactBytes, 0);
 });
 test('data copy failure retains target stores and a permanent incomplete host enrollment', { skip }, async t => {
   const f = await fixture(t); f.options.data = async () => { throw new Error('injected copy failure'); };
@@ -165,4 +176,18 @@ test('a live destination observed after route rebinding cannot obtain host compl
     const result = await routes(...args); live = true; return result;
   };
   await uncertain(f.run()); await assert.rejects(assertDurableEnrollmentReady(f.target.directory), { code: 'ENROLLMENT_NOT_READY' });
+});
+
+test('route snapshot refuses a durable prune intent before any artifact removal', { skip }, async t => {
+  const f = await sourceBundle(t), c = f.c, id = randomUUID();
+  await cp(c.artifact(f.request.id), c.artifact(id), { recursive: true });
+  c.state.deployments[id] = { ...f.request, id, status: 'rejected' }; await c.save();
+  const plan = await planArtifactRetention(c.state, join(c.dir, 'artifacts')), save = c.save.bind(c);
+  c.save = async () => { await save(); throw new Error('stop after durable intent'); };
+  await assert.rejects(c.pruneArtifacts(plan.plan), /stop after durable intent/);
+  assert.equal(await artifactDigest(c.artifact(id)), f.request.digest);
+  const observed = await readRouteRecord(join(f.roots.authority, 'routes.json'), f.routePolicy);
+  assert.throws(() => validateRouteSnapshot(c.state, observed, f.policy), /snapshot|prun/i);
+  assert.deepEqual(await readRouteRecord(join(f.roots.authority, 'routes.json'), f.routePolicy), observed);
+  assert.equal(c.state.apps.alpha.route, 'active');
 });

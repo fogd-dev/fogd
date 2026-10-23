@@ -38,6 +38,7 @@ export function setArtifactPin(controller, id, digest, kept) {
     if (typeof id !== 'string' || !uuid.test(id) || typeof digest !== 'string' || !hex64.test(digest) || typeof kept !== 'boolean') throw new Error('Artifact pin requires a deployment id, artifact digest and boolean kept');
     const releases = validateArtifactPins(controller.state);
     if (!pinnedRelease(controller.state.deployments, id, digest)) throw new Error('Deployment/digest mismatch');
+    if (kept && Object.hasOwn(controller.state.deployments[id], 'artifactPruned')) throw new Error('Pruned artifact history cannot be pinned; inspect the current retention plan');
     const result = { schema: 1, id, digest, kept };
     if (kept) await assertStoredArtifact(controller, id, digest);
     if (kept === Object.hasOwn(releases, id)) return result;

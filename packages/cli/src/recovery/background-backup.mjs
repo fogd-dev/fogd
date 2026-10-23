@@ -1,3 +1,4 @@
+import { artifactPruneCapability } from '@fogd/platform/artifact-prune-state';
 import { queueRecoveryApps, queueSnapshotProtocol } from './queue-backup.mjs';
 import { cronRecoveryApps, cronSnapshotProtocol } from './cron-backup.mjs';
 import { cronRetirementCapability } from '@fogd/platform/cron-retirement';
@@ -15,7 +16,7 @@ const families = [
   { key: 'queueRecovery', surface: 'delivery', apps: queueRecoveryApps, protocol: queueSnapshotProtocol },
   { key: 'cronRecovery', surface: 'dispatch', apps: cronRecoveryApps, protocol: cronSnapshotProtocol },
 ];
-const capabilities = ['fogd-retirement-v1', 'fogd-claim-intent-v1', 'fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability];
+const capabilities = [artifactPruneCapability, 'fogd-retirement-v1', 'fogd-claim-intent-v1', 'fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability];
 // Only a validated schema 3 durable profile admits durable route authority state.
 function supportedCapabilities(profile) {
   if (profile === undefined) return capabilities;
