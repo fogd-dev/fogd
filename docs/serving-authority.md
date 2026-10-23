@@ -169,7 +169,7 @@ runtime verification callback. The public authority directory and private contro
 directory cannot contain one another, including through path aliases checked at open;
 actual mount isolation still requires the launch inventory checks. Default controllers still reject authority-bearing
 state. No environment switch or catalog entry enables this constructor composition.
-Sealed launch configuration, gateway and stopped recovery integration remain required
+Sealed launch configuration and stopped recovery integration remain required
 before it can serve an application.
 
 Validation: the [publication tests](../packages/platform/test/route-publication.test.mjs)
@@ -330,6 +330,38 @@ and [HTTP authorization tests](../packages/platform/test/controller-route-http.t
 observe real temporary authority/private files while substituting the backend. They
 exercise the source protocol; they do not establish native runtime, image or mount
 qualification.
+
+## Gateway candidate implementation
+
+The [durable gateway](../packages/runtime/src/gateway-durable.js) reads the fixed
+record through its private authority binding on every request, including its health
+endpoint. The [reader](../packages/runtime/src/gateway-authority.mjs) requires a
+complete HTTP 200 response, bounds actual bytes at 65,536, decodes UTF-8 strictly,
+and applies the shared record codec against an independent configured policy. A
+three-second read deadline bounds unavailable authority; it is not a permission
+lease. Failure never reuses an earlier route decision. Health reports readable
+routing authority, not application or storage health.
+
+The [configuration renderer](../packages/runtime/src/gateway-durable-config.mjs)
+provides a read-only disk service, only the declared replica bindings, and no
+controller binding or outbound internet access. The
+[program preparer](../packages/runtime/src/gateway-durable-program.mjs) stages the
+complete module graph and optional TLS material outside the authority directory.
+It requires existing directories and does not start a runtime. Its caller must
+establish sealed policy, actual mount isolation and completed startup recovery.
+The candidate has no launcher or catalog admission yet.
+
+The candidate forwarding helper preserves the existing gateway protections for
+private paths, privileged headers, actual-origin headers, replica health selection
+and sent-request non-replay. The pinned legacy gateway and launcher remain
+byte-identical to avoid further drift from the frozen runtime inventory. The
+controller candidate already changes pinned sources: exporting the qualified family
+requires its matching frozen checkout, until a new family is qualified. The [gateway tests](../packages/runtime/test/gateway-durable.test.mjs)
+cover fresh decisions, withheld/invalid/unavailable authority, stalled and oversized
+reads, and forwarding protections. Host staging tests import the prepared module
+graph. These tests do not establish native workerd timeout, configuration parsing,
+disk freshness, mounts or controller-loss serving in the candidate topology; those
+remain release gates.
 
 ## Release evidence and sequence
 

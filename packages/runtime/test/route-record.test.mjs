@@ -52,7 +52,7 @@ for (const [name, routes] of [
 for (const value of ['not-json', JSON.stringify(record()).padEnd(65537, ' '), null]) test(`unreadable or oversized input refuses (${typeof value})`, () => {
   assert.throws(() => decodeRouteRecord(value, policy), { message: 'Invalid route authority record' });
 });
-for (const value of [{}, { ...policy, slots: [] }, { ...policy, slots: ['slot-1', 'slot-1'] }]) test('missing or ambiguous installed policy refuses', () => {
+for (const value of [{}, { ...policy, privateToken: 'private-do-not-echo' }, { ...policy, slots: [] }, { ...policy, slots: ['slot-1', 'slot-1'] }]) test('missing or ambiguous installed policy refuses', () => {
   assert.throws(() => decodeRouteRecord(JSON.stringify(record()), value), { message: 'Invalid route authority policy' });
 });
 

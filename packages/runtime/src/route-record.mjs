@@ -5,8 +5,8 @@ const invalid = () => { throw new Error('Invalid route authority record'); };
 const encoder = new TextEncoder();
 export const maxRouteRecordBytes = 65536;
 
-function installedPolicy(policy) {
-  if (!policy || !digest(policy.installation) || !Array.isArray(policy.slots) || !policy.slots.length || policy.slots.length > 3 || !policy.slots.every(slot) || new Set(policy.slots).size !== policy.slots.length) throw new Error('Invalid route authority policy');
+export function validateRoutePolicy(policy) {
+  if (!exactKeys(policy, ['installation', 'slots']) || !digest(policy.installation) || !Array.isArray(policy.slots) || !policy.slots.length || policy.slots.length > 3 || !policy.slots.every(slot) || new Set(policy.slots).size !== policy.slots.length) throw new Error('Invalid route authority policy');
   return policy;
 }
 export const isRouteRevision = value => typeof value === 'string' && /^(?:0|[1-9][0-9]{0,19})$/.test(value) && BigInt(value) <= 18446744073709551615n;
@@ -27,7 +27,7 @@ function routeEntry(value, slots) {
   return { host: value.host, state: value.state, slot: value.slot, submission: value.submission, digest: value.digest };
 }
 export function decodeRouteRecord(text, inputPolicy) {
-  const policy = installedPolicy(inputPolicy);
+  const policy = validateRoutePolicy(inputPolicy);
   if (typeof text !== 'string' || text.length > maxRouteRecordBytes || encoder.encode(text).byteLength > maxRouteRecordBytes) return invalid();
   let value;
   try { value = JSON.parse(text); } catch { return invalid(); }
