@@ -197,6 +197,40 @@ they require separately authorized image assembly and qualification of a new fam
 They must not alter the current catalog pins or be presented as host-only changes.
 Host-side work can continue while that build constraint remains in force.
 
+### Next runtime release
+
+The next runtime release should remove installation and operating barriers before
+adding another binding family. These requirements remain open:
+
+- **Build from declared inputs.** Record the native source revision, patches,
+  dependency locks, toolchain and base-image inputs, and the resulting native,
+  supervisor and program fingerprints. Exercise the recipe on a clean build host
+  without an earlier private seed image or undeclared cache. A new build receives
+  its own runtime-family identity and qualification; it need not reproduce the
+  current cached binary's digest. Maintainers own the recipe and patch upkeep.
+- **Install independently.** Follow the public installation procedure on a
+  separate supported Docker engine using the distributed release and declared
+  prerequisites. Deploy, approve, update, restart and recover an application while
+  checking its saved records and pending-code isolation. Record assistance and
+  failures. This tests distribution and operation separately from building source.
+- **Serve through controller loss.** Define the route authority, staleness bound
+  and pause acknowledgment before introducing a gateway cache or another routing
+  mechanism. Test controller loss alongside approval, migration, operator pause,
+  retirement and restart. A warmed route must not bypass a required pause or serve
+  another app's data; retain unknown outcomes and measure recovery. Gateway code is
+  part of the pinned runtime program, so this change needs a new family too.
+- **Inspect live applications.** Define an app-scoped diagnostic interface and
+  its disclosure policy before exposing runtime logs. Test two applications,
+  private configuration, unavailable replicas, and failure followed by correction.
+  Filtering mixed stdout by an app name or replacing known secret strings alone
+  does not establish isolation or safe disclosure.
+
+Cached-image transfer remains useful without a source rebuild, and existing local
+qualification remains evidence for its recorded artifact. Neither closes the
+separate-machine or clean-build requirements. Keeping the current routing behavior
+preserves its refusal during controller loss but also preserves the measured
+application outage. Broader serving availability remains an explicit product gap.
+
 Existing shared installations with the development password were already outside
 the shared guide's requirement to choose a private password before first use.
 Refusing that configuration is intentional hardening. It does not claim a credential

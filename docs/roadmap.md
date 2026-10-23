@@ -57,6 +57,9 @@ these current gaps:
 The contract supplies acceptance conditions for each increment. These are product
 priorities, not newly qualified capabilities. Exact-artifact approval and
 the existing recovery boundaries remain in force.
+Its [next runtime release requirements](operator-readiness.md#next-runtime-release)
+separate clean builds, installation on another engine, controller-loss serving and
+live application diagnosis. Host CLI improvements do not close those release gaps.
 
 ## Milestones and acceptance gates
 
