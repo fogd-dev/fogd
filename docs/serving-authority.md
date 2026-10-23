@@ -377,6 +377,52 @@ check authorization, CSRF, error disclosure and recovery/lookup refusal. These s
 tests do not close mount inventory, freshness authorization, gateway launch, stopped
 restore or native qualification gates.
 
+The [host preflight client](../packages/cli/src/runtime/route-preflight.mjs) now
+generates its own fresh challenge, obtains CSRF through the authenticated admin
+channel, and checks the returned record against an independently selected durable
+profile. It checks the canonical record digest and exact active-host list. Both
+HTTP requests and their bodies share a 30-second deadline; actual bytes are bounded
+and UTF-8 is decoded strictly. Redirects, stale challenges, recovery-only service,
+private errors and foreign authority cannot become an accepted observation.
+The [client tests](../packages/cli/test/runtime-route-preflight.test.mjs) cover
+those refusals; an [integration test](../packages/cli/test/runtime-route-preflight-controller.test.mjs)
+exercises the actual enrolled controller service, authentication and CSRF. The
+empty installation in that integration test proves no native application availability.
+
+## Durable runtime profile and sealed layout candidate
+
+The [runtime profile](../packages/platform/src/runtime-policy.mjs) uses schema 3
+with exactly `routing: "durable"` and the dedicated `main-durable.mjs` controller
+entrypoint. Schema 2 retains its lookup-family meaning. The
+[catalog codec](../packages/cli/src/runtime/catalog.mjs) pairs that new profile
+with a schema-2 durable-capable catalog entry; a legacy entry cannot authorize the
+new execution mode, even if the image fields otherwise match. No such entry is
+shipped yet. Storage/fleet installation identity retains the same hashing rules;
+execution-mode compatibility is checked separately against the complete profile.
+
+The [sealed layout builder](../packages/cli/src/runtime/durable-config.mjs) adds
+separate owned `route-authority` and `gateway-policy` volumes. Only the controller
+writes authority; the gateway mounts both additions read-only with image seeding
+disabled. Application replicas mount neither. The gateway uses `serve-durable.mjs`,
+keeps only transport/TLS environment fields, and joins only the two fleet networks.
+It receives no controller binding, gateway token, storage credentials or admin
+credentials. Retained configuration must match the reconstructed sealed layout
+exactly; re-entry refuses drift rather than repairing it.
+
+The [controller composition](../packages/platform/src/durable-startup.mjs) requires
+that independently installed durable profile and fixes authority at
+`/var/lib/fogd-routes/routes.json`. Missing or legacy profiles refuse that entrypoint;
+ordinary controller startup refuses a durable profile without explicit durable
+routing. Signed native identity proofs retain their existing version-2 protocol.
+
+These are source integration steps, not an admitted installation path. The
+[generic selected-runtime start](../packages/cli/src/runtime/start-installation.mjs)
+refuses a durable profile, family or volume layout before running its all-services
+Compose command. The host still needs ingress-last coordination, actual inventory
+and writer checks, policy-volume initialization and stopped restore integration.
+The existing archive layout intentionally does not accept the new volumes. A new
+image and its native acceptance evidence remain required before catalog admission.
+
 ## One-use route enrollment candidate
 
 The [enrollment primitive](../packages/platform/src/route-enrollment.mjs) maintains

@@ -117,6 +117,12 @@ test('explicit routing without an independent installed policy refuses before co
   await assert.rejects(startController(undefined, { ...legacyPolicy, routeAuthority: { path: join(dir, 'authority/routes.json') } }), { code: 'RUNTIME_POLICY_REFUSED' });
   await assert.rejects(access(join(dir, 'controller')), { code: 'ENOENT' });
 });
+test('ordinary controller startup cannot downgrade an installed durable profile to lookup routing', async t => {
+  const dir = await environment(t); Object.assign(process.env, runtimeEnvironment());
+  const profile = { ...runtimePolicy(), schema: 3, routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] };
+  await assert.rejects(startController(undefined, { readPolicy: async () => profile }), { code: 'RUNTIME_POLICY_REFUSED' });
+  await assert.rejects(access(join(dir, 'controller')), { code: 'ENOENT' });
+});
 test('top-level durable startup refuses unenrolled stores without writing or listening', async t => {
   const dir = await environment(t); Object.assign(process.env, runtimeEnvironment());
   const privateDir = join(dir, 'controller'), authority = join(dir, 'authority');

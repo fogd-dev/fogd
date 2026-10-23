@@ -53,6 +53,14 @@ test('production adapter verifies real signed challenges, CLI bytes and storage 
   assert.equal(f.calls.filter(value => value === '/.well-known/celld/health').length, 2);
   assert.equal(f.calls.filter(value => value === 'ListObjectsV2Command').length, 4);
 });
+test('durable profile verifies the same signed native identity protocol before observing active routes', async t => {
+  const f = await fixture(t);
+  Object.assign(f.profile, { schema: 3, routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] });
+  await backendRouteVerifier(f.controller, f.profile)('alpha', f.selected);
+  assert.equal(f.calls.filter(value => value === '/runtime/identity').length, 4);
+  assert.equal(f.calls.filter(value => value === '/state').length, 4);
+  assert.equal(f.calls.filter(value => value === '/.well-known/celld/health').length, 2);
+});
 test('changed CLI bytes refuse before reading application state or health', async t => {
   const f = await fixture(t), verify = backendRouteVerifier(f.controller, f.profile); await writeFile(f.executable, 'changed bytes');
   await assert.rejects(verify('alpha', f.selected), { code: 'ROUTE_RUNTIME_UNCONFIRMED' });

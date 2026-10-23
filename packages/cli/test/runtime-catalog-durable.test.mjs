@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { validateRuntimeFamily, authorizePolicyEntry, runtimeFamilies } from '../src/runtime/catalog.mjs';
+
+const legacyEntry = () => ({ schema: 1, id: 'celld-cron-r1', admission: 'candidate', os: 'linux', architecture: 'arm64',
+  image: 'sha256:' + 'a'.repeat(64), storageImage: 'sha256:' + 'b'.repeat(64), parentImage: 'sha256:' + 'e'.repeat(64),
+  binarySha256: 'c'.repeat(64), supervisorSha256: 'd'.repeat(64),
+  sourceFiles: { 'packages/platform/package.json': 'f'.repeat(64), 'packages/runtime/package.json': '1'.repeat(64) } });
+const durableEntry = () => ({ ...legacyEntry(), schema: 2, routing: 'durable' });
+const legacyPolicy = () => ({ schema: 2, family: 'celld-cron-r1', admission: 'candidate', image: 'sha256:' + 'a'.repeat(64),
+  storageImage: 'sha256:' + 'b'.repeat(64), binarySha256: 'c'.repeat(64), supervisorSha256: 'd'.repeat(64),
+  controllerArgs: ['packages/platform/src/main.mjs'], bucket: 'fogd', storage: { endpoint: 'http://minio:9000', region: 'us-east-1' },
+  fleets: [
+    { id: 'slot-1', prefix: 'slots/slot-1', nodes: [{ host: 'slot-1-a', id: 'slot-1-a' }, { host: 'slot-1-b', id: 'slot-1-b' }] },
+    { id: 'slot-2', prefix: 'slots/slot-2', nodes: [{ host: 'slot-2-a', id: 'slot-2-a' }, { host: 'slot-2-b', id: 'slot-2-b' }] },
+  ] });
+const durablePolicy = () => ({ ...legacyPolicy(), schema: 3, routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] });
+
+test('shipped catalog still loads and both entry shapes validate', () => {
+  assert.ok(runtimeFamilies().length > 0);
+  assert.deepEqual(validateRuntimeFamily(legacyEntry()), legacyEntry());
+  assert.deepEqual(validateRuntimeFamily(durableEntry()), durableEntry());
+});
+
+for (const [name, make] of [
+  ['legacy entry with routing', () => ({ ...legacyEntry(), routing: 'durable' })],
+  ['durable entry without routing', () => { const e = durableEntry(); delete e.routing; return e; }],
+  ['durable entry with other routing', () => ({ ...durableEntry(), routing: 'legacy' })],
+  ['durable entry with foreign field', () => ({ ...durableEntry(), extra: true })],
+  ['durable entry missing source files', () => { const e = durableEntry(); delete e.sourceFiles; return e; }],
+  ['string schema', () => ({ ...legacyEntry(), schema: '1' })],
+  ['schema 3 entry', () => ({ ...durableEntry(), schema: 3 })],
+]) test(`catalog ${name} refuses`, () => {
+  assert.throws(() => validateRuntimeFamily(make()), /Invalid shipped runtime family/);
+});
+
+test('profile mode binds to matching catalog capability', () => {
+  assert.deepEqual(authorizePolicyEntry(legacyPolicy(), legacyEntry()), legacyEntry());
+  assert.deepEqual(authorizePolicyEntry(durablePolicy(), durableEntry()), durableEntry());
+});
+
+test('cross-mode and mismatched authorization refuses', () => {
+  const differs = /differs from the shipped catalog/;
+  assert.throws(() => authorizePolicyEntry(durablePolicy(), legacyEntry()), differs);
+  assert.throws(() => authorizePolicyEntry(legacyPolicy(), durableEntry()), differs);
+  assert.throws(() => authorizePolicyEntry(durablePolicy(), { ...durableEntry(), id: 'other-family' }), differs);
+  assert.throws(() => authorizePolicyEntry(durablePolicy(), { ...durableEntry(), image: 'sha256:' + '9'.repeat(64) }), differs);
+  assert.throws(() => authorizePolicyEntry({ ...durablePolicy(), routing: 'legacy' }, durableEntry()), { code: 'RUNTIME_POLICY_REFUSED' });
+  assert.throws(() => authorizePolicyEntry(durablePolicy(), { ...durableEntry(), routing: 'legacy' }), /Invalid shipped runtime family/);
+});

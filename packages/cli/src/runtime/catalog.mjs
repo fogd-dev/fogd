@@ -9,8 +9,15 @@ const fields = ['schema', 'id', 'admission', 'os', 'architecture', 'image', 'sto
 const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const image = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 
+// Entry schema 2 qualifies an image for durable routing; schema 1 keeps legacy semantics.
+const entryFields = { 1: fields, 2: [...fields, 'routing'] };
+// Installed policy schema -> catalog entry schema carrying that execution mode.
+const policyEntrySchema = { 2: 1, 3: 2 };
+
 export function validateRuntimeFamily(input) {
-  if (!input || !isDeepStrictEqual(Object.keys(input).sort(), [...fields].sort()) || input.schema !== 1 ||
+  const expected = [1, 2].includes(input?.schema) ? entryFields[input.schema] : null;
+  if (!expected || !isDeepStrictEqual(Object.keys(input).sort(), [...expected].sort()) ||
+    (input.schema === 2 && input.routing !== 'durable') ||
     !/^[a-z][a-z0-9-]{1,63}$/.test(input.id || '') || !['candidate', 'qualified'].includes(input.admission) ||
     input.os !== 'linux' || input.architecture !== 'arm64' || !['image', 'storageImage', 'parentImage'].every(key => image(input[key])) ||
     !digest(input.binarySha256) || !digest(input.supervisorSha256)) throw new Error('Invalid shipped runtime family');
@@ -47,7 +54,12 @@ export function selectFamily(entries, name, intent = 'new') {
 }
 export function authorizeInstalledPolicy(input) {
   const policy = validateRuntimePolicy(input);
-  const entry = runtimeFamily(policy.family, 'enrolled');
+  return authorizePolicyEntry(policy, runtimeFamily(policy.family, 'enrolled'));
+}
+// Pure binding of a validated installed policy to one catalog entry, including execution mode.
+export function authorizePolicyEntry(input, candidate) {
+  const policy = validateRuntimePolicy(input), entry = validateRuntimeFamily(candidate);
+  if (policy.family !== entry.id || policyEntrySchema[policy.schema] !== entry.schema) throw new Error('Installed runtime policy differs from the shipped catalog; keep the installation stopped');
   for (const key of ['image', 'storageImage', 'binarySha256', 'supervisorSha256']) {
     if (policy[key] !== entry[key]) throw new Error('Installed runtime policy differs from the shipped catalog; keep the installation stopped');
   }

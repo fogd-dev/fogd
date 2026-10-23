@@ -4,6 +4,7 @@ import { storageOrigin } from '@fogd/platform/runtime-identity-proof';
 import { fleetLayout, runtimePolicyVolume, hasRuntimePolicy } from '../recovery/layout.mjs';
 import { validateTopology } from '../recovery/bundle.mjs';
 import { sealRuntimeConfig } from './cron-preboot.mjs';
+import { durableRuntimeConfig, durableLegacyBase, isDurableConfig } from './durable-config.mjs';
 
 export function freshRuntimePlan(input, entry, networks, generation = randomUUID()) {
   const config = structuredClone(input); validateTopology(config);
@@ -20,21 +21,47 @@ export function freshRuntimePlan(input, entry, networks, generation = randomUUID
 
 // Construction validates data; callers still authorize the family and source
 // identity independently before installing this policy.
-export function runtimePolicyForConfig(config, entry, networks) {
+export function runtimePolicyForConfig(input, entry, networks) {
+  const durable = durableEntry(entry);
+  if (isDurableConfig(input) && !durable) throw new Error('Durable launch configuration requires a durable-capable runtime family');
+  const config = durable ? durableLegacyBase(input) : input;
   validateTopology(config);
   const env = config.services.controller.environment;
-  return validateRuntimePolicy({ schema: 2, family: entry.id, admission: entry.admission,
+  return validateRuntimePolicy({ schema: durable ? 3 : 2, ...(durable ? { routing: 'durable' } : {}), family: entry.id, admission: entry.admission,
     image: entry.image, storageImage: entry.storageImage, binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256,
-    controllerArgs: ['packages/platform/src/main.mjs'], bucket: env.FOGD_BUCKET,
+    controllerArgs: [durable ? 'packages/platform/src/main-durable.mjs' : 'packages/platform/src/main.mjs'], bucket: env.FOGD_BUCKET,
     storage: { endpoint: storageOrigin(env.S3_ENDPOINT), region: env.AWS_REGION },
     fleets: fleetLayout(config).map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(host => ({ host, id: config.services[host].environment.CELLD_NODE })) })),
     ...(networks ? { networks } : {}),
   }, env);
 }
 
+// Only a catalog entry schema 2 qualifies durable routing; any other routing
+// marker is refused rather than read as legacy.
+function durableEntry(entry) {
+  if (entry?.routing === undefined) return false;
+  if (entry.schema !== 2 || entry.routing !== 'durable') throw new Error('Unsupported runtime family routing');
+  return true;
+}
+
 export function selectedRuntimeConfig(input, entry, policy) {
-  const config = structuredClone(input); validateTopology(config);
+  if (durableEntry(entry) !== (policy?.schema === 3)) throw new Error('Runtime family routing differs from installation policy');
+  if (policy.schema !== 3) return sealRuntimeConfig(boundRuntimeConfig(input, entry, policy), policy);
+  // A sealed durable config re-enters without binding so drift is refused, not repaired.
+  if (isDurableConfig(input)) {
+    assertFamily(entry, policy);
+    return durableRuntimeConfig(input, policy);
+  }
+  return durableRuntimeConfig(boundRuntimeConfig(input, entry, policy), policy);
+}
+
+function assertFamily(entry, policy) {
   if (policy.family !== entry.id || ['image', 'storageImage', 'binarySha256', 'supervisorSha256'].some(key => policy[key] !== entry[key])) throw new Error('Runtime family differs from installation policy');
+}
+
+function boundRuntimeConfig(input, entry, policy) {
+  const config = structuredClone(input); validateTopology(config);
+  assertFamily(entry, policy);
   if (new Set(Object.values(config.volumes).map(volume => volume.name)).size !== Object.keys(config.volumes).length) throw new Error('Selected runtime requires separate installation data volumes');
   bindImages(config, entry);
   bindNativeDefaults(config);
@@ -47,7 +74,7 @@ export function selectedRuntimeConfig(input, entry, policy) {
   if (policy.networks) for (const [name, network] of Object.entries(config.networks)) {
     if (!network.ipam || !Object.keys(network.ipam).length) network.ipam = { config: [{ subnet: policy.networks[name] }] };
   }
-  return sealRuntimeConfig(config, policy);
+  return config;
 }
 
 function bindNativeIdentities(config, policy) {

@@ -42,6 +42,7 @@ export async function startController(backend, { readPolicy = installedRuntimePo
   const credentials = { user: required('FOGD_ADMIN_USER'), password: required('FOGD_ADMIN_PASSWORD'), deploy: process.env.FOGD_DEPLOY_TOKEN || null, gateway: required('FOGD_GATEWAY_TOKEN') };
   const options = controllerOptions(backend);
   const policy = await readPolicy(process.env);
+  if (policy?.schema === 3 && routeAuthority === null) throw new RuntimePolicyError();
   options.backend = selectedBackend(options.backend, policy, process.env);
   options.cronApps = policy ? true : cronApps;
   let controller;

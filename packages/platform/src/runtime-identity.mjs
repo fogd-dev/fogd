@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { verifyIdentityProof, storageOrigin } from './runtime-identity-proof.mjs';
+import { validateRuntimePolicy } from './runtime-policy.mjs';
 
 const digest = text => createHash('sha256').update(text).digest('hex');
 const sha256 = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
@@ -49,9 +50,10 @@ export class RuntimeIdentity {
 }
 
 function expectedFleet(profile, slot) {
-  if (!profile || profile.schema !== 2 || !sha256(profile.binarySha256) ||
+  if (!profile || ![2, 3].includes(profile.schema) || !sha256(profile.binarySha256) ||
     typeof profile.bucket !== 'string' || !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(profile.bucket) ||
     !Array.isArray(profile.fleets)) throw new Error('Invalid runtime identity profile');
+  if (profile.schema === 3) validateRuntimePolicy(profile);
   assertStorage(profile.storage);
   const matches = profile.fleets.filter(fleet => fleet?.id === slot?.id);
   if (matches.length !== 1) throw new Error('Fleet identity is not declared');

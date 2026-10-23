@@ -6,6 +6,9 @@ import { isIP } from 'node:net';
 const sha256 = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const imageId = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 const rootKeys = ['schema', 'family', 'admission', 'image', 'storageImage', 'binarySha256', 'supervisorSha256', 'controllerArgs', 'bucket', 'storage', 'fleets'];
+// Each schema names exactly one controller execution mode; schema 3 is durable routing.
+const modes = { 2: { extra: [], controllerArgs: ['packages/platform/src/main.mjs'] },
+  3: { extra: ['routing'], routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] } };
 export const RUNTIME_POLICY_MAX_BYTES = 65536;
 
 export class RuntimePolicyError extends Error {
@@ -50,11 +53,13 @@ function keys(value, expected) {
     !isDeepStrictEqual(Object.keys(value).sort(), [...expected].sort())) throw new Error('Invalid policy fields');
 }
 function assertHeader(input) {
-  keys(input, [...rootKeys, ...(input && Object.hasOwn(input, 'networks') ? ['networks'] : [])]);
-  if (input.schema !== 2 || typeof input.family !== 'string' || !/^[a-z][a-z0-9-]{1,63}$/.test(input.family) ||
+  const mode = [2, 3].includes(input?.schema) ? modes[input.schema] : null;
+  if (!mode) throw new Error('Unknown runtime policy schema');
+  keys(input, [...rootKeys, ...mode.extra, ...(Object.hasOwn(input, 'networks') ? ['networks'] : [])]);
+  if ((mode.routing && input.routing !== mode.routing) || typeof input.family !== 'string' || !/^[a-z][a-z0-9-]{1,63}$/.test(input.family) ||
     !['candidate', 'qualified'].includes(input.admission) || !imageId(input.image) || !imageId(input.storageImage) ||
     !sha256(input.binarySha256) || !sha256(input.supervisorSha256) ||
-    !isDeepStrictEqual(input.controllerArgs, ['packages/platform/src/main.mjs'])) throw new Error('Invalid runtime declaration');
+    !isDeepStrictEqual(input.controllerArgs, mode.controllerArgs)) throw new Error('Invalid runtime declaration');
 }
 function assertNetworks(networks) {
   keys(networks, ['control', 'fleet-1', 'fleet-2']);
