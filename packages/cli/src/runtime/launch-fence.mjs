@@ -4,10 +4,12 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { bindHostDirectory, hostDirectoryMessage, checkHostDirectory, syncHostDirectory } from './host-directory.mjs';
 
-// A launch fence is local CLI exclusion only: it refuses concurrent or crashed launches
+// A launch fence is local CLI exclusion only: it refuses concurrent or crashed launches and stops
 // until an operator inspects the installation. It is not proof against privileged writers.
+// Launch and stop share one marker so each excludes the other; release is allowed only in the first or last phase.
 const MARKER = 'launch.pending.json', SIZE = 512;
-const PHASES = ['checking', 'starting', 'preflight', 'ingress', 'complete'];
+const LAUNCH = { noun: 'launch', phases: ['checking', 'starting', 'preflight', 'ingress', 'complete'] };
+const STOP = { noun: 'stop', phases: ['checking', 'stopping', 'complete'], fields: { operation: 'stop' } };
 const NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/;
 
 export class LaunchFenceError extends Error {
@@ -26,17 +28,20 @@ const encode = record => {
 const owned = (info, identity) => info.isFile() && info.dev === identity.dev && info.ino === identity.ino &&
   info.nlink === 1 && (info.mode & 0o7777) === 0o600 && info.uid === process.geteuid() && info.size === SIZE;
 
-export async function acquireLaunchFence(directory, { project, installation } = {}) {
+export const acquireLaunchFence = (directory, identity) => acquire(directory, identity, LAUNCH);
+export const acquireStopFence = (directory, identity) => acquire(directory, identity, STOP);
+
+async function acquire(directory, { project, installation } = {}, { noun, phases, fields }) {
   if (!NAME.test(project ?? '') || !NAME.test(installation ?? '')) fail('FENCE_IDENTITY', 'Launch fence requires valid project and installation names');
   const bound = await bindDirectory(directory), path = join(bound.canonical, MARKER);
-  const record = { schema: 1, project, installation, id: randomUUID(), phase: 'checking' };
+  const record = { schema: 1, ...fields, project, installation, id: randomUUID(), phase: phases[0] };
   let handle;
   try { handle = await open(path, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600); }
   catch (error) {
-    if (error.code === 'EEXIST') fail('FENCE_EXISTS', 'Another launch is pending or an earlier launch did not finish; inspect the installation before removing its launch marker');
+    if (error.code === 'EEXIST') fail('FENCE_EXISTS', 'Another launch or stop is pending or an earlier one did not finish; inspect the installation before removing its launch marker');
     fail('FENCE_DIRECTORY', 'Cannot create the launch fence');
   }
-  // From here on the marker exists; any failure leaves it in place to keep refusing launches.
+  // From here on the marker exists; any failure leaves it in place to keep refusing launches and stops.
   let identity;
   try {
     await handle.chmod(0o600); await handle.write(encode(record), 0, SIZE, 0); await handle.sync();
@@ -67,7 +72,7 @@ export async function acquireLaunchFence(directory, { project, installation } = 
 
   return {
     record: guarded(async phase => {
-      if (PHASES.indexOf(phase) !== PHASES.indexOf(record.phase) + 1) fail('FENCE_PHASE', 'Launch phases must advance one checkpoint at a time');
+      if (phases.indexOf(phase) !== phases.indexOf(record.phase) + 1) fail('FENCE_PHASE', `The ${noun} phases must advance one checkpoint at a time`);
       const file = await verified(constants.O_RDWR);
       // A single fixed-size write on the verified inode, never a path rename,
       // so an external replacement is never overwritten; a torn write still leaves a refusing marker.
@@ -77,7 +82,7 @@ export async function acquireLaunchFence(directory, { project, installation } = 
       await syncDirectory(bound); await checkDirectory(bound);
     }),
     release: guarded(async () => {
-      if (record.phase !== 'checking' && record.phase !== 'complete') fail('FENCE_ACTIVE', 'A started launch cannot release its fence; inspect the installation manually');
+      if (record.phase !== phases[0] && record.phase !== phases.at(-1)) fail('FENCE_ACTIVE', `A started ${noun} cannot release its fence; inspect the installation manually`);
       await (await verified(constants.O_RDONLY)).close();
       // Move aside instead of unlinking by path so a racing replacement is preserved, never deleted.
       const aside = join(bound.canonical, `.${MARKER}.${randomUUID()}.released`);

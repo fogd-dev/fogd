@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { acquireLaunchFence, LaunchFenceError } from '../src/runtime/launch-fence.mjs';
+import { acquireLaunchFence, acquireStopFence, LaunchFenceError } from '../src/runtime/launch-fence.mjs';
 
 const exec = promisify(execFile), module = new URL('../src/runtime/launch-fence.mjs', import.meta.url).href;
 const identity = { project: 'fogd-demo', installation: 'demo' };
@@ -153,4 +153,77 @@ test('the directory must be an existing private real directory and stays bound',
   const removed = await acquireLaunchFence(join(root, 'moved'), identity).catch(error => error.code);
   assert.equal(removed, 'FENCE_EXISTS');
   await assert.rejects(stat(directory), { code: 'ENOENT' });
+});
+
+test('launch and stop exclude each other without disturbing the holder', async t => {
+  const { directory, marker } = await fixture(t);
+  for (const [hold, compete] of [[acquireLaunchFence, acquireStopFence], [acquireStopFence, acquireLaunchFence]]) {
+    const held = await hold(directory, identity), before = await readFile(marker);
+    await refuses(compete(directory, identity), 'FENCE_EXISTS');
+    assert.deepEqual(await readFile(marker), before);
+    await held.release();
+    assert.deepEqual(await readdir(directory), []);
+  }
+
+  const script = `const { acquireLaunchFence, acquireStopFence } = await import(${JSON.stringify(module)});
+    const acquire = process.argv[2] === 'stop' ? acquireStopFence : acquireLaunchFence;
+    try { await acquire(process.argv[1], ${JSON.stringify(identity)}); console.log('won'); } catch (error) { console.log(error.code); }`;
+  const outputs = await Promise.all(Array.from({ length: 8 }, (_, index) => exec(process.execPath, ['--input-type=module', '-e', script, directory, index % 2 ? 'stop' : 'launch'])));
+  const codes = outputs.map(output => output.stdout.trim());
+  assert.equal(codes.filter(code => code === 'won').length, 1);
+  assert.equal(codes.filter(code => code === 'FENCE_EXISTS').length, 7);
+});
+
+test('stop marks its operation, advances checking, stopping, complete, and releases only at the ends', async t => {
+  const { directory, marker } = await fixture(t);
+  const idle = await acquireStopFence(directory, identity), { id } = await read(marker);
+  assert.deepEqual(await read(marker), { schema: 1, operation: 'stop', ...identity, id, phase: 'checking' });
+  await idle.release();
+  assert.deepEqual(await readdir(directory), []);
+
+  const fence = await acquireStopFence(directory, identity), next = (await read(marker)).id;
+  for (const phase of ['stopping', 'complete']) {
+    await fence.record(phase); assert.deepEqual(await read(marker), { schema: 1, operation: 'stop', ...identity, id: next, phase });
+  }
+  await fence.release();
+  assert.deepEqual(await readdir(directory), []);
+
+  for (const phase of ['starting', 'complete', 'checking']) {
+    const wrong = await acquireStopFence(directory, identity);
+    await refuses(wrong.record(phase), 'FENCE_PHASE');
+    assert.equal((await read(marker)).phase, 'checking');
+    await rm(marker);
+  }
+});
+
+test('a stop that began stopping keeps its marker through release attempts and crashes', async t => {
+  const { directory, marker } = await fixture(t);
+  const fence = await acquireStopFence(directory, identity);
+  await fence.record('stopping');
+  await refuses(fence.release(), 'FENCE_ACTIVE');
+  await refuses(fence.record('complete'), 'FENCE_LATCHED');
+  assert.equal((await read(marker)).phase, 'stopping');
+  await refuses(acquireLaunchFence(directory, identity), 'FENCE_EXISTS');
+  await refuses(acquireStopFence(directory, identity), 'FENCE_EXISTS');
+  await rm(marker);
+
+  const script = `const { acquireStopFence } = await import(${JSON.stringify(module)});
+    const fence = await acquireStopFence(process.argv[1], ${JSON.stringify(identity)});
+    await fence.record('stopping'); process.kill(process.pid, 'SIGKILL');`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', script, directory]), { signal: 'SIGKILL' });
+  assert.deepEqual({ ...(await read(marker)), id: undefined }, { schema: 1, operation: 'stop', ...identity, id: undefined, phase: 'stopping' });
+  await refuses(acquireLaunchFence(directory, identity), 'FENCE_EXISTS');
+});
+
+test('a stop never releases or rewrites a marker that replaced its own', async t => {
+  const { root, directory, marker } = await fixture(t);
+  const foreign = JSON.stringify({ schema: 1, ...identity, id: 'foreign', phase: 'starting' });
+  for (const reached of [[], ['stopping'], ['stopping', 'complete']]) {
+    const fence = await acquireStopFence(directory, identity);
+    for (const phase of reached) await fence.record(phase);
+    await writeFile(join(root, 'foreign'), foreign, { mode: 0o600 }); await rename(join(root, 'foreign'), marker);
+    await refuses(reached.length === 1 ? fence.record('complete') : fence.release(), 'FENCE_UNCERTAIN');
+    assert.equal(await readFile(marker, 'utf8'), foreign);
+    await rm(marker);
+  }
 });

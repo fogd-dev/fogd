@@ -517,6 +517,35 @@ termination. These establish source ordering and refusal behavior. They run no
 Docker or application runtime and do not establish daemon-version compatibility,
 physical mount freshness, controller-loss serving, recovery or native acceptance.
 
+## Retained installation shutdown candidate
+
+`fogd stop --installation PROJECT` dispatches a durable host configuration to the
+[shutdown coordinator](../packages/cli/src/runtime/durable-stop.mjs). It matches
+the pinned family against the independent catalog and reconstructs the exact sealed
+plan before reading project containers. It executes no image and does not require
+healthy policy stores, completed enrollment or application credentials. Missing
+services and volumes can be reported without recreating them.
+
+Startup and shutdown share the same exclusive host operation marker. Shutdown
+records `operation: "stop"` and advances through checking, stopping and completion.
+An existing marker refuses either operation. Checking failures can release their
+own marker; a failed stop retains it. There is no automatic marker reclamation.
+
+Shutdown targets inspected container IDs, with gateway first. It verifies the same
+gateway ID is stopped before stopping controller, replicas and storage. A changed
+project inventory, surviving process, running volume writer or disappearing volume
+prevents a successful report. Configuration, enrollment records, containers,
+networks and volumes are retained. Background pause controls are unchanged; this
+command creates no snapshot and proves no storage-health or application-drain
+guarantee.
+
+[Source tests](../packages/cli/test/runtime-durable-stop.test.mjs) cover operation
+exclusion, partial installations, uncertain commands, retained records and changed
+inventory. The [public command test](../packages/cli/test/installation-stop.test.mjs)
+uses an isolated synthetic catalog and fake Docker executable. It checks dispatch
+without changing shipped admission. Actual daemon shutdown and native durability
+still need qualification.
+
 ## One-use route enrollment candidate
 
 The [enrollment primitive](../packages/platform/src/route-enrollment.mjs) maintains
@@ -533,8 +562,8 @@ These filesystem checks do not prove that mounts are newly allocated or that wri
 are stopped. Only a trusted fresh-enrollment coordinator may issue a grant, after
 checking actual sealed mounts, images, storage generation and writer exclusion. Its
 binding must identify that independently verified inventory. The primitive validates
-the supplied binding as data; it cannot establish those external facts. That host
-coordinator and its native qualification remain open. Qualification must establish
+the supplied binding as data; it cannot establish those external facts. The fresh
+coordinator supplies these source checks; native qualification remains open. It must establish
 that the initializer and controller use the same effective UID and stable canonical
 paths, device numbers and inodes across their actual mounts and supported restarts.
 It must hold writer exclusion
@@ -657,8 +686,9 @@ boundaries and actual public withholding through controller pause/resume. The
 signed challenge proofs, executable hashing and storage lease checks with local
 fixtures and substituted network/storage reads. They establish source behavior,
 not native qualification. The explicit startup composition below uses this adapter;
-sealed launch inventory and pre-ingress recovery checks remain open. This module
-enables no runtime family.
+the retained startup coordinator supplies source inventory and pre-ingress checks.
+Their actual daemon and native behavior remain unqualified. This module enables no
+runtime family.
 
 ## Gateway candidate implementation
 

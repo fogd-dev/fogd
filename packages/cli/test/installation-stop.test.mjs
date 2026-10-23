@@ -1,27 +1,37 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm, access } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, access, cp, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { freshRuntimePlan } from '../src/runtime/selection-plan.mjs';
 import { runtimeFamilies } from '../src/runtime/catalog.mjs';
 import { composeLiteral } from '../src/recovery/bundle.mjs';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
 
 const exec = promisify(execFile), cli = new URL('../bin/fogd.js', import.meta.url).pathname;
-async function fixture(t) {
+async function fixture(t, { durable = false } = {}) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-stop-')); t.after(() => rm(root, { recursive: true, force: true }));
   const directory = join(root, '.fogd/installations/original'), bin = join(root, 'bin');
   await mkdir(directory, { recursive: true, mode: 0o700 }); await mkdir(bin);
   const { source } = prebootFixture();
   for (const [name, service] of Object.entries(source.services)) service.image = name === 'minio' ? 'fogd-minio:local' : 'fogd-runtime:local';
-  const { config } = freshRuntimePlan(source, runtimeFamilies()[0]);
+  const entry = { ...runtimeFamilies()[0], ...(durable ? { schema: 2, routing: 'durable' } : {}) };
+  const { config } = freshRuntimePlan(source, entry);
+  let command = cli;
+  if (durable) {
+    const copy = join(root, 'cli'); await mkdir(copy);
+    for (const name of ['package.json', 'src', 'bin']) await cp(new URL(`../${name}`, import.meta.url), join(copy, name), { recursive: true });
+    await symlink(fileURLToPath(new URL('../node_modules', import.meta.url)), join(copy, 'node_modules'), 'dir');
+    await writeFile(join(copy, 'src/runtime/catalog.json'), JSON.stringify([entry]));
+    command = join(copy, 'bin/fogd.js');
+  }
   const file = join(directory, 'compose.json'); await writeFile(file, JSON.stringify(composeLiteral(config)), { mode: 0o600 });
-  const containers = Object.keys(config.services).map((service, index) => ({ Id: String(index + 1).padStart(64, 'a'),
-    Config: { Labels: { 'com.docker.compose.project': config.name, 'com.docker.compose.service': service } },
-    State: { Running: service !== 'bucket-init', Restarting: false, Paused: false, ExitCode: 0, OOMKilled: false } }));
+  const containers = Object.keys(config.services).map((service, index) => ({ Id: String(index + 1).padStart(64, 'a'), Image: config.services[service].image,
+    Config: { Labels: { 'com.docker.compose.project': config.name, 'com.docker.compose.service': service, 'com.docker.compose.oneoff': 'False' } },
+    State: { Running: service !== 'bucket-init', Restarting: false, Paused: false, ExitCode: 0, OOMKilled: false, Status: service === 'bucket-init' ? 'exited' : 'running' } }));
   const state = join(root, 'engine.json'), log = join(root, 'calls.jsonl'), driver = join(root, 'driver.mjs');
   await writeFile(state, JSON.stringify({ containers, volumes: Object.values(config.volumes).map(volume => volume.name) }));
   await writeFile(join(bin, 'docker'), '#!/bin/sh\nexec "$FOGD_TEST_NODE" "$FOGD_TEST_DRIVER" "$@"\n', { mode: 0o700 });
@@ -29,15 +39,31 @@ async function fixture(t) {
 if(a[0]==='volume'&&a[1]==='ls')console.log(s.volumes.join('\\n'));
 else if(a[0]==='ps')console.log(a.includes('-aq')?s.containers.map(c=>c.Id).join('\\n'):process.env.FOGD_TEST_FOREIGN_WRITER||'');
 else if(a[0]==='inspect')console.log(JSON.stringify(s.containers.filter(c=>a.includes(c.Id))));
+else if(a[0]==='stop'){if(process.env.FOGD_TEST_STOP_FAILURE)process.exit(91);for(const c of s.containers)if(a.slice(1).includes(c.Id)&&!process.env.FOGD_TEST_IGNORE_STOP){c.State.Running=false;c.State.Restarting=false;c.State.Paused=false;c.State.Status='exited';}writeFileSync(process.env.FOGD_TEST_STATE,JSON.stringify(s));}
 else if(a[0]==='compose'&&a.includes('stop')){if(process.env.FOGD_TEST_STOP_FAILURE)process.exit(91);for(const c of s.containers)if(a.slice(a.indexOf('stop')+1).includes(c.Config.Labels['com.docker.compose.service'])&&!process.env.FOGD_TEST_IGNORE_STOP){if(c.State.Running)c.State.ExitCode=c.Config.Labels['com.docker.compose.service']==='workerd'?1:0;c.State.Running=false;c.State.Restarting=false;c.State.Paused=false;}writeFileSync(process.env.FOGD_TEST_STATE,JSON.stringify(s));}
 else process.exit(99);`);
   const env = { PATH: bin, HOME: root, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'must-not-be-created.env'),
     FOGD_COMPOSE_FILE: '/private/wrong-template', COMPOSE_PROJECT_NAME: 'wrong-project',
     FOGD_TEST_NODE: process.execPath, FOGD_TEST_DRIVER: driver, FOGD_TEST_STATE: state, FOGD_TEST_LOG: log };
   return { root, directory, file, config, state, log, env,
-    run: (args = ['--installation', 'original'], extra = {}) => exec(process.execPath, [cli, 'stop', ...args], { env: { ...env, ...extra }, timeout: 20000 }),
+    run: (args = ['--installation', 'original'], extra = {}) => exec(process.execPath, [command, 'stop', ...args], { env: { ...env, ...extra }, timeout: 20000 }),
     calls: async () => (await readFile(log, 'utf8')).trim().split('\n').map(JSON.parse) };
 }
+test('the public stop command dispatches a durable layout to inspected-ID shutdown without images or credentials', async t => {
+  const f = await fixture(t, { durable: true }), before = await readFile(f.file);
+  await writeFile(join(f.directory, 'enrollment.pending.json'), 'unfinished enrollment');
+  const report = JSON.parse((await f.run()).stdout), calls = await f.calls();
+  assert.equal(report.status, 'stopped'); assert.equal(report.retainedVolumes.length, Object.keys(f.config.volumes).length);
+  const stops = calls.filter(args => args[0] === 'stop'); assert.equal(stops.length, 4);
+  const containers = JSON.parse(await readFile(f.state)).containers;
+  const service = id => containers.find(container => container.Id === id).Config.Labels['com.docker.compose.service'];
+  assert.deepEqual(stops.map(args => args.slice(1).map(service)), [['workerd'], ['controller'], ['slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'], ['minio']]);
+  assert.ok(calls.every(args => ['volume', 'ps', 'inspect', 'stop'].includes(args[0])));
+  assert.deepEqual(await readFile(f.file), before);
+  assert.equal(await readFile(join(f.directory, 'enrollment.pending.json'), 'utf8'), 'unfinished enrollment');
+  await assert.rejects(access(join(f.directory, 'launch.pending.json')), { code: 'ENOENT' });
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
 test('stop selects canonical configuration, preserves volumes and uses ordered Compose stop without building or credentials', async t => {
   const f = await fixture(t), before = await readFile(f.file), engine = JSON.parse(await readFile(f.state));
   const report = JSON.parse((await f.run()).stdout);
