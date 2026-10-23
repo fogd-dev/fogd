@@ -1,10 +1,12 @@
 import { isDeepStrictEqual } from 'node:util';
+import { createHash } from 'node:crypto';
 import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { sealRuntimeConfig } from './cron-preboot.mjs';
 
 export const routeAuthorityVolume = 'route-authority';
 export const gatewayPolicyVolume = 'gateway-policy';
-const roles = [routeAuthorityVolume, gatewayPolicyVolume];
+export const routeEnrollmentVolume = 'route-enrollment';
+const roles = [routeAuthorityVolume, gatewayPolicyVolume, routeEnrollmentVolume];
 const controllerArgs = { legacy: ['packages/platform/src/main.mjs'], durable: ['packages/platform/src/main-durable.mjs'] };
 const gatewayArgs = { legacy: ['packages/runtime/src/serve.mjs'], durable: ['packages/runtime/src/serve-durable.mjs'] };
 const gatewayEnvironment = ['FOGD_PROFILE', 'FOGD_TLS', 'FOGD_PUBLIC_BIND_ADDRESS'];
@@ -14,6 +16,17 @@ const mount = (source, target, readOnly) => ({ type: 'volume', source, target, .
 // Any durable role volume makes this a sealed durable config: it must re-seal
 // to itself exactly. Without one it is a legacy template to convert.
 export const isDurableConfig = config => roles.some(role => Object.hasOwn(config?.volumes || {}, role));
+
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+  return value;
+}
+export function durablePlanSha256(config, profile) {
+  const sealed = durableRuntimeConfig(config, profile);
+  if (!isDeepStrictEqual(config, sealed)) throw new Error('Enrollment requires an exactly sealed durable plan');
+  return createHash('sha256').update(JSON.stringify(canonical({ config: sealed, profile: validateRuntimePolicy(profile) }))).digest('hex');
+}
 
 // The schema 3 profile is the authority; the legacy seal only checks the common
 // backend/storage/native constraints of the reconstructed base.
@@ -68,5 +81,8 @@ function durableFromSealed(sealed, policy) {
   workerd.environment = Object.fromEntries(Object.entries(workerd.environment).filter(([key]) => gatewayEnvironment.includes(key)));
   workerd.networks = Object.fromEntries(Object.entries(workerd.networks).filter(([name]) => gatewayNetworks.includes(name)));
   workerd.volumes = [...workerd.volumes || [], mount(routeAuthorityVolume, '/var/lib/fogd-routes', true), mount(gatewayPolicyVolume, '/var/lib/fogd-gateway', true)];
+  for (const service of Object.values(config.services)) {
+    for (const volume of service.volumes || []) volume.volume = { ...volume.volume, nocopy: true };
+  }
   return config;
 }

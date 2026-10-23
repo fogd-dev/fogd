@@ -7,7 +7,7 @@ import { docker } from '../recovery/docker.mjs';
 import { assertSharedStorageConfiguration } from '../shared-storage.mjs';
 import { checkInstalledTLS } from '../tls.mjs';
 import { authorizeInstalledPolicy, verifyRuntimeFamily } from './catalog.mjs';
-import { durableRuntimeConfig } from './durable-config.mjs';
+import { durableRuntimeConfig, durablePlanSha256 } from './durable-config.mjs';
 import { inspectDurableInstallation } from './durable-inventory.mjs';
 import { readDurableStores } from './durable-stores.mjs';
 import { acquireLaunchFence } from './launch-fence.mjs';
@@ -15,6 +15,7 @@ import { installationDirectory, assertRuntimeReady } from './installation-state.
 import { assertRecoverySourceStopped } from './recovery-source.mjs';
 import { requestRoutingPreflight } from './route-preflight.mjs';
 import { readPolicyVolume } from './policy-volume.mjs';
+import { assertDurableEnrollmentReady } from './enrollment-record.mjs';
 
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const refused = () => Object.assign(new Error('Durable startup is unconfirmed; retain its resources and inspect the launch fence and ingress state'), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
@@ -90,6 +91,8 @@ async function launchSelection(selected, io) {
 async function checkRetained(context, io) {
   const { config, policy, env, entry, transport } = context;
   await io.ready(config.name); await io.recovery(config.name); await io.verify(entry);
+  const directory = io.directory ?? installationDirectory(config.name);
+  if (!await io.enrollmentReady(directory, { project: config.name, installation: runtimePolicyIdentity(policy), planSha256: durablePlanSha256(config, policy) })) throw refused();
   if (transport.tls) await io.tls(env, config);
   const first = checkedSnapshot(await io.inspect(config, policy, { run: io.run }), config); requireStopped(first);
   await matchingPolicy(context, io);
@@ -138,6 +141,7 @@ export async function startDurableInstallation(selected, options = {}) {
   const io = { run: docker, inspect: inspectDurableInstallation, readStores: readDurableStores, observe: requestRoutingPreflight,
     authorize: authorizeInstalledPolicy, verify: verifyRuntimeFamily, acquire: acquireLaunchFence, delay: pause,
     ready: assertRuntimeReady, recovery: assertRecoverySourceStopped, tls: checkInstalledTLS, readPolicy: readPolicyVolume,
+    enrollmentReady: assertDurableEnrollmentReady,
     server: process.env.FOGD_SERVER, ...options };
   const attempt = { fence: null, started: false, complete: false, gateway: null };
   try {

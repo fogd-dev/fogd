@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { durableRuntimeConfig } from '../src/runtime/durable-config.mjs';
+import { durableRuntimeConfig, durablePlanSha256 } from '../src/runtime/durable-config.mjs';
 import { freshRuntimePlan, runtimePolicyForConfig, selectedRuntimeConfig } from '../src/runtime/selection-plan.mjs';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
 
@@ -21,6 +21,7 @@ test('conversion seals the candidate topology and preserves its input', () => {
   assert.deepEqual(f.policy.controllerArgs, ['packages/platform/src/main-durable.mjs']);
   assert.deepEqual(c.volumes['route-authority'], { name: 'original_route-authority' });
   assert.deepEqual(c.volumes['gateway-policy'], { name: 'original_gateway-policy' });
+  assert.deepEqual(c.volumes['route-enrollment'], { name: 'original_route-enrollment' });
   assert.deepEqual(c.services.controller.command, ['packages/platform/src/main-durable.mjs']);
   assert.deepEqual(c.services.controller.volumes.at(-1), routes);
   assert.ok(c.services.controller.volumes.some(m => m.source === 'runtime-policy' && m.read_only));
@@ -34,6 +35,8 @@ test('conversion seals the candidate topology and preserves its input', () => {
     { type: 'volume', source: 'gateway-policy', target: '/var/lib/fogd-gateway', read_only: true, volume: { nocopy: true } }]);
   for (const service of Object.values(c.services)) {
     assert.equal(service.read_only, true); assert.equal(service.pull_policy, 'never'); assert.deepEqual(service.cap_drop, ['ALL']);
+    assert.equal((service.volumes || []).some(mount => mount.source === 'route-enrollment'), false);
+    assert.equal((service.volumes || []).every(mount => mount.volume.nocopy === true), true);
   }
   for (const name of ['slot-1-a', 'minio', 'bucket-init']) assert.ok(!(c.services[name].volumes || []).some(m => ['route-authority', 'gateway-policy'].includes(m.source)));
 });
@@ -48,6 +51,12 @@ test('sealed durable config re-enters idempotently through both entrypoints', ()
   assert.equal(plan.policy.schema, 3);
   assert.deepEqual(selectedRuntimeConfig(plan.config, f.entry, plan.policy), plan.config);
   assert.deepEqual(plan.config.services.workerd.command, ['packages/runtime/src/serve-durable.mjs']);
+});
+test('enrollment plan identity ignores object key order and binds operating configuration', () => {
+  const f = fixture(), expected = durablePlanSha256(f.durable, f.policy);
+  assert.equal(durablePlanSha256({ networks: f.durable.networks, ...f.durable }, { fleets: f.policy.fleets, ...f.policy }), expected);
+  const changed = structuredClone(f.durable); changed.services.controller.environment.FOGD_MAX_PENDING = '23';
+  assert.notEqual(durablePlanSha256(changed, f.policy), expected);
 });
 
 test('gateway keeps only transport fields', () => {

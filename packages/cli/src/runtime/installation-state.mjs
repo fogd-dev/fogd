@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { stackRoot } from '../local.mjs';
 import { composeLiteral, composeResolved, writeJson } from '../recovery/bundle.mjs';
 import { projectName, volumeNames } from '../recovery/docker.mjs';
+import { assertDurableEnrollmentReady } from './enrollment-record.mjs';
 
 export const installationDirectory = project => join(stackRoot, '.fogd', 'installations', projectName(project));
 
@@ -74,8 +75,16 @@ export async function readEnrolledConfiguration(project) {
 
 export async function assertRuntimeReady(project) {
   try { await lstat(join(installationDirectory(project), 'restore.pending.json')); }
-  catch (error) { if (error.code === 'ENOENT') return; throw error; }
+  catch (error) { if (error.code === 'ENOENT') return checkEnrollmentReady(project); throw error; }
   throw new Error('Restoration is incomplete; keep the installation stopped and retain its data');
+}
+async function checkEnrollmentReady(project) {
+  const directory = installationDirectory(project);
+  for (const name of ['enrollment.pending.json', 'enrollment.complete.json']) {
+    try { await lstat(join(directory, name)); }
+    catch (error) { if (error.code === 'ENOENT') continue; throw error; }
+    await assertDurableEnrollmentReady(directory, { project }); return;
+  }
 }
 
 export async function completeRuntimeRestore(project) {

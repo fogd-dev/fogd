@@ -9,6 +9,7 @@ import { requestedRuntime, verifyRuntimeFamily } from './catalog.mjs';
 import { freshRuntimePlan, selectedRuntimeConfig } from './selection-plan.mjs';
 import { installRuntimePolicy } from './install-policy.mjs';
 import { writeRuntimeConfiguration, assertRuntimeReady } from './installation-state.mjs';
+import { enrollDurableInstallation } from './durable-installation.mjs';
 
 // Candidate enrollment is an internal qualification seam. The public command
 // can select only a qualified catalog entry; it cannot supply image/policy data.
@@ -27,8 +28,13 @@ export async function selectedInstallation(config, selection = {}) {
     return selectedResult(sealed, installed);
   }
   if (!requested) return null;
-  await verifyRuntimeFamily(requested);
   const plan = freshRuntimePlan(config, requested, selection.networks);
+  if (plan.policy.schema === 3) {
+    const result = await enrollDurableInstallation({ ...plan, entry: requested });
+    console.log(`Enrolled ${requested.admission} durable runtime ${requested.id}; identity ${runtimePolicyIdentity(plan.policy)}. All services remain stopped.`);
+    return result;
+  }
+  await verifyRuntimeFamily(requested);
   await requireFresh(config.name, plan.config);
   await assertDockerNetworkAvailability(plan.policy.networks);
   const result = await selectedResult(plan.config, { entry: requested, policy: plan.policy }, { reserve: true });

@@ -1,7 +1,8 @@
 import { constants } from 'node:fs';
-import { open, lstat, chmod, rename, rm } from 'node:fs/promises';
+import { open, lstat, chmod, rename, rm, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { writeAtomicFile } from './atomic-file.mjs';
 import { decodeRuntimePolicy, validateRuntimePolicy, runtimePolicyIdentity, RuntimePolicyError, RUNTIME_POLICY_MAX_BYTES } from './runtime-policy.mjs';
 
 export const RUNTIME_POLICY_DIRECTORY = '/var/lib/fogd-runtime';
@@ -29,13 +30,19 @@ export async function readRuntimePolicy(directory, env) {
 
 // The host invokes this only with the dedicated policy volume while stopped.
 // The policy is installation data; the host catalog still authorizes its image.
-export async function writeRuntimePolicy(directory, input) {
+// createOnly never replaces or repairs: it requires an existing empty directory
+// owned by this user and publishes without overwrite. Emptiness is not proof of
+// physical freshness; the caller owns fresh inventory and exclusion.
+export async function writeRuntimePolicy(directory, input, { createOnly = false } = {}) {
   const policy = validateRuntimePolicy(input), text = JSON.stringify(policy) + '\n';
   if (Buffer.byteLength(text) > RUNTIME_POLICY_MAX_BYTES) throw new RuntimePolicyError();
   try {
-    assertDirectory(await lstat(directory));
+    const stat = await lstat(directory);
+    assertDirectory(stat);
+    if (createOnly) await assertFresh(directory, stat);
     await chmod(directory, 0o700);
-    await atomicPolicyFile(directory, text);
+    if (createOnly) await writeAtomicFile(join(directory, filename), text, { createOnly: true, createDirectory: false });
+    else await atomicPolicyFile(directory, text);
     return { family: policy.family, admission: policy.admission, identitySha256: runtimePolicyIdentity(policy) };
   } catch {
     const error = new Error('Could not durably install runtime policy; keep the installation stopped');
@@ -44,6 +51,9 @@ export async function writeRuntimePolicy(directory, input) {
 }
 function assertDirectory(stat) {
   if (!stat.isDirectory() || (stat.mode & 0o022)) throw new RuntimePolicyError();
+}
+async function assertFresh(directory, stat) {
+  if (stat.uid !== process.geteuid() || (await readdir(directory)).length) throw new RuntimePolicyError();
 }
 async function atomicPolicyFile(directory, text) {
   const temporary = join(directory, `${randomUUID()}.tmp`);

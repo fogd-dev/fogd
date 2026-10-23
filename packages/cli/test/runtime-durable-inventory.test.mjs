@@ -26,7 +26,8 @@ function fixture(subnets) {
       HostConfig: { ReadonlyRootfs: true, Privileged: false, CapAdd: null, CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges:true'], Tmpfs: { '/tmp': 'rw,noexec,nosuid,nodev' },
         NetworkMode: config.networks[nets[0]].name, IpcMode: 'private', CgroupnsMode: 'private', PidMode: '', Binds: null,
         RestartPolicy: { Name: service.restart ?? 'no', MaximumRetryCount: 0 },
-        PortBindings: name === 'workerd' ? { '8080/tcp': [{ HostIp: '127.0.0.1', HostPort: '8787' }] } : {} },
+        PortBindings: name === 'workerd' ? { '8080/tcp': [{ HostIp: '127.0.0.1', HostPort: '8787' }] } : {},
+        Mounts: (service.volumes || []).map(m => ({ Type: 'volume', Source: config.volumes[m.source].name, Target: m.target, VolumeOptions: { NoCopy: true } })) },
       Mounts: (service.volumes || []).map(m => ({ Type: 'volume', Name: config.volumes[m.source].name, Source: volumes[m.source].Mountpoint, Destination: m.target, Driver: 'local', RW: !m.read_only })),
       NetworkSettings: { Networks: Object.fromEntries(nets.map(key => [config.networks[key].name, { NetworkID: networks[key].Id, IPAMConfig: null, IPAddress: '' }])) },
       State: { Status: 'exited', Running: false, Restarting: false, Paused: false, ExitCode: 0, StartedAt: '0001-01-01T00:00:00Z' } };
@@ -48,6 +49,11 @@ function docker(f, { reverse = false, calls = [] } = {}) {
 const inspect = (f, run = docker(f)) => inspectDurableInstallation(f.config, f.policy, { run });
 const container = (f, name) => f.containers.find(c => c.Config.Labels['com.docker.compose.service'] === name);
 const foreign = (f, extra) => ({ Id: hex(500, 'a'), Name: '/other', Created: 'x', Image: 'sha256:' + '9'.repeat(64), Config: { Labels: {} }, HostConfig: { NetworkMode: 'bridge' }, Mounts: [], NetworkSettings: { Networks: { bridge: { NetworkID: hex(1, 'b') } } }, State: { Running: false }, ...extra });
+
+test('a data mount that permits image seeding refuses even when its ordinary mount mapping matches', async () => {
+  const f = fixture(); container(f, 'controller').HostConfig.Mounts[0].VolumeOptions.NoCopy = false;
+  await assert.rejects(inspect(f), { code: 'DURABLE_INVENTORY_REFUSED' });
+});
 
 async function refused(f, pattern, run) {
   await assert.rejects(inspect(f, run), error => {

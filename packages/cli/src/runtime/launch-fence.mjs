@@ -1,7 +1,8 @@
 import { constants } from 'node:fs';
-import { open, lstat, realpath, rename, link, unlink } from 'node:fs/promises';
-import { isAbsolute, join } from 'node:path';
+import { open, lstat, rename, link, unlink } from 'node:fs/promises';
+import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { bindHostDirectory, hostDirectoryMessage, checkHostDirectory, syncHostDirectory } from './host-directory.mjs';
 
 // A launch fence is local CLI exclusion only: it refuses concurrent or crashed launches
 // until an operator inspects the installation. It is not proof against privileged writers.
@@ -15,28 +16,9 @@ export class LaunchFenceError extends Error {
 const fail = (code, message) => { throw new LaunchFenceError(code, message); };
 const uncertain = () => new LaunchFenceError('FENCE_UNCERTAIN', 'Launch fence state is uncertain; keep the installation stopped and inspect it manually');
 
-async function bindDirectory(directory) {
-  if (typeof directory !== 'string' || !isAbsolute(directory)) fail('FENCE_DIRECTORY', 'Launch fence directory must be an absolute path');
-  let info, canonical;
-  try { info = await lstat(directory); canonical = await realpath(directory); }
-  catch { fail('FENCE_DIRECTORY', 'Launch fence directory is unavailable'); }
-  if (!info.isDirectory() || (info.mode & 0o7777) !== 0o700 || info.uid !== process.geteuid())
-    fail('FENCE_DIRECTORY', 'Launch fence directory must be an existing private directory owned by the current user');
-  return { canonical, dev: info.dev, ino: info.ino };
-}
-async function checkDirectory(bound) {
-  const info = await lstat(bound.canonical);
-  if (!info.isDirectory() || info.dev !== bound.dev || info.ino !== bound.ino || (info.mode & 0o7777) !== 0o700 ||
-    info.uid !== process.geteuid() || await realpath(bound.canonical) !== bound.canonical) throw uncertain();
-}
-async function syncDirectory(bound) {
-  const handle = await open(bound.canonical, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
-  try {
-    const info = await handle.stat();
-    if (info.dev !== bound.dev || info.ino !== bound.ino) throw uncertain();
-    await handle.sync();
-  } finally { await handle.close(); }
-}
+const bindDirectory = directory => bindHostDirectory(directory).catch(error => fail('FENCE_DIRECTORY', hostDirectoryMessage('Launch fence', error)));
+const checkDirectory = bound => checkHostDirectory(bound).catch(() => { throw uncertain(); });
+const syncDirectory = bound => syncHostDirectory(bound).catch(() => { throw uncertain(); });
 const encode = record => {
   const buffer = Buffer.alloc(SIZE, ' '), text = JSON.stringify(record);
   buffer.write(text); buffer[SIZE - 1] = 0x0a; return buffer;

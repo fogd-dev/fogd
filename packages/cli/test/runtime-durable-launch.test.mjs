@@ -7,9 +7,13 @@ import { tmpdir } from 'node:os';
 import { startDurableInstallation } from '../src/runtime/durable-launch.mjs';
 import { acquireLaunchFence } from '../src/runtime/launch-fence.mjs';
 import { freshRuntimePlan } from '../src/runtime/selection-plan.mjs';
+import { durablePlanSha256 } from '../src/runtime/durable-config.mjs';
+import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { beginDurableEnrollment } from '../src/runtime/enrollment-record.mjs';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
+const enrolled = ['enrollment.complete.json', 'enrollment.pending.json'];
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), 'fogd-durable-launch-')); t.after(() => rm(directory, { recursive: true, force: true }));
   const { source, profile } = prebootFixture();
@@ -17,6 +21,8 @@ async function fixture(t) {
   source.services.controller.ports = [{ target: 8082, published: '18788', host_ip: '127.0.0.1', protocol: 'tcp' }];
   const entry = { ...profile, schema: 2, id: 'durable-candidate', routing: 'durable', admission: 'candidate' };
   const plan = freshRuntimePlan(source, entry), selected = { ...plan, entry };
+  const enrollment = await beginDurableEnrollment(directory, { project: plan.config.name, installation: runtimePolicyIdentity(plan.policy), planSha256: durablePlanSha256(plan.config, plan.policy) });
+  await enrollment.complete(hash('inventory'));
   const states = Object.fromEntries(Object.keys(plan.config.services).map(name => [name,
     { id: hash(name), running: false, restarting: false, paused: false, status: name === 'bucket-init' ? 'exited' : 'created', exitCode: 0, startedAt: '' }]));
   const authority = { record: { schema: 1, installation: hash('installation'), revision: '0', routes: [] }, sha256: hash('authority') };
@@ -41,7 +47,7 @@ test('retained startup verifies before effects and opens only the inspected gate
   assert.equal(result.status, 'started'); assert.equal(result.project, 'original'); assert.equal(result.authoritySha256, f.authority.sha256);
   assert.deepEqual(f.calls, [['start', hash('minio')], ['start', hash('slot-1-a'), hash('slot-1-b'), hash('slot-2-a'), hash('slot-2-b')],
     ['start', hash('controller')], ['preflight', 'http://127.0.0.1:18788', 'preflight'], ['start', hash('workerd')]]);
-  assert.deepEqual(await readdir(f.directory), []); assert.equal(f.states.workerd.running, true);
+  assert.deepEqual((await readdir(f.directory)).sort(), enrolled); assert.equal(f.states.workerd.running, true);
 });
 test('an uncompleted bucket initializer is attached and must finish before backend startup', async t => {
   const f = await fixture(t); f.states['bucket-init'].status = 'created';
@@ -53,17 +59,17 @@ test('an uncompleted bucket initializer is attached and must finish before backe
 test('read-only verification failure releases checking fence without Docker mutation or private diagnostics', async t => {
   const f = await fixture(t); f.options.verify = async () => { throw new Error('PRIVATE verification failure'); };
   await assert.rejects(startDurableInstallation(f.selected, f.options), error => error.code === 'ROUTE_STARTUP_UNCONFIRMED' && !error.message.includes('PRIVATE') && !('cause' in error));
-  assert.deepEqual(f.calls, []); assert.deepEqual(await readdir(f.directory), []);
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
 test('a foreign installed policy refuses before starting any container', async t => {
   const f = await fixture(t); f.options.readPolicy = async () => ({ ...f.selected.policy, binarySha256: hash('foreign') });
   await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
-  assert.deepEqual(f.calls, []); assert.deepEqual(await readdir(f.directory), []);
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
 test('an initially running gateway refuses without stopping a pre-existing live installation', async t => {
   const f = await fixture(t); Object.assign(f.states.workerd, { running: true, status: 'running' });
   await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
-  assert.deepEqual(f.calls, []); assert.equal(f.states.workerd.running, true); assert.deepEqual(await readdir(f.directory), []);
+  assert.deepEqual(f.calls, []); assert.equal(f.states.workerd.running, true); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
 test('startup waits for an available controller using fresh observations while ingress remains stopped', async t => {
   const f = await fixture(t), observe = f.options.observe; let tries = 0, delays = 0;
@@ -123,7 +129,7 @@ test('controller preflight deadline preserves the started fence and never opens 
 test('a cleartext remote admin endpoint refuses before any Docker mutation', async t => {
   const f = await fixture(t); f.options.server = 'http://remote.example:18788';
   await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
-  assert.deepEqual(f.calls, []); assert.deepEqual(await readdir(f.directory), []);
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
 test('a report delivered after deadline cancellation cannot open ingress', { timeout: 15000 }, async t => {
   const f = await fixture(t), observing = Promise.withResolvers();
@@ -136,4 +142,19 @@ test('a report delivered after deadline cancellation cannot open ingress', { tim
   await assert.rejects(running, { code: 'ROUTE_STARTUP_UNCONFIRMED' });
   assert.equal(f.calls.some(args => args[0] === 'start' && args.includes(hash('workerd'))), false);
   assert.equal((await f.marker()).phase, 'preflight');
+});
+test('durable startup cannot bypass a missing host enrollment record', async t => {
+  const f = await fixture(t); await rm(join(f.directory, 'enrollment.pending.json')); await rm(join(f.directory, 'enrollment.complete.json'));
+  await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
+  assert.deepEqual(f.calls, []); assert.deepEqual(await readdir(f.directory), []);
+});
+test('durable startup preserves and refuses an incomplete host enrollment', async t => {
+  const f = await fixture(t); await rm(join(f.directory, 'enrollment.complete.json'));
+  await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
+  assert.deepEqual(f.calls, []); assert.deepEqual(await readdir(f.directory), ['enrollment.pending.json']);
+});
+test('a completed enrollment cannot authorize a changed retained plan', async t => {
+  const f = await fixture(t); f.selected.config.services.controller.environment.FOGD_MAX_PENDING = '23';
+  await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });

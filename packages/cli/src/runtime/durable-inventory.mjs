@@ -134,6 +134,7 @@ function checkService(config, name, service, container, image, volumes, networks
   const host = container.HostConfig || {};
   if (!id64(container.Id) || typeof container.Created !== 'string' || !container.Created) refuse('container identity is unreadable');
   checkLaunch(config, service, container, image);
+  checkImageSeeding(config, service, host);
   checkVolumeMounts(config, container, volumes);
   assertPrivileges(host, Object.values(networks).map(n => n.name));
   checkRestartAndPorts(service, host);
@@ -143,6 +144,12 @@ function checkService(config, name, service, container, image, volumes, networks
       mounts: sorted(container.Mounts.map(m => [m.Type, m.Name ?? null, m.Destination, m.RW])), networks: sorted(attached.map(([n, e]) => [n, e.NetworkID])) },
     state: serviceState(container),
   };
+}
+function checkImageSeeding(config, service, host) {
+  for (const mount of service.volumes || []) {
+    const matches = (host.Mounts || []).filter(actual => actual.Type === 'volume' && actual.Source === config.volumes[mount.source].name && actual.Target === mount.target);
+    if (matches.length !== 1 || matches[0].VolumeOptions?.NoCopy !== true) refuse('container volume permits image seeding');
+  }
 }
 
 function checkLaunch(config, service, container, image) {

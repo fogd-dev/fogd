@@ -203,7 +203,8 @@ test('selected restore installs independent policy after data and refuses incons
     assert.equal(calls[install][calls[install].indexOf('--entrypoint') + 1], '/usr/local/bin/node');
     if (mode !== 'receipt') {
       const readback = calls.find(args => args[0] === 'run' && args.at(-1).includes('readRuntimePolicy'));
-      assert.ok(readback.includes('type=volume,src=fresh_runtime-policy,dst=/data,readonly'));
+      assert.ok(readback.includes('type=volume,src=fresh_runtime-policy,dst=/data,volume-nocopy,readonly'));
+      assert.equal(readback[readback.indexOf('--pull') + 1], 'never');
       assert.equal(readback.includes('--cap-add'), false);
       assert.equal(readback.join(' ').includes('private-password'), false);
       assert.deepEqual(JSON.parse(await readFile(log + '.binding', 'utf8')), Object.fromEntries(

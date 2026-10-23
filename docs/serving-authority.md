@@ -401,9 +401,11 @@ shipped yet. Storage/fleet installation identity retains the same hashing rules;
 execution-mode compatibility is checked separately against the complete profile.
 
 The [sealed layout builder](../packages/cli/src/runtime/durable-config.mjs) adds
-separate owned `route-authority` and `gateway-policy` volumes. Only the controller
-writes authority; the gateway mounts both additions read-only with image seeding
-disabled. Application replicas mount neither. The gateway uses `serve-durable.mjs`,
+separate owned `route-authority`, `gateway-policy` and `route-enrollment` volumes. Only the controller
+writes authority; the gateway mounts authority and its policy read-only with image
+seeding disabled. The enrollment-control volume is mounted only by the stopped initializer;
+normal services never mount it. All declared volume mounts disable image seeding.
+Application replicas mount none of these three roles. The gateway uses `serve-durable.mjs`,
 keeps only transport/TLS environment fields, and joins only the two fleet networks.
 It receives no controller binding, gateway token, storage credentials or admin
 credentials. Retained configuration must match the reconstructed sealed layout
@@ -418,10 +420,54 @@ routing. Signed native identity proofs retain their existing version-2 protocol.
 These are source integration steps, not an admitted installation path. The
 [selected-runtime dispatcher](../packages/cli/src/runtime/start-installation.mjs)
 routes durable installations through the retained-container coordinator below,
-never through its legacy all-services Compose command. Fresh policy-volume
-initialization and stopped restore integration remain open. The existing archive
+never through its legacy all-services Compose command. Fresh installation enrollment
+has the source implementation below; stopped restore integration remains open. The existing archive
 layout intentionally does not accept the new volumes. A new image and its native
 acceptance evidence remain required before catalog admission.
+
+## Fresh installation enrollment candidate
+
+The [fresh coordinator](../packages/cli/src/runtime/durable-installation.mjs) checks
+the independent family selection and cached image, confirms the target project,
+volume and network names are absent, then reserves the private host installation
+directory. It records a synced enrollment intent before creating installation
+resources. It creates stopped, pinned containers without building or pulling and
+allocates the separate enrollment-control volume. Actual inventory must match the
+new sealed plan with every service stopped before any policy or route store is
+initialized. An empty filesystem alone never authorizes that initialization.
+
+The [policy installer](../packages/cli/src/runtime/durable-policies.mjs) writes the
+full native policy and independently derived gateway plan through create-only
+writers in the verified image, then checks both readbacks. The
+[route initializer adapter](../packages/cli/src/runtime/durable-enrollment.mjs)
+mounts only controller, authority and enrollment-control volumes into a networkless
+Node helper. The [helper](../packages/platform/src/fresh-route-enrollment.mjs)
+checks all three existing directories are empty, owned and disjoint before setting
+permissions, issuing and spending the one-use grant, and initializing route stores.
+It starts no application, listener or backend operation. Its paths are fixed by the
+entrypoint; serialized input cannot select them. Helpers prohibit image pulls and
+volume seeding, receive no provider credentials, and return bounded checked receipts.
+
+The [host record](../packages/cli/src/runtime/enrollment-record.mjs) retains both
+`enrollment.pending.json` and `enrollment.complete.json` permanently. Completion
+binds the original intent, installation identity, canonical full-plan digest and
+inspected resource identity. It is published only after policies, route stores,
+receipts and stopped inventory agree and all helpers have returned. No Docker or
+runtime write follows that publication. A partial attempt cannot silently retry as
+fresh: its resources and intent remain, and ordinary CLI readiness refuses it.
+Retained durable startup requires a matching completed host record; marker absence
+does not provide a legacy fallback for schema 3. These host records lift an
+enrollment refusal, not the independent runtime, storage and ingress gates.
+
+The [pipeline test](../packages/cli/test/runtime-durable-installation.test.mjs)
+translates fixed Docker helper calls into the actual filesystem writer, grant and
+publication functions, then starts an ordinary source controller on those stores.
+It checks the whole source sequence without executing Docker or the helper image.
+Other tests cover incomplete enrollment readiness, preserved records, changed
+inventory, retained directories and create-only refusal. Native mount/UID identity,
+daemon behavior and first-app deployment still need qualification. Interrupted
+enrollment reconciliation and stopped restore remain open; no new catalog entry or
+default cron admission is enabled.
 
 ## Retained installation startup candidate
 

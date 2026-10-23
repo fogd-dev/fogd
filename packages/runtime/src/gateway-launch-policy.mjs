@@ -1,5 +1,6 @@
 import { constants } from 'node:fs';
-import { open, lstat } from 'node:fs/promises';
+import { open, lstat, chmod, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { durableGatewayConfig } from './gateway-durable-config.mjs';
@@ -40,4 +41,24 @@ export async function readGatewayLaunchPolicy(directory = gatewayPolicyDirectory
       return validateGatewayLaunchPolicy(JSON.parse(text));
     } finally { await file.close(); }
   } catch { throw refused(); }
+}
+
+// Fresh installation only: an existing empty directory owned by this user gets
+// one exclusively created file; retained or partial stores are refused, never
+// replaced. Emptiness is not physical freshness; the caller proves that.
+export async function writeGatewayLaunchPolicy(directory, input) {
+  const policy = validateGatewayLaunchPolicy(input), text = JSON.stringify(policy) + '\n';
+  try {
+    if (Buffer.byteLength(text) > maxGatewayPolicyBytes) throw refused();
+    const stat = await lstat(directory);
+    if (!stat.isDirectory() || (stat.mode & 0o022) || stat.uid !== process.geteuid() || (await readdir(directory)).length) throw refused();
+    await chmod(directory, 0o755);
+    const file = await open(join(directory, 'policy.json'), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o644);
+    try { await file.chmod(0o644); await file.writeFile(text); await file.sync(); } finally { await file.close(); }
+    const parent = await open(directory, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
+    try { await parent.sync(); } finally { await parent.close(); }
+    return { installation: policy.policy.installation, sha256: createHash('sha256').update(text).digest('hex') };
+  } catch {
+    throw Object.assign(new Error('Could not install the fresh gateway launch policy; keep ingress stopped'), { code: 'GATEWAY_POLICY_WRITE_FAILED' });
+  }
 }

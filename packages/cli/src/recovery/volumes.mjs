@@ -4,7 +4,7 @@ import { runtimePolicyVolume } from './layout.mjs';
 
 export function volumeHelper(image, volume, args, { readonly = true, entrypoint, capabilities, ...options } = {}) {
   const caps = capabilities ?? (readonly ? ['DAC_OVERRIDE'] : ['CHOWN', 'FOWNER', 'FSETID', 'DAC_OVERRIDE']);
-  return docker(['run', ...(options.input || options.inputText !== undefined ? ['-i'] : []), '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', ...caps.flatMap(cap => ['--cap-add', cap]), '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${volume},dst=/data${readonly ? ',readonly' : ''}`, ...(entrypoint ? ['--entrypoint', entrypoint] : []), image, ...args], options);
+  return docker(['run', '--pull', 'never', ...(options.input || options.inputText !== undefined ? ['-i'] : []), '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', ...caps.flatMap(cap => ['--cap-add', cap]), '--security-opt', 'no-new-privileges', '--mount', `type=volume,src=${volume},dst=/data,volume-nocopy${readonly ? ',readonly' : ''}`, ...(entrypoint ? ['--entrypoint', entrypoint] : []), image, ...args], options);
 }
 export async function restoreVolumes(directory, target, names, image, skipped = []) {
   // Execution authority is installed independently after data restoration.
