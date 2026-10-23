@@ -70,8 +70,9 @@ bodies. Received redirects are refused.
 
 This is an owner diagnostic view. Submitters use [`fogd status ID`](submission-status.md) with bounded reads and
 public-field filtering. Its existing queue progress labels can still be `unknown`
-on the frozen runtime. Fixing
-those labels, exposing app logs, and observing application outcomes remain separate
+on the frozen runtime. The source status correction covers existing queue steps;
+deploying it still requires new-runtime qualification. Exposing app logs and
+observing application outcomes remain separate
 [operator-readiness work](operator-readiness.md).
 
 ## Reproduce the local runtime check

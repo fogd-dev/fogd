@@ -105,8 +105,10 @@ for failed SQL, correction and credential boundaries. Both views report recorded
 state and withhold private errors. [Local native observation](application-observation.md)
 checks approved versions, signed runtime identity and replica health without app
 requests. It does not establish controller storage health or application outcomes.
-Queue status labels in the frozen runtime, scoped logs, and broader live diagnosis
-remain open; these commands implement part of this increment.
+Source status reporting now recognizes the existing queue activation and replacement
+steps with fixed public explanations. The frozen runtime still discards those labels;
+new-family qualification, scoped logs and broader live diagnosis remain open.
+These commands implement part of this increment.
 
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown

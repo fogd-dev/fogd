@@ -29,6 +29,15 @@ test('real status CLI makes one deploy-authenticated GET and emits only the requ
   assert.equal(result.stderr, ''); assert.equal(result.stdout.includes('private-'), false);
   await assert.rejects(access(join(f.root, '.fogd')), { code: 'ENOENT' });
 });
+test('real status CLI preserves a queue hold-transfer failure without exposing either release diagnostics', async t => {
+  const f = await fixture(t, (_, response) => response.end(JSON.stringify({ ...release, step: 'transferring-delivery-hold',
+    error: 'private-backend-command', replaces: { deployment: 'private-held-release', digest: 'b'.repeat(64) }, version: 'private-runtime' })));
+  const result = await f.invoke(), report = JSON.parse(result.stdout);
+  assert.equal(report.step, 'transferring-delivery-hold'); assert.equal(report.status, 'failed');
+  assert.match(report.error, /both releases/); assert.equal(result.stdout.includes('private-'), false);
+  assert.equal(result.stderr, ''); assert.equal(f.calls.length, 1); assert.equal(f.calls[0].method, 'GET');
+  assert.deepEqual(Object.keys(report).sort(), [...Object.keys(release), 'error'].sort());
+});
 for (const args of [[], ['invalid'], ['../escape'], [id, 'extra']]) test(`invalid status arguments refuse before HTTP: ${JSON.stringify(args)}`, async t => {
   const f = await fixture(t, (_, response) => response.end('{}'));
   await assert.rejects(f.invoke(args), error => error.code === 1 && /Usage:/.test(error.stderr)); assert.deepEqual(f.calls, []);

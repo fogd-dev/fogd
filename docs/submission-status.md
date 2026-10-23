@@ -29,10 +29,16 @@ administrator interface. Retrying or replacing an activation still needs explici
 approval of the exact artifact.
 
 Unrecognized status or progress values are `unknown`; an unsupported timestamp is
-`null`. The frozen runtime discards some queue lifecycle labels before returning
-status. The CLI cannot recover those labels and does not guess them. Correcting
-that server behavior, providing scoped logs, and observing live health remain open
-in [operator readiness](operator-readiness.md#3-diagnose-an-application).
+`null`. The source status policy recognizes queue bootstrap, replica adoption,
+delivery pause/release, application publication and replacement hold transfer,
+with fixed explanations for failed releases. It does not expose either release's
+private diagnostics during replacement.
+
+The frozen runtime still discards some queue lifecycle labels before returning
+status. The CLI cannot recover those labels and does not guess them. The source
+correction needs a newly qualified runtime before it changes that behavior.
+Scoped logs and live application outcomes remain open in
+[operator readiness](operator-readiness.md#3-diagnose-an-application).
 
 ## Connection and compatibility failures
 

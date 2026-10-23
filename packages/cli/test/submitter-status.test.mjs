@@ -8,8 +8,18 @@ test('known failed stages preserve useful fixed explanations while discarding ra
 });
 test('unfamiliar states, progress and timestamps cannot become output or imply success', () => {
   assert.deepEqual(submitterStatus({ ...input, status: 'private-status', step: 'private-step', submittedAt: 'private-time' }, id), { id, app: 'guestbook', digest: input.digest, status: 'unknown', step: 'unknown', submittedAt: null, error: null });
-  assert.equal(submitterStatus({ ...input, step: 'queue-bootstrap-intent' }, id).step, 'unknown');
-  assert.equal(submitterStatus({ ...input, step: 'queue-bootstrap-intent' }, id).error, 'Activation failed. Ask an administrator to inspect this release.');
+  assert.equal(submitterStatus({ ...input, step: 'future-queue-step' }, id).step, 'unknown');
+  assert.equal(submitterStatus({ ...input, step: 'future-queue-step' }, id).error, 'Activation failed. Ask an administrator to inspect this release.');
+});
+test('queue lifecycle failures retain recorded progress and use local explanations without trusting server errors', () => {
+  const steps = ['queue-bootstrap-intent', 'publishing-queue-bootstrap', 'waiting-for-queue-bootstrap', 'pausing-delivery',
+    'queue-application-intent', 'releasing-delivery', 'transferring-delivery-hold'];
+  for (const step of steps) {
+    const report = submitterStatus({ ...input, step, error: 'private-server-message' }, id);
+    assert.equal(report.step, step); assert.equal(report.status, 'failed'); assert.match(report.error, /administrator/i);
+    assert.equal(JSON.stringify(report).includes('private-'), false);
+    assert.equal(submitterStatus({ ...input, step, status: 'activating' }, id).error, null);
+  }
 });
 for (const status of ['pending', 'activating', 'active', 'rejected', 'superseded', 'retired']) test(`${status} remains a recorded status and does not echo a stale error`, () => {
   const step = status === 'pending' ? 'submitted' : 'migrating';
