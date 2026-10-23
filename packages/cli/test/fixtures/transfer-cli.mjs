@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, cp, writeFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, cp, writeFile, readFile, rm, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -24,7 +24,15 @@ export async function transferFixture(t) {
   }
   const catalog = join(source, 'packages/cli/src/runtime/catalog.json'), entries = JSON.parse(await readFile(catalog, 'utf8'));
   const configs = ['runtime', 'storage'].map(role => JSON.stringify({ os: 'linux', architecture: 'arm64', config: { Labels: { role } } }));
-  const ids = configs.map(value => hash(value)), entry = { ...entries[0], image: `sha256:${ids[0]}`, storageImage: `sha256:${ids[1]}` };
+  const sourceFiles = {};
+  // These synthetic images claim this fixture's own copied programs. Never
+  // rewrite the shipped catalog to accommodate a development source change.
+  for (const name of ['platform', 'runtime']) {
+    const base = `packages/${name}`;
+    const files = ['package.json', ...(await readdir(join(source, base, 'src'), { recursive: true })).filter(path => /\.[cm]?js$/.test(path)).map(path => `src/${path}`)];
+    for (const path of files) sourceFiles[`${base}/${path}`] = hash(await readFile(join(source, base, path)));
+  }
+  const ids = configs.map(value => hash(value)), entry = { ...entries[0], image: `sha256:${ids[0]}`, storageImage: `sha256:${ids[1]}`, sourceFiles };
   await writeFile(catalog, JSON.stringify([entry], null, 2) + '\n');
   const archive = join(root, 'archive'); await mkdir(archive);
   await writeFile(join(archive, 'manifest.json'), JSON.stringify(ids.map(id => ({ Config: `${id}.json`, RepoTags: null, Layers: ['layer.tar'] }))));
