@@ -39,6 +39,7 @@ function addQueue(state, expected) {
 
 test('full snapshots account for separate queue and cron apps and retain independent recovery contracts', async t => {
   const { state, expected } = cronSnapshotSource(); addQueue(state, expected);
+  state.artifactPins = { schema: 1, releases: { [state.apps.imports.active]: state.deployments[state.apps.imports.active].digest } };
   state.apps.static = { active: 'static-release', slot: 'three', route: 'active', resources: {} };
   state.deployments['static-release'] = { app: 'static', status: 'active', resources: {} };
   const before = structuredClone(state), manifest = backgroundSnapshotEvidence(state, expected);
@@ -57,11 +58,19 @@ test('full snapshots account for separate queue and cron apps and retain indepen
   assert.equal(restored.apps.imports.queueSnapshot, undefined);
   assert.deepEqual(restored.apps.static, state.apps.static);
   assert.deepEqual(restored.deployments, state.deployments);
+  assert.deepEqual(restored.artifactPins, state.artifactPins);
   assert.deepEqual(state, before);
   const again = await restoredInstallationState(dir, manifest);
   assert.notEqual(restored.apps.refresh.cronRecovery.id, again.apps.refresh.cronRecovery.id);
   assert.notEqual(restored.apps.imports.queueRecovery.id, again.apps.imports.queueRecovery.id);
   assert.deepEqual(requiredCapabilities(restored).map(value => value[0]), ['queue-snapshot', 'cron-dispatch', 'cron-snapshot']);
+});
+
+test('malformed retained-release pins refuse before snapshot preparation', async () => {
+  const { state } = cronSnapshotSource();
+  state.artifactPins = { schema: 1, releases: { [state.apps.refresh.active]: 'f'.repeat(64) } };
+  assert.throws(() => backgroundBackupApps(state), /artifact pins are malformed/);
+  await assert.rejects(prepareBackgroundBackup({}, state, [], {}), /artifact pins are malformed/);
 });
 
 test('cron evidence pins approval, selected secrets, schedule and native revision through shutdown', () => {

@@ -1,3 +1,5 @@
+import { validateArtifactPins } from '@fogd/platform/artifact-pins';
+
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 
 export function assertSnapshotStateShape(state) {
@@ -8,5 +10,6 @@ export function assertSnapshotStateShape(state) {
 
 export function assertSnapshotState(state, capabilities) {
   assertSnapshotStateShape(state);
+  validateArtifactPins(state);
   if (state.requirements?.some(value => !capabilities.includes(value))) throw new Error('Controller metadata requires an unsupported recovery capability');
 }

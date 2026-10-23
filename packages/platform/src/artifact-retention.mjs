@@ -1,9 +1,10 @@
 import { createHash } from 'node:crypto';
 import { appName } from '@fogd/runtime/artifact';
 import { artifactInventory } from './artifact-inventory.mjs';
+import { validateArtifactPins } from './artifact-pins.mjs';
 
 const POLICY = 'fogd-terminal-artifact-retention-v1';
-const REASONS = ['active', 'unfinished', 'retired', 'unknown-status', 'controller-reference', 'deployment-reference', 'unreferenced', 'digest-mismatch', 'invalid-deployment'];
+const REASONS = ['active', 'unfinished', 'retired', 'unknown-status', 'operator-pin', 'controller-reference', 'deployment-reference', 'unreferenced', 'digest-mismatch', 'invalid-deployment'];
 const STATUS_REASONS = new Map([['active', 'active'], ['pending', 'unfinished'], ['failed', 'unfinished'], ['activating', 'unfinished'], ['retired', 'retired'], ['rejected', null], ['superseded', null], ['unknown', 'unknown-status']]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const hex64 = /^[0-9a-f]{64}$/;
@@ -40,8 +41,8 @@ function publicFields(id, record) {
   };
 }
 
-function describeRecord(id, record, row) {
-  const fields = publicFields(id, record), reasons = new Set();
+function describeRecord(id, record, row, pins) {
+  const fields = publicFields(id, record), reasons = new Set(Object.hasOwn(pins, id) ? ['operator-pin'] : []);
   const wellFormed = uuid.test(id) && record?.id === id && fields.app !== null && fields.digest !== null;
   if (!wellFormed) reasons.add('invalid-deployment');
   if (STATUS_REASONS.get(fields.status)) reasons.add(STATUS_REASONS.get(fields.status));
@@ -82,10 +83,12 @@ function decide(records, inventory, controllerReferences) {
 
 // Read-only preview. The plan hash binds this view and every physical file hash; it is not a lease.
 export async function planArtifactRetention(state, artifactDirectory) {
-  const { deployments, ...metadata } = usableState(state);
+  // Pins are explicit roots, so the pin map itself is not a generic controller reference.
+  const { deployments, artifactPins, ...metadata } = usableState(state);
+  const pins = validateArtifactPins(state);
   const inventory = await artifactInventory(artifactDirectory);
   const rows = new Map(inventory.map(row => [row.id, row]));
-  const records = new Map(Object.keys(deployments).sort().map(id => [id, describeRecord(id, deployments[id], rows.get(id))]));
+  const records = new Map(Object.keys(deployments).sort().map(id => [id, describeRecord(id, deployments[id], rows.get(id), pins)]));
   const controllerReferences = referencedStrings(metadata);
   protectReferences(records, deployments, controllerReferences);
   const decision = decide(records, inventory, controllerReferences);

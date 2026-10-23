@@ -20,6 +20,7 @@ import { readJson, saveJson, storageFailureDiagnostic } from './store.mjs';
 import { Secrets } from './secrets.mjs';
 import { controllerRoutes, routingStartupError } from './controller-routes.mjs';
 import { resourceChanges } from './resources.mjs';
+import { setArtifactPin } from './artifact-pins.mjs';
 
 export class Controller {
   #persist;
@@ -266,6 +267,7 @@ export class Controller {
     }
     return activateRelease(this, request, app, slot, selected);
   }
+  setArtifactPin(id, digest, kept) { return setArtifactPin(this, id, digest, kept); }
   preflightIngress(input) { return this.exclusive(() => this.routes.preflight(input)); }
   decideRoute(name, action, input) { return this.exclusive(async () => {
     const result = await this.routes.decide(name, action, input);

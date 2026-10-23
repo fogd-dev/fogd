@@ -7,12 +7,14 @@ import { cronRecoveryCapability } from './cron-snapshot.mjs';
 import { cronCapability } from './cron-dispatch.mjs';
 import { routeAuthorityCapability } from './route-publication.mjs';
 import { appName } from '@fogd/runtime/artifact';
+import { validateArtifactPins } from './artifact-pins.mjs';
 
 export const retirementCapability = 'fogd-retirement-v1';
 export function assertLiveName(state, name) {
   if (state.apps[name]?.retirement) throw new Error('App name is permanently retired; choose a different name');
 }
 export function validateRetirementState(state, slots, { durableRoutes = false } = {}) {
+  validateArtifactPins(state);
   if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability, queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability, ...(durableRoutes ? [routeAuthorityCapability] : [])].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
   for (const [name, app] of Object.entries(state.apps)) {
     if (!app.retirement) continue;

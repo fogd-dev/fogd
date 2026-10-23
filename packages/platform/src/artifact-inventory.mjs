@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 const readFlags = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
 const singleRegular = info => info.isFile() && info.nlink === 1;
 const sameNode = (a, b) => a.dev === b.dev && a.ino === b.ino;
+const releaseId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function refused() {
   const error = new Error('Cannot inventory retained artifacts; remove links, special files or unreadable entries from the controller artifacts directory');
@@ -81,5 +82,14 @@ export async function artifactInventory(dir) {
       else throw refused();
     }
     return rows;
+  } catch { throw refused(); }
+}
+
+// One release directory under the same safeguards; unrelated artifacts-root entries are never opened.
+export async function inspectRetainedArtifact(dir, id) {
+  try {
+    if (typeof id !== 'string' || !releaseId.test(id) || !(await lstat(dir)).isDirectory()) throw refused();
+    if (!(await lstat(join(dir, id))).isDirectory()) throw refused();
+    return await directoryRow(dir, id);
   } catch { throw refused(); }
 }

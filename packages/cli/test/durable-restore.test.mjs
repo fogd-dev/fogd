@@ -44,6 +44,7 @@ async function sourceBundle(t) {
   await writeFile(join(artifact, 'wrangler.json'), JSON.stringify({ name: 'alpha', main: 'index.js', d1_databases: [] }));
   const request = { id, app: 'alpha', digest: await artifactDigest(artifact), resources: { script: 'alpha', d1: [], r2: [], durable: { bindings: [] } }, migrations: [], requiredSecrets: [], status: 'pending', step: 'submitted' };
   c.state.deployments[id] = request; await c.save(); await c.mutate(id, request.digest, 'approve');
+  await c.setArtifactPin(id, request.digest, true);
   await writeFile(join(roots.controller, 'operator-secret.key'), 'source-private-value', { mode: 0o600 });
   // Use the actual producer's GNU tar flags, with ownership matching the host
   // helper identity. Native root ownership is a separate acceptance gate.
@@ -103,6 +104,7 @@ test('stopped restore copies actual approved artifacts and private data before h
   assert.equal(await readFile(join(target.rolePath('controller'), 'operator-secret.key'), 'utf8'), 'source-private-value');
   const copied = join(target.rolePath('controller'), 'artifacts', f.source.request.id);
   assert.equal(await artifactDigest(copied), f.source.request.digest);
+  assert.deepEqual(state.artifactPins, { schema: 1, releases: { [f.source.request.id]: f.source.request.digest } });
   assert.equal(state.routeEnrollment.controller.path, await realpath(target.rolePath('controller')));
   const observed = await readRouteRecord(join(target.rolePath('route-authority'), 'routes.json'), f.source.routePolicy);
   assert.equal(observed.record.revision, '1'); assert.ok(observed.record.routes.every(route => route.state === 'withheld'));
@@ -112,6 +114,7 @@ test('stopped restore copies actual approved artifacts and private data before h
     backend: { owner: async slot => f.source.owners[slot.id] || null, hasDeployment: async () => false },
     routeAuthority: { path: join(target.rolePath('route-authority'), 'routes.json'), policy: f.source.routePolicy, verifyRuntime: async () => assert.fail('HTTP remains withheld') } });
   await controller.init(); assert.equal(controller.routingStartupComplete, true);
+  assert.deepEqual(controller.state.artifactPins, state.artifactPins);
 });
 test('data copy failure retains target stores and a permanent incomplete host enrollment', { skip }, async t => {
   const f = await fixture(t); f.options.data = async () => { throw new Error('injected copy failure'); };

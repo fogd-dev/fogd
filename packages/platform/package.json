@@ -8,6 +8,7 @@
     "@aws-sdk/client-s3": "3.1152.0"
   },
   "exports": {
+    "./artifact-pins": "./src/artifact-pins.mjs",
     "./retirement": "./src/retirement.mjs",
     "./queue-snapshot": "./src/queue-snapshot.mjs",
     "./queue-retirement": "./src/queue-retirement.mjs",
