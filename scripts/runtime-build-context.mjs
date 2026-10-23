@@ -5,6 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { writeJson } from '../packages/cli/src/recovery/bundle.mjs';
 import { programInventory } from '../packages/cli/src/runtime/program-inventory.mjs';
+import { validateNativeInputs, assertNativeLock } from '../docker/runtime-native-inputs.mjs';
 import { inventoryDigest, placeOutput, readRegularJson, sourceInventory, verifyPreparedSource } from './runtime-source.mjs';
 
 // Source-only: assembles a complete build context from a re-verified prepared
@@ -12,7 +13,7 @@ import { inventoryDigest, placeOutput, readRegularJson, sourceInventory, verifyP
 // qualified, and the declared base digests authorize no enrollment.
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
-const rootFiles = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'patches/void@1.1.11.patch', 'docker/runtime-tools/package.json', 'docker/runtime-tools/package-lock.json', 'docker/celld-supervisor.sh'];
+const rootFiles = ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'patches/void@1.1.11.patch', 'docker/runtime-tools/package.json', 'docker/runtime-tools/package-lock.json', 'docker/celld-supervisor.sh', 'docker/runtime-native-inputs.json', 'docker/runtime-native-inputs.mjs', 'docker/runtime-workerd.mjs'];
 const template = 'docker/runtime-source.Dockerfile';
 const images = { rustImage: /^docker\.io\/library\/rust:1\.98\.1-bookworm@sha256:[0-9a-f]{64}$/, nodeImage: /^docker\.io\/library\/node:26\.2\.0-bookworm-slim@sha256:[0-9a-f]{64}$/ };
 
@@ -51,6 +52,8 @@ async function capture(prepared, root, inputs, manifest) {
   }
   for (const path of rootFiles) files.set(path, { bytes: (await readOrdinary(root, path)).bytes, mode: path.endsWith('.sh') ? '755' : '644' });
   checkPatchedDependencies(files);
+  const nativeInputs = validateNativeInputs(JSON.parse(files.get('docker/runtime-native-inputs.json').bytes));
+  assertNativeLock(files.get('native/Cargo.lock').bytes.toString('utf8'), nativeInputs);
   const templateBytes = (await readOrdinary(root, template)).bytes;
   files.set('Dockerfile', { bytes: Buffer.from(render(templateBytes.toString('utf8'), inputs)), mode: '644' });
   return { files, receipt, program, templateSha256: sha256(templateBytes) };

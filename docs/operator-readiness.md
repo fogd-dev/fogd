@@ -231,9 +231,10 @@ adding another binding family. These requirements remain open:
   The [source-preparation command](runtime-selection.md#prepare-the-next-native-source)
   declares and checks the upstream source, dependency lock and ordered patches;
   the [build-context command](runtime-selection.md#prepare-a-runtime-build-context)
-  captures pinned base images, production sources and dependency locks for a
-  recipe that builds from source. Neither closes the clean-build or output
-  qualification gates.
+  captures pinned base images, production sources and dependency locks. The candidate
+  recipe declares the prebuilt V8 archive and bindings with content hashes and
+  uses the locked workerd platform package without installer fallback downloads.
+  These source checks do not close the clean-build or output qualification gates.
 - **Install independently.** Follow the public installation procedure on a
   separate supported Docker engine using the distributed release and declared
   prerequisites. Deploy, approve, update, restart and recover an application while

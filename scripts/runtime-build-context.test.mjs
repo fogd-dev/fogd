@@ -15,12 +15,19 @@ const git = (cwd, ...args) => execFileSync('git', ['-c', 'user.name=t', '-c', 'u
 const digest = character => character.repeat(64);
 const inputs = { schema: 1, platform: 'linux/arm64', rustImage: `docker.io/library/rust:1.98.1-bookworm@sha256:${digest('a')}`, nodeImage: `docker.io/library/node:26.2.0-bookworm-slim@sha256:${digest('b')}` };
 const template = 'FROM --platform=linux/arm64 @@RUST_IMAGE@@ AS native\nCOPY native/ /src/\nRUN cargo build --release --locked\nFROM @@NODE_IMAGE@@\nCOPY --from=native /src/target/release/celld /usr/local/bin/celld\n';
-const native = { 'Cargo.lock': ['version = 4\n', '644'], 'build.sh': ['#!/bin/sh\n', '755'], 'src/main.rs': ['fn main() {}\n', '644'], 'assets/blob.bin': [Buffer.from([0, 255, 10, 13, 0]), '644'] };
+const nativeLock = 'version = 4\n\n[[package]]\nname = \"v8\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nversion = \"152.1.0\"\nchecksum = \"' + digest('e') + '\"\n';
+const nativeInputs = { schema: 1, target: 'aarch64-unknown-linux-gnu', v8Version: '152.1.0', v8CrateSha256: digest('e'),
+  archive: { url: 'https://github.com/denoland/rusty_v8/releases/download/v152.1.0/librusty_v8_release_aarch64-unknown-linux-gnu.a.gz', sha256: digest('d'), bytes: 3 },
+  bindings: { url: 'https://github.com/denoland/rusty_v8/releases/download/v152.1.0/src_binding_release_aarch64-unknown-linux-gnu.rs', sha256: digest('f'), bytes: 4 } };
+const native = { 'Cargo.lock': [nativeLock, '644'], 'build.sh': ['#!/bin/sh\n', '755'], 'src/main.rs': ['fn main() {}\n', '644'], 'assets/blob.bin': [Buffer.from([0, 255, 10, 13, 0]), '644'] };
 const production = {
   'package.json': ['{"name":"fogd-workspace"}\n', '644'], 'pnpm-lock.yaml': ['lockfileVersion: 9.0\n', '644'],
   'pnpm-workspace.yaml': ["packages:\n  - packages/*\npatchedDependencies:\n  void@1.1.11: patches/void@1.1.11.patch\n", '644'],
   'patches/void@1.1.11.patch': ['void patch\n', '644'], 'docker/runtime-tools/package.json': ['{"dependencies":{"pnpm":"10.16.1"}}\n', '644'],
-  'docker/runtime-tools/package-lock.json': ['{"lockfileVersion":3}\n', '644'], 'docker/celld-supervisor.sh': ['#!/bin/sh\nexec celld\n', '755'],
+  'docker/runtime-tools/package-lock.json': ['{"lockfileVersion":3}\n', '644'],
+  'docker/runtime-native-inputs.json': [JSON.stringify(nativeInputs), '644'],
+  'docker/runtime-native-inputs.mjs': ['export const acquire = true;\n', '644'],
+  'docker/runtime-workerd.mjs': ['export const workerd = true;\n', '644'], 'docker/celld-supervisor.sh': ['#!/bin/sh\nexec celld\n', '755'],
   'packages/platform/package.json': ['{"name":"@fogd/platform"}\n', '644'], 'packages/platform/src/index.mjs': ['export const platform = 1;\n', '644'],
   'packages/runtime/package.json': ['{"name":"@fogd/runtime"}\n', '644'], 'packages/runtime/src/serve.mjs': ['export const serve = 1;\n', '644'],
   'packages/runtime/src/wasm/blob.wasm': [Buffer.from([0, 97, 115, 109, 255]), '644'],
@@ -85,7 +92,7 @@ test('assembles the exact production context and binds it in a final receipt', a
   assert.deepEqual(receipt, { schema: 1, complete: true, platform: 'linux/arm64', rustImage: inputs.rustImage, nodeImage: inputs.nodeImage,
     native: { repository: f.manifest.repository, revision: f.manifest.revision, cargoLockSha256: f.manifest.cargoLockSha256, patches: [], sourceFiles: 4, sourceInventorySha256: f.manifest.sourceInventorySha256 },
     programFiles: pick(Object.keys(production).filter(path => path.startsWith('packages/')).sort()),
-    rootFiles: pick(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'patches/void@1.1.11.patch', 'docker/runtime-tools/package.json', 'docker/runtime-tools/package-lock.json', 'docker/celld-supervisor.sh']),
+    rootFiles: pick(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'patches/void@1.1.11.patch', 'docker/runtime-tools/package.json', 'docker/runtime-tools/package-lock.json', 'docker/celld-supervisor.sh', 'docker/runtime-native-inputs.json', 'docker/runtime-native-inputs.mjs', 'docker/runtime-workerd.mjs']),
     templateSha256: sha256(template), dockerfileSha256: sha256(expected.Dockerfile[0]), contextFiles: Object.keys(expected).length, contextInventorySha256: inventory(expected), built: false, qualified: false });
   assert.deepEqual(JSON.parse(await readFile(join(f.output, 'receipt.json'), 'utf8')), receipt);
 });
@@ -191,6 +198,15 @@ test('templates with unresolved tokens or undeclared bases, and extra patched de
   }
 });
 
+test('native input declarations must match the prepared Cargo lock before output exists', async () => {
+  for (const change of [{ v8CrateSha256: digest('a') }, { v8Version: '152.1.1' }]) {
+    const f = await fixture();
+    await writeFile(join(f.root, 'docker/runtime-native-inputs.json'), JSON.stringify({ ...nativeInputs, ...change }));
+    await assert.rejects(prepareBuildContext(f), /checksum does not match|archive.url is invalid/);
+    assert.equal(existsSync(f.output), false);
+  }
+});
+
 test('a context that fails after writing is retained without a receipt', async () => {
   const f = await fixture();
   await put(f.root, { 'packages/runtime/src/.git/config': ['x', '644'] });
@@ -217,6 +233,6 @@ test('the pinned local chain assembles a context without builds or downloads', {
   assert.equal((await lstat(join(base, 'out/context/docker/celld-supervisor.sh'))).mode & 0o777, 0o755);
   assert.ok(!existsSync(join(base, 'out/context/packages/runtime/test')) && !existsSync(join(base, 'out/context/packages/cli')));
   const dockerfile = await readFile(join(base, 'out/context/Dockerfile'), 'utf8');
-  assert.deepEqual([...dockerfile.matchAll(/^FROM (?:--platform=\S+ )?(\S+)/gm)].map(match => match[1]), [inputs.rustImage, inputs.nodeImage]);
+  assert.deepEqual([...dockerfile.matchAll(/^FROM (?:--platform=\S+ )?(\S+)/gm)].map(match => match[1]), [inputs.nodeImage, inputs.rustImage, inputs.nodeImage]);
   for (const [, sources] of dockerfile.matchAll(/^COPY (?!--from)(.+) \S+$/gm)) for (const source of sources.split(' ')) assert.ok(existsSync(join(base, 'out/context', source)), source);
 });

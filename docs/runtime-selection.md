@@ -260,10 +260,25 @@ File modification times and directory permissions are normalized for assembly.
 Keep partial output after a failure for inspection and use a different directory
 for another attempt.
 
-The recipe compiles the release native binary and runs the upstream Cargo test
-and clippy stages. It installs pnpm through its
+The candidate recipe compiles celld against a declared prebuilt Rusty V8 library
+and runs the upstream Cargo test and clippy stages. The
+[native-input manifest](../docker/runtime-native-inputs.json) pins the archive and
+bindings by SHA-256 and byte length, and ties their release to the V8 crate in
+`Cargo.lock`. The pins come from the
+[upstream release asset metadata](https://api.github.com/repos/denoland/rusty_v8/releases/tags/v152.1.0);
+the bindings also match the file embedded in the locked crate. During image
+assembly, the standalone acquisition helper verifies both assets before publishing
+its receipt. It bounds requests and streams, refuses unapproved redirect hosts,
+and retains partial output privately on failure. Rust uses explicit local paths
+for both inputs. Source context preparation performs no downloads.
+
+The recipe installs pnpm through its
 [integrity lock](../docker/runtime-tools/package-lock.json) and runtime dependencies
-through the frozen workspace lock. It uses no private seed image or build-cache
+through the frozen workspace lock with lifecycle scripts disabled. The
+[workerd placement helper](../docker/runtime-workerd.mjs) selects the locked Linux
+arm64 package, checks its metadata and ELF header, and copies its executable into
+the gateway path without running an installer or fetching a fallback. It records
+the copied binary fingerprint. The recipe uses no private seed image or build-cache
 mount. An upstream test stage can execute zero public cases; successful image
 assembly would still need separate native lifecycle qualification.
 
