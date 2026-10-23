@@ -9,6 +9,7 @@ export const operatorGuides = [
   'docs/artifact-review.md',
   'docs/application-inspection.md',
   'docs/application-observation.md',
+  'docs/application-check.md',
   'docs/submission-status.md',
   'docs/build-retention.md',
   'docs/storage-space.md',

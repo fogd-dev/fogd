@@ -18,6 +18,7 @@ transfer hashes and matching package alongside your recovery material.
 | Compare proposed and active artifacts | [Artifact review](artifact-review.md) |
 | Inspect recorded application state | [Application inspection](application-inspection.md) |
 | Observe native replicas locally | [Application observation](application-observation.md) |
+| Request an explicit application path | [Gateway request check](application-check.md) |
 | Diagnose a submitter's release | [Submission status](submission-status.md) |
 | Inspect backing filesystem space | [Storage space](storage-space.md) |
 | Retain and prune local build copies | [Build retention](build-retention.md) |

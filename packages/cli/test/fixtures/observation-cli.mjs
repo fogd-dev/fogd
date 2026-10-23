@@ -22,7 +22,7 @@ export async function observationFixture(t) {
   const driver = new URL('./observation-docker.mjs', import.meta.url).pathname;
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_TEST_NODE: process.execPath, FOGD_TEST_DRIVER: driver, FOGD_OBSERVE_TEST_DATA: data, FOGD_TEST_LOG: log };
   return { root, plan, state, env, data, log, project: source.name,
-    invoke: (args = ['sample', '--installation', source.name], extra = {}) => exec(process.execPath, [cli.cli, 'observe', ...args], { env: { ...env, ...extra }, timeout: 20000 }),
+    invoke: (args = ['sample', '--installation', source.name], extra = {}) => exec(process.execPath, [cli.cli, extra.FOGD_CHECK_TEST ? 'check' : 'observe', ...args], { env: { ...env, ...extra }, timeout: 20000 }),
     calls: async () => (await readFile(log, 'utf8').catch(error => { if (error.code === 'ENOENT') return ''; throw error; })).trim().split('\n').filter(Boolean).map(JSON.parse),
   };
 }

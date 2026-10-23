@@ -167,7 +167,10 @@ node packages/cli/bin/fogd.js storage space --installation my-cloud
 it does not call an application's health endpoint. Developers use scoped
 [`status`](submission-status.md). A healthy replica does not establish that the
 application works, and controller loss currently interrupts gateway serving.
-Check the application's own outcomes as well. Scoped application logs remain open.
+The explicit [gateway request check](application-check.md) reports a chosen
+public path's HTTP status and header timing without response contents. Native
+acceptance of that command and scoped application logs remain open. Check the
+application's own outcomes as well.
 [Storage space](storage-space.md) reports the backing filesystem separately from
 controller artifact quotas; it supplies no storage-health or admission verdict.
 

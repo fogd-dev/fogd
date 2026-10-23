@@ -173,8 +173,10 @@ public CLI selectors use the same frozen image and recorded source bytes. Defaul
 installations, other topologies, Workflows, and general Durable Object alarms remain
 outside this admission. Next, define and implement the
 [operator-readiness slice](#immediate-priorities) before another binding milestone. Owner application
-[inspection](application-inspection.md) connects recorded release and control state;
-live outcome observation and scoped logs remain open.
+[inspection](application-inspection.md) connects recorded release and control state.
+The host [gateway request check](application-check.md) reports a requested endpoint's
+status and header timing without response contents; native acceptance,
+application-health assertions and scoped logs remain open.
 
 ## Opportunities to explore later
 

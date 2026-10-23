@@ -108,7 +108,10 @@ requests. It does not establish controller storage health or application outcome
 Source status reporting now recognizes the existing queue activation and replacement
 steps with fixed public explanations. The frozen runtime still discards those labels;
 new-family qualification, scoped logs and broader live diagnosis remain open.
-These commands implement part of this increment.
+The host [gateway request check](application-check.md) sends an explicit app-path
+GET and reports status and time to headers without response contents. It has host
+HTTP/TLS and mocked-Docker tests; native acceptance, application-health assertions
+and scoped logs remain open. These commands implement part of this increment.
 
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown

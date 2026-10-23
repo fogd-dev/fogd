@@ -6,6 +6,7 @@ import { reviewCommand } from '../src/review/command.mjs';
 import { stopCommand } from '../src/runtime/stop.mjs';
 import { startupOptions } from '../src/runtime/startup-options.mjs';
 import { observeCommand } from '../src/observe/command.mjs';
+import { checkCommand } from '../src/check/command.mjs';
 import { buildsCommand } from '../src/build-cache/command.mjs';
 import { runtimeCommand } from '../src/distribution/command.mjs';
 import { expansionCommand } from '../src/recovery/expand.mjs';
@@ -29,6 +30,8 @@ try {
     await stopCommand(args);
   } else if (command === 'observe') {
     await observeCommand(args);
+  } else if (command === 'check') {
+    await checkCommand(args);
   } else if (command === 'builds') {
     await buildsCommand(args);
   } else if (command === 'runtime') {
@@ -89,6 +92,7 @@ try {
     }
   }
   else if (!command || command === '--help' || command === 'help') {
+    console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd admin review ID --output DIR  Export verified artifacts and compare a release');
