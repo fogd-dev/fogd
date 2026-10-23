@@ -123,8 +123,13 @@ exact bytes:
 
 ```sh
 node packages/cli/bin/fogd.js admin list
+node packages/cli/bin/fogd.js admin review SUBMISSION_ID --output /private/reviews/new-release
 node packages/cli/bin/fogd.js admin approve SUBMISSION_ID SHA256
 ```
+
+The [artifact review guide](artifact-review.md) explains the verified readable
+copies and changed-file report. Review is separate from approval and does not
+execute application code or SQL.
 
 Applications requiring secrets also need an operator-supplied
 [secret revision](m7c.md#secret-contract) in the approval command. A submitted

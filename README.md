@@ -28,6 +28,10 @@ Operators can follow the [install-to-recovery guide](docs/operator-guide.md) for
 the selected cached runtime, private configuration, developer access, approval,
 diagnosis, backups and recovery.
 
+Approvers can [compare a submission with its active release](docs/artifact-review.md)
+using `fogd admin review ID --output DIRECTORY`, with verified readable artifact
+copies and a file, resource and migration summary before separate exact approval.
+
 Planning drafts describe the [vision](docs/vision.md), [product scenarios](docs/product.md),
 [roadmap](docs/roadmap.md), and [compatibility goals](docs/compatibility-policy.md).
 They include optional Filecoin storage and recovery as future work. See the
