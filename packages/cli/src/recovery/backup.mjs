@@ -5,7 +5,7 @@ import { inventory } from './inventory.mjs';
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { requireDocker, configEnv, stackRoot } from '../local.mjs';
-import { docker, composeArgs, projectContainers, projectName, stopped } from './docker.mjs';
+import { docker, projectContainers, projectName, stopped } from './docker.mjs';
 import { fingerprint, writeJson, validateTopology } from './bundle.mjs';
 import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEvidence } from './background-backup.mjs';
 import { snapshotState } from './snapshot-state.mjs';
@@ -13,6 +13,7 @@ import { volumeHelper } from './volumes.mjs';
 import { assertCronDockerTopology } from './cron-backup.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { selectedInstallation } from '../runtime/installation.mjs';
+import { stopRuntimeServices } from '../runtime/stop.mjs';
 
 export async function backup(directory, installation) {
   const profile = await configEnv();
@@ -34,11 +35,9 @@ export async function backup(directory, installation) {
   const dir = resolve(directory); await mkdir(dir, { mode: 0o700 });
   if (Object.values(background).some(names => names.length)) console.warn('Preparing background dispatch pause. If backup fails, inspect delivery and scheduled dispatch status: apps may remain operator-paused and require explicit resume. Cron pause clears timer and retry identity.');
   const prepared = await prepareBackgroundBackup(env, state, images, layout.replicas);
-  const started = Date.now(), command = composeArgs(file, config.name);
+  const started = Date.now();
   console.log(`Stopping ${config.name} for a complete installation snapshot`);
-  await docker([...command, 'stop', 'workerd', 'controller'], { env });
-  await docker([...command, 'stop', ...layout.replicas], { env });
-  await docker([...command, 'stop', 'minio', 'bucket-init'], { env });
+  await stopRuntimeServices(config, file, { env });
   const names = volumes.map(name => config.volumes[name].name);
   await stopped(config.name, names);
   const stoppedAt = new Date().toISOString();

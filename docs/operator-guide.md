@@ -159,6 +159,52 @@ Use [build retention](build-retention.md) to list, keep and review local build
 copies before pruning. Controller artifact reclamation remains open; removing a
 local copy does not free the controller's artifact quota or delete app data.
 
+## Stop and resume maintenance
+
+Stop an enrolled installation directly when you need its services offline:
+
+```sh
+node packages/cli/bin/fogd.js stop --installation my-cloud
+```
+
+The command selects the saved configuration under `FOGD_HOME`, stops ingress and
+controller first, then replicas, then storage, using Compose's configured graceful
+shutdown periods. It retains containers, networks and volumes. It needs Docker
+access and the saved enrollment; administrator/deploy tokens and the profile's
+project/template do not select its target. The report lists retained or already
+missing volumes and prior service exits. A stopped report does not establish
+storage health or create a backup.
+
+Stopping leaves background pause controls unchanged. After starting again,
+background execution follows its existing pause, retry and scheduling semantics.
+Use the [background controls](runtime-selection.md) when you need a persistent
+operator pause. Full-installation background stop/start is outside the HTTP/D1
+lifecycle scenario below; existing queue/cron qualification boundaries still apply.
+
+Import a replacement certificate while stopped, then resume the same project:
+
+```sh
+node packages/cli/bin/fogd.js tls import /private/new-chain.pem /private/new-key.pem \
+  --installation my-cloud
+node packages/cli/bin/fogd.js up --installation my-cloud
+```
+
+Stop can read a fenced, unfinished restoration so the operator can halt its known
+services; it does not remove the restoration fence or authorize startup. Unknown
+enrollment or unexpected project containers refuse instead of selecting another
+profile. A surviving writer prevents a successful stopped report.
+
+Startup requires all selected installation volumes to remain present and owned
+local project storage. Both `up --installation PROJECT` and selected runtime
+re-entry refuse missing or foreign volumes before recreating containers or
+rewriting the installed configuration. Recover lost storage through a qualified
+stopped backup onto fresh volumes.
+
+The repeatable HTTP/D1 lifecycle scenario is
+`node scripts/cron-probe/selected/installation-lifecycle.mjs .fogd/lifecycle-native-NEW`.
+It checks saved rows and an inert pending submission across public stop/start,
+and retains its volumes.
+
 ## Back up, restart, or recover
 
 Take a private stopped backup before maintenance:

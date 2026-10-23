@@ -2,6 +2,7 @@ import { assertRecoverySourceStopped } from './recovery-source.mjs';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { isDeepStrictEqual } from 'node:util';
 import { assertDockerNetworkAvailability } from './network-availability.mjs';
+import { assertInstalledStorage } from './maintenance.mjs';
 import { docker, composeArgs, requireFresh, projectName } from '../recovery/docker.mjs';
 import { readInstalledPolicy } from './installed-policy.mjs';
 import { requestedRuntime, verifyRuntimeFamily } from './catalog.mjs';
@@ -22,6 +23,7 @@ export async function selectedInstallation(config, selection = {}) {
     if (requested && requested.id !== installed.entry.id) throw new Error('Runtime family changes require an independently qualified migration');
     if (selection.networks !== undefined && !isDeepStrictEqual(selection.networks, installed.policy.networks)) throw new Error('Network plan differs from the installed policy; startup cannot move existing networks');
     const sealed = selectedRuntimeConfig(config, installed.entry, installed.policy);
+    await assertInstalledStorage(sealed);
     return selectedResult(sealed, installed);
   }
   if (!requested) return null;

@@ -67,7 +67,9 @@ curl -H 'Host: hello.localhost' http://127.0.0.1:8787/api/posts
 
 The response is `[]`. Pending and rejected code does not run. Ports bind to loopback;
 stop with `docker compose down` to preserve data. Do not delete volumes containing
-data you want to keep.
+data you want to keep. For an enrolled installation, use
+[`fogd stop --installation PROJECT`](docs/operator-guide.md#stop-and-resume-maintenance)
+to stop its services while retaining containers, configuration, and storage.
 
 ## Milestone 1: compatibility and architecture
 

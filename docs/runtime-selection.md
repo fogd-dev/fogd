@@ -158,11 +158,20 @@ fogd up --installation PROJECT
 
 This command requires an existing independent policy, validates the catalog again,
 and starts pinned images without credential bootstrapping, building or pulling.
+Selected startup also requires every configured volume to exist with its original
+local Compose project/role ownership. Missing or foreign storage refuses before
+installation service creation; use stopped recovery rather than empty replacement
+volumes. Read-only catalog and policy checks can run helper containers first.
 It cannot be combined with `--runtime` or `--shared`. Retain the source operator
 environment for subsequent admin/deploy endpoints, credentials and TLS trust.
 Restored scheduled work requires recovery acknowledgment and a separate explicit
 resume. A late initial runtime check can change recovery findings: inspect the new
 status and acknowledge its current review digest rather than replaying an old one.
+
+Use `fogd stop --installation PROJECT` for an ordered stop without a snapshot.
+It retains the saved configuration and storage, preserves restoration fences and
+does not change persistent background pause controls. See
+[operator maintenance](operator-guide.md#stop-and-resume-maintenance) for scope.
 
 Local source project and volume writers must be stopped before selected recovery
 and finalization. Host recovery metadata also checks related sources, descendants,

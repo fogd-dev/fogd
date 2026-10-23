@@ -36,7 +36,7 @@ async function fixture(t, admission = 'candidate') {
     else if(args[0]==='ps'&&args.includes('-aq')&&process.env.FOGD_TEST_CONTAINER)console.log('existing-container');
     else if(args[0]==='inspect'&&process.env.FOGD_TEST_CONTAINER)console.log(JSON.stringify([{Image:entry.image,State:{Running:false}}]));
     else if(args[0]==='volume'&&args[1]==='inspect')console.log(JSON.stringify(args.slice(2).map(Name=>({Name,Driver:'local',Options:{},Labels:{'com.docker.compose.project':process.env.FOGD_TEST_FOREIGN_VOLUME?'foreign':'original','com.docker.compose.volume':Name.slice('original_'.length)}}))));
-    else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING)console.log(process.env.FOGD_TEST_EXISTING);
+    else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING){const value=process.env.FOGD_TEST_EXISTING;const complete=value==='original_runtime-policy'&&!process.env.FOGD_TEST_EXACT_VOLUMES;console.log(complete?[...Object.values(JSON.parse(readFileSync(process.env.FOGD_TEST_SOURCE,'utf8')).volumes).map(v=>v.name),'original_runtime-policy'].join('\\n'):value);}
     else if(!['ps','volume','network'].includes(args[0]))process.exit(99);`);
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'installation.env'),
     FOGD_TEST_NODE: process.execPath, FOGD_TEST_DRIVER: driver, FOGD_TEST_LOG: log,
@@ -100,7 +100,7 @@ test('explicit maintenance resolves only the enrolled configuration and requires
   const code = `import{maintenanceConfiguration}from ${JSON.stringify(f.module('maintenance.mjs'))};console.log(JSON.stringify(await maintenanceConfiguration({FOGD_COMPOSE_FILE:'/private/wrong-template'},'original')));`;
   const env = { ...f.env, FOGD_TEST_EXISTING: Object.values(plan.config.volumes).map(volume => volume.name).join('\n') };
   assert.deepEqual(JSON.parse((await exec(process.execPath, ['--input-type=module', '-e', code], { env })).stdout), plan.config);
-  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...env, FOGD_TEST_EXISTING: 'original_runtime-policy' } }), /storage is incomplete/);
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...env, FOGD_TEST_EXISTING: 'original_runtime-policy', FOGD_TEST_EXACT_VOLUMES: '1' } }), /storage is incomplete/);
   await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...env, FOGD_TEST_FOREIGN_VOLUME: '1' } }), /not owned local project storage/);
   assert.equal((await calls(f)).some(args => args[0] === 'compose'), false);
   await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
@@ -242,6 +242,21 @@ test('ordinary installation startup uses the existing policy and pinned no-build
   assert.equal(launch.length, 1); assert.deepEqual(launch[0].slice(-5), ['up', '-d', '--no-build', '--pull', 'never']);
   assert.equal(launch[0].includes('--build'), false);
   await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
+});
+
+for (const mode of ['enrolled', 'selector']) test(`${mode} startup refuses missing or foreign installation storage before configuration writes or container mutation`, async t => {
+  const f = await fixture(t, 'qualified'), plan = freshRuntimePlan(f.source, f.entry), policy = join(f.root, 'policy.json');
+  await writeFile(policy, JSON.stringify(plan.policy));
+  const directory = join(f.root, '.fogd/installations/original'); await mkdir(directory, { recursive: true, mode: 0o700 });
+  const file = join(directory, 'compose.json'); await writeFile(file, JSON.stringify(plan.config), { mode: 0o600 });
+  const before = await readFile(file);
+  const args = mode === 'enrolled' ? ['up', '--installation', 'original'] : ['up', '--runtime', f.entry.id];
+  const env = { ...f.env, FOGD_TEST_POLICY: policy, FOGD_TEST_EXACT_VOLUMES: '1', FOGD_ADMIN_PASSWORD: 'private-admin', FOGD_GATEWAY_TOKEN: 'private-gateway', FOGD_DEPLOY_TOKEN: 'private-deploy' };
+  const names = Object.values(plan.config.volumes).map(volume => volume.name);
+  await assert.rejects(exec(process.execPath, [f.cli, ...args], { env: { ...env, FOGD_TEST_EXISTING: names.filter(name => name !== 'original_bucket').join('\n') } }), /storage is incomplete/);
+  await assert.rejects(exec(process.execPath, [f.cli, ...args], { env: { ...env, FOGD_TEST_EXISTING: names.join('\n'), FOGD_TEST_FOREIGN_VOLUME: '1' } }), /not owned local project storage/);
+  assert.deepEqual(await readFile(file), before);
+  assert.equal((await calls(f)).some(args => args[0] === 'compose' && args.some(value => ['up', 'create', 'build'].includes(value))), false);
 });
 
 

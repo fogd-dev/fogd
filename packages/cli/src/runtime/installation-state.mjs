@@ -69,6 +69,10 @@ async function readEnrolledConfiguration(project) {
   } catch { throw new Error('Cannot read the enrolled installation configuration; keep its resources stopped'); }
 }
 
+// Stopping cannot authorize a writer. It may inspect the saved configuration
+// of an unfinished restoration without bypassing the ordinary startup fence.
+export { readEnrolledConfiguration as readStopConfiguration };
+
 
 export async function assertRuntimeReady(project) {
   try { await lstat(join(installationDirectory(project), 'restore.pending.json')); }
