@@ -1,3 +1,4 @@
+import { artifactPruneStatus } from './artifact-prune-state.mjs';
 import { cronRecoveryView } from './cron-recovery.mjs';
 import { cronUpdateNotice } from './cron-dispatch.mjs';
 import { capacity } from './capacity.mjs';
@@ -11,7 +12,9 @@ export function adminDeployment(request) {
   return visible;
 }
 export function adminState(controller) {
-  return { ...controller.state, apps: Object.fromEntries(Object.entries(controller.state.apps).map(([name, app]) => [name, adminApp(app)])), capacity: capacity(controller), deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
+  const { artifactPruning, ...state } = controller.state;
+  const pruning = artifactPruning ? { artifactPruning: artifactPruneStatus(controller.state) } : {};
+  return { ...state, ...pruning, apps: Object.fromEntries(Object.entries(controller.state.apps).map(([name, app]) => [name, adminApp(app)])), capacity: capacity(controller), deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
 }
 
 function adminApp(app) {

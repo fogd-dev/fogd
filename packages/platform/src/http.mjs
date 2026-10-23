@@ -1,5 +1,6 @@
 import { routeHold } from './route-publication.mjs';
-import { artifactRequest } from './admin-artifacts.mjs';
+import { artifactRequest, artifactManifest } from './admin-artifacts.mjs';
+import { artifactPruneRequest } from './admin-artifact-pruning.mjs';
 import { ingressRequest } from './admin-ingress.mjs';
 import { deliveryRequest, deliveryHTML } from './admin-delivery.mjs';
 import { routingRecoveryRequest, assertRoutingServiceMode } from './admin-routing-recovery.mjs';
@@ -10,7 +11,7 @@ import { equal } from './security.mjs';
 import { createServer } from 'node:http';
 import { createServer as createSecureServer } from 'node:https';
 import { randomBytes } from 'node:crypto';
-import { manifest, MAX_UPLOAD } from '@fogd/runtime/manifest';
+import { MAX_UPLOAD } from '@fogd/runtime/manifest';
 import { adminDeployment, adminState } from './admin-view.mjs';
 import { checkMutation, secretRequest } from './admin-secrets.mjs';
 import { deploymentHandler } from './deployment-http.mjs';
@@ -58,6 +59,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
       if (await artifactRequest(request, url, controller, csrf, body, send)) return;
+      if (await artifactPruneRequest(request, url, controller, csrf, body, send)) return;
       if (await ingressRequest(request, url, controller, csrf, body, send)) return;
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await deliveryRequest(request, url, controller, csrf, body, send)) return;
@@ -66,9 +68,8 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       if (await secretRequest(request, url, controller, csrf, body, send)) return;
       const match = /^\/v1\/deployments\/([a-f0-9-]{36})\/(approve|reject|artifact)$/.exec(url.pathname);
       if (match && match[2] === 'artifact' && request.method === 'GET') {
-        const release = controller.state.deployments[match[1]];
-        if (!release) return send(404, { error: 'Not found' });
-        return send(200, await manifest(controller.artifact(release.id), release));
+        const result = await artifactManifest(controller, match[1]);
+        return send(result.status, result.body);
       }
       if (match && request.method === 'POST' && ['approve', 'reject'].includes(match[2])) {
         try { checkMutation(request, csrf); }
@@ -88,6 +89,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
 
 
 function errorStatus(error) {
+  if (['ARTIFACT_PRUNE_PENDING', 'ARTIFACT_PRUNE_REFUSED', 'ARTIFACT_PRUNE_INCOMPLETE'].includes(error.code)) return 503;
   if (['CONTROLLER_STORAGE_UNCERTAIN', 'ROUTE_PUBLICATION_UNCERTAIN', 'ROUTE_STARTUP_UNRECONCILED', 'ROUTE_PREFLIGHT_UNCONFIRMED'].includes(error.code)) return 503;
   if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED', 'CRON_SNAPSHOT_UNCONFIRMED', 'CRON_RECOVERY_UNCONFIRMED'].includes(error.code)) return 502;
   return 400;

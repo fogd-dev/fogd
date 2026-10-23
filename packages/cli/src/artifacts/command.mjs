@@ -1,23 +1,26 @@
+import { artifactPruneCommand } from './prune-command.mjs';
+import { artifactPruneStatusView } from './prune-view.mjs';
 import { configEnv, serverOrigin } from '../local.mjs';
 import { controllerGet, boundedJson, discardResponse } from '../client-http.mjs';
 import { artifactRetentionView } from './view.mjs';
 import { artifactPinCommand } from './pins-command.mjs';
 
 export async function artifactsCommand(args) {
+  if (args.length === 2 && ['prune', 'resume'].includes(args[0])) return artifactPruneCommand(args);
   if (args.length === 3 && ['keep', 'unkeep'].includes(args[0])) return artifactPinCommand(args);
-  if (args.length !== 1 || args[0] !== 'plan') throw new Error('Usage: fogd admin artifacts plan | keep|unkeep ID SHA');
+  if (args.length !== 1 || !['plan', 'status'].includes(args[0])) throw new Error('Usage: fogd admin artifacts plan|status | keep|unkeep ID SHA | prune PLAN_SHA | resume OPERATION_ID');
   const env = await configEnv();
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD for administrator artifact inspection');
   const authorization = `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`;
   let response;
-  try { response = await controllerGet(serverOrigin(env), '/v1/admin/artifacts', authorization); }
+  try { response = await controllerGet(serverOrigin(env), args[0] === 'status' ? '/v1/admin/artifacts/prune' : '/v1/admin/artifacts', authorization); }
   catch { throw new Error('Cannot read controller artifacts; check its endpoint, TLS trust, and availability'); }
   await checkResponse(response);
   const plan = await boundedJson(response, { limit: 4 * 1024 ** 2,
     invalid: 'Controller returned unreadable artifact JSON; private response contents are withheld',
     interrupted: 'Artifact inspection was interrupted or timed out; inspect controller availability',
     oversized: 'Artifact retention plan exceeded the 4 MiB inspection limit' });
-  console.log(JSON.stringify(artifactRetentionView(plan), null, 2));
+  console.log(JSON.stringify(args[0] === 'status' ? artifactPruneStatusView(plan) : artifactRetentionView(plan), null, 2));
 }
 
 async function checkResponse(response) {

@@ -1,9 +1,5 @@
-import { configEnv, serverOrigin } from '../local.mjs';
-import { readAdminSnapshot } from '../inspect-command.mjs';
-import { boundedJson, discardResponse } from '../client-http.mjs';
-
-const uncertainMessage = 'Artifact pin update is uncertain; inspect a fresh artifact plan before retrying';
-const uncertain = () => new Error(uncertainMessage);
+import { mutateArtifact, uncertainArtifactMutation } from './mutation.mjs';
+const uncertain = () => uncertainArtifactMutation('pin');
 
 function parse(args) {
   const [action, id, digest] = args;
@@ -13,32 +9,8 @@ function parse(args) {
 }
 
 export async function artifactPinCommand(args) {
-  const command = parse(args), env = await configEnv(), state = await readAdminSnapshot(env);
-  if (typeof state?.csrf !== 'string' || !/^[a-f0-9]{64}$/.test(state.csrf)) throw new Error('Controller did not return a valid mutation token; artifact pin update was not sent');
-  const response = await update(env, state.csrf, command);
-  await checkUpdate(response);
-  const value = await boundedJson(response, { limit: 4096, invalid: uncertainMessage });
+  const command = parse(args);
+  const value = await mutateArtifact('pin', `/v1/admin/artifacts/${command.id}/${command.action}`, { digest: command.digest });
   if (value?.schema !== 1 || value.id !== command.id || value.digest !== command.digest || value.kept !== (command.action === 'keep')) throw uncertain();
   console.log(JSON.stringify({ schema: 1, id: value.id, digest: value.digest, kept: value.kept }, null, 2));
-}
-
-async function update(env, csrf, { action, id, digest }) {
-  const authorization = `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`;
-  try {
-    return await fetch(`${serverOrigin(env)}/v1/admin/artifacts/${id}/${action}`, { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(15000),
-      headers: { Authorization: authorization, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf }, body: JSON.stringify({ digest }) });
-  } catch { throw uncertain(); }
-}
-
-async function checkUpdate(response) {
-  if (!response.ok) {
-    await discardResponse(response);
-    if (response.status >= 500) throw uncertain();
-    if ([401, 403].includes(response.status)) throw new Error('Artifact pin authorization was refused; inspect owner credentials and retry explicitly');
-    if (response.status === 404) throw new Error('Controller does not provide artifact pins; use a runtime that supports this command');
-    throw new Error(`Controller refused artifact pin update (HTTP ${response.status}); inspect the current artifact plan`);
-  }
-  if (response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json') {
-    await discardResponse(response); throw uncertain();
-  }
 }

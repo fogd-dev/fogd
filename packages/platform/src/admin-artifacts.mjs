@@ -1,6 +1,16 @@
 import { join } from 'node:path';
 import { planArtifactRetention } from './artifact-retention.mjs';
 import { checkMutation } from './admin-secrets.mjs';
+import { manifest } from '@fogd/runtime/manifest';
+
+export function artifactManifest(controller, id) {
+  return controller.exclusive(async () => {
+    const release = controller.state.deployments[id];
+    if (!release) return { status: 404, body: { error: 'Not found' } };
+    if (release.artifactPruned) return { status: 410, body: { error: 'Artifact bytes were pruned; deployment history remains' } };
+    return { status: 200, body: await manifest(controller.artifact(id), release) };
+  });
+}
 
 export async function artifactRequest(request, url, controller, csrf, body, send) {
   if (request.method === 'GET' && url.pathname === '/v1/admin/artifacts') {

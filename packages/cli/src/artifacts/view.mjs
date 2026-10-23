@@ -4,7 +4,7 @@ const uuid = value => typeof value === 'string' && /^[a-f0-9]{8}-(?:[a-f0-9]{4}-
 const app = value => typeof value === 'string' && /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(value);
 const bytes = value => Number.isSafeInteger(value) && value >= 0;
 const statuses = new Set(['active', 'pending', 'failed', 'activating', 'rejected', 'superseded', 'retired', 'unknown']);
-const reasons = new Set(['active', 'unfinished', 'retired', 'unknown-status', 'controller-reference', 'deployment-reference', 'unreferenced', 'digest-mismatch', 'invalid-deployment', 'operator-pin']);
+const reasons = new Set(['active', 'unfinished', 'retired', 'unknown-status', 'controller-reference', 'deployment-reference', 'unreferenced', 'digest-mismatch', 'invalid-deployment', 'operator-pin', 'pruned']);
 const invalid = () => { throw new Error('Controller returned an invalid artifact retention plan; private response contents are withheld'); };
 
 function identity(row) {

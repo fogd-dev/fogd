@@ -129,11 +129,13 @@ The [host retention commands](build-retention.md) implement the local build-copy
 subset with [same-engine evidence](evidence/operator-retention-local.json) for an
 interrupted operator prune, offline resume, overlapping approval and backup, another
 deployment, and fresh-volume restore. Legacy and uncertain outputs remain kept.
-[Controller artifact planning and pins](controller-artifacts.md) are implemented
-in source with an owner-only preview and durable retention choices for exact
-releases. The frozen server does not provide these endpoints. Deletion and quota
-accounting are unchanged; interrupted-prune recovery and the full quota-fill and
-reclamation gate below remain open and need a newly qualified server runtime.
+[Controller artifact retention](controller-artifacts.md) is implemented in source
+with an owner-only preview, exact-release pins, explicit pruning, quota
+re-accounting, and interrupted-prune resume. Temporary-filesystem tests cover
+process interruption, metadata write uncertainty, protected releases and completed
+stopped restore. The frozen server does not provide these endpoints. The full
+native quota-fill and reclamation gate below remains open and needs a newly
+qualified server runtime.
 
 The owner can inspect [backing filesystem space](storage-space.md) without
 starting services or recreating missing volumes. These observations are separate from
