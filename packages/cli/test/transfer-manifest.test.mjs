@@ -23,9 +23,14 @@ test('a qualified source inventory returns an independent manifest value', () =>
   value.files['images.tar'].bytes = 1;
   assert.equal(input.files['images.tar'].bytes, 10240);
 });
-for (const path of ['.env', '.fogd/state.json', 'packages/cli/test/private.mjs', 'packages/cli/src/../secret.mjs', '/packages/cli/src/main.mjs', 'packages/cli/src//main.mjs', 'node_modules/@fogd/cli/src/main.mjs', 'node_modules/ignore/private.env']) {
+for (const path of ['.env', '.fogd/state.json', 'docs/session-handoff.md', 'docs/reviews/private.md', 'docs/evidence/private.json', 'docs/not-an-operating-guide.md', 'packages/cli/test/private.mjs', 'packages/cli/src/../secret.mjs', '/packages/cli/src/main.mjs', 'packages/cli/src//main.mjs', 'node_modules/@fogd/cli/src/main.mjs', 'node_modules/ignore/private.env']) {
   test(`private or ambiguous program path is refused: ${path}`, () => assert.equal(publicProgramPath(path), false));
 }
+test('a version-1 transfer may carry an explicitly allowed operating guide', () => {
+  const input = fixture();
+  input.files['program/docs/operator-guide.md'] = { bytes: 42, sha256: 'e'.repeat(64) };
+  assert.deepEqual(validateTransferManifest(input, entry), input);
+});
 for (const [name, change, message] of [
   ['wrong format', m => { m.format = 'fogd-stopped-v1'; }, /manifest/],
   ['different runtime', m => { m.runtime.id = 'different'; }, /manifest/],

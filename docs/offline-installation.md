@@ -27,6 +27,10 @@ The output reports manifest and bootstrap SHA256 values. Retain both independent
 and transfer them through a trusted channel. Copy the complete directory to the receiving machine.
 The directory contains `manifest.json`, `verify-transfer.mjs`, `images.tar`, and a
 public `program` tree.
+The program includes the [operator workflow](operator-guide.md) and the
+[packaged operating guides](operator-package.md), authenticated by the same
+manifest. Import retains these instructions under the new operator directory's
+`docs/` folder. Older bundles can have a smaller documentation inventory.
 The image archive has content IDs rather than mutable image tags. Failed exports
 retain their incomplete directory; choose a new destination for another attempt.
 

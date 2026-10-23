@@ -5,9 +5,10 @@ import { join, dirname } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { transferFiles, transferFingerprint, copyTransferFile, ordinaryDirectory } from './files.mjs';
 import { publicProgramPath, operatorFiles, ignoreFiles } from './manifest.mjs';
+import { operatorGuides } from './guides.mjs';
 
 export async function programInputs(root) {
-  const files = new Map(operatorFiles.map(path => [path, join(root, path)]));
+  const files = new Map([...operatorFiles, ...operatorGuides].map(path => [path, join(root, path)]));
   for (const name of ['cli', 'runtime', 'platform']) {
     const base = `packages/${name}`;
     await ordinaryDirectory(join(root, base));

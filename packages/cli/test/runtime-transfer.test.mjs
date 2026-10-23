@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, rm, symlink, mkdir, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
@@ -27,6 +27,17 @@ test('export is self-contained and import loads pinned images without starting r
   const help = await exec(process.execPath, [join(output, 'packages/cli/bin/fogd.js'), '--help'], { cwd: output, env: { PATH: process.env.PATH, HOME: f.root } });
   assert.match(help.stdout, /fogd up/);
   assert.deepEqual(JSON.parse(await readFile(join(output, 'transfer-receipt.json'))).images, [f.entry.image, f.entry.storageImage]);
+  const index = await readFile(join(output, 'docs/operator-package.md'), 'utf8');
+  const manifest = JSON.parse(await readFile(join(f.bundle, 'manifest.json')));
+  for (const match of index.matchAll(/\]\(([^)]+\.md)\)/g)) {
+    const guide = posix.join('docs', match[1]);
+    const original = await readFile(join(f.source, guide));
+    assert.deepEqual(await readFile(join(f.bundle, 'program', guide)), original);
+    assert.deepEqual(await readFile(join(output, guide)), original);
+    assert.deepEqual(manifest.files[`program/${guide}`], { bytes: original.length, sha256: digest(original) });
+  }
+  assert.match(await readFile(join(output, 'docs/operator-guide.md'), 'utf8'), /stop --installation my-cloud/);
+  assert.ok(Object.keys(manifest.files).every(path => !path.startsWith('program/docs/') || /^program\/docs\/[a-z-]+\.md$/.test(path)));
   await assert.rejects(access(join(output, '.env')), { code: 'ENOENT' });
   await assert.rejects(access(join(output, '.fogd')), { code: 'ENOENT' });
 });
@@ -34,6 +45,8 @@ test('export is self-contained and import loads pinned images without starting r
 for (const [name, change, message] of [
   ['altered file', f => writeFile(join(f.bundle, 'program/compose.yaml'), 'changed'), /checksum differs/],
   ['missing file', f => rm(join(f.bundle, 'program/compose.yaml')), /missing or unexpected/],
+  ['altered operating guide', f => writeFile(join(f.bundle, 'program/docs/operator-guide.md'), 'changed instructions'), /checksum differs/],
+  ['missing developer guide', f => rm(join(f.bundle, 'program/docs/developer-client.md')), /missing or unexpected/],
   ['extra private file', f => writeFile(join(f.bundle, '.env'), 'private'), /missing or unexpected/],
   ['empty extra directory', f => mkdir(join(f.bundle, 'extra')), /Empty directories/],
   ['symlink member', async f => { await rm(join(f.bundle, 'program/compose.yaml')); await symlink(join(f.source, 'compose.yaml'), join(f.bundle, 'program/compose.yaml')); }, /without symlinks/],
@@ -44,6 +57,28 @@ for (const [name, change, message] of [
   await assert.rejects(f.invoke(['import', f.bundle, ...selection(f, exported.manifestSha256), '--output', output]), error => error.code === 1 && message.test(error.stderr));
   assert.equal(await readFile(f.log, 'utf8'), '');
   await assert.rejects(access(output), { code: 'ENOENT' });
+});
+
+test('an authenticated earlier documentation inventory remains importable', async t => {
+  const f = await transferFixture(t); await f.exportBundle();
+  const file = join(f.bundle, 'manifest.json'), manifest = JSON.parse(await readFile(file));
+  for (const path of Object.keys(manifest.files)) if (path.startsWith('program/docs/') && path !== 'program/docs/offline-installation.md') {
+    await rm(join(f.bundle, path)); delete manifest.files[path];
+  }
+  await writeFile(file, JSON.stringify(manifest, null, 2) + '\n');
+  const expected = digest(await readFile(file)), output = join(f.root, 'earlier-installed');
+  const result = JSON.parse((await f.invoke(['import', f.bundle, ...selection(f, expected), '--output', output])).stdout);
+  assert.equal(result.servicesStarted, false);
+  assert.deepEqual(await readFile(join(output, 'docs/offline-installation.md')), await readFile(join(f.source, 'docs/offline-installation.md')));
+  await assert.rejects(access(join(output, 'docs/operator-guide.md')), { code: 'ENOENT' });
+});
+
+test('export refuses an incomplete guide source before Docker or destination creation', async t => {
+  const f = await transferFixture(t);
+  await rm(join(f.source, 'docs/operator-guide.md'));
+  await assert.rejects(f.exportBundle(), /ENOENT/);
+  await assert.rejects(access(f.log), { code: 'ENOENT' });
+  await assert.rejects(access(f.bundle), { code: 'ENOENT' });
 });
 
 test('wrong manifest digest refuses before Docker or output creation', async t => {

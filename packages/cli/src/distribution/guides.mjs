@@ -1,0 +1,22 @@
+// Explicit public operating instructions; never collect a documentation directory.
+// Historical reviews, private state and qualification receipts are not package inputs.
+export const operatorGuides = [
+  'docs/operator-package.md',
+  'docs/operator-guide.md',
+  'docs/runtime-selection.md',
+  'docs/shared-installation.md',
+  'docs/developer-client.md',
+  'docs/artifact-review.md',
+  'docs/application-inspection.md',
+  'docs/application-observation.md',
+  'docs/submission-status.md',
+  'docs/build-retention.md',
+  'docs/recovery.md',
+  'docs/deploy-access.md',
+  'docs/delivery-controls.md',
+  'docs/queue-recovery.md',
+  'docs/cron-controls.md',
+  'docs/cron-recovery.md',
+  'docs/cron-selected-pause.md',
+  'docs/cron-selected-recovery.md',
+];

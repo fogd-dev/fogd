@@ -3,10 +3,11 @@ import { isDeepStrictEqual } from 'node:util';
 export { transferFormat, ignoreFiles } from './bootstrap.mjs';
 import { transferFormat, validTransferFingerprint } from './bootstrap.mjs';
 import { ignoreFiles } from './bootstrap.mjs';
+import { operatorGuides } from './guides.mjs';
 export const operatorFiles = ['package.json', 'compose.yaml', '.env.example', 'docs/offline-installation.md'];
 export function publicProgramPath(path) {
   if (typeof path !== 'string' || path.length > 240 || !/^[A-Za-z0-9@._/-]+$/.test(path) || path.split('/').some(part => !part || part === '.' || part === '..')) return false;
-  if (operatorFiles.includes(path)) return true;
+  if (operatorFiles.includes(path) || operatorGuides.includes(path)) return true;
   if (/^packages\/(?:cli|platform|runtime)\/package\.json$/.test(path) || path === 'packages/cli/bin/fogd.js') return true;
   if (/^packages\/(?:cli|platform|runtime)\/src\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:mjs|js|json)$/.test(path)) return true;
   if (path.startsWith('node_modules/@fogd/')) return publicProgramPath(path.replace('node_modules/@fogd/', 'packages/')) && !path.startsWith('node_modules/@fogd/cli/');

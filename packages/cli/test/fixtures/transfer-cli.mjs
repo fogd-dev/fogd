@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { execFile } from 'node:child_process';
+import { operatorGuides } from '../../src/distribution/guides.mjs';
 const exec = promisify(execFile), repo = fileURLToPath(new URL('../../../../', import.meta.url));
 const hash = value => createHash('sha256').update(value).digest('hex');
 export async function transferFixture(t) {
@@ -18,7 +19,7 @@ export async function transferFixture(t) {
   }
   // Resolve the existing declared dependency through its workspace installation.
   await cp(join(repo, 'packages/runtime/node_modules/ignore'), join(source, 'node_modules/ignore'), { recursive: true, dereference: true });
-  for (const name of ['package.json', 'compose.yaml', '.env.example', 'docs/offline-installation.md']) {
+  for (const name of ['package.json', 'compose.yaml', '.env.example', 'docs/offline-installation.md', ...operatorGuides]) {
     await mkdir(join(source, name, '..'), { recursive: true }); await cp(join(repo, name), join(source, name));
   }
   const catalog = join(source, 'packages/cli/src/runtime/catalog.json'), entries = JSON.parse(await readFile(catalog, 'utf8'));
