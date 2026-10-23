@@ -38,6 +38,8 @@ export class RuntimeIdentity {
       assertMembership(after, fleet.nodes, requireLeases, this.now());
       assertAuthorities(after, authorities);
       if (!isDeepStrictEqual(stableMembership(before), stableMembership(after))) throw new Error('Membership changed');
+      // Callers can bracket read-only observations with the same verified processes.
+      return requireLeases ? digest(JSON.stringify(stableMembership(before).sort((a, b) => a.node.localeCompare(b.node)))) : undefined;
     } catch {
       const error = new Error('Runtime identity policy refused the fleet');
       error.code = 'RUNTIME_IDENTITY_REFUSED';

@@ -331,6 +331,39 @@ observe real temporary authority/private files while substituting the backend. T
 exercise the source protocol; they do not establish native runtime, image or mount
 qualification.
 
+## Read-only runtime verification candidate
+
+The [runtime verifier](../packages/platform/src/route-runtime.mjs) supplies the
+controller callback for verified HTTP resume and pending-publication reconciliation.
+Its production adapter validates the independent installed runtime profile against
+the backend environment. It checks the exact current completed approval, configured
+fleet, native version and storage owner. Signed identity verification returns a
+fingerprint of the verified process membership; matching fingerprints bracket GET
+reads of each replica's version, native health and version again. Owner and approval
+references are checked again before success. A changed process, version, owner or
+approval refuses verification. Lease renewal alone does not change the fingerprint.
+
+This callback sends no reload, deploy, migration, queue or cron commands, and no
+application requests. Native health is separate from application outcomes and storage
+durability. Each state/health HTTP read has a three-second deadline; state JSON is
+limited to four MiB of actual bytes and strict UTF-8. Identity and lease reads retain
+their existing five-second limits. Failures expose a fixed refusal without private
+runtime bodies. The controller must serialize backend work around verification, and
+launch checks must exclude other live writers. Owner reads retain the backend
+storage client's timeout behavior; the per-HTTP deadline does not bound the whole verification. Identity, state and health use
+separate ports on a hostname: sealed topology must bind those ports to the expected
+native process and supervisor. The fingerprint is not attestation of arbitrary HTTP
+responders. These observations do not fence a later process failure or privileged
+storage replacement.
+
+The [verifier tests](../packages/platform/test/route-runtime.test.mjs) check failure
+boundaries and actual public withholding through controller pause/resume. The
+[adapter tests](../packages/platform/test/route-runtime-backend.test.mjs) exercise
+signed challenge proofs, executable hashing and storage lease checks with local
+fixtures and substituted network/storage reads. They establish source behavior,
+not native qualification. Startup composition with the sealed route policy and
+pre-ingress recovery checks remains open; this module enables no runtime family.
+
 ## Gateway candidate implementation
 
 The [durable gateway](../packages/runtime/src/gateway-durable.js) reads the fixed

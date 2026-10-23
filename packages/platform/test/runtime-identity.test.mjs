@@ -168,3 +168,20 @@ test('bootstrap permits partial valid membership while checking both native auth
   await f.policy.bootstrap(slot);
   assert.deepEqual(f.calls, ['members', 'cli', 'a', 'b', 'members']);
 });
+
+test('verified process fingerprint ignores lease renewal and ordering but changes on a signed process restart', async () => {
+  const f = fixture(), policy = f.policy, first = await policy.verify(slot);
+  assert.match(first, /^[a-f0-9]{64}$/);
+  f.members.reverse(); f.members.forEach(member => { member.expiresMs += 1000; });
+  assert.equal(await policy.verify(slot), first);
+  const restarted = fixtureAuthority(9), original = f.adapter.identify;
+  f.members.find(member => member.node === 'node-a').processKey = restarted.publicKey;
+  f.identities.a.processKeySha256 = hash(restarted.publicKey);
+  policy.identify = async (host, challenge) => host === 'a' ? signedIdentity(f.identities.a, challenge, restarted) : original(host, challenge);
+  assert.notEqual(await policy.verify(slot), first);
+});
+
+test('bootstrap with absent or partial membership never returns a verified fleet fingerprint', async () => {
+  const f = fixture(); f.members.pop(); assert.equal(await f.policy.bootstrap(slot), undefined);
+  f.members.length = 0; assert.equal(await f.policy.bootstrap(slot), undefined);
+});
