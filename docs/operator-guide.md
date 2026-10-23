@@ -159,6 +159,7 @@ Start with recorded app state, then observe local native replicas separately:
 node packages/cli/bin/fogd.js admin inspect my-app
 node packages/cli/bin/fogd.js observe my-app --installation my-cloud
 node packages/cli/bin/fogd.js admin capacity
+node packages/cli/bin/fogd.js storage space --installation my-cloud
 ```
 
 [Inspection](application-inspection.md) connects releases, routing and held work.
@@ -167,6 +168,8 @@ it does not call an application's health endpoint. Developers use scoped
 [`status`](submission-status.md). A healthy replica does not establish that the
 application works, and controller loss currently interrupts gateway serving.
 Check the application's own outcomes as well. Scoped application logs remain open.
+[Storage space](storage-space.md) reports the backing filesystem separately from
+controller artifact quotas; it supplies no storage-health or admission verdict.
 
 Use [build retention](build-retention.md) to list, keep and review local build
 copies before pruning. Controller artifact reclamation remains open; removing a

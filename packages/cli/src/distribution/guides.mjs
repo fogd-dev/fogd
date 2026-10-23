@@ -11,6 +11,7 @@ export const operatorGuides = [
   'docs/application-observation.md',
   'docs/submission-status.md',
   'docs/build-retention.md',
+  'docs/storage-space.md',
   'docs/recovery.md',
   'docs/deploy-access.md',
   'docs/delivery-controls.md',

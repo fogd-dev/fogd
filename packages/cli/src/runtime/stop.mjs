@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
 import { join } from 'node:path';
-import { readStopConfiguration, installationDirectory } from './installation-state.mjs';
+import { readEnrolledConfiguration, installationDirectory } from './installation-state.mjs';
 import { validateTopology } from '../recovery/bundle.mjs';
 import { docker, composeArgs, projectContainers, stopped } from '../recovery/docker.mjs';
 import { recoveryLayout } from '../recovery/layout.mjs';
@@ -11,7 +11,7 @@ export async function stopRuntimeServices(config, file, options = {}) {
 }
 
 export async function stopInstallation(project) {
-  const config = await readStopConfiguration(project); validateTopology(config);
+  const config = await readEnrolledConfiguration(project); validateTopology(config);
   const names = Object.values(config.volumes).map(volume => volume.name);
   const before = await retainedVolumes(names), containers = await projectContainers(project);
   assertStopInventory(config, containers);

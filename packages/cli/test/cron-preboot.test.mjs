@@ -85,7 +85,7 @@ test('image preboot hashes exact executable and supervisor without mounting or b
   await verifyCronRuntimeImage(f.profile, async (args, options) => { calls.push({ args, options }); if (args[0] === 'image') return JSON.stringify(imageConfig(f.profile.image)); return JSON.stringify({ binarySha256: 'b'.repeat(64), supervisorSha256: 'c'.repeat(64) }); });
   assert.equal(calls.length, 2);
   assert.deepEqual(calls[0].args, ['image', 'inspect', f.profile.image]);
-  assert.deepEqual(calls[1].args.slice(0, 7), ['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL']);
+  assert.deepEqual(calls[1].args.slice(0, 9), ['run', '--rm', '--pull', 'never', '--network', 'none', '--read-only', '--cap-drop', 'ALL']);
   assert.equal(calls[1].args.includes('--mount'), false);
   assert.equal(calls[1].args.includes(f.profile.image), true);
   assert.equal(calls[1].args[calls[1].args.indexOf('--entrypoint') + 1], '/usr/local/bin/node');

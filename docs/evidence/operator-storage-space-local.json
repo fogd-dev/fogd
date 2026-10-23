@@ -1,0 +1,67 @@
+{
+  "scope": "Read-only backing-space inspection of a retained local selected installation, including fenced, missing and foreign controls; no application stack, volume creation, data writes or space reclamation.",
+  "baseCommit": "5b7a935ee7234d2b5c1ceb706aa56237aa508e3f",
+  "nativeExitCode": 0,
+  "qualification": "Local read-only backing-filesystem observations of retained selected-installation volumes; no application health, per-volume usage, admission, remote-engine or reclamation qualification.",
+  "observation": {
+    "volumeCount": 8,
+    "filesystemCount": 1,
+    "availableBytes": "543617024",
+    "totalBytes": "58861912064"
+  },
+  "controls": {
+    "missingVolumeNotCreated": true,
+    "fencedInspectionSucceeded": true,
+    "startupFencePreserved": true,
+    "foreignOwnershipRefused": true,
+    "configurationUnchanged": true,
+    "allExistingResourcesUnchanged": true,
+    "preexistingContainerStatesVerified": 191,
+    "independentDeviceAndTotalMatch": true,
+    "byteArithmeticChecked": true
+  },
+  "attempts": [
+    {
+      "directory": ".fogd/storage-space-native1",
+      "exitCode": 1,
+      "disposition": "Probe expected a label refusal but its foreign control first failed canonical policy-volume naming. Control fixture corrected; no command pass inferred from that attempt."
+    },
+    {
+      "directory": ".fogd/storage-space-native2",
+      "exitCode": 0,
+      "disposition": "Passed before output field clarification and memory-ceiling adjustment."
+    },
+    {
+      "directory": ".fogd/storage-space-native3",
+      "exitCode": 0,
+      "disposition": "Passed on the qualified filesystem, whose block and fragment sizes match; superseded by the fragment-aware reader."
+    },
+    {
+      "directory": ".fogd/storage-space-native4",
+      "exitCode": 0,
+      "disposition": "Final source; fragment-aware byte accounting, reader metadata, partial and fenced inspection, startup refusal and foreign ownership controls passed."
+    }
+  ],
+  "raw": {
+    "directory": ".fogd/storage-space-native4",
+    "receiptSha256": "b7d6c74cfc03b17f8b502d0a85be68d494facb7f3fba649029885f2d01ac0861",
+    "sourceInventorySha256": "299c93a9d49508210741850306f2ddf629727584339e5478005681cd85f23e5a",
+    "independentAuditSha256": "dc75a033b9394041979ec3f164f1039d744966a0e59a7098bef9ac526ce4776d",
+    "sourceFilesVerified": 309
+  },
+  "executedSources": {
+    "packages/cli/bin/fogd.js": "a94ae0996263b62a0119d13ffc7522ae0eacf54afd1a055421efe9fd27818c13",
+    "packages/cli/src/storage/command.mjs": "3ed778b20f3f9f365962fb0ccb26077ddc124f03986cd428cb54d6138d7b46c4",
+    "packages/cli/src/storage/inventory.mjs": "12efffe5365af1c5df650eba34828656f6ee61247b1d2db4fa86dd416e6ed099",
+    "packages/cli/src/storage/model.mjs": "9234473248da7846246bd99dffd8c98d0b92117efd371cb9d72d9b6d6fd2932c",
+    "packages/cli/src/storage/worker.mjs": "2eaeb4e056b18ff221cf81982b14725a12a2547b79239a255621725e224669d3",
+    "packages/cli/src/observe/cleanup.mjs": "873ef54b4c3139f017d4d96378061586bb1dbb3ce3acfe1fcead992e61b5586f",
+    "packages/cli/src/runtime/installation-state.mjs": "d805784a66b18104c09884b8daa6d2be5e1dee4394ff93431a9e0787e782a8da",
+    "packages/cli/src/runtime/cron-image.mjs": "31f944356d2a4ce9b378962b889765206032e2a21c67ff3d81082fea67b3c042"
+  },
+  "limits": [
+    "Space is a point-in-time observation, not a reservation or storage-health verdict.",
+    "Filesystem counters are distinct from per-app artifact quotas and per-volume usage.",
+    "Low Docker backing-space still prevents further write-load acceptance; no retained data or thresholds were changed."
+  ]
+}

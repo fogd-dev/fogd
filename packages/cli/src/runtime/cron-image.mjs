@@ -26,7 +26,7 @@ export async function verifyCronRuntimeImage(profile, run = docker) {
 }
 
 export function runtimeInspector(image, code, run = docker) {
-  return run(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+  return run(['run', '--rm', '--pull', 'never', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     '--memory', '128m', '--cpus', '1', '--pids-limit', '64', '--entrypoint', '/usr/local/bin/node',
     ...['NODE_OPTIONS', 'NODE_PATH', 'LD_PRELOAD', 'LD_LIBRARY_PATH', 'BASH_ENV', 'ENV'].flatMap(key => ['--env', `${key}=`]),
     image, '--input-type=module', '-e', code], { timeoutMs: 15000 });

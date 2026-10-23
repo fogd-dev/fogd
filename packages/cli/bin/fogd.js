@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { storageCommand } from '../src/storage/command.mjs';
 import { clientCommand } from '../src/client/command.mjs';
 import { reviewCommand } from '../src/review/command.mjs';
 import { stopCommand } from '../src/runtime/stop.mjs';
@@ -19,7 +20,9 @@ import { up, deploy, admin, adminDelivery, adminDispatch, adminRepair, adminAckn
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  if (command === 'client') {
+  if (command === 'storage') {
+    await storageCommand(args);
+  } else if (command === 'client') {
     await clientCommand(args);
   } else if (command === 'stop') {
     await stopCommand(args);
@@ -83,6 +86,7 @@ try {
     }
   }
   else if (!command || command === '--help' || command === 'help') {
+    console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd admin review ID --output DIR  Export verified artifacts and compare a release');
     console.log('fogd client export DIR     Export a standalone developer CLI without images\nfogd client verify DIR --expected-manifest SHA');

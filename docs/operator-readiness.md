@@ -130,6 +130,10 @@ deployment, and fresh-volume restore. Legacy and uncertain outputs remain kept.
 Controller artifacts and quota are unchanged; the full quota-fill and reclamation
 gate below remains open and needs a newly qualified server runtime.
 
+The owner can inspect [backing filesystem space](storage-space.md) without
+starting services or recreating missing volumes. These observations are separate from
+artifact quota accounting, per-volume usage and storage-health checks.
+
 Provide an inspectable retention plan and an explicit execution command. Active
 releases, unfinished operations, recovery references, and operator-selected retained
 releases must remain protected. Define which local build outputs and controller

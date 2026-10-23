@@ -51,7 +51,9 @@ export async function readInstallationVolumeNames(project) {
   return names;
 }
 
-async function readEnrolledConfiguration(project) {
+// Reading metadata can inspect an unfinished restoration. Writer entry points
+// still require readRuntimeConfiguration and its startup fence.
+export async function readEnrolledConfiguration(project) {
   const dir = installationDirectory(project);
   try {
     for (const parent of [join(stackRoot, '.fogd'), join(stackRoot, '.fogd', 'installations'), dir]) {
@@ -68,10 +70,6 @@ async function readEnrolledConfiguration(project) {
     } finally { await file.close(); }
   } catch { throw new Error('Cannot read the enrolled installation configuration; keep its resources stopped'); }
 }
-
-// Stopping cannot authorize a writer. It may inspect the saved configuration
-// of an unfinished restoration without bypassing the ordinary startup fence.
-export { readEnrolledConfiguration as readStopConfiguration };
 
 
 export async function assertRuntimeReady(project) {
