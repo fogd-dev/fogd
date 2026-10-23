@@ -12,7 +12,7 @@ export function activationQueue(resources) {
 
 export function deliveryFor(controller, app, slot) {
   return new Delivery({ state: app.delivery, slot, runtime: controller.backend.queues,
-    persist: async state => { controller.assertStorage(); delete app.queueSnapshot; app.delivery = state; await controller.save(); } });
+    persist: state => { controller.assertStorage(); return controller.routes.persistBackground(app, 'delivery', state); } });
 }
 
 export function requireQueueCapability(state, resources) {
@@ -54,6 +54,7 @@ export async function recoverQueueHolds(controller) {
     const slot = controller.slots.find(value => value.id === app.slot);
     if (!slot) throw new Error('Queue fleet is missing');
     try {
+      await controller.routes.beforeEffect(app, slot);
       if (app.queueBootstrap.phase === 'ready') await controller.backend.ready(slot, app.queueBootstrap.version);
       await deliveryFor(controller, app, slot).reconcile();
       delete app.deliveryRecoveryError;

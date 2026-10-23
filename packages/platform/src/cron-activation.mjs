@@ -5,7 +5,7 @@ import { CronDispatch, initialCronDispatch, validateCronDispatch, cronCapability
 
 export function dispatchFor(controller, app, slot) {
   return new CronDispatch({ state: app.dispatch, slot, runtime: controller.backend.crons, clock: controller.clock,
-    persist: async state => { controller.assertStorage(); delete app.cronSnapshot; app.dispatch = state; await controller.save(); } });
+    persist: state => { controller.assertStorage(); return controller.routes.persistBackground(app, 'dispatch', state); } });
 }
 
 export function validateCronState(state, runtime) {
@@ -68,6 +68,7 @@ export async function recoverCronHolds(controller) {
     const slot = controller.slots.find(value => value.id === app.slot);
     if (!slot) throw new Error('Cron fleet is missing');
     try {
+      await controller.routes.beforeEffect(app, slot);
       if (app.cronBootstrap.phase === 'ready') await controller.backend.ready(slot, app.cronBootstrap.version);
       await dispatchFor(controller, app, slot).reconcile();
       delete app.dispatchRecoveryError;

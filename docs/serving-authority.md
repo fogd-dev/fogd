@@ -123,11 +123,60 @@ implementation whose disk service retains stale permission for a new request.
 ## Persist intent, withhold, then change the backend
 
 Private controller state retains the settled public record revision and digest. Each
-route publication also has a durable `routePublication` intent containing its
+route publication also has a durable `routeAuthority.pending` intent containing its
 operation identity, direction, previous and intended revisions, intended record
 digest, and exact approval identity where applicable. Table revisions are global and
 publications are serialized, preserving unrelated app entries. Clearing an intent
 records the newly settled revision/digest; it never discards that reference.
+
+The candidate [publication core](../packages/platform/src/route-publication.mjs)
+and [portable record codec](../packages/runtime/src/route-record.mjs) implement
+this protocol without changing the admitted family. The gateway must apply the same
+codec against its sealed identity and slot policy. Revisions use canonical unsigned
+64-bit decimal strings; exhaustion refuses further publication. Public files use the
+canonical encoding so a settled digest identifies exact file bytes. The public writer
+requires an existing dedicated directory and never creates a missing mount path.
+The directory must allow traversal by the separate gateway UID without relying on
+a shared group. Topology inspection must separately establish the actual mount and
+sole writer.
+
+An explicit withdrawal of pending active permission reserves a later revision and
+retains the superseded active decision in its private intent. Recovery must recognize
+the old settled, superseded active and new withheld records across an interrupted
+withdrawal. It must never assign different decisions the same revision. A failed
+read-only runtime verification leaves the decision unresolved but permits this
+withdrawal; uncertain persistence still requires durable reload first. Resuming a
+settled paused route selects its exact completed approval, confirms fresh withholding
+and runtime identity/readiness, then publishes active permission. Withdrawing permission
+retains any existing approval hold, so a pause cannot authorize an older release after
+a failed update. A corrected approval must explicitly select the failed, superseded or current
+completed hold it replaces. Only an activating corrected approval can use that path;
+a completed older approval cannot replace an unfinished update hold.
+
+The controller must await the core's per-app withheld assertion before an
+HTTP-affecting backend effect. Its read-only runtime verification callback must not
+re-enter queued publication methods; the controller owns backend serialization.
+The active-publication method belongs only to activation completion after backend
+readiness; operator unpause and interrupted publication use the verified resume and
+reconciliation methods.
+
+The [stopped retirement transform](../packages/platform/src/route-retirement.mjs)
+removes the retired host, preserves peers and binds the resulting stores to the
+target installation identity. It grants no live-write permission. The candidate
+[controller integration](../packages/platform/src/controller-routes.mjs) composes
+publication explicitly with an independent policy, separate public path and read-only
+runtime verification callback. The public authority directory and private controller
+directory cannot contain one another, including through path aliases checked at open;
+actual mount isolation still requires the launch inventory checks. Default controllers still reject authority-bearing
+state. No environment switch or catalog entry enables this constructor composition.
+Sealed launch configuration and stopped recovery integration remain required
+before it can serve an application.
+
+Validation: the [publication tests](../packages/platform/test/route-publication.test.mjs)
+exercise interrupted writes, reload, active withdrawal and resume, peer preservation,
+retirement and slot reuse against temporary files. The [record tests](../packages/runtime/test/route-record.test.mjs)
+exercise policy, approval identity, canonical encoding and revision bounds. These host
+checks do not establish native fsync ordering, mount isolation or gateway behavior.
 
 Before an HTTP-affecting backend effect, persist the withholding intent bound to the
 exact approval and desired withheld route revision. Atomically replace the public
@@ -192,7 +241,11 @@ recovery](../packages/platform/src/cron-activation.mjs), and
 [claim rejection and discovered owners](../packages/platform/src/claims.mjs), startup
 queue/cron snapshot recovery, and the offline [retirement
 transform](../packages/cli/src/recovery/retirement-plan.mjs) and [restore
-path](../packages/cli/src/recovery/restore.mjs). Keep this inventory with the
+path](../packages/cli/src/recovery/restore.mjs). Rejection of a pristine unclaimed
+reservation must remove its withheld public entry before freeing the slot; otherwise
+that entry prevents another app from using the fleet. The candidate claim-release
+publication retains the private reservation through public removal; an interruption
+can finish removal without freeing the slot or replaying the rejected approval. Keep this inventory with the
 implementation review; a new route write cannot bypass it.
 
 Controller restart does not rewrite active authority merely because it restarts. Load
@@ -211,6 +264,29 @@ without an HTTP pause. Any resulting quarantine must publish withholding; its de
 state alone cannot be described as confirmed ingress refusal. Held queue/cron pause
 reconciliation remains independent of HTTP admission unless it also changes
 HTTP-observable runtime or data.
+
+The controller candidate publishes a permission-only quarantine when a settled public
+entry cannot be matched to private ownership or completed approval. This preserves the
+entry's actual host and fleet while withholding it; it never adopts that ownership or
+regenerates active permission. Startup still refuses until the metadata is reconciled.
+An interrupted quarantine may resume permission reduction without backend effects.
+
+A valid pending active decision blocks other publications. If another active entry
+needs withholding at that point, the candidate reports
+`ROUTE_STARTUP_UNRECONCILED` rather than claiming successful startup or withdrawing the
+valid pending app automatically. Launch integration must keep ingress stopped and
+provide a control-only recovery path for the exact pending decision. After explicit
+reconciliation, the controller repeats withholding and background recovery before it
+can report ready. Enforcing this boundary in the actual launch coordinator remains a
+release gate; the constructor API alone cannot stop a separately running gateway.
+
+Ownership inspection must finish before an explicit reconciliation can run startup
+recovery. Ordinary mutations, snapshot preparation and HTTP resume require startup
+recovery to finish too. A permission-reduction command after failed initialization
+cannot mark those phases complete. If initialization fails before ownership inspection,
+restart with corrected storage/configuration before increasing permissions; a pause
+alone never turns the controller ready. Pending-active withdrawal preserves the actual
+public host/fleet even when the private slot differs, and does not adopt that slot.
 
 Queue and cron snapshot preparation intentionally requires active HTTP routing. It
 pauses background execution and observes retained background state. Do not add an
@@ -234,6 +310,58 @@ Runtime-family migration and cross-version restore remain outside this increment
 Validation: run failed and corrected approval, held queue replacement, cron recovery,
 active-routing background snapshot preparation, stopped full restore, retirement and
 slot reuse. Check both durable stores and app identity at every boundary.
+
+The controller candidate shares background-hold transfer and HTTP withholding intent
+in one private save. Restored queue/cron acknowledgment verifies runtime before
+persisting acknowledgment with active-publication intent. Background snapshot
+preparation checks actual public active authority and does not publish HTTP withholding.
+
+The candidate admin routing API reads actual public authority and accepts exact
+approval selections for pause, verified resume and pending-active reconciliation or
+withdrawal. It uses the existing admin authentication and CSRF checks; submitter and
+gateway credentials confer no routing control. The durable controller has no internal
+route lookup endpoint. The existing approval page selects HTTP hold predecessors for corrected approval.
+Dedicated operator CLI and routing UI controls remain open.
+
+Validation: the [controller integration tests](../packages/platform/test/controller-routes.test.mjs),
+[background transition tests](../packages/platform/test/controller-route-background.test.mjs),
+[restored recovery tests](../packages/platform/test/controller-route-recovery.test.mjs)
+and [HTTP authorization tests](../packages/platform/test/controller-route-http.test.mjs)
+observe real temporary authority/private files while substituting the backend. They
+exercise the source protocol; they do not establish native runtime, image or mount
+qualification.
+
+## Gateway candidate implementation
+
+The [durable gateway](../packages/runtime/src/gateway-durable.js) reads the fixed
+record through its private authority binding on every request, including its health
+endpoint. The [reader](../packages/runtime/src/gateway-authority.mjs) requires a
+complete HTTP 200 response, bounds actual bytes at 65,536, decodes UTF-8 strictly,
+and applies the shared record codec against an independent configured policy. A
+three-second read deadline bounds unavailable authority; it is not a permission
+lease. Failure never reuses an earlier route decision. Health reports readable
+routing authority, not application or storage health.
+
+The [configuration renderer](../packages/runtime/src/gateway-durable-config.mjs)
+provides a read-only disk service, only the declared replica bindings, and no
+controller binding or outbound internet access. The
+[program preparer](../packages/runtime/src/gateway-durable-program.mjs) stages the
+complete module graph and optional TLS material outside the authority directory.
+It requires existing directories and does not start a runtime. Its caller must
+establish sealed policy, actual mount isolation and completed startup recovery.
+The candidate has no launcher or catalog admission yet.
+
+The candidate forwarding helper preserves the existing gateway protections for
+private paths, privileged headers, actual-origin headers, replica health selection
+and sent-request non-replay. The pinned legacy gateway and launcher remain
+byte-identical to avoid further drift from the frozen runtime inventory. The
+controller candidate already changes pinned sources: exporting the qualified family
+requires its matching frozen checkout, until a new family is qualified. The [gateway tests](../packages/runtime/test/gateway-durable.test.mjs)
+cover fresh decisions, withheld/invalid/unavailable authority, stalled and oversized
+reads, and forwarding protections. Host staging tests import the prepared module
+graph. These tests do not establish native workerd timeout, configuration parsing,
+disk freshness, mounts or controller-loss serving in the candidate topology; those
+remain release gates.
 
 ## Release evidence and sequence
 

@@ -16,6 +16,7 @@ function recoveryMismatch(message) {
 }
 export async function prepareCronSnapshot(controller, name, input) {
   const { app, active } = cronSnapshotTarget(controller.state, name); activeInput(active, input);
+  await controller.routes.snapshotReady(name, active);
   if (cronRecoveryPending(app) || app.route !== 'active') throw new Error('Acknowledge restored cron recovery before another snapshot');
   if (await artifactDigest(controller.artifact(active.id)) !== active.digest) throw new Error('Stored artifact digest mismatch');
   await controller.secrets.select(active, active.secretRevision);
@@ -40,6 +41,7 @@ function diagnose(receipt, text) {
   receipt.diagnoses = [...new Set([...(receipt.diagnoses || []), text])]; receipt.diagnosis = receipt.diagnoses.join('; ');
 }
 async function inspectRecovery(controller, name, app) {
+  await controller.routes.beforeEffect(app, controller.slots.find(slot => slot.id === app.slot));
   const receipt = app.cronRecovery, { active } = cronSnapshotTarget(controller.state, name);
   const slot = controller.slots.find(value => value.id === app.slot);
   const before = await controller.backend.crons.status(slot, app.dispatch.script);
@@ -90,13 +92,15 @@ export async function recoverCronSnapshots(controller) {
   }
 }
 export async function acknowledgeCronRecovery(controller, name, input) {
+  await controller.routes.checkReady();
   const { app, active } = cronSnapshotTarget(controller.state, name); activeInput(active, input);
   const receipt = app.cronRecovery;
   if (!cronRecoveryPending(app) || input.recovery !== receipt.id || input.acceptPossibleLoss !== true) throw new Error('Acknowledge the current recovery ID and possible loss or replay explicitly');
   if (input.review !== recoveryReview(receipt)) throw new Error('Recovery findings changed; inspect status and acknowledge again');
   await checkRecovery(controller, name, app);
   if (input.review !== recoveryReview(receipt)) { await controller.save(); throw new Error('Recovery findings changed; inspect status and acknowledge again'); }
-  receipt.status = 'acknowledged'; receipt.acknowledgedAt = controller.clock(); app.route = 'active'; await controller.save();
+  await controller.routes.verifyRecovery(name, active);
+  receipt.status = 'acknowledged'; receipt.acknowledgedAt = controller.clock(); app.route = 'active'; await controller.routes.complete(active);
 }
 export function cronRecoveryView(receipt) {
   if (!receipt) return null;

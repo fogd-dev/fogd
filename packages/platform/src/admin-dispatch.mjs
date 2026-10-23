@@ -40,6 +40,7 @@ function dispatchTarget(controller, name) {
 export async function operateDispatch(controller, name, action, input = {}) {
   if (!['observe', 'pause', 'resume', 'snapshot', 'acknowledge-recovery'].includes(action)) throw new Error('Invalid dispatch action');
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Dispatch input must be a JSON object');
+  await controller.routes.checkReady();
   const { app, slot } = dispatchTarget(controller, name);
   if (action === 'snapshot') return prepareCronSnapshot(controller, name, input);
   if (action === 'acknowledge-recovery') { await acknowledgeCronRecovery(controller, name, input); return dispatchView(controller, name); }

@@ -1,4 +1,5 @@
 import { deliveryRequest, deliveryHTML } from './admin-delivery.mjs';
+import { routingRequest } from './admin-routing.mjs';
 import { dispatchRequest, dispatchHTML } from './admin-dispatch.mjs';
 import { capacityHTML } from './admin-capacity.mjs';
 import { equal } from './security.mjs';
@@ -36,6 +37,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
     };
     try {
       const url = new URL(request.url, 'http://controller');
+      if (role === 'internal' && controller.routes.durable) return send(404, { error: 'Not found' });
       if (role === 'internal' && url.pathname === '/internal/route' && request.method === 'GET') {
         if (!equal(request.headers.authorization, `Bearer ${credentials.gateway}`)) return send(401, { error: 'Unauthorized' });
         return send(200, controller.route(url.searchParams.get('host') || ''));
@@ -51,6 +53,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await deliveryRequest(request, url, controller, csrf, body, send)) return;
       if (await dispatchRequest(request, url, controller, csrf, body, send)) return;
+      if (await routingRequest(request, url, controller, csrf, body, send)) return;
       if (await secretRequest(request, url, controller, csrf, body, send)) return;
       const match = /^\/v1\/deployments\/([a-f0-9-]{36})\/(approve|reject|artifact)$/.exec(url.pathname);
       if (match && match[2] === 'artifact' && request.method === 'GET') {
@@ -76,7 +79,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
 
 
 function errorStatus(error) {
-  if (error.code === 'CONTROLLER_STORAGE_UNCERTAIN') return 503;
+  if (['CONTROLLER_STORAGE_UNCERTAIN', 'ROUTE_PUBLICATION_UNCERTAIN', 'ROUTE_STARTUP_UNRECONCILED'].includes(error.code)) return 503;
   if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED', 'CRON_SNAPSHOT_UNCONFIRMED', 'CRON_RECOVERY_UNCONFIRMED'].includes(error.code)) return 502;
   return 400;
 }
@@ -89,11 +92,12 @@ function approvalButtons(controller, request, html) {
     if (app.dispatch.hold !== request.id) return '<p>Another artifact holds scheduled dispatch. Wait for or retry that activation before approving this request.</p>' + approvalButton(controller, request, html, 'reject');
     return approvalButton(controller, request, html, 'approve');
   }
-  const held = controller.state.deployments[app?.delivery?.hold];
-  const replacing = held && held.id !== request.id && held.status === 'failed';
-  const conflict = replacing && differentPredecessor(request.replaces, held);
-  const explanation = conflict ? '<p>This request records a different predecessor. Resubmit the artifact to request another approval.</p>' : replacing ? `<p>Replacement approval preserves the queue hold and applied migrations. Replaces ${html(held.id)} with digest <code>${html(held.digest)}</code>.</p>` : '';
-  const actions = [...(conflict ? [] : ['approve']), ...(held?.id === request.id ? [] : ['reject'])];
+  const httpHold = controller.routes.durable ? controller.state.routeAuthority.holds[request.app]?.id : null;
+  const held = controller.state.deployments[app?.delivery?.hold || httpHold];
+  const replacing = held && held.id !== request.id && (held.status === 'failed' || Boolean(httpHold));
+  const conflict = replacing && differentPredecessor(request.routeReplaces || request.replaces, held);
+  const explanation = conflict ? '<p>This request records a different predecessor. Resubmit the artifact to request another approval.</p>' : replacing ? `<p>Replacement approval preserves the ${httpHold && !app?.delivery?.hold ? 'HTTP' : 'queue'} hold and applied migrations. Replaces ${html(held.id)} with digest <code>${html(held.digest)}</code>.</p>` : '';
+  const actions = [...(conflict ? [] : ['approve']), ...(held?.id === request.id && !(httpHold && app?.claim?.deployment === request.id) ? [] : ['reject'])];
   return explanation + actions.map(action => {
     const replacement = replacing && action === 'approve' ? ` data-replaces="${html(held.id)}" data-replaces-digest="${html(held.digest)}"` : '';
     return approvalButton(controller, request, html, action, replacement, replacing);

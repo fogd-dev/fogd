@@ -14,6 +14,7 @@
     "./bucket": "./src/bucket.mjs",
     "./deployment": "./src/deployment.mjs",
     "./transport": "./src/transport.mjs",
-    "./queues": "./src/queues.mjs"
+    "./queues": "./src/queues.mjs",
+    "./route-record": "./src/route-record.mjs"
   }
 }
