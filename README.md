@@ -16,7 +16,9 @@ with `fogd admin inspect APP`; submitters can [diagnose their releases](docs/sub
 with `fogd status ID`. Local Docker owners can [observe native replicas](docs/application-observation.md)
 with `fogd observe APP --installation PROJECT`. An explicit [gateway request check](docs/application-check.md) reports HTTP status
 and header timing without response contents; native acceptance of that command,
-application-health assertions and scoped logs remain open.
+application-health assertions and shared logs remain open. Owners can also
+[capture private replica logs](docs/application-logs.md); native acceptance of that
+command remains open.
 [Local build retention](docs/build-retention.md) provides explicit keep, plan, prune,
 and offline resume commands; controller artifacts and application data stay intact.
 

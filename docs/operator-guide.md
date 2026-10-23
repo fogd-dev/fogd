@@ -169,7 +169,9 @@ it does not call an application's health endpoint. Developers use scoped
 application works, and controller loss currently interrupts gateway serving.
 The explicit [gateway request check](application-check.md) reports a chosen
 public path's HTTP status and header timing without response contents. Native
-acceptance of that command and scoped application logs remain open. Check the
+acceptance of that command remains open. [Private replica log capture](application-logs.md)
+saves selected process streams for a local Docker owner. Native log acceptance and
+shared or submitter-facing log access remain open. Check the
 application's own outcomes as well.
 [Storage space](storage-space.md) reports the backing filesystem separately from
 controller artifact quotas; it supplies no storage-health or admission verdict.

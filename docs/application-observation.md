@@ -58,7 +58,8 @@ controller API health. Controller-process liveness is a Docker observation.
 On-disk routing can lag a controller whose metadata writes failed: a controller can
 pause routing in memory while disk still says active. This command cannot detect
 that memory-only condition. Use the authenticated controller view and the app's
-own endpoint/results separately. The explicit [gateway request check](application-check.md)
+own endpoint/results separately. [Private replica logs](application-logs.md)
+provide a separate owner-only capture of selected process streams. The explicit [gateway request check](application-check.md)
 can sample a chosen public path without copying its response contents. A confirmed native observation does not establish
 that the app is reachable through ingress or that its writes persist correctly.
 

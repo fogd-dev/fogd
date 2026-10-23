@@ -116,9 +116,11 @@ and scoped logs remain open. These commands implement part of this increment.
 Provide scoped deployment diagnostics that connect a submitted release, approval
 progress, runtime state, and the application's recorded failure. Correct unknown
 progress labels for existing queue lifecycle steps when a new runtime family can be
-built and qualified. Define a separate
-logging interface before exposing raw process logs, which may mix applications or
-contain private values.
+built and qualified. The [private replica-log interface](application-logs.md) defines local Docker-owner
+capture and its disclosure policy. The source CLI implements that owner-only
+surface with bounded process/file tests and a mocked Docker boundary. Raw streams stay in
+private files and are not safe submitter-facing output. Native acceptance and a
+separate structured shared-log interface remain open.
 
 Validation: submit a failing application, observe its failure through the supported
 CLI, correct it, and observe the successful release. Exercise all existing queue

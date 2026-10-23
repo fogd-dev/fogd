@@ -176,7 +176,9 @@ outside this admission. Next, define and implement the
 [inspection](application-inspection.md) connects recorded release and control state.
 The host [gateway request check](application-check.md) reports a requested endpoint's
 status and header timing without response contents; native acceptance,
-application-health assertions and scoped logs remain open.
+application-health assertions and shared logs remain open. The source
+[private replica-log capture](application-logs.md) selects one app's fleet for local
+Docker-owner files; native acceptance of that interface remains open.
 
 ## Opportunities to explore later
 
