@@ -251,7 +251,9 @@ adding another binding family. These requirements remain open:
   migration, operator pause,
   retirement and restart. A warmed route must not bypass a required pause or serve
   another app's data; retain unknown outcomes and measure recovery. Gateway code is
-  part of the pinned runtime program, so this change needs a new family too.
+  part of the pinned runtime program, so this change needs a new family too. The
+  source [routing CLI](http-routing.md) supplies exact-approval operator controls;
+  native acceptance remains open.
 - **Inspect live applications.** Define an app-scoped diagnostic interface and
   its disclosure policy before exposing runtime logs. Test two applications,
   private configuration, unavailable replicas, and failure followed by correction.

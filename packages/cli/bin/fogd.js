@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { storageCommand } from '../src/storage/command.mjs';
 import { artifactsCommand } from '../src/artifacts/command.mjs';
+import { routingCommand } from '../src/routing/command.mjs';
 import { clientCommand } from '../src/client/command.mjs';
 import { reviewCommand } from '../src/review/command.mjs';
 import { stopCommand } from '../src/runtime/stop.mjs';
@@ -75,7 +76,9 @@ try {
     if (args.length !== 1) throw new Error('Usage: fogd status <deployment-id>');
     await status(args[0]);
   } else if (command === 'admin') {
-    if (args[0] === 'artifacts') {
+    if (args[0] === 'routing') {
+      await routingCommand(args.slice(1));
+    } else if (args[0] === 'artifacts') {
       await artifactsCommand(args.slice(1));
     } else if (args[0] === 'review') {
       await reviewCommand(args.slice(1));
@@ -95,6 +98,7 @@ try {
     }
   }
   else if (!command || command === '--help' || command === 'help') {
+    console.log('fogd admin routing APP [status | pause|resume ID SHA | reconcile|withhold-pending ID SHA INTENT]  Inspect and control durable HTTP routing');
     console.log('fogd logs APP --installation PROJECT --output NEW_DIRECTORY [--tail COUNT]  Save private replica logs');
     console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
