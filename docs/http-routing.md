@@ -34,6 +34,31 @@ from queue delivery and scheduled dispatch controls; use their dedicated command
 for background work. HTTP pause is also separate from the stopped backup procedure.
 Existing requests and sessions are not drained by changing route authority.
 
+## Use the operator page
+
+Open `/routing` at the administrator endpoint, or follow **Inspect and control
+HTTP routing** from deployment approvals. The page reads durable authority for
+each live app and displays the selected approval and digest before each decision.
+It offers pause or verified resume when the recorded controls permit them.
+Unavailable authority produces no decision form.
+
+The page uses standard HTML forms and works with JavaScript disabled. Completed
+form submissions redirect to a fresh status page; refreshing that page does not
+repeat the POST. A stale approval or uncertain publication produces an explicit
+uncertainty page with a link to inspect current state. Review that state before
+another decision.
+
+The restricted recovery service opens this page at both `/` and `/routing`, with
+an ingress-stopped banner and no resume or deployment-approval controls. An exact
+pending publication offers verified reconciliation or withholding. The service
+remains restricted after that decision; complete the ordered startup procedure
+before opening ingress.
+
+Local browser checks cover two applications, standard HTML pause/resume forms, refresh
+without replay, pending withdrawal, keyboard focus and desktop/mobile rendering.
+They use the source controller and a substituted backend. The browser page still
+needs native acceptance on a newly qualified durable-routing family.
+
 ## Resolve an interrupted publication
 
 Inspect status before choosing between completing a pending active publication

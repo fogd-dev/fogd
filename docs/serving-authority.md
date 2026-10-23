@@ -323,7 +323,9 @@ gateway credentials confer no routing control. The durable controller has no int
 route lookup endpoint. The existing approval page selects HTTP hold predecessors for corrected approval.
 The source [operator routing CLI](http-routing.md) exposes status, exact-approval
 pause/resume and both pending-publication decisions, with real-controller
-process/filesystem tests. Routing UI controls and native CLI acceptance remain open.
+process/filesystem tests. The source [operator routing page](http-routing.md#use-the-operator-page)
+adds standard forms and a restricted recovery view, with HTTP and local browser
+checks. Native acceptance of both operator surfaces remains open.
 
 Validation: the [controller integration tests](../packages/platform/test/controller-routes.test.mjs),
 [background transition tests](../packages/platform/test/controller-route-background.test.mjs),

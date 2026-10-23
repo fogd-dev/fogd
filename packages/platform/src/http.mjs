@@ -1,3 +1,5 @@
+import { html } from './admin-html.mjs';
+import { routingPageRequest, routingPageLink } from './admin-routing-page.mjs';
 import { routeHold } from './route-publication.mjs';
 import { artifactRequest, artifactManifest } from './admin-artifacts.mjs';
 import { artifactPruneRequest } from './admin-artifact-pruning.mjs';
@@ -18,7 +20,6 @@ import { deploymentHandler } from './deployment-http.mjs';
 import { credentialRequest } from './admin-credentials.mjs';
 
 const revision = (d, controller) => (d.requiredSecrets || []).length ? d.secretRevision || controller.secrets.index[d.app]?.revision || null : null;
-const html = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 async function body(request, limit = MAX_UPLOAD * 1.4) {
   if (request.headers['content-type']?.split(';')[0] !== 'application/json') throw new Error('JSON content type required');
   let size = 0; const parts = [];
@@ -38,8 +39,8 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
   const basic = `Basic ${Buffer.from(`${credentials.user}:${credentials.password}`).toString('base64')}`;
   const create = tls ? createSecureServer : createServer;
   return create({ ...tls, requestTimeout: 300000, maxHeaderSize: 16384 }, async (request, response) => {
-    const send = (status, value, type = 'application/json') => {
-      response.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" });
+    const send = (status, value, type = 'application/json', extra = {}) => {
+      response.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'", ...extra });
       response.end(type === 'application/json' ? JSON.stringify(value) : value);
     };
     try {
@@ -56,6 +57,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         return send(401, { error: 'Admin authentication required' });
       }
       controller.assertStorage();
+      if (await routingPageRequest(request, url, controller, csrf, send, recoveryOnly)) return;
       if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
       if (await artifactRequest(request, url, controller, csrf, body, send)) return;
@@ -80,7 +82,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       if (request.method === 'GET' && url.pathname === '/') {
         const apps = Object.entries(controller.state.apps).map(([name, app]) => `<p><strong>${html(name)}</strong>: ${html(app.route)} (${html(app.slot)}) ${html(app.reason || '')}</p>`).join('');
         const rows = Object.values(controller.state.deployments).reverse().map(d => `<article><h2>${html(d.app)} — ${html(d.status)}</h2><p>Submitted by ${html(d.submitter)} at ${html(d.submittedAt)}</p><code>${html(d.digest)}</code><p>Secret revision: ${html(revision(d, controller) || 'none')}${d.secretRevision ? ' (pinned for retry)' : ''}</p><p>${html(d.step)} ${html(d.error || '')}</p>${backgroundNotice(d, html)}<details><summary>Resources and migrations</summary><pre>${html(JSON.stringify({ requiredSecrets: d.requiredSecrets || [], secretRevision: revision(d, controller), resourceChanges: d.resourceChanges, resources: d.resources, migrations: d.migrations }, null, 2))}</pre></details><p><a href="/v1/deployments/${d.id}/artifact">Review full artifact manifest</a></p>${approvalButtons(controller, d, html)}</article>`).join('');
-        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1><p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${dispatchHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null,...(b.dataset.replaces?{replaces:{deployment:b.dataset.replaces,digest:b.dataset.replacesDigest}}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
+        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1>${routingPageLink(controller)}<p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${dispatchHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null,...(b.dataset.replaces?{replaces:{deployment:b.dataset.replaces,digest:b.dataset.replacesDigest}}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
       }
       send(404, { error: 'Not found' });
     } catch (error) { send(errorStatus(error), { error: error.message }); }
