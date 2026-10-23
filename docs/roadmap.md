@@ -59,7 +59,9 @@ priorities, not newly qualified capabilities. Exact-artifact approval and
 the existing recovery boundaries remain in force.
 Its [next runtime release requirements](operator-readiness.md#next-runtime-release)
 separate clean builds, installation on another engine, controller-loss serving and
-live application diagnosis. Host CLI improvements do not close those release gaps.
+live application diagnosis. The [serving-authority proposal](serving-authority.md)
+selects durable route authority and fresh-read/crash gates for a new runtime.
+Host CLI improvements do not close those release gaps.
 
 ## Milestones and acceptance gates
 

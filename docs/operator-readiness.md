@@ -223,7 +223,10 @@ adding another binding family. These requirements remain open:
   failures. This tests distribution and operation separately from building source.
 - **Serve through controller loss.** Define the route authority, staleness bound
   and pause acknowledgment before introducing a gateway cache or another routing
-  mechanism. Test controller loss alongside approval, migration, operator pause,
+  mechanism. The [serving-authority proposal](serving-authority.md) selects a separate
+  durable route record, fresh gateway reads and a crash-ordering contract before
+  implementation; no new route authority is enabled. Test controller loss alongside approval,
+  migration, operator pause,
   retirement and restart. A warmed route must not bypass a required pause or serve
   another app's data; retain unknown outcomes and measure recovery. Gateway code is
   part of the pinned runtime program, so this change needs a new family too.
