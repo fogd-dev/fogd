@@ -92,9 +92,12 @@ async function checkRetained(context, io) {
   const { config, policy, env, entry, transport } = context;
   await io.ready(config.name); await io.recovery(config.name); await io.verify(entry);
   const directory = io.directory ?? installationDirectory(config.name);
-  if (!await io.enrollmentReady(directory, { project: config.name, installation: runtimePolicyIdentity(policy), planSha256: durablePlanSha256(config, policy) })) throw refused();
+  const enrollment = await io.enrollmentReady(directory, { project: config.name, installation: runtimePolicyIdentity(policy), planSha256: durablePlanSha256(config, policy) });
+  if (!enrollment) throw refused();
   if (transport.tls) await io.tls(env, config);
-  const first = checkedSnapshot(await io.inspect(config, policy, { run: io.run }), config); requireStopped(first);
+  const first = checkedSnapshot(await io.inspect(config, policy, { run: io.run }), config);
+  if (first.identity !== enrollment.inventoryBinding) throw refused();
+  requireStopped(first);
   await matchingPolicy(context, io);
   await io.readStores(config, policy);
   requireStopped(checkedSnapshot(await io.inspect(config, policy, { run: io.run }), config, first));

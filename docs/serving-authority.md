@@ -485,6 +485,15 @@ image, initializes no authority and runs no application migration. The durable
 gateway has restart policy `no`: Docker must not reopen ingress automatically
 after daemon or host restart, bypassing the pre-ingress checks.
 
+The first retained inventory must match `inventoryBinding` in the completed
+enrollment record. The enrolled resource identity must match even when the sealed
+configuration and resource names are unchanged. A mismatch refuses before starting
+installation services and retains enrollment records and resources. The
+[launch regression test](../packages/cli/test/runtime-durable-launch.test.mjs)
+checks that a consistently replaced inventory cannot reuse the earlier enrollment.
+Recreated resources must use a fresh installation or stopped-restore target with
+its own enrollment record.
+
 The [inventory inspector](../packages/cli/src/runtime/durable-inventory.mjs) checks
 actual container IDs, images, commands, inherited environment, privileges, mounts,
 ports and networks against the sealed layout. It checks every declared volume and

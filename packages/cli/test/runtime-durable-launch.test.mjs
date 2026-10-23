@@ -158,3 +158,11 @@ test('a completed enrollment cannot authorize a changed retained plan', async t 
   await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
   assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
+
+test('a consistently replaced resource inventory cannot reuse completed enrollment', async t => {
+  const f = await fixture(t), inspect = f.options.inspect;
+  f.options.inspect = async (...args) => ({ ...await inspect(...args), identity: hash('replacement inventory') });
+  await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
+  assert.equal(f.states.workerd.running, false);
+});
