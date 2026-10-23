@@ -1,24 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createServer } from 'node:http';
-import { mkdtemp, rm, access } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-const exec = promisify(execFile), cli = fileURLToPath(new URL('../bin/fogd.js', import.meta.url));
+import { adminCliFixture } from './fixtures/admin-client.mjs';
 const id = '00000000-0000-4000-8000-000000000001', digest = 'a'.repeat(64);
 const state = { apps: { guestbook: { route: 'paused', uncertain: id } }, deployments: { [id]: { id, app: 'guestbook', digest, status: 'failed', step: 'migrating', error: 'private-sql-response' } }, csrf: 'private-csrf' };
-async function fixture(t, respond) {
-  const root = await mkdtemp(join(tmpdir(), 'fogd-inspect-')); t.after(() => rm(root, { recursive: true, force: true }));
-  const calls = [], server = createServer((request, response) => { calls.push({ path: request.url, method: request.method, authorization: request.headers.authorization }); response.setHeader('Content-Type', 'application/json'); respond(request, response); });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  t.after(() => new Promise(resolve => server.close(resolve)));
-  const env = { PATH: process.env.PATH, HOME: root, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'operator.env'), FOGD_SERVER: `http://127.0.0.1:${server.address().port}`, FOGD_ADMIN_PASSWORD: 'private-admin-password', FOGD_DEPLOY_TOKEN: 'private-builder-token' };
-  const invoke = (args = ['guestbook'], extra = {}) => exec(process.execPath, [cli, 'admin', 'inspect', ...args], { env: { ...env, ...extra }, timeout: 20000, maxBuffer: 1024 ** 2 });
-  return { calls, env, invoke, root };
-}
+const fixture = (t, respond) => adminCliFixture(t, { respond, command: 'inspect', defaults: ['guestbook'] });
 test('real CLI uses one administrator GET and reports the selected app without raw diagnostics', async t => {
   const f = await fixture(t, (_, response) => response.end(JSON.stringify(state)));
   const result = await f.invoke(), report = JSON.parse(result.stdout);

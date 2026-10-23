@@ -1,4 +1,5 @@
 import { routeHold } from './route-publication.mjs';
+import { artifactRequest } from './admin-artifacts.mjs';
 import { ingressRequest } from './admin-ingress.mjs';
 import { deliveryRequest, deliveryHTML } from './admin-delivery.mjs';
 import { routingRecoveryRequest, assertRoutingServiceMode } from './admin-routing-recovery.mjs';
@@ -56,6 +57,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       controller.assertStorage();
       if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
+      if (await artifactRequest(request, url, controller, send)) return;
       if (await ingressRequest(request, url, controller, csrf, body, send)) return;
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await deliveryRequest(request, url, controller, csrf, body, send)) return;
