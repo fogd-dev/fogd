@@ -70,6 +70,7 @@ export async function rejectUnclaimed(c, request) {
     if (other.id !== slot.id && (await c.backend.owner(other))?.app === request.app) throw new Error('Another fleet owns this app; restore matching ownership metadata before rejection');
   }
   await c.backend.assertUnclaimed(slot);
+  await c.routes.releaseClaim(request);
   // The caller persists reservation removal and rejection together. No bucket
   // objects are deleted, and an ambiguous local write trips the shared latch.
   request.claimRelease = { schema: 1, deployment: request.id, digest: request.digest, slot: slot.id, prefix: slot.prefix, at: new Date(c.clock()).toISOString() };

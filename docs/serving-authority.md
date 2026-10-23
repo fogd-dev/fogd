@@ -162,9 +162,15 @@ reconciliation methods.
 
 The [stopped retirement transform](../packages/platform/src/route-retirement.mjs)
 removes the retired host, preserves peers and binds the resulting stores to the
-target installation identity. It grants no live-write permission. Controller, gateway,
-startup and recovery integration remain required before this component can serve an
-application.
+target installation identity. It grants no live-write permission. The candidate
+[controller integration](../packages/platform/src/controller-routes.mjs) composes
+publication explicitly with an independent policy, separate public path and read-only
+runtime verification callback. The public authority directory and private controller
+directory cannot contain one another, including through path aliases checked at open;
+actual mount isolation still requires the launch inventory checks. Default controllers still reject authority-bearing
+state. No environment switch or catalog entry enables this constructor composition.
+Sealed launch configuration, gateway and stopped recovery integration remain required
+before it can serve an application.
 
 Validation: the [publication tests](../packages/platform/test/route-publication.test.mjs)
 exercise interrupted writes, reload, active withdrawal and resume, peer preservation,
@@ -237,8 +243,9 @@ queue/cron snapshot recovery, and the offline [retirement
 transform](../packages/cli/src/recovery/retirement-plan.mjs) and [restore
 path](../packages/cli/src/recovery/restore.mjs). Rejection of a pristine unclaimed
 reservation must remove its withheld public entry before freeing the slot; otherwise
-that entry prevents another app from using the fleet. This removal path remains part
-of controller integration. Keep this inventory with the
+that entry prevents another app from using the fleet. The candidate claim-release
+publication retains the private reservation through public removal; an interruption
+can finish removal without freeing the slot or replaying the rejected approval. Keep this inventory with the
 implementation review; a new route write cannot bypass it.
 
 Controller restart does not rewrite active authority merely because it restarts. Load
@@ -257,6 +264,29 @@ without an HTTP pause. Any resulting quarantine must publish withholding; its de
 state alone cannot be described as confirmed ingress refusal. Held queue/cron pause
 reconciliation remains independent of HTTP admission unless it also changes
 HTTP-observable runtime or data.
+
+The controller candidate publishes a permission-only quarantine when a settled public
+entry cannot be matched to private ownership or completed approval. This preserves the
+entry's actual host and fleet while withholding it; it never adopts that ownership or
+regenerates active permission. Startup still refuses until the metadata is reconciled.
+An interrupted quarantine may resume permission reduction without backend effects.
+
+A valid pending active decision blocks other publications. If another active entry
+needs withholding at that point, the candidate reports
+`ROUTE_STARTUP_UNRECONCILED` rather than claiming successful startup or withdrawing the
+valid pending app automatically. Launch integration must keep ingress stopped and
+provide a control-only recovery path for the exact pending decision. After explicit
+reconciliation, the controller repeats withholding and background recovery before it
+can report ready. Enforcing this boundary in the actual launch coordinator remains a
+release gate; the constructor API alone cannot stop a separately running gateway.
+
+Ownership inspection must finish before an explicit reconciliation can run startup
+recovery. Ordinary mutations, snapshot preparation and HTTP resume require startup
+recovery to finish too. A permission-reduction command after failed initialization
+cannot mark those phases complete. If initialization fails before ownership inspection,
+restart with corrected storage/configuration before increasing permissions; a pause
+alone never turns the controller ready. Pending-active withdrawal preserves the actual
+public host/fleet even when the private slot differs, and does not adopt that slot.
 
 Queue and cron snapshot preparation intentionally requires active HTTP routing. It
 pauses background execution and observes retained background state. Do not add an
@@ -280,6 +310,26 @@ Runtime-family migration and cross-version restore remain outside this increment
 Validation: run failed and corrected approval, held queue replacement, cron recovery,
 active-routing background snapshot preparation, stopped full restore, retirement and
 slot reuse. Check both durable stores and app identity at every boundary.
+
+The controller candidate shares background-hold transfer and HTTP withholding intent
+in one private save. Restored queue/cron acknowledgment verifies runtime before
+persisting acknowledgment with active-publication intent. Background snapshot
+preparation checks actual public active authority and does not publish HTTP withholding.
+
+The candidate admin routing API reads actual public authority and accepts exact
+approval selections for pause, verified resume and pending-active reconciliation or
+withdrawal. It uses the existing admin authentication and CSRF checks; submitter and
+gateway credentials confer no routing control. The durable controller has no internal
+route lookup endpoint. The existing approval page selects HTTP hold predecessors for corrected approval.
+Dedicated operator CLI and routing UI controls remain open.
+
+Validation: the [controller integration tests](../packages/platform/test/controller-routes.test.mjs),
+[background transition tests](../packages/platform/test/controller-route-background.test.mjs),
+[restored recovery tests](../packages/platform/test/controller-route-recovery.test.mjs)
+and [HTTP authorization tests](../packages/platform/test/controller-route-http.test.mjs)
+observe real temporary authority/private files while substituting the backend. They
+exercise the source protocol; they do not establish native runtime, image or mount
+qualification.
 
 ## Release evidence and sequence
 

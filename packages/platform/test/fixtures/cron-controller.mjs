@@ -9,7 +9,7 @@ import { readJson, saveJson } from '../../src/store.mjs';
 import { cronBackend } from './cron-backend.mjs';
 
 export const slots = [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }];
-export async function fixture(t) {
+export async function fixture(t, options = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'fogd-cron-activation-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   let failure, beforeFailure, writeFailure;
@@ -21,7 +21,7 @@ export async function fixture(t) {
     await saveJson(path, value);
     if (fail === 'after') throw Error('lost write response');
   };
-  const create = () => new Controller({ cronApps: true, dir, slots, backend, persist, reportStorageFailure: () => {} });
+  const create = () => new Controller({ cronApps: true, dir, slots, backend, persist, reportStorageFailure: () => {}, ...options });
   const c = create(); await c.init();
   // Private staging bypasses artifact admission. Ordinary triggers stay rejected.
   async function request(controller = c, { crons = ['* * * * *'], requiredSecrets = [] } = {}) {

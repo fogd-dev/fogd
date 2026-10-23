@@ -27,12 +27,13 @@ async function migrate(controller, request, app, slot, execution, step) {
   await controller.reconcile(app, slot);
 }
 
-async function finish(controller, request, app, step) {
+async function finish(controller, request, app) {
   app.active = request.id; app.route = 'active';
   for (const other of Object.values(controller.state.deployments)) {
     if (other.app === request.app && other.id !== request.id && ['pending', 'failed', 'active'].includes(other.status)) other.status = 'superseded';
   }
-  request.status = 'active'; await step('complete');
+  request.status = 'active'; request.step = 'complete';
+  await controller.routes.complete(request);
 }
 
 async function failed(controller, request, app, slot) {
@@ -59,7 +60,7 @@ export async function activateRelease(controller, request, app, slot, selected) 
       await step(background.releaseStep);
       await background.control.completeActivation(request.id, request.version);
     }
-    await finish(controller, request, app, step);
+    await finish(controller, request, app);
   } catch (error) {
     controller.assertStorage();
     request.status = 'failed'; request.error = app.privateConfiguration ? 'Private activation failed; secret values and runtime diagnostics are withheld. Check the recorded step and retry explicitly.' : error.message; app.route = 'paused';

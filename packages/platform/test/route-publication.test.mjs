@@ -462,7 +462,7 @@ test('a corrected release can replace the completed hold of a withdrawn pending 
   assert.deepEqual((await f.private()).routeAuthority.holds.alpha, { id: second, digest: secondDigest });
 });
 
-test('the pre-integration controller loader refuses the new authority capability', async t => {
+test('the default state loader refuses the new authority capability', async t => {
   const f = await fixture(t); await f.publication().initialize();
   assert.throws(() => validateRetirementState(f.state(), []), /unsupported platform capability/);
   assert.equal((await f.public()).revision, '0');

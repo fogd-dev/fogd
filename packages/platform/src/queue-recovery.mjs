@@ -11,6 +11,7 @@ function activeInput(active, input) {
 export async function prepareQueueSnapshot(controller, name, input) {
   const { app, active } = snapshotTarget(controller.state, name);
   activeInput(active, input);
+  await controller.routes.snapshotReady(name, active);
   if (recoveryPending(app) || app.route !== 'active') throw new Error('Resolve restored queue recovery before taking another snapshot');
   const slot = controller.slots.find(value => value.id === app.slot);
   await deliveryFor(controller, app, slot).pause();
@@ -34,6 +35,7 @@ export function validateRecoveryState(state) {
   }
 }
 async function inspectRecovery(controller, name, app) {
+  await controller.routes.beforeEffect(app, controller.slots.find(slot => slot.id === app.slot));
   const receipt = app.queueRecovery;
   assertRetentionContract(receipt.prepared);
   const slot = controller.slots.find(value => value.id === app.slot);
@@ -77,6 +79,7 @@ async function checkRecovery(controller, name, app) {
   }
 }
 export async function acknowledgeQueueRecovery(controller, name, input) {
+  await controller.routes.checkReady();
   const { app, active } = snapshotTarget(controller.state, name);
   activeInput(active, input);
   if (!recoveryPending(app) || input.recovery !== app.queueRecovery.id || input.acceptPossibleLoss !== true) throw new Error('Acknowledge the current recovery ID and possible message loss explicitly');
@@ -86,6 +89,7 @@ export async function acknowledgeQueueRecovery(controller, name, input) {
     await controller.save();
     throw new Error('Recovery findings changed; inspect status and acknowledge again');
   }
+  await controller.routes.verifyRecovery(name, active);
   app.queueRecovery.status = 'acknowledged'; app.queueRecovery.acknowledgedAt = controller.clock();
-  app.route = 'active'; await controller.save();
+  app.route = 'active'; await controller.routes.complete(active);
 }

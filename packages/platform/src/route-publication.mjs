@@ -11,11 +11,12 @@ const approvedReference = value => keys(value, ['id', 'digest']) && uuid(value.i
 function intentShape(value) {
   const fields = ['id', 'kind', 'app', 'approval', 'previous', 'record', 'digest'];
   if (value?.kind === 'withdraw') fields.push('superseded');
-  return keys(value, fields) && ['initialize', 'withhold', 'active', 'withdraw'].includes(value.kind) && typeof value.id === 'string' && object(value.record) && hash(value.digest) &&
+  if (value?.kind === 'quarantine') fields.push('host');
+  return keys(value, fields) && (value.kind !== 'quarantine' || typeof value.host === 'string') && ['initialize', 'withhold', 'active', 'withdraw', 'release-claim', 'quarantine'].includes(value.kind) && typeof value.id === 'string' && object(value.record) && hash(value.digest) &&
     (value.approval === null || approvedReference(value.approval));
 }
 const validReference = value => keys(value, ['revision', 'digest']) && isRouteRevision(value.revision) && hash(value.digest);
-const failure = () => new Error('Route publication is uncertain; reload durable state and reconcile before changing the backend');
+const failure = cause => Object.assign(new Error('Route publication is uncertain; reload durable state and reconcile before changing the backend', { cause }), { code: 'ROUTE_PUBLICATION_UNCERTAIN' });
 const same = (left, right) => Boolean(left && right && left.revision === right.revision && left.digest === right.digest);
 const reference = observed => observed && ({ revision: observed.record.revision, digest: observed.digest });
 function approval(state, app, id, digest, statuses) {
@@ -24,19 +25,23 @@ function approval(state, app, id, digest, statuses) {
   if (request.status === 'active' && (state.apps[app]?.active !== id || request.step !== 'complete')) throw new Error('Route publication requires the current completed approval');
   return { id, digest };
 }
-function withheldApplication(app) {
+export function applicationWithheld(app) {
   const holds = [app.quarantined, app.uncertain, app.claim, app.delivery?.hold, app.dispatch?.hold];
   const recovering = [app.queueRecovery, app.cronRecovery].some(record => record && record.status !== 'acknowledged');
   return app.route !== 'active' || holds.some(Boolean) || recovering;
+}
+export function completedRoute(state, name, domain) {
+  const app = state.apps[name], request = state.deployments[app?.active];
+  if (!app || app.retirement || request?.step !== 'complete') throw new Error('Active route has no completed pinned approval');
+  const selected = approval(state, name, app.active, request.digest, ['active']);
+  return { host: `${name}.${domain}`, state: 'active', slot: app.slot, submission: selected.id, digest: selected.digest };
 }
 function projectedRoute(name, app, state, domain) {
   if (!object(app)) throw new Error('Route application is unavailable');
   if (app.retirement) throw new Error('Retired apps cannot publish live route authority');
   const route = { host: `${name}.${domain}`, state: 'withheld', slot: app.slot };
-  if (withheldApplication(app)) return route;
-  const request = state.deployments[app.active];
-  if (!request || request.app !== name || request.id !== app.active || request.status !== 'active' || request.step !== 'complete' || !pinnedSecret(request)) throw new Error('Active route has no completed pinned approval');
-  return { ...route, state: 'active', submission: request.id, digest: request.digest };
+  if (applicationWithheld(app)) return route;
+  return completedRoute(state, name, domain);
 }
 
 export function routeAuthorityJournal(state, policy) {
@@ -68,6 +73,12 @@ export class RoutePublication {
     const journal = this.#journal();
     if (!this.#verified || !journal.settled || journal.pending) throw failure();
   }
+  inspect() {
+    return this.#exclusive(async () => {
+      if (this.#journal().pending) this.#pending(['initialize', 'withhold', 'active', 'withdraw', 'release-claim', 'quarantine']);
+      return this.#current();
+    });
+  }
   verifySettled() {
     return this.#exclusive(async () => {
       if (this.#journal().pending) throw failure();
@@ -79,7 +90,7 @@ export class RoutePublication {
     this.#queue = result.catch(() => {}); return result;
   }
   async #durable(task) {
-    try { return await task(); } catch (cause) { this.#failed = true; throw new Error(failure().message, { cause }); }
+    try { return await task(); } catch (cause) { this.#failed = true; throw failure(cause); }
   }
   #record(revision, previous = null, app = null) {
     if (app === null) return { schema: 1, installation: this.policy.installation, revision, routes: [] };
@@ -93,7 +104,7 @@ export class RoutePublication {
   async #settle(pending) {
     const holds = { ...this.state.routeAuthority.holds };
     if (pending.kind === 'withhold' && pending.approval) holds[pending.app] = { ...pending.approval };
-    if (pending.kind === 'active') delete holds[pending.app];
+    if (['active', 'release-claim'].includes(pending.kind)) delete holds[pending.app];
     if ((pending.kind === 'withdraw' || pending.kind === 'withhold' && !pending.approval) && this.state.apps[pending.app]) this.state.apps[pending.app].route = 'paused';
     this.state.routeAuthority = { schema: 1, installation: this.policy.installation, holds,
       settled: { revision: pending.record.revision, digest: pending.digest }, pending: null };
@@ -132,14 +143,25 @@ export class RoutePublication {
     if (!route || route.state !== (kind === 'active' ? 'active' : 'withheld')) throw new Error('Route publication state does not match the requested decision');
     const pending = { id: `${kind}:${revision}`, kind, app, approval: selected, previous, record, digest: routeRecordDigest(record, this.policy) };
     if (kind === 'withhold' && this.state.apps[app]) this.state.apps[app].route = 'paused';
+    await this.#commitPending(pending);
+  }
+  async #commitPending(pending) {
     this.state.routeAuthority.pending = pending;
     await this.#durable(() => this.savePrivate());
     await this.#writePending(pending);
     await this.#settle(pending);
   }
+
   #requireHold(app, selected, record) {
     const held = this.#journal().holds[app], route = record.routes.find(value => value.host === `${app}.${this.domain}`);
     if (held?.id !== selected.id || held.digest !== selected.digest || route?.state !== 'withheld' || route.slot !== this.state.apps[app]?.slot) throw new Error('Active publication requires withholding for the exact approval');
+  }
+  assertServing(app, id, digest) {
+    return this.#exclusive(async () => {
+      this.assertReady(); approval(this.state, app, id, digest, ['active']);
+      const current = await this.#current(), route = current.record.routes.find(route => route.host === `${app}.${this.domain}`);
+      if (route?.state !== 'active' || route.submission !== id || route.digest !== digest || route.slot !== this.state.apps[app]?.slot) throw new Error('Snapshot requires active public HTTP routing');
+    });
   }
   assertWithheld(app, id, digest) {
     return this.#exclusive(async () => {
@@ -175,18 +197,70 @@ export class RoutePublication {
   #continuedIntent(journal, pending) {
     if (!journal.settled || BigInt(pending.record.revision) <= BigInt(journal.settled.revision) ||
       routeRecordDigest(pending.previous, this.policy) !== journal.settled.digest || pending.previous.revision !== journal.settled.revision) throw failure();
-    if (pending.kind === 'withdraw') return this.#withdrawalIntent(journal, pending);
-    if (pending.kind === 'withhold') {
-      const target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
-      if (target?.state !== 'withheld' || target.slot !== this.state.apps[pending.app]?.slot || encodeRouteRecord(this.#replaceRoute(pending.record.revision, pending.previous, target), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+    switch (pending.kind) {
+      case 'withdraw': return this.#withdrawalIntent(journal, pending);
+      case 'withhold': return this.#withholdIntent(pending);
+      case 'active': return this.#activeIntent(journal, pending);
+      case 'release-claim': return this.#releaseIntent(pending);
+      case 'quarantine': return this.#quarantineIntent(pending);
+      default: throw failure();
     }
+  }
+  #withholdIntent(pending) {
+    const target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
+    if (target?.state !== 'withheld' || target.slot !== this.state.apps[pending.app]?.slot || encodeRouteRecord(this.#replaceRoute(pending.record.revision, pending.previous, target), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+  }
+  #activeIntent(journal, pending) {
     const prior = pending.previous.routes.find(route => route.host === `${pending.app}.${this.domain}`);
-    if (pending.kind === 'active') {
-      const held = journal.holds[pending.app], target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
-      if (!held || held.id !== pending.approval?.id || held.digest !== pending.approval.digest || prior?.state !== 'withheld' ||
-        target?.state !== 'active' || target.submission !== held.id || target.digest !== held.digest || target.slot !== prior.slot) throw failure();
-      if (encodeRouteRecord(this.#replaceRoute(pending.record.revision, pending.previous, target), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
-    }
+    const held = journal.holds[pending.app], target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
+    if (!held || held.id !== pending.approval?.id || held.digest !== pending.approval.digest || prior?.state !== 'withheld' ||
+      target?.state !== 'active' || target.submission !== held.id || target.digest !== held.digest || target.slot !== prior.slot) throw failure();
+    if (encodeRouteRecord(this.#replaceRoute(pending.record.revision, pending.previous, target), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+  }
+  #claim(app, selected) {
+    approval(this.state, app, selected.id, selected.digest, ['failed']);
+    const value = this.state.apps[app], request = this.state.deployments[selected.id];
+    if (!value || value.active !== null || value.uncertain !== null || value.route !== 'paused' || value.migrations?.length !== 0 ||
+      value.claim?.deployment !== selected.id || value.claim.digest !== selected.digest || request.step !== 'preparing-activation') throw new Error('Route removal requires a pristine failed ownership claim');
+  }
+  #withoutHost(revision, previous, app) {
+    return { ...previous, revision, routes: previous.routes.filter(route => route.host !== `${app}.${this.domain}`) };
+  }
+  #releaseIntent(pending) {
+    this.#claim(pending.app, pending.approval);
+    this.#requireHold(pending.app, pending.approval, pending.previous);
+    if (encodeRouteRecord(this.#withoutHost(pending.record.revision, pending.previous, pending.app), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+  }
+  releaseClaim(app, id, digest) {
+    return this.#exclusive(async () => {
+      this.assertReady(); const selected = { id, digest }; this.#claim(app, selected);
+      const previous = (await this.#current()).record;
+      if (!previous.routes.some(route => route.host === `${app}.${this.domain}`)) {
+        if (this.#journal().holds[app]) throw failure();
+        return;
+      }
+      this.#requireHold(app, selected, previous);
+      const revision = String(BigInt(previous.revision) + 1n), record = this.#withoutHost(revision, previous, app);
+      await this.#commitPending({ id: `release-claim:${revision}`, kind: 'release-claim', app, approval: selected, previous, record, digest: routeRecordDigest(record, this.policy) });
+    });
+  }
+  #quarantineRecord(revision, previous, host) {
+    const route = previous.routes.find(value => value.host === host);
+    if (!route) throw new Error('Public route is unavailable');
+    return this.#replaceRoute(revision, previous, { host, state: 'withheld', slot: route.slot });
+  }
+  #quarantineIntent(pending) {
+    if (pending.app !== null || pending.approval !== null || encodeRouteRecord(this.#quarantineRecord(pending.record.revision, pending.previous, pending.host), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+  }
+  withholdHost(host) {
+    return this.#exclusive(async () => {
+      this.assertReady(); const previous = (await this.#current()).record;
+      const route = previous.routes.find(value => value.host === host);
+      if (!route) throw new Error('Public route is unavailable');
+      if (route.state === 'withheld') return;
+      const revision = String(BigInt(previous.revision) + 1n), record = this.#quarantineRecord(revision, previous, host);
+      await this.#commitPending({ id: `quarantine:${revision}`, kind: 'quarantine', app: null, approval: null, host, previous, record, digest: routeRecordDigest(record, this.policy) });
+    });
   }
   #replaceRoute(revision, previous, route) {
     return { ...previous, revision, routes: [...previous.routes.filter(value => value.host !== route.host), route].sort((a, b) => a.host < b.host ? -1 : a.host > b.host ? 1 : 0) };
@@ -207,7 +281,7 @@ export class RoutePublication {
     if (!keys(prior, ['record', 'digest', 'approval']) || routeRecordDigest(prior.record, this.policy) !== prior.digest ||
       BigInt(prior.record.revision) <= BigInt(journal.settled.revision) || BigInt(pending.record.revision) <= BigInt(prior.record.revision)) throw failure();
     this.#continuedIntent(journal, { ...prior, kind: 'active', app: pending.app, previous: pending.previous });
-    if (pending.approval !== null || encodeRouteRecord(this.#withheldRecord(pending.record.revision, pending.previous, pending.app), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
+    if (pending.approval !== null || encodeRouteRecord(this.#quarantineRecord(pending.record.revision, pending.previous, `${pending.app}.${this.domain}`), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
   }
   #pending(kind) {
     const journal = this.#journal(), pending = journal.pending;
@@ -226,17 +300,16 @@ export class RoutePublication {
       const previous = this.#pending(['active']);
       if (previous.id !== intent || previous.approval.id !== id || previous.approval.digest !== digest) throw new Error('Inspect and select the exact pending route publication');
       await this.#current();
-      const revision = String(BigInt(previous.record.revision) + 1n), record = this.#withheldRecord(revision, previous.previous, previous.app);
+      const revision = String(BigInt(previous.record.revision) + 1n), record = this.#quarantineRecord(revision, previous.previous, `${previous.app}.${this.domain}`);
       const pending = { id: `withdraw:${revision}`, kind: 'withdraw', app: previous.app, approval: null, previous: previous.previous,
         record, digest: routeRecordDigest(record, this.policy), superseded: { record: previous.record, digest: previous.digest, approval: previous.approval } };
       if (this.state.apps[previous.app]) this.state.apps[previous.app].route = 'paused';
-      this.state.routeAuthority.pending = pending;
-      await this.#durable(() => this.savePrivate()); await this.#writePending(pending); await this.#settle(pending);
+      await this.#commitPending(pending);
     });
   }
   resumeWithholding() {
     return this.#exclusive(async () => {
-      const pending = this.#pending(['initialize', 'withhold', 'withdraw']);
+      const pending = this.#pending(['initialize', 'withhold', 'withdraw', 'release-claim', 'quarantine']);
       const observed = await this.#current();
       if (!same(reference(observed), { revision: pending.record.revision, digest: pending.digest })) {
         await this.#writePending(pending, pending.kind === 'initialize');

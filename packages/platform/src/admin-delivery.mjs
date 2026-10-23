@@ -32,6 +32,7 @@ function deliveryTarget(controller, name) {
 }
 
 export async function operateDelivery(controller, name, action, input = {}) {
+  await controller.routes.checkReady();
   const { app, slot } = deliveryTarget(controller, name);
   if (!['observe', 'pause', 'resume', 'snapshot', 'acknowledge-recovery'].includes(action)) throw new Error('Invalid delivery action');
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Delivery input must be a JSON object');
