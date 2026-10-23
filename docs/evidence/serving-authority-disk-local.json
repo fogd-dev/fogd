@@ -1,0 +1,152 @@
+{
+  "scope": "Fresh-read filesystem mechanism on the retained local Docker Desktop Linux arm64 VM/ext4; not production serving, power-loss durability or new-family qualification.",
+  "nativeExitCode": 0,
+  "baseCommit": "06d6faa571666be192e9231832700027bbc0f170",
+  "sourceTreeDirty": true,
+  "platform": {
+    "host": "darwin",
+    "operatingSystem": "Docker Desktop",
+    "kernelVersion": "6.10.14-linuxkit",
+    "architecture": "aarch64",
+    "driver": "overlay2"
+  },
+  "filesystem": "ext4",
+  "image": "sha256:b2e9e39d3f7fb00be9e5716160775d0a624b521aa6f0d40a69ddbad3b8c0a1a9",
+  "workerdVersion": "workerd 2026-10-16",
+  "workerdBinarySha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914",
+  "fixtureFileBytes": 67,
+  "observations": {
+    "missingHTTPStatus": 404,
+    "putHTTPStatus": 405,
+    "active": {
+      "status": 200,
+      "value": {
+        "revision": 1,
+        "state": "active",
+        "slot": "slot-1"
+      }
+    },
+    "paused": {
+      "status": 200,
+      "value": {
+        "revision": 2,
+        "state": "paused",
+        "slot": "slot-1"
+      }
+    },
+    "earlier": {
+      "status": 200,
+      "value": {
+        "revision": 1,
+        "state": "active",
+        "slot": "slot-1"
+      }
+    },
+    "replacement": {
+      "status": 200,
+      "value": {
+        "revision": 3,
+        "state": "active",
+        "slot": "slot-2"
+      }
+    },
+    "afterStop": {
+      "status": 200,
+      "value": {
+        "revision": 3,
+        "state": "active",
+        "slot": "slot-2"
+      }
+    }
+  },
+  "restart": {
+    "record": {
+      "status": 200,
+      "value": {
+        "revision": 3,
+        "state": "active",
+        "slot": "slot-2"
+      }
+    }
+  },
+  "readerExitCodes": {
+    "initial": 0,
+    "restart": 0
+  },
+  "independentAudit": {
+    "sourceFilesVerified": 315,
+    "existingContainerStatesVerified": 191,
+    "existingResourcesPreserved": true,
+    "finalRecordIndependentlyRead": true,
+    "executableHashIndependentlyChecked": true
+  },
+  "attempts": [
+    {
+      "directory": ".fogd/serving-authority-disk1",
+      "exitCode": 1,
+      "disposition": "Early reader failure; harness did not retain stderr. No passing mechanism evidence."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk2",
+      "exitCode": 1,
+      "disposition": "Retained reader stderr identified an unsupported absolute CapnProto embed path. Fixture copied into private tmpfs for relative embedding."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk3",
+      "exitCode": 0,
+      "disposition": "Reported pass rejected by independent audit: computed fixture size was 55 bytes, actual retained file total is 67. Worker results were also expanded to actual statuses and records."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk4",
+      "exitCode": 1,
+      "disposition": "Mount-audit assumption failed: Docker reports tmpfs in HostConfig separately from persistent Mounts. No pass accepted."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk5",
+      "exitCode": 1,
+      "disposition": "Host bind-path equality failed under Docker Desktop VM translation. Final audit verifies mounted file inventory and hashes instead."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk6",
+      "exitCode": 0,
+      "disposition": "Mechanism assertions and independent audit passed. Superseded to bind executable hashing to actual reader invocation and eliminate helper AutoRemove races."
+    },
+    {
+      "directory": ".fogd/serving-authority-disk7",
+      "exitCode": 0,
+      "disposition": "Final source: reader invokes the exact hashed native binary; explicit helper cleanup, actual status/record/file measurements and independent source/resource/file/executable audit passed. All seven scratch volumes retained."
+    }
+  ],
+  "raw": {
+    "directory": ".fogd/serving-authority-disk7",
+    "receiptSha256": "4e400a9cafc12ddc8dea1d4b92eee1e9159c286bb35802d6415a7b9b29a024b1",
+    "sourceInventorySha256": "62528219f1ed11ade3d5460d7a2874a93e168ab3179ebe0273707cac51f1e053",
+    "independentAuditSha256": "7225121fffb8e3f5245ab0410661e3505bb8994c2ac4c01c91e0e5bc87085842",
+    "observationsSha256": "c208c5fc9a2ec9abb024db5041785b85566fbdfbffd5c7f7b07101f17811669e",
+    "publisherFactsSha256": "e84f9303b4b13c587fc44a56a2a1d4bb9387996e7e33c3c32da453226412cf8b"
+  },
+  "executedProbeSources": {
+    "scripts/serving-authority/check-disk.mjs": "471fda0d7b4703e23dfac492017203e2d22beaee4af6b8632551196275dbd834",
+    "scripts/serving-authority/disk-reader.mjs": "bbbeb011370b0bc958903283cbcee5411c4d9c6d42a5e9c8cc11065cebd90697",
+    "scripts/serving-authority/disk-worker.mjs": "4a2bcf714458bca77b0dad879318086607e273522348050f6708c3ded9fc1342",
+    "scripts/serving-authority/publisher-facts.mjs": "2ea1e202c329f147665d2c239d320a8968475da8b045d5c1e8320060d6b202c5",
+    "scripts/serving-authority/reader-host.mjs": "09a916053d807cd322b67a9b28384145a878d588737b45c34e4f6bf7e3ff5171",
+    "scripts/serving-authority/workerd-executable.mjs": "006478e12aeb0037f25f40b2c5f0e81a7eef8ddef9c30a2bed57b11eaa4f228b"
+  },
+  "limits": [
+    "Minimal fixture records test filesystem behavior, not the proposed route schema or approval protocol.",
+    "Node saveJson and directory sync returned successfully; process stop/read restart do not prove engine, kernel or power-loss durability.",
+    "This is the retained local Docker Desktop Linux VM; another Docker engine and standalone Linux host remain unqualified.",
+    "No application serving, private-state disclosure boundary, latency, capacity, complete controller failure or new runtime-family acceptance is established."
+  ],
+  "executedReaderBinaries": {
+    "initial": {
+      "path": "/app/node_modules/.pnpm/@cloudflare+workerd-linux-arm64@1.20261016.1/node_modules/@cloudflare/workerd-linux-arm64/bin/workerd",
+      "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914"
+    },
+    "restart": {
+      "path": "/app/node_modules/.pnpm/@cloudflare+workerd-linux-arm64@1.20261016.1/node_modules/@cloudflare/workerd-linux-arm64/bin/workerd",
+      "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914"
+    }
+  }
+}

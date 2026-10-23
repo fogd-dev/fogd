@@ -106,10 +106,13 @@ including one whose old-file read began before replacement but completed afterwa
 Pause does not drain those requests or terminate WebSockets. Compatible migrations and
 the existing session, queue and cron controls remain necessary.
 
-A cached host workerd experiment observed fresh active, paused and replacement records
-through a read-only disk service, and refused writes through that reader. That
-experiment establishes only a local mechanism to investigate. It does not qualify
-Linux Docker mounts, fsync durability, the production gateway or recovery.
+A [local Docker mechanism check](evidence/serving-authority-disk-local.json) now
+observes fresh active, paused and replacement records through a separate read-only
+workerd reader. It checks an earlier open read, staging siblings, publisher stop
+and reader restart. The measured backing filesystem is ext4 inside Docker Desktop's
+Linux VM. An independent audit checks executed sources, actual files, executable hash,
+mounts and preserved resource states. This does not qualify the production gateway,
+new route schema, two-store crash protocol, another engine or power-loss durability.
 
 Validation: keep one old read open across replacement, then start separate requests
 after pause acknowledgment. The earlier request may complete; every later request must
@@ -252,6 +255,22 @@ valid durable authority without that process; this does not bypass the full
 installation startup or restore checks. An unreadable authority volume must refuse.
 Storage availability and native replica health remain separate dependencies; no
 whole-stack availability claim follows.
+
+Repeat the bounded filesystem check with the qualified cached image and a new
+private output directory:
+
+```sh
+node scripts/serving-authority/check-disk.mjs .fogd/route-disk-NEW
+```
+
+It installs nothing, builds no image and starts no application or object store.
+Each attempt retains one small scratch volume and its evidence; nonce-scoped
+helpers are removed after completion or a handled failure. Forced termination of
+the host harness can require local cleanup of its own labelled helpers. The check
+writes fixture records only to its new volume, and refuses an existing output
+directory. It verifies actual child exits and resource preservation before reporting
+success. Minimal filesystem records are deliberately separate from the future
+route-authority wire schema.
 
 Release requires successful pause-boundary, crash-ordering, privacy, same-family
 recovery and existing selected-admission gates. Preserve internal-path refusal,
