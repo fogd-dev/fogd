@@ -1,69 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { mkdtemp, mkdir, rm, writeFile, readFile, chmod, link, symlink, rename } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
+import { mkdir, rm, writeFile, readFile, link, symlink, rename } from 'node:fs/promises';
 import { join } from 'node:path';
-import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
-import { RoutePublication } from '../../platform/src/route-publication.mjs';
-import { writeRouteRecord } from '../../platform/src/route-record-store.mjs';
-import { durableSnapshotLayout, durableSnapshotFormat, verifyDurableBundle } from '../src/recovery/durable-bundle.mjs';
+import { durableSnapshotLayout, verifyDurableBundle } from '../src/recovery/durable-bundle.mjs';
 import { backgroundBackupApps } from '../src/recovery/background-backup.mjs';
 import { verifyBundle, fingerprint } from '../src/recovery/bundle.mjs';
-import { durableRuntimeConfig } from '../src/runtime/durable-config.mjs';
-import { freshRuntimePlan, runtimePolicyForConfig } from '../src/runtime/selection-plan.mjs';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
 
 const schema2 = ({ routing, ...policy }) => ({ ...policy, schema: 2, controllerArgs: ['packages/platform/src/main.mjs'] });
-const first = '00000000-0000-4000-8000-000000000001', digest = 'b'.repeat(64);
-function durable() {
-  const { source, profile } = prebootFixture();
-  source.services.controller.environment.FOGD_GATEWAY_TOKEN = 'private-gateway';
-  const entry = { ...profile, id: 'celld-cron-v2-linux-arm64', admission: 'candidate', routing: 'durable' };
-  const legacy = freshRuntimePlan(source, { ...entry, routing: undefined }), policy = runtimePolicyForConfig(legacy.config, entry);
-  return { config: durableRuntimeConfig(legacy.config, policy), policy };
-}
-
-// Drive the real publisher to a settled withheld or active pair.
-async function routePair(root, policy, stage) {
-  const authority = join(root, 'authority'); await mkdir(authority); await chmod(authority, 0o755);
-  const routes = { installation: runtimePolicyIdentity(policy), slots: policy.fleets.map(fleet => fleet.id) };
-  const state = { apps: {}, deployments: {} };
-  const publication = new RoutePublication({ state, policy: routes, path: join(authority, 'routes.json'), domain: 'localhost', savePrivate: async () => {},
-    writePublic: (path, record) => writeRouteRecord(path, record, routes), createPublic: (path, record) => writeRouteRecord(path, record, routes) });
-  await publication.initialize();
-  if (stage !== 'empty') {
-    state.apps.alpha = { slot: 'slot-1', active: null, route: 'paused' };
-    state.deployments[first] = { id: first, app: 'alpha', digest, status: 'activating', step: 'preparing-activation', secretRevision: null };
-    await publication.withhold('alpha', first, digest);
-  }
-  if (stage === 'active') {
-    state.apps.alpha.active = first; state.apps.alpha.route = 'active'; Object.assign(state.deployments[first], { status: 'active', step: 'complete' });
-    await publication.activate('alpha');
-  }
-  return { state: structuredClone(state), authority };
-}
-
-const tar = (output, directory, ...members) => execFileSync('tar', ['-cf', output, '-C', directory, ...(members.length ? members : ['.'])]);
-async function bundle(t, { stage = 'active', edit = () => {} } = {}) {
-  const root = await mkdtemp('/tmp/fogd-durable-bundle-'); t.after(() => rm(root, { recursive: true, force: true }));
-  const { config, policy } = durable(), { state, authority } = await routePair(root, policy, stage);
-  const dir = join(root, 'bundle'), staging = join(root, 'staging'); await mkdir(dir); await mkdir(staging);
-  await writeFile(join(staging, 'state.json'), JSON.stringify(state)); tar(join(dir, 'controller.tar'), staging, 'state.json');
-  tar(join(dir, 'route-authority.tar'), authority);
-  const layout = durableSnapshotLayout(config, policy);
-  for (const name of layout.archiveVolumes.filter(name => !['controller', 'route-authority'].includes(name))) tar(join(dir, `${name}.tar`), staging, 'state.json');
-  await writeFile(join(dir, 'images.tar'), 'images'); await writeFile(join(dir, 'compose.json'), JSON.stringify(config));
-  const context = { root, dir, config, policy, state, authority, layout };
-  await edit(context);
-  const files = {};
-  for (const name of layout.archives) files[name] = await fingerprint(join(dir, name));
-  const images = Object.fromEntries(layout.services.map(name => [name, name === 'minio' ? policy.storageImage : policy.image]));
-  const revision = stage === 'empty' ? '0' : stage === 'active' ? '2' : '1';
-  const sha256 = createHash('sha256').update(await readFile(join(authority, 'routes.json')).catch(() => '')).digest('hex');
-  context.manifest = { format: durableSnapshotFormat, sourceProject: config.name, images, files, routeAuthority: { schema: 1, installation: runtimePolicyIdentity(policy), revision, sha256 } };
-  return context;
-}
+import { durableFixture as durable, durableBundleFixture as bundle, tarArchive as tar } from './fixtures/durable-bundle.mjs';
 const write = context => writeFile(join(context.dir, 'manifest.json'), JSON.stringify(context.manifest));
 async function refuses(context, profile = context.policy) {
   await write(context);

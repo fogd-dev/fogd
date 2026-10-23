@@ -3,10 +3,10 @@ import { isDeepStrictEqual } from 'node:util';
 import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { docker } from '../recovery/docker.mjs';
-import { durableRuntimeConfig, routeAuthorityVolume, routeEnrollmentVolume } from './durable-config.mjs';
+import { durableRuntimeConfig } from './durable-config.mjs';
+import { durableRouteHelperArgs } from './durable-route-helper.mjs';
 
 const RECEIPT_MAX_BYTES = 1024;
-const mounts = [['controller', '/var/lib/fogd'], [routeAuthorityVolume, '/var/lib/fogd-routes'], [routeEnrollmentVolume, '/var/lib/fogd-enrollment']];
 const refused = () => Object.assign(new Error('Durable route enrollment requires an independently checked durable profile, sealed configuration and layout binding; nothing was started'), { code: 'DURABLE_ENROLLMENT_REFUSED' });
 const uncertain = () => Object.assign(new Error('Durable route enrollment is unconfirmed; keep ingress stopped and retain the controller, route authority and enrollment volumes'), { code: 'DURABLE_ENROLLMENT_UNCERTAIN' });
 
@@ -14,10 +14,8 @@ function enrollmentPlan(config, profile, binding) {
   if (typeof binding !== 'string' || !/^[a-f0-9]{64}$/.test(binding) || !isDeepStrictEqual(durableRuntimeConfig(config, profile), config)) throw refused();
   const policy = validateRuntimePolicy(profile);
   if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
-  const volumes = mounts.map(([role, target]) => [config.volumes[role]?.name, target]);
-  if (volumes.some(([name]) => typeof name !== 'string' || !name)) throw refused();
   const routePolicy = { installation: runtimePolicyIdentity(policy), slots: policy.fleets.map(fleet => fleet.id) };
-  return { policy, volumes, routePolicy };
+  return { policy, routePolicy };
 }
 
 // Revision 0 must be the canonical empty record; recompute it rather than trust the helper.
@@ -35,11 +33,8 @@ function expectedReceipt(output, { installation, slots }, binding) {
 // Only the dedicated initializer mounts route-enrollment; no network, secrets,
 // TLS, binds or capabilities reach it.
 export async function initializeDurableRoutes(config, profile, binding, { run = docker } = {}) {
-  let plan;
-  try { plan = enrollmentPlan(config, profile, binding); } catch { throw refused(); }
-  const args = ['run', '--pull', 'never', '--rm', '-i', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-    ...plan.volumes.flatMap(([name, target]) => ['--mount', `type=volume,src=${name},dst=${target},volume-nocopy`]),
-    '--entrypoint', '/usr/local/bin/node', plan.policy.image, 'packages/platform/src/import-route-enrollment.mjs'];
+  let plan, args;
+  try { plan = enrollmentPlan(config, profile, binding); args = durableRouteHelperArgs(config, plan.policy.image, 'initialize'); } catch { throw refused(); }
   try { return expectedReceipt(await run(args, { inputText: JSON.stringify({ profile: plan.policy, binding }) }), plan.routePolicy, binding); }
   catch { throw uncertain(); }
 }

@@ -595,6 +595,58 @@ selection, fresh mount enrollment, source-writer exclusion and held background
 recovery before it can start. Actual backup/restore durability and native acceptance
 remain open; no catalog or default cron admission changes.
 
+## Stopped destination routing restoration candidate
+
+The [host planner](../packages/cli/src/runtime/durable-recovery-plan.mjs) takes an
+independently selected durable-capable catalog entry and externally recorded source
+identity. Its filesystem reader verifies the actual snapshot and derives a digest
+from the manifest bytes. The target project must differ from the source. Native
+node IDs, storage prefixes, application approvals and secrets remain source data;
+target volume and network names are canonical for the new project. Network
+placement comes only from the independent target selection. Snapshot data cannot
+select another runtime image, execution mode or public listener policy.
+
+The [stopped finalizer](../packages/platform/src/route-restoration.mjs) operates
+only on the exact empty stores produced by fresh enrollment. It checks the original
+grant, its complete spent marker, full target profile, inventory binding and current
+directory identities. The controller state must still match the empty initialization
+state; restored controller data files may sit beside it. The target authority must
+still contain only the canonical empty revision-zero record.
+
+Before changing either store, the finalizer exclusively creates and syncs a
+permanent `route-restoration.spent.json` marker bound to the original grant,
+installation, inventory and snapshot. Any existing or partial marker blocks replay.
+It projects the checked source onto a new settled revision-one record with every
+HTTP route withheld. Formerly active approvals receive exact HTTP holds; existing
+holds remain. Nonretired apps are HTTP-paused. Qualified queue and cron snapshot
+receipts become pending recovery records, and their consumed snapshot fields are
+removed. Missing, expired or unacknowledged background recovery evidence refuses.
+The helper resumes no background work and makes no backend call.
+
+Private state is written before public authority, then both readbacks are checked.
+The private state uses the destination's enrollment targets, never copied source
+directory references. Failures after spending retain all stores and the marker.
+An interrupted mismatch is not an ordinary publication intent and cannot silently
+replay. A lost acknowledgment can leave a consistent pair; the host enrollment
+must remain incomplete until the restore coordinator confirms the whole operation.
+HTTP resume and background recovery acknowledgment remain separate operator acts.
+
+The [CLI adapter](../packages/cli/src/runtime/durable-restoration.mjs) fixes the
+three mount paths and executable, prohibits image pulls and volume seeding, and
+checks a bounded receipt against its own withheld-record digest. Serialized input
+cannot select paths, publishers or force flags. The helper receives no network or
+provider environment. [Filesystem tests](../packages/platform/test/route-restoration.test.mjs)
+cover fresh enrollment, copied bindings, replay refusal, private/public write faults,
+source controller approvals, target controller startup, HTTP resume and queue/cron
+pending recovery. [Host tests](../packages/cli/test/runtime-durable-restoration.test.mjs)
+connect the adapter to actual temporary stores without Docker execution.
+
+These are source components for the restore coordinator. Archive data copying,
+independent policy installation, source-writer exclusion and final host enrollment
+completion are not yet integrated into the restore command. Legacy restore still
+refuses the durable format. Native mount identity, storage durability and complete
+backup/restore acceptance remain open.
+
 ## One-use route enrollment candidate
 
 The [enrollment primitive](../packages/platform/src/route-enrollment.mjs) maintains

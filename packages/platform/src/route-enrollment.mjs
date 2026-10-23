@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
 
-const grantFile = 'route-enrollment.json', spentFile = 'route-enrollment.spent.json';
+const grantFile = 'route-enrollment.json', spentFile = 'route-enrollment.spent.json', restorationFile = 'route-restoration.spent.json';
 const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const uuid = value => typeof value === 'string' && /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(value);
 const keys = (value, names) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === names.length && names.every(name => Object.hasOwn(value, name));
@@ -53,8 +53,8 @@ async function exclusiveRecord(directory, name, value) {
     await parent.sync();
   } finally { await parent.close(); }
 }
-async function grantRecord(directory) {
-  const file = await open(join(directory, grantFile), constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+async function grantRecord(directory, name = grantFile) {
+  const file = await open(join(directory, name), constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
   try {
     const stat = await file.stat(), buffer = Buffer.alloc(32769);
     if (!stat.isFile() || stat.uid !== process.geteuid() || (stat.mode & 0o777) !== 0o600 || stat.size > 32768) throw refused();
@@ -110,6 +110,28 @@ async function spendAvailable(target, targets, id) {
     throw refused();
   }
   try { await exclusiveRecord(targets.enrollment.path, spentFile, { schema: 1, id: grant.id, installation: target.installation, binding: target.binding }); }
+  catch (error) { if (error.code === 'EEXIST') throw spent(); throw uncertain(); }
+  return { id: grant.id, ...target, targets };
+}
+
+// One-use follow-up to a spent fresh enrollment: never a reinitialization option.
+// The caller's read-only check of the initialized stores runs after the original
+// grant and spent marker are proved and before the permanent restoration marker
+// is synced. Any retained or partial restoration marker blocks replay.
+export async function spendRouteRestoration({ snapshot, ...input }, verifyStores) {
+  if (!hex(snapshot) || typeof verifyStores !== 'function') throw refused();
+  const { target, targets } = await enrollmentContext(input, false);
+  let grant;
+  try {
+    const entries = []; for await (const entry of await opendir(targets.enrollment.path)) entries.push(entry.name);
+    if (!isDeepStrictEqual(entries.sort(), [grantFile, spentFile])) throw refused();
+    grant = await grantRecord(targets.enrollment.path);
+    if (!matching(grant, target, targets, grant.id)) throw refused();
+    const marker = await grantRecord(targets.enrollment.path, spentFile);
+    if (!isDeepStrictEqual(marker, { schema: 1, id: grant.id, installation: target.installation, binding: target.binding })) throw refused();
+    await verifyStores({ id: grant.id, ...target, targets });
+  } catch { throw refused(); }
+  try { await exclusiveRecord(targets.enrollment.path, restorationFile, { schema: 1, id: grant.id, installation: target.installation, binding: target.binding, snapshot }); }
   catch (error) { if (error.code === 'EEXIST') throw spent(); throw uncertain(); }
   return { id: grant.id, ...target, targets };
 }
