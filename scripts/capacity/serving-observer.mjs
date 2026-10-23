@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { setTimeout as delay } from 'node:timers/promises';
 
-export function summarizeReads(samples) {
+export function summarizeRequests(samples) {
   if (!Array.isArray(samples) || !samples.length) throw new Error('Serving measurement has no samples');
   const durations = [], statuses = {}; let errors = 0;
   for (const sample of samples) {
@@ -19,21 +19,35 @@ export function summarizeReads(samples) {
 }
 
 export function servingReport(samples) {
-  return Object.fromEntries(['gateway', 'direct'].map(kind => [kind, summarizeReads(samples.filter(sample => sample.kind === kind))]));
+  if (!Array.isArray(samples) || samples.some(sample => !['gateway', 'direct'].includes(sample?.kind))) throw new Error('Unknown serving sample path');
+  return Object.fromEntries(['gateway', 'direct'].map(kind => [kind, summarizeRequests(samples.filter(sample => sample.kind === kind))]));
 }
 
-async function observe(settings, kind) {
+const workloads = {
+  reads: settings => ({ method: 'GET', path: '/api/messages', metadata: {},
+    correct: bytes => createHash('sha256').update(bytes).digest('hex') === settings.bodySha256 }),
+  writes: writeOperation,
+};
+function writeOperation(settings, writeId) {
+  if (typeof writeId !== 'string' || !/^[a-z0-9-]{1,96}$/.test(writeId)) throw new Error('Invalid serving write identity');
+  return { method: 'POST', path: '/api/write-probe', metadata: { writeId }, body: JSON.stringify({ id: writeId }),
+    correct: bytes => { try { const value = JSON.parse(bytes); return value.id === writeId && value.app === (settings.app || 'baseline'); } catch { return false; } } };
+}
+
+export async function observeServing(settings, kind, writeId) {
   const began = performance.now();
-  const target = settings.targets[kind];
+  if (!Object.hasOwn(workloads, settings.workload || 'reads')) throw new Error('Unknown serving workload');
+  const profile = workloads[settings.workload || 'reads'];
+  const target = settings.targets[kind], operation = profile(settings, writeId), appHost = `${settings.app || 'baseline'}.localhost`;
   return new Promise(resolve => {
     let settled = false;
     const finish = (status, correct) => {
       if (settled) return; settled = true;
-      resolve({ kind, startedMs: began, finishedMs: performance.now(), status, correct });
+      resolve({ kind, ...operation.metadata, startedMs: began, finishedMs: performance.now(), status, correct });
     };
     const transport = kind === 'gateway' ? httpsRequest : httpRequest;
-    const req = transport({ hostname: target, port: 8080, path: '/api/messages', method: 'GET',
-      ca: settings.ca, servername: 'baseline.localhost', headers: { Host: 'baseline.localhost', 'x-forwarded-host': 'baseline.localhost', 'x-forwarded-proto': 'https' },
+    const req = transport({ hostname: target, port: settings.port || 8080, path: operation.path, method: operation.method,
+      ca: settings.ca, servername: appHost, headers: { Host: appHost, 'x-forwarded-host': appHost, 'x-forwarded-proto': 'https', ...(operation.body ? { 'Content-Type': 'application/json' } : {}) },
       signal: AbortSignal.timeout(5000) }, response => {
       const chunks = []; let bytes = 0;
       response.on('data', chunk => {
@@ -41,20 +55,21 @@ async function observe(settings, kind) {
         if (bytes > 1024 * 1024) req.destroy(new Error('Response bound exceeded'));
         else chunks.push(chunk);
       });
-      response.on('end', () => finish(response.statusCode, createHash('sha256').update(Buffer.concat(chunks)).digest('hex') === settings.bodySha256));
+      response.on('end', () => finish(response.statusCode, operation.correct(Buffer.concat(chunks))));
       response.on('error', () => finish(response.statusCode, false));
     });
-    req.on('error', () => finish(0, false)); req.end();
+    req.on('error', () => finish(0, false)); req.end(operation.body);
   });
 }
 
 async function run(settings) {
-  if (!Number.isInteger(settings.durationMs) || settings.durationMs < 1000 || settings.durationMs > 120000 || !Number.isInteger(settings.concurrency) || settings.concurrency < 1 || settings.concurrency > 8 || !Number.isInteger(settings.maxDurationMs) || settings.maxDurationMs < settings.durationMs || settings.maxDurationMs > 300000) throw new Error('Invalid serving workload');
+  validateWorkload(settings);
   const markers = {}, server = await markerServer(markers), resourcesBefore = resources();
   const samples = [], startedAt = new Date().toISOString(), startedMs = performance.now(), deadline = startedMs + settings.durationMs, maximumEnd = startedMs + settings.maxDurationMs;
   console.log(JSON.stringify({ ready: true, startedAt, startedMs }));
-  await Promise.all(['gateway', 'direct'].flatMap(kind => Array.from({ length: settings.concurrency }, async () => {
-    while (samplingContinues(performance.now(), markers, deadline, maximumEnd)) { samples.push(await observe(settings, kind)); await delay(100); }
+  await Promise.all(['gateway', 'direct'].flatMap(kind => Array.from({ length: settings.concurrency }, async (_, worker) => {
+    let sequence = 0;
+    while (samplingContinues(performance.now(), markers, deadline, maximumEnd)) { samples.push(await observeServing(settings, kind, `${settings.phase}-${kind}-${worker}-${sequence++}`)); await delay(100); }
   })));
   await new Promise(resolve => server.close(resolve));
   console.log(JSON.stringify({ startedAt, finishedAt: new Date().toISOString(), startedMs, finishedMs: performance.now(), concurrencyPerPath: settings.concurrency, delayPerWorkerMs: 100, keepAlive: true, minimumWindowMs: settings.durationMs, maximumSchedulingWindowMs: settings.maxDurationMs, postActionTailMs: 5000,
@@ -74,12 +89,12 @@ async function markerServer(markers) {
   return server;
 }
 
-export function interferenceReads(report) {
+export function interferenceRequests(report) {
   const { start, end } = report.markers;
   if (!Number.isFinite(start) || !Number.isFinite(end) || start < report.startedMs || end <= start || end > report.finishedMs) throw new Error('Interference is outside the observed window');
   return Object.fromEntries(['gateway', 'direct'].map(kind => {
     const samples = report.samples.filter(sample => sample.kind === kind && sample.startedMs < end && sample.finishedMs > start);
-    return [kind, summarizeReads(samples)];
+    return [kind, summarizeRequests(samples)];
   }));
 }
 
@@ -89,4 +104,9 @@ function resources() {
 
 export function samplingContinues(now, markers, minimumEnd, maximumEnd) {
   return now < maximumEnd && (now < minimumEnd || (markers.start !== undefined && (markers.end === undefined || now < markers.end + 5000)));
+}
+
+function validateWorkload(settings) {
+  if (!Number.isInteger(settings.durationMs) || settings.durationMs < 1000 || settings.durationMs > 120000 || !Number.isInteger(settings.concurrency) || settings.concurrency < 1 || settings.concurrency > 8 || !Number.isInteger(settings.maxDurationMs) || settings.maxDurationMs < settings.durationMs || settings.maxDurationMs > 300000) throw new Error('Invalid serving workload');
+  if (!Object.hasOwn(workloads, settings.workload || 'reads') || (settings.workload === 'writes' && !/^[a-z0-9-]{1,48}$/.test(settings.phase || ''))) throw new Error('Invalid serving workload profile');
 }

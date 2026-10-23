@@ -147,8 +147,12 @@ protected bytes and restore the retained recovery point after pruning.
 The [paired serving guide](serving-measurement.md) supplies a repeatable local
 two-fleet read workload during maximum-size uploads, peer activation and controller
 interruption. It compares the complete gateway path with one direct replica and
-retains raw errors and resource counters. It does not complete the broader app-count,
-write-load or density acceptance below.
+retains raw errors and resource counters. The [write workload](serving-measurement.md#write-workload-and-response-reconciliation)
+adds response/ledger reconciliation with one writing app and an idle or deploying
+peer. Its corrected local trial failed the native storage-health check with
+HTTP 507 responses and low Docker backing-filesystem headroom, so write-performance
+acceptance remains open. Broader app-count, concurrent-app write-load and density
+acceptance below remain open.
 
 Measure end-to-end latency, throughput, memory, and failure behavior across the
 currently supported app counts, with idle apps, active traffic, and concurrent

@@ -103,7 +103,7 @@ confidence intervals or isolated ingress costs.
 | Peer activation | 9.41–10.17 | 4.91–6.41 | 0 |
 | Recovered serving | 9.05–10.53 | 5.22–5.44 | 0 |
 
-The deliberate controller interruptions produced 94 and 84 gateway HTTP 503s;
+The deliberate controller interruptions produced 94 and 84 gateway HTTP 503 responses;
 direct reads had no errors. Each interval includes stopping, a configured pause,
 restarting and waiting for a correct gateway response. This demonstrates the
 current routing dependency on the controller. It does not establish a production
@@ -127,3 +127,75 @@ observer records and eight volumes were retained; service logs were not captured
 The harness now retains available service logs before failure cleanup. A separate
 intentional-failure control verified private log retention, original-error identity
 and cleanup without removing any volume.
+
+## Write workload and response reconciliation
+
+Run the write probe from a prepared checkout with the same cached prerequisites:
+
+```sh
+node scripts/operator/serving-writes.mjs .fogd/write-serving-observation-01
+```
+
+It copies the guestbook into private fixtures and adds a D1 table and a public
+measurement-only route to those copies. It leaves the original example and existing
+installations unchanged. Each POST uses a unique operation ID. The handler awaits
+one insert before returning that ID and its app name. The sampler sends each write
+once; it follows no redirects and never replays a failed or timed-out mutation.
+
+A separate control deliberately returns HTTP 502 after inserting its row. This
+checks that response failure and an absent write are distinguishable. That control
+is excluded from latency distributions. A short read control also exercises the
+default complete-body hash check on both paths.
+
+Two workers per path use the same five-second deadline and 100-millisecond pause
+as the read workload. The phases are one approved app, approval of an idle peer,
+two approved apps with that peer idle, two concurrent maximum-size peer uploads,
+compatible peer activation, controller interruption, and recovered writes. Minimum
+windows are 10, 45, 10, 20, 45, 30 and 10 seconds. This measures one writing app
+alongside an idle or deploying peer, not two applications generating write traffic.
+The observer continues through longer actions and their recorded tail.
+
+After each phase, the harness retains the samples before making exactly one ledger
+read. It records that read's status and elapsed time, full row list, phase-scoped
+reconciliation, and cumulative reconciliation including earlier attempts and the
+control. A missing acknowledged row fails the run with that first observation
+retained; the harness does not poll until it disappears. Unacknowledged operations
+retain their IDs and HTTP status and are classified by presence in that read.
+An absent unacknowledged operation can appear in a later snapshot if its handler
+continues after the client deadline. Every classification is tied to its observation
+point; it is not proof of a failed transaction or permission to retry blindly.
+
+The peer's table must remain empty and its slot must differ from the baseline's.
+The baseline release must stay unchanged. Interference errors on either path remain
+measurements; healthy one-app, idle-peer and recovered windows require correct
+responses. Completion does not establish zero-error serving during controller loss.
+
+Each phase retains resource counters for the gateway, controller, storage server
+and both replica pairs, with container start times and configured cgroup limits.
+These counters include measurement-command overhead. Peaks are cumulative within
+one container start, not phase-specific application RSS. Host load and engine
+resources are start-of-run snapshots; the host and VM are shared with other workloads. Container
+CPU limits do not establish per-worker isolation or CPU budgets. This paced workload
+measures neither saturation nor the maximum safe number of applications.
+
+### Current write-run status
+
+The [write evidence record](evidence/operator-write-serving-local.json) records no
+accepted write-performance baseline. The corrected trial completed all seven
+observation phases and retained every acknowledged row in its first ledger reads,
+but replica logs contained storage HTTP 507 responses. The native health check
+therefore failed. A read-only check of its retained bucket volume afterward found
+about 0.6 GB available on Docker's backing filesystem. Available space on the host
+filesystem alone does not establish headroom inside the Docker engine.
+
+The [declared storage source](https://github.com/minio/minio/blob/RELEASE.2025-10-15T17-29-55Z/cmd/api-errors.go#L1276-L1280)
+maps the storage-full response to its minimum-free-space refusal. The observation
+is consistent with storage pressure, but was taken after the errors. No retained
+data was removed and no storage threshold was lowered. Repeat acceptance requires
+sufficient backing-filesystem headroom and a complete run without native health
+failures. These failed-run observations are not a latency or capacity recommendation.
+
+An earlier reported pass used ledger polling and is rejected as measurement
+evidence. Another attempt failed on missing test-certificate hostname coverage;
+the test certificate now covers the peer and TLS verification stays enabled.
+All attempt volumes and raw diagnostics remain retained.

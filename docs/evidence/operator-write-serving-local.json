@@ -1,0 +1,83 @@
+{
+  "scope": "Local write-measurement tooling and a failed native trial. No accepted write-performance baseline, density limit, cross-host or power-loss durability qualification.",
+  "baseCommit": "a4963eeb23ffdc1e69d65530b5c42bd310666799",
+  "runtimeFamily": "celld-cron-v2-linux-arm64",
+  "nativeAcceptance": "not-passed",
+  "attempts": [
+    {
+      "directory": ".fogd/write-serving-native1",
+      "exitCode": 1,
+      "disposition": "Failed TLS hostname coverage; certificate SAN corrected without bypassing verification."
+    },
+    {
+      "directory": ".fogd/write-serving-native2",
+      "exitCode": 0,
+      "disposition": "Reported pass rejected: ledger polling could hide first-read anomalies."
+    },
+    {
+      "directory": ".fogd/write-serving-native3",
+      "exitCode": 1,
+      "disposition": "Corrected first-read evidence retained; storage HTTP 507 messages fail final native health check."
+    }
+  ],
+  "failedTrial": {
+    "phase": "clean-shutdown",
+    "observerPhasesCompleted": 7,
+    "attemptsIncludingControl": 6280,
+    "acknowledgedWrites": 6197,
+    "acknowledgedMissingFromFirstReads": 0,
+    "postCommitErrorControl": {
+      "status": 502,
+      "committed": true,
+      "includedInLatencyDistributions": false
+    },
+    "unacknowledgedAbsentAtFinalRead": {
+      "status": 503,
+      "count": 82
+    },
+    "gatewayErrorsDuringControllerInterruption": 82,
+    "directErrorsDuringControllerInterruption": 0,
+    "storage507LogLines": 32
+  },
+  "backingFilesystemObservation": {
+    "observedAt": "2026-10-23T01:48:24.785009+00:00",
+    "totalBytes": 58861912064,
+    "availableBytes": 594235392,
+    "freeInodes": 2529361,
+    "scope": "Read-only statfs of the retained trial bucket volume after failure; not a measurement at the first 507 response.",
+    "interpretation": "Low available storage is consistent with the upstream minimum-free-space refusal; no storage settings were weakened."
+  },
+  "independentChecks": {
+    "rawObserverExitCodesChecked": 7,
+    "sourceFilesAndArchivesChecked": 737,
+    "artifactDigestsChecked": 4,
+    "phaseSummariesAndLedgersRecomputed": 7,
+    "baselineSlotStable": true,
+    "allPreexistingResourcesAndStatesPreserved": true,
+    "retainedTrialVolumes": 24
+  },
+  "raw": {
+    "directory": ".fogd/write-serving-native3",
+    "failureSha256": "d741f89275b9a6ff5b16404c2d4eab8ad9606a695dc99a9c1159d5de4064954f",
+    "sourceInventorySha256": "bffec20909c04be0756438d3b5187949cee73da04ad77f491cb615f00d332011",
+    "independentAuditSha256": "c31eb0bb6347a05a2f9004de8ad0e6a99c1e95f0aa6f00f1372c01787586337d",
+    "spaceObservationSha256": "f065c16f04b4397cff8c731b1ddac204fa8d36a51f6854c46d5bc714a981111d"
+  },
+  "executedSources": {
+    "scripts/operator/serving-writes.mjs": "3449e2b12b491455f11b4b26ba74a14a9be3a455b2be51f8bd73c6c87bc43ead",
+    "scripts/capacity/serving-observer.mjs": "604e8a83ea620d8fd1421aa1a0268670afd05f80b7bf2690ef1f4eb23d4d34e2",
+    "scripts/capacity/serving-host.mjs": "846e13d9137b3e39aef1c77104c4710d4454e07353f286e9b0cfb85789425281",
+    "scripts/capacity/serving-session.mjs": "8d0e802189a606fcd54e64d2f0efc5a22438ab503bf41b83b11087d11e08b2a6",
+    "scripts/capacity/write-fixture.mjs": "04b94c2b6c12dd466c9d7f303864daab4069fd780f204a29b5556dbeefe485ea",
+    "scripts/capacity/write-ledger.mjs": "e797c6fa3a45afbab1936373a1cb450ab30847fc8f1a6abf64490e8f26e8478b",
+    "scripts/cron-probe/selected/host.mjs": "b2a5682f47410c7fb8f53a0a0724f973b9ba09e325941474bc27b0e69466b5fe",
+    "scripts/cron-probe/selected/selected-trial.mjs": "d1351d71152620ecd38a0d35ed98f3db0a21a489217d1de72679406f2c709c03",
+    "scripts/cron-probe/selected/shutdown.mjs": "0db160eebc1d38e77fe769c0aa80b736dfd3cb95d3014caf176fde9e1cc411cb"
+  },
+  "upstreamStorageFullMapping": "https://github.com/minio/minio/blob/RELEASE.2025-10-15T17-29-55Z/cmd/api-errors.go#L1276-L1280",
+  "openAcceptance": [
+    "Restore sufficient Docker backing-filesystem headroom while preserving retained data.",
+    "Repeat the final write workload and its complete native health checks; retain first-read anomalies and every error.",
+    "Broader active-app counts, saturation, remote hosts, and durability faults remain separate work."
+  ]
+}
