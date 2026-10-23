@@ -57,14 +57,17 @@ function observation(report, challenge, policy) {
 }
 
 // The result is an observation interval only: never an authorization lease or mount proof.
-export async function requestRoutingPreflight(env, profile, { fetchImpl = fetch } = {}) {
+export async function requestRoutingPreflight(env, profile, { fetchImpl = fetch, signal: parentSignal } = {}) {
   const policy = durablePolicy(profile);
   if (!env || typeof env.FOGD_ADMIN_PASSWORD !== 'string' || !env.FOGD_ADMIN_PASSWORD) throw refused();
   const challenge = randomBytes(32).toString('hex');
   const authorization = `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`;
   const controller = new AbortController(), timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const abort = () => controller.abort();
+  parentSignal?.addEventListener('abort', abort, { once: true });
   const { signal } = controller;
   try {
+    if (parentSignal?.aborted) throw refused();
     const origin = serverOrigin(env);
     const admin = await readJson(await fetchImpl(`${origin}/v1/admin`, { headers: { Authorization: authorization }, redirect: 'error', signal }), ADMIN_MAX_BYTES, signal);
     if (!admin || typeof admin !== 'object' || Object.hasOwn(admin, 'recoveryOnly') || typeof admin.csrf !== 'string' || !/^[a-f0-9]{64}$/.test(admin.csrf)) throw refused();
@@ -74,5 +77,5 @@ export async function requestRoutingPreflight(env, profile, { fetchImpl = fetch 
       body: JSON.stringify({ challenge }),
     });
     return observation(await readJson(response, REPORT_MAX_BYTES, signal), challenge, policy);
-  } catch { throw refused(); } finally { clearTimeout(timer); controller.abort(); }
+  } catch { throw refused(); } finally { parentSignal?.removeEventListener('abort', abort); clearTimeout(timer); controller.abort(); }
 }

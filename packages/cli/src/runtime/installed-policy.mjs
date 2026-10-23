@@ -27,7 +27,9 @@ export async function readInstalledPolicy(config, { allowMissing = false } = {})
 }
 
 async function verifiedReader() {
-  for (const entry of runtimeFamilies()) {
+  // New readers retain older codecs; prefer them so a cached legacy reader
+  // cannot prevent decoding an independently installed newer profile schema.
+  for (const entry of runtimeFamilies().sort((a, b) => b.schema - a.schema)) {
     try { await verifyRuntimeFamily(entry); return entry; }
     catch { /* A different locally verified catalog image can read schema 2. */ }
   }

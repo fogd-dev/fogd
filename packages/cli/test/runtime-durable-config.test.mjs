@@ -27,6 +27,7 @@ test('conversion seals the candidate topology and preserves its input', () => {
   const gateway = c.services.workerd;
   assert.deepEqual(gateway.command, ['packages/runtime/src/serve-durable.mjs']);
   assert.deepEqual(gateway.entrypoint, ['/usr/local/bin/node']);
+  assert.equal(gateway.restart, 'no');
   assert.deepEqual(gateway.environment, {});
   assert.deepEqual(Object.keys(gateway.networks).sort(), ['fleet-1', 'fleet-2']);
   assert.deepEqual(gateway.volumes, [{ ...routes, read_only: true },
@@ -82,6 +83,7 @@ test('durable re-entry refuses drift instead of repairing it, without exposing p
     c => { c.services.workerd.image = 'fogd-runtime:local'; },
     c => { c.services.controller.image = 'mutable:tag'; },
     c => { c.services.workerd.read_only = false; },
+    c => { c.services.workerd.restart = 'unless-stopped'; },
     c => { c.volumes['route-authority'].name = 'private-other_route-authority'; },
     c => { c.volumes['gateway-policy'].name = c.volumes['route-authority'].name; },
     c => { c.volumes['route-authority'].name = c.volumes.controller.name; },

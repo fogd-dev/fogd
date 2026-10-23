@@ -64,6 +64,7 @@ function durableFromSealed(sealed, policy) {
   controller.command = [...policy.controllerArgs];
   controller.volumes = [...controller.volumes, mount(routeAuthorityVolume, '/var/lib/fogd-routes', false)];
   workerd.command = [...gatewayArgs.durable];
+  workerd.restart = 'no';
   workerd.environment = Object.fromEntries(Object.entries(workerd.environment).filter(([key]) => gatewayEnvironment.includes(key)));
   workerd.networks = Object.fromEntries(Object.entries(workerd.networks).filter(([name]) => gatewayNetworks.includes(name)));
   workerd.volumes = [...workerd.volumes || [], mount(routeAuthorityVolume, '/var/lib/fogd-routes', true), mount(gatewayPolicyVolume, '/var/lib/fogd-gateway', true)];

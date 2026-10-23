@@ -25,7 +25,7 @@ export async function up(shared = false, selection = {}) {
   const launch = transportPolicy(config.services.controller.environment);
   if (launch.profile !== policy.profile || launch.tls !== policy.tls) throw new Error('Configuration does not match the requested TLS/profile policy');
   if (policy.tls) await checkInstalledTLS(env, config);
-  if (selected) await startSelectedRuntime(selected);
+  if (selected) await startSelectedRuntime(selected, undefined, env.FOGD_SERVER);
   else await compose(['up', '-d', '--build'], env);
   if (selected) console.log(`Runtime ${selected.entry.id} (${selected.entry.admission}); installation identity ${runtimePolicyIdentity(selected.policy)}`);
   console.log(`Stack started. Admin: ${origin(env)} (user ${env.FOGD_ADMIN_USER || 'admin'}, password in ${configPath()}).\nRun fogd deploy in a Void app; an admin must approve its digest.`);

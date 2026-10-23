@@ -416,12 +416,60 @@ ordinary controller startup refuses a durable profile without explicit durable
 routing. Signed native identity proofs retain their existing version-2 protocol.
 
 These are source integration steps, not an admitted installation path. The
-[generic selected-runtime start](../packages/cli/src/runtime/start-installation.mjs)
-refuses a durable profile, family or volume layout before running its all-services
-Compose command. The host still needs ingress-last coordination, actual inventory
-and writer checks, policy-volume initialization and stopped restore integration.
-The existing archive layout intentionally does not accept the new volumes. A new
-image and its native acceptance evidence remain required before catalog admission.
+[selected-runtime dispatcher](../packages/cli/src/runtime/start-installation.mjs)
+routes durable installations through the retained-container coordinator below,
+never through its legacy all-services Compose command. Fresh policy-volume
+initialization and stopped restore integration remain open. The existing archive
+layout intentionally does not accept the new volumes. A new image and its native
+acceptance evidence remain required before catalog admission.
+
+## Retained installation startup candidate
+
+The [host coordinator](../packages/cli/src/runtime/durable-launch.mjs) starts an
+already enrolled, stopped installation. It authorizes the full profile against the
+independent catalog, verifies pinned images, checks recovery fences and validates
+the installed TLS material. It creates no container, volume or policy, pulls no
+image, initializes no authority and runs no application migration. The durable
+gateway has restart policy `no`: Docker must not reopen ingress automatically
+after daemon or host restart, bypassing the pre-ingress checks.
+
+The [inventory inspector](../packages/cli/src/runtime/durable-inventory.mjs) checks
+actual container IDs, images, commands, inherited environment, privileges, mounts,
+ports and networks against the sealed layout. It checks every declared volume and
+network, including the new routing roles. Foreign containers, including stopped
+ones, cannot retain installation-volume or network access. Known bind paths that
+overlap volume mountpoints also refuse. This is a local observation, not proof
+against privileged writers, arbitrary host path aliases or later Docker mutations.
+
+The [store reader](../packages/cli/src/runtime/durable-stores.mjs) uses sequential
+read-only, networkless helpers in the verified image to compare installed gateway
+policy and authority with independently derived expectations. The coordinator also
+reads back the complete installed native policy. After starting inspected storage,
+replica and controller IDs, it obtains a fresh authenticated controller preflight,
+then re-reads stores and policy and repeats inventory checks. It compares container
+start times as well as immutable identities before opening the inspected gateway
+ID last, then inspects again. Readiness retries have a 90-second deadline; the
+HTTP client's own bounded reads share that cancellation signal. The admin endpoint
+uses the declared published port or an explicit operator `FOGD_SERVER` origin;
+remote cleartext and mismatched TLS configuration refuse.
+
+The [launch fence](../packages/cli/src/runtime/launch-fence.mjs) serializes cooperating
+CLI attempts using the same private host enrollment directory. A synced exclusive
+marker precedes mutations and records checking, starting, preflight, ingress and
+completion. An existing or incomplete marker always refuses; PID absence never
+reclaims it. Read-only checking failures may release their own marker. Once a start
+is attempted, failure retains it and attempts to stop the known gateway ID. Failed
+commands or cleanup leave ingress state unconfirmed, not proven stopped. After
+verified completion, uncertain fence release cannot trigger another Docker mutation
+that races a successor. Interrupted-attempt reconciliation is still an open gate;
+there is no automatic marker deletion or force-reset command.
+
+The [coordinator tests](../packages/cli/test/runtime-durable-launch.test.mjs) use real
+fence files and substituted Docker observations/effects. Inventory and store-reader
+tests use command fixtures; fence tests cover real competing processes and abrupt
+termination. These establish source ordering and refusal behavior. They run no
+Docker or application runtime and do not establish daemon-version compatibility,
+physical mount freshness, controller-loss serving, recovery or native acceptance.
 
 ## One-use route enrollment candidate
 

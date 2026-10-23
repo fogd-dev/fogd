@@ -13,6 +13,6 @@ for (const [name, selection] of [
   ['durable storage', { config: { volumes: { 'route-authority': {} } } }],
 ]) test(`${name} cannot use generic all-services startup`, async () => {
   const calls = [];
-  await assert.rejects(startSelectedRuntime({ command: [], ...selection }, async args => { calls.push(args); }), { code: 'ROUTE_LAUNCH_UNAVAILABLE' });
+  await assert.rejects(startSelectedRuntime({ command: [], ...selection }, async args => { calls.push(args); }), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
   assert.deepEqual(calls, []);
 });

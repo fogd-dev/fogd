@@ -24,6 +24,13 @@ const CSRF = 'f'.repeat(64), PASSWORD = 'private-admin-password';
 const basic = `Basic ${Buffer.from(`admin:${PASSWORD}`).toString('base64')}`;
 const env = origin => ({ FOGD_SERVER: origin, FOGD_ADMIN_PASSWORD: PASSWORD });
 
+test('parent cancellation refuses before sending administrator credentials', async () => {
+  const controller = new AbortController(); controller.abort(); let calls = 0;
+  await assert.rejects(requestRoutingPreflight(env('http://127.0.0.1:18788'), profile(), { signal: controller.signal,
+    fetchImpl: async () => { calls++; throw new Error('unexpected request'); } }), { code: 'ROUTE_PREFLIGHT_UNCONFIRMED' });
+  assert.equal(calls, 0);
+});
+
 async function controller(t, respond = (challenge) => [200, report(challenge)], admin = () => [200, { csrf: CSRF, deployments: { secret: 'private-admin-snapshot' } }]) {
   const seen = [];
   const server = createServer(async (request, response) => {
