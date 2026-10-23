@@ -38,6 +38,20 @@ test('real restore and retirement commands refuse candidate or unpaired identity
   }
 });
 
+test('real restore dispatch requires independent durable capability and never migrates a legacy-format snapshot', async t => {
+  const f = await fixture(t), client = await runtimeCli(f.root, 'qualified');
+  const entry = { ...client.entry, schema: 2, routing: 'durable' };
+  await writeFile(client.catalog, JSON.stringify([entry])); await mkdir(f.bundle);
+  const manifest = JSON.stringify({ format: 'fogd-stopped-v1', files: {} });
+  await writeFile(join(f.bundle, 'manifest.json'), manifest); await writeFile(join(f.bundle, 'compose.json'), '{}');
+  const args = [client.cli, 'restore', f.bundle, '--project', 'fresh', '--output', f.output, '--runtime', entry.id, '--expected-identity', 'a'.repeat(64)];
+  await assert.rejects(exec(process.execPath, args, { env: f.env }), error => error.code === 1 && /Durable restore is unconfirmed/.test(error.stderr));
+  await writeFile(client.catalog, JSON.stringify([{ ...entry, admission: 'candidate' }]));
+  await assert.rejects(exec(process.execPath, args, { env: f.env }), error => error.code === 1 && /candidate; ordinary enrollment remains closed/.test(error.stderr));
+  assert.equal(await readFile(join(f.bundle, 'manifest.json'), 'utf8'), manifest);
+  for (const path of [f.marker, f.output, join(f.root, '.fogd'), f.env.FOGD_ENV_FILE]) await assert.rejects(access(path), { code: 'ENOENT' });
+});
+
 test('installation startup never bootstraps missing host state or accepts runtime/shared selection', async t => {
   const f = await fixture(t);
   for (const args of [

@@ -421,9 +421,10 @@ These are source integration steps, not an admitted installation path. The
 [selected-runtime dispatcher](../packages/cli/src/runtime/start-installation.mjs)
 routes durable installations through the retained-container coordinator below,
 never through its legacy all-services Compose command. Fresh installation enrollment
-has the source implementation below; stopped restore integration remains open. The legacy archive
-layout intentionally does not accept the new volumes; the dedicated snapshot format below
-carries their data without adopting execution authority. A new image and its native
+and stopped restore have the source coordinators below. Native backup/restore
+acceptance remains open. The legacy archive layout intentionally does not accept
+the new volumes; the dedicated snapshot format below carries their data without
+adopting execution authority. A new image and its native
 acceptance evidence remain required before catalog admission.
 
 ## Fresh installation enrollment candidate
@@ -467,7 +468,7 @@ It checks the whole source sequence without executing Docker or the helper image
 Other tests cover incomplete enrollment readiness, preserved records, changed
 inventory, retained directories and create-only refusal. Native mount/UID identity,
 daemon behavior and first-app deployment still need qualification. Interrupted
-enrollment reconciliation and stopped restore remain open; no new catalog entry or
+enrollment reconciliation and native backup/restore acceptance remain open; no new catalog entry or
 default cron admission is enabled.
 
 ## Retained installation startup candidate
@@ -590,10 +591,10 @@ filesystem initialization, shutdown fences, tar files and bundle verification wi
 substituted Docker metadata and transport. The positive pipeline is empty;
 [bundle tests](../packages/cli/test/durable-bundle.test.mjs) also cover active and
 withheld source pairs. These tests execute no Docker or native application runtime.
-Legacy restore refuses this format. Durable restore still needs independent
-selection, fresh mount enrollment, source-writer exclusion and held background
-recovery before it can start. Actual backup/restore durability and native acceptance
-remain open; no catalog or default cron admission changes.
+Legacy-family restore refuses this format. The durable coordinator below integrates
+independent selection, fresh mount enrollment, source-writer checks and held
+background recovery. Actual backup/restore durability and native acceptance remain
+open; no catalog or default cron admission changes.
 
 ## Stopped destination routing restoration candidate
 
@@ -641,11 +642,69 @@ source controller approvals, target controller startup, HTTP resume and queue/cr
 pending recovery. [Host tests](../packages/cli/test/runtime-durable-restoration.test.mjs)
 connect the adapter to actual temporary stores without Docker execution.
 
-These are source components for the restore coordinator. Archive data copying,
-independent policy installation, source-writer exclusion and final host enrollment
-completion are not yet integrated into the restore command. Legacy restore still
-refuses the durable format. Native mount identity, storage durability and complete
-backup/restore acceptance remain open.
+The restore coordinator below composes these source components with data copying,
+independent policy installation and final host enrollment. Native mount identity,
+storage durability and complete backup/restore acceptance remain open.
+
+## Stopped durable restore coordinator candidate
+
+The [restore command](../packages/cli/src/recovery/restore.mjs) dispatches to the
+[durable coordinator](../packages/cli/src/recovery/durable-restore.mjs) only when
+the independently selected catalog entry supports durable routing. A legacy entry
+cannot adopt the new format; a durable entry cannot migrate a legacy archive.
+No durable-capable entry is shipped, so ordinary admission remains closed.
+
+The coordinator verifies actual snapshot bytes and cached images, checks source
+and related writers, and requires new output outside the source bundle. It holds
+the source's host operation fence when that source is enrolled in the current
+`FOGD_HOME`. A competing local startup or maintenance operation then refuses.
+This does not fence another checkout, engine, remote host or privileged writer;
+the operator must keep every source copy stopped.
+
+The shared [enrollment coordinator](../packages/cli/src/runtime/durable-installation.mjs)
+reserves destination configuration and a permanent incomplete host record before
+resource creation. It records the source relationship, creates stopped resources,
+installs execution policies independently and initializes the empty route stores.
+Restore tasks run inside that incomplete enrollment, before the completion record.
+
+The [data restorer](../packages/cli/src/recovery/durable-restore-data.mjs) checks
+every data target before copying. Bucket, replica and optional TLS volumes must be
+empty. Controller storage may contain only its initialized `state.json`. Each fixed
+helper mounts one destination volume, prohibits pulls and image seeding, and uses
+fixed Node, tar and sync executables without archive-supplied commands. Extraction
+gets only the capabilities needed for numeric ownership restoration.
+
+Only data archives are copied. The root source `state.json` is excluded, while
+nested application files with that name are preserved. Existing files cannot be
+overwritten; the controller state's bytes, inode, owner, permissions, link count
+and timestamps must remain identical through extraction. Symlink and hardlink
+aliases refuse. Restored files are synced and compared against their archives.
+No route authority, execution policy or enrollment-control archive is extracted.
+
+After copying, source writers and snapshot metadata are checked again. The route
+finalizer binds the verified source data to the fresh destination, withholds HTTP
+and creates pending queue/cron recovery. The coordinator rereads native policy and
+rechecks source exclusion. It writes prepared output that explicitly still requires
+host enrollment. The enrollment coordinator then compares route-store readbacks,
+requires unchanged stopped inventory, and publishes host completion last. No
+Docker or runtime write follows completion, including uncertain source-fence release.
+
+Copy, comparison, source-writer, rebinding or final-inventory failure retains the
+partial target and incomplete enrollment. Prepared output cannot bypass that
+record. A completed target remains stopped; start uses the retained ingress-last
+coordinator. HTTP resume and background acknowledgment/resume stay explicit.
+Restoring old credentials and application state can resurrect access or replay
+effects, so application reconciliation remains necessary.
+
+[Source integration tests](../packages/cli/test/durable-restore.test.mjs) use actual
+controller approval, artifact files, private data, GNU tar extraction/comparison,
+fresh route enrollment, route rebinding and permanent host records. Docker
+inventory and transport are substituted; archive ownership is aligned with the
+unprivileged host test identity. They also exercise target controller startup with
+substituted ownership reads. [Data tests](../packages/cli/test/durable-restore-data.test.mjs)
+cover aliases, partial extraction and comparison failure. No Docker, native
+application, native root-ownership or cross-engine recovery trial was run. Those
+acceptance gates remain open.
 
 ## One-use route enrollment candidate
 
@@ -851,7 +910,8 @@ runtime. Native package compatibility, configuration parsing, TLS/exit behavior 
 controller-loss serving still require qualification on the new image and topology.
 This executable is not an ingress authorization: the host coordinator must verify
 sealed images and mounts, exclusive writers, retained storage and current controller
-preflight before starting it. Stopped restore integration remains required.
+preflight before starting it. The source restore coordinator preserves that ordering;
+native backup/restore acceptance remains required.
 
 The candidate forwarding helper preserves the existing gateway protections for
 private paths, privileged headers, actual-origin headers, replica health selection

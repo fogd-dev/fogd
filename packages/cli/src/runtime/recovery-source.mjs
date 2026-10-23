@@ -5,12 +5,13 @@ import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { hasRuntimeEnrollment, installationDirectory, readInstallationVolumeNames } from './installation-state.mjs';
 import { writeJson } from '../recovery/bundle.mjs';
-import { projectName, stopped, volumeNames } from '../recovery/docker.mjs';
+import { projectName, stopped } from '../recovery/docker.mjs';
+import { installationVolumeNames } from './installation-volumes.mjs';
 
 const filename = project => join(installationDirectory(project), 'recovery-source.json');
 
 export async function writeRecoverySource(project, sourceProject, config) {
-  const source = { schema: 1, project, sourceProject, volumes: volumeNames(config).map(name => config.volumes[name].name) };
+  const source = { schema: 1, project, sourceProject, volumes: installationVolumeNames(config) };
   validateSource(source, project);
   const file = filename(project), temporary = join(installationDirectory(project), `recovery-source-${randomUUID()}.pending.json`);
   try {

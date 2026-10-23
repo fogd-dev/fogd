@@ -4,8 +4,9 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { stackRoot } from '../local.mjs';
 import { composeLiteral, composeResolved, writeJson } from '../recovery/bundle.mjs';
-import { projectName, volumeNames } from '../recovery/docker.mjs';
+import { projectName } from '../recovery/docker.mjs';
 import { assertDurableEnrollmentReady } from './enrollment-record.mjs';
+import { installationVolumeNames } from './installation-volumes.mjs';
 
 export const installationDirectory = project => join(stackRoot, '.fogd', 'installations', projectName(project));
 
@@ -47,9 +48,7 @@ export async function readRuntimeConfiguration(project) {
 // startup; returning them does not authorize starting an incomplete installation.
 export async function readInstallationVolumeNames(project) {
   const config = await readEnrolledConfiguration(project);
-  const names = volumeNames(config).map(name => config.volumes[name]?.name);
-  if (names.some(name => typeof name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(name))) throw new Error('Cannot verify related installation volumes; keep its resources stopped');
-  return names;
+  return installationVolumeNames(config);
 }
 
 // Reading metadata can inspect an unfinished restoration. Writer entry points

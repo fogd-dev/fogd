@@ -25,11 +25,18 @@ import { assertCronDockerTopology } from './cron-backup.mjs';
 import { restoredRuntimeConfig } from '../runtime/cron-preboot.mjs';
 import { verifyCronRuntimeImage, verifyCronStorageImage } from '../runtime/cron-image.mjs';
 import { hasCronHistory } from '@fogd/platform/cron-history';
+import { restoreDurableInstallation } from './durable-restore.mjs';
 
 export async function restore(directory, project, output, selection = {}) {
-  requestedRecoveryRuntime(selection);
+  const entry = requestedRecoveryRuntime(selection);
   projectName(project);
   const dir = resolve(directory), destination = resolve(output);
+  if (entry?.routing === 'durable') {
+    const result = await restoreDurableInstallation(dir, project, destination, selection);
+    console.log(`Restored ${result.policy.family} with HTTP withheld. Services remain stopped. Keep every source copy stopped; acknowledge background recovery and resume HTTP separately. Start with: fogd up --installation ${project}`);
+    console.warn('Restoring an older snapshot can resurrect application access, deploy credentials, and secret revisions. Reconcile application data before resuming.');
+    return result;
+  }
   const { manifest, config } = await verifyBundle(dir);
   const selected = selectedRecoveryPlan({ manifest, config }, selection);
   return restoreInstallation({ manifest, config, dir }, project, destination, null, selected?.targetPolicy, { selected: Boolean(selected) });
