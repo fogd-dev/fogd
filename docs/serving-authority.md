@@ -538,7 +538,49 @@ controller binding or outbound internet access. The
 complete module graph and optional TLS material outside the authority directory.
 It requires existing directories and does not start a runtime. Its caller must
 establish sealed policy, actual mount isolation and completed startup recovery.
-The candidate has no launcher or catalog admission yet.
+The candidate has no host launch coordinator or catalog admission yet.
+
+The separate [gateway entrypoint](../packages/runtime/src/serve-durable.mjs) runs
+only when a future sealed installation explicitly selects it. Its
+[launch policy reader](../packages/runtime/src/gateway-launch-policy.mjs) requires
+`/var/lib/fogd-gateway/policy.json` from a dedicated host-controlled, read-only
+mount. The schema-1 plan contains exactly `schema`, `policy` and `slots`: the
+expected installation identity and the two declared fleet/replica bindings. It
+contains no controller credential, TLS material, executable or path selection.
+The host must derive that plan from its independently selected installation profile;
+public route data cannot supply the expected identity. Missing, invalid, oversized,
+symlinked or group/world-writable policy refuses startup without legacy fallback.
+Reads bound actual bytes at 16,384 and decode UTF-8 strictly. These file checks do
+not prove mount provenance or completion of the host's pre-ingress checks.
+
+The [process supervisor](../packages/runtime/src/gateway-process.mjs) loads the
+existing transport/TLS policy, stages the program, and starts the packaged workerd
+executable with a fixed `*:8080` listener and `/var/lib/fogd-routes` authority path.
+The [executable check](../packages/runtime/src/gateway-executable.mjs) requires a
+regular executable with a Linux arm64 ELF preamble. It refuses the optional npm
+Node shim so that the observed child is workerd itself. This format check does
+not establish executable provenance or replace the host's pinned-image checks.
+The supervisor passes an empty child environment, forwards SIGTERM/SIGINT, and waits for the
+child's terminal `close` event before removing its own staged program and TLS files.
+An error event alone cannot trigger cleanup while the child remains live. Nonzero
+exit and signal termination remain failures; the supervisor does not restart the
+child or alter authority. Signal handlers cover policy loading, staging and cleanup;
+a signal before spawn aborts after any pending setup work completes. There is no
+internal forced-shutdown deadline. SIGKILL or host failure can interrupt cleanup;
+the supported topology must qualify its temporary-storage lifetime separately.
+Its programmatic I/O seams are trusted internal inputs;
+installed JSON cannot select them. It creates no authority or policy directory.
+
+The [policy tests](../packages/runtime/test/gateway-launch-policy.test.mjs) use
+real files. The [supervisor tests](../packages/runtime/test/gateway-process.test.mjs)
+substitute short Node child processes to check actual exits, early and delayed
+shutdown, private TLS staging, credential isolation and cleanup ordering. ELF
+fixtures are inspected without execution. These tests execute no workerd or Docker
+runtime. Native package compatibility, configuration parsing, TLS/exit behavior and
+controller-loss serving still require qualification on the new image and topology.
+This executable is not an ingress authorization: the host coordinator must verify
+sealed images and mounts, exclusive writers, retained storage and current controller
+preflight before starting it. Stopped restore integration remains required.
 
 The candidate forwarding helper preserves the existing gateway protections for
 private paths, privileged headers, actual-origin headers, replica health selection
