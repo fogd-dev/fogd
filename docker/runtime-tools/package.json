@@ -1,0 +1,7 @@
+{
+  "name": "fogd-runtime-tools",
+  "private": true,
+  "dependencies": {
+    "pnpm": "10.16.1"
+  }
+}

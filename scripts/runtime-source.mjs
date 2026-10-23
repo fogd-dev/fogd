@@ -1,6 +1,8 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { lstat, mkdir, readFile, readdir, realpath, rename, writeFile } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { lstat, mkdir, open, readFile, readdir, realpath, rename, writeFile } from 'node:fs/promises';
+import { isDeepStrictEqual } from 'node:util';
 import { basename, dirname, join, relative, resolve, sep, isAbsolute } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { writeJson } from '../packages/cli/src/recovery/bundle.mjs';
@@ -18,7 +20,8 @@ function git(cwd, args, options = {}) {
 
 export async function prepareRuntimeSource({ repository, output, manifest, patchRoot = root }) {
   validateManifest(manifest);
-  const target = await placeOutput(repository, output, patchRoot);
+  const gitDir = git(repository, ['rev-parse', '--path-format=absolute', '--git-common-dir']).toString().trim();
+  const target = await placeOutput(output, [repository, gitDir, patchRoot]);
   const files = readPinnedTree(repository, manifest.revision);
   const lock = files.get('Cargo.lock');
   if (!lock || sha256(lock.bytes) !== manifest.cargoLockSha256) throw new Error('Pinned Cargo.lock does not match the declared hash');
@@ -34,10 +37,10 @@ function validateManifest(manifest) {
   if (!hashes.every(hash => /^[0-9a-f]{64}$/.test(hash))) throw new Error('Runtime source manifest has an invalid SHA256');
 }
 
-async function placeOutput(repository, output, patchRoot) {
+// Resolves the parent through symlinks, so an aliased path cannot land inside an input.
+export async function placeOutput(output, inputs) {
   const target = join(await realpath(dirname(resolve(output))), basename(resolve(output)));
-  const gitDir = git(repository, ['rev-parse', '--path-format=absolute', '--git-common-dir']).toString().trim();
-  for (const input of [repository, gitDir, patchRoot]) {
+  for (const input of inputs) {
     const path = relative(await realpath(input), target);
     if (!path || (path !== '..' && !path.startsWith(`..${sep}`) && !isAbsolute(path))) throw new Error(`Output must be outside input ${input}`);
   }
@@ -106,16 +109,46 @@ async function assemble(target, files, patches, manifest) {
   for (const patch of patches) git(source, ['apply', '--whitespace=nowarn', '-'], { input: patch.bytes, env: { ...gitEnv, GIT_CEILING_DIRECTORIES: target } });
   const inventory = await sourceInventory(source);
   if (inventory.get('Cargo.lock')?.sha256 !== manifest.cargoLockSha256) throw new Error('Patched Cargo.lock does not match the declared hash');
-  const sourceInventorySha256 = sha256([...inventory].map(([path, file]) => `${file.sha256} ${file.mode}  ${path}\n`).join(''));
+  const sourceInventorySha256 = inventoryDigest(inventory);
   if (sourceInventorySha256 !== manifest.sourceInventorySha256) throw new Error(`Patched source inventory ${sourceInventorySha256} does not match the declared hash`);
-  const receipt = { schema: 1, complete: true, repository: manifest.repository, revision: manifest.revision, cargoLockSha256: manifest.cargoLockSha256,
-    patches: patches.map(({ path, sha256: hash }) => ({ path, sha256: hash })), sourceFiles: inventory.size, sourceInventorySha256, compiled: false, qualified: false };
+  const receipt = preparedReceipt(manifest, inventory);
   await writeJson(join(target, 'receipt.pending.json'), receipt);
   await rename(join(target, 'receipt.pending.json'), join(target, 'receipt.json'));
   return receipt;
 }
 
-async function sourceInventory(source) {
+function preparedReceipt(manifest, inventory) {
+  return { schema: 1, complete: true, repository: manifest.repository, revision: manifest.revision, cargoLockSha256: manifest.cargoLockSha256,
+    patches: manifest.patches.map(({ path, sha256: hash }) => ({ path, sha256: hash })), sourceFiles: inventory.size, sourceInventorySha256: manifest.sourceInventorySha256, compiled: false, qualified: false };
+}
+
+// A receipt only names what to expect: the tree itself is re-hashed against the manifest.
+export async function verifyPreparedSource(prepared, manifest) {
+  validateManifest(manifest);
+  if (!(await lstat(prepared)).isDirectory() || (await readdir(prepared)).sort().join('/') !== 'receipt.json/source') throw new Error('Prepared source must be a directory holding only receipt.json and source');
+  const receipt = await readRegularJson(join(prepared, 'receipt.json'));
+  if (!(await lstat(join(prepared, 'source'))).isDirectory()) throw new Error('Prepared source must be an ordinary directory');
+  const inventory = await sourceInventory(join(prepared, 'source'));
+  if (inventory.get('Cargo.lock')?.sha256 !== manifest.cargoLockSha256 || inventoryDigest(inventory) !== manifest.sourceInventorySha256) throw new Error('Prepared source tree does not match the pinned manifest');
+  if (!isDeepStrictEqual(receipt, preparedReceipt(manifest, inventory))) throw new Error('Prepared source receipt does not match the pinned manifest');
+  return { receipt, inventory };
+}
+
+export async function readRegularJson(path, limit = 65536) {
+  const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  try {
+    const info = await file.stat(), error = new Error(`${basename(path)} must be a bounded regular file`);
+    if (!info.isFile() || info.size > limit) throw error;
+    const bytes = await file.readFile();
+    if (bytes.length > limit) throw error;
+    return JSON.parse(bytes.toString('utf8'));
+  } finally { await file.close(); }
+}
+
+// Canonical full-path sorted lines: '<sha256> <644|755>  <path>\n'.
+export const inventoryDigest = inventory => sha256([...inventory].map(([path, file]) => `${file.sha256} ${file.mode}  ${path}\n`).join(''));
+
+export async function sourceInventory(source) {
   const inventory = new Map();
   for (const path of (await readdir(source, { recursive: true })).sort()) {
     const stats = await lstat(join(source, path));

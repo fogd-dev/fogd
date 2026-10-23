@@ -233,3 +233,43 @@ base-image inputs, dependency acquisition, a clean native build, output
 fingerprints and qualification remain required. The cached builder above still
 uses its recorded private dependency input. Preparing source does not change the
 catalog or authorize installation of a new runtime family.
+
+## Prepare a runtime build context
+
+Maintainers can assemble the candidate runtime's build inputs without invoking
+Docker or installing dependencies:
+
+```sh
+node scripts/runtime-build-context.mjs /tmp/fogd-native-source \
+  docker/runtime-build-inputs.json /tmp/fogd-runtime-build
+```
+
+The first directory comes from source preparation above. The
+[build-input file](../docker/runtime-build-inputs.json) pins the Linux arm64 Rust
+and Node base manifests. The command refuses mutable image references and other
+platforms. Use a new output directory with an existing parent, outside the source
+and fogd repositories. Existing output is never reused.
+
+The output's `context/` contains the reverified native tree, production platform
+and runtime programs, dependency locks, supervisor and rendered
+[Dockerfile](../docker/runtime-source.Dockerfile). The fogd package copies contain
+only manifests and production sources. Checkout secrets, application data and
+installed workspace dependencies are excluded. The completion
+receipt binds the selected image references and the captured context inventory.
+File modification times and directory permissions are normalized for assembly.
+Keep partial output after a failure for inspection and use a different directory
+for another attempt.
+
+The recipe compiles the release native binary and runs the upstream Cargo test
+and clippy stages. It installs pnpm through its
+[integrity lock](../docker/runtime-tools/package-lock.json) and runtime dependencies
+through the frozen workspace lock. It uses no private seed image or build-cache
+mount. An upstream test stage can execute zero public cases; successful image
+assembly would still need separate native lifecycle qualification.
+
+Source context preparation does not establish a successful clean-host build,
+native behavior, output fingerprints or independent installation. Those remain
+[next-release requirements](operator-readiness.md#next-runtime-release), and a
+built candidate still needs its own family identity and qualification before
+catalog admission. The existing cached family's image and installation authority
+are unchanged.
