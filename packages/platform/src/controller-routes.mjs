@@ -1,14 +1,19 @@
 import { isDeepStrictEqual } from 'node:util';
 import { preflightRoutes } from './route-preflight.mjs';
+import { assertRouteEnrollmentTargets } from './route-enrollment.mjs';
 import { realpath } from 'node:fs/promises';
 import { isAbsolute, relative, sep, dirname } from 'node:path';
-import { encodeRouteRecord } from '@fogd/runtime/route-record';
-import { RoutePublication, applicationWithheld, completedRoute, routeHold } from './route-publication.mjs';
+import { encodeRouteRecord, routeRecordFilename } from '@fogd/runtime/route-record';
+import { RoutePublication, applicationWithheld, completedRoute, routeHold, routeAuthorityJournal } from './route-publication.mjs';
 
 function containsPath(parent, child) {
   const path = relative(parent, child);
   return !path || path !== '..' && !path.startsWith('..' + sep);
 }
+export function routeEnrollmentRequired() {
+  return Object.assign(new Error('Durable routing requires retained enrollment state; initialize through stopped route enrollment before ordinary startup'), { code: 'ROUTE_ENROLLMENT_REQUIRED' });
+}
+
 export function routingStartupError(cause) {
   return Object.assign(new Error('HTTP authority could not be reconciled; keep ingress stopped and resolve the pending publication or restore matching storage', { cause }), { code: 'ROUTE_STARTUP_UNRECONCILED' });
 }
@@ -17,6 +22,7 @@ class LookupRoutes {
   durable = false;
   constructor(controller) { this.controller = controller; }
   async open() { if (this.controller.state.routeAuthority) throw new Error('Controller state requires durable route authority'); }
+  assertEnrollment() {}
   assertStorage() {}
   async checkReady() {}
   async snapshotReady() {}
@@ -41,20 +47,23 @@ class DurableRoutes extends LookupRoutes {
   durable = true;
   constructor(controller, options) {
     super(controller); this.options = { ...options, policy: structuredClone(options.policy) };
+    if (Object.hasOwn(options, 'fresh')) throw new Error('Controller routing does not accept initialization flags; use stopped route enrollment');
     const { path, policy, verifyRuntime } = options;
-    if (typeof path !== 'string' || !isAbsolute(path) || typeof verifyRuntime !== 'function') throw new Error('Durable routing needs an absolute authority path and read-only runtime verification');
+    if (typeof path !== 'string' || !isAbsolute(path) || !path.endsWith('/' + routeRecordFilename) || typeof verifyRuntime !== 'function') throw new Error('Durable routing needs an absolute routes.json authority path and read-only runtime verification');
     if (containsPath(controller.dir, dirname(path)) || containsPath(dirname(path), controller.dir)) throw new Error('Public route authority must be outside private controller storage');
     encodeRouteRecord({ schema: 1, installation: policy?.installation, revision: '1', routes: [{ host: `probe.${controller.baseDomain}`, state: 'withheld', slot: policy?.slots?.[0] }] }, policy);
     if (JSON.stringify([...policy.slots].sort()) !== JSON.stringify(controller.slots.map(slot => slot.id).sort())) throw new Error('Route policy must match the configured fleets');
   }
-  async open(retained) {
+  assertEnrollment(state) {
+    if (!state?.routeAuthority) throw routeEnrollmentRequired();
+    routeAuthorityJournal(state, this.options.policy);
+  }
+  async open() {
     await this.#separateStorage();
     const controller = this.controller, state = controller.state;
+    await assertRouteEnrollmentTargets(state.routeEnrollment, controller.dir, dirname(this.options.path));
     this.publication = new RoutePublication({ ...this.options, state, domain: controller.baseDomain, savePrivate: () => controller.save() });
-    if (!state.routeAuthority) {
-      if (retained || this.options.fresh !== true) throw new Error('Durable route initialization requires explicitly fresh private storage');
-      await this.publication.initialize(); return;
-    }
+    if (!state.routeAuthority) throw routeEnrollmentRequired();
     await this.publication.inspect();
     if (state.routeAuthority.pending?.kind === 'active') {
       try { this.#assertPendingActive(state.routeAuthority.pending); }

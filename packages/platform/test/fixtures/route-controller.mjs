@@ -1,3 +1,4 @@
+import { seedRouteStores } from './route-stores.mjs';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -50,7 +51,7 @@ export async function routeController(t) {
     if (failure === 'after') throw new Error('Public acknowledgment lost');
   };
   let verifications = 0;
-  const routeAuthority = { path, policy, fresh: true, writePublic,
+  const routeAuthority = { path, policy, writePublic,
     async verifyRuntime(app, selected) {
       verifications++; const saved = JSON.parse(await readFile(statePath, 'utf8'));
       assert.equal(saved.apps[app].active, selected.id);
@@ -59,6 +60,7 @@ export async function routeController(t) {
       assert.equal(owners[slot]?.app, app); assert.equal(versions[slot], saved.deployments[selected.id].version);
     } };
   const create = (options = {}) => new Controller({ dir, slots, backend, persist, routeAuthority, reportStorageFailure: () => {}, ...options });
+  await seedRouteStores(dir, routeAuthority);
   const c = create(); await c.init();
   async function request(app = 'alpha', controller = c) {
     const id = randomUUID(), artifact = controller.artifact(id); await mkdir(artifact, { recursive: true });

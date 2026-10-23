@@ -1,3 +1,4 @@
+import { seedRouteStores } from './route-stores.mjs';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -38,6 +39,7 @@ export async function fixture(t, options = {}) {
     if (fail === 'after') throw Error('lost write response');
   };
   const create = () => new Controller({ queueApps: true, dir, slots, backend, persist, reportStorageFailure: () => {}, ...options });
+  if (options.routeAuthority) await seedRouteStores(dir, options.routeAuthority);
   const c = create(); await c.init();
   // Private fixture bypasses artifact validation; admission defaults off elsewhere.
   async function request(controller = c) {

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { routeController } from './fixtures/route-controller.mjs';
 
-test('controller initializes empty authority and withholds before every activation effect', async t => {
+test('enrolled controller loads empty authority and withholds before every activation effect', async t => {
   const f = await routeController(t);
   assert.deepEqual((await f.public()).routes, []);
   const request = await f.request(); await f.c.mutate(request.id, request.digest, 'approve');
@@ -106,7 +106,7 @@ test('a pending active record with lost private approval is withheld before star
   assert.equal((await f.public()).routes[0].state, 'withheld');
 });
 
-test('explicit fresh enrollment cannot repair retained null private state', async t => {
+test('ordinary enrolled startup cannot repair retained null private state', async t => {
   const f = await routeController(t), { writeFile, readFile, rm } = await import('node:fs/promises');
   await writeFile(f.statePath, 'null'); await rm(f.path);
   const restored = f.create(); await assert.rejects(restored.init());
@@ -122,7 +122,7 @@ test('a default controller still refuses authority state before any backend effe
 test('retained empty state cannot silently enroll into durable routing', async t => {
   const f = await routeController(t), { writeFile, readFile, rm } = await import('node:fs/promises');
   const prior = JSON.stringify({ apps: {}, deployments: {} }); await writeFile(f.statePath, prior); await rm(f.path);
-  const restored = f.create(); await assert.rejects(restored.init(), /explicitly fresh private storage/);
+  const restored = f.create(); await assert.rejects(restored.init(), /stopped route enrollment/);
   assert.equal(await readFile(f.statePath, 'utf8'), prior); await assert.rejects(readFile(f.path), { code: 'ENOENT' });
 });
 test('constructor refuses public authority inside private storage and implicit lookup fallback', async t => {
@@ -233,6 +233,9 @@ test('storage separation also refuses a public directory alias containing privat
   const f = await routeController(t), { mkdir, symlink, readFile } = await import('node:fs/promises');
   await mkdir(f.root + '/shared', { mode: 0o755 });
   await symlink(f.root, f.root + '-alias'); t.after(() => import('node:fs/promises').then(fs => fs.unlink(f.root + '-alias')));
+  await mkdir(f.root + '/shared/private', { mode: 0o700 });
+  const { writeFile } = await import('node:fs/promises');
+  await writeFile(f.root + '/shared/private/state.json', await readFile(f.statePath));
   const bad = f.create({ dir: f.root + '/shared/private', routeAuthority: { ...f.routeAuthority, path: f.root + '-alias/shared/routes.json' } });
   await assert.rejects(bad.init(), /outside private controller storage/);
   await assert.rejects(readFile(f.root + '/shared/routes.json'), { code: 'ENOENT' });

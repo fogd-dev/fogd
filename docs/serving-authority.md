@@ -377,17 +377,82 @@ check authorization, CSRF, error disclosure and recovery/lookup refusal. These s
 tests do not close mount inventory, freshness authorization, gateway launch, stopped
 restore or native qualification gates.
 
+## One-use route enrollment candidate
+
+The [enrollment primitive](../packages/platform/src/route-enrollment.mjs) maintains
+separate private host control storage. Issuance creates an exclusive, synced grant
+bound to the complete independently selected native profile, installation identity,
+a host-supplied inventory binding and canonical controller/authority/enrollment
+paths with their filesystem device and inode identities.
+The three directories must already exist, have the expected owner and permissions,
+be separate and be empty. Grant and spent files use mode 0600; enrollment and
+controller directories use 0700, while authority requires 0755 so the separate
+gateway UID can traverse and read it. Missing paths are never created by enrollment.
+
+These filesystem checks do not prove that mounts are newly allocated or that writers
+are stopped. Only a trusted fresh-enrollment coordinator may issue a grant, after
+checking actual sealed mounts, images, storage generation and writer exclusion. Its
+binding must identify that independently verified inventory. The primitive validates
+the supplied binding as data; it cannot establish those external facts. That host
+coordinator and its native qualification remain open. Qualification must establish
+that the initializer and controller use the same effective UID and stable canonical
+paths, device numbers and inodes across their actual mounts and supported restarts.
+It must hold writer exclusion
+until the initializer is confirmed terminal before ordinary controller startup,
+including after an uncertain result. A spent grant is not a process lock; ordinary
+startup can resume a retained intent and must never overlap its initializer.
+Enrollment control storage must not be mounted into application replicas or the gateway, nor adopted from a data
+backup as execution authority.
+
+Spending checks the grant and target stores, then creates an exclusive spent marker
+and syncs it before either route store can be initialized. Any existing spent marker,
+even an incomplete or unreadable one, prevents replay. Concurrent attempts cannot both
+spend the same grant. Invalid profile, binding, grant identity, copied control path or
+retained target data refuse without initialization. Existing records and uncertain
+markers are preserved; restarting or changing a configuration flag cannot reset them.
+
+The [stopped initializer](../packages/platform/src/route-initialize.mjs) then runs the
+existing publication protocol: create the first private initialization intent without
+overwriting a state file, exclusively publish empty authority, and settle the private
+reference. The private state retains the enrolled controller and authority directory
+paths, devices and inodes. Ordinary startup checks these identities before reading or
+resuming public authority, including after initialization settles. Moving or replacing
+either store requires the separate recovery contract; a copied empty record cannot
+authorize a different directory. The initializer starts no listener or gateway and
+invokes no backend, credentials or secret-materialization path. Production controller
+startup has no initialization flag and requires retained enrollment state before any
+secrets, execution or artifact-directory writes. A retained
+initialization intent can finish through the existing crash protocol without another
+grant; missing retained authority outside that intent still refuses. If an attempt
+stops after spending but before any private intent exists, it cannot be replayed:
+retain those resources and use an independently fresh enrollment rather than deleting
+its marker or treating empty storage as authorization. The coordinator must refuse
+rebinding those failed targets through a newly chosen grant directory as well;
+creating another control directory is not evidence of fresh target storage.
+
+The [enrollment tests](../packages/platform/test/route-enrollment.test.mjs) exercise
+real temporary files, profile/layout binding, permissions, copied grants, competing
+initializers, partial spent markers, retained-data refusal, ordinary recovery of
+interrupted initialization, directory rebinding refusal, and failures before/after
+real public creation through the initializer's trusted publisher seam. The tests
+consume the actual grant and inspect its real persisted private intent. These source
+tests do not qualify physical mount freshness, whole-installation recovery, gateway
+startup or power-loss behavior.
+
 ## Candidate controller startup and restricted recovery
 
 An explicit programmatic `startController` option accepts an absolute path to the
-fixed `routes.json` record and freshness authorization. The [startup composition](../packages/platform/src/startup-routing.mjs)
+fixed `routes.json` record. It requires retained route state and rejects a `fresh`
+setting, including a stale false-valued flag; first initialization uses the dedicated
+stopped enrollment path above. The [startup composition](../packages/platform/src/startup-routing.mjs)
 derives expected installation identity and fleet slots from the independently
 installed native runtime profile. It supplies the read-only production verifier;
 the route-authority input cannot substitute a public identity or a nominal
 verification callback. The normal entry point reads the dedicated installed policy
 volume; an injected policy reader remains a trusted internal launcher seam. Neither an environment setting nor the current catalog selects this option. The
-caller must establish actual mounts, sole writers and one-time fresh enrollment
-before using it; retained authority is never recreated by ordinary startup.
+caller must establish actual mounts, sole writers and completed enrollment before
+using it. Ordinary startup can finish a retained initialization intent on its bound
+stores; it cannot recreate missing authority after that initialization settles.
 
 The [controller service](../packages/platform/src/controller-service.mjs) awaits
 initialization before listening. A typed unresolved-routing error after ownership
@@ -417,8 +482,8 @@ bootstrap readiness; it does not approve or replay the failed activation.
 The [service tests](../packages/platform/test/controller-service.test.mjs) use real
 private/public temporary files and HTTP listeners to check these boundaries,
 reconciliation and withdrawal without replaying activation, controlled held-queue
-pause recovery behind public withholding, and listener collisions. Startup tests exercise fresh source composition with substituted backend
-ownership reads. These do not establish actual mounts, gateway ordering, fresh-volume
+pause recovery behind public withholding, and listener collisions. Startup tests
+exercise enrolled source composition with substituted backend ownership reads. These do not establish actual mounts, gateway ordering, fresh-volume
 authorization, stopped restore or native qualification.
 
 ## Read-only runtime verification candidate

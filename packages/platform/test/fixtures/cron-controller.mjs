@@ -1,3 +1,4 @@
+import { seedRouteStores } from './route-stores.mjs';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -22,6 +23,7 @@ export async function fixture(t, options = {}) {
     if (fail === 'after') throw Error('lost write response');
   };
   const create = () => new Controller({ cronApps: true, dir, slots, backend, persist, reportStorageFailure: () => {}, ...options });
+  if (options.routeAuthority) await seedRouteStores(dir, options.routeAuthority);
   const c = create(); await c.init();
   // Private staging bypasses artifact admission. Ordinary triggers stay rejected.
   async function request(controller = c, { crons = ['* * * * *'], requiredSecrets = [] } = {}) {

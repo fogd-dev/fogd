@@ -57,21 +57,22 @@ export class Controller {
   async init() {
     this.assertStorage();
     if (this.cronApps) requireCronRuntime(this.backend.crons);
-    await this.secrets.init();
-    await this.credentials.init();
-    await mkdir(join(this.dir, 'artifacts'), { recursive: true });
     const missing = Symbol('missing controller state');
     const retained = await readJson(join(this.dir, 'state.json'), missing);
+    this.routes.assertEnrollment(retained === missing ? null : retained);
     this.state = retained === missing ? { apps: {}, deployments: {} } : retained;
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
-    await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     validateRetirementState(this.state, this.slots, { durableRoutes: this.routes.durable });
     validateQueueState(this.state);
     validateCronState(this.state, this.backend.crons);
     validateRecoveryState(this.state);
     validateCronRecoveryState(this.state);
-    await this.routes.open(retained !== missing);
+    await this.routes.open();
+    await this.secrets.init();
+    await this.credentials.init();
+    await mkdir(join(this.dir, 'artifacts'), { recursive: true });
+    await this.quota.init(join(this.dir, 'artifacts'), this.state.deployments);
     for (const request of Object.values(this.state.deployments)) {
       if (request.status === 'activating') { interruptQueueActivation(this.state.apps[request.app], request); interruptCronActivation(this.state.apps[request.app], request); request.status = 'failed'; request.error = `Controller interrupted at ${request.step}; explicit approval is required to retry`; }
     }

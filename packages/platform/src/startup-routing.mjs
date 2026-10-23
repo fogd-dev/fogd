@@ -7,11 +7,11 @@ import { backendRouteVerifier } from './route-runtime.mjs';
 // variable or a public record cannot select durable routing or authorize freshness.
 export function startupRouting(input, profile, controller) {
   if (input === null || input === undefined) return null;
-  if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).some(key => !['path', 'fresh'].includes(key)) ||
-    typeof input.path !== 'string' || input.fresh !== undefined && typeof input.fresh !== 'boolean') throw new Error('Invalid candidate route startup configuration');
+  if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).some(key => key !== 'path') ||
+    typeof input.path !== 'string') throw new Error('Invalid candidate route startup configuration');
   if (!isAbsolute(input.path) || !input.path.endsWith('/' + routeRecordFilename)) throw new Error('Candidate route authority requires an absolute path to routes.json');
   const expected = validateRuntimePolicy(profile);
-  return { path: input.path, fresh: input.fresh === true,
+  return { path: input.path,
     policy: { installation: runtimePolicyIdentity(expected), slots: expected.fleets.map(fleet => fleet.id) },
     verifyRuntime: (name, selected) => backendRouteVerifier(controller(), expected)(name, selected) };
 }

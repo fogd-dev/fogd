@@ -8,7 +8,7 @@ export async function authorityFixture(t, verifyRuntime = async () => {}) {
   t.after(() => rm(root, { recursive: true, force: true }));
   const dir = join(root, 'authority'); await mkdir(dir, { mode: 0o755 });
   const path = join(dir, 'routes.json'), policy = { installation: 'a'.repeat(64), slots: ['one'] }; let fault;
-  const options = { path, policy, fresh: true, verifyRuntime, async writePublic(file, record) {
+  const options = { path, policy, verifyRuntime, async writePublic(file, record) {
     const failure = fault; fault = null;
     if (failure === 'before') throw new Error('Public write unavailable');
     await writeRouteRecord(file, record, policy);

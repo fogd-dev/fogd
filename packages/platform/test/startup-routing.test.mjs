@@ -8,10 +8,10 @@ test('explicit startup derives route identity and slots from the independent nat
   const profile = policy(), expected = runtimePolicyIdentity(profile);
   const routing = startupRouting({ path: '/authority/routes.json' }, profile, () => null);
   assert.deepEqual(routing.policy, { installation: expected, slots: ['slot-1', 'slot-2'] });
-  assert.equal(routing.path, '/authority/routes.json'); assert.equal(routing.fresh, false); assert.equal(typeof routing.verifyRuntime, 'function');
+  assert.equal(routing.path, '/authority/routes.json'); assert.equal(Object.hasOwn(routing, 'fresh'), false); assert.equal(typeof routing.verifyRuntime, 'function');
   profile.fleets[0].nodes[0].id = 'mutated'; assert.equal(routing.policy.installation, expected);
 });
-for (const input of [{ fresh: true }, { path: '/authority/routes.json', fresh: 'true' }, { path: '/authority/routes.json', verifyRuntime() {} }, { path: '/authority/routes.json', policy: {} }]) test('startup refuses caller-supplied verification or route identity', () => {
+for (const input of [{ fresh: true }, { path: '/authority/routes.json', fresh: true }, { path: '/authority/routes.json', fresh: false }, { path: '/authority/routes.json', fresh: 'true' }, { path: '/authority/routes.json', verifyRuntime() {} }, { path: '/authority/routes.json', policy: {} }]) test('startup refuses caller-supplied verification or route identity', () => {
   assert.throws(() => startupRouting(input, policy(), () => null), /Invalid candidate route startup/);
 });
 test('durable startup cannot select itself without an independent native policy', () => {
