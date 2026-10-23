@@ -28,6 +28,7 @@ export class Controller {
   #reportStorageFailure;
   #recoveryPending = true;
   #ownershipChecked = false;
+  #routingServiceRestricted = false;
   constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false, cronApps = false, routeAuthority = null }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
     this.clock = clock;
@@ -89,6 +90,11 @@ export class Controller {
     this.#recoveryPending = false;
   }
 
+  get routingServiceRestricted() { return this.#routingServiceRestricted; }
+  restrictRoutingService() {
+    if (!this.routingRecoveryAvailable) throw routingStartupError();
+    this.#routingServiceRestricted = true;
+  }
   get routingRecoveryAvailable() { return this.routes.durable && this.#ownershipChecked; }
   get routingStartupComplete() { return this.#ownershipChecked && !this.#recoveryPending; }
   assertRoutingStartup(requireComplete = false) {
@@ -259,6 +265,7 @@ export class Controller {
     }
     return activateRelease(this, request, app, slot, selected);
   }
+  preflightIngress(input) { return this.exclusive(() => this.routes.preflight(input)); }
   decideRoute(name, action, input) { return this.exclusive(async () => {
     const result = await this.routes.decide(name, action, input);
     if (this.#recoveryPending && this.#ownershipChecked && ['reconcile', 'withhold-pending'].includes(action)) await this.#recoverStartup();

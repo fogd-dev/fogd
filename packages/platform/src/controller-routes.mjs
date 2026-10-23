@@ -1,7 +1,9 @@
+import { isDeepStrictEqual } from 'node:util';
+import { preflightRoutes } from './route-preflight.mjs';
 import { realpath } from 'node:fs/promises';
 import { isAbsolute, relative, sep, dirname } from 'node:path';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
-import { RoutePublication, applicationWithheld, completedRoute } from './route-publication.mjs';
+import { RoutePublication, applicationWithheld, completedRoute, routeHold } from './route-publication.mjs';
 
 function containsPath(parent, child) {
   const path = relative(parent, child);
@@ -21,6 +23,7 @@ class LookupRoutes {
   beforeEffect() {}
   assertReject() {}
   decide() { throw new Error('Durable HTTP routing is not configured'); }
+  preflight() { throw new Error('Durable HTTP routing is not configured'); }
   async verifyRecovery() {}
   prepareApproval(_request, replaces) { return replaces; }
   releaseClaim() {}
@@ -91,13 +94,13 @@ class DurableRoutes extends LookupRoutes {
   #assertPendingActive(pending) {
     const domain = this.controller.baseDomain;
     const route = pending.record.routes.find(route => route.host === `${pending.app}.${domain}`);
-    if (JSON.stringify(completedRoute(this.controller.state, pending.app, domain)) !== JSON.stringify(route)) throw new Error('Pending route differs from its completed approval');
+    if (!isDeepStrictEqual(completedRoute(this.controller.state, pending.app, domain), route)) throw new Error('Pending route differs from its completed approval');
   }
   #routeApplication(route) {
     const state = this.controller.state, domain = this.controller.baseDomain;
     const name = route.host.slice(0, -domain.length - 1), app = state.apps[name];
     if (!route.host.endsWith('.' + domain) || !app || app.retirement || app.slot !== route.slot) throw new Error('Public route authority differs from controller ownership');
-    if (route.state === 'active' && JSON.stringify(completedRoute(state, name, domain)) !== JSON.stringify(route)) throw new Error('Public route authority differs from its completed approval');
+    if (route.state === 'active' && !isDeepStrictEqual(completedRoute(state, name, domain), route)) throw new Error('Public route authority differs from its completed approval');
     return { name, app };
   }
   #needsWithholding(route) {
@@ -114,11 +117,12 @@ class DurableRoutes extends LookupRoutes {
     }
     const { name, app } = target, state = this.controller.state;
     const recovering = app.queueRecovery?.status === 'pending' || app.cronRecovery?.status === 'pending';
-    if (recovering && !state.routeAuthority.holds[name]) {
+    if (recovering && !routeHold(state.routeAuthority.holds, name)) {
       const active = completedRoute(state, name, this.controller.baseDomain);
       await this.publication.withhold(name, active.submission, active.digest);
     } else if (route.state === 'active' && applicationWithheld(app)) await this.publication.withdraw(name);
   }
+  preflight(input) { return preflightRoutes(this.controller, this, input); }
   async view(name) {
     const observed = await this.publication.inspect(), state = this.controller.state;
     if (!state.apps[name] || state.apps[name].retirement) throw new Error('Live application is unavailable');
@@ -126,7 +130,7 @@ class DurableRoutes extends LookupRoutes {
     const pending = state.routeAuthority.pending;
     return { app: name, state: route?.state || 'unknown', revision: observed.record.revision,
       active: route?.state === 'active' ? { deployment: route.submission, digest: route.digest } : null,
-      hold: state.routeAuthority.holds[name] || null, startupBlocked: Boolean(this.startupError) || !this.controller.routingStartupComplete,
+      hold: routeHold(state.routeAuthority.holds, name) || null, startupBlocked: Boolean(this.startupError) || !this.controller.routingStartupComplete,
       pending: pending ? { intent: pending.id, kind: pending.kind, app: pending.app, approval: pending.approval } : null };
   }
   async decide(name, action, input) {
@@ -156,7 +160,7 @@ class DurableRoutes extends LookupRoutes {
   }
   assertReject(request) {
     const state = this.controller.state, app = state.apps[request.app];
-    if (state.routeAuthority.holds[request.app]?.id === request.id && app?.claim?.deployment !== request.id) throw new Error('Resolve the held HTTP approval before rejecting its artifact');
+    if (routeHold(state.routeAuthority.holds, request.app)?.id === request.id && app?.claim?.deployment !== request.id) throw new Error('Resolve the held HTTP approval before rejecting its artifact');
   }
   async verifyRecovery(name, request) {
     this.controller.assertRoutingStartup(true); this.controller.assertStorage();
@@ -165,13 +169,13 @@ class DurableRoutes extends LookupRoutes {
     catch (cause) { throw new Error('HTTP runtime identity/readiness is unconfirmed', { cause }); }
   }
   prepareApproval(request, replaces) {
-    const app = this.controller.state.apps[request.app], held = this.controller.state.routeAuthority.holds[request.app];
+    const app = this.controller.state.apps[request.app], held = routeHold(this.controller.state.routeAuthority.holds, request.app);
     if (replaces !== undefined) this.#replacement(request, replaces);
     if (held && held.id !== request.id && replaces === undefined) throw new Error('Select the held HTTP approval before a corrected release');
     return app?.delivery?.hold || app?.dispatch?.hold ? replaces : undefined;
   }
   #replacement(request, replaces) {
-    const held = this.controller.state.routeAuthority.holds[request.app];
+    const held = routeHold(this.controller.state.routeAuthority.holds, request.app);
     if (!replaces || typeof replaces !== 'object' || Object.keys(replaces).length !== 2 || !Object.hasOwn(replaces, 'deployment') || !Object.hasOwn(replaces, 'digest')) throw new Error('HTTP replacement requires the held deployment and digest');
     const expected = request.routeReplaces;
     if (expected && (expected.deployment !== replaces.deployment || expected.digest !== replaces.digest)) throw new Error('HTTP replacement predecessor changed');
@@ -181,7 +185,7 @@ class DurableRoutes extends LookupRoutes {
   async beforeEffect(app, slot) {
     this.controller.assertRoutingStartup(); this.controller.assertStorage();
     const state = this.controller.state, name = Object.keys(state.apps).find(name => state.apps[name] === app);
-    const selected = state.routeAuthority.holds[name];
+    const selected = routeHold(state.routeAuthority.holds, name);
     if (!selected || !slot || app.slot !== slot.id) throw new Error('Backend change requires the app approval and withheld fleet');
     await this.publication.assertWithheld(name, selected.id, selected.digest);
   }
@@ -207,7 +211,7 @@ class DurableRoutes extends LookupRoutes {
     if (replaces !== undefined) {
       this.#replacement(request, replaces);
       request.routeReplaces ||= structuredClone(replaces);
-      if (this.controller.state.routeAuthority.holds[request.app]?.id !== request.id) selected = { id: replaces.deployment, digest: replaces.digest };
+      if (routeHold(this.controller.state.routeAuthority.holds, request.app)?.id !== request.id) selected = { id: replaces.deployment, digest: replaces.digest };
     }
     return this.publication.withhold(request.app, request.id, request.digest, { replaces: selected });
   }

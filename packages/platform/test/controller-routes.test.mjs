@@ -237,3 +237,15 @@ test('storage separation also refuses a public directory alias containing privat
   await assert.rejects(bad.init(), /outside private controller storage/);
   await assert.rejects(readFile(f.root + '/shared/routes.json'), { code: 'ENOENT' });
 });
+
+test('pending active route comparison accepts reordered private JSON keys without withdrawing permission', async t => {
+  const f = await routeController(t), request = await f.request();
+  f.failPublic(record => record.routes[0]?.state === 'active' ? 'after' : null);
+  await assert.rejects(f.c.mutate(request.id, request.digest, 'approve'), /uncertain/); f.failPublic(null);
+  const saved = await f.private();
+  saved.routeAuthority.pending.record.routes = saved.routeAuthority.pending.record.routes.map(route => Object.fromEntries(Object.entries(route).reverse()));
+  const { writeFile } = await import('node:fs/promises'); await writeFile(f.statePath, JSON.stringify(saved));
+  const before = await f.public(), effects = [...f.events], controller = f.create(); await controller.init();
+  assert.deepEqual(await f.public(), before); assert.deepEqual(f.events, effects);
+  assert.equal(controller.state.routeAuthority.pending.kind, 'active'); assert.equal(f.verifications(), 0);
+});

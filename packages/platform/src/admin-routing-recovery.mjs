@@ -3,7 +3,7 @@ import { routingRequest } from './admin-routing.mjs';
 
 export function assertRoutingServiceMode(controller, recoveryOnly) {
   if (typeof recoveryOnly !== 'boolean' || recoveryOnly && !controller.routingRecoveryAvailable) throw new Error('Routing recovery service requires inspected durable ownership');
-  if (controller.routes.durable && !controller.routingStartupComplete && !recoveryOnly) throw new Error('Unreconciled durable controller requires a restricted routing recovery service');
+  if ((controller.routingServiceRestricted || controller.routes.durable && !controller.routingStartupComplete) && !recoveryOnly) throw new Error('Durable controller requires a restricted routing recovery service');
 }
 
 export async function routingRecoveryRequest(request, url, controller, csrf, body, send) {

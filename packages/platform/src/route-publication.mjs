@@ -1,6 +1,8 @@
 import { encodeRouteRecord, isRouteRevision } from '@fogd/runtime/route-record';
 import { readRouteRecord, routeRecordDigest, writeRouteRecord, createRouteRecord } from './route-record-store.mjs';
 
+export const routeHold = (holds, name) => Object.hasOwn(holds, name) ? holds[name] : undefined;
+
 export const routeAuthorityCapability = 'fogd-route-authority-v1';
 const uuid = value => typeof value === 'string' && /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(value);
 const pinnedSecret = request => Object.hasOwn(request, 'secretRevision') && (request.secretRevision === null || uuid(request.secretRevision));
@@ -153,7 +155,7 @@ export class RoutePublication {
   }
 
   #requireHold(app, selected, record) {
-    const held = this.#journal().holds[app], route = record.routes.find(value => value.host === `${app}.${this.domain}`);
+    const held = routeHold(this.#journal().holds, app), route = record.routes.find(value => value.host === `${app}.${this.domain}`);
     if (held?.id !== selected.id || held.digest !== selected.digest || route?.state !== 'withheld' || route.slot !== this.state.apps[app]?.slot) throw new Error('Active publication requires withholding for the exact approval');
   }
   assertServing(app, id, digest) {
@@ -171,7 +173,7 @@ export class RoutePublication {
     });
   }
   #selectHold(app, selected, replaces) {
-    const held = this.#journal().holds[app];
+    const held = routeHold(this.#journal().holds, app);
     if (!held || held.id === selected.id && held.digest === selected.digest) {
       if (replaces !== null) throw new Error('No different approval hold matches the replacement selection');
       return;
@@ -212,7 +214,7 @@ export class RoutePublication {
   }
   #activeIntent(journal, pending) {
     const prior = pending.previous.routes.find(route => route.host === `${pending.app}.${this.domain}`);
-    const held = journal.holds[pending.app], target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
+    const held = routeHold(journal.holds, pending.app), target = pending.record.routes.find(route => route.host === `${pending.app}.${this.domain}`);
     if (!held || held.id !== pending.approval?.id || held.digest !== pending.approval.digest || prior?.state !== 'withheld' ||
       target?.state !== 'active' || target.submission !== held.id || target.digest !== held.digest || target.slot !== prior.slot) throw failure();
     if (encodeRouteRecord(this.#replaceRoute(pending.record.revision, pending.previous, target), this.policy) !== encodeRouteRecord(pending.record, this.policy)) throw failure();
@@ -236,7 +238,7 @@ export class RoutePublication {
       this.assertReady(); const selected = { id, digest }; this.#claim(app, selected);
       const previous = (await this.#current()).record;
       if (!previous.routes.some(route => route.host === `${app}.${this.domain}`)) {
-        if (this.#journal().holds[app]) throw failure();
+        if (routeHold(this.#journal().holds, app)) throw failure();
         return;
       }
       this.#requireHold(app, selected, previous);

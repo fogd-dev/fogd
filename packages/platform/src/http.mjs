@@ -1,3 +1,5 @@
+import { routeHold } from './route-publication.mjs';
+import { ingressRequest } from './admin-ingress.mjs';
 import { deliveryRequest, deliveryHTML } from './admin-delivery.mjs';
 import { routingRecoveryRequest, assertRoutingServiceMode } from './admin-routing-recovery.mjs';
 import { routingRequest } from './admin-routing.mjs';
@@ -28,6 +30,7 @@ async function body(request, limit = MAX_UPLOAD * 1.4) {
 }
 export function server(controller, credentials, { maxUploads = 2, role = 'public', tls = null, recoveryOnly = false } = {}) {
   assertRoutingServiceMode(controller, recoveryOnly);
+  if (recoveryOnly) controller.restrictRoutingService();
   const deploymentRequest = deploymentHandler(controller, credentials.deploy, body, maxUploads);
   const csrf = randomBytes(32).toString('hex');
   const basic = `Basic ${Buffer.from(`${credentials.user}:${credentials.password}`).toString('base64')}`;
@@ -53,6 +56,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       controller.assertStorage();
       if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
+      if (await ingressRequest(request, url, controller, csrf, body, send)) return;
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await deliveryRequest(request, url, controller, csrf, body, send)) return;
       if (await dispatchRequest(request, url, controller, csrf, body, send)) return;
@@ -82,7 +86,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
 
 
 function errorStatus(error) {
-  if (['CONTROLLER_STORAGE_UNCERTAIN', 'ROUTE_PUBLICATION_UNCERTAIN', 'ROUTE_STARTUP_UNRECONCILED'].includes(error.code)) return 503;
+  if (['CONTROLLER_STORAGE_UNCERTAIN', 'ROUTE_PUBLICATION_UNCERTAIN', 'ROUTE_STARTUP_UNRECONCILED', 'ROUTE_PREFLIGHT_UNCONFIRMED'].includes(error.code)) return 503;
   if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED', 'CRON_SNAPSHOT_UNCONFIRMED', 'CRON_RECOVERY_UNCONFIRMED'].includes(error.code)) return 502;
   return 400;
 }
@@ -95,7 +99,7 @@ function approvalButtons(controller, request, html) {
     if (app.dispatch.hold !== request.id) return '<p>Another artifact holds scheduled dispatch. Wait for or retry that activation before approving this request.</p>' + approvalButton(controller, request, html, 'reject');
     return approvalButton(controller, request, html, 'approve');
   }
-  const httpHold = controller.routes.durable ? controller.state.routeAuthority.holds[request.app]?.id : null;
+  const httpHold = controller.routes.durable ? routeHold(controller.state.routeAuthority.holds, request.app)?.id : null;
   const held = controller.state.deployments[app?.delivery?.hold || httpHold];
   const replacing = held && held.id !== request.id && (held.status === 'failed' || Boolean(httpHold));
   const conflict = replacing && differentPredecessor(request.routeReplaces || request.replaces, held);

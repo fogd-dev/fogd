@@ -331,6 +331,52 @@ observe real temporary authority/private files while substituting the backend. T
 exercise the source protocol; they do not establish native runtime, image or mount
 qualification.
 
+## Pre-ingress observation candidate
+
+A normal durable controller exposes `POST /v1/admin/routing/preflight` to the
+operator, using admin authentication and the existing CSRF check. The request
+contains only a fresh caller-generated 64-character lowercase hexadecimal
+`challenge`. The [preflight](../packages/platform/src/route-preflight.mjs) runs under
+controller serialization. It requires completed startup and settled private/public
+authority, compares public permissions with private approvals and holds, and invokes
+the configured read-only native verifier for every active host. A privately serving
+app missing from the public table cannot pass as an empty installation. Withheld
+entries confer no permission and their runtime availability is not checked.
+
+After those observations, it re-reads settled authority and compares both its exact
+byte digest and active approval/version/secret references with the initial snapshot.
+Any pending decision, permission mismatch, runtime refusal or changed reference
+returns an unconfirmed 503. On an otherwise available controller, invalid challenge
+requests return 400 before their authority reads; requests still join controller serialization, and existing
+storage or recovery refusal can take precedence.
+
+HTTP hold lookups use only own entries, so a valid app name such as `constructor`
+cannot inherit a hold from the JavaScript object prototype. A successful report
+contains schema version 1, the echoed challenge, public
+`authority.record`, its raw-byte `authority.sha256`, and `observedActiveHosts`.
+Native versions, secret revisions and runtime diagnostics remain private.
+
+This report describes an observation interval. It grants no routing permission,
+freezes no later controller work, initializes no storage and starts no gateway. The
+report is trustworthy only over the authenticated admin channel; the echoed challenge is not a signature or proof for a third party. The caller must correlate
+the challenge with its own current request; an old report cannot authorize a later launch. The host still must keep ingress stopped, verify
+actual sealed mounts/images/generation and writer exclusion, and apply the ordered
+startup procedure. A report with no active hosts proves no native availability or
+whole-installation storage health. The verifier's existing timeout limits apply;
+there is no new whole-operation storage deadline.
+
+The restricted recovery service never exposes this endpoint, including after an
+exact reconciliation makes its startup-complete field true. The controller instance
+retains that restriction too: direct preflight calls and construction of another
+ordinary HTTP listener on the marked instance are refused. Restart normally after
+the complete launch checks; lookup-family services have no such endpoint. The
+[preflight tests](../packages/platform/test/route-preflight.test.mjs) check real
+temporary authority files, cross-app checks, changed references and serialized
+mutations. [HTTP tests](../packages/platform/test/route-preflight-http.test.mjs)
+check authorization, CSRF, error disclosure and recovery/lookup refusal. These source
+tests do not close mount inventory, freshness authorization, gateway launch, stopped
+restore or native qualification gates.
+
 ## Candidate controller startup and restricted recovery
 
 An explicit programmatic `startController` option accepts an absolute path to the
