@@ -228,8 +228,7 @@ preparation only; it does not establish compilation, native test execution or a
 qualified runtime.
 
 This is the source-preparation step of the
-[next runtime release](operator-readiness.md#next-runtime-release). Toolchain and
-base-image inputs, dependency acquisition, a clean native build, output
+[next runtime release](operator-readiness.md#next-runtime-release). A clean native build, observed output
 fingerprints and qualification remain required. The cached builder above still
 uses its recorded private dependency input. Preparing source does not change the
 catalog or authorize installation of a new runtime family.
@@ -288,3 +287,43 @@ native behavior, output fingerprints or independent installation. Those remain
 built candidate still needs its own family identity and qualification before
 catalog admission. The existing cached family's image and installation authority
 are unchanged.
+
+
+## Build a source candidate
+
+Maintainers can explicitly build the prepared source and record its output:
+
+```sh
+node scripts/build-source-runtime.mjs /path/to/celld /tmp/fogd-source-build
+```
+
+This command downloads build dependencies and compiles native code. It requires
+existing local objects for the pinned upstream revision and a Linux arm64 Docker
+engine. The selected Docker context must use the Docker build driver. Use a new
+output directory with an existing parent, outside both source repositories.
+
+The [build command](../scripts/build-source-runtime.mjs) prepares fresh native
+source and a captured build context, then requests one uncached build using the
+pinned base images. It binds the build and subsequent inspections to the selected
+Docker context. Private stdout and stderr files share a byte limit and deadline;
+the command retains the attempt outcome and partial output after failure. A failed
+or interrupted Docker client does not prove that the daemon stopped its build.
+Inspect that builder before another attempt; the command never retries or prunes
+images automatically.
+
+A successful `result.json` records the image ID, declared source and base-image
+inputs, native and supervisor fingerprints, gateway fingerprint, production
+program inventory, dependency receipts and toolchain output. The reader runs with
+networking disabled, a read-only filesystem and no application mounts; it reads
+native headers and hashes without executing the binaries. The image build itself
+includes the recipe's native version, test and lint stages. Changed build contexts,
+unexpected image configuration or mismatched outputs withhold the completion
+record. Logs and records remain owner-private.
+
+A completed build is a candidate. It does not establish an independently observed
+clean build host, repeatable image digests, lifecycle behavior or installation on
+another engine. The command neither publishes an image nor changes the catalog or
+installation admission. Follow the
+[next-release requirements](operator-readiness.md#next-runtime-release) before
+qualifying a new runtime family. The command has process/filesystem tests with a
+substituted Docker executable; a real native build remains unverified.

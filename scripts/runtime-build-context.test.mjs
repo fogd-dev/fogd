@@ -8,6 +8,9 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { prepareBuildContext } from './runtime-build-context.mjs';
 import { prepareRuntimeSource } from './runtime-source.mjs';
+import { buildSourceRuntime } from './build-source-runtime.mjs';
+import { execute } from '../packages/cli/src/recovery/execute.mjs';
+import { captureProcess } from '../packages/cli/src/logs/capture.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const env = { PATH: process.env.PATH, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null' };
@@ -235,4 +238,84 @@ test('the pinned local chain assembles a context without builds or downloads', {
   const dockerfile = await readFile(join(base, 'out/context/Dockerfile'), 'utf8');
   assert.deepEqual([...dockerfile.matchAll(/^FROM (?:--platform=\S+ )?(\S+)/gm)].map(match => match[1]), [inputs.nodeImage, inputs.rustImage, inputs.nodeImage]);
   for (const [, sources] of dockerfile.matchAll(/^COPY (?!--from)(.+) \S+$/gm)) for (const source of sources.split(' ')) assert.ok(existsSync(join(base, 'out/context', source)), source);
+});
+
+// The complete source-build workflow uses real child processes and private files;
+// only the external Docker executable is substituted. Nothing compiles or downloads.
+async function sourceBuildFixture(t, mode = 'success') {
+  const f = await fixture(); t.after(() => rm(f.base, { recursive: true, force: true }));
+  const workerdVersion = '1.20261016.1', image = 'sha256:' + digest('a');
+  await writeFile(join(f.root, 'packages/runtime/package.json'), JSON.stringify({ name: '@fogd/runtime', dependencies: { workerd: workerdVersion } }));
+  await writeFile(join(f.root, 'docker/runtime-source.json'), JSON.stringify(f.manifest));
+  await writeFile(join(f.root, 'docker/runtime-build-inputs.json'), JSON.stringify(inputs));
+  const sourceFiles = {};
+  for (const path of Object.keys(production).filter(path => path.startsWith('packages/'))) sourceFiles[path] = sha256(await readFile(join(f.root, path)));
+  const nativeReceipt = { schema: 1, kind: 'verified-native-inputs', target: nativeInputs.target, v8Version: nativeInputs.v8Version, v8CrateSha256: nativeInputs.v8CrateSha256,
+    assets: { archive: { file: 'rusty-v8.a.gz', sha256: digest('d'), bytes: 3 }, bindings: { file: 'rusty-v8-bindings.rs', sha256: digest('f'), bytes: 4 } }, compiled: false, qualified: false };
+  const observed = { sourceFiles, celld: { sha256: digest('c'), bytes: 64 }, supervisor: { sha256: sha256(production['docker/celld-supervisor.sh'][0]), bytes: production['docker/celld-supervisor.sh'][0].length },
+    workerd: { sha256: digest('d'), bytes: 64 }, nativeInputs: nativeReceipt,
+    workerdInput: { schema: 1, package: 'workerd', version: workerdVersion, platformPackage: '@cloudflare/workerd-linux-arm64', sha256: digest('d'), bytes: 64, directNative: true, downloaded: false, executed: false },
+    toolchain: 'rustc 1.98.1 (synthetic)\nhost: aarch64-unknown-linux-gnu\ncargo 1.98.1 (synthetic)\n' };
+  if (mode === 'bad-output') observed.nativeInputs.qualified = true;
+  const trace = join(f.base, 'docker-calls.jsonl'), fake = join(f.base, 'docker.mjs');
+  await writeFile(fake, `import{appendFileSync,writeFileSync}from'node:fs';
+const raw=process.argv.slice(2), mode=${JSON.stringify(mode)}, observed=${JSON.stringify(observed)}, image=${JSON.stringify(image)};
+appendFileSync(${JSON.stringify(trace)},JSON.stringify(raw)+'\\n');
+let args=raw;
+if(args[0]==='--context'){if(args[1]!=='desktop-linux')process.exit(91);args=args.slice(2)}else if(args.join(' ')!=='context show')process.exit(92);
+if(args[0]==='context')console.log('desktop-linux');
+else if(args[0]==='info')console.log(JSON.stringify({OSType:'linux',Architecture:mode==='wrong-host'?'amd64':'aarch64'}));
+else if(args[0]==='buildx')console.log('Driver: '+(mode==='wrong-driver'?'docker-container':'docker'));
+else if(args[0]==='build'){
+ console.log('private build stdout');console.error('private build stderr');
+ if(mode==='failed-build')process.exit(17);
+ writeFileSync(args[args.indexOf('--iidfile')+1],mode==='bad-image'?'fogd:mutable':image+'\\n');
+ if(mode==='changed-context')writeFileSync(args.at(-1)+'/Dockerfile','changed');
+}else if(args[0]==='image')console.log(JSON.stringify([{Id:image,Os:'linux',Architecture:'arm64',Config:{WorkingDir:'/app',Env:['PATH=/app/packages/runtime/node_modules/workerd/bin:/usr/local/bin:/usr/bin:/bin','NODE_VERSION=26.2.0']}}]));
+else if(args[0]==='run')console.log(JSON.stringify(args.at(-1).includes('const result = await (')?observed:{binarySha256:observed.celld.sha256,supervisorSha256:observed.supervisor.sha256}));
+else process.exit(93);
+`);
+  const run = (args, options) => execute(process.execPath, [fake, ...args], options);
+  const capture = (command, args, options) => { assert.equal(command, 'docker'); return captureProcess(process.execPath, [fake, ...args], options); };
+  return { ...f, image, observed, trace, invoke: () => buildSourceRuntime({ repository: join(f.base, 'celld'), root: f.root, output: f.output }, { run, capture }) };
+}
+
+test('source build retains bounded private logs and checked outputs without granting runtime admission', async t => {
+  const f = await sourceBuildFixture(t), result = await f.invoke();
+  assert.equal(result.image, f.image); assert.deepEqual(result.outputs, f.observed);
+  assert.equal(result.buildCompleted, true); assert.equal(result.qualified, false); assert.equal(result.cleanHostVerified, false); assert.equal(result.applicationContainersStarted, false);
+  assert.deepEqual(JSON.parse(await readFile(join(f.output, 'result.json'), 'utf8')), result);
+  assert.equal(result.contextInventorySha256, JSON.parse(await readFile(join(f.output, 'build-inputs/receipt.json'), 'utf8')).contextInventorySha256);
+  for (const name of ['build.stdout', 'build.stderr']) assert.equal((await lstat(join(f.output, name))).mode & 0o777, 0o600);
+  assert.equal((await lstat(f.output)).mode & 0o777, 0o700);
+  assert.match(await readFile(join(f.output, 'build.stderr'), 'utf8'), /private build stderr/);
+  const calls = (await readFile(f.trace, 'utf8')).trim().split('\n').map(line => JSON.parse(line));
+  assert.deepEqual(calls[0], ['context', 'show']);
+  assert.ok(calls.slice(1).every(args => args[0] === '--context' && args[1] === 'desktop-linux'));
+  const builds = calls.filter(args => args[2] === 'build'); assert.equal(builds.length, 1);
+  assert.ok(builds[0].includes('--no-cache') && builds[0].includes('--pull'));
+  assert.equal(builds[0][builds[0].indexOf('--platform') + 1], 'linux/arm64');
+  const inspections = calls.filter(args => args[2] === 'run'); assert.equal(inspections.length, 2);
+  assert.ok(inspections.every(args => args.includes('--read-only') && args.includes('--entrypoint') && !args.includes('--mount')));
+  assert.ok(!calls.some(args => args.includes('push') || args.includes('tag') || args.includes('compose')));
+});
+
+for (const [mode, error] of [
+  ['failed-build', /did not complete/], ['bad-image', /immutable image identity/], ['bad-output', /dependency receipts differ/],
+  ['changed-context', /context changed/], ['wrong-host', /Linux arm64 Docker host/], ['wrong-driver', /Docker driver/],
+]) test(`source build withholds its completion record after ${mode}`, async t => {
+  const f = await sourceBuildFixture(t, mode); await assert.rejects(f.invoke(), error);
+  assert.equal(existsSync(join(f.output, 'result.json')), false);
+  assert.equal(JSON.parse(await readFile(join(f.output, 'failure.json'), 'utf8')).complete, false);
+  if (mode.startsWith('wrong-')) assert.equal(existsSync(join(f.output, 'build.stdout')), false);
+  if (mode === 'failed-build') {
+    assert.equal(JSON.parse(await readFile(join(f.output, 'build-attempt.json'), 'utf8')).exitCode, 17);
+    assert.match(await readFile(join(f.output, 'build.stderr'), 'utf8'), /private build stderr/);
+  }
+});
+
+test('source build refuses an existing output before contacting Docker or replacing user files', async t => {
+  const f = await sourceBuildFixture(t); await mkdir(f.output); await writeFile(join(f.output, 'keep'), 'keep');
+  await assert.rejects(f.invoke(), { code: 'EEXIST' });
+  assert.equal(existsSync(f.trace), false); assert.deepEqual(await readdir(f.output), ['keep']);
 });

@@ -43,7 +43,7 @@ function assertImageEnvironment(values) {
   if (new Set(values.map(value => value.split('=', 1)[0])).size !== values.length) throw new Error('Ambiguous inherited runtime environment');
   const env = Object.fromEntries(values.map(value => { const index = value.indexOf('='); return [value.slice(0, index), value.slice(index + 1)]; }));
   if (Object.keys(env).some(key => !['PATH', 'NODE_VERSION'].includes(key))) throw new Error('Unsupported runtime image environment');
-  const paths = ['/opt/pnpm/node_modules/.bin', '/app/packages/runtime/node_modules/.bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin'];
+  const paths = ['/opt/pnpm/node_modules/.bin', '/app/packages/runtime/node_modules/.bin', '/app/packages/runtime/node_modules/workerd/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin'];
   if (!env.PATH || env.PATH.split(':').some(path => !paths.includes(path))) throw new Error('Runtime search path includes writable or unqualified locations');
 }
 

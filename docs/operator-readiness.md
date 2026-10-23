@@ -234,7 +234,10 @@ adding another binding family. These requirements remain open:
   captures pinned base images, production sources and dependency locks. The candidate
   recipe declares the prebuilt V8 archive and bindings with content hashes and
   uses the locked workerd platform package without installer fallback downloads.
-  These source checks do not close the clean-build or output qualification gates.
+  The [source-build command](runtime-selection.md#build-a-source-candidate) connects
+  preparation, bounded private build logs and checked image fingerprints. It has
+  process/filesystem tests with a substituted Docker executable; a real native
+  build, clean-host evidence and output qualification remain open.
 - **Install independently.** Follow the public installation procedure on a
   separate supported Docker engine using the distributed release and declared
   prerequisites. Deploy, approve, update, restart and recover an application while
