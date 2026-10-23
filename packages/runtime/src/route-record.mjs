@@ -4,6 +4,7 @@ const exactKeys = (value, keys) => value && typeof value === 'object' && !Array.
 const invalid = () => { throw new Error('Invalid route authority record'); };
 const encoder = new TextEncoder();
 export const maxRouteRecordBytes = 65536;
+export const routeRecordFilename = 'routes.json';
 
 export function validateRoutePolicy(policy) {
   if (!exactKeys(policy, ['installation', 'slots']) || !digest(policy.installation) || !Array.isArray(policy.slots) || !policy.slots.length || policy.slots.length > 3 || !policy.slots.every(slot) || new Set(policy.slots).size !== policy.slots.length) throw new Error('Invalid route authority policy');

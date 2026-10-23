@@ -89,6 +89,7 @@ export class Controller {
     this.#recoveryPending = false;
   }
 
+  get routingRecoveryAvailable() { return this.routes.durable && this.#ownershipChecked; }
   get routingStartupComplete() { return this.#ownershipChecked && !this.#recoveryPending; }
   assertRoutingStartup(requireComplete = false) {
     if (!this.#ownershipChecked || requireComplete && this.#recoveryPending) throw routingStartupError();

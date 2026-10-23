@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { Readable } from 'node:stream';
+import { startupRouting } from '../src/startup-routing.mjs';
 import { backendRouteVerifier } from '../src/route-runtime.mjs';
 import { policy, environment } from './fixtures/runtime-policy.mjs';
 import { fixtureAuthority, signedIdentity } from './fixtures/runtime-proof.mjs';
@@ -61,4 +62,12 @@ test('a lease that cannot authenticate its serving process refuses before applic
   const f = await fixture(t); f.members[0].probe_public_key = 'e'.repeat(64);
   await assert.rejects(backendRouteVerifier(f.controller, f.profile)('alpha', f.selected), { code: 'ROUTE_RUNTIME_UNCONFIRMED' });
   assert.equal(f.calls.some(value => value === '/state' || value.endsWith('/health')), false);
+});
+
+test('startup-composed verification uses the independently validated native adapter', async t => {
+  const f = await fixture(t); let controller;
+  const routing = startupRouting({ path: '/authority/routes.json' }, f.profile, () => controller);
+  controller = f.controller; await routing.verifyRuntime('alpha', f.selected);
+  assert.equal(f.calls.filter(value => value === '/runtime/identity').length, 4);
+  assert.equal(f.calls.filter(value => value === '/state').length, 4);
 });

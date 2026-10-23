@@ -45,7 +45,7 @@ test('pending HTTP withdrawal requires the exact app, intent and approval', asyn
   await assert.rejects(f.c.mutate(request.id, request.digest, 'approve'), /uncertain/); f.failPublic(null);
   const c = f.create(); await c.init(); const before = [...f.events];
   const credentials = { user: 'admin', password: 'password', deploy: 'deploy', gateway: 'gateway' };
-  const http = server(c, credentials); await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
+  const http = server(c, credentials, { recoveryOnly: true }); await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => { http.close(resolve); http.closeAllConnections(); }));
   const origin = `http://127.0.0.1:${http.address().port}`, auth = { authorization: `Basic ${Buffer.from('admin:password').toString('base64')}` };
   const admin = await (await fetch(origin + '/v1/admin', { headers: auth })).json();

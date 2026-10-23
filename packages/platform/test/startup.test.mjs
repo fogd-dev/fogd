@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, access } from 'node:fs/promises';
+import { mkdtemp, rm, access, mkdir, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { once } from 'node:events';
@@ -8,6 +8,7 @@ import { Backend } from '../src/backend.mjs';
 import { startController } from '../src/startup.mjs';
 import { policy as runtimePolicy, environment as runtimeEnvironment } from './fixtures/runtime-policy.mjs';
 import { claimBackend } from './fixtures/claim-backend.mjs';
+import { routeController } from './fixtures/route-controller.mjs';
 import { RuntimePolicyError } from '../src/runtime-policy.mjs';
 
 const legacyPolicy = { readPolicy: async () => null };
@@ -89,4 +90,47 @@ test('a refused installed policy prevents controller storage initialization', as
   });
   await assert.rejects(attempt, { code: 'RUNTIME_POLICY_REFUSED' });
   await assert.rejects(access(join(dir, 'controller')), { code: 'ENOENT' });
+});
+
+test('explicit durable startup derives independent policy and opens no legacy internal listener', async t => {
+  const dir = await environment(t); Object.assign(process.env, runtimeEnvironment());
+  const authority = join(dir, 'authority'); await mkdir(authority, { mode: 0o755 });
+  t.mock.method(Backend.prototype, 'owner', async () => null);
+  const result = await startController(undefined, { readPolicy: async () => runtimePolicy(), routeAuthority: { path: join(authority, 'routes.json'), fresh: true } });
+  t.after(() => result.close({ force: true }));
+  assert.equal(result.internal, null); assert.equal(result.recoveryOnly, false); assert.equal(result.controller.routes.durable, true);
+  const record = JSON.parse(await readFile(join(authority, 'routes.json'), 'utf8'));
+  assert.equal(record.revision, '0'); assert.deepEqual(record.routes, []);
+  assert.equal(record.installation, result.controller.routes.options.policy.installation);
+});
+test('explicit routing without an independent installed policy refuses before controller storage writes', async t => {
+  const dir = await environment(t);
+  await assert.rejects(startController(undefined, { ...legacyPolicy, routeAuthority: { path: join(dir, 'authority/routes.json'), fresh: true } }), { code: 'RUNTIME_POLICY_REFUSED' });
+  await assert.rejects(access(join(dir, 'controller')), { code: 'ENOENT' });
+});
+
+test('top-level durable startup enters recovery after a real pending publication without an internal listener', async t => {
+  const dir = await environment(t); Object.assign(process.env, runtimeEnvironment());
+  const authority = join(dir, 'authority'); await mkdir(authority, { mode: 0o755 });
+  const owners = {}, logs = [];
+  t.mock.method(console, 'log', message => { logs.push(message); });
+  t.mock.method(Backend.prototype, 'owner', async slot => owners[slot.id] || null);
+  t.mock.method(Backend.prototype, 'claim', async (slot, app) => { owners[slot.id] = { app }; });
+  t.mock.method(Backend.prototype, 'hasDeployment', async () => false);
+  t.mock.method(Backend.prototype, 'publish', async () => 'approved-version');
+  t.mock.method(Backend.prototype, 'ready', async () => {});
+  t.mock.method(Backend.prototype, 'migrate', async () => {});
+  t.mock.method(Backend.prototype, 'applied', async () => []);
+  const options = { readPolicy: async () => runtimePolicy(), routeAuthority: { path: join(authority, 'routes.json'), fresh: true } };
+  const first = await startController(undefined, options); t.after(() => first.close({ force: true }));
+  const f = await routeController(t), release = await f.request('alpha', first.controller);
+  const publication = first.controller.routes.publication, write = publication.writePublic;
+  t.mock.method(publication, 'writePublic', async (file, record) => { await write(file, record); if (record.routes.some(route => route.state === 'active')) throw new Error('Lost public acknowledgment'); });
+  await assert.rejects(first.controller.mutate(release.id, release.digest, 'approve'), /uncertain/);
+  await first.close({ force: true });
+  const recovered = await startController(undefined, { ...options, routeAuthority: { ...options.routeAuthority, fresh: false } });
+  t.after(() => recovered.close({ force: true }));
+  assert.equal(recovered.recoveryOnly, true); assert.equal(recovered.internal, null);
+  assert.equal(recovered.controller.state.routeAuthority.pending.kind, 'active');
+  assert.ok(logs.some(message => message.includes('keep ingress stopped')));
 });

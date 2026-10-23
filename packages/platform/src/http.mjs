@@ -1,4 +1,5 @@
 import { deliveryRequest, deliveryHTML } from './admin-delivery.mjs';
+import { routingRecoveryRequest, assertRoutingServiceMode } from './admin-routing-recovery.mjs';
 import { routingRequest } from './admin-routing.mjs';
 import { dispatchRequest, dispatchHTML } from './admin-dispatch.mjs';
 import { capacityHTML } from './admin-capacity.mjs';
@@ -25,7 +26,8 @@ async function body(request, limit = MAX_UPLOAD * 1.4) {
   try { return JSON.parse(Buffer.concat(parts).toString()); }
   catch { throw new Error('Invalid JSON body'); }
 }
-export function server(controller, credentials, { maxUploads = 2, role = 'public', tls = null } = {}) {
+export function server(controller, credentials, { maxUploads = 2, role = 'public', tls = null, recoveryOnly = false } = {}) {
+  assertRoutingServiceMode(controller, recoveryOnly);
   const deploymentRequest = deploymentHandler(controller, credentials.deploy, body, maxUploads);
   const csrf = randomBytes(32).toString('hex');
   const basic = `Basic ${Buffer.from(`${credentials.user}:${credentials.password}`).toString('base64')}`;
@@ -43,12 +45,13 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         return send(200, controller.route(url.searchParams.get('host') || ''));
       }
       if (role === 'internal' || url.pathname.startsWith('/internal/')) return send(404, { error: 'Not found' });
-      if (await deploymentRequest(request, url, send)) return;
+      if (!recoveryOnly && await deploymentRequest(request, url, send)) return;
       if (!equal(request.headers.authorization, basic)) {
         response.setHeader('WWW-Authenticate', 'Basic realm="fogd admin", charset="UTF-8"');
         return send(401, { error: 'Admin authentication required' });
       }
       controller.assertStorage();
+      if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
       if (await credentialRequest(request, url, controller, csrf, body, send)) return;
       if (await deliveryRequest(request, url, controller, csrf, body, send)) return;

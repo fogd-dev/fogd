@@ -1,4 +1,4 @@
-import { decodeRouteRecord, validateRoutePolicy, maxRouteRecordBytes } from './route-record.mjs';
+import { decodeRouteRecord, validateRoutePolicy, maxRouteRecordBytes, routeRecordFilename } from './route-record.mjs';
 
 // Cancellation must not extend a request's deadline when a producer is stuck.
 const cancel = reader => { void reader.cancel().catch(() => {}); };
@@ -26,7 +26,7 @@ async function boundedBody(response, signal) {
 }
 async function readRecord(env, policy, signal) {
   // This header is not freshness evidence; native disk reads require qualification.
-  const response = await env.ROUTE_AUTHORITY.fetch('http://authority/routes.json', {
+  const response = await env.ROUTE_AUTHORITY.fetch('http://authority/' + routeRecordFilename, {
     method: 'GET', headers: { 'Cache-Control': 'no-store' }, redirect: 'error', signal,
   });
   if (response.status !== 200) { if (response.body) cancel(response.body); throw new Error('Authority unavailable'); }

@@ -4,7 +4,8 @@ import { Backend } from './backend.mjs';
 import { backendCronRuntime } from './backend-runtime-identity.mjs';
 import { installedRuntimePolicy } from './runtime-policy-file.mjs';
 import { validateRuntimePolicy, RuntimePolicyError } from './runtime-policy.mjs';
-import { server } from './http.mjs';
+import { serveController } from './controller-service.mjs';
+import { startupRouting } from './startup-routing.mjs';
 
 const required = key => { const value = process.env[key]; if (!value) throw new Error(`${key} is required; run fogd up to initialize local credentials`); return value; };
 function configuredSlots() {
@@ -35,7 +36,7 @@ export function selectedBackend(backend, policy, env) {
 // A dedicated host-written policy selects the guarded transport. Without it,
 // existing installations and private backend composition retain their behavior.
 // Artifact admission remains separately controlled by the controller.
-export async function startController(backend, { readPolicy = installedRuntimePolicy, cronApps = false } = {}) {
+export async function startController(backend, { readPolicy = installedRuntimePolicy, cronApps = false, routeAuthority = null } = {}) {
   transportPolicy(process.env);
   const tls = await loadTLS(process.env);
   const credentials = { user: required('FOGD_ADMIN_USER'), password: required('FOGD_ADMIN_PASSWORD'), deploy: process.env.FOGD_DEPLOY_TOKEN || null, gateway: required('FOGD_GATEWAY_TOKEN') };
@@ -43,12 +44,12 @@ export async function startController(backend, { readPolicy = installedRuntimePo
   const policy = await readPolicy(process.env);
   options.backend = selectedBackend(options.backend, policy, process.env);
   options.cronApps = policy ? true : cronApps;
-  const controller = new Controller(options);
-  await controller.init();
-  const http = server(controller, credentials, { maxUploads: process.env.FOGD_MAX_UPLOADS ?? 2, tls });
-  http.listen(Number(process.env.FOGD_CONTROL_PORT || 8082), process.env.FOGD_CONTROL_BIND || '0.0.0.0', () => console.log('fogd approval controller ready'));
-  const internal = server(controller, credentials, { role: 'internal' });
-  internal.listen(Number(process.env.FOGD_INTERNAL_PORT || 8083), process.env.FOGD_CONTROL_BIND || '0.0.0.0');
-  for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => { http.close(); internal.close(); setTimeout(() => process.exit(), 30000).unref(); });
-  return { controller, http, internal };
+  let controller;
+  options.routeAuthority = startupRouting(routeAuthority, policy, () => controller);
+  controller = new Controller(options);
+  const result = await serveController(controller, credentials, { maxUploads: process.env.FOGD_MAX_UPLOADS ?? 2, tls,
+    port: Number(process.env.FOGD_CONTROL_PORT || 8082), internalPort: Number(process.env.FOGD_INTERNAL_PORT || 8083), host: process.env.FOGD_CONTROL_BIND || '0.0.0.0' });
+  console.log(result.recoveryOnly ? 'fogd routing recovery controller listening; keep ingress stopped' : 'fogd approval controller ready');
+  for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => { void result.close(); setTimeout(() => process.exit(), 30000).unref(); });
+  return result;
 }

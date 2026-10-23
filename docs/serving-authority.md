@@ -331,6 +331,50 @@ observe real temporary authority/private files while substituting the backend. T
 exercise the source protocol; they do not establish native runtime, image or mount
 qualification.
 
+## Candidate controller startup and restricted recovery
+
+An explicit programmatic `startController` option accepts an absolute path to the
+fixed `routes.json` record and freshness authorization. The [startup composition](../packages/platform/src/startup-routing.mjs)
+derives expected installation identity and fleet slots from the independently
+installed native runtime profile. It supplies the read-only production verifier;
+the route-authority input cannot substitute a public identity or a nominal
+verification callback. The normal entry point reads the dedicated installed policy
+volume; an injected policy reader remains a trusted internal launcher seam. Neither an environment setting nor the current catalog selects this option. The
+caller must establish actual mounts, sole writers and one-time fresh enrollment
+before using it; retained authority is never recreated by ordinary startup.
+
+The [controller service](../packages/platform/src/controller-service.mjs) awaits
+initialization before listening. A typed unresolved-routing error after ownership
+inspection, or an unresolved pending decision after initialization, opens an
+authenticated recovery API. Failure before ownership inspection, uncertain storage,
+invalid configuration and unrelated errors refuse startup. Durable services open no
+legacy internal route listener. Listener failure closes any listeners already opened
+by that service and preserves unrelated listeners.
+
+The recovery API exposes admin status and actual per-app public routing views. It
+allows only HTTP pause, exact pending-active reconciliation and exact pending-active
+withdrawal through the existing admin authentication and CSRF checks. Uploads,
+approvals, credentials, secrets, background operations and ordinary HTTP resume stay
+unavailable. `GET /v1/admin` reports `recoveryOnly`, `routingStartupComplete` and
+`ingress: "keep-stopped"`. A failed response can follow a persisted pending decision if subsequent startup
+recovery fails; inspect the actual routing view and pending intent before retrying.
+The startup-complete field can become true after an exact reconciliation, but this listener stays restricted for its lifetime. The launch
+procedure must check the complete sealed installation and restart normally before
+opening ingress. A ready admin listener alone is not permission to start a gateway. Direct HTTP
+server construction also refuses ordinary service on an unreconciled durable
+controller. Some ownership/storage mismatches expose diagnostics but cannot be
+repaired through this API; those require stopped repair or matching storage restore.
+After an exact pending decision, the controller repeats withholding and existing
+background startup recovery. That can re-establish a held queue pause or its
+bootstrap readiness; it does not approve or replay the failed activation.
+
+The [service tests](../packages/platform/test/controller-service.test.mjs) use real
+private/public temporary files and HTTP listeners to check these boundaries,
+reconciliation and withdrawal without replaying activation, controlled held-queue
+pause recovery behind public withholding, and listener collisions. Startup tests exercise fresh source composition with substituted backend
+ownership reads. These do not establish actual mounts, gateway ordering, fresh-volume
+authorization, stopped restore or native qualification.
+
 ## Read-only runtime verification candidate
 
 The [runtime verifier](../packages/platform/src/route-runtime.mjs) supplies the
@@ -361,8 +405,9 @@ boundaries and actual public withholding through controller pause/resume. The
 [adapter tests](../packages/platform/test/route-runtime-backend.test.mjs) exercise
 signed challenge proofs, executable hashing and storage lease checks with local
 fixtures and substituted network/storage reads. They establish source behavior,
-not native qualification. Startup composition with the sealed route policy and
-pre-ingress recovery checks remains open; this module enables no runtime family.
+not native qualification. The explicit startup composition below uses this adapter;
+sealed launch inventory and pre-ingress recovery checks remain open. This module
+enables no runtime family.
 
 ## Gateway candidate implementation
 
