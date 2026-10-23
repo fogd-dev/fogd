@@ -218,6 +218,9 @@ adding another binding family. These requirements remain open:
   without an earlier private seed image or undeclared cache. A new build receives
   its own runtime-family identity and qualification; it need not reproduce the
   current cached binary's digest. Maintainers own the recipe and patch upkeep.
+  The [source-preparation command](runtime-selection.md#prepare-the-next-native-source)
+  declares and checks the upstream source, dependency lock and ordered patches;
+  it does not close the clean-build or output qualification gates.
 - **Install independently.** Follow the public installation procedure on a
   separate supported Docker engine using the distributed release and declared
   prerequisites. Deploy, approve, update, restart and recover an application while

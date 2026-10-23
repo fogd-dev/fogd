@@ -205,3 +205,31 @@ existing native/dependency image. That cleanup is not claimed reproducible from
 its earlier seed. Product assembly reproducibility applies to the exact recorded
 clean input; it does not establish a native rebuild, dependency installation,
 registry distribution or cross-architecture support.
+
+## Prepare the next native source
+
+Maintainers can prepare the next native source tree from existing local Git
+objects without an image build or dependency installation. This requires Node.js
+and Git with `--no-lazy-fetch`; missing local objects refuse instead of fetching:
+
+```sh
+node scripts/runtime-source.mjs /path/to/celld /tmp/fogd-native-source
+```
+
+Use a new output directory whose parent exists, outside both input repositories.
+The command selects the upstream commit, dependency
+lock and ordered patch hashes declared in
+[`docker/runtime-source.json`](../docker/runtime-source.json). Local checkout
+edits do not enter the prepared tree. Existing output is refused; a failed attempt
+retains its partial directory for inspection and needs a different output path.
+The output contains `source/` and a `receipt.json` recording the resulting source
+inventory. A failed attempt has no completion receipt. The receipt describes source
+preparation only; it does not establish compilation, native test execution or a
+qualified runtime.
+
+This is the source-preparation step of the
+[next runtime release](operator-readiness.md#next-runtime-release). Toolchain and
+base-image inputs, dependency acquisition, a clean native build, output
+fingerprints and qualification remain required. The cached builder above still
+uses its recorded private dependency input. Preparing source does not change the
+catalog or authorize installation of a new runtime family.
