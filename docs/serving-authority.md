@@ -421,8 +421,9 @@ These are source integration steps, not an admitted installation path. The
 [selected-runtime dispatcher](../packages/cli/src/runtime/start-installation.mjs)
 routes durable installations through the retained-container coordinator below,
 never through its legacy all-services Compose command. Fresh installation enrollment
-has the source implementation below; stopped restore integration remains open. The existing archive
-layout intentionally does not accept the new volumes. A new image and its native
+has the source implementation below; stopped restore integration remains open. The legacy archive
+layout intentionally does not accept the new volumes; the dedicated snapshot format below
+carries their data without adopting execution authority. A new image and its native
 acceptance evidence remain required before catalog admission.
 
 ## Fresh installation enrollment candidate
@@ -545,6 +546,54 @@ inventory. The [public command test](../packages/cli/test/installation-stop.test
 uses an isolated synthetic catalog and fake Docker executable. It checks dispatch
 without changing shipped admission. Actual daemon shutdown and native durability
 still need qualification.
+
+## Stopped durable snapshot candidate
+
+The [backup coordinator](../packages/cli/src/recovery/durable-backup.mjs) requires
+an independently authorized durable profile, verified cached image, matching host
+enrollment and installed native policy. It inspects the sealed resource inventory,
+checks background capabilities and reserves a new private output directory before
+requesting queue or scheduled snapshot preparation. Existing output is never
+replaced. Preparation may leave background execution paused if a later step fails.
+
+The shutdown scope holds the shared operation fence through archive creation and
+verification. It stops ingress first and checks stopped processes and volume
+writers before and after the archive task. The task compares the inspected resource
+identity before copying and before publishing the manifest. All volume helpers
+mount source data read-only without image seeding, prohibit image pulls and use
+fixed executable entrypoints in the independently verified image.
+
+`fogd-stopped-durable-v1` archives controller, bucket, native replica and optional
+TLS data plus `route-authority.tar`. It excludes runtime policy, gateway policy,
+enrollment-control storage and host enrollment records. Those remain independently
+selected or newly issued execution authority. The controller archive retains its
+old route directory references as source metadata; copying them cannot enroll new
+mounts.
+
+The [pair validator](../packages/platform/src/route-snapshot.mjs) requires a settled
+private journal with no pending publication, the exact canonical public record and
+matching digest and revision. It shares application/approval/hold checks with live
+preflight. Unknown capabilities and inconsistent active or withheld routes refuse.
+This is a source consistency check; it makes no backend availability observation.
+
+The [bundle verifier](../packages/cli/src/recovery/durable-bundle.mjs) takes the full
+profile independently from its caller. It checks the sealed configuration, exact
+archive inventory, pinned image IDs and checksums, then reads the actual controller
+and authority members without filesystem extraction. Public authority must be one
+regular canonical `routes.json` member with bounded output. Interpreted metadata
+is checksummed again after parsing. Background evidence must match the archived
+state. Snapshot completion is reported only after this verification and the final
+stopped-process checks. Failure retains the operation marker and partial files.
+
+[Pipeline tests](../packages/cli/test/durable-backup.test.mjs) exercise real
+filesystem initialization, shutdown fences, tar files and bundle verification with
+substituted Docker metadata and transport. The positive pipeline is empty;
+[bundle tests](../packages/cli/test/durable-bundle.test.mjs) also cover active and
+withheld source pairs. These tests execute no Docker or native application runtime.
+Legacy restore refuses this format. Durable restore still needs independent
+selection, fresh mount enrollment, source-writer exclusion and held background
+recovery before it can start. Actual backup/restore durability and native acceptance
+remain open; no catalog or default cron admission changes.
 
 ## One-use route enrollment candidate
 

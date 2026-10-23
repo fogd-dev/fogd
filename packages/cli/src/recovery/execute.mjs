@@ -2,17 +2,17 @@ import { spawn } from 'node:child_process';
 import { open } from 'node:fs/promises';
 
 // Keep configuration and credentials out of command diagnostics.
-export async function execute(command, args, { env = process.env, output, input, inputText, timeoutMs = 900000 } = {}) {
+export async function execute(command, args, { env = process.env, output, input, inputText, timeoutMs = 900000, maxOutputBytes = 16 * 1024 * 1024 } = {}) {
   let out, source;
   try {
     out = output ? await open(output, 'wx', 0o600) : null;
     source = input ? await open(input, 'r') : null;
-    return await capture(command, args, { env, out, source, inputText, timeoutMs });
+    return await capture(command, args, { env, out, source, inputText, timeoutMs, maxOutputBytes });
   } finally { await out?.sync(); await out?.close(); await source?.close(); }
 }
-function capture(command, args, { env, out, source, inputText, timeoutMs }) {
+function capture(command, args, { env, out, source, inputText, timeoutMs, maxOutputBytes }) {
   return new Promise((resolve, reject) => {
-    let stdout = '', failure, force;
+    let stdout = '', bytes = 0, failure, force;
     const child = spawn(command, args, { env, stdio: [source?.fd ?? (inputText === undefined ? 'ignore' : 'pipe'), out?.fd ?? 'pipe', 'pipe'] });
     function abort(message) {
       failure ||= new Error(message); child.kill('SIGTERM');
@@ -23,8 +23,10 @@ function capture(command, args, { env, out, source, inputText, timeoutMs }) {
       child.stdin.on('error', () => abort(`${command} input stream failed`)); child.stdin.end(inputText);
     }
     child.stdout?.on('data', chunk => {
-      stdout += chunk;
-      if (stdout.length > 16 * 1024 * 1024) abort(`${command} diagnostic output exceeded its limit`);
+      if (failure) return;
+      bytes += chunk.length;
+      if (bytes > maxOutputBytes) abort(`${command} diagnostic output exceeded its limit`);
+      else stdout += chunk;
     });
     child.stderr.resume();
     child.on('error', () => { failure = new Error(`${command} could not start`); });

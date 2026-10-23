@@ -1,37 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, readdir, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { writeFile, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { stopDurableInstallation } from '../src/runtime/durable-stop.mjs';
+import { stopDurableInstallation, withStoppedDurableInstallation } from '../src/runtime/durable-stop.mjs';
 import { acquireLaunchFence } from '../src/runtime/launch-fence.mjs';
-import { freshRuntimePlan } from '../src/runtime/selection-plan.mjs';
-import { runtimeFamilies } from '../src/runtime/catalog.mjs';
-import { prebootFixture } from './fixtures/cron-preboot.mjs';
+import { durableStopFixture as fixture } from './fixtures/durable-stop.mjs';
 
-async function fixture(t) {
-  const root = await mkdtemp(join(tmpdir(), 'fogd-durable-stop-')); t.after(() => rm(root, { recursive: true, force: true }));
-  const directory = join(root, 'host'); await mkdir(directory, { mode: 0o700 });
-  const { source, profile } = prebootFixture();
-  const entry = { ...runtimeFamilies()[0], schema: 2, routing: 'durable', image: profile.image, storageImage: profile.storageImage,
-    binarySha256: profile.binarySha256, supervisorSha256: profile.supervisorSha256 };
-  const { config, policy } = freshRuntimePlan(source, entry);
-  const engine = { volumes: Object.values(config.volumes).map(volume => volume.name).sort(),
-    containers: Object.entries(config.services).map(([name, service], i) => ({ Id: i.toString(16).padStart(64, 'a'), Image: service.image,
-      Config: { Labels: { 'com.docker.compose.project': config.name, 'com.docker.compose.service': name, 'com.docker.compose.oneoff': 'False' } },
-      State: { Running: name !== 'bucket-init', Restarting: false, Paused: false, Status: name === 'bucket-init' ? 'exited' : 'running', ExitCode: 0, OOMKilled: false } })) };
-  const calls = [], observations = [], options = { directory, families: () => [entry], volumes: async () => [...engine.volumes],
-    containers: async project => { assert.equal(project, config.name); observations.push(structuredClone(engine.containers)); return structuredClone(engine.containers); },
-    run: async args => {
-      calls.push(args); assert.equal(args[0], 'stop');
-      for (const id of args.slice(1)) {
-        const container = engine.containers.find(value => value.Id === id); assert.ok(container);
-        container.State.Running = false; container.State.Status = 'exited';
-      }
-    },
-    stopped: async (project, names) => { assert.equal(project, config.name); assert.deepEqual(names.sort(), Object.values(config.volumes).map(volume => volume.name).sort()); assert.ok(engine.containers.every(container => !container.State.Running)); } };
-  return { root, directory, config, policy, engine, calls, observations, options };
-}
 const nameOf = container => container.Config.Labels['com.docker.compose.service'];
 const marker = f => join(f.directory, 'launch.pending.json');
 const uncertain = work => assert.rejects(work, error => error.code === 'ROUTE_STOP_UNCONFIRMED' && !/private|sha256|original_/.test(error.message) && !error.cause);
@@ -106,4 +80,20 @@ test('uncertain fence release after verified shutdown cannot make further Docker
   f.options.acquire = async () => ({ record: async value => { phase = value; }, release: async () => { throw new Error('private release'); } });
   await uncertain(stopDurableInstallation(f.config, f.options)); assert.equal(phase, 'complete'); assert.equal(f.calls.length, 4);
   assert.ok(f.engine.containers.every(container => !container.State.Running));
+});
+
+test('stopped maintenance cannot report success if a service restarts during its task', async t => {
+  const f = await fixture(t);
+  await uncertain(withStoppedDurableInstallation(f.config, async () => {
+    const controller = f.engine.containers.find(container => nameOf(container) === 'controller');
+    controller.State.Running = true; controller.State.Status = 'running';
+    return 'completed maintenance';
+  }, f.options));
+  assert.equal(JSON.parse(await readFile(marker(f))).phase, 'stopping'); assert.equal(f.calls.length, 4);
+});
+
+test('stopped maintenance never invokes its task after an uncertain ingress stop', async t => {
+  const f = await fixture(t); f.options.run = async () => { throw new Error('uncertain stop'); };
+  await uncertain(withStoppedDurableInstallation(f.config, async () => assert.fail('No maintenance before shutdown proof'), f.options));
+  assert.equal(JSON.parse(await readFile(marker(f))).phase, 'stopping');
 });

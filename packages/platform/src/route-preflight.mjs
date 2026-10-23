@@ -7,30 +7,35 @@ function challenge(input) {
     typeof input.challenge !== 'string' || !/^[a-f0-9]{64}$/.test(input.challenge)) throw new Error('Routing preflight requires exactly one 64-character hexadecimal challenge');
   return input.challenge;
 }
-function application(controller, route) {
-  const suffix = '.' + controller.baseDomain;
-  if (!route.host.endsWith(suffix)) throw refused();
-  const name = route.host.slice(0, -suffix.length), app = controller.state.apps[name];
-  if (!app || app.retirement || app.slot !== route.slot) throw refused();
+const inconsistent = () => new Error('Route state is inconsistent with public authority');
+function application(state, domain, route) {
+  const suffix = '.' + domain;
+  if (!route.host.endsWith(suffix)) throw inconsistent();
+  const name = route.host.slice(0, -suffix.length), app = state.apps[name];
+  if (!app || app.retirement || app.slot !== route.slot) throw inconsistent();
   return { name, app };
 }
-function held(controller, name, app) {
-  return applicationWithheld(app) || Boolean(routeHold(controller.state.routeAuthority.holds, name));
+function held(state, name, app) {
+  return applicationWithheld(app) || Boolean(routeHold(state.routeAuthority.holds, name));
 }
-function serving(controller, record) {
+// Pure serving decision shared by live preflight and stopped snapshot validation.
+// Throws unless every public route matches private state and every unheld live
+// app has its exact completed approval published; returns the active routes.
+export function routeStateApplications(state, record, domain) {
   const active = [];
   for (const route of record.routes) {
-    const { name, app } = application(controller, route), withheld = held(controller, name, app);
-    if (route.state === 'withheld') { if (!withheld) throw refused(); continue; }
-    if (withheld || !isDeepStrictEqual(completedRoute(controller.state, name, controller.baseDomain), route)) throw refused();
-    const release = controller.state.deployments[route.submission];
+    const { name, app } = application(state, domain, route), withheld = held(state, name, app);
+    if (route.state === 'withheld') { if (!withheld) throw inconsistent(); continue; }
+    if (withheld || !isDeepStrictEqual(completedRoute(state, name, domain), route)) throw inconsistent();
+    const release = state.deployments[route.submission];
     active.push({ name, route, version: release.version, secretRevision: release.secretRevision });
   }
-  for (const [name, app] of Object.entries(controller.state.apps)) {
-    if (!app.retirement && !held(controller, name, app) && !active.some(value => value.name === name)) throw refused();
+  for (const [name, app] of Object.entries(state.apps)) {
+    if (!app.retirement && !held(state, name, app) && !active.some(value => value.name === name)) throw inconsistent();
   }
   return structuredClone(active);
 }
+const serving = (controller, record) => routeStateApplications(controller.state, record, controller.baseDomain);
 // The controller serializes this with backend work. The result describes an
 // observation interval, not a route grant or evidence about actual launch mounts.
 export async function preflightRoutes(controller, routes, input) {

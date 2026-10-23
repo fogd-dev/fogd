@@ -35,11 +35,29 @@ async function stopGroup(group, containers, run) {
   const ids = group.flatMap(name => containers.filter(container => serviceName(container) === name && !isStopped(container)).map(container => container.Id));
   if (ids.length) await run(['stop', ...ids]);
 }
+async function stoppedState(config, before, names, beforeVolumes, io) {
+  await io.stopped(config.name, names);
+  const containers = checkedContainers(config, await io.containers(config.name), before), retained = await io.volumes(names);
+  if (containers.some(container => !isStopped(container)) || beforeVolumes.some(name => !retained.includes(name))) throw refused();
+  return { containers, report: stoppedReport(config, containers, retained) };
+}
 
 // Only stops already inspected IDs. No Compose operation, image/helper execution,
 // resource allocation, data write, marker reset or background pause is performed.
 // Launch and stop share one exclusive host marker; an uncertain mutation retains it.
 export async function stopDurableInstallation(config, options = {}) {
+  return (await shutdown(config, options)).report;
+}
+
+// Internal stopped-maintenance scope. The task runs after shutdown and must not
+// start resources. The shared fence stays held through its completion and a
+// second stopped-inventory proof. A failed task leaves the operation fenced.
+export async function withStoppedDurableInstallation(config, task, options = {}) {
+  if (typeof task !== 'function') throw refused();
+  return shutdown(config, options, task);
+}
+
+async function shutdown(config, options, task) {
   const io = { run: docker, families: runtimeFamilies, containers: projectContainers, volumes: retainedVolumes,
     stopped, acquire: acquireStopFence, ...options };
   let fence, stopping = false;
@@ -54,12 +72,13 @@ export async function stopDurableInstallation(config, options = {}) {
     if (ingress.some(container => serviceName(container) === 'workerd' && !isStopped(container))) throw refused();
     const groups = [['controller'], policy.fleets.flatMap(fleet => fleet.nodes.map(node => node.host)), ['minio', 'bucket-init']];
     for (const group of groups) await stopGroup(group, before, io.run);
-    await io.stopped(config.name, names);
-    const after = checkedContainers(config, await io.containers(config.name), before), retained = await io.volumes(names);
-    if (after.some(container => !isStopped(container)) || beforeVolumes.some(name => !retained.includes(name))) throw refused();
-    const report = stoppedReport(config, after, retained);
+    let settled = await stoppedState(config, before, names, beforeVolumes, io), value;
+    if (task) {
+      value = await task({ policy, ...settled });
+      settled = await stoppedState(config, before, names, beforeVolumes, io);
+    }
     await fence.record('complete'); await fence.release();
-    return report;
+    return { report: settled.report, value };
   } catch {
     if (fence && !stopping) await fence.release().catch(() => {});
     throw refused();
