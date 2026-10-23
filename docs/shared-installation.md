@@ -1,52 +1,70 @@
 # Start a shared installation with HTTPS
 
-Use this procedure for a controlled installation running trusted apps. You need
-Docker Compose, the checkout's dependencies, DNS for the app subdomains, and a PEM
-server certificate/key valid for the admin hostname and each app hostname. The local
-qualification uses a private CA; it does not establish a two-host deployment.
+Use this procedure for a controlled installation running trusted apps. The selected
+path needs Node.js 24.21 or newer, Linux arm64 Docker with Compose, a matching
+[operator package](offline-installation.md) or prepared checkout with qualified
+cached images, DNS for app subdomains, and a PEM certificate/key covering the admin
+and app hostnames. Local qualification uses a private CA and does not establish
+operation on another machine. The [operator workflow](operator-guide.md) connects
+setup with deployment, maintenance and recovery.
 
 ## Prepare and start
 
-1. Copy `.env.example` to a private installation file inside `.fogd/`, set a unique
-   `COMPOSE_PROJECT_NAME`, and retain the bucket credentials, replica identities,
-   prefixes, and ports for that installation. Set `FOGD_BASE_DOMAIN` to the app domain.
-   Choose `FOGD_BIND_ADDRESS` for the intended interface; its default is loopback.
-   Set `FOGD_PROFILE=shared`, `FOGD_TLS=1`, and `FOGD_DEPLOY_TOKEN=`. Set a private bucket
-   password before initial startup. Shared CLI startup and TLS import refuse missing
-   storage credentials or the development password before writing generated settings.
-   Keep this file mode 0600.
-2. Select that installation and import the certificate while it is stopped:
+1. From the operator directory, set a persistent installation home and create a
+   private profile in an existing private directory:
 
    ```sh
-   export FOGD_ENV_FILE="$PWD/.fogd/shared.env"
-   pnpm exec fogd tls import /path/to/server-chain.pem /path/to/server-key.pem
-   pnpm exec fogd up --shared
+   export FOGD_HOME="$PWD"
+   export FOGD_ENV_FILE=/private/fogd/shared.env
+   cp -n .env.example "$FOGD_ENV_FILE"
+   chmod 600 "$FOGD_ENV_FILE"
    ```
 
-   Import builds the checkout's runtime image and recreates stopped containers using
-   its Compose configuration. This is also a configuration upgrade; take a backup
-   before using a newer checkout with an existing installation. Import never starts
-   the containers. `up --shared` persists TLS/shared settings and clears the legacy
-   installation-wide deploy credential. It generates missing admin/gateway secrets.
-3. Trust the issuer in each client. For a private CA, set `NODE_EXTRA_CA_CERTS` before
-   starting the Node CLI; use your organization's browser trust procedure for people.
-   Set `FOGD_SERVER` to the certificate-valid HTTPS admin endpoint, including its port.
+   Choose a fresh `COMPOSE_PROJECT_NAME` such as `my-cloud`, unused ports, and
+   `FOGD_BASE_DOMAIN`. Set `FOGD_BIND_ADDRESS` for the intended interface; the
+   default is loopback. Set `FOGD_PROFILE=shared`, `FOGD_TLS=1`, and
+   `FOGD_DEPLOY_TOKEN=`. Supply explicit `FOGD_BUCKET_USER` and a private
+   `FOGD_BUCKET_PASSWORD` before first startup. Never select existing data by
+   reusing its volume names. Retain the profile and private `.fogd` state.
+2. Enroll the qualified family on fresh storage:
 
    ```sh
-   export NODE_EXTRA_CA_CERTS=/path/to/issuer-ca.pem
+   node packages/cli/bin/fogd.js up --shared --runtime celld-cron-v2-linux-arm64
+   ```
+
+   When needed, add `--network-plan FILE` using unused subnets in the
+   [documented format](operator-guide.md#choose-private-subnets-when-needed).
+   Enrollment uses cached verified images and creates stopped services. The first
+   call reports the missing TLS keypair. Record the printed runtime family and
+   installation identity digest independently, then import the keypair and start:
+
+   ```sh
+   node packages/cli/bin/fogd.js tls import /private/server-chain.pem /private/server-key.pem --installation my-cloud
+   node packages/cli/bin/fogd.js up --installation my-cloud
+   ```
+
+   Use the actual project name from the profile. Shared bootstrap generates missing
+   admin/gateway credentials and clears the installation-wide deployment token.
+   Selected certificate import does not build or pull images. Later startup reads
+   the saved enrollment rather than adopting changed profile credentials or images.
+3. Trust the issuer in each client. For a private CA, set `NODE_EXTRA_CA_CERTS`
+   before starting Node; use the organization's browser trust procedure for people.
+   Set `FOGD_SERVER` to the certificate-valid HTTPS admin endpoint and port:
+
+   ```sh
+   export NODE_EXTRA_CA_CERTS=/private/issuer-ca.pem
    export FOGD_SERVER=https://admin.example.test:8788
-   pnpm exec fogd admin issue-token teammate demo
+   node packages/cli/bin/fogd.js admin issue-token teammate demo
    ```
 
-   Give the teammate the returned scoped token and endpoint. Their CLI needs
-   `FOGD_SERVER`, `FOGD_DEPLOY_TOKEN`, and private-CA trust if applicable; no cluster or
-   admin credentials. Follow the [approval workflow](deploy-access.md). App URLs use
-   `https://APP.BASE_DOMAIN:PORT`; port defaults to 8787.
+   Give developers the endpoint, scoped token, client trust and an authenticated
+   [developer bundle](developer-client.md). Keep operator and storage credentials
+   private. Follow the [approval workflow](deploy-access.md). App URLs use
+   `https://APP.BASE_DOMAIN:APP_PORT`; the app port defaults to 8787.
 
-`FOGD_ENV_FILE` selects the CLI's installation file; process environment values take
-precedence. CLI Compose calls suppress implicit `.env` loading, so another checkout
-configuration cannot supply missing settings. Direct `docker compose` calls do not
-read `FOGD_ENV_FILE`; pass `--env-file "$FOGD_ENV_FILE"` explicitly.
+`FOGD_ENV_FILE` selects the private operator profile; process environment values
+have precedence. CLI Compose calls suppress implicit `.env` loading. Direct Docker
+commands bypass these CLI controls and do not read `FOGD_ENV_FILE` automatically.
 
 ## Existing development storage credentials
 
@@ -66,32 +84,58 @@ it with changed credentials. Retain the original backup and configuration.
 Use a fresh installation with explicit private credentials for new shared work.
 Direct Docker commands bypass these host CLI checks.
 
-## Rotate a certificate or upgrade from HTTP
+## Rotate a certificate
 
-Take a [stopped backup](recovery.md) before upgrading an existing installation.
-Keep the same project name, credentials, replica IDs, prefixes, and volume names.
-Use the new checkout's Compose configuration, stop the installation, import the new
-certificate, then run `fogd up --shared`:
+For a planned rotation, take a [stopped backup](recovery.md) using a new private
+destination. Backup leaves the installation stopped. Import a valid replacement
+for the same hostnames and resume the same enrolled project:
 
 ```sh
-docker compose --env-file "$FOGD_ENV_FILE" stop
-pnpm exec fogd tls import /path/to/new-chain.pem /path/to/new-key.pem
-pnpm exec fogd up --shared
+node packages/cli/bin/fogd.js backup /private/backups/before-certificate --installation my-cloud
+node packages/cli/bin/fogd.js tls import /private/new-chain.pem /private/new-key.pem --installation my-cloud
+node packages/cli/bin/fogd.js up --installation my-cloud
 ```
 
-A pre-TLS restored configuration pins old images and has no TLS volume. Keep that
-configuration as recovery evidence; switch to the current `compose.yaml` and an
-installation file preserving its private settings before importing. Clear any old
-`FOGD_CONTROLLER=controller:8082` override: gateway routing now uses the private
-8083 listener. Recreate all replicas so they receive trusted-forwarding configuration.
-Never remove volumes to perform this upgrade.
+Point clients at the intended endpoint and update issuer trust if the issuer
+changed. Persistent background pause controls are separate: backup can leave work
+paused and require explicit resume. Rotation interrupts serving; existing sockets
+are not promised to survive.
 
 Expired certificates fail startup validation and can leave services restarting.
-Stop the project explicitly before importing a replacement. Running processes retain
-the loaded certificate until restart; fogd does not renew certificates or watch
-expiry. Operators own issuance, renewal, DNS, network policy, and client trust.
+Use `fogd stop --installation PROJECT` before importing a replacement; retain
+existing backups and saved configuration. Running processes keep the certificate
+loaded at startup. fogd does not renew certificates or watch expiry. Operators own
+issuance, renewal, DNS, network access and client trust.
 
-## Reproduce local qualification
+## Legacy checkout setup and HTTP upgrade
+
+The older, unenrolled checkout workflow builds from its Compose template. With its
+original private profile and the stack stopped, its commands are below. Existing
+enrollment, orphaned project networks or an image tag resolving to a catalog image
+can refuse legacy fallback. Keep resources stopped rather than removing policy or
+enrollment records or retagging qualified images to force this path.
+
+```sh
+node packages/cli/bin/fogd.js tls import /private/server-chain.pem /private/server-key.pem
+node packages/cli/bin/fogd.js up --shared
+```
+
+Unlike explicit enrolled import, this can build images and recreate stopped
+containers from the checkout. Keep the original credentials, replica IDs, prefixes,
+volume names and backup. A newer checkout is not a qualified selected-family upgrade.
+Do not apply this path to an enrolled installation or remove volumes to upgrade it.
+
+The bounded earlier HTTP-to-TLS drill uses an unenrolled snapshot with old images
+and no TLS volume. It retains that snapshot, selects the newer checkout template,
+removes an old `FOGD_CONTROLLER=controller:8082` override, and recreates replicas
+with trusted-forwarding configuration. Its evidence does not authorize changing a
+selected runtime's pinned image or launch configuration.
+
+## Checkout-only legacy qualification
+
+These scripts exercise the older checkout path and require its source, dependencies
+and build inputs. They are not packaged operator commands or a selected-family
+migration procedure.
 
 Generate an isolated seven-day test CA/server certificate with the host's existing
 OpenSSL. No system trust-store changes are made:
@@ -101,8 +145,9 @@ node scripts/local-certificate.mjs .fogd/local-certificate
 export NODE_EXTRA_CA_CERTS="$PWD/.fogd/local-certificate/ca.pem"
 ```
 
-Use a fresh installation file/project with the settings above and default localhost
-ports, import its `server.pem`/`server.key`, and start it. Then run:
+Use a fresh, unenrolled checkout project/profile with the shared settings above
+and default localhost ports. Import its `server.pem`/`server.key` using the legacy
+commands, then start it. Then run:
 
 ```sh
 node scripts/tls-smoke.mjs .fogd/local-certificate/server.pem

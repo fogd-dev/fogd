@@ -34,9 +34,10 @@ the verifier still accepts that inventory when its retained manifest matches.
 ## Using an imported program
 
 From the imported operator directory, invoke commands with
-`node packages/cli/bin/fogd.js`. Some reference guides also describe the older
-checkout workflow using `pnpm exec fogd`; those examples assume workspace setup.
-Use the operator workflow's selected installation commands for this package.
+`node packages/cli/bin/fogd.js`. The installation, access and recovery guides use
+that entrypoint. Sections labelled as legacy or checkout-only describe separate
+procedures and source-based qualification scripts. Use the operator workflow's
+selected installation commands for this package.
 
 The package includes operating guides rather than the complete repository.
 Links to specifications, historical reviews, evidence receipts, examples and

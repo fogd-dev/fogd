@@ -2,47 +2,60 @@
 
 An administrator can issue a credential that submits deployments for named apps.
 It cannot approve releases, read private artifacts, change app secrets, or inspect
-another credential's submissions. This slice qualifies local access controls;
-HTTPS and shared-network operation are still M8b2 work.
+another credential's submissions. Use the [shared installation](shared-installation.md)
+procedure for HTTPS and private operator configuration. Local qualification does
+not establish operation on another host.
 
 ## Issue and use a credential
 
-From the fogd checkout, using the existing administrator configuration:
+From the operator directory, using the existing administrator profile and TLS trust:
 
 ```sh
-pnpm exec fogd admin issue-token 'Demo builder' hello,notebook
+node packages/cli/bin/fogd.js admin issue-token 'Demo builder' hello,notebook
 ```
 
 The response includes an opaque credential ID, app scopes, and the token. The token
 is shown only during issuance. Deliver it privately and keep it out of source code,
 logs, and screenshots. The controller stores its hash, not the original token.
 
-The teammate configures `FOGD_SERVER` and `FOGD_DEPLOY_TOKEN` privately, then runs
-`fogd deploy` inside an allowed app. Use the workspace CLI with `FOGD_HOME` pointing
-at the checkout; this version has not been published to npm. The app name comes from
-`fogd.json` or `--name`. An administrator still approves the exact deployment digest.
-`fogd status ID` reports only submissions made with that credential.
+Give the teammate a [standalone developer client](developer-client.md), the
+endpoint, token, and CA certificate when needed. They configure `FOGD_SERVER`,
+`FOGD_DEPLOY_TOKEN`, and client trust privately, then invoke the client inside their
+prepared application project:
+
+```sh
+node /path/to/client/fogd.mjs deploy
+node /path/to/client/fogd.mjs status SUBMISSION_ID
+```
+
+The app name comes from `fogd.json` or `--name`. An administrator still approves
+the exact deployment digest. Status reports only submissions made with that
+credential. The client needs the app's existing SDK/build dependencies; it needs
+no Docker or operator credentials.
 
 ## Inspect and revoke
 
 ```sh
-pnpm exec fogd admin list
-pnpm exec fogd admin revoke-token CREDENTIAL_ID
+node packages/cli/bin/fogd.js admin list
+node packages/cli/bin/fogd.js admin revoke-token CREDENTIAL_ID
 ```
 
 Listing shows credential names, scopes, issue/revocation timestamps, deployment
 submitter IDs, and retained artifact usage. It never returns token values or hashes.
-Revocation blocks subsequent submission and status access, including after controller
-restart or restoration. It does not remove already approved apps or pending review
-records. Scopes are immutable: issue a replacement credential and revoke the old one.
+Revocation blocks subsequent submission and status access and persists across
+controller restart. A backup retains the credential state at its snapshot boundary:
+restoring a backup taken before revocation can make the token valid again. Review
+and revoke restored credentials before reopening deployment access. Revocation
+does not remove already approved apps or pending review records. Scopes are
+immutable: issue a replacement credential and revoke the old one.
 There is one bootstrap administrator in this slice; SSO and multiple administrator
 identities are not implemented.
 
-The legacy installation-wide deployment token remains available when configured.
-To disable it at the server, omit or clear `FOGD_DEPLOY_TOKEN` when starting Compose.
-`fogd up` currently generates a legacy token for the local examples, so use direct
-Compose startup when intentionally disabling it. M8b2 must make the shared-mode
-policy explicit rather than relying on this local bootstrap behavior.
+Shared bootstrap with `fogd up --shared` clears the installation-wide deployment
+token and requires app-scoped credentials. Normal enrolled startup preserves the
+saved configuration. Local development bootstrap can still generate a legacy
+installation-wide token; use the shared installation path when giving teammates
+access. Do not change an enrolled policy or invoke raw Compose to bypass it.
 
 ## Capacity limits
 
@@ -56,12 +69,17 @@ have a separate limit; excess requests return 429 and can be retried later.
 
 Capacity refusal preserves existing data and does not silently prune artifacts.
 Orphan directories are counted conservatively because they may be useful when
-reconciling mismatched controller metadata. Ask an operator to inspect capacity;
-safe retirement/pruning belongs to M10. Artifact quotas exclude filesystem overhead,
+reconciling mismatched controller metadata. Operators can inspect usage with
+`fogd admin capacity`. Local build-copy pruning does not reclaim controller
+artifacts; controller artifact collection remains open. Artifact quotas exclude
+filesystem overhead,
 controller metadata, secret revision history, transient activation copies, and app
 D1/R2 growth. Runtime limits and storage monitoring remain separate responsibilities.
 
 ## Reproduce the local check
+
+The following reproduction scripts require the source checkout and its declared
+inputs; they are not operator-package commands.
 
 Run `node scripts/scoped-deploy-smoke.mjs` against a fresh disposable stack. It uses
 the real CLI to issue credentials, deploy hello and notebook with distinct scopes,

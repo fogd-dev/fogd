@@ -27,71 +27,126 @@ trust pointed at the intended installation for background controls. The
 
 ## Create a snapshot
 
-Run from the fogd checkout with the same configuration used to start the installation:
+From the operator directory, retain the installation's `FOGD_HOME`, private operator
+profile and TLS trust. The examples use an enrolled project named `my-cloud`:
 
 ```sh
-pnpm exec fogd backup .fogd/snapshot-01
+node packages/cli/bin/fogd.js backup /private/backups/snapshot-01 --installation my-cloud
 ```
 
-The destination must not exist. The command verifies the running configuration,
+The destination must not exist. The command verifies the saved configuration,
 stops ingress and approvals, stops the replicas together, then stops MinIO. It
 copies every named volume and the exact images. Success writes `manifest.json` last
-and leaves the source stopped. The manifest records checksums, timing, and container
-exit codes. Replica kill/OOM exits indicate crash recovery rather than a clean shutdown.
-Gateway exit status does not describe durable-state recovery. A failed backup also leaves the installation stopped; inspect the
+and leaves the source stopped. The manifest records checksums, timing and container
+exit codes. Replica kill/OOM exits indicate crash recovery rather than a clean
+shutdown. Gateway exit status does not describe durable-state recovery. A failed
+backup can leave the installation stopped or background work paused; inspect the
 failure and use a new destination for another attempt.
 
-To resume the original installation explicitly:
+Resume the same enrolled installation with:
 
 ```sh
-docker compose start
+node packages/cli/bin/fogd.js up --installation my-cloud
 ```
 
-A changed Compose file or environment can make the inventory differ from the
-running containers. Restore the original settings before retrying backup; do not
-change replica IDs, bucket prefixes, or credentials to bypass the check. Docker
-command diagnostics are withheld because they can contain credentials. An operator
-can inspect `docker compose config` privately to diagnose configuration errors; do
-not paste its output into logs or issue reports. Container stdout logs are not
-included; the preserved logs are celld durable recovery logs.
+Background delivery and dispatch can remain paused after backup; use their
+respective status and explicit resume commands. Starting containers does not
+remove an operator pause or acknowledge recovery findings.
+
+A changed configuration can make the inventory differ from the containers. Retain
+the original settings; do not change replica IDs, bucket prefixes or credentials to
+bypass the check. Docker command diagnostics are withheld because they can contain
+credentials. Inspect configuration locally without pasting it into logs or issues.
+Container stdout logs are not included; the preserved logs are celld durable
+recovery logs.
 
 ## Restore to fresh storage
 
-Keep the source stopped while using the same published ports and app hostnames:
+Keep the source and all related copies stopped, including copies on other hosts.
+Keep the same `FOGD_HOME` so the CLI retains its local recovery relationships.
+Use the recorded source installation identity and the same qualified family:
 
 ```sh
-pnpm exec fogd restore .fogd/snapshot-01 --project fogd-restored --output .fogd/restored-01
-docker compose -f .fogd/restored-01/compose.json -p fogd-restored up -d --pull never
+node packages/cli/bin/fogd.js restore /private/backups/snapshot-01 \
+  --project my-cloud-recovered --output /private/fogd/recovery-01 \
+  --runtime celld-cron-v2-linux-arm64 --expected-identity RECORDED_SHA256 \
+  --network-plan /private/fogd/recovery-networks.json
+node packages/cli/bin/fogd.js up --installation my-cloud-recovered
 ```
 
-Only run the start command after restore reports success and both compose.json and
-restored.json exist. A failed restore may retain compose.pending.json and stopped resources for inspection;
-do not start partial containers manually. Restoring an older snapshot can resurrect
-apps, credentials, and secret revisions from that boundary. Keep its source stopped.
-The output directory and Docker project must be new. Restore refuses existing
-containers, volumes, or networks rather than overwriting them. It verifies all
-archives before creation, loads the recorded images, restores stopped volumes,
-then compares their contents against the original archives. A failed restore leaves
-its new resources stopped. Inspect them and choose a fresh project/output directory
-for another attempt. Do not start a partial restoration.
+Choose unused recovery subnets using the [network-plan format](operator-guide.md#choose-private-subnets-when-needed).
+The option can be omitted when Docker can allocate suitable networks; source subnet
+settings are not reused in that case. The new
+project and output directory must not exist. The source identity is the digest
+recorded at enrollment, not the software-transfer manifest hash. Selected recovery
+requires cached, verified catalog images; import the matching software package
+separately if they are unavailable. It does not assemble or pull replacements.
 
-The generated Compose file is private and self-contained. It preserves node names,
-peer addresses, app routing, bucket prefixes, secret revisions, and platform
-credentials while assigning new physical volumes and networks. It pins image IDs,
-omits build instructions, and disables pulls. The restored bucket is independent
-of the original. This procedure does not support running both copies at the same
-application origin simultaneously.
+Wait for restore to report success before starting. The CLI fences incomplete
+restoration against startup; retain partial outputs and stopped resources for
+inspection. Do not start partial containers manually. Restore refuses existing
+resources, verifies the snapshot before creation, restores fresh stopped volumes,
+then compares their contents against the archives. A failed restore leaves its
+new resources stopped. Choose a fresh project/output directory for another attempt.
 
-Continue using the same deploy/admin endpoint and credentials. For subsequent fogd
-operations against the generated Compose file, select both its file and project:
+The canonical recovered configuration lives under
+`FOGD_HOME/.fogd/installations/my-cloud-recovered/`; `--output` contains a recovery
+copy. It preserves logical identities and private settings while assigning new
+physical volumes and networks. Images remain pinned. The restored bucket is
+independent of the original. Running both copies at the same application origin
+is outside this procedure.
+
+Point `FOGD_SERVER` and client trust at the recovered endpoint, using the operator
+credentials and certificate trust from that recovery point. The original
+operator profile can still name the source, so select the recovered project
+explicitly for later maintenance:
 
 ```sh
-FOGD_COMPOSE_FILE="$PWD/.fogd/restored-01/compose.json" COMPOSE_PROJECT_NAME=fogd-restored pnpm exec fogd backup .fogd/snapshot-02
+node packages/cli/bin/fogd.js backup /private/backups/snapshot-02 --installation my-cloud-recovered
+node packages/cli/bin/fogd.js tls import /private/server-chain.pem /private/server-key.pem \
+  --installation my-cloud-recovered
 ```
 
-An interrupted approval returns as failed and requires explicit retry with its
-original digest and pinned secret revision. A snapshot restores the state at its
-stopped boundary; changes made after the source resumes are not included.
+An interrupted approval requires an explicit retry with its original digest and
+pinned secret revision. Queue and scheduled recovery also require inspection,
+acknowledgment of the current findings and a separate resume. Restoring an older
+snapshot restores its application access, deployment credentials and secret
+revisions: later revocations and rotations are not merged. Keep endpoint access
+restricted while reviewing and revoking restored credentials. Changes made after
+the snapshot boundary are absent.
+
+## Unenrolled checkout installations
+
+The older checkout path uses its operator profile and Compose template rather than
+an enrolled selection. It remains separate from the selected-family commands above.
+Existing enrollment, orphaned project networks or a local image tag resolving to a
+catalog image can refuse legacy fallback. Keep the resources stopped on refusal;
+do not remove policy/enrollment records or retag qualified images to force startup.
+From that checkout, with the same settings used to create the stack:
+
+```sh
+node packages/cli/bin/fogd.js backup .fogd/snapshot-01
+```
+
+For an unenrolled snapshot, restore onto a fresh project and start its generated
+configuration only after restoration reports success:
+
+```sh
+node packages/cli/bin/fogd.js restore .fogd/snapshot-01 --project fogd-restored --output .fogd/restored-01
+docker compose --env-file /dev/null -f .fogd/restored-01/compose.json -p fogd-restored up -d --pull never
+```
+
+This path loads the snapshot's recorded images. For later backup, select its exact
+configuration and project through the profile overrides:
+
+```sh
+FOGD_COMPOSE_FILE="$PWD/.fogd/restored-01/compose.json" COMPOSE_PROJECT_NAME=fogd-restored \
+  node packages/cli/bin/fogd.js backup .fogd/snapshot-02
+```
+
+Do not use these raw Compose commands for an enrolled family or an unfinished
+selected restoration. Selected installations use `up --installation PROJECT` and
+retain their independent policy and restoration fence.
 
 ## What the bundle contains
 

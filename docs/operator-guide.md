@@ -131,9 +131,22 @@ The [artifact review guide](artifact-review.md) explains the verified readable
 copies and changed-file report. Review is separate from approval and does not
 execute application code or SQL.
 
-Applications requiring secrets also need an operator-supplied
-[secret revision](m7c.md#secret-contract) in the approval command. A submitted
-artifact remains inert until approval. The application URL uses
+For an application requiring secrets, prepare a private JSON object containing its
+secret names and values. Supply it on standard input, then approve with the returned
+revision ID:
+
+```sh
+node packages/cli/bin/fogd.js admin secrets my-app < /private/fogd/app-secrets.json
+node packages/cli/bin/fogd.js admin approve SUBMISSION_ID SHA256 SECRET_REVISION
+```
+
+A secret update replaces the app's whole stored secret set. Values must be
+nonempty strings, at most 8 KiB each and 32 KiB for the serialized JSON object.
+They stay out of command arguments, artifacts and status output; retain the input file privately.
+A new revision does not change a running release. Submit and approve a new release
+with that revision to apply changed values. The [secret contract](m7c.md#secret-contract)
+defines declaration and retry rules. A submitted artifact remains inert until
+approval. The application URL uses
 `https://APP.BASE_DOMAIN:APP_PORT`; DNS, certificate coverage and network access
 must match your configuration. Approval pauses new HTTP routing during activation;
 failed updates can leave the route paused. This is not a zero-downtime update path.
