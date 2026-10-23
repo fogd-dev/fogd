@@ -8,6 +8,7 @@ const output = value => console.log(JSON.stringify(value));
 if (args[0] === 'info') output({ OSType: 'linux', Architecture: 'arm64' });
 else if (args[0] === 'image' && args[1] === 'inspect') output([{ Id: args.at(-1), Os: 'linux', Architecture: 'arm64', Config: { WorkingDir: '/app', Env: ['PATH=/usr/local/bin:/usr/bin:/bin'] } }]);
 else if (args[0] === 'volume' && args[1] === 'ls') console.log(Object.entries(config.volumes).filter(([role]) => role !== process.env.FOGD_OBSERVE_MISSING_VOLUME).map(([, value]) => value.name).join('\n'));
+else if (args[0] === 'volume' && args[1] === 'inspect') output(args.slice(2).map(Name => ({ Name, Driver: 'local', Options: {}, Labels: { 'com.docker.compose.project': process.env.FOGD_OBSERVE_FOREIGN_POLICY || config.name, 'com.docker.compose.volume': Object.keys(config.volumes).find(role => config.volumes[role].name === Name) } })));
 else if (args[0] === 'network' && args[1] === 'inspect') {
   const [role, network] = Object.entries(config.networks).find(([, value]) => value.name === args.at(-1));
   output([{ Name: network.name, Labels: { 'com.docker.compose.project': process.env.FOGD_OBSERVE_FOREIGN_NETWORK || config.name, 'com.docker.compose.network': role } }]);

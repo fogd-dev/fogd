@@ -3,6 +3,7 @@ import { docker, json, projectContainers, projectName } from '../recovery/docker
 import { runtimeFamilies, authorizeInstalledPolicy, verifyRuntimeFamily } from './catalog.mjs';
 import { readPolicyVolume } from './policy-volume.mjs';
 import { hasRuntimeEnrollment } from './installation-state.mjs';
+import { assertOwnedLocalVolume } from '../recovery/inventory.mjs';
 
 export async function readInstalledPolicy(config, { allowMissing = false } = {}) {
   projectName(config.name);
@@ -14,6 +15,9 @@ export async function readInstalledPolicy(config, { allowMissing = false } = {})
     if (hasRuntimePolicy(config) || await hasRuntimeEnrollment(config.name) || await usesCatalogImage(config)) throw new Error('Selected runtime policy is missing; keep the installation stopped');
     return null;
   }
+  const volumes = await json(['volume', 'inspect', name]);
+  if (!Array.isArray(volumes) || volumes.length !== 1 || volumes[0]?.Name !== name) throw new Error('Cannot verify installed runtime policy volume ownership');
+  assertOwnedLocalVolume(config, runtimePolicyVolume, volumes[0]);
   const reader = await verifiedReader();
   const env = config.services.controller.environment;
   const policy = await readPolicyVolume(reader.image, name, env);

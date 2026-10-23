@@ -35,7 +35,7 @@ async function fixture(t, admission = 'candidate') {
     else if(args[0]==='ps'&&args.includes('volume='+process.env.FOGD_TEST_WRITER_VOLUME))console.log('aliased-writer');
     else if(args[0]==='ps'&&args.includes('-aq')&&process.env.FOGD_TEST_CONTAINER)console.log('existing-container');
     else if(args[0]==='inspect'&&process.env.FOGD_TEST_CONTAINER)console.log(JSON.stringify([{Image:entry.image,State:{Running:false}}]));
-    else if(args[0]==='volume'&&args[1]==='inspect')console.log(JSON.stringify(args.slice(2).map(Name=>({Name,Driver:'local',Options:{},Labels:{'com.docker.compose.project':process.env.FOGD_TEST_FOREIGN_VOLUME?'foreign':'original','com.docker.compose.volume':Name.slice('original_'.length)}}))));
+    else if(args[0]==='volume'&&args[1]==='inspect')console.log(JSON.stringify(args.slice(2).map(Name=>({Name,Driver:process.env.FOGD_TEST_VOLUME_DRIVER||'local',Options:JSON.parse(process.env.FOGD_TEST_VOLUME_OPTIONS||'{}'),Labels:{'com.docker.compose.project':process.env.FOGD_TEST_FOREIGN_VOLUME?'foreign':'original','com.docker.compose.volume':process.env.FOGD_TEST_VOLUME_ROLE||Name.slice('original_'.length)}}))));
     else if(args[0]==='volume'&&args[1]==='ls'&&process.env.FOGD_TEST_EXISTING){const value=process.env.FOGD_TEST_EXISTING;const complete=value==='original_runtime-policy'&&!process.env.FOGD_TEST_EXACT_VOLUMES;console.log(complete?[...Object.values(JSON.parse(readFileSync(process.env.FOGD_TEST_SOURCE,'utf8')).volumes).map(v=>v.name),'original_runtime-policy'].join('\\n'):value);}
     else if(!['ps','volume','network'].includes(args[0]))process.exit(99);`);
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'installation.env'),
@@ -370,4 +370,18 @@ test('recovery source publication refuses replacement and cleans the staged file
   assert.deepEqual(JSON.parse(await readFile(join(directory, 'recovery-source.json'))), { schema: 1, project: 'target', sourceProject: 'original', volumes: Object.keys(f.source.volumes).sort().map(name => f.source.volumes[name].name) });
   const list = (await import('node:fs/promises')).readdir;
   assert.deepEqual((await list(directory)).filter(name => name.startsWith('recovery-source-')), []);
+});
+
+for (const [label, metadata] of [
+  ['foreign project', { FOGD_TEST_FOREIGN_VOLUME: '1' }],
+  ['foreign role', { FOGD_TEST_VOLUME_ROLE: 'bucket' }],
+  ['external driver', { FOGD_TEST_VOLUME_DRIVER: 'external-driver' }],
+  ['local mount options', { FOGD_TEST_VOLUME_OPTIONS: '{"device":"/private/foreign"}' }],
+]) test(`policy volume with ${label} refuses before any reader or installation mutation`, async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.invoke({ runtime: f.entry.id, candidateEnrollment: true }, { FOGD_TEST_EXISTING: 'original_runtime-policy', ...metadata }), /not owned local project storage/);
+  const recorded = await calls(f);
+  assert.deepEqual(recorded.map(args => args.slice(0, 2)), [['volume', 'ls'], ['volume', 'inspect']]);
+  await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
+  await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
 });

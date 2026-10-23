@@ -21,7 +21,13 @@ test('copied CLI observes only its selected fleet with no networked data mounts 
   assert.deepEqual(Object.keys(payload.env).sort(), ['AWS_ACCESS_KEY_ID', 'AWS_REGION', 'AWS_SECRET_ACCESS_KEY', 'FOGD_BUCKET', 'FOGD_SLOTS', 'S3_ENDPOINT']);
   assert.equal(input.includes('private-app-secret'), false); assert.equal(input.includes('private-deploy-credentials'), false);
   assert.equal(args.join('\n').includes('private-password'), false);
-  assert.equal(calls.some(row => row.args.includes('create') || row.args.includes('up') || row.args.includes('stop') || row.args[0] === 'volume' && row.args[1] !== 'ls'), false);
+  assert.equal(calls.some(row => row.args.includes('create') || row.args.includes('up') || row.args.includes('stop') || row.args[0] === 'volume' && !['ls', 'inspect'].includes(row.args[1])), false);
+  assert.deepEqual(calls.filter(row => row.args[0] === 'volume' && row.args[1] === 'inspect').map(row => row.args), [['volume', 'inspect', f.plan.config.volumes['runtime-policy'].name]]);
+});
+test('foreign policy storage refuses observation before any metadata or networked helper', async t => {
+  const f = await observationFixture(t);
+  await assert.rejects(f.invoke(undefined, { FOGD_OBSERVE_FOREIGN_POLICY: 'other-project' }), /not owned local project storage/);
+  assert.equal((await f.calls()).some(row => row.args[0] === 'run'), false);
 });
 for (const args of [[], ['sample'], ['../app', '--installation', 'original'], ['sample', '--installation', '../escape'], ['sample', 'extra', '--installation', 'original'], ['sample', '--installation', 'original', '--unknown']]) test(`bad observation arguments refuse before Docker: ${JSON.stringify(args)}`, async t => {
   const f = await observationFixture(t); await assert.rejects(f.invoke(args), error => error.code === 1); assert.deepEqual(await f.calls(), []);
