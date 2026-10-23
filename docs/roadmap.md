@@ -41,7 +41,7 @@ these current gaps:
   references. Enforce shared-installation storage credential requirements without
   silently changing credentials on existing data. [Host build-cache retention](build-retention.md)
   now has local interrupted-prune and restore evidence. An owner-only
-  [controller artifact plan](controller-artifacts.md) is implemented in source;
+  [controller artifact plan and pins](controller-artifacts.md) are implemented in source;
   controller pruning and its quota-fill gate remain open.
 - **Capacity and serving:** measure latency, throughput, memory, and controller-loss
   behavior across declared app counts and concurrent uploads. Use those results to

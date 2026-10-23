@@ -1,9 +1,11 @@
 import { configEnv, serverOrigin } from '../local.mjs';
 import { controllerGet, boundedJson, discardResponse } from '../client-http.mjs';
 import { artifactRetentionView } from './view.mjs';
+import { artifactPinCommand } from './pins-command.mjs';
 
 export async function artifactsCommand(args) {
-  if (args.length !== 1 || args[0] !== 'plan') throw new Error('Usage: fogd admin artifacts plan');
+  if (args.length === 3 && ['keep', 'unkeep'].includes(args[0])) return artifactPinCommand(args);
+  if (args.length !== 1 || args[0] !== 'plan') throw new Error('Usage: fogd admin artifacts plan | keep|unkeep ID SHA');
   const env = await configEnv();
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD for administrator artifact inspection');
   const authorization = `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`;

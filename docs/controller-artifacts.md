@@ -1,10 +1,10 @@
-# Controller artifact retention plans
+# Controller artifact retention
 
-Controller artifact planning reports protected releases and terminal artifacts
-with no recorded references. It reads stored files without executing application
-code. The planner is implemented in source and requires a server that provides
-`/v1/admin/artifacts`. The frozen catalog family does not provide this endpoint;
-a new runtime still needs qualification before ordinary installation.
+Controller artifact retention lets owners keep exact releases and inspect which
+terminal artifacts have no recorded references. These commands are implemented in
+source and require matching CLI/server support for `/v1/admin/artifacts`. The
+frozen catalog family does not provide this endpoint; a new runtime still needs
+qualification before ordinary installation.
 
 Use the selected installation's administrator endpoint and credentials:
 
@@ -25,7 +25,8 @@ secret revisions, credentials and raw backend diagnostics. Its fields are:
   codes. Active, pending, failed, activating, retired and unknown releases stay
   protected. Controller metadata references, references from protected releases,
   and their transitive chains protect otherwise terminal artifacts too. Unknown
-  entries and content mismatches stay retained.
+  entries and content mismatches stay retained. `operator-pin` identifies an
+  explicit owner choice to keep that release.
 - `missing`: deployment records without a physical artifact entry. Missing bytes
   do not contribute to either byte total. A missing terminal release can have an
   empty reason list; its metadata alone cannot reclaim storage.
@@ -44,6 +45,32 @@ waits for earlier queued operations to finish. External filesystem writers are
 outside that queue. File reads may update access times; no metadata or artifact
 content is written.
 
-Operator pins, explicit pruning, interruption recovery, and quota-fill/restore
-acceptance remain in the [operator-readiness contract](operator-readiness.md#4-retain-releases-deliberately).
+## Keep an exact release
+
+Use a deployment ID and its artifact digest from the plan or owner inspection:
+
+```sh
+fogd admin artifacts keep ID SHA
+fogd admin artifacts unkeep ID SHA
+```
+
+Keep verifies the stored artifact before saving the pin. The pin protects that
+release and its recorded reference chain. It survives controller restart and
+travels with controller metadata in stopped backups. Restoring an older backup
+restores that backup's pin choices. Source snapshot/restore tests cover this
+preservation; independent runtime acceptance remains open.
+
+Unkeep removes the explicit owner pin. Active, unfinished, recovery and other
+references continue protecting the release. It can clear retention intent when
+artifact bytes are missing or corrupt; it does not repair those bytes or delete
+anything. Repeating an unchanged request leaves metadata unchanged.
+
+Pin changes require owner credentials and a fresh CSRF token. A lost or invalid
+mutation reply leaves the outcome uncertain. Recover controller access and
+inspect a fresh plan before retrying. A metadata write failure requires a restart
+to reload durable state before further changes. The CLI never retries a pin
+mutation automatically.
+
+Explicit pruning, interrupted-prune recovery, and quota-fill/reclamation acceptance
+remain in the [operator-readiness contract](operator-readiness.md#4-retain-releases-deliberately).
 [Host build-copy retention](build-retention.md) has separate commands and evidence.

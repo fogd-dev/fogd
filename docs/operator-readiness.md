@@ -129,10 +129,10 @@ The [host retention commands](build-retention.md) implement the local build-copy
 subset with [same-engine evidence](evidence/operator-retention-local.json) for an
 interrupted operator prune, offline resume, overlapping approval and backup, another
 deployment, and fresh-volume restore. Legacy and uncertain outputs remain kept.
-[Controller artifact planning](controller-artifacts.md) is implemented in source
-with an owner-only preview of protected and unreferenced terminal releases. The
-frozen server does not provide that endpoint. Deletion and quota accounting are
-unchanged; operator pins, interruption recovery, and the full quota-fill and
+[Controller artifact planning and pins](controller-artifacts.md) are implemented
+in source with an owner-only preview and durable retention choices for exact
+releases. The frozen server does not provide these endpoints. Deletion and quota
+accounting are unchanged; interrupted-prune recovery and the full quota-fill and
 reclamation gate below remain open and need a newly qualified server runtime.
 
 The owner can inspect [backing filesystem space](storage-space.md) without

@@ -7,7 +7,7 @@ import { adminCliFixture } from './fixtures/admin-client.mjs';
 const id = '00000000-0000-4000-8000-000000000001', other = '00000000-0000-4000-8000-000000000002';
 const plan = { schema: 1, policy: 'fogd-terminal-artifact-retention-v1', plan: 'a'.repeat(64), retainedArtifactBytes: 5, reclaimableArtifactBytes: 2, protectedArtifactBytes: 3,
   candidates: [{ id, app: 'guestbook', digest: 'b'.repeat(64), status: 'rejected', bytes: 2 }],
-  protected: [{ id: other, app: 'guestbook', digest: 'c'.repeat(64), status: 'active', bytes: 3, reasons: ['active'] }],
+  protected: [{ id: other, app: 'guestbook', digest: 'c'.repeat(64), status: 'active', bytes: 3, reasons: ['active', 'operator-pin'] }],
   missing: [{ id: '00000000-0000-4000-8000-000000000003', app: 'guestbook', digest: 'd'.repeat(64), status: 'rejected', reasons: [] }] };
 const fixture = (t, respond) => adminCliFixture(t, { respond, command: 'artifacts', defaults: ['plan'] });
 
