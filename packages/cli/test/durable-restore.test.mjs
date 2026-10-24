@@ -1,14 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, readdir, rm, realpath, lstat, chown, cp } from 'node:fs/promises';
+import { mkdir, readFile, readdir, realpath, lstat, cp } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { restoreDurableInstallation } from '../src/recovery/durable-restore.mjs';
 import { restoreDurableData } from '../src/recovery/durable-restore-data.mjs';
-import { fingerprint, writeJson } from '../src/recovery/bundle.mjs';
+import { writeJson } from '../src/recovery/bundle.mjs';
 import { readDurableRestorePlan } from '../src/runtime/durable-recovery-plan.mjs';
 import { enrollDurableRestoration } from '../src/runtime/durable-installation.mjs';
 import { restoreDurableRoutes } from '../src/runtime/durable-restoration.mjs';
@@ -17,53 +16,15 @@ import { durablePlanSha256 } from '../src/runtime/durable-config.mjs';
 import { runtimeFamilies } from '../src/runtime/catalog.mjs';
 import { acquireStopFence } from '../src/runtime/launch-fence.mjs';
 import { readRuntimePolicy } from '../../platform/src/runtime-policy-file.mjs';
-import { initializeFreshRouteStores } from '../../platform/src/fresh-route-enrollment.mjs';
 import { Controller } from '../../platform/src/controller.mjs';
 import { readRouteRecord } from '../../platform/src/route-record-store.mjs';
 import { planArtifactRetention } from '../../platform/src/artifact-retention.mjs';
 import { validateRouteSnapshot } from '../../platform/src/route-snapshot.mjs';
-import { durableBundleFixture } from './fixtures/durable-bundle.mjs';
+import { sourceBundle } from './fixtures/durable-recovery.mjs';
 import { durableEnrollmentFixture } from './fixtures/durable-enrollment.mjs';
 import { durableDataTransport, gnuTar } from './fixtures/durable-data-transport.mjs';
 
 const skip = gnuTar ? false : 'host GNU tar unavailable';
-async function hostOwnership(path) {
-  await chown(path, process.getuid(), process.getgid());
-  if ((await lstat(path)).isDirectory()) for (const name of await readdir(path)) await hostOwnership(join(path, name));
-}
-async function sourceBundle(t) {
-  const f = await durableBundleFixture(t, { stage: 'empty' }), roots = {};
-  for (const role of ['controller', 'authority', 'enrollment']) { roots[role] = join(f.root, `source-${role}`); await mkdir(roots[role]); }
-  await initializeFreshRouteStores({ profile: f.policy, binding: 'a'.repeat(64) }, roots);
-  const slots = f.policy.fleets.map(fleet => ({ ...fleet, nodes: fleet.nodes.map(node => node.host) })), owners = {};
-  const policy = { installation: runtimePolicyIdentity(f.policy), slots: slots.map(slot => slot.id) };
-  const backend = { owner: async slot => owners[slot.id] || null, hasDeployment: async () => false, assertUnclaimed: async () => {},
-    claim: async (slot, app) => { owners[slot.id] = { app }; }, publish: async () => randomUUID(), ready: async () => {}, applicationReady: async () => {}, migrate: async () => {}, applied: async () => [] };
-  const c = new Controller({ dir: roots.controller, slots, backend, routeAuthority: { path: join(roots.authority, 'routes.json'), policy, verifyRuntime: async () => {} } });
-  await c.init(); const id = randomUUID(), artifact = c.artifact(id); await mkdir(artifact, { recursive: true });
-  await writeFile(join(artifact, 'index.js'), 'export default {fetch(){return new Response("saved")}}');
-  await writeFile(join(artifact, 'wrangler.json'), JSON.stringify({ name: 'alpha', main: 'index.js', d1_databases: [] }));
-  const request = { id, app: 'alpha', digest: await artifactDigest(artifact), resources: { script: 'alpha', d1: [], r2: [], durable: { bindings: [] } }, migrations: [], requiredSecrets: [], status: 'pending', step: 'submitted' };
-  c.state.deployments[id] = request; await c.save(); await c.mutate(id, request.digest, 'approve');
-  await c.setArtifactPin(id, request.digest, true);
-  const retiredId = randomUUID(); await cp(artifact, c.artifact(retiredId), { recursive: true });
-  c.state.deployments[retiredId] = { ...request, id: retiredId, status: 'rejected' }; await c.save();
-  const retention = await planArtifactRetention(c.state, join(c.dir, 'artifacts'));
-  const pruneReceipt = await c.pruneArtifacts(retention.plan);
-  await writeFile(join(roots.controller, 'operator-secret.key'), 'source-private-value', { mode: 0o600 });
-  // Use the actual producer's GNU tar flags, with ownership matching the host
-  // helper identity. Native root ownership is a separate acceptance gate.
-  for (const role of f.layout.archiveVolumes) {
-    const path = role === 'controller' ? roots.controller : role === 'route-authority' ? roots.authority : join(f.root, 'staging');
-    await hostOwnership(path);
-    await rm(join(f.dir, `${role}.tar`)); execFileSync(gnuTar, ['--numeric-owner', '-cpf', join(f.dir, `${role}.tar`), '-C', path, '.']);
-    f.manifest.files[`${role}.tar`] = await fingerprint(join(f.dir, `${role}.tar`));
-  }
-  const observed = await readRouteRecord(join(roots.authority, 'routes.json'), policy);
-  f.manifest.routeAuthority = validateRouteSnapshot(c.state, observed, f.policy);
-  await writeFile(join(f.dir, 'manifest.json'), JSON.stringify(f.manifest));
-  return { ...f, c, owners, slots, routePolicy: policy, roots, request, pruneReceipt };
-}
 async function fixture(t) {
   const source = await sourceBundle(t), p = source.policy;
   const entry = { ...runtimeFamilies()[0], schema: 2, routing: 'durable', id: p.family, admission: p.admission,

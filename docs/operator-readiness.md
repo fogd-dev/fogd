@@ -314,10 +314,12 @@ Eight [native update crash cases](evidence/operator-native-activation-crashes.js
 also cover selected activation, migration-ledger and active-publication boundaries,
 with nine retained SQL rows, four peer records and a fresh stopped snapshot. They
 do not cover the gap between native SQL commit and controller ledger commit.
-Durable snapshot retirement still needs a host coordinator: the legacy command
-refuses its format before Docker contact or target creation. Ordinary released-family
-selection, first-claim and retirement crashes, restricted recovery browser interaction
-and the full recovery/load matrix remain open.
+The durable snapshot retirement coordinator has component checks for source
+verification, fresh replacement identities and disks, survivor holds and incomplete
+enrollment after faults. The catalog's existing durable candidate lacks the new
+stopped helper, so a matching runtime build and native retirement acceptance remain
+required. Ordinary released-family selection, first-claim and retirement crashes,
+restricted recovery browser interaction and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the

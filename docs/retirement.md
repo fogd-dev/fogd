@@ -9,12 +9,22 @@ Scheduled history requires the qualified selected runtime and its independent
 The [M11c acceptance](m11c-acceptance.md) records current scheduled retirement and
 restore evidence. Earlier experimental profiles below retain their pinned scope.
 
-This workflow accepts legacy `fogd-stopped-v1` snapshots. Retirement of the durable
-routing candidate's `fogd-stopped-durable-v1` snapshots is not implemented. A
-[native command check](evidence/operator-native-activation-crashes.json) confirms
-that even internal candidate selection refuses that format before Docker contact
-or target creation. Keep those installations on their enrolled recovery workflow;
-the raw Docker startup command below does not apply to them.
+The commands below cover legacy `fogd-stopped-v1` snapshots. The source implements
+a separate coordinator for `fogd-stopped-durable-v1`, but the catalog's durable
+candidate lacks its stopped retirement helper. Durable retirement therefore remains
+unavailable until a matching runtime is packaged and qualified. The earlier
+[native refusal check](evidence/operator-native-activation-crashes.json) records
+the missing path before this coordinator existed.
+
+The [durable retirement tests](../packages/cli/test/durable-retirement.test.mjs)
+exercise verified archive copying, empty replacement disks, retained artifacts,
+survivor holds and fresh enrollment. The helper validates the original source pair
+and the change to one fleet's identity before spending its enrollment grant.
+Interrupted copying or publication retains the target for inspection and keeps
+host enrollment incomplete. These component checks do not qualify Docker mounts,
+native data recovery or background retirement in a packaged runtime. Keep durable
+installations on their enrolled recovery workflow; the raw Docker startup command
+below does not apply to them.
 
 ## Prepare and retire
 

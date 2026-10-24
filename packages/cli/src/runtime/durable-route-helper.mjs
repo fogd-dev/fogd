@@ -1,6 +1,6 @@
 import { routeAuthorityVolume, routeEnrollmentVolume } from './durable-config.mjs';
 
-const scripts = { initialize: 'packages/platform/src/import-route-enrollment.mjs', restore: 'packages/platform/src/import-restored-routes.mjs' };
+const scripts = { initialize: 'packages/platform/src/import-route-enrollment.mjs', restore: 'packages/platform/src/import-restored-routes.mjs', retire: 'packages/platform/src/import-retired-routes.mjs' };
 const mounts = [['controller', '/var/lib/fogd'], [routeAuthorityVolume, '/var/lib/fogd-routes'], [routeEnrollmentVolume, '/var/lib/fogd-enrollment']];
 
 // Fixed stopped helpers share only these three volumes. Callers authorize the

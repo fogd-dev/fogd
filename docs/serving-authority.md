@@ -1019,6 +1019,11 @@ performance. The ledger case observes both SQL and the controller ledger already
 committed; it does not target a crash between those commits or inside a native SQL
 transaction. First-claim and retirement crashes, restricted recovery browser
 interaction, broader serving measurements and ordinary family release remain open.
-Durable snapshot retirement still lacks a host coordinator; the legacy command
-refuses that format before contacting Docker. The durable family retains candidate
-admission.
+The source durable retirement coordinator verifies the original snapshot pair and
+changes only the retired fleet's namespace and native identities. Its stopped helper
+removes the retired route and applies ordinary withheld-restoration rules to the
+survivors before spending fresh enrollment. Component tests cover copying, empty
+replacement disks, approval holds, interrupted publication and incomplete host
+completion. The catalog's existing durable candidate lacks this helper; a separately
+packaged runtime and native retirement acceptance remain required. The durable
+family retains candidate admission.

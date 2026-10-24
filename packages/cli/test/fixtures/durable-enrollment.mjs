@@ -11,7 +11,7 @@ import { prebootFixture } from './cron-preboot.mjs';
 import { readRuntimePolicy, writeRuntimePolicy } from '../../../platform/src/runtime-policy-file.mjs';
 import { readGatewayLaunchPolicy, writeGatewayLaunchPolicy } from '../../../runtime/src/gateway-launch-policy.mjs';
 import { initializeFreshRouteStores } from '../../../platform/src/fresh-route-enrollment.mjs';
-import { restoreEnrolledRouteStores } from '../../../platform/src/route-restoration.mjs';
+import { restoreEnrolledRouteStores, restoreRetiredRouteStores } from '../../../platform/src/route-restoration.mjs';
 import { readRouteRecord } from '../../../platform/src/route-record-store.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -41,8 +41,11 @@ export async function durableEnrollmentFixture(t, selection) {
     }
     if (args[0] === 'run') {
       const paths = { controller: rolePath('controller'), authority: rolePath('route-authority'), enrollment: rolePath('route-enrollment') };
-      const restore = args.at(-1) === 'packages/platform/src/import-restored-routes.mjs';
-      return JSON.stringify(await (restore ? restoreEnrolledRouteStores : initializeFreshRouteStores)(JSON.parse(options.inputText), paths));
+      const helpers = { 'packages/platform/src/import-route-enrollment.mjs': initializeFreshRouteStores,
+        'packages/platform/src/import-restored-routes.mjs': restoreEnrolledRouteStores, 'packages/platform/src/import-retired-routes.mjs': restoreRetiredRouteStores };
+      const helper = helpers[args.at(-1)];
+      if (!helper) throw new Error('Unexpected stopped route helper');
+      return JSON.stringify(await helper(JSON.parse(options.inputText), paths));
     }
     throw new Error('Unexpected Docker mutation');
   };

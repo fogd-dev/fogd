@@ -3,8 +3,9 @@ import { join, resolve, dirname, basename, relative, sep } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { readDurableRestorePlan } from '../runtime/durable-recovery-plan.mjs';
+import { readDurableRetirementPlan } from '../runtime/durable-retirement-plan.mjs';
 import { enrollDurableRestoration } from '../runtime/durable-installation.mjs';
-import { restoreDurableRoutes } from '../runtime/durable-restoration.mjs';
+import { restoreDurableRoutes, retireDurableRoutes } from '../runtime/durable-restoration.mjs';
 import { verifyRuntimeFamily } from '../runtime/catalog.mjs';
 import { acquireStopFence } from '../runtime/launch-fence.mjs';
 import { hasRuntimeEnrollment, installationDirectory } from '../runtime/installation-state.mjs';
@@ -35,12 +36,13 @@ async function sourceSnapshot(directory, plan, io) {
 async function populate(directory, output, plan, context, io) {
   const { config, policy, inventory } = context;
   await sourceStopped(plan, io); await sourceSnapshot(directory, plan, io);
-  await io.data(directory, config, policy);
+  await io.data(directory, config, policy, { retiredFleet: plan.retiredFleet });
   await sourceStopped(plan, io); await sourceSnapshot(directory, plan, io);
   const receipt = await io.routes(config, { profile: policy, sourceProfile: plan.source.policy,
-    source: { state: plan.source.state, authority: plan.source.authority }, binding: inventory.identity, snapshot: plan.snapshot, domain: plan.domain });
+    source: { state: plan.source.state, authority: plan.source.authority }, binding: inventory.identity, snapshot: plan.snapshot, domain: plan.domain, ...(plan.retirement ? { retirement: plan.retirement } : {}) });
   if (!isDeepStrictEqual(await io.policy(policy.image, config.volumes['runtime-policy'].name, config.services.controller.environment), policy)) throw refused();
   await sourceStopped(plan, io); await io.related(config.name);
+  if (plan.retirement) await writeJson(join(output, 'retirement.json'), plan.retirement.evidence);
   await writeJson(join(output, 'compose.json'), composeLiteral(config));
   await writeJson(join(output, 'restored.json'), { format: durableSnapshotFormat, sourceProject: plan.source.config.name,
     project: config.name, snapshot: plan.snapshot, runtimeFamily: policy.family, identitySha256: runtimePolicyIdentity(policy),
@@ -52,10 +54,19 @@ async function populate(directory, output, plan, context, io) {
 // verifies and installs policies, allocates stopped resources and withholds its
 // completion record until copying, route rebinding and readbacks all finish.
 export async function restoreDurableInstallation(directory, project, output, selection, options = {}) {
-  const io = { plan: readDurableRestorePlan, verify: verifyRuntimeFamily, enrolled: hasRuntimeEnrollment,
+  return recoverInstallation(directory, project, output, selection, { plan: readDurableRestorePlan, routes: restoreDurableRoutes, ...options });
+}
+
+export async function retireDurableInstallation(directory, project, output, selection, retirement, options = {}) {
+  return recoverInstallation(directory, project, output, selection, {
+    plan: (source, target, selected) => readDurableRetirementPlan(source, target, selected, retirement), routes: retireDurableRoutes, ...options });
+}
+
+async function recoverInstallation(directory, project, output, selection, options) {
+  const io = { verify: verifyRuntimeFamily, enrolled: hasRuntimeEnrollment,
     directory: installationDirectory, acquire: acquireStopFence, related: assertRecoverySourceStopped, stopped,
     relation: writeRecoverySource, enroll: enrollDurableRestoration, data: restoreDurableData,
-    routes: restoreDurableRoutes, policy: readPolicyVolume, bundle: verifyDurableBundle, ...options };
+    policy: readPolicyVolume, bundle: verifyDurableBundle, ...options };
   let fence, releasing = false;
   try {
     const { source, destination } = await restorePaths(directory, output), plan = await io.plan(source, project, selection);

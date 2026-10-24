@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { artifactDigest } from '@fogd/runtime/artifact';
 import { Controller } from '../src/controller.mjs';
 import { initializeFreshRouteStores } from '../src/fresh-route-enrollment.mjs';
-import { prepareRouteRestoration, restoreEnrolledRouteStores } from '../src/route-restoration.mjs';
+import { prepareRouteRestoration, restoreEnrolledRouteStores, prepareRetiredRouteRestoration } from '../src/route-restoration.mjs';
 import { readRouteRecord, writeRouteRecord } from '../src/route-record-store.mjs';
 import { runtimePolicyIdentity } from '../src/runtime-policy.mjs';
 import { operateDelivery } from '../src/admin-delivery.mjs';
@@ -21,6 +21,7 @@ import { seedRouteStores } from './fixtures/route-stores.mjs';
 import { fixture as queueFixture } from './fixtures/queue-controller.mjs';
 import { fixture as cronFixture } from './fixtures/cron-controller.mjs';
 import { policy as nativePolicy } from './fixtures/runtime-policy.mjs';
+import { retirementRequest } from './fixtures/route-retirement.mjs';
 
 const durableProfile = () => ({ ...nativePolicy(), schema: 3, routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] });
 const profile = durableProfile(), slots = profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
@@ -222,13 +223,18 @@ test('queue lifecycle without a receipt or with an unacknowledged recovery refus
   assert.deepEqual((await readdir(d.paths.enrollment)).sort(), ['route-enrollment.json', 'route-enrollment.spent.json']);
 });
 
-test('scheduled snapshot restoration holds HTTP and creates pending recovery without resuming dispatch', async t => {
+async function cronSource(t) {
   const root = await temporary(t, 'fogd-restore-cron-'), dir = join(root, 'authority'); await mkdir(dir, { mode: 0o755 });
   const routeAuthority = { path: join(dir, 'routes.json'), policy, verifyRuntime: async () => {} };
   const f = await cronFixture(t, { slots, routeAuthority }), value = await f.request();
   await f.c.mutate(value.id, value.digest, 'approve');
   await operateDispatch(f.c, 'refresh', 'snapshot', { deployment: value.id, digest: value.digest });
-  const state = JSON.parse(await readFile(join(f.dir, 'state.json'))), authority = await readRouteRecord(routeAuthority.path, policy), d = await target(t);
+  const state = JSON.parse(await readFile(join(f.dir, 'state.json'))), authority = await readRouteRecord(routeAuthority.path, policy);
+  return { f, value, state, authority };
+}
+
+test('scheduled snapshot restoration holds HTTP and creates pending recovery without resuming dispatch', async t => {
+  const { f, value, state, authority } = await cronSource(t), d = await target(t);
   const runtimeBefore = await f.runtime();
   await restoreEnrolledRouteStores(request(state, authority), d.paths);
   const saved = JSON.parse(await readFile(join(d.paths.controller, 'state.json'))), app = saved.apps.refresh;
@@ -268,4 +274,42 @@ for (const [name, input] of [
   const result = spawnSync(process.execPath, [entrypoint], { input, encoding: 'utf8' });
   assert.equal(result.status, 1); assert.equal(result.stdout, '');
   assert.match(result.stderr, /^Route restoration failed( \(ROUTE_[A-Z_]+\))?; keep ingress stopped and retain all stores\n$/);
+});
+
+// The fixture's original profile matches these controller fleets. Only the app,
+// approval and source pair differ; the replacement identity remains explicit.
+function backgroundRetirement(pair, app, value) {
+  const input = retirementRequest();
+  input.source = pair;
+  Object.assign(input.retirement, { app, digest: value.digest });
+  Object.assign(input.retirement.evidence, { app, digest: value.digest });
+  return input;
+}
+
+test('durable queue retirement requires stopped-work acknowledgment and retains the original snapshot audit', async t => {
+  const q = await queueSource(t); await q.snapshot();
+  const pair = await q.pair(), input = backgroundRetirement(pair, 'imports', q.value);
+  assert.throws(() => prepareRetiredRouteRestoration(input), { code: 'ROUTE_RETIREMENT_REFUSED' });
+  input.retirement.stopQueuedWork = true;
+  const projected = prepareRetiredRouteRestoration(input), app = projected.state.apps.imports;
+  assert.deepEqual(projected.record.routes, []);
+  assert.equal(app.route, 'retired'); assert.equal(app.delivery, undefined); assert.equal(app.queueRecovery, undefined);
+  assert.deepEqual(app.retirement.snapshot, { sha256: snapshot });
+  assert.deepEqual(app.retirement.queue.prepared, pair.state.apps.imports.queueSnapshot);
+  assert.equal(app.retirement.queue.stopQueuedWork, true);
+  assert.equal(pair.state.apps.imports.route, 'active');
+});
+
+test('durable scheduled retirement requires stopped-work acknowledgment and retains dispatch history without executing work', async t => {
+  const { f, value, state, authority } = await cronSource(t), before = await f.runtime();
+  const input = backgroundRetirement({ state, authority }, 'refresh', value);
+  assert.throws(() => prepareRetiredRouteRestoration(input), { code: 'ROUTE_RETIREMENT_REFUSED' });
+  input.retirement.stopScheduledWork = true;
+  const projected = prepareRetiredRouteRestoration(input), app = projected.state.apps.refresh;
+  assert.deepEqual(projected.record.routes, []);
+  assert.equal(app.route, 'retired'); assert.equal(app.dispatch, undefined); assert.equal(app.cronRecovery, undefined);
+  assert.deepEqual(app.retirement.snapshot, { sha256: snapshot });
+  assert.deepEqual(app.retirement.cron.prepared, state.apps.refresh.cronSnapshot);
+  assert.equal(app.retirement.cron.stopScheduledWork, true);
+  assert.deepEqual(await f.runtime(), before);
 });

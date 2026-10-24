@@ -58,9 +58,11 @@ these current gaps:
   [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving
   through controller loss. Eight [native update crash cases](evidence/operator-native-activation-crashes.json)
   cover selected activation, migration-ledger and active-publication boundaries.
-  First claims, retirement, broader counts and loads remain open. Durable snapshot
-  retirement needs a host coordinator before its native recovery tests can run;
-  the existing command accepts only legacy snapshots.
+  First claims, retirement, broader counts and loads remain open. The durable
+  retirement coordinator now has component tests for fresh enrollment, retained
+  recovery data and a different-name replacement. Its stopped helper still needs
+  a matching packaged runtime and native recovery acceptance; the catalog's
+  existing durable candidate cannot run this protocol.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)

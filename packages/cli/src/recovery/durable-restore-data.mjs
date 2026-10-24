@@ -45,23 +45,41 @@ async function helper(readVolume, image, volume, mode, input, options) {
   if (bounded(await readVolume(image, volume, helperArgs(mode), { ...options, input, maxOutputBytes: 4096 })) !== 'ok') throw unconfirmed();
 }
 
-function restorationPlan(directory, config, profile) {
+function restorationPlan(directory, config, profile, retiredFleet) {
   const policy = validateRuntimePolicy(profile);
   if (policy.schema !== 3 || policy.routing !== 'durable') throw unconfirmed();
   // Execution policy, enrollment and route authority are never data roles.
   const roles = durableSnapshotLayout(config, policy).archiveVolumes.filter(role => role !== routeAuthorityVolume);
   const volumes = roles.map(role => config.volumes[role]?.name);
   if (!roles.includes('controller') || volumes.some(name => typeof name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(name)) || new Set(volumes).size !== volumes.length) throw unconfirmed();
-  return { image: policy.image, targets: roles.map((role, index) => ({ role, volume: volumes[index], archive: join(directory, `${role}.tar`) })) };
+  let emptyRoles = [];
+  if (retiredFleet !== undefined) {
+    const fleet = policy.fleets.find(value => value.id === retiredFleet);
+    const generation = fleet?.prefix.match(/^retirement-generations\/([a-f0-9-]{36})$/)?.[1];
+    if (!generation || fleet.nodes.some(node => node.id !== `${node.host}-${generation}`)) throw unconfirmed();
+    emptyRoles = fleet.nodes.map(node => node.host);
+    if (emptyRoles.length !== 2 || emptyRoles.some(role => !roles.includes(role))) throw unconfirmed();
+  }
+  return { image: policy.image, targets: roles.map((role, index) => ({ role, volume: volumes[index], archive: join(directory, `${role}.tar`), empty: emptyRoles.includes(role) })) };
+}
+
+async function restoreRole(readVolume, image, { role, volume, archive }, original) {
+  const controller = role === 'controller';
+  await helper(readVolume, image, volume, controller ? 'extract-controller' : 'extract', archive, writable);
+  if (controller) {
+    const after = await survey(readVolume, image, volume);
+    if (after.links !== 0 || !isDeepStrictEqual(after.state, original)) throw unconfirmed();
+  }
+  await helper(readVolume, image, volume, controller ? 'compare-controller' : 'compare', archive, readOnly);
 }
 
 // Internal step after independent family/image/archive verification, fresh
 // stopped resources, execution policy install and fresh route enrollment.
 // Copies only data roles beside the fresh controller state; a failure after
 // any copy starts is retained as-is, never cleaned or retried here.
-export async function restoreDurableData(directory, config, profile, { readVolume = volumeHelper } = {}) {
+export async function restoreDurableData(directory, config, profile, { readVolume = volumeHelper, retiredFleet } = {}) {
   try {
-    const { image, targets } = restorationPlan(directory, config, profile);
+    const { image, targets } = restorationPlan(directory, config, profile, retiredFleet);
     for (const target of targets) if (!(await lstat(target.archive)).isFile()) throw unconfirmed();
     let original;
     for (const { role, volume } of targets) {
@@ -69,15 +87,9 @@ export async function restoreDurableData(directory, config, profile, { readVolum
       if (role === 'controller' ? !freshState(found) : found.entries !== 0) throw unconfirmed();
       if (role === 'controller') original = found.state;
     }
-    for (const { role, volume, archive } of targets) {
-      const controller = role === 'controller';
-      await helper(readVolume, image, volume, controller ? 'extract-controller' : 'extract', archive, writable);
-      if (controller) {
-        const after = await survey(readVolume, image, volume);
-        if (after.links !== 0 || !isDeepStrictEqual(after.state, original)) throw unconfirmed();
-      }
-      await helper(readVolume, image, volume, controller ? 'compare-controller' : 'compare', archive, readOnly);
-    }
-    return { roles: targets.map(target => target.role) };
+    for (const target of targets.filter(value => !value.empty)) await restoreRole(readVolume, image, target, original);
+    const empty = targets.filter(target => target.empty);
+    for (const { volume } of empty) if ((await survey(readVolume, image, volume)).entries !== 0) throw unconfirmed();
+    return { roles: targets.filter(target => !target.empty).map(target => target.role), ...(empty.length ? { emptyRoles: empty.map(target => target.role) } : {}) };
   } catch { throw unconfirmed(); }
 }
