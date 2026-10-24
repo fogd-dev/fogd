@@ -6,7 +6,7 @@ import { logContainer, ownedLogNetwork } from './scope.mjs';
 
 export async function logOwner(installation, selection) {
   const { config } = installation;
-  if (!config.services.controller.networks.control || config.services.controller.environment.S3_ENDPOINT !== 'http://minio:9000') throw new Error('Replica log ownership network is unavailable');
+  if (!Object.hasOwn(config.services.controller.networks, 'control') || config.services.controller.environment.S3_ENDPOINT !== 'http://minio:9000') throw new Error('Replica log ownership network is unavailable');
   const network = await ownedLogNetwork(installation, 'control');
   const storage = await storageScope(installation, network);
   const env = Object.fromEntries(['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'FOGD_BUCKET', 'S3_ENDPOINT', 'FOGD_SLOTS'].map(key => [key, config.services.controller.environment[key]]));

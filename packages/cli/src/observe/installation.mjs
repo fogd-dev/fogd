@@ -5,11 +5,13 @@ import { selectedRuntimeConfig } from '../runtime/selection-plan.mjs';
 import { docker, json, projectContainers } from '../recovery/docker.mjs';
 import { volumeHelper } from '../recovery/volumes.mjs';
 
-export async function observationInstallation(project) {
+// Internal qualification can inspect a known installed candidate; public calls stay qualified-only.
+export async function observationInstallation(project, { candidateEnrollment = false } = {}) {
+  if (typeof candidateEnrollment !== 'boolean') throw new Error('Candidate observation requires an explicit boolean selection');
   const config = await readRuntimeConfiguration(project);
   await requireVolumes(config);
   const installed = await readInstalledPolicy(config);
-  if (!installed || installed.entry.admission !== 'qualified') throw new Error('Local observation requires an enrolled qualified Docker installation');
+  if (!installed || (!candidateEnrollment && installed.entry.admission !== 'qualified')) throw new Error('Local observation requires an enrolled qualified Docker installation');
   if (!isDeepStrictEqual(selectedRuntimeConfig(config, installed.entry, installed.policy), config)) throw new Error('Installed observation configuration differs from its independent runtime policy');
   return { project, config, ...installed };
 }
@@ -28,11 +30,13 @@ export async function readObservationState(installation) {
     return JSON.parse(text);
   } catch { throw new Error('Cannot read local controller state; native readiness is unknown'); }
 }
-export async function observationNetwork(installation, fleet) {
-  const { config, entry } = installation;
+export function fleetNetworkRole(config, fleet) {
   const attachments = fleet.nodes.map(node => Object.keys(config.services[node.host].networks));
-  if (!attachments.every(value => value.length === 1 && value[0] === attachments[0][0])) throw new Error('Observed fleet has inconsistent private network attachments');
-  const role = attachments[0][0];
+  if (!attachments.length || !attachments.every(value => value.length === 1 && value[0] === attachments[0][0])) throw new Error('Observed fleet has inconsistent private network attachments');
+  return attachments[0][0];
+}
+export async function observationNetwork(installation, fleet) {
+  const { config, entry } = installation, role = fleetNetworkRole(config, fleet);
   const network = config.networks[role]?.name;
   if (!network) throw new Error('Observed fleet has no installed private network');
   const networks = await json(['network', 'inspect', network]);

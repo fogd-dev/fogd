@@ -1,3 +1,5 @@
+import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { routeAuthorityCapability } from '@fogd/platform/route-snapshot';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -8,15 +10,21 @@ import { prebootFixture } from './cron-preboot.mjs';
 import { freshRuntimePlan } from '../../src/runtime/selection-plan.mjs';
 const exec = promisify(execFile);
 export const observationId = '00000000-0000-4000-8000-000000000001';
-export async function observationFixture(t) {
+export async function observationFixture(t, { admission = 'qualified', durable = false } = {}) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-observation-')); t.after(() => rm(root, { recursive: true, force: true }));
-  const cli = await runtimeCli(root, 'qualified'), { source } = prebootFixture();
+  const cli = await runtimeCli(root, admission), { source } = prebootFixture();
+  const entry = durable ? { ...cli.entry, schema: 2, routing: 'durable' } : cli.entry;
+  if (durable) { const catalog = JSON.parse(await readFile(cli.catalog, 'utf8')); catalog[0] = entry; await writeFile(cli.catalog, JSON.stringify(catalog)); }
   for (const [role, service] of Object.entries(source.services)) service.image = role === 'minio' ? 'fogd-minio:local' : 'fogd-runtime:local';
-  const plan = freshRuntimePlan(source, cli.entry), directory = join(root, '.fogd/installations', source.name);
+  const plan = freshRuntimePlan(source, entry), directory = join(root, '.fogd/installations', source.name);
   await mkdir(directory, { recursive: true, mode: 0o700 }); await writeFile(join(directory, 'compose.json'), JSON.stringify(plan.config), { mode: 0o600 });
   const state = { apps: { sample: { active: observationId, route: 'active', slot: 'slot-1' } }, deployments: { [observationId]: { id: observationId, app: 'sample', digest: 'a'.repeat(64), status: 'active', step: 'complete', version: 'private-runtime-version' } }, secrets: { sample: 'private-app-secret' }, credentials: 'private-deploy-credentials' };
+  if (durable) {
+    state.requirements = [routeAuthorityCapability];
+    state.routeAuthority = { schema: 1, installation: runtimePolicyIdentity(plan.policy), holds: {}, settled: { revision: '1', digest: 'b'.repeat(64) }, pending: null };
+  }
   const data = join(root, 'data.json'), log = join(root, 'calls.jsonl');
-  await writeFile(data, JSON.stringify({ ...plan, entry: cli.entry, state }));
+  await writeFile(data, JSON.stringify({ ...plan, entry, state }));
   const bin = join(root, 'bin'); await mkdir(bin);
   await writeFile(join(bin, 'docker'), '#!/bin/sh\nexec "$FOGD_TEST_NODE" "$FOGD_TEST_DRIVER" "$@"\n', { mode: 0o700 });
   const driver = new URL('./observation-docker.mjs', import.meta.url).pathname;

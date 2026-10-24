@@ -132,3 +132,14 @@ test('an output parent alias cannot place private logs inside installation recor
   await assert.rejects(f.logs({}, ['--output', join(alias, 'logs')]), error => error.code === 1 && /outside installation records/.test(error.stderr));
   assert.deepEqual(logCalls(await f.calls()), []); await assert.rejects(access(join(directory, 'logs')), { code: 'ENOENT' });
 });
+
+test('a declared null control attachment permits scoped log ownership inspection', async t => {
+  const f = await observationFixture(t, { durable: true }), data = JSON.parse(await readFile(f.data, 'utf8'));
+  data.config.services.controller.networks.control = null;
+  await writeFile(f.data, JSON.stringify(data));
+  await writeFile(join(f.root, '.fogd/installations', f.project, 'compose.json'), JSON.stringify(data.config));
+  const output = join(f.root, 'capture');
+  const result = await f.invoke(['sample', '--installation', f.project, '--output', output], { FOGD_LOG_TEST: '1' });
+  assert.equal(JSON.parse(result.stdout).status, 'captured');
+  assert.equal(logCalls(await f.calls()).length, 2);
+});

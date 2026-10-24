@@ -114,3 +114,23 @@ for (const value of ['1', 'null']) test(`controller requirements changed to ${va
   assert.deepEqual(report.ingressResponse, { state: 'uncertain', httpStatus: null, headersMs: null, reason: 'controller-record-unconfirmed' });
   assert.equal(report.controllerRecord, 'changed');
 });
+
+
+test('durable gateway check uses the selected fleet network without a control attachment', async t => {
+  const f = await observationFixture(t, { durable: true });
+  const result = await f.invoke(['sample', '--installation', f.project, '--path', '/health'], { FOGD_CHECK_TEST: '1' });
+  const report = JSON.parse(result.stdout); assert.equal(report.ingressResponse.state, 'observed');
+  const workers = (await f.calls()).filter(helper); assert.equal(workers.length, 1);
+  const args = workers[0].args; assert.equal(args[args.indexOf('--network') + 1], f.plan.config.networks['fleet-1'].name);
+  assert.equal(Object.hasOwn(f.plan.config.services.workerd.networks, 'control'), false);
+});
+
+
+test('durable gateway with a foreign selected-fleet attachment sends no request', async t => {
+  const f = await observationFixture(t, { durable: true }), data = JSON.parse(await readFile(f.data, 'utf8'));
+  data.gateway = { NetworkSettings: { Networks: { [f.plan.config.networks['fleet-1'].name]: { NetworkID: 'foreign-network', IPAddress: '172.20.0.10' } } } };
+  await writeFile(f.data, JSON.stringify(data));
+  const result = await f.invoke(['sample', '--installation', f.project, '--path', '/health'], { FOGD_CHECK_TEST: '1' });
+  assert.equal(JSON.parse(result.stdout).ingressResponse.state, 'not-requested');
+  assert.equal((await f.calls()).some(helper), false);
+});

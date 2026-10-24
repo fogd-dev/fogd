@@ -16,6 +16,10 @@ access. The command uses the enrolled configuration directly, not `FOGD_SERVER`.
 The currently supported runtime family must be independently qualified and cached.
 It does not enroll, start, upgrade, or repair an installation.
 
+The [native durable candidate drill](evidence/operator-native-diagnostics.json)
+also covers a failing handler, a stopped replica and correction. It uses an
+internal maintainer selection; ordinary CLI candidate observation remains refused.
+
 ## Interpret the report
 
 `recorded` identifies the on-disk route and active submission ID/digest. `replicas`
@@ -27,7 +31,8 @@ native state bodies are omitted.
 `nativeReadiness: confirmed` requires both expected replicas to answer native state
 and health checks, serve the approved version, and pass signed runtime identity and
 fresh fleet-membership verification. The selected controller record, required
-capabilities and artifact-pruning state must match before and after probing, and
+capabilities, artifact-pruning state and durable route journal must match before
+and after probing, and
 its controller container must be running at both boundaries. `controllerRecord: matched-at-boundaries` does not establish an atomic
 snapshot or prove that nothing changed between those reads.
 

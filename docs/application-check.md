@@ -12,9 +12,14 @@ fogd check guestbook --installation YOUR_PROJECT --path /health
 Use Docker-owner access, the installation's private enrollment files, and its
 cached qualified runtime image. The command selects that installation directly;
 `FOGD_SERVER` and deploy credentials do not select or authorize the request.
-The implementation supports the qualified legacy Docker layout. Native acceptance
-of this command remains open; host tests use temporary HTTP/TLS servers and a
-mocked Docker boundary. It does not qualify another runtime or topology.
+The source supports legacy and durable-routing Docker layouts. The
+[native candidate evidence](evidence/operator-native-diagnostics.json) covers
+scoped HTTPS responses from failing and corrected handlers, a healthy peer,
+serving through controller loss and refusal to request an app while routing is
+paused. The durable check uses the selected fleet network because its gateway has
+no control-network attachment.
+Ordinary CLI use still requires a qualified family; candidate checks use an
+internal maintainer selection and do not qualify another runtime or topology.
 
 ## Read the result
 

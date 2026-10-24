@@ -12,11 +12,11 @@ import { logOwner } from './owner.mjs';
 import { privateLogOutput } from './output.mjs';
 import { captureProcess } from './capture.mjs';
 
-export async function logsCommand(args) {
+export async function logsCommand(args, qualification = {}) {
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { installation: { type: 'string' }, output: { type: 'string' }, tail: { type: 'string', default: '2000' } } });
   if (positionals.length !== 1 || !values.installation || !values.output) throw new Error('Usage: fogd logs APP --installation PROJECT --output NEW_DIRECTORY [--tail COUNT]');
   if (!/^[1-9][0-9]{0,4}$/.test(values.tail) || Number(values.tail) > 10000) throw new Error('Log tail must be between 1 and 10000 lines');
-  const app = appName(positionals[0]), project = projectName(values.installation), installation = await observationInstallation(project);
+  const app = appName(positionals[0]), project = projectName(values.installation), installation = await observationInstallation(project, qualification);
   const selection = logSelection(await readObservationState(installation), app, installation.policy);
   const before = await logScope(installation, selection), owner = await logOwner(installation, selection);
   if (!owner.matched) throw new Error('Replica log ownership is unconfirmed; no logs were collected');

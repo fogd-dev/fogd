@@ -38,11 +38,11 @@ async function certificate(path) {
   } finally { await file.close(); }
 }
 
-export async function checkCommand(args) {
+export async function checkCommand(args, qualification = {}) {
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { installation: { type: 'string' }, path: { type: 'string' }, ca: { type: 'string' } } });
   if (positionals.length !== 1 || !values.installation || !values.path) throw new Error('Usage: fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]');
   const app = appName(positionals[0]), project = projectName(values.installation), path = validateCheckPath(values.path), ca = await certificate(values.ca);
-  const installation = await observationInstallation(project), state = await readObservationState(installation);
+  const installation = await observationInstallation(project, qualification), state = await readObservationState(installation);
   if (ca !== null && installation.config.services.workerd.environment.FOGD_TLS !== '1') throw new Error('A CA file requires a TLS installation');
   const selection = observationSelection(state, app, installation.policy), context = { installation: project, boundary: 'single-read', gateway: 'not-observed', sent: false, reason: selection.reason };
   const sample = !selection.reason ? await sampleApplication(installation, selection, { path, ca }, context) : null;
@@ -52,11 +52,11 @@ export async function checkCommand(args) {
 async function sampleApplication(installation, selection, { path, ca }, context) {
   let sample;
   try {
-    const scope = await checkGatewayScope(installation), host = checkHost(installation, selection.app);
+    const scope = await checkGatewayScope(installation, selection.fleet), host = checkHost(installation, selection.app);
     const code = (await readFile(new URL('./worker.mjs', import.meta.url), 'utf8')) + '\nawait main();\n';
     context.sent = true;
     sample = await runObserver(installation, { network: scope.network, code, input: { address: scope.address, host, tls: scope.tls, path, ca }, timeoutMs: 15000 });
-    context.gateway = sameGateway(scope, await checkGatewayScope(installation)) ? 'matched-at-boundaries' : 'changed';
+    context.gateway = sameGateway(scope, await checkGatewayScope(installation, selection.fleet)) ? 'matched-at-boundaries' : 'changed';
     if (context.gateway !== 'matched-at-boundaries') context.reason = 'gateway-process-unconfirmed';
   } catch (error) {
     if (error instanceof ObserverCleanupError) throw error;

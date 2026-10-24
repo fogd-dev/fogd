@@ -1,3 +1,4 @@
+import { fleetNetworkRole } from '../observe/installation.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { json, projectContainers } from '../recovery/docker.mjs';
 import { checkContainer } from '../recovery/inventory.mjs';
@@ -6,9 +7,9 @@ import { checkMounts } from '../recovery/container-isolation.mjs';
 const refused = () => new Error('Replica container log scope is unconfirmed; no log command was started');
 
 async function fleetNetwork(installation, fleet) {
-  const roles = fleet.nodes.map(node => Object.keys(installation.config.services[node.host].networks));
-  if (!roles.every(role => role.length === 1 && role[0] === roles[0][0])) throw refused();
-  return ownedLogNetwork(installation, roles[0][0]);
+  let role;
+  try { role = fleetNetworkRole(installation.config, fleet); } catch { throw refused(); }
+  return ownedLogNetwork(installation, role);
 }
 
 export async function ownedLogNetwork(installation, role) {

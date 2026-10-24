@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "kind": "operator-native-diagnostics",
+  "recordedAt": "2026-10-24T01:35:54.414511+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Docker-owner observation, explicit HTTPS gateway requests and unredacted private process-log capture on the two-fleet Linux arm64 durable candidate. Maintainer used internal candidate selection; ordinary CLI candidate admission remains closed.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "baseline": {
+    "passed": true,
+    "nativeReadiness": "confirmed",
+    "httpStatus": 200,
+    "logCapture": "captured"
+  },
+  "workflow": {
+    "passed": true,
+    "family": "celld-durable-v2-linux-arm64",
+    "privateConfiguration": true,
+    "failingHandler": {
+      "nativeReadiness": "confirmed",
+      "applicationOutcomes": "not-observed",
+      "http": 500,
+      "responseContents": "withheld"
+    },
+    "healthyPeerHTTP": 200,
+    "privateLogs": {
+      "twoApps": true,
+      "selectedReplicaIdsOnly": true,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "secretOffTerminalAndManifest": true,
+      "directoryMode": "0700",
+      "fileMode": "0600",
+      "stoppedReplicaCaptured": true,
+      "pausedAppCaptured": true,
+      "mixedReleaseHistoryRetained": true
+    },
+    "unavailableReplicaReadiness": "uncertain",
+    "initialRestartReadinessUncertain": true,
+    "freshReadConfirmedWithoutAnotherRestart": true,
+    "pausedCheck": "not-requested",
+    "correction": {
+      "id": "572bebc0-7edf-44c8-808c-3a2abce84baa",
+      "digest": "a14ecfe8c066bedc7df0cc5c74251a3fc77653f0ed7f53d76e5b5b3f06f4c495",
+      "http": 200,
+      "nativeReadiness": "confirmed",
+      "retainedSecretRevision": true,
+      "peerDataPreserved": true
+    }
+  },
+  "logCaptures": [
+    {
+      "case": "hello-failed-logs",
+      "app": "hello",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-1-a",
+        "slot-1-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    },
+    {
+      "case": "notebook-private-logs",
+      "app": "notebook",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-2-a",
+        "slot-2-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    },
+    {
+      "case": "hello-stopped-replica-logs",
+      "app": "hello",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-1-a",
+        "slot-1-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    },
+    {
+      "case": "hello-paused-logs",
+      "app": "hello",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-1-a",
+        "slot-1-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    },
+    {
+      "case": "hello-corrected-logs",
+      "app": "hello",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-1-a",
+        "slot-1-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    },
+    {
+      "case": "hello-controller-stopped-logs",
+      "app": "hello",
+      "status": "captured",
+      "scope": {
+        "controllerRecord": "matched-at-boundaries",
+        "replicas": "matched-at-boundaries",
+        "owner": "matched-at-boundaries"
+      },
+      "nodes": [
+        "slot-1-a",
+        "slot-1-b"
+      ],
+      "commandExitCodes": [
+        0,
+        0
+      ],
+      "directoryMode": "0o700",
+      "allFilesPrivate": true
+    }
+  ],
+  "privateMaterialPublished": false,
+  "defectsFound": [
+    {
+      "symptom": "Gateway checks assumed legacy policy schema 2 and a control-network attachment.",
+      "fix": "Choose the selected fleet network for durable schema 3 and preserve inspected image, process, endpoint and network checks.",
+      "regressionRedBeforeFix": true
+    },
+    {
+      "symptom": "Diagnostic controller readers refused the durable route-authority capability marker.",
+      "fix": "Use a diagnostic-only envelope projection bound to the installed identity. Keep pending publication/holds unconfirmed and bind route-journal changes at observation boundaries. Generic controller-state consumers retain their existing restrictions.",
+      "regressionRedBeforeFix": true
+    },
+    {
+      "symptom": "Log ownership refused a valid Compose network attachment represented by null.",
+      "fix": "Check that control is a declared network key; retain the same fixed storage endpoint and independent network/storage ownership checks.",
+      "regressionRedBeforeFix": true
+    }
+  ],
+  "restartObservation": {
+    "firstFiveReads": "uncertain",
+    "laterFreshRead": "confirmed",
+    "anotherRestartPerformed": false,
+    "underlyingDelayCause": "not established"
+  },
+  "hostChecks": {
+    "fullTestsPassed": 2593,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "targetedTestsPassed": 81,
+    "syntaxPassed": true,
+    "qualityPassed": true
+  },
+  "limitations": [
+    "Private owner logs identify process sources, not the sensitivity or original author of every printed value. They are not a redacted or submitter-facing API.",
+    "A native readiness confirmation does not assert gateway availability, controller storage health, application health or business outcomes.",
+    "The diagnostic route envelope is not publication, restore or artifact-deletion authorization.",
+    "Native background lifecycle progress labels, a structured shared-log surface and full family release qualification remain open."
+  ],
+  "controllerLoss": {
+    "passed": true,
+    "controllerStopped": true,
+    "nativeReadiness": "uncertain",
+    "controllerProcess": "not-running",
+    "gatewayHTTP": 200,
+    "privateLogsCaptured": true,
+    "controllerRestarted": true
+  }
+}

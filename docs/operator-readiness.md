@@ -128,6 +128,17 @@ surface with bounded process/file tests and a mocked Docker boundary. Raw stream
 private files and are not safe submitter-facing output. Native acceptance and a
 separate structured shared-log interface remain open.
 
+The [native diagnostic drill](evidence/operator-native-diagnostics.json) covers
+two durable-candidate apps with private configuration. A request check observes a
+500 while signed native readiness remains confirmed; a corrected release returns
+200. Owner log captures retain only the selected fleet’s process streams in private
+files, including while routing is paused, a replica is stopped or the controller is
+down. During controller loss, gateway checks still report 200 while native readiness
+stays uncertain. A stopped or still-recovering replica remains uncertain until
+fresh native checks confirm it.
+These internal candidate checks do not complete native queue-step, shared-log or
+full-family qualification.
+
 Validation: submit a failing application, observe its failure through the supported
 CLI, correct it, and observe the successful release. Exercise all existing queue
 progress steps. An app-scoped submitter cannot inspect another app, operator

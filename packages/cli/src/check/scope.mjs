@@ -1,3 +1,4 @@
+import { fleetNetworkRole } from '../observe/installation.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { isIPv4 } from 'node:net';
 import { json, projectContainers } from '../recovery/docker.mjs';
@@ -14,13 +15,20 @@ export function checkHost(installation, app) {
   return host;
 }
 
+function gatewayNetworkRole({ config, policy }, fleet) {
+  if (policy.schema === 2) return 'control';
+  if (policy.schema === 3 && policy.routing === 'durable') return fleetNetworkRole(config, fleet);
+  throw refused();
+}
+
 // Use the inspected gateway's address, never an arbitrary URL or a Docker DNS alias.
-export async function checkGatewayScope(installation) {
+export async function checkGatewayScope(installation, fleet) {
   const { config, entry } = installation, service = config.services.workerd;
-  if (!service.networks.control || installation.policy.schema !== 2) throw refused();
-  const network = config.networks.control.name;
+  const role = gatewayNetworkRole(installation, fleet);
+  if (!Object.hasOwn(service.networks, role)) throw refused();
+  const network = config.networks[role].name;
   const networks = await json(['network', 'inspect', network]);
-  if (networks.length !== 1 || !networks[0].Id || networks[0].Labels?.['com.docker.compose.project'] !== config.name || networks[0].Labels?.['com.docker.compose.network'] !== 'control') throw refused();
+  if (networks.length !== 1 || !networks[0].Id || networks[0].Labels?.['com.docker.compose.project'] !== config.name || networks[0].Labels?.['com.docker.compose.network'] !== role) throw refused();
   const containers = (await projectContainers(config.name)).filter(value => value.Config.Labels?.['com.docker.compose.service'] === 'workerd');
   if (containers.length !== 1) throw refused();
   const gateway = containers[0], endpoint = gateway.NetworkSettings?.Networks?.[network];

@@ -6,11 +6,11 @@ import { observationKey } from './fingerprint.mjs';
 import { observationSelection, observationReport } from './model.mjs';
 import { sampleNative, ObserverCleanupError } from './runner.mjs';
 
-export async function observeCommand(args) {
+export async function observeCommand(args, qualification = {}) {
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { installation: { type: 'string' } } });
   if (positionals.length !== 1 || !values.installation) throw new Error('Usage: fogd observe APP --installation PROJECT (local Docker owner access)');
   const app = appName(positionals[0]), project = projectName(values.installation);
-  const installation = await observationInstallation(project), state = await readObservationState(installation);
+  const installation = await observationInstallation(project, qualification), state = await readObservationState(installation);
   const selection = observationSelection(state, app, installation.policy);
   let sample = null, boundary = 'single-read', controllerProcess = 'unconfirmed';
   if (!selection.reason) {

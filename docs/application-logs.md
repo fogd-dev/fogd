@@ -5,10 +5,13 @@ process output from the selected app's replica containers into private local fil
 This is a Docker-owner diagnostic interface. It is not a developer or submitter log
 API, and its files are not redacted for sharing.
 
-The interface is implemented in the host CLI with temporary-process/filesystem
-and mocked-Docker checks. Native acceptance remains
-open. It does not enable logging in a runtime, change log drivers, or qualify a new
-runtime family. Follow the [operator-readiness contract](operator-readiness.md)
+The interface has temporary-process/filesystem and mocked-Docker checks. The
+[native candidate evidence](evidence/operator-native-diagnostics.json) also covers
+two apps with distinct private configuration, failing and corrected handlers,
+stopped replicas, paused routing, private file modes and process-source isolation.
+Ordinary CLI use still requires a qualified family; these candidate checks use an
+internal maintainer selection. Capture does not enable runtime logging, change log
+drivers or qualify a new runtime family. Follow the [operator-readiness contract](operator-readiness.md)
 for the remaining runtime and two-application acceptance gates.
 
 ## Collect a capture
