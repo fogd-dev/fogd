@@ -13,7 +13,7 @@ export async function observeCommand(args, qualification = {}) {
   const installation = await observationInstallation(project, qualification), state = await readObservationState(installation);
   const selection = observationSelection(state, app, installation.policy);
   let sample = null, boundary = 'single-read', controllerProcess = 'unconfirmed';
-  if (!selection.reason) {
+  if (selection.expected) {
     boundary = 'matched-at-boundaries';
     try {
       const before = await observationNetwork(installation, selection.fleet);

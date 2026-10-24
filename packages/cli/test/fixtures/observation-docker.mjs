@@ -57,6 +57,6 @@ else if (args[0] === 'run') {
     if (process.env.FOGD_OBSERVE_REQUIREMENTS_CHANGE) { data.state.requirements = process.env.FOGD_OBSERVE_REQUIREMENTS_CHANGE === 'null' ? null : ['future-protocol']; writeFileSync(path, JSON.stringify(data)); }
     if (code.includes('.owner(slot)')) { output({ owner: process.env.FOGD_LOG_OWNER_MISMATCH || data.logsRead && process.env.FOGD_LOG_OWNER_FAIL_AFTER_CAPTURE ? 'unconfirmed' : 'matched', private: 'private-owner-response' }); process.exit(0); }
     if (code.includes('checkGateway')) { output({ httpStatus: 503, headersMs: 7, reason: null, body: 'private-worker-extra' }); process.exit(0); }
-    output({ identity: process.env.FOGD_OBSERVE_UNVERIFIED ? 'unconfirmed' : 'verified', replicas: ['slot-1-a', 'slot-1-b'].map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })), secrets: 'private-worker-extra' });
+    output({ identity: process.env.FOGD_OBSERVE_UNVERIFIED ? 'unconfirmed' : 'verified', leases: 'current', replicas: ['slot-1-a', 'slot-1-b'].map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })), secrets: 'private-worker-extra' });
   } else process.exit(98);
 } else process.exit(99);

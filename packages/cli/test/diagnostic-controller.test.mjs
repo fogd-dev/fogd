@@ -28,7 +28,7 @@ for (const mode of ['hold', 'pending']) test(`durable ${mode} cannot be promoted
   assert.equal(selection.reason, 'http-routing-unconfirmed');
   const context = { installation: 'local', boundary: 'matched-at-boundaries', controllerProcess: 'running-at-boundaries', observedAt: '2026-10-24T00:00:00Z' };
   const replicas = policy.fleets[0].nodes.map(node => ({ node: node.host, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' }));
-  assert.equal(observationReport(selection, context, { identity: 'verified', replicas }).nativeReadiness, 'uncertain');
+  assert.equal(observationReport(selection, context, { identity: 'verified', leases: 'current', replicas }).nativeReadiness, 'uncertain');
 });
 for (const [name, change] of [
   ['future requirement', s => { s.requirements.push('future-protocol'); }],
@@ -50,4 +50,18 @@ test('route journal changes invalidate the diagnostic observation boundary', () 
   const { state } = fixture(), before = observationKey(state, 'sample');
   state.routeAuthority.pending = { kind: 'active' };
   assert.notEqual(observationKey(state, 'sample'), before);
+});
+
+test('a durable HTTP hold permits native inspection without permitting a gateway request', () => {
+  const { state, policy } = fixture(); state.routeAuthority.holds.sample = { id, digest };
+  state.apps.sample.route = 'paused';
+  const selection = observationSelection(state, 'sample', policy);
+  assert.equal(selection.reason, 'http-routing-unconfirmed');
+  assert.equal(selection.expected?.slot, 'slot-1');
+});
+test('pending durable publication still prevents native sampling', () => {
+  const { state, policy } = fixture(); state.routeAuthority.pending = { kind: 'active' };
+  const selection = observationSelection(state, 'sample', policy);
+  assert.equal(selection.reason, 'http-routing-unconfirmed');
+  assert.equal(selection.expected, undefined);
 });

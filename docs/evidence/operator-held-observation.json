@@ -1,0 +1,234 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-24T02:12:05.722001+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "hostCLIBaseCommit": "9a8d8548bcb0996af1543f4a8107507ed77c3f0c",
+  "scope": "Internal candidate selection on the same isolated Linux arm64 classic-overlay2 Docker engine and physical host; scoped HTTPS and two native fleets. Ordinary candidate admission remains closed.",
+  "privateMaterialPublished": false,
+  "kind": "operator-held-observation",
+  "hostDiagnosticSourceSha256": {
+    "packages/cli/src/observe/command.mjs": "bec391bbb3699517fae443fafb8e08caa200aee3da804af9a461d95c630caed3",
+    "packages/cli/src/observe/model.mjs": "816856dd9a84877a4219d59be8a78fe129b698e39cf15e5710d2ba64c1a016d5",
+    "packages/cli/src/observe/worker.mjs": "a95e7dd3a42cc803cd9ab1f1ba0fdfd204173ac4e4caa4795847fb12a62bbeec"
+  },
+  "diagnosis": {
+    "coldVerifierSamples": 30,
+    "refusedAtExpiredLeaseInventory": 30,
+    "nativeStateOrHealthRequestsReached": 0,
+    "laterReadonlyVerifierSamplesPassed": 2,
+    "operatorRestartBetweenTraces": false,
+    "conclusion": "Expired node leases caused the cold verifier to refuse before its native state/health requests. Later renewal permitted identity/version/health verification. Exact lease-publication timing remains unqualified."
+  },
+  "heldInspection": {
+    "twoApps": true,
+    "routingUnchanged": true,
+    "signedRuntimeIdentity": "verified",
+    "leaseInventory": "current",
+    "replicasPerApp": 2,
+    "nativeStateAndHealthHTTP": 200,
+    "approvedVersionsMatch": true,
+    "nativeReadiness": "uncertain",
+    "reason": "http-routing-unconfirmed",
+    "gatewayRequests": "not-requested"
+  },
+  "coldRestoredObservation": {
+    "sampleCount": 10,
+    "leaseStates": {
+      "expired": 8,
+      "current": 2
+    },
+    "samples": [
+      {
+        "elapsedMs": 1555,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 3101,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 4659,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 6235,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 7872,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 9555,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 11207,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 12801,
+        "runtimeLeases": "expired",
+        "runtimeIdentity": "unconfirmed",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 16062,
+        "runtimeLeases": "current",
+        "runtimeIdentity": "verified",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      },
+      {
+        "elapsedMs": 18083,
+        "runtimeLeases": "current",
+        "runtimeIdentity": "verified",
+        "nativeReadiness": "uncertain",
+        "reason": "http-routing-unconfirmed"
+      }
+    ],
+    "readinessStayedUncertain": true,
+    "freshSignedObservationBeforeExactResume": true,
+    "selectedReplicaPhases": [
+      {
+        "elapsedMs": 1555,
+        "runtimeLeases": "expired",
+        "replicas": [
+          {
+            "node": "slot-1-a",
+            "stateHTTPStatus": null,
+            "healthHTTPStatus": null,
+            "version": "unknown"
+          },
+          {
+            "node": "slot-1-b",
+            "stateHTTPStatus": null,
+            "healthHTTPStatus": null,
+            "version": "unknown"
+          }
+        ]
+      },
+      {
+        "elapsedMs": 16062,
+        "runtimeLeases": "current",
+        "replicas": [
+          {
+            "node": "slot-1-a",
+            "stateHTTPStatus": 200,
+            "healthHTTPStatus": 200,
+            "version": "matches"
+          },
+          {
+            "node": "slot-1-b",
+            "stateHTTPStatus": 200,
+            "healthHTTPStatus": 503,
+            "version": "matches"
+          }
+        ]
+      },
+      {
+        "elapsedMs": 18083,
+        "runtimeLeases": "current",
+        "replicas": [
+          {
+            "node": "slot-1-a",
+            "stateHTTPStatus": 200,
+            "healthHTTPStatus": 200,
+            "version": "matches"
+          },
+          {
+            "node": "slot-1-b",
+            "stateHTTPStatus": 200,
+            "healthHTTPStatus": 200,
+            "version": "matches"
+          }
+        ]
+      }
+    ]
+  },
+  "privateEvidenceFingerprints": {
+    "cold-readiness-trace.json": "f92fd8e46bcf779e3d57d92a2a3cfe98eef2d29677edb7f9f6571f3af0ad3e11",
+    "warm-readiness-trace.json": "e4ab082da81a21ea8b4ba96b3cfa7c6642b60cb6472aad81002c231b6ca2bb64",
+    "held-inspection-native-result.json": "a38cdd418c5612b6e3e0bb9cd8ef4d4692c7d8b13111661c9562d7a8f61beb59",
+    "concurrency-second/concurrency-recovered-result.json": "7cb366a1228cd6e983cac1701a9357d11fa6565a4be9fa2912d425558247d833",
+    "concurrency-second/cold-held-observation-0.json": "a9e7510e5ae265b6b5d74f27ec98780e4734d949e32f29de7bd1b5935b958aa4",
+    "concurrency-second/cold-held-observation-1.json": "b79a57fee89aaf988c7ba29759a513b664966f83b003ecdd92d4daa5967c77fb",
+    "concurrency-second/cold-held-observation-2.json": "56170a5e60c16548d5605471339139450a5f678884d4dfda91dde092978c6195",
+    "concurrency-second/cold-held-observation-3.json": "58be49dc5ab6e44fdb784388d32a47a556ed3619c7aeb0b13e924aafcf2fdf52",
+    "concurrency-second/cold-held-observation-4.json": "b5ec62181e3f742b392e1cab611436ebbad19080a19f20fa326587f00fb83f19",
+    "concurrency-second/cold-held-observation-5.json": "602dae4ab7a4c9a867ed30f5c5f388909c678e7a36fcc792e0408abffe12787c",
+    "concurrency-second/cold-held-observation-6.json": "0505dab80e1f5a1cdb44185f7b3f260d33aefc9f0deaebbf38f51297b183ccea",
+    "concurrency-second/cold-held-observation-7.json": "b1ad5d98ed54bf64305a77d7853687bbe3699e71208d88298e92794d78236141",
+    "concurrency-second/cold-held-observation-8.json": "00143ff9bb608b997c4e36526632e0de5163aea95360d7106d9a82a150ca114f",
+    "concurrency-second/cold-held-observation-9.json": "e987939bc53bcbe9b7bb4040f8927fb1db8d0ae5b19e88fd0b106fbd5ff391c7",
+    "final-projection-native-result.json": "26ded9bf7d168a6be5392d95b6d55ab059aded8acf22d5fec9455bdad676d5a8"
+  },
+  "limitations": [
+    "Lease inventory is separate from signed runtime identity and application health. Expired leases never authorize serving.",
+    "Full cold-start timing, broader recovery and runtime-family release qualification remain open.",
+    "No automatic resume, mutation retry, resource recreation or relaxed identity policy was introduced."
+  ],
+  "finalDiagnosticSourceSha256": {
+    "packages/cli/src/observe/command.mjs": "bec391bbb3699517fae443fafb8e08caa200aee3da804af9a461d95c630caed3",
+    "packages/cli/src/observe/model.mjs": "d9ddd32b3e22d1075845c3f0f2504bcf4b433904877870f694ba7573bc31e8ff",
+    "packages/cli/src/observe/worker.mjs": "a95e7dd3a42cc803cd9ab1f1ba0fdfd204173ac4e4caa4795847fb12a62bbeec"
+  },
+  "finalProjectionNativeCheck": {
+    "passed": true,
+    "manualPauseReason": "controller-withholds-application",
+    "nativeReadiness": "uncertain",
+    "runtimeIdentity": "verified",
+    "runtimeLeases": "current",
+    "gatewayRequest": "not-requested",
+    "separateExactResume": true,
+    "peerRecordsUnchanged": 3,
+    "initialSmokeReasonOracleCorrected": true
+  },
+  "verification": {
+    "fullSuite": {
+      "tests": 2604,
+      "pass": 2604,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "scope": "All behavior changes before extraction of the final native-result projection."
+    },
+    "finalTargetedSuite": {
+      "tests": 132,
+      "pass": 132,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "scope": "Final selection, native worker, report projection, CLI observation and request checks."
+    },
+    "syntaxPassed": true,
+    "qualityPassed": true,
+    "finalNativeProjectionPassed": true
+  }
+}

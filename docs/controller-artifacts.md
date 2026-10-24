@@ -146,8 +146,14 @@ and Durable Object data, new writes and a subsequent approval pass. An initially
 uncertain route resume stays withheld; fresh read-only runtime verification precedes
 a new exact decision. Its initial verification delay cause remains unestablished.
 
-Concurrent approval and backup during uninterrupted native deletion, disk power loss
-and ordinary runtime-family release remain outside this evidence. The
+The [uninterrupted native concurrency drill](evidence/operator-native-artifact-concurrency.json)
+starts approval and backup commands after observing partial deletion. All three
+commands complete; protected artifact hashes match in the stopped source and its
+snapshot. Restoring that snapshot preserves the completed prune receipt, serves the
+concurrently approved release, retains D1/R2/Durable Object records and accepts a
+new write. Controller mutations remain serialized.
+
+Disk power loss and ordinary runtime-family release remain outside this evidence. The
 [operator-readiness contract](operator-readiness.md#4-retain-releases-deliberately)
 retains the remaining acceptance conditions.
 [Host build-copy retention](build-retention.md) has separate commands and evidence.

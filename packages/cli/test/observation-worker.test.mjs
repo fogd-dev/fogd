@@ -16,7 +16,7 @@ function fixture({ members = leases(), version = expected.version } = {}) {
 }
 test('real worker core brackets probes with fresh membership and signed verification, emitting only public facts', async () => {
   const f = fixture(), result = await observeFleet(f);
-  assert.deepEqual(result, { identity: 'verified', replicas: slot.nodes.map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })) });
+  assert.deepEqual(result, { identity: 'verified', leases: 'current', replicas: slot.nodes.map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })) });
   assert.equal(f.events[0], 'members'); assert.deepEqual(f.events.slice(-2), ['verify', 'members']);
   assert.equal(f.options.length, 4); assert.ok(f.options.every(value => value.redirect === 'error' && value.signal instanceof AbortSignal));
   assert.equal(JSON.stringify(result).includes('PRIVATE_'), false);
@@ -69,4 +69,34 @@ test('non-successful state and unhealthy health are recorded without reading pri
   const f = fixture(); f.request = async () => new Response('PRIVATE_ERROR_BODY', { status: 503 });
   const result = await observeFleet(f); assert.deepEqual(result.replicas[0], { node: slot.nodes[0], stateHTTPStatus: 503, healthHTTPStatus: 503, version: 'unknown' });
   assert.equal(JSON.stringify(result).includes('PRIVATE_ERROR'), false);
+});
+
+test('expired but otherwise valid leases remain distinct from unknown membership', async () => {
+  const members = leases(); members[0].expiresMs = 999;
+  const result = await observeFleet(fixture({ members }));
+  assert.equal(result.identity, 'unconfirmed'); assert.equal(result.leases, 'expired');
+});
+test('failed signed verification can still report current lease inventory without exposing errors', async () => {
+  const f = fixture(); f.identity.verify = async () => { throw new Error('PRIVATE_PROOF_DIAGNOSTIC'); };
+  const result = await observeFleet(f);
+  assert.equal(result.identity, 'unconfirmed'); assert.equal(result.leases, 'current');
+  assert.equal(JSON.stringify(result).includes('PRIVATE_'), false);
+});
+
+test('lease renewal between boundaries remains unconfirmed until a fresh observation', async () => {
+  const f = fixture(); let reads = 0;
+  f.identity.members = async () => { const rows = leases(); if (reads++ === 0) rows[0].expiresMs = 999; return rows; };
+  const result = await observeFleet(f);
+  assert.equal(result.identity, 'unconfirmed'); assert.equal(result.leases, 'unconfirmed');
+});
+test('negative expiration cannot appear as an expired valid lease inventory', async () => {
+  const members = leases(); members[0].expiresMs = -1;
+  const result = await observeFleet(fixture({ members }));
+  assert.equal(result.identity, 'unconfirmed'); assert.equal(result.leases, 'unconfirmed');
+});
+
+test('an invalid observation clock cannot classify leases as expired', async () => {
+  const f = fixture(); f.now = () => NaN;
+  const result = await observeFleet(f);
+  assert.equal(result.identity, 'unconfirmed'); assert.equal(result.leases, 'unconfirmed');
 });

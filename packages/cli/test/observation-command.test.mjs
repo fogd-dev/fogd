@@ -71,11 +71,12 @@ test('an unconfirmed observer cleanup cannot be swallowed as a normal uncertain 
   await assert.rejects(f.invoke(undefined, { FOGD_OBSERVE_HELPER_FAIL: '1', FOGD_OBSERVE_CLEANUP_FAIL: '1' }), error => error.code === 1 && /cleanup is unconfirmed/.test(error.stderr) && error.stdout === '');
 });
 
-test('a recorded paused app is uncertain without contacting its native fleet', async t => {
+test('a recorded paused app exposes native facts while readiness remains uncertain', async t => {
   const f = await observationFixture(t), data = JSON.parse(await readFile(f.data, 'utf8'));
   data.state.apps.sample.route = 'paused'; await writeFile(f.data, JSON.stringify(data));
   const output = await report(f); assert.equal(output.nativeReadiness, 'uncertain'); assert.equal(output.reason, 'controller-withholds-application');
-  assert.equal((await f.calls()).some(networkObserver), false);
+  assert.equal(output.runtimeIdentity, 'verified'); assert.equal(output.runtimeLeases, 'current');
+  assert.equal(output.replicas.length, 2); assert.equal((await f.calls()).some(networkObserver), true);
 });
 
 test('a wrong native image is refused before the networked observer starts', async t => {

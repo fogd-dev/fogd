@@ -19,6 +19,8 @@ It does not enroll, start, upgrade, or repair an installation.
 The [native durable candidate drill](evidence/operator-native-diagnostics.json)
 also covers a failing handler, a stopped replica and correction. It uses an
 internal maintainer selection; ordinary CLI candidate observation remains refused.
+The [held-route drill](evidence/operator-held-observation.json) covers signed native
+facts while HTTP routing stays withheld and diagnoses expired leases after restore.
 
 ## Interpret the report
 
@@ -27,6 +29,13 @@ contains each selected node's native state and health HTTP status, plus whether 
 published `version` matches the approved release. This compares release versions;
 it does not compare per-process generation counters. Private version strings and
 native state bodies are omitted.
+
+`runtimeLeases` describes the membership inventory at both native observation
+boundaries. `current` means the expected process records have unexpired leases;
+`expired` means a structurally valid, stable inventory contains an expired lease at
+both boundaries. `unconfirmed` covers unavailable, malformed or changing inventory.
+`not-observed` means there was no eligible native selection or sample. Lease inventory
+alone does not establish signed runtime identity.
 
 `nativeReadiness: confirmed` requires both expected replicas to answer native state
 and health checks, serve the approved version, and pass signed runtime identity and
@@ -44,6 +53,14 @@ prevents a native probe, with reason `controller-artifact-prune-pending`. Comple
 pruning of terminal history does not withhold the retained active release. These
 findings describe recorded state and native readiness. They do not authorize retry,
 resume or metadata replacement.
+
+An approved app held only by HTTP routing can still expose native state, health,
+version, identity and lease facts. Its readiness remains `uncertain`, even when all
+native checks pass. This lets an owner inspect a cold restored fleet before making
+a separate exact routing decision. The command does not resume routing or send an
+application request. Pending publication, unresolved application operations or
+recovery, unknown routing states and pending artifact pruning still prevent native
+sampling. [`fogd check`](application-check.md) continues refusing held app requests.
 
 Use `reason` to distinguish local scope, observer timeout/unavailability, controller
 uncertainty, identity failure, and replica readiness.

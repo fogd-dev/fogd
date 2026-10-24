@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-24T02:12:05.722001+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "hostCLIBaseCommit": "9a8d8548bcb0996af1543f4a8107507ed77c3f0c",
+  "scope": "Internal candidate selection on the same isolated Linux arm64 classic-overlay2 Docker engine and physical host; scoped HTTPS and two native fleets. Ordinary candidate admission remains closed.",
+  "privateMaterialPublished": false,
+  "kind": "operator-native-artifact-concurrency",
+  "commandsLaunchedAfterPartialDeletion": {
+    "phase": "partial-deletion",
+    "operation": "e2c55b7d-7ecf-4910-ab3b-2655ad8cd08d",
+    "approvedFiles": 1505,
+    "remainingFiles": 1484
+  },
+  "commandsStartedAfterObservationMs": [
+    5,
+    5
+  ],
+  "pruneReceipt": {
+    "schema": 1,
+    "id": "e2c55b7d-7ecf-4910-ab3b-2655ad8cd08d",
+    "plan": "22d2330196a5f00acf03a8a691d351c0e9f4da6363472b3ae8489bf0d1b5f0d9",
+    "artifacts": [
+      {
+        "id": "06db3abe-b750-4795-95f7-72d2ff57de30",
+        "digest": "27981b70b927c4eb243a753b6ae3af0eb7528e944238eafb6d080b3e9850ac8c",
+        "bytes": 1048479
+      }
+    ],
+    "reclaimedArtifactBytes": 1048479
+  },
+  "approvalAndBackupBothSucceeded": true,
+  "protectedArtifactTrees": 3,
+  "protectedHashesUnchangedInStoppedSourceAndSnapshot": true,
+  "allSnapshotArchiveHashesMatched": true,
+  "snapshotHasCompletedPruneReceipt": true,
+  "snapshotHasApprovedConcurrentRelease": true,
+  "recovery": {
+    "passed": true,
+    "freshResources": true,
+    "completedPruneReceiptRestored": true,
+    "threeProtectedArtifactTreesMatch": true,
+    "concurrentlyApprovedReleaseServed": true,
+    "D1R2DODataRestored": true,
+    "restoredRecordCount": 2,
+    "newWriteRecordCount": 3,
+    "readOnlyHeldObservations": 10,
+    "expiredLeaseObservations": 8,
+    "freshSignedObservationBeforeExactResume": true,
+    "HTTPStayedHeldDuringInspection": true,
+    "sourceStartupRefused": true,
+    "sourceRemainsStopped": true
+  },
+  "attemptAccounting": {
+    "firstAttemptAcceptedAsConcurrency": false,
+    "firstAttemptPruneCompletedBeforeCommandsWereLaunched": true,
+    "firstHarnessFailure": "The harness shadowed its concurrency module with a function. Owner status confirmed the completed prune before a separately reviewed second case.",
+    "readonlyVerificationLogNameCollisionRetained": true,
+    "failedAttemptRecordsRetainedPrivately": true
+  },
+  "privateEvidenceFingerprints": {
+    "concurrency-first-terminal-status.json": "bb461c5ac9a76e406607491bbc4ebabdcd73feec41559ba92679a97d7b8c85ca",
+    "concurrency/reviewed-plan.json": "a90b75a1583c1e42c79c471f5287ea2ff5bf40e3504475c2f99675af0ab8c324",
+    "concurrency-second/concurrent-processes.json": "dce11021e51161f494805651cd892b2980e1f9434b4ca241224e08ea6e94f70b",
+    "concurrency-second/protected-artifacts-before.json": "af5f49d45d096d9379fca9c997e74eee7ec88a74c8563eaa28297b2975974287",
+    "concurrency-second/protected-artifacts-after.json": "af5f49d45d096d9379fca9c997e74eee7ec88a74c8563eaa28297b2975974287",
+    "concurrency-second/concurrency-verified-result.json": "7c22259b03b82dafb1ed80bdcaac87a9aaaeb4ed8021971b577434854bcea4b3",
+    "concurrency-second/overlap-snapshot/manifest.json": "74653bb4cdecbfcee485c634e0ddd63d10ca5bf04f9faa86f8c661ab7189342b",
+    "concurrency-restore-result.json": "a1be3aaa9cfe509542a9cff9178a18bdd078ea7c61a965328ddc3d559833664e",
+    "concurrency-second/concurrency-recovered-result.json": "7cb366a1228cd6e983cac1701a9357d11fa6565a4be9fa2912d425558247d833"
+  },
+  "limitations": [
+    "The commands were launched after observing partial deletion; their backend mutations remain serialized by the controller.",
+    "This qualifies the bounded local candidate case, not disk power loss, multi-host storage or ordinary family admission.",
+    "Private snapshots, credentials and raw operator logs are retained outside the repository."
+  ]
+}

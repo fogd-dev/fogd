@@ -45,8 +45,9 @@ these current gaps:
   in source, including explicit pruning and interrupted-prune resume. The
   [native candidate drill](evidence/operator-native-artifact-retention.json) covers
   quota refusal, interrupted pruning, explicit reclamation and retained recovery.
-  Concurrent approval/backup during uninterrupted deletion and ordinary runtime-family
-  release remain open.
+  [Concurrent approval and backup](evidence/operator-native-artifact-concurrency.json)
+  during uninterrupted deletion also pass with protected hashes and restored data.
+  Ordinary runtime-family release remains open.
 - **Capacity and serving:** measure latency, throughput, memory, and controller-loss
   behavior across declared app counts and concurrent uploads. Use those results to
   decide app density and routing architecture; caching needs an explicit approval

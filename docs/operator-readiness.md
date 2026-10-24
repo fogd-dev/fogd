@@ -160,11 +160,17 @@ stopped restore. The frozen server does not provide these endpoints. The
 quota refusal, protected artifacts and pins, interrupted pruning, explicit resume,
 quota reclamation, another deployment and restoration of a retained pre-prune
 snapshot. Approval and backup attempts while pruning remains pending refuse.
-Concurrent approval/backup during uninterrupted deletion and ordinary runtime-family
-release remain open.
-The retained-recovery drill also repeats an initially uncertain route resume that
-stays withheld until fresh native verification and a new exact decision. Diagnose
-that initial uncertainty before treating restored-route operation as fully qualified.
+The [uninterrupted concurrency drill](evidence/operator-native-artifact-concurrency.json)
+also starts approval and backup after observing partial deletion. All commands
+complete, protected hashes match in source and snapshot, and fresh-resource restore
+preserves the completed prune, approved update and application data. Ordinary
+runtime-family release remains open.
+The [held-route diagnosis](evidence/operator-held-observation.json) reproduces a
+cold restored fleet with expired node leases. The routing verifier refuses before
+native state/health requests; later lease renewal permits signed verification
+without an operator restart. Owner observation now exposes native facts and lease
+state while HTTP routing stays held. Full startup timing and recovery qualification
+remain open; observation never substitutes for a new exact routing decision.
 
 The owner can inspect [backing filesystem space](storage-space.md) without
 starting services or recreating missing volumes. These observations are separate from

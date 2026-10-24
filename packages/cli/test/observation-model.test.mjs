@@ -7,7 +7,7 @@ const id = '00000000-0000-4000-8000-000000000001', app = 'sample', digest = 'a'.
 const policy = { fleets: [{ id: 'slot-1', nodes: [{ host: 'slot-1-a' }, { host: 'slot-1-b' }] }] };
 const fresh = () => ({ apps: { [app]: { route: 'active', active: id, slot: 'slot-1' } }, deployments: { [id]: { id, app, digest, status: 'active', step: 'complete', version: 'private-version', error: 'private-error', secretRevision: 'private-revision' } }, credentials: 'private-credentials', secrets: 'private-secret-values' });
 const context = { installation: 'local-project', boundary: 'matched-at-boundaries', controllerProcess: 'running-at-boundaries', observedAt: '2026-10-22T12:00:00.000Z' };
-const healthy = () => ({ identity: 'verified', replicas: ['slot-1-a', 'slot-1-b'].map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })) });
+const healthy = () => ({ identity: 'verified', leases: 'current', replicas: ['slot-1-a', 'slot-1-b'].map(node => ({ node, stateHTTPStatus: 200, healthHTTPStatus: 200, version: 'matches' })) });
 
 test('matching signed replicas confirm only native readiness, never application or controller storage health', () => {
   const selection = observationSelection(fresh(), app, policy), report = observationReport(selection, context, healthy());
@@ -27,7 +27,7 @@ test('an unverified identity or missing replica cannot confirm readiness', () =>
   const selection = observationSelection(fresh(), app, policy);
   for (const sample of [null, { ...healthy(), identity: 'unconfirmed' }, { ...healthy(), replicas: [healthy().replicas[0]] }, { identity: 'verified', replicas: {} }]) assert.equal(observationReport(selection, context, sample).nativeReadiness, 'uncertain');
 });
-for (const details of [{ route: 'paused' }, { quarantined: true }, { uncertain: id }, { retirement: {} }, { dispatch: { hold: id } }, { delivery: { operation: 'pause' } }, { cronRecovery: { status: 'required' }, dispatch: {} }]) test(`withheld state ${JSON.stringify(details)} does not contact or confirm a runtime`, () => {
+for (const details of [{ route: 'future' }, { quarantined: true }, { uncertain: id }, { retirement: {} }, { dispatch: { hold: id } }, { delivery: { operation: 'pause' } }, { cronRecovery: { status: 'required' }, dispatch: {} }]) test(`withheld state ${JSON.stringify(details)} does not contact or confirm a runtime`, () => {
   const state = fresh(); Object.assign(state.apps[app], details);
   // Hold/migration/retirement references must have statuses consistent with them.
   if (details.uncertain || details.dispatch?.hold) state.deployments[id].status = 'failed';
@@ -113,4 +113,21 @@ test('newly unknown requirements change the observation boundary', () => {
 for (const field of ['requirements', 'artifactPruning']) test(`an explicit null ${field} differs from absent controller metadata at a probe boundary`, () => {
   const before = fresh(), after = fresh(); after[field] = null;
   assert.notEqual(observationKey(before, app), observationKey(after, app));
+});
+
+test('a paused approved app exposes native facts without becoming ready', () => {
+  const state = fresh(); state.apps[app].route = 'paused';
+  const selection = observationSelection(state, app, policy);
+  assert.equal(selection.expected?.slot, 'slot-1');
+  const report = observationReport(selection, context, healthy());
+  assert.equal(report.reason, 'controller-withholds-application');
+  assert.equal(report.nativeReadiness, 'uncertain');
+  assert.equal(report.runtimeIdentity, 'verified');
+  assert.equal(report.runtimeLeases, 'current');
+  assert.equal(report.replicas.length, 2);
+});
+for (const [leases, wanted, reason] of [['expired', 'expired', 'runtime-leases-expired'], ['unconfirmed', 'unconfirmed', 'runtime-leases-unconfirmed'], [undefined, 'unconfirmed', 'runtime-leases-unconfirmed']]) test(`leases ${leases} cannot be promoted by signed healthy replicas`, () => {
+  const report = observationReport(observationSelection(fresh(), app, policy), context, { ...healthy(), leases });
+  assert.equal(report.nativeReadiness, 'uncertain');
+  assert.equal(report.runtimeLeases, wanted); assert.equal(report.reason, reason);
 });
