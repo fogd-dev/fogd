@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "kind": "operator-native-zero-live-recovery",
+  "recordedAt": "2026-10-24T04:45:20.509172+00:00",
+  "hostCLICommit": "c6d6fa87f30602a0f4aa8361b90a57e1e0bdca78",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Continue the fresh v3 HTTP qualification through retirement of its two remaining applications, stopped backup and ordinary restore with no live apps, and a newly approved app. Two fleets on one isolated Linux arm64 classic-overlay2 Docker engine on the same physical host; internal candidate selection only.",
+  "engine": {
+    "id": "2a142e44-1892-474f-b159-e319964a6c59",
+    "os": "linux",
+    "architecture": "aarch64",
+    "driver": "overlay2"
+  },
+  "privateMaterialPublished": false,
+  "priorRetirementEvidenceSha256": "cab79c060005741560da00c9786cd11d3710f2b9e51b53c66c2b6f1a830bc410",
+  "cases": [
+    {
+      "operation": "retire-third-app",
+      "application": "replacement",
+      "retiredAppsAfter": 3,
+      "lastSurvivor": "newbook",
+      "survivorRecordsPreserved": 2,
+      "survivorHeldBeforeExactResume": true,
+      "resumeAfterVerifiedIdentityCurrentLeasesHealthAndVersions": true,
+      "replacementDisksEmptyBeforeStartup": true,
+      "priorRetirementAuditsAndNamespaceBytesPreserved": true
+    },
+    {
+      "operation": "retire-last-live-app",
+      "application": "newbook",
+      "retiredAppsAfter": 4,
+      "retiredReleases": 5,
+      "publicRoutes": 0,
+      "approvalHolds": 0,
+      "availableSlots": 2,
+      "oldNamesHTTP": 404,
+      "allPinnedArtifactsAndFourRetiredNamespacesPreserved": true,
+      "stoppedBackupCompleted": true
+    },
+    {
+      "operation": "ordinary-restore-with-no-live-apps",
+      "retiredApps": 4,
+      "retiredReleases": 5,
+      "publicRoutes": 0,
+      "approvalHolds": 0,
+      "availableSlots": 2,
+      "oldNamesHTTP": 404,
+      "nativeIdentitiesAndRetirementAuditsPreserved": true,
+      "freshEnrolledTargetStarted": true
+    },
+    {
+      "operation": "new-app-after-empty-recovery",
+      "application": "afterempty",
+      "pendingHTTP": 404,
+      "initialRows": 0,
+      "savedRows": 1,
+      "exactApprovalPassed": true,
+      "retiredCredentialScopeRefusedWithoutStoreChange": true,
+      "allRetiredNamesStillHTTP": 404,
+      "occupiedSlots": 1,
+      "availableSlots": 1,
+      "newArtifactPinned": true
+    }
+  ],
+  "independentAudit": {
+    "capturedPrivatePublicPairsValidated": 3,
+    "independentHostPolicyAndEnrollmentPlanBindingsMatched": true,
+    "targetContainersNeverStartedAtCapture": 24,
+    "retirementAuditsPreservedThroughEmptyRestore": 4,
+    "actualPinnedArtifactDigestsVerified": 6,
+    "retiredNamespaceFilesComparedAfterNewAppWrite": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "fourRetiredNamespacesByteIdentical": true,
+    "retainedNativeVolumes": 88,
+    "stoppedSourceOrIncompleteProjects": 7,
+    "finalRunningServices": 7,
+    "currentNewAppDataMatchesAcknowledgedWrite": true,
+    "productionSourceInventoryMatchesCandidate": true,
+    "snapshotsIndependentlyHashed": {
+      "zero-live-source-snapshot": {
+        "manifestSha256": "5d09bef06f376710c9bb9ac86f044055290ff63dc4317c24d2c5f24d45b0fb8e",
+        "members": 10
+      },
+      "zero-third-snapshot": {
+        "manifestSha256": "edcc4ac2f074dd00d1b989c2aa0aa648b7e36fde69b509b67ab890d5d1b32bb1",
+        "members": 10
+      },
+      "zero-empty-snapshot": {
+        "manifestSha256": "a96f6a9be7ea37d8ed72120eaad144def9ee76dbea0745fa9f2d3a4da79038c2",
+        "members": 10
+      }
+    }
+  },
+  "regressionChecks": {
+    "addedTests": 2,
+    "targetedTestsPassed": 28,
+    "fullSuiteTestsPassed": 2643,
+    "fullSuiteTestsFailed": 0,
+    "fullSuiteTestsSkipped": 0,
+    "terminalExitCode": 0,
+    "discardRetirementHistoryMutationCaughtByBothNewTests": true,
+    "targetedOutputSha256": "9babf00d48b2724b5036a6e90a81edcd5462a4adcd9ef2c42bb684597230b783",
+    "fullSuiteOutputSha256": "302e61212125b2c621e376769040c21181db466fe781a1403fd14ab75e1d5ea0",
+    "mutationOutputSha256": "b494c0f288b10046de264b62d76101790429c0543d476916f73f84418c771ac4"
+  },
+  "executionRecords": {
+    "commandRecords": 34,
+    "HTTPTranscripts": 27,
+    "expectedNonzeroCommands": [
+      "zero-live-reuse/refuse-retired-credential-11.json"
+    ],
+    "unexpectedCommandFailures": 0,
+    "failedNativeHarnessRuns": 0,
+    "completedDecisionsNotReplayed": true
+  },
+  "privateEvidenceFingerprints": {
+    "zero-live-source-state.json": "7e62542d345b51968a697299cfb14171351563ab01ca709d6357f9da09fd1d69",
+    "zero-third-result.json": "f2f82756d3284a19eae0899be325e148f7cfbe7005e99d21eb6faa8857c1d617",
+    "zero-fourth-source-state.json": "67a681630cd1e4fdb65061ad1b35220c47459e5817334f85378ebc086c565d14",
+    "zero-fourth-result.json": "ba19f956657cc6595ef1a0e4da5849c1e143f033348d8310e8fa38501732ac2e",
+    "zero-empty-restore-result.json": "1940775d988199341616231b6d4bb2fc2ba3f24e1068510942b825d18f7b0fd6",
+    "zero-live-reuse-result.json": "f265ba793a32b175d32237854ba1bbcaca307b349a0b7eeb9f48053d928a991c",
+    "zero-third-stopped-survey.json": "c54fc59f49ada2967e17d6db2997771210e6677157585853998f4540262e1cda",
+    "zero-fourth-stopped-survey.json": "9a81d021586d7786f2be94ed7db3a156f52731a3e5dd1808746f55f048dbfae3",
+    "zero-empty-restored-stopped-survey.json": "d1d30a831e56c93b4a62fa6cc6afcf5d8124f91399b8443d057d3dbcfde59c32",
+    "zero-live-native-forensics.json": "e7853b5ca9c8e68f3c5739dcf4247fd645f1002360531065990b0e69af41805b",
+    "zero-live-independent-audit.json": "63c3e36c259b345c1bc73134f39b48ab688ae81c09d04b158b09aeaa587b3a76",
+    "zero-live-replacement-namespace-before.json": "594f0b33b3095e4e69d30133db8814d7667cf255f85eaeea0f54ba3110cc4726",
+    "zero-live-newbook-namespace-before.json": "934f07ca26a03f4853759e3cec2bae6ef65fe8fa0d96c241d9d9f94dc940c87b",
+    "zero-live-execution-fingerprints.json": "8846d033da6579c670262c0b4596b2cd09fc8d9d73c7196eaef5c81f53949e45",
+    "zero-live-source-snapshot/manifest.json": "5d09bef06f376710c9bb9ac86f044055290ff63dc4317c24d2c5f24d45b0fb8e",
+    "zero-third-snapshot/manifest.json": "edcc4ac2f074dd00d1b989c2aa0aa648b7e36fde69b509b67ab890d5d1b32bb1",
+    "zero-empty-snapshot/manifest.json": "a96f6a9be7ea37d8ed72120eaad144def9ee76dbea0745fa9f2d3a4da79038c2"
+  },
+  "privateHarnessFingerprints": {
+    "fogd-native-zero-live-audit.py": "cdf451ddfe91e6d27f51e415abd476de62d0ce91ca41559b729358419b562758",
+    "fogd-native-zero-live-fourth.py": "612fbc18f34ba1461d45e40efdeb59a00fb2fa56c7d2e4cb16877ee0ca8c5232",
+    "fogd-native-zero-live-common.py": "40f4a04056bc02e417fa594547dca5195ba0dcbf02d9d8f5abd172d47e597e70",
+    "fogd-native-zero-live-third.py": "4aba352f4185d305fbafb343f6e13a45cb37f04286b972d60e3b05570f8fce03",
+    "fogd-native-zero-live-audit.mjs": "15e32c21444a2a11c1d0b5f9eecb52d6de3673c8277ccdaab988c642ba77abe0",
+    "fogd-native-zero-live-restore.py": "9c3f4bee0d222ac31d1e4a8f867741b2834b187247083136d23da60fed0431e0"
+  },
+  "limitations": [
+    "One physical host, one isolated Linux arm64 Docker engine and the HTTP/D1/R2/Durable Object fixtures. No second-machine, performance, density or resource-limit qualification.",
+    "Ordinary v3 admission remains closed. No runtime-family migration, native queue/cron retirement or background-work recovery was qualified here.",
+    "No controller/helper process crash, disk power loss or SQL-to-ledger interruption was injected. Those remain separate acceptance gates.",
+    "Normal adapter resource IDs change with a differently named replacement. This checks fresh disks/native identities/namespaces, retained bytes and application isolation, not reuse of the retired app physical database IDs.",
+    "Native binaries are unchanged from the separately recorded v3 COPY-only package."
+  ]
+}

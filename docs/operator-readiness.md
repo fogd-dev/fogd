@@ -322,8 +322,10 @@ retirement and same-family recovery have [bounded native evidence](evidence/oper
 from a fresh two-fleet installation. Two retirements preserve prior history,
 different-name replacements use fresh storage, and recovered apps retain data and
 accept new writes. The post-finalizer host-error case keeps its target unstarted
-and enrollment incomplete. Zero-live-app recovery, native background retirement
-and v2-to-v3 migration remain unqualified. Ordinary released-family selection, first-claim and retirement crashes,
+and enrollment incomplete. [Zero-live-app recovery](evidence/operator-native-zero-live-recovery.json)
+also preserves four tombstones and restores two free slots; a new app starts empty
+and writes after exact approval. Native background retirement and v2-to-v3 migration
+remain unqualified. Ordinary released-family selection, first-claim and retirement crashes,
 restricted recovery browser interaction and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local

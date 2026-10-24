@@ -1036,6 +1036,13 @@ apps acknowledge new writes.
 An injected host exception after successful native finalization retains the spent
 grant and the unstarted target with incomplete host enrollment. Startup refuses
 before Docker contact; a different fresh target completes ordinary recovery.
-This is not a process-crash or power-loss test. Native background retirement and
-zero-live-app recovery remain open, and no migration from v2 is qualified. Both
-durable families retain candidate admission.
+This is not a process-crash or power-loss test. The
+[last-app follow-up](evidence/operator-native-zero-live-recovery.json) retires the
+remaining two apps, snapshots an installation with four tombstones and no live
+routes, and restores it without creating approval holds. The native controller
+reports both slots free. A newly approved app then starts empty and writes while
+all retired names remain unavailable. Independent checks preserve the retirement
+audits, pinned artifacts and all four retired namespace file maps.
+
+Native background retirement and process-crash gates remain open, and no migration
+from v2 is qualified. Both durable families retain candidate admission.

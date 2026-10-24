@@ -62,8 +62,11 @@ these current gaps:
   remain open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
   covers two retirements, different-name replacements, retained namespace bytes
   and ordinary recovery with both tombstones. An injected host error after native
-  finalization preserves incomplete enrollment and refuses startup. Zero-live-app
-  recovery, native background retirement and ordinary release remain open.
+  finalization preserves incomplete enrollment and refuses startup. The
+  [last-app follow-up](evidence/operator-native-zero-live-recovery.json) restores
+  four tombstones with no live apps and then approves a fresh app in the freed
+  capacity. Native background retirement, process-crash gates and ordinary release
+  remain open.
   Existing v2 installations cannot run this protocol or adopt v3 through an
   unqualified family migration.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,

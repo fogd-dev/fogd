@@ -5,13 +5,48 @@ import { fileURLToPath } from 'node:url';
 import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { prepareRetiredRouteRestoration, restoreRetiredRouteStores, restoreEnrolledRouteStores } from '../src/route-restoration.mjs';
+import { prepareRouteRestoration, prepareRetiredRouteRestoration, restoreRetiredRouteStores, restoreEnrolledRouteStores } from '../src/route-restoration.mjs';
 import { initializeFreshRouteStores } from '../src/fresh-route-enrollment.mjs';
-import { readRouteRecord } from '../src/route-record-store.mjs';
+import { readRouteRecord, routeRecordDigest } from '../src/route-record-store.mjs';
 import { runtimePolicyIdentity } from '../src/runtime-policy.mjs';
 import { retirementRequest, alphaId, betaId, alphaDigest, betaDigest } from './fixtures/route-retirement.mjs';
 
 const refused = error => error.code === 'ROUTE_RETIREMENT_REFUSED' && error.cause === undefined;
+function lastAppRequest() {
+  const input = retirementRequest(), { state, authority } = input.source;
+  delete state.apps.beta; delete state.deployments[betaId];
+  authority.record.routes = authority.record.routes.filter(route => route.host === 'alpha.localhost');
+  authority.digest = routeRecordDigest(authority.record, { installation: authority.record.installation, slots: ['slot-1', 'slot-2'] });
+  state.routeAuthority.settled.digest = authority.digest;
+  return input;
+}
+
+test('retiring the last app leaves empty authority and no approval holds while preserving its tombstone', t => {
+  t.mock.method(Date, 'now', () => 0);
+  const input = lastAppRequest();
+  const projected = prepareRetiredRouteRestoration(input);
+  assert.deepEqual(projected.record.routes, []);
+  assert.deepEqual(projected.state.routeAuthority.holds, {});
+  assert.equal(projected.state.apps.alpha.slot, null);
+  assert.equal(projected.state.apps.alpha.route, 'retired');
+  assert.equal(projected.state.deployments[alphaId].status, 'retired');
+  assert.deepEqual(projected.state.apps.alpha.retirement, { ...input.retirement.evidence, deployment: alphaId });
+});
+
+test('ordinary restoration of only-retired history preserves the tombstone without creating routes or holds', t => {
+  t.mock.method(Date, 'now', () => 0);
+  const input = lastAppRequest(), retired = prepareRetiredRouteRestoration(input);
+  const source = { state: retired.state, authority: { record: retired.record, digest: retired.state.routeAuthority.settled.digest } };
+  const restored = prepareRouteRestoration({ profile: input.profile, sourceProfile: input.profile, source,
+    snapshot: 'd'.repeat(64), binding: 'b'.repeat(64), domain: 'localhost' });
+  assert.deepEqual(restored.record.routes, []);
+  assert.deepEqual(restored.state.routeAuthority.holds, {});
+  assert.equal(restored.state.apps.alpha.route, 'retired');
+  assert.equal(restored.state.deployments[alphaId].status, 'retired');
+  assert.deepEqual(restored.state.apps.alpha.retirement, { ...input.retirement.evidence, deployment: alphaId });
+  assert.ok(restored.state.requirements.includes('fogd-retirement-v1'));
+});
+
 test('retirement removes only its route, tombstones its releases and holds the survivor behind its exact approval', () => {
   const input = retirementRequest(), before = structuredClone(input);
   const projected = prepareRetiredRouteRestoration(input);

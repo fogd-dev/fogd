@@ -23,17 +23,24 @@ exercise verified archive copying, empty replacement disks, retained artifacts,
 survivor holds and fresh enrollment. The helper validates the original source pair
 and the change to one fleet's identity before spending its enrollment grant.
 Interrupted copying or publication retains the target for inspection and keeps
-host enrollment incomplete. The native drill covers two consecutive retirements,
+host enrollment incomplete. The initial native drill covers two consecutive retirements,
 fresh replacement applications, retained data and artifact pins, and ordinary
 restore with both retirement tombstones. It compares every stored file in the two
 retired namespaces after new writes on the recovered installation. Normal adapter
 resource IDs change with the replacement app name; this is not a test of reusing
 the retired app's physical resource IDs.
 
+The [last-app follow-up](evidence/operator-native-zero-live-recovery.json) retires
+the two remaining apps and restores the installation with four tombstones, five
+retired releases, no routes or approval holds, and two free slots. A differently
+named app then deploys, receives exact approval, starts empty and accepts a write.
+Independent reads verify all retired namespace bytes and artifact pins after that
+write; old names remain unavailable.
+
 An injected host error after the real native finalizer succeeds leaves enrollment
 incomplete, all target services unstarted and partial stores retained. Startup
 refuses before Docker contact. This does not qualify process crashes, disk power
-loss, zero-live-app recovery or native background retirement. Keep durable
+loss or native background retirement. Keep durable
 installations on their enrolled recovery workflow; the raw Docker startup command
 below does not apply to them.
 
