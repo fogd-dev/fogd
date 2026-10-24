@@ -12,8 +12,9 @@ restore evidence. Earlier experimental profiles below retain their pinned scope.
 The commands below cover legacy `fogd-stopped-v1` snapshots. The source implements
 a separate coordinator for `fogd-stopped-durable-v1`. The
 [packaged v3 candidate](evidence/operator-durable-retirement-package.json) includes
-its stopped retirement helper, but native retirement acceptance remains open and
-ordinary enrollment stays closed. The v2 candidate lacks the helper. The earlier
+its stopped retirement helper. A [native HTTP retirement and recovery drill](evidence/operator-native-durable-retirement.json)
+passes on that candidate; ordinary enrollment stays closed. The v2 candidate lacks
+the helper. The earlier
 [native refusal check](evidence/operator-native-activation-crashes.json) records
 the missing path before this coordinator existed.
 
@@ -22,15 +23,24 @@ exercise verified archive copying, empty replacement disks, retained artifacts,
 survivor holds and fresh enrollment. The helper validates the original source pair
 and the change to one fleet's identity before spending its enrollment grant.
 Interrupted copying or publication retains the target for inspection and keeps
-host enrollment incomplete. These component checks do not qualify Docker mounts,
-native data recovery or background retirement in a packaged runtime. Keep durable
+host enrollment incomplete. The native drill covers two consecutive retirements,
+fresh replacement applications, retained data and artifact pins, and ordinary
+restore with both retirement tombstones. It compares every stored file in the two
+retired namespaces after new writes on the recovered installation. Normal adapter
+resource IDs change with the replacement app name; this is not a test of reusing
+the retired app's physical resource IDs.
+
+An injected host error after the real native finalizer succeeds leaves enrollment
+incomplete, all target services unstarted and partial stores retained. Startup
+refuses before Docker contact. This does not qualify process crashes, disk power
+loss, zero-live-app recovery or native background retirement. Keep durable
 installations on their enrolled recovery workflow; the raw Docker startup command
 below does not apply to them.
 
 The v3 package preserves the pinned native binaries and adds the matching controller
 sources. It does not qualify upgrading an existing v2 installation or restoring its
-snapshots under v3. Native acceptance needs a fresh v3 installation and snapshots
-from that same family.
+snapshots under v3. The native drill uses a fresh v3 installation and snapshots
+from that same family on one isolated Docker engine on the same physical host.
 
 ## Prepare and retire
 

@@ -1025,6 +1025,17 @@ removes the retired route and applies ordinary withheld-restoration rules to the
 survivors before spending fresh enrollment. Component tests cover copying, empty
 replacement disks, approval holds, interrupted publication and incomplete host
 completion. A [separate v3 package](evidence/operator-durable-retirement-package.json)
-contains this helper and preserves the native binaries. Native retirement acceptance
-on a fresh v3 installation remains required; this package does not qualify migration
-from v2. Both durable families retain candidate admission.
+contains this helper and preserves the native binaries. The
+[v3 native retirement drill](evidence/operator-native-durable-retirement.json)
+qualifies two consecutive HTTP-app retirements, different-name replacements and
+ordinary recovery with both tombstones. Independent checks match captured journals
+to installed profiles and host enrollment plans, verify five pinned artifact
+digests, and compare all 47 stored files in the retired namespaces after recovered
+apps acknowledge new writes.
+
+An injected host exception after successful native finalization retains the spent
+grant and the unstarted target with incomplete host enrollment. Startup refuses
+before Docker contact; a different fresh target completes ordinary recovery.
+This is not a process-crash or power-loss test. Native background retirement and
+zero-live-app recovery remain open, and no migration from v2 is qualified. Both
+durable families retain candidate admission.

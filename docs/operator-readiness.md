@@ -318,8 +318,12 @@ The durable snapshot retirement coordinator has component checks for source
 verification, fresh replacement identities and disks, survivor holds and incomplete
 enrollment after faults. The [v3 candidate package](evidence/operator-durable-retirement-package.json)
 includes the new stopped helper and preserves the pinned native binaries. Native
-retirement acceptance on a fresh v3 installation remains required; v2-to-v3
-migration is unqualified. Ordinary released-family selection, first-claim and retirement crashes,
+retirement and same-family recovery have [bounded native evidence](evidence/operator-native-durable-retirement.json)
+from a fresh two-fleet installation. Two retirements preserve prior history,
+different-name replacements use fresh storage, and recovered apps retain data and
+accept new writes. The post-finalizer host-error case keeps its target unstarted
+and enrollment incomplete. Zero-live-app recovery, native background retirement
+and v2-to-v3 migration remain unqualified. Ordinary released-family selection, first-claim and retirement crashes,
 restricted recovery browser interaction and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local

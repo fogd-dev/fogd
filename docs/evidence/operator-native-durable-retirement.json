@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "kind": "operator-native-durable-retirement",
+  "recordedAt": "2026-10-24T04:18:54.101239+00:00",
+  "hostCLICommit": "3b5fdc654f3f3dbf1e8691269ce75b92d29bc9f6",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Fresh two-fleet Linux arm64 HTTPS installation and fresh stopped targets on one isolated classic-overlay2 Docker engine on the same physical host. HTTP/D1/R2/Durable Object fixtures only; internal candidate selection.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "privateMaterialPublished": false,
+  "boundedHTTPRetirementAndRecoveryPassed": true,
+  "cases": [
+    {
+      "operation": "retire-hello",
+      "retiredSlot": "slot-1",
+      "sourceRows": 3,
+      "survivor": "notebook",
+      "survivorD1R2DurableObjectRecords": 4,
+      "pendingAndActiveReleasesRetired": true,
+      "retiredHTTP": 404,
+      "survivorHeldHTTP": 503,
+      "replacementDisksEmptyBeforeStartup": true,
+      "replacementNativeIDsAndNamespaceFresh": true,
+      "originalSnapshotIndependentlyHashed": true
+    },
+    {
+      "operation": "reuse-first-fleet",
+      "application": "replacement",
+      "initialRows": 0,
+      "savedRows": 2,
+      "oldNameApprovalRefused": true,
+      "oldNameSubmissionHTTP": 400,
+      "noNewOldNameSubmissionRecorded": true,
+      "oldCredentialCanReadOwnRetiredHistory": true,
+      "retainedRestartPreservedData": true,
+      "resourceNames": "Normal adapter renamed hello-db to replacement-db; both use binding DB. Same physical database ID reuse was not tested."
+    },
+    {
+      "operation": "retire-notebook",
+      "retiredSlot": "slot-2",
+      "priorRetirementAuditIdentical": true,
+      "survivor": "replacement",
+      "survivorRows": 2,
+      "retiredHTTP": 404,
+      "survivorHeldHTTP": 503,
+      "replacementDisksEmptyBeforeStartup": true,
+      "freshNativeIDsAndNamespace": true,
+      "exactResumeAfterCurrentNativeObservation": true
+    },
+    {
+      "operation": "reuse-second-fleet",
+      "application": "newbook",
+      "initialD1Rows": 0,
+      "initialDurableObjectCount": 0,
+      "sameDurableObjectClassAndBindingNames": true,
+      "savedD1R2DurableObjectRecords": 1,
+      "retiredNamespacesUnchanged": true
+    },
+    {
+      "operation": "ordinary-restore-with-two-tombstones",
+      "nativeIdentitiesPreserved": true,
+      "retirementAuditsAndArtifactPinsIdentical": true,
+      "bothSurvivorsHeldHTTP": 503,
+      "retiredNamesHTTP": 404,
+      "exactResumesAfterNativeObservation": true,
+      "acknowledgedDataPreservedBeforeNewWrites": true,
+      "finalSQLRows": 3,
+      "finalD1R2DurableObjectRecords": 2,
+      "newWritesAcknowledged": true
+    }
+  ],
+  "injectedHostFailure": {
+    "boundary": "After a real native retirement finalizer returns its successful receipt, before the host coordinator can complete enrollment.",
+    "actualNativeFinalizerSucceeded": true,
+    "hostErrorInjectedThroughTrustedCoordinatorOptions": true,
+    "hostEnrollmentPending": true,
+    "hostCompletionAndOutputSuccessFilesAbsent": true,
+    "allEightTargetContainersNeverStarted": true,
+    "startupRefusedBeforeDockerContact": true,
+    "partialVolumesAndStoresRetained": true,
+    "noRepairOrRetryOfIncompleteTarget": true,
+    "runtimeProgramFilesModified": false,
+    "processSIGKILLTested": false,
+    "actualSpentGrantReadBackAndMatched": true
+  },
+  "independentAudit": {
+    "capturedStateAndAuthorityPairsValidated": 4,
+    "hostPolicyAndEnrollmentPlanBindingsMatched": true,
+    "neverStartedTargetContainersVerified": true,
+    "exactApprovalHoldsVerified": true,
+    "pendingOnlyReleaseStayedRetired": true,
+    "actualPinnedArtifactDigestsVerified": 5,
+    "retainedNamespaceFileMaps": [
+      {
+        "app": "hello",
+        "files": 18,
+        "storedBytes": 322317,
+        "canonicalFileMapSha256": "156099dddb340c2cc6d3d38af426e444e0b2b21ff5df376f0cfad121f508572f",
+        "unchangedAfterReplacementAndRecoveredWrites": true
+      },
+      {
+        "app": "notebook",
+        "files": 29,
+        "storedBytes": 351660,
+        "canonicalFileMapSha256": "0140c3d717370a23c4c83d192778c2e12c49b808009a18dd4e0237c71f94606b",
+        "unchangedAfterReplacementAndRecoveredWrites": true
+      }
+    ],
+    "retainedNativeVolumes": 55,
+    "stoppedSourceOrIncompleteProjects": 4,
+    "finalRunningServices": 7,
+    "snapshotsIndependentlyHashed": {
+      "source-snapshot": {
+        "manifestSha256": "967366a0e65a4718101faa4d77e19959f4ebff8aa99f7770a15261a5018abe77",
+        "members": 10
+      },
+      "replacement-snapshot": {
+        "manifestSha256": "2c31af000b018744b6806b274fb86fc3d7797be62307f6f315da397454a0015c",
+        "members": 10
+      },
+      "replacement-snapshot-verified": {
+        "manifestSha256": "a36bcb4427e8d78125375c1e7b6e50600dea552134fd67157686d313befa1c3e",
+        "members": 10
+      },
+      "two-retirements-snapshot": {
+        "manifestSha256": "172b9044719da4b849c9350ad7be80dd834c7d9a4ec7c7e1ea442504898b7e43",
+        "members": 10
+      }
+    },
+    "currentDataMatchedAcknowledgedResponses": true
+  },
+  "uncertainResume": {
+    "firstDecisionReturnedUncertain": true,
+    "freshStatusShowedWithheldExactHoldAndNoPendingPublication": true,
+    "bothReplicaIdentitiesCurrentLeasesHealthAndVersionsObservedBeforeNewExplicitDecision": true,
+    "explicitDecisionSucceededAndDataMatched": true,
+    "causeOfFirstUncertainty": "not-established",
+    "noAutomaticMutationReplay": true
+  },
+  "attemptAccounting": {
+    "failedHarnessAttemptsRetainedAndNotAcceptedAsCompleteRuns": true,
+    "fixedPrivacyErrorOracleCorrected": true,
+    "normalAdapterResourceIDOracleCorrected": true,
+    "candidateObservationQualificationFlagCorrected": true,
+    "privateDirectoryAndReadOnlyObservationNameCollisionsRefusedWithoutOverwrite": true,
+    "completedRetirementsApprovalsAndReplacementWritesNotRepeated": true,
+    "completedFirstSurvivorResumeInspectedBeforeContinuingSecondSurvivor": true
+  },
+  "executionRecords": {
+    "commandRecords": 76,
+    "HTTPTranscripts": 30,
+    "unexpectedCommandFailures": 0,
+    "expectedNonzeroCommands": [
+      "post-finalizer-fault/incomplete-start-refused-3.json",
+      "replacement/retired-approval-3.json",
+      "replacement/retired-submit-4.json",
+      "resume-observation/native-observe-1.json",
+      "retirement/command-7.json",
+      "retirement/foreign-family-3.json",
+      "retirement/wrong-digest-2.json"
+    ]
+  },
+  "privateEvidenceFingerprints": {
+    "native-baseline.json": "cdf2be3c8904d3c1f52ab860807d2b7b0998d75fe250588428af894716a1f873",
+    "native-retirement-result.json": "126fa2812d9fa8b164c8c597a2a9434fe56e5e65706afcf4ff92443fa51ef7cf",
+    "native-replacement-result.json": "635a83729d90f5005b26c717e9f7426d42720624ab6913fb7ca793f3a88b0acf",
+    "native-second-retirement-result.json": "df14d5b726e59d332dbe11ac59ec93951232e949f098ef2ae8a68d5db4992dcf",
+    "native-newbook-result.json": "0075c1fa479d52ce471123817ef08f89b52fba21a86e1fba5021810ac3b41f02",
+    "native-post-finalizer-fault-result.json": "061f7b4649c97932e397dad83bf4f3aa6a2513e9cf814ab4f3d201d9bfa70a8e",
+    "post-finalizer-native-receipt.json": "e52123ce9aece162c466115b722b1c936486b0ef5364a660bff7baa83ca1b2f9",
+    "native-recovery-result.json": "d8995fcc5b30b40bf6dd09fbcb77f44912f9d403d6ef7ea22f29eb686c4197b7",
+    "independent-audit-result.json": "c1c9e613163e73166b579fb5eeae42f749658b0c3d45ab698a7e929301de8f0c",
+    "forensics-result.json": "c8a66617ef631f3f3258d9df4da01073c4d439129298531b0fc1fd256895aefc",
+    "postflight-result.json": "e20d3a6605a24354bffe26e1bb6007b1092bfc3e88538b2174370ce65170c4ff",
+    "target-stopped-survey.json": "434eda76fb315477e5a57620b21c294f1db0bb8904a9b0dca77dc4dfad91b6a4",
+    "second-target-stopped-survey.json": "44a730ae746ce25e6ae62f4a834ab7c490d2591be795f258897447bcf39041ab",
+    "post-finalizer-fault-survey.json": "0a2ee078c467866cefb0354e280f042134fde5569020aa432c4cbb90ab3c3edb",
+    "recovered-target-stopped-survey.json": "0b806075188798c04e425f002587f3b9a465178acaabefed4fcdc457460c02fb",
+    "retained-namespace-before.json": "7355b40601367a83245d4f009c6af00d890f776eb58e06378453cfc2c9258433",
+    "retained-notebook-namespace-before.json": "9609c27393f36ea0d3c681fc28674137be7d745e0d162f1e3e9e12101dabdacd",
+    "retired-refusal-corrected.json": "30394fa56c9c23c0cee95f52cb5f34cb8f2ce528e30e135275d6213aa1966055",
+    "command-and-http-fingerprints.json": "8177b410aee651604cb2dfbae1e5c7514bb782476bfe4b046be8d0d292e9ecbd",
+    "source-snapshot/manifest.json": "967366a0e65a4718101faa4d77e19959f4ebff8aa99f7770a15261a5018abe77",
+    "replacement-snapshot/manifest.json": "2c31af000b018744b6806b274fb86fc3d7797be62307f6f315da397454a0015c",
+    "replacement-snapshot-verified/manifest.json": "a36bcb4427e8d78125375c1e7b6e50600dea552134fd67157686d313befa1c3e",
+    "two-retirements-snapshot/manifest.json": "172b9044719da4b849c9350ad7be80dd834c7d9a4ec7c7e1ea442504898b7e43",
+    "spent-grant-audit-result.json": "51778bf0a2d22ebf44f2bd15c3070d3e2d2e0eda0bb44d6324a4250c79b6661d",
+    "command-and-http-fingerprints-final.json": "dde2e8c23b7018e8a0fdb178602604919f0534d7368c4ba8f5798996d17ea6fb"
+  },
+  "privateHarnessFingerprints": {
+    "fogd-native-retirement-v3-audit.py": "b699737cc68550b80081cb339337f33a581fe258ebb1b95e00ee8aca4005e9a2",
+    "fogd-native-retirement-v3-stopped-survey.mjs": "d0100828d5b01f8054ac2044834bb0fd875bee3278f8fcfb5b3d899b225c6ca6",
+    "fogd-native-retirement-v3-replacement.py": "e2c3365d80a1fae4686d163f86059fc5ada8305e91a428f176334190f11c65f8",
+    "fogd-native-retirement-v3-recover.py": "780d7a751a8963b81ac385ca3d12f78d09cd88192c1c1926b56a2014befdb10b",
+    "fogd-native-retirement-v3-inspect.py": "6b07bd0719e909cf9c8c9cb069564738ec113a202c0082c875ce00323bce77eb",
+    "fogd-native-retirement-v3-observe.py": "62ace44e748fff2404933032ee6bc8ad2364f86b41536b7888cd1e20e1699e1b",
+    "fogd-native-retirement-v3-finish-resume.py": "ce34aae9439642cab821a973d7d4cf18fadfc341097adc83d8c189680343c4c6",
+    "fogd-native-retirement-v3-verify-replacement.py": "7785e6ef13f6428ddeda1d31f5dd2c01aa92957abf32e9c64caaf3338971e8cc",
+    "fogd-native-retirement-v3-common.py": "40f4a04056bc02e417fa594547dca5195ba0dcbf02d9d8f5abd172d47e597e70",
+    "fogd-native-retirement-v3-pending-survey.mjs": "71de469646dc4ed09acae49e55f59bd7632cbb161aa02185bb59d2ec7d7e5676",
+    "fogd-native-retirement-v3-postflight.mjs": "c7ab1cd2489c50fec06ea58a3a42b62706f2718b595a795791fcc745d6c522fd",
+    "fogd-native-retirement-v3-forensics.mjs": "2c4eb932fc33fa2c923b35027f9d08223389e6a776d18a2b788591b9408a3f6f",
+    "fogd-native-retirement-v3-second.py": "852a1ce34da90d2142796924aef7cdf652d3dbdb52c034d3ec218b8999abbbad",
+    "fogd-native-retirement-v3-retire.py": "553bcaec590ceea0a911ce04b7d0378ab8d7b0914720c5564041c4d5a6de33c8",
+    "fogd-native-retirement-v3-fixture.py": "aae87ec1a7fe5ac281ff18ceaaed882a31fce8f7f1e000f325bd220614999b64",
+    "fogd-native-retirement-v3-observe-signed.py": "88a069982132c5d70c46ae49d25f8ddf7a740aae8167ab0a3a62229a71c2547f",
+    "fogd-native-retirement-v3-bootstrap.py": "42110abf3f75349dbe0447dd2219dd3b6a751e720ffd1cb56b3cd117fe0d7209",
+    "fogd-native-retirement-v3-recover-continue.py": "663fca2b6aa09a0e89a4c187a2ae572b6bad0912d5c27d4fddf776d1e5445fd9",
+    "fogd-native-retirement-v3-fault.py": "367f9ea417526d383c85683e168737c4755c288b2dfd5f4746fbd41d8b78735d",
+    "fogd-native-retirement-v3-newbook.py": "bb4cdcfb308cddc41507b575f69a8fae741e67665bda406fdfa8d04c7b46b71f",
+    "fogd-native-retirement-v3-common-before-observation-names.py": "8b325b87b4690848a62fb640853e49f92e39005d95e12e2272829f7542bfe99a",
+    "fogd-native-retirement-v3-replacement-continue.py": "d0fd5019713041ea9bdaa1650cd03acec42800df7a7c015032004b34fc2641f8",
+    "fogd-native-retirement-v3-grant.py": "4e01e41768d89a06304934cc1f90ab5945a5d110babcbc4cab052056ba8d6a6d"
+  },
+  "limitations": [
+    "One physical host and one isolated Linux arm64 Docker engine; no remote-host, other image-store, performance or capacity qualification.",
+    "Internal candidate selection only. Ordinary v3 enrollment and runtime-family release remain closed; v2-to-v3 migration is unqualified.",
+    "The injected failure is a host exception after a completed native finalizer, not a process crash, failure inside data copying, or disk power loss. First-claim and retirement process-crash matrices remain open.",
+    "Native queue/cron retirement, zero-live-app recovery, broader lifecycle/load cases and restricted recovery browser interaction are outside this run. Queue and cron admission were not opened.",
+    "Normal adapter resource IDs change with the replacement app name. This run proves fresh disks/native identities/namespaces, retained old namespace bytes and application data isolation; it does not test a replacement reusing the retired app physical resource IDs.",
+    "Native binaries were inherited from the pinned v2 parent; the separate packaging receipt records COPY-only reproducibility, not a new native compilation."
+  ],
+  "harnessProvenance": "Retained harness fingerprints describe the files at recording time; shared probe functions were corrected between attempts. Failed harness runs remain private and are excluded as complete runs. Independent state, stored-byte, artifact, process-state and enrollment checks establish the recorded outcomes."
+}

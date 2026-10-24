@@ -58,12 +58,14 @@ these current gaps:
   [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving
   through controller loss. Eight [native update crash cases](evidence/operator-native-activation-crashes.json)
   cover selected activation, migration-ledger and active-publication boundaries.
-  First claims, retirement, broader counts and loads remain open. The durable
-  retirement coordinator now has component tests for fresh enrollment, retained
-  recovery data and a different-name replacement. The [separate v3 package](evidence/operator-durable-retirement-package.json)
-  contains its stopped helper; native recovery acceptance and ordinary release
-  remain open. Existing v2 installations cannot run this protocol or adopt v3
-  through an unqualified family migration.
+  First-claim and retirement process-crash matrices, broader counts and loads
+  remain open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
+  covers two retirements, different-name replacements, retained namespace bytes
+  and ordinary recovery with both tombstones. An injected host error after native
+  finalization preserves incomplete enrollment and refuses startup. Zero-live-app
+  recovery, native background retirement and ordinary release remain open.
+  Existing v2 installations cannot run this protocol or adopt v3 through an
+  unqualified family migration.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)
