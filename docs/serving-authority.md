@@ -1059,3 +1059,15 @@ and unchanged stored bytes across four retired namespaces. This covers one
 first-claim boundary on the same physical host, with HTTP-only fixtures. The full
 first-claim matrix, retirement process crashes, background retirement and ordinary
 candidate release remain open.
+
+The [first-claim withholding matrix](evidence/operator-native-first-claim-withholding-crashes.json)
+adds three native process kills after the private intent, public withholding record,
+and private settlement directory fsyncs. Each new hostname begins without a route.
+After restart, exact withholding is settled and native inspection finds neither a
+fleet owner nor deployment objects. Exact rejection of two pristine reservations
+removes their public entries and releases the slot without assigning ownership or
+publishing code. Exact approval of the third starts an empty app and permits a write. The peer retains its
+record across all three kills. Independent checks validate each captured record
+pair, all nine retained artifact digests and unchanged bytes across four retired
+namespaces. Native owner-write uncertainty and interruption before private ownership
+confirmation remain untested; these three cuts precede native ownership.

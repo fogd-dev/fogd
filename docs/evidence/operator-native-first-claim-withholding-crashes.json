@@ -1,0 +1,273 @@
+{
+  "schema": 1,
+  "kind": "operator-native-first-claim-withholding-crashes",
+  "recordedAt": "2026-10-24T05:06:51.436927+00:00",
+  "hostCLICommit": "5a07a7e1ec3b5b5f068f11e844f322427c297e65",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Three first-claim withholding publication process-crash boundaries on a fresh restored two-fleet HTTPS installation. Same physical host, isolated Linux arm64 overlay2 Docker engine, HTTP-only fixtures.",
+  "method": {
+    "kernelSyscallExitTracing": true,
+    "completedDirectoryFsyncBeforeSIGKILL": true,
+    "directoryDeviceAndInodeMatched": true,
+    "targetContainerAndControllerCommandMatched": true,
+    "processExitSignalObserved": 9,
+    "guestTracerHashMatched": "d756da9f624a4827493ec6da19d3c20e2e28d7499cbe56850bcd6aa26bfacdb7",
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedBoundariesKilled": 3,
+      "unselectedStepNegativeCases": 3
+    }
+  },
+  "cases": [
+    {
+      "phase": "private-intent",
+      "app": "claimintent",
+      "checkpoint": {
+        "phase": "private-intent",
+        "kind": "first-withhold",
+        "directory": "private",
+        "fsyncReturn": 0,
+        "pending": {
+          "id": "withhold:4",
+          "kind": "withhold",
+          "app": "claimintent"
+        },
+        "publicRevision": "3",
+        "publicRouteState": null,
+        "privateRoute": "paused",
+        "claimPresent": true,
+        "active": null,
+        "publicSha256": "a3006307d1b027d2a526b794d51df4df47dd92995bcfb070f93eaff4505c6cf1",
+        "privateSha256": "816a590519f55cd32e2c410bb43a27fbdca862ab77bdf574838f60a019480ffa",
+        "pid": 151142,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "uncertainApprovalExitCode": 1,
+      "nativeOwnerBeforeDecision": null,
+      "nativeDeploymentObjectsBeforeDecision": false,
+      "startupReconciledExactWithholding": true,
+      "HTTPBeforeDecision": 503,
+      "decision": "explicit-reject-pristine-claim",
+      "finalRows": null,
+      "peerRecordsPreserved": 1,
+      "sameControllerContainer": true,
+      "newControllerProcess": true
+    },
+    {
+      "phase": "public-commit",
+      "app": "claimpublic",
+      "checkpoint": {
+        "phase": "public-commit",
+        "kind": "first-withhold",
+        "directory": "public",
+        "fsyncReturn": 0,
+        "pending": {
+          "id": "withhold:6",
+          "kind": "withhold",
+          "app": "claimpublic"
+        },
+        "publicRevision": "6",
+        "publicRouteState": "withheld",
+        "privateRoute": "paused",
+        "claimPresent": true,
+        "active": null,
+        "publicSha256": "09c2b8e2b5eb161313e14256ac3841dd32f10ec59947c7558ce65161f9e820dc",
+        "privateSha256": "6f6a1f58890b9497f8cce97d7ed80606adbd532d02abe315018d86faecac0ad6",
+        "pid": 151738,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "uncertainApprovalExitCode": 1,
+      "nativeOwnerBeforeDecision": null,
+      "nativeDeploymentObjectsBeforeDecision": false,
+      "startupReconciledExactWithholding": true,
+      "HTTPBeforeDecision": 503,
+      "decision": "explicit-reject-pristine-claim",
+      "finalRows": null,
+      "peerRecordsPreserved": 1,
+      "sameControllerContainer": true,
+      "newControllerProcess": true
+    },
+    {
+      "phase": "private-settle",
+      "app": "claimsettle",
+      "checkpoint": {
+        "phase": "private-settle",
+        "kind": "first-withhold",
+        "directory": "private",
+        "fsyncReturn": 0,
+        "pending": null,
+        "publicRevision": "8",
+        "publicRouteState": "withheld",
+        "privateRoute": "paused",
+        "claimPresent": true,
+        "active": null,
+        "publicSha256": "abb27fbac60fb0bcb34da0b5f94632eae9b6b8e812c4ad31a5e79ee8676debcd",
+        "privateSha256": "3085d4e6dbfbdeaeb4a0c60f48fb765a52e260f805f566c47e2f2ac04b6a9f26",
+        "pid": 151983,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "uncertainApprovalExitCode": 1,
+      "nativeOwnerBeforeDecision": null,
+      "nativeDeploymentObjectsBeforeDecision": false,
+      "startupReconciledExactWithholding": true,
+      "HTTPBeforeDecision": 503,
+      "decision": "explicit-same-artifact-approval",
+      "finalRows": 1,
+      "peerRecordsPreserved": 1,
+      "sameControllerContainer": true,
+      "newControllerProcess": true
+    }
+  ],
+  "independentChecks": {
+    "capturedPrivatePublicPairsVerified": 3,
+    "exactClaimAndApprovalVerified": true,
+    "publicOrPendingRecordDigestVerified": true,
+    "hostEnrollmentAndPlanMatched": true,
+    "artifactDigestsVerified": 9,
+    "retiredNamespacesVerified": 4,
+    "retiredNamespaceFilesVerified": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "retainedNamedVolumes": 110,
+    "rejectedClaimsRemovedFromFinalState": true,
+    "priorCrashTargetBothRecordsVerifiedBeforeStoppedRetention": true,
+    "rootDockerContext": "desktop-linux",
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/controller-routes.test.mjs packages/platform/test/route-runtime.test.mjs",
+    "passed": 66,
+    "failed": 0,
+    "skipped": 0
+  },
+  "probeCorrections": [
+    {
+      "issue": "Initial read-only setup checked the future peer name against the prior installation",
+      "outcome": "Preflight refused before any stop or restore; corrected the source peer name and verified both saved records before maintenance."
+    }
+  ],
+  "limitations": [
+    "These cuts precede native ownership; owner-write uncertainty and interruption between native ownership and private confirmation remain open.",
+    "The prior ownership-confirmed crash is separate evidence; this does not close the full first-claim matrix.",
+    "No retirement process-crash, native background retirement, power-loss, SQL-commit/ledger-gap, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No runtime admission or image/source change; private scripts, stores and logs stay outside the repository."
+  ],
+  "relatedEvidence": {
+    "ownershipConfirmed": {
+      "path": "operator-native-first-claim-crash.json",
+      "sha256": "7caaf92caaeb975a1b04f1d025a73959b992795b143924c139acf4ae4daab5bd"
+    },
+    "zeroLiveSource": {
+      "path": "operator-native-zero-live-recovery.json",
+      "sha256": "7df614c32b3bdb34ed8e12f5d8af233bfef23ecd4d9e8c3630c50312d7a9da82"
+    }
+  },
+  "privateEvidenceFingerprints": {
+    "first-withhold-private-intent-processes.json": {
+      "bytes": 1400,
+      "sha256": "38cc5c674d98ade1350fa90d6243f17aad8efad4f0ebecb13221b971eedcbec9"
+    },
+    "first-withhold-private-intent-private.json": {
+      "bytes": 22060,
+      "sha256": "816a590519f55cd32e2c410bb43a27fbdca862ab77bdf574838f60a019480ffa"
+    },
+    "first-withhold-private-intent-public.json": {
+      "bytes": 385,
+      "sha256": "a3006307d1b027d2a526b794d51df4df47dd92995bcfb070f93eaff4505c6cf1"
+    },
+    "first-withhold-private-intent-result.json": {
+      "bytes": 1325,
+      "sha256": "9a40c639aa2565d321a78357802c8db8d84e8f61bd40f50b7b148ff963f9bbbe"
+    },
+    "first-withhold-private-intent-tracer-config.json": {
+      "bytes": 672,
+      "sha256": "e6eb13e0fb88277efd0eeb062398311ae7f8f8e21ca31a76ca8b7609a1a5b8b1"
+    },
+    "first-withhold-public-commit-processes.json": {
+      "bytes": 1411,
+      "sha256": "9aa98d51dcc96b04c95266bfcef67366528e71b5ceeb0882a9569729dd3b2393"
+    },
+    "first-withhold-public-commit-private.json": {
+      "bytes": 23609,
+      "sha256": "6f6a1f58890b9497f8cce97d7ed80606adbd532d02abe315018d86faecac0ad6"
+    },
+    "first-withhold-public-commit-public.json": {
+      "bytes": 487,
+      "sha256": "09c2b8e2b5eb161313e14256ac3841dd32f10ec59947c7558ce65161f9e820dc"
+    },
+    "first-withhold-public-commit-result.json": {
+      "bytes": 1328,
+      "sha256": "7d343138e8a66bd7663ed6f33f9c8bef08c9c9100d485027a655c48338a29496"
+    },
+    "first-withhold-public-commit-tracer-config.json": {
+      "bytes": 671,
+      "sha256": "be6647ba7380e71120d42e32ca99bbd21ef0e51844a5a7896dd85771f151ac33"
+    },
+    "first-withhold-private-settle-processes.json": {
+      "bytes": 1286,
+      "sha256": "a149baff4f2276ad914ac9871c30cba0f09fae0535a638eb8180c3f0b36a6335"
+    },
+    "first-withhold-private-settle-private.json": {
+      "bytes": 23903,
+      "sha256": "3085d4e6dbfbdeaeb4a0c60f48fb765a52e260f805f566c47e2f2ac04b6a9f26"
+    },
+    "first-withhold-private-settle-public.json": {
+      "bytes": 487,
+      "sha256": "abb27fbac60fb0bcb34da0b5f94632eae9b6b8e812c4ad31a5e79ee8676debcd"
+    },
+    "first-withhold-private-settle-result.json": {
+      "bytes": 1439,
+      "sha256": "a4bf707ee0457b74ffdf0254728c35353da86958693bf15d545a97e8a94f7d92"
+    },
+    "first-withhold-private-settle-tracer-config.json": {
+      "bytes": 672,
+      "sha256": "e96b8d8b7c09fc4af1ef740d6be3672df8aea7767c1673dd574c2795ab367ae5"
+    },
+    "first-withhold-matrix-result.json": {
+      "bytes": 5812,
+      "sha256": "c28d7a5cc372b7e30f49e9cdfa8fab542111c4f073cb30c7a403e0eb52a0958c"
+    },
+    "first-withhold-native-audit.json": {
+      "bytes": 34007,
+      "sha256": "87f44be07dc9406ecdbd29e8a9958243796acbfac9397e98390c3b8db90d7000"
+    },
+    "first-withhold-fresh-stopped-survey.json": {
+      "bytes": 24770,
+      "sha256": "22c738d6a7245efc6519a3ce561e023c7d61d636e0f9fa3bc1b7190f35c6fc36"
+    },
+    "first-withhold-retained-source.json": {
+      "bytes": 468,
+      "sha256": "78d90279940e212082245a25c63f953771c053d6da496d86ba9bf16c0b77e3c2"
+    },
+    "fogd-native-first-withhold-matrix.py": {
+      "bytes": 8428,
+      "sha256": "c7adf8b579a3fdeed6daafc963301f2955ad6f9df3d00eebcb22b95953da6753"
+    },
+    "fogd-first-withhold-tracer.py": {
+      "bytes": 11191,
+      "sha256": "d756da9f624a4827493ec6da19d3c20e2e28d7499cbe56850bcd6aa26bfacdb7"
+    },
+    "fogd-first-withhold-selftest.py": {
+      "bytes": 2984,
+      "sha256": "58582e454d6fefd1e303dabd2a4f4323b792fea08486854616bab120d629b7fe"
+    },
+    "fogd-first-withhold-native-audit.mjs": {
+      "bytes": 9840,
+      "sha256": "2b467f55f40a959ffaae80eb5571f567b41434195424b213e82aa3df55e41ada"
+    },
+    "fogd-first-withhold-selftest.log": {
+      "bytes": 3918,
+      "sha256": "fee638e84e802a9bc34f705c374d76c6efbd7325ae2340c9579ab0892b021575"
+    },
+    "fogd-first-withhold-regressions.log": {
+      "bytes": 6063,
+      "sha256": "481f1f51eaf9987e8d6aa52425082f8ae12e7707b04952f7bc5fb9c08126a91e"
+    }
+  }
+}

@@ -329,9 +329,13 @@ remain unqualified. The [native first-claim crash](evidence/operator-native-firs
 interrupts the controller after durable ownership confirmation and before migrations
 or application publication. The app remains withheld, its bucket has an owner but
 no deployment, and explicit same-artifact approval starts empty and permits a write.
-The peer record and retired namespaces remain intact. Ordinary released-family
-selection, other first-claim boundaries, retirement crashes, restricted recovery
-browser interaction and the full recovery/load matrix remain open.
+The peer record and retired namespaces remain intact. Three earlier
+[withholding publication crashes](evidence/operator-native-first-claim-withholding-crashes.json)
+recover without native ownership or deployment objects. Exact rejection releases
+two pristine reservations; exact approval of the third starts empty and writes.
+Ordinary released-family selection, native owner-write uncertainty, retirement
+crashes, restricted recovery browser interaction and the full recovery/load matrix
+remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the
