@@ -10,9 +10,10 @@ The [M11c acceptance](m11c-acceptance.md) records current scheduled retirement a
 restore evidence. Earlier experimental profiles below retain their pinned scope.
 
 The commands below cover legacy `fogd-stopped-v1` snapshots. The source implements
-a separate coordinator for `fogd-stopped-durable-v1`, but the catalog's durable
-candidate lacks its stopped retirement helper. Durable retirement therefore remains
-unavailable until a matching runtime is packaged and qualified. The earlier
+a separate coordinator for `fogd-stopped-durable-v1`. The
+[packaged v3 candidate](evidence/operator-durable-retirement-package.json) includes
+its stopped retirement helper, but native retirement acceptance remains open and
+ordinary enrollment stays closed. The v2 candidate lacks the helper. The earlier
 [native refusal check](evidence/operator-native-activation-crashes.json) records
 the missing path before this coordinator existed.
 
@@ -25,6 +26,11 @@ host enrollment incomplete. These component checks do not qualify Docker mounts,
 native data recovery or background retirement in a packaged runtime. Keep durable
 installations on their enrolled recovery workflow; the raw Docker startup command
 below does not apply to them.
+
+The v3 package preserves the pinned native binaries and adds the matching controller
+sources. It does not qualify upgrading an existing v2 installation or restoring its
+snapshots under v3. Native acceptance needs a fresh v3 installation and snapshots
+from that same family.
 
 ## Prepare and retire
 

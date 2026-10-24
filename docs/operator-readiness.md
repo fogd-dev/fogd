@@ -316,9 +316,10 @@ with nine retained SQL rows, four peer records and a fresh stopped snapshot. The
 do not cover the gap between native SQL commit and controller ledger commit.
 The durable snapshot retirement coordinator has component checks for source
 verification, fresh replacement identities and disks, survivor holds and incomplete
-enrollment after faults. The catalog's existing durable candidate lacks the new
-stopped helper, so a matching runtime build and native retirement acceptance remain
-required. Ordinary released-family selection, first-claim and retirement crashes,
+enrollment after faults. The [v3 candidate package](evidence/operator-durable-retirement-package.json)
+includes the new stopped helper and preserves the pinned native binaries. Native
+retirement acceptance on a fresh v3 installation remains required; v2-to-v3
+migration is unqualified. Ordinary released-family selection, first-claim and retirement crashes,
 restricted recovery browser interaction and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local

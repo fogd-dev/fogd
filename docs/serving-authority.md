@@ -1024,6 +1024,7 @@ changes only the retired fleet's namespace and native identities. Its stopped he
 removes the retired route and applies ordinary withheld-restoration rules to the
 survivors before spending fresh enrollment. Component tests cover copying, empty
 replacement disks, approval holds, interrupted publication and incomplete host
-completion. The catalog's existing durable candidate lacks this helper; a separately
-packaged runtime and native retirement acceptance remain required. The durable
-family retains candidate admission.
+completion. A [separate v3 package](evidence/operator-durable-retirement-package.json)
+contains this helper and preserves the native binaries. Native retirement acceptance
+on a fresh v3 installation remains required; this package does not qualify migration
+from v2. Both durable families retain candidate admission.

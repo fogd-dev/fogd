@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "kind": "operator-durable-retirement-package",
+  "recordedAt": "2026-10-24T03:48:55.193539+00:00",
+  "passed": true,
+  "sourceCommit": "3d8a3b5c6cf32f7d866f6ac78868ba97682b1edc",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "parentImage": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "sourceFiles": 109,
+  "sourceInventorySha256": "c1cd57b0ec5bbea4fab98b282f213576bdd1ed47d62b33e122bd6a0525c8dcb9",
+  "repeatedUncachedBuilds": [
+    "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+    "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e"
+  ],
+  "identicalImageIds": true,
+  "nativeAndSupervisorHashesVerified": true,
+  "completeProductSourceInventoryVerified": true,
+  "sourceParentLayersPreserved": true,
+  "nativeRebuild": false,
+  "dependencyInstall": false,
+  "applicationResourcesMounted": false,
+  "applicationContainersStarted": false,
+  "limitations": [
+    "COPY-only packaging from the existing immutable durable-v2 native image; no fresh native compilation.",
+    "Native retirement and recovery acceptance and ordinary family release remain open."
+  ],
+  "scope": "Two COPY-only builds of the frozen retirement source on the isolated classic-overlay2 Linux arm64 recipient engine. No installation or application was started.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "ordinaryAdmission": "closed",
+  "privateEvidenceFingerprints": {
+    "candidate.json": "6a2d770bc5b8c872e2f0e58c66bf5e808439a57cb42c1f86971455a4d22c9007",
+    "result.json": "a5556da991972c33515254e3e5e20b15feeaea7490928a9ecc22b6dbf45363eb",
+    "packaging-script": "46bdb2531985e3b80bba39110a60d6129f2d0377a7593485102fe313afbd29a6",
+    "Dockerfile": "5070f1af01381801c023a918830e356340cb710e960a9e835dc3580ab4a6b2cf"
+  },
+  "existingDurableV2EntryUnchanged": true,
+  "sourceFamilyMigrationQualified": false
+}

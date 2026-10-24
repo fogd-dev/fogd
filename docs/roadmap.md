@@ -60,9 +60,10 @@ these current gaps:
   cover selected activation, migration-ledger and active-publication boundaries.
   First claims, retirement, broader counts and loads remain open. The durable
   retirement coordinator now has component tests for fresh enrollment, retained
-  recovery data and a different-name replacement. Its stopped helper still needs
-  a matching packaged runtime and native recovery acceptance; the catalog's
-  existing durable candidate cannot run this protocol.
+  recovery data and a different-name replacement. The [separate v3 package](evidence/operator-durable-retirement-package.json)
+  contains its stopped helper; native recovery acceptance and ordinary release
+  remain open. Existing v2 installations cannot run this protocol or adopt v3
+  through an unqualified family migration.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)

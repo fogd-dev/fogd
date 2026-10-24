@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateRuntimeFamily, authorizePolicyEntry, runtimeFamilies } from '../src/runtime/catalog.mjs';
+import { validateRuntimeFamily, authorizePolicyEntry, runtimeFamilies, runtimeFamily } from '../src/runtime/catalog.mjs';
 
 const legacyEntry = () => ({ schema: 1, id: 'celld-cron-r1', admission: 'candidate', os: 'linux', architecture: 'arm64',
   image: 'sha256:' + 'a'.repeat(64), storageImage: 'sha256:' + 'b'.repeat(64), parentImage: 'sha256:' + 'e'.repeat(64),
@@ -20,6 +20,19 @@ test('shipped catalog still loads and both entry shapes validate', () => {
   assert.ok(runtimeFamilies().length > 0);
   assert.deepEqual(validateRuntimeFamily(legacyEntry()), legacyEntry());
   assert.deepEqual(validateRuntimeFamily(durableEntry()), durableEntry());
+});
+
+test('retirement has a separate durable candidate and cannot open ordinary admission or change the v2 protocol', () => {
+  const retired = runtimeFamily('celld-durable-v3-linux-arm64', 'enrolled');
+  const previous = runtimeFamily('celld-durable-v2-linux-arm64', 'enrolled');
+  assert.equal(retired.admission, 'candidate');
+  assert.equal(retired.routing, 'durable');
+  assert.equal(retired.parentImage, previous.image);
+  assert.match(retired.sourceFiles['packages/platform/src/import-retired-routes.mjs'], /^[a-f0-9]{64}$/);
+  assert.equal(previous.sourceFiles['packages/platform/src/import-retired-routes.mjs'], undefined);
+  assert.equal(retired.binarySha256, previous.binarySha256);
+  assert.equal(retired.supervisorSha256, previous.supervisorSha256);
+  assert.throws(() => runtimeFamily('celld-durable-v3-linux-arm64'), /ordinary enrollment remains closed/);
 });
 
 for (const [name, make] of [
