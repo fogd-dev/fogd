@@ -27,7 +27,7 @@ async function boundedBody(response, signal) {
 async function readRecord(env, policy, signal) {
   // This header is not freshness evidence; native disk reads require qualification.
   const response = await env.ROUTE_AUTHORITY.fetch('http://authority/' + routeRecordFilename, {
-    method: 'GET', headers: { 'Cache-Control': 'no-store' }, redirect: 'error', signal,
+    method: 'GET', headers: { 'Cache-Control': 'no-store' }, redirect: 'manual', signal,
   });
   if (response.status !== 200) { if (response.body) cancel(response.body); throw new Error('Authority unavailable'); }
   return decodeRouteRecord(await boundedBody(response, signal), policy);

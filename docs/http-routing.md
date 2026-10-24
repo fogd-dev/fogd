@@ -3,7 +3,11 @@
 `fogd admin routing` inspects and controls an application's durable HTTP authority.
 The command is implemented in source for the candidate durable-routing controller;
 no shipped runtime family currently qualifies this interface. The cached legacy
-controller returns an unsupported-feature error. Native acceptance remains open.
+controller returns an unsupported-feature error. The
+[candidate native evidence](evidence/operator-durable-candidate.json) covers exact
+approval, CLI pause/resume, controller-stop serving and retained startup on an
+independent Docker engine. Browser, crash-ordering and full release acceptance
+remain open.
 
 Configure `FOGD_SERVER` and owner credentials as described in the
 [operator guide](operator-guide.md). Routing uses administrator authentication;

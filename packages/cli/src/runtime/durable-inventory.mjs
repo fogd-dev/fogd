@@ -141,7 +141,7 @@ function checkService(config, name, service, container, image, volumes, networks
   const attached = checkServiceNetworks(service, container, host, networks);
   return {
     identity: { id: container.Id, created: container.Created, image: container.Image,
-      mounts: sorted(container.Mounts.map(m => [m.Type, m.Name ?? null, m.Destination, m.RW])), networks: sorted(attached.map(([n, e]) => [n, e.NetworkID])) },
+      mounts: sorted(container.Mounts.map(m => [m.Type, m.Name ?? null, m.Destination, m.RW])), networks: sorted(attached) },
     state: serviceState(container),
   };
 }
@@ -170,9 +170,18 @@ function checkRestartAndPorts(service, host) {
 function checkServiceNetworks(service, container, host, networks) {
   const attached = Object.entries(container.NetworkSettings?.Networks || {});
   const expected = Object.keys(service.networks || {}).map(key => networks[key]);
-  const declared = ([attachedName, endpoint]) => expected.some(n => n.name === attachedName && n.id === endpoint?.NetworkID) && empty(endpoint.IPAMConfig) && empty(endpoint.Links);
+  const declared = ([attachedName, endpoint]) => expected.some(n => n.name === attachedName &&
+    (n.id === endpoint?.NetworkID || deferredEndpoint(container, endpoint))) && empty(endpoint.IPAMConfig) && empty(endpoint.Links);
   if (attached.length !== expected.length || !expected.some(n => n.name === host.NetworkMode) || !attached.every(declared)) refuse('container networks differ from the sealed configuration');
-  return attached;
+  // Docker can defer endpoint creation until first start. Bind both observations
+  // to the separately inspected network, so startup cannot change the identity.
+  return attached.map(([name]) => [name, expected.find(n => n.name === name).id]);
+}
+function deferredEndpoint(container, endpoint) {
+  const state = container.State;
+  return state?.Status === 'created' && state.Running === false && state.Restarting === false && state.Paused === false &&
+    /^0001-01-01T00:00:00(?:\.0+)?Z$/.test(state.StartedAt) && container.RestartCount === 0 &&
+    endpoint?.NetworkID === '' && endpoint.EndpointID === '';
 }
 // StartedAt brackets preflight, so it must be a real date even when stopped.
 function serviceState(container) {

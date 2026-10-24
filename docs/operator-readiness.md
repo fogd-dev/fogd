@@ -263,6 +263,13 @@ adding another binding family. These requirements remain open:
   Filtering mixed stdout by an app name or replacing known secret strings alone
   does not establish isolation or safe disclosure.
 
+The [durable candidate evidence](evidence/operator-durable-candidate.json) covers
+internal enrollment on a separate classic-overlay2 engine, two approved apps,
+controller-stop serving with an acknowledged app pause, a write during controller
+loss, and D1/R2/Durable Object data after retained startup. This uses local HTTP on
+the same physical machine. Public distribution, HTTPS, native browser controls,
+crash ordering and full recovery acceptance remain open.
+
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the
 separate-machine or clean-build requirements. Keeping the current routing behavior

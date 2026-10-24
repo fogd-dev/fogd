@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "kind": "operator-durable-candidate",
+  "recordedAt": "2026-10-24T00:31:58.689504+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Local HTTP two-fleet qualification on a separate classic overlay2 Docker engine on the same physical Mac. Internal candidate enrollment; not a public release installation.",
+  "build": {
+    "sourceImage": "sha256:7e34ca4da0123c97fb74c60f55e0fbdf993a501595fa7e6faa5f003d082acea9",
+    "classicImage": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+    "contextInventorySha256": "08466ffcfd42940387603c1d9b9f82093bad067c28bc78e04bfe9532061257f6",
+    "native": {
+      "repository": "https://github.com/denoland/celld.git",
+      "revision": "90b43017241f81189453d326d05948f388b34652",
+      "cargoLockSha256": "d6a17422788aa910ba76bed9cf59ac15767f93fe107ebdb336954d0e9efe052b",
+      "patches": [
+        {
+          "path": "patches/celld-0.6.2-preaccept-attachment.patch",
+          "sha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd"
+        },
+        {
+          "path": "patches/celld-0.6.2-cron-retry.patch",
+          "sha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19"
+        },
+        {
+          "path": "patches/celld-0.6.2-cron-controls.patch",
+          "sha256": "11460dd716730265b7506d28dc17e0353fdedfa447e2e15c6b42514114e7fb3a"
+        },
+        {
+          "path": "patches/celld-0.6.2-runtime-identity.patch",
+          "sha256": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3"
+        },
+        {
+          "path": "patches/celld-0.6.2-runtime-binding.patch",
+          "sha256": "2c6e3048e7bace0d53808bcf5a4aa0f1b37e96b7ad64410951406bf735f42907"
+        }
+      ],
+      "sourceFiles": 281,
+      "sourceInventorySha256": "fb9db4de87c2157b711cc55d0e3160c145b9aac205fcb445134b6b4da1961cf6"
+    },
+    "baseImages": {
+      "rust": "docker.io/library/rust:1.98.1-bookworm@sha256:5b993f23fb69746405496e76f91e511d96c82b5b23304fd5d20b4a80a8b223ea",
+      "node": "docker.io/library/node:26.2.0-bookworm-slim@sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0"
+    },
+    "outputs": {
+      "celld": {
+        "sha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+        "bytes": 64555080
+      },
+      "supervisor": {
+        "sha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+        "bytes": 860
+      },
+      "workerd": {
+        "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914",
+        "bytes": 143764176
+      },
+      "nativeInputs": {
+        "schema": 1,
+        "kind": "verified-native-inputs",
+        "target": "aarch64-unknown-linux-gnu",
+        "v8Version": "152.1.0",
+        "v8CrateSha256": "eb60870e5cff45e02719ab782f1c67507d33c4ef184755656bcc11a9795ccf83",
+        "assets": {
+          "archive": {
+            "file": "rusty-v8.a.gz",
+            "sha256": "1e45a2d8a62eab57da30880a0c8b6c8811a831e24c4bce1559efa39e55e771c3",
+            "bytes": 38515009
+          },
+          "bindings": {
+            "file": "rusty-v8-bindings.rs",
+            "sha256": "3e4d5fecdbe0f98a6017e69d7ca82519a77fb032c5eb5e4cdbecdd3e2ec519d5",
+            "bytes": 40045
+          }
+        },
+        "compiled": false,
+        "qualified": false
+      },
+      "workerdInput": {
+        "schema": 1,
+        "package": "workerd",
+        "version": "1.20261016.1",
+        "platformPackage": "@cloudflare/workerd-linux-arm64",
+        "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914",
+        "bytes": 143764176,
+        "directNative": true,
+        "downloaded": false,
+        "executed": false
+      },
+      "toolchain": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\ncargo 1.98.1 (797e8a9bc 2026-08-05)\n"
+    },
+    "productionProgramFiles": 106,
+    "noCache": true,
+    "attempt": {
+      "status": "captured",
+      "stdoutBytes": 0,
+      "stderrBytes": 63432,
+      "exitCode": 0,
+      "signal": null,
+      "reason": null
+    },
+    "log": {
+      "sha256": "60a9f37bb77951790259755a298ff620f1538851da1efdf1dcbbcaa82270491f",
+      "bytes": 63432
+    },
+    "rustTestsPassed": 9,
+    "clippyAllTargetsDenyWarningsPassed": true
+  },
+  "transfer": {
+    "archive": {
+      "sha256": "5dfeafc1d0438338f7411afa6fe84ca99a01af51e505cfef6f063dc00aafca2e",
+      "bytes": 208212992
+    },
+    "configDigestVerified": true,
+    "rootfsMatchedAfterLoad": true,
+    "engineBefore": {
+      "engine": {
+        "ID": "043a9734-e319-4236-861d-1dbb7108b664",
+        "Name": "colima-fogd-install-20261024",
+        "OSType": "linux",
+        "Architecture": "aarch64",
+        "Driver": "overlay2",
+        "DriverStatus": [
+          [
+            "Backing Filesystem",
+            "extfs"
+          ],
+          [
+            "Supports d_type",
+            "true"
+          ],
+          [
+            "Using metacopy",
+            "false"
+          ],
+          [
+            "Native Overlay Diff",
+            "true"
+          ],
+          [
+            "userxattr",
+            "false"
+          ]
+        ],
+        "ServerVersion": "29.5.2"
+      },
+      "images": [],
+      "containers": [],
+      "volumes": []
+    },
+    "containerdStorageIdentityMismatchRefused": true,
+    "existingDesktopResourcesRetained": true
+  },
+  "defectsFound": {
+    "deferredEndpoints": {
+      "symptom": "Docker 29 created containers have declared network names and empty NetworkID before first start. Inventory rejected fresh enrollment.",
+      "fix": "Only never-started created containers may defer endpoint IDs; inventory binds independently inspected network IDs and remains stable after startup.",
+      "regressionRedBeforeFix": true,
+      "failedEnrollmentRetainedWithoutReset": true
+    },
+    "workerdRedirect": {
+      "symptom": "Authority fetch with redirect:error throws TypeError in native workerd; gateway returned 503 after successful approval.",
+      "fix": "Use manual redirects and retain exact HTTP 200 requirement.",
+      "nativeProbeRedBeforeFix": true,
+      "failedNativeTestReturnedExitZero": true,
+      "fixedProbeObservedRecordAndPassMarker": true,
+      "reference": "https://developers.cloudflare.com/workers/runtime-apis/request/"
+    }
+  },
+  "hostChecks": {
+    "fullTestsPassed": 2567,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "fullSuiteExitCode": 0,
+    "deterministicInventoryTestsPassed": 17,
+    "catalogTestsPassed": 13,
+    "syntaxPassed": true,
+    "qualityPassed": true
+  },
+  "firstApplication": {
+    "family": "celld-durable-v2-linux-arm64",
+    "receipt": {
+      "id": "2148b39e-bc4a-43f5-8f9a-7991800d8d6b",
+      "app": "hello",
+      "digest": "173edd937617122c00145eed77a60b13a51f0cb4c7a55d80f4c9c5e859689d89",
+      "status": "pending"
+    },
+    "preapprovalHTTP": 404,
+    "activationStatus": "active",
+    "gatewayStatus": 200,
+    "posts": [],
+    "passed": true
+  },
+  "servingAndRestart": {
+    "passed": true,
+    "family": "celld-durable-v2-linux-arm64",
+    "notebookApproval": {
+      "id": "eb53fc4a-a82b-4de6-a06f-1e87cecd4bf4",
+      "digest": "601f18e67d2b579f0b84d2c60fe72629ff802f0ab943b78aed017ddd64718cab"
+    },
+    "controllerLoss": {
+      "pausedHelloHTTP": 503,
+      "notebookReads": 5,
+      "notebookHTTP": 200,
+      "writeDuringLoss": true,
+      "readMilliseconds": [
+        15.229583950713277,
+        5.4844580590724945,
+        3.851749934256077,
+        5.212583811953664,
+        3.771750023588538
+      ]
+    },
+    "resumeHTTP": 200,
+    "retainedRestart": {
+      "helloHTTP": 200,
+      "notebookHTTP": 200,
+      "entries": 2,
+      "durableObjectCount": 2,
+      "D1AndR2BodiesMatched": true
+    }
+  },
+  "controllerLossMethod": "Explicit Docker stop, followed by start; not a SIGKILL or crash-during-publication test.",
+  "ordinaryCandidateEnrollment": {
+    "refusedBeforeHostSetup": true
+  },
+  "remainingGates": [
+    "Shared HTTPS and distributed operator-bundle installation",
+    "Native browser routing page",
+    "Crash ordering during approval, migration, publication and retirement",
+    "Stopped backup and fresh-resource restore",
+    "Diagnostics, log disclosure and artifact quota reclamation",
+    "Queue, cron and live-session regression for this new family",
+    "Second physical machine and broader capacity/performance acceptance"
+  ]
+}

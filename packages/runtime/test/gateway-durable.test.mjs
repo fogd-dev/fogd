@@ -10,7 +10,7 @@ function fixture() {
   const backend = { async fetch(input) { if (typeof input === 'string') return new Response('{}'); requests++; return new Response('alpha records'); } };
   const wrong = { async fetch() { throw new Error('Wrong app fleet'); } };
   const env = { ROUTE_POLICY: JSON.stringify(policy), ROUTE_AUTHORITY: { async fetch(url, options) {
-    assert.equal(url, 'http://authority/routes.json'); assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'error');
+    assert.equal(url, 'http://authority/routes.json'); assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'manual');
     assert.equal(options.headers['Cache-Control'], 'no-store'); assert.ok(options.signal instanceof AbortSignal);
     reads++; return new Response(value);
   } }, 'slot-1-0': backend, 'slot-1-1': backend, 'slot-2-0': wrong, 'slot-2-1': wrong };
@@ -45,7 +45,7 @@ test('empty authority reports unknown hosts without using legacy bindings', asyn
   const response = await gateway.fetch(new Request('http://alpha.localhost/'), f.env);
   assert.equal(response.status, 404); assert.equal(await response.text(), 'Unknown app'); assert.equal(f.requests(), 0);
 });
-for (const status of [404, 304, 206, 500]) test(`authority HTTP ${status} never enables routing or a legacy fallback`, async () => {
+for (const status of [301, 302, 303, 307, 308, 404, 304, 206, 500]) test(`authority HTTP ${status} never enables routing or a legacy fallback`, async () => {
   const f = fixture(); f.env.ROUTE_AUTHORITY = { async fetch() { return new Response(status === 304 ? null : JSON.stringify(active()), { status }); } };
   const response = await gateway.fetch(new Request('http://alpha.localhost/'), f.env);
   assert.equal(response.status, 503); assert.equal(await response.text(), 'Routing unavailable'); assert.equal(f.requests(), 0);

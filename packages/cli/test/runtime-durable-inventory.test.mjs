@@ -11,7 +11,7 @@ function fixture(subnets) {
   const { source, profile } = prebootFixture();
   source.services.workerd.ports = [{ mode: 'ingress', host_ip: '127.0.0.1', target: 8080, published: '8787', protocol: 'tcp' }];
   source.services.workerd.restart = 'no'; source.services.controller.restart = 'unless-stopped';
-  const { config, policy } = freshRuntimePlan(source, { ...profile, id: 'celld-cron-v2-linux-arm64', admission: 'candidate', routing: 'durable' }, subnets);
+  const { config, policy } = freshRuntimePlan(source, { ...profile, id: 'celld-cron-v2-linux-arm64', admission: 'candidate', routing: 'durable' }, subnets, '00000000-0000-4000-8000-000000000001');
   const images = Object.fromEntries([...new Set(Object.values(config.services).map(s => s.image))].map(Id => [Id, { Id, Config: { Env: ['PATH=/usr/bin'], Cmd: ['default'], Entrypoint: null, User: 'node', WorkingDir: '/app' } }]));
   const volumes = Object.fromEntries(Object.entries(config.volumes).map(([key, { name }]) => [key, { Name: name, Driver: 'local', Scope: 'local', Options: null, CreatedAt: '2026-10-01T00:00:00Z',
     Mountpoint: `/var/lib/docker/volumes/${name}/_data`, Labels: { 'com.docker.compose.project': config.name, 'com.docker.compose.volume': key } }]));
@@ -83,6 +83,43 @@ test('stopped and running inventory share one identity across query order, using
   assert.equal(running.identity, stopped.identity);
   assert.equal(running.services.workerd.running, true);
   assert.equal(running.services.workerd.startedAt, '2026-10-23T00:00:00Z');
+});
+
+test('never-started deferred network endpoints bind the same checked networks after startup', async () => {
+  const f = fixture();
+  const attached = structuredClone(f.containers);
+  for (const c of f.containers) {
+    c.State.Status = 'created'; c.RestartCount = 0;
+    for (const endpoint of Object.values(c.NetworkSettings.Networks)) {
+      endpoint.NetworkID = ''; endpoint.EndpointID = '';
+    }
+  }
+  const created = await inspect(f);
+  f.containers = attached;
+  for (const c of f.containers) {
+    c.State.Status = 'running'; c.State.Running = true; c.State.StartedAt = '2026-10-23T00:00:00Z';
+  }
+  assert.equal((await inspect(f)).identity, created.identity);
+});
+
+test('deferred network identity refuses used, incomplete and foreign endpoints', async () => {
+  const changes = [
+    c => { c.State.Status = 'exited'; },
+    c => { c.State.StartedAt = '2026-10-23T00:00:00Z'; },
+    c => { c.RestartCount = 1; },
+    c => { Object.values(c.NetworkSettings.Networks)[0].EndpointID = hex(77); },
+    c => { delete Object.values(c.NetworkSettings.Networks)[0].NetworkID; },
+    c => { Object.values(c.NetworkSettings.Networks)[0].NetworkID = hex(78); },
+    c => { c.State.Running = true; },
+  ];
+  for (const change of changes) {
+    const f = fixture(), c = container(f, 'controller');
+    c.State.Status = 'created'; c.RestartCount = 0;
+    for (const endpoint of Object.values(c.NetworkSettings.Networks)) {
+      endpoint.NetworkID = ''; endpoint.EndpointID = '';
+    }
+    change(c); await refused(f, /networks differ/);
+  }
 });
 
 test('identity binds container, volume and network identity', async () => {
