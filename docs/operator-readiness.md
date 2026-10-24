@@ -236,8 +236,11 @@ adding another binding family. These requirements remain open:
   uses the locked workerd platform package without installer fallback downloads.
   The [source-build command](runtime-selection.md#build-a-source-candidate) connects
   preparation, bounded private build logs and checked image fingerprints. It has
-  process/filesystem tests with a substituted Docker executable; a real native
-  build, clean-host evidence and output qualification remain open.
+  process/filesystem tests with a substituted Docker executable and
+  [native build evidence](evidence/operator-source-build.json) from a fresh isolated
+  engine without a private seed image. Native tests, strict lint and output
+  fingerprint checks pass. Separate-machine installation, image digest
+  reproducibility and application lifecycle qualification remain open.
 - **Install independently.** Follow the public installation procedure on a
   separate supported Docker engine using the distributed release and declared
   prerequisites. Deploy, approve, update, restart and recover an application while

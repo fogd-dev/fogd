@@ -6,9 +6,9 @@
   "patches": [
     { "path": "patches/celld-0.6.2-preaccept-attachment.patch", "sha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd" },
     { "path": "patches/celld-0.6.2-cron-retry.patch", "sha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19" },
-    { "path": "patches/celld-0.6.2-cron-controls.patch", "sha256": "0837791235505d4900f605c4253b08e198591fb708b676de213f60d2e600f0a8" },
+    { "path": "patches/celld-0.6.2-cron-controls.patch", "sha256": "11460dd716730265b7506d28dc17e0353fdedfa447e2e15c6b42514114e7fb3a" },
     { "path": "patches/celld-0.6.2-runtime-identity.patch", "sha256": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3" },
     { "path": "patches/celld-0.6.2-runtime-binding.patch", "sha256": "2c6e3048e7bace0d53808bcf5a4aa0f1b37e96b7ad64410951406bf735f42907" }
   ],
-  "sourceInventorySha256": "d52cb8673e43f2f6555709b8362143da9aeab89d225aa6ee0f28297265a2c752"
+  "sourceInventorySha256": "fb9db4de87c2157b711cc55d0e3160c145b9aac205fcb445134b6b4da1961cf6"
 }

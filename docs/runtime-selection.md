@@ -326,4 +326,8 @@ another engine. The command neither publishes an image nor changes the catalog o
 installation admission. Follow the
 [next-release requirements](operator-readiness.md#next-runtime-release) before
 qualifying a new runtime family. The command has process/filesystem tests with a
-substituted Docker executable; a real native build remains unverified.
+substituted Docker executable. The [native build evidence](evidence/operator-source-build.json)
+records an uncached build on a fresh isolated Docker engine, passing native tests
+and strict lint, checked image fingerprints and direct cron help output. The engine
+shares its physical host with earlier qualification; independent installation and
+application lifecycle acceptance remain open.

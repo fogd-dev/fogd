@@ -213,13 +213,14 @@
 +use serde_json::json;
 +
 +use crate::cli_options::FleetFlags;
++use crate::cli_output::{Format, Output};
 +use crate::operator_cell::{Fleet, Reachable, Subject};
 +
 +pub async fn run(arguments: Vec<String>) -> anyhow::Result<()> {
 +    let mut arguments = arguments.into_iter();
 +    let Some(action) = arguments.next() else {
-+        println!("celld cron <info|pause|resume> <script> [--json] [fleet flags]");
-+        return Ok(());
++        return Output::new(Format::Text)
++            .help("celld cron <info|pause|resume> <script> [--json] [fleet flags]");
 +    };
 +    if !["info", "pause", "resume"].contains(&action.as_str()) {
 +        bail!("unknown celld cron command: {action}");
@@ -262,6 +263,5 @@
 +    )
 +    .await?;
 +    let reply = cron.call(json!({ "op": action })).await?;
-+    println!("{}", serde_json::to_string(&reply)?);
-+    Ok(())
++    Output::new(Format::Json).line(format_args!("{}", serde_json::to_string(&reply)?))
 +}
