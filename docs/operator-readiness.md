@@ -304,15 +304,21 @@ restore, explicit HTTP resume, retained D1/R2/Durable Object data and new writes
 The source refuses startup while its restored target runs. One initially uncertain
 resume stayed withheld; a new decision succeeded after fresh state and native
 identity/version/health checks. The separate candidate distribution drill covers
-bundle transfer and received-code operation. Ordinary released-family selection,
-the restricted recovery page, crash ordering and the full recovery matrix remain
-open.
+bundle transfer and received-code operation. The
+[native gateway restart](evidence/operator-native-gateway-restart.json) serves both
+apps and acknowledges a durable write after gateway restart while the controller
+stays stopped. The [native route crash matrix](evidence/operator-native-route-crashes.json)
+covers six pause/resume publication boundaries, restricted APIs, exact pending
+withdrawal/reconciliation and ordered restart, preserving the peer's four records.
+Ordinary released-family selection, broader lifecycle crashes, restricted recovery
+browser interaction and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the
-separate-machine or clean-build requirements. Keeping the current routing behavior
-preserves its refusal during controller loss but also preserves the measured
-application outage. Broader serving availability remains an explicit product gap.
+separate-machine or clean-build requirements. The released legacy routing behavior
+still refuses during controller loss and retains the measured application outage.
+The durable candidate's availability evidence remains bounded to its declared
+topology and generation. Broader serving availability remains an explicit product gap.
 
 Existing shared installations with the development password were already outside
 the shared guide's requirement to choose a private password before first use.

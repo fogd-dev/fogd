@@ -63,9 +63,12 @@ without replay, pending withdrawal, keyboard focus and desktop/mobile rendering.
 They use the source controller and a substituted backend. The
 [native candidate browser check](evidence/operator-durable-https-recovery.json)
 covers the normal page over HTTPS with two apps, exact pause/resume forms,
-JavaScript disabled, refresh without replay and mobile rendering. The restricted
-recovery page, interrupted-publication paths and full family qualification remain
-open.
+JavaScript disabled, refresh without replay and mobile rendering. The
+[native crash drill](evidence/operator-native-route-crashes.json) covers six
+pause/resume publication boundaries, restricted recovery APIs, both exact pending
+decisions and ordered restart. Its HTTP checks cover the restricted HTML page and
+absence of resume forms. Restricted browser interaction, broader lifecycle crashes
+and full family qualification remain open.
 
 ## Resolve an interrupted publication
 

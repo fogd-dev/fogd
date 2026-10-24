@@ -53,7 +53,10 @@ these current gaps:
   decide app density and routing architecture; caching needs an explicit approval
   and pause contract. The [paired serving probe](serving-measurement.md) now
   exercises local two-fleet reads during uploads, peer activation and controller
-  interruption; broader counts and loads remain open.
+  interruption. [Native candidate restart and crash checks](evidence/operator-native-route-crashes.json)
+  cover paused/resumed authority and recovery; the
+  [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving
+  through controller loss. Broader lifecycle, counts and loads remain open.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)

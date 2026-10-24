@@ -981,3 +981,28 @@ privileged-header stripping, origin replacement, replica selection and non-repla
 Retain timeouts, unknown writes and storage-health failures in measurements. Multiple
 controllers/gateways, remote filesystem coherence, broader app density and migration
 from the current runtime family require separate contracts and evidence.
+
+The [native gateway restart drill](evidence/operator-native-gateway-restart.json)
+restarts the existing generation's gateway while its controller is confirmed stopped.
+Both approved apps serve through the new gateway process, a D1/R2/Durable Object
+write is acknowledged, and its record and body remain after controller return.
+Application replicas do not restart during that drill.
+
+The [native pause/resume crash matrix](evidence/operator-native-route-crashes.json)
+observes successful directory-sync syscall exits in the actual controller before
+sending SIGKILL. It uses the Linux [ptrace interface](https://man7.org/linux/man-pages/man2/ptrace.2.html)
+without modifying runtime program files or adding product fault hooks. Six cases cover the
+private intent, public commit and private settlement for withholding and resuming
+the same approved release. Captured journals and public records validate against
+the independent installed identity; every active target matches a completed approval.
+
+Pending active publication opens restricted recovery. Owner mutations refuse;
+exact withdrawal and verified reconciliation each pass while ingress stays stopped.
+The listener remains restricted after either decision, and ordered stopped startup
+precedes ingress. A settled active publication with a lost reply is inspected
+without replaying that decision. The peer's four acknowledged records remain intact.
+
+These process-crash cases change timing and do not qualify power loss or normal-load
+performance. Activation, migration, claim and retirement crash matrices, restricted
+recovery browser interaction, broader serving measurements and ordinary family
+release remain open. The durable family retains candidate admission.

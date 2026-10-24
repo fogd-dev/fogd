@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-24T02:53:21.058390+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "hostCLICommit": "d893a1d2c289f7c670cc5e46809113cd8d6ac6fa",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "scope": "One isolated classic-overlay2 Linux arm64 Docker engine on the same physical host. Existing reconciled two-fleet generation, scoped HTTPS, D1/R2/Durable Object fixture and internal candidate enrollment. Ordinary candidate admission remains closed.",
+  "privateMaterialPublished": false,
+  "kind": "operator-native-gateway-restart",
+  "controllerConfirmedStopped": true,
+  "gatewayContainerPreserved": true,
+  "gatewayProcessChanged": true,
+  "nativeNodesNotRestarted": true,
+  "twoAppsHTTP": 200,
+  "recordsBefore": 3,
+  "recordsAfterAcknowledgedWrite": 4,
+  "controllerReturned": true,
+  "freshRoutingStatusActive": true,
+  "acknowledgedWriteBodyVerifiedAfterAllCrashCases": true,
+  "finalRecordCount": 4,
+  "privateEvidenceFingerprints": {
+    "gateway-restart/controller-down-result.json": "fc45b2ccefa49a407ad09c67eeb15d1af6df548d927c94e23c6e82152028d946",
+    "gateway-restart/gateway-restart-result.json": "846a3f303a39cefc045b255a09fcbc46cfee199734ad430028784d2b6575acf4",
+    "route-crashes/final-data-result.json": "427e8dc8ede2c7436a01b5ba3300e0063a13972c03fd1fe13a338a71d90c4354"
+  },
+  "limitations": [
+    "This restarts the gateway process inside an already reconciled installation generation; it does not authorize a full installation or restored-generation startup.",
+    "Backing storage and native replica availability remain dependencies. This is not whole-stack high availability or a performance measurement."
+  ]
+}
