@@ -71,7 +71,13 @@ export, authenticated bootstrap, verification, and import commands. The
 [local transfer evidence](evidence/operator-transfer-local.json) covers a transferred
 CLI outside the checkout, fresh private-credential enrollment, scoped app deployment,
 and saved data after a full installation stop/start on the same classic `overlay2`
-engine. This does not complete the separate-machine acceptance condition below.
+engine. This does not complete the separate-machine acceptance condition below. The
+[candidate distribution drill](evidence/operator-candidate-transfer.json) also
+loads an authenticated bundle into an empty independent engine, then uses its
+received operator and standalone developer client for scoped HTTPS deployment and
+data after restart. It requires internal candidate selection and shares the
+physical host; ordinary released-family and separate-machine acceptance remain
+open.
 
 Provide an operator path for transferring the qualified runtime and storage images,
 matching CLI source, runtime catalog, and required configuration instructions to a
@@ -273,8 +279,10 @@ scoped HTTPS deployment, native operator forms, stopped backup, fresh-resource
 restore, explicit HTTP resume, retained D1/R2/Durable Object data and new writes.
 The source refuses startup while its restored target runs. One initially uncertain
 resume stayed withheld; a new decision succeeded after fresh state and native
-identity/version/health checks. Public distribution, the restricted recovery page,
-crash ordering and the full recovery matrix remain open.
+identity/version/health checks. The separate candidate distribution drill covers
+bundle transfer and received-code operation. Ordinary released-family selection,
+the restricted recovery page, crash ordering and the full recovery matrix remain
+open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the

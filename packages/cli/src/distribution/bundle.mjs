@@ -1,7 +1,7 @@
 import { mkdir, lstat, realpath } from 'node:fs/promises';
 import { join, resolve, relative, isAbsolute, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runtimeFamily, verifyRuntimeFamily } from '../runtime/catalog.mjs';
+import { requestedRuntime, verifyRuntimeFamily } from '../runtime/catalog.mjs';
 import { docker } from '../recovery/docker.mjs';
 import { writeJson } from '../recovery/bundle.mjs';
 import { transferFingerprint, copyTransferFile, ordinaryDirectory } from './files.mjs';
@@ -13,8 +13,11 @@ import { verifyTransferHost } from './host.mjs';
 import { verifyTransferArchive } from './archive.mjs';
 
 const sourceRoot = fileURLToPath(new URL('../../../../', import.meta.url));
-export async function exportRuntimeBundle(directory, family) {
-  const entry = runtimeFamily(family), output = await canonicalDestination(directory);
+// Candidate selection is an internal qualification seam, never a CLI option.
+export async function exportRuntimeBundle(directory, family, { candidateEnrollment = false } = {}) {
+  const entry = requestedRuntime({ runtime: family, candidateEnrollment });
+  if (!entry) throw new Error('Transfer requires an explicit shipped runtime family');
+  const output = await canonicalDestination(directory);
   for (const path of ['packages', 'node_modules', 'docs']) if (inside(join(sourceRoot, path), output)) throw new Error('Transfer output must be outside public source directories');
   await newDestination(output);
   const inputs = await programInputs(sourceRoot), files = await programInventory(inputs);
@@ -33,8 +36,10 @@ export async function exportRuntimeBundle(directory, family) {
   await writeJson(join(output, 'manifest.json'), manifest);
   return { directory: output, family: entry.id, sourceEngine, bootstrapSha256: files['verify-transfer.mjs'].sha256, manifestSha256: (await transferFingerprint(join(output, 'manifest.json'))).sha256 };
 }
-export async function importRuntimeBundle(directory, family, expected, destination) {
-  const entry = runtimeFamily(family), source = resolve(directory), output = await canonicalDestination(destination);
+export async function importRuntimeBundle(directory, family, expected, destination, { candidateEnrollment = false } = {}) {
+  const entry = requestedRuntime({ runtime: family, candidateEnrollment });
+  if (!entry) throw new Error('Transfer requires an explicit shipped runtime family');
+  const source = resolve(directory), output = await canonicalDestination(destination);
   await ordinaryDirectory(source);
   if (inside(await realpath(source), output)) throw new Error('Installation output must be outside the transfer bundle');
   await newDestination(output);

@@ -4,11 +4,52 @@ import { readFile, writeFile, rm, symlink, mkdir, access } from 'node:fs/promise
 import { join, posix } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { transferFixture } from './fixtures/transfer-cli.mjs';
 const exec = promisify(execFile);
 const digest = value => createHash('sha256').update(value).digest('hex');
 const selection = (f, sha) => ['--runtime', f.entry.id, '--expected-manifest', sha];
+
+async function callTransferFunction(f, operation, args) {
+  const module = pathToFileURL(join(f.source, 'packages/cli/src/distribution/bundle.mjs')).href;
+  const code = `const bundle = await import(${JSON.stringify(module)}); console.log(JSON.stringify(await bundle[${JSON.stringify(operation)}](...${JSON.stringify(args)})));`;
+  return exec(process.execPath, ['--input-type=module', '-e', code], { env: f.env, timeout: 20000, maxBuffer: 1024 ** 2 });
+}
+
+test('internal candidate transfer preserves its admission and starts no installation services', async t => {
+  const f = await transferFixture(t), candidate = { ...f.entry, admission: 'candidate' };
+  await writeFile(f.catalog, JSON.stringify([candidate], null, 2) + '\n');
+  const internal = { candidateEnrollment: true };
+  const exported = JSON.parse((await callTransferFunction(f, 'exportRuntimeBundle', [f.bundle, candidate.id, internal])).stdout);
+  const output = join(f.root, 'candidate-installed');
+  const imported = JSON.parse((await callTransferFunction(f, 'importRuntimeBundle', [f.bundle, candidate.id, exported.manifestSha256, output, internal])).stdout);
+  assert.equal(imported.servicesStarted, false);
+  assert.deepEqual(JSON.parse(await readFile(join(f.bundle, 'manifest.json'))).runtime, candidate);
+  assert.deepEqual(JSON.parse(await readFile(join(output, 'packages/cli/src/runtime/catalog.json'))), [candidate]);
+  const calls = (await readFile(f.log, 'utf8')).trim().split('\n').map(JSON.parse);
+  assert.ok(calls.some(args => args[0] === 'image' && args[1] === 'load'));
+  assert.ok(calls.every(args => ['info', 'image', 'run'].includes(args[0])));
+});
+
+test('ordinary transfer and malformed internal selection refuse candidates before host setup', async t => {
+  const f = await transferFixture(t);
+  await writeFile(f.catalog, JSON.stringify([{ ...f.entry, admission: 'candidate' }]) + '\n');
+  for (const args of [
+    ['export', f.bundle, '--runtime', f.entry.id],
+    ['verify', f.bundle, ...selection(f, 'a'.repeat(64))],
+    ['import', f.bundle, ...selection(f, 'a'.repeat(64)), '--output', join(f.root, 'installed')],
+  ]) await assert.rejects(f.invoke(args), error => error.code === 1 && /candidate/.test(error.stderr));
+  await assert.rejects(f.invoke(['export', f.bundle, '--runtime', f.entry.id, '--candidate-enrollment']),
+    error => error.code === 1 && /Unknown option.*--candidate-enrollment/.test(error.stderr));
+  await assert.rejects(callTransferFunction(f, 'exportRuntimeBundle', [f.bundle, f.entry.id, { candidateEnrollment: 'true' }]), /Candidate enrollment/);
+  await assert.rejects(callTransferFunction(f, 'importRuntimeBundle', [f.bundle, f.entry.id, 'a'.repeat(64), join(f.root, 'installed'), { candidateEnrollment: 'true' }]), /Candidate enrollment/);
+  await assert.rejects(callTransferFunction(f, 'exportRuntimeBundle', [f.bundle]), /explicit shipped runtime family/);
+  await assert.rejects(callTransferFunction(f, 'importRuntimeBundle', [f.bundle]), /explicit shipped runtime family/);
+  await assert.rejects(access(f.log), { code: 'ENOENT' });
+  await assert.rejects(access(f.bundle), { code: 'ENOENT' });
+  await assert.rejects(access(join(f.root, 'installed')), { code: 'ENOENT' });
+});
 
 test('export is self-contained and import loads pinned images without starting resources', async t => {
   const f = await transferFixture(t), exported = await f.exportBundle();

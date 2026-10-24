@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "kind": "operator-candidate-transfer",
+  "recordedAt": "2026-10-24T00:58:43.960262+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Internal candidate distribution between separate classic-overlay2 Docker engines on one physical Mac. Ordinary public candidate transfer/enrollment remain refused.",
+  "sourceEngineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "recipientBefore": {
+    "engine": {
+      "ID": "2a142e44-1892-474f-b159-e319964a6c59",
+      "Name": "colima-fogd-install-20261024",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "ServerVersion": "29.5.2",
+      "Driver": "overlay2",
+      "DriverStatus": [
+        [
+          "Backing Filesystem",
+          "extfs"
+        ],
+        [
+          "Supports d_type",
+          "true"
+        ],
+        [
+          "Using metacopy",
+          "false"
+        ],
+        [
+          "Native Overlay Diff",
+          "true"
+        ],
+        [
+          "userxattr",
+          "false"
+        ]
+      ]
+    },
+    "images": [],
+    "containers": [],
+    "volumes": []
+  },
+  "transfer": {
+    "format": "fogd-runtime-transfer-v1",
+    "runtimeImage": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+    "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "bootstrapSha256": "3f5732d7877a1cfe27b766ad517a99f5693d8832f2bdd3c4ad2536272ebb5816",
+    "manifestSha256": "9ebe02400989e44cca8ecae627cc64832d244c74a34ca844f21d148a5ac27fb3",
+    "imageArchive": {
+      "bytes": 920989696,
+      "sha256": "6db3f639a519eec1462f686b78e601311071b3c3bea48787ebb921255cbe85ae"
+    },
+    "programFiles": 410,
+    "operatorTransferModule": {
+      "bytes": 5070,
+      "sha256": "2375c202b6b93ddb71926bb5e9c2416a55e95b48ef7193ce51765567ed24a303"
+    },
+    "standaloneVerification": {
+      "bootstrapHashMatched": true,
+      "manifestHashMatched": true,
+      "verifiedFiles": 412,
+      "dockerContacted": false
+    },
+    "alteredBundle": {
+      "passed": true,
+      "alteredOperatorProgramRefused": true,
+      "dockerContacted": false,
+      "installationCreated": false,
+      "originalBundleUnchanged": true
+    },
+    "import": {
+      "passed": true,
+      "recipientEngine": "2a142e44-1892-474f-b159-e319964a6c59",
+      "executedOutsideCheckout": true,
+      "bundledModulesOnly": true,
+      "bootstrapAuthenticatedBeforeExecution": true,
+      "loadedImages": [
+        "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+        "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a"
+      ],
+      "containers": 0,
+      "volumes": 0,
+      "installedCredentialsOrIdentity": false,
+      "admission": "candidate",
+      "servicesStarted": false
+    }
+  },
+  "recipientSetup": {
+    "passed": true,
+    "family": "celld-durable-v2-linux-arm64",
+    "project": "fogd-bundle-install-20261024",
+    "tlsRefusalBeforeServicesStart": true,
+    "initialCreatedServices": 8,
+    "privateCertificateImported": true,
+    "sharedStartup": true,
+    "credentialId": "f89fafed-b1b3-4e85-a507-39538eb834e7",
+    "credentialApps": [
+      "hello",
+      "notebook"
+    ]
+  },
+  "applications": {
+    "passed": true,
+    "operatorExecutedOutsideCheckout": true,
+    "newInstallationIdentity": "eefe086885543b7f7a5fa5f918232fa1145e34452299ba1bd3d0a0eba0337aa9",
+    "sourceIdentityNotInherited": true,
+    "developerClientAuthenticated": true,
+    "developerClientDockerContacted": false,
+    "developerClientReceivedOperatorCredentials": false,
+    "operatorProgramProvidedAppSDK": false,
+    "declaredAppPrerequisite": "Prepared example projects and their existing Void/Vite dependencies",
+    "scopedCapabilities": {
+      "hello": 200,
+      "notebook": 400
+    },
+    "crossCredentialStatusRefusedEvenWithinApp": true,
+    "developerAdminCommandRefused": true,
+    "approvals": {
+      "hello": {
+        "id": "fb47c4d8-0cc9-484a-bfa1-ac4f6489650b",
+        "digest": "173edd937617122c00145eed77a60b13a51f0cb4c7a55d80f4c9c5e859689d89",
+        "preapprovalHTTP": 404,
+        "activeHTTP": 200
+      },
+      "notebook": {
+        "id": "860d0d6b-758d-4b2a-8667-708919c5f190",
+        "digest": "601f18e67d2b579f0b84d2c60fe72629ff802f0ab943b78aed017ddd64718cab",
+        "preapprovalHTTP": 404,
+        "activeHTTP": 200
+      }
+    },
+    "freshApplicationDataBeforeWrite": true,
+    "D1R2DOWrite": true,
+    "retainedRestart": {
+      "helloHTTP": 200,
+      "notebookHTTP": 200,
+      "records": 1,
+      "bodiesAndDOCountMatched": true
+    }
+  },
+  "hostChecks": {
+    "fullTestsPassed": 2569,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "targetedCandidateTestsPassed": 2,
+    "redBeforeImplementation": true,
+    "syntaxPassed": true,
+    "qualityPassed": true
+  },
+  "assistance": [
+    "Provisioned an isolated Linux arm64 classic-overlay2 Docker engine before transfer. Engine provisioning is a host prerequisite and is not claimed offline.",
+    "Retained verifier and manifest hashes independently before executing bundled code.",
+    "Used explicit internal candidate selection for export, import and initial enrollment; no catalog promotion, public flag or image override.",
+    "Supplied fresh private storage/admin credentials and a private certificate after import.",
+    "Used the received operator CLI to export and authenticate a standalone developer client.",
+    "Application builds used prepared example projects and their declared existing Void/Vite dependencies outside the operator bundle.",
+    "Corrected probe assumptions: a new credential cannot read another credential\u2019s submissions even within app scope; the capabilities endpoint reports out-of-scope refusal as HTTP 400. No application redeployment or credential policy change was needed."
+  ],
+  "preservation": {
+    "sourceInstallationsAndDataRetained": true,
+    "recipientImportedNoSourceInstallationIdentity": true,
+    "newDataEmptyBeforeFirstWrite": true,
+    "globalDockerContextChanged": false,
+    "imagesPublished": false
+  },
+  "remainingGates": [
+    "Ordinary released-family transfer/enrollment after remaining family gates pass",
+    "Crash ordering, interrupted and older-snapshot recovery matrix, and native restricted recovery page",
+    "Application diagnostics/log disclosure and artifact quota reclamation",
+    "Queue, cron and live-session regression for this new family",
+    "Separate physical-machine acceptance and broader serving/capacity measurements"
+  ]
+}

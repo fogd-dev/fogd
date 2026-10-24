@@ -122,3 +122,21 @@ Back up retained application state separately. Existing shared installations usi
 development storage credentials need deliberate maintenance; import does not rotate
 or repair them. The frozen runtime's existing topology, recovery, and approval
 boundaries still apply.
+
+
+## Candidate distribution evidence
+
+The [candidate distribution drill](evidence/operator-candidate-transfer.json) covers
+an authenticated bundle loaded into an empty, independent classic-overlay2 engine.
+The received operator code runs outside the checkout, enrolls fresh HTTPS storage,
+and exports a standalone developer client. Scoped deployments, pending-code
+isolation, exact approval, fresh application data and retained restart pass.
+Application authors still supply their prepared projects and SDK dependencies.
+
+Maintainers use the [transfer module](../packages/cli/src/distribution/bundle.mjs)
+with explicit internal selection of a known catalog candidate to run these checks
+before promotion. The manifest and installed catalog retain candidate status;
+ordinary `fogd runtime` commands and public enrollment still refuse the candidate.
+No public candidate flag or image override is available. This evidence uses separate engines
+on one physical machine and does not complete released-family or separate-machine
+acceptance.
