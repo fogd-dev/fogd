@@ -1002,7 +1002,23 @@ The listener remains restricted after either decision, and ordered stopped start
 precedes ingress. A settled active publication with a lost reply is inspected
 without replaying that decision. The peer's four acknowledged records remain intact.
 
+The [native update crash matrix](evidence/operator-native-activation-crashes.json)
+adds eight boundaries: approval recorded, before migration, migration ledger recorded,
+before publication, waiting for replicas, and the three active-publication stages.
+Each candidate adds one SQL migration. Independent captured-state checks match
+declared migration hashes, applied ledger entries, native SQL rows and completed
+approvals. The first five cases recover through explicit approval of the same
+artifact; pending active publication requires exact reconciliation or withdrawal
+and ordered startup. The settled publication is inspected without another approval.
+The original row and eight migration rows each remain exactly once, and the peer's
+four records survive. A fresh stopped snapshot and retained startup preserve both
+applications' data.
+
 These process-crash cases change timing and do not qualify power loss or normal-load
-performance. Activation, migration, claim and retirement crash matrices, restricted
-recovery browser interaction, broader serving measurements and ordinary family
-release remain open. The durable family retains candidate admission.
+performance. The ledger case observes both SQL and the controller ledger already
+committed; it does not target a crash between those commits or inside a native SQL
+transaction. First-claim and retirement crashes, restricted recovery browser
+interaction, broader serving measurements and ordinary family release remain open.
+Durable snapshot retirement still lacks a host coordinator; the legacy command
+refuses that format before contacting Docker. The durable family retains candidate
+admission.

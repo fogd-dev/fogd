@@ -56,7 +56,11 @@ these current gaps:
   interruption. [Native candidate restart and crash checks](evidence/operator-native-route-crashes.json)
   cover paused/resumed authority and recovery; the
   [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving
-  through controller loss. Broader lifecycle, counts and loads remain open.
+  through controller loss. Eight [native update crash cases](evidence/operator-native-activation-crashes.json)
+  cover selected activation, migration-ledger and active-publication boundaries.
+  First claims, retirement, broader counts and loads remain open. Durable snapshot
+  retirement needs a host coordinator before its native recovery tests can run;
+  the existing command accepts only legacy snapshots.
 - **Operator workflow:** make installation, deployment, diagnosis, backup, recovery,
   and upgrade procedures easy to find. Record the current downtime and loss
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)

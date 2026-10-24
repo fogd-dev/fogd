@@ -9,6 +9,13 @@ Scheduled history requires the qualified selected runtime and its independent
 The [M11c acceptance](m11c-acceptance.md) records current scheduled retirement and
 restore evidence. Earlier experimental profiles below retain their pinned scope.
 
+This workflow accepts legacy `fogd-stopped-v1` snapshots. Retirement of the durable
+routing candidate's `fogd-stopped-durable-v1` snapshots is not implemented. A
+[native command check](evidence/operator-native-activation-crashes.json) confirms
+that even internal candidate selection refuses that format before Docker contact
+or target creation. Keep those installations on their enrolled recovery workflow;
+the raw Docker startup command below does not apply to them.
+
 ## Prepare and retire
 
 Upgrade to a runtime with retirement support before taking the snapshot. The command

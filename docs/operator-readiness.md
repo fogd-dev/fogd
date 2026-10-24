@@ -310,8 +310,14 @@ apps and acknowledges a durable write after gateway restart while the controller
 stays stopped. The [native route crash matrix](evidence/operator-native-route-crashes.json)
 covers six pause/resume publication boundaries, restricted APIs, exact pending
 withdrawal/reconciliation and ordered restart, preserving the peer's four records.
-Ordinary released-family selection, broader lifecycle crashes, restricted recovery
-browser interaction and the full recovery/load matrix remain open.
+Eight [native update crash cases](evidence/operator-native-activation-crashes.json)
+also cover selected activation, migration-ledger and active-publication boundaries,
+with nine retained SQL rows, four peer records and a fresh stopped snapshot. They
+do not cover the gap between native SQL commit and controller ledger commit.
+Durable snapshot retirement still needs a host coordinator: the legacy command
+refuses its format before Docker contact or target creation. Ordinary released-family
+selection, first-claim and retirement crashes, restricted recovery browser interaction
+and the full recovery/load matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the
