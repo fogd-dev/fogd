@@ -267,8 +267,14 @@ The [durable candidate evidence](evidence/operator-durable-candidate.json) cover
 internal enrollment on a separate classic-overlay2 engine, two approved apps,
 controller-stop serving with an acknowledged app pause, a write during controller
 loss, and D1/R2/Durable Object data after retained startup. This uses local HTTP on
-the same physical machine. Public distribution, HTTPS, native browser controls,
-crash ordering and full recovery acceptance remain open.
+the same physical machine. The separate
+[HTTPS and recovery evidence](evidence/operator-durable-https-recovery.json) covers
+scoped HTTPS deployment, native operator forms, stopped backup, fresh-resource
+restore, explicit HTTP resume, retained D1/R2/Durable Object data and new writes.
+The source refuses startup while its restored target runs. One initially uncertain
+resume stayed withheld; a new decision succeeded after fresh state and native
+identity/version/health checks. Public distribution, the restricted recovery page,
+crash ordering and the full recovery matrix remain open.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the

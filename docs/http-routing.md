@@ -60,8 +60,12 @@ before opening ingress.
 
 Local browser checks cover two applications, standard HTML pause/resume forms, refresh
 without replay, pending withdrawal, keyboard focus and desktop/mobile rendering.
-They use the source controller and a substituted backend. The browser page still
-needs native acceptance on a newly qualified durable-routing family.
+They use the source controller and a substituted backend. The
+[native candidate browser check](evidence/operator-durable-https-recovery.json)
+covers the normal page over HTTPS with two apps, exact pause/resume forms,
+JavaScript disabled, refresh without replay and mobile rendering. The restricted
+recovery page, interrupted-publication paths and full family qualification remain
+open.
 
 ## Resolve an interrupted publication
 

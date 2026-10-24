@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "kind": "operator-durable-https-recovery",
+  "recordedAt": "2026-10-24T00:42:31.790550+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Native Linux arm64, two fleets, private-CA HTTPS, internal candidate enrollment on a separate classic-overlay2 Docker engine on the same physical host. This is not distributed operator-bundle or public family-selection acceptance.",
+  "engine": {
+    "id": "043a9734-e319-4236-861d-1dbb7108b664",
+    "driver": "overlay2"
+  },
+  "checks": {
+    "setup": {
+      "passed": true,
+      "family": "celld-durable-v2-linux-arm64",
+      "project": "fogd-durable-https-20261024",
+      "tlsRefusalBeforeServicesStart": true,
+      "initialCreatedServices": 8,
+      "privateCertificateImported": true,
+      "sharedStartup": true,
+      "credentialId": "a142d16d-42dd-4ea3-987f-2bed5fe6d287",
+      "credentialApps": [
+        "hello",
+        "notebook"
+      ]
+    },
+    "apps": {
+      "passed": true,
+      "tlsVerification": {
+        "untrustedCARefused": true,
+        "privateCATrusted": true,
+        "hostnameChecked": true
+      },
+      "scopedDeployment": true,
+      "approvals": {
+        "hello": {
+          "id": "ab307610-f535-401d-a746-3ca49a3492d5",
+          "digest": "173edd937617122c00145eed77a60b13a51f0cb4c7a55d80f4c9c5e859689d89",
+          "preapprovalHTTP": 404,
+          "activeHTTP": 200
+        },
+        "notebook": {
+          "id": "89310f4c-e51d-4982-95fb-bda7cdcae163",
+          "digest": "601f18e67d2b579f0b84d2c60fe72629ff802f0ab943b78aed017ddd64718cab",
+          "preapprovalHTTP": 404,
+          "activeHTTP": 200
+        }
+      },
+      "notebookWrite": {
+        "http": 200,
+        "D1R2DO": true
+      }
+    },
+    "browser": {
+      "passed": true,
+      "nativeCandidate": "celld-durable-v2-linux-arm64",
+      "https": true,
+      "certificateTrust": "Exact certificate SPKI allowlist; no OS trust changes or blanket certificate bypass",
+      "javaScriptDisabled": true,
+      "apps": 2,
+      "pauseHTTP": 503,
+      "pauseBody": "App activation paused",
+      "peerAppHTTP": 200,
+      "resumeHTTP": 200,
+      "nativeFormPosts": 2,
+      "refreshReplayedPOST": false,
+      "mobileHorizontalOverflow": false,
+      "externalRequests": false
+    },
+    "backup": {
+      "passed": true,
+      "format": "fogd-stopped-durable-v1",
+      "sourceStopped": true,
+      "allArchiveHashesMatched": true,
+      "archives": 10,
+      "expectedIdentityRecordedBeforeSnapshot": true
+    },
+    "restore": {
+      "passed": true,
+      "project": "fogd-durable-https-restored-20261024",
+      "sourceStopped": true,
+      "targetServicesNeverStarted": true,
+      "targetServiceCount": 8,
+      "freshNonoverlappingVolumeNames": true,
+      "newInventoryBinding": true,
+      "storageIdentityMatched": true,
+      "httpRouting": "withheld"
+    },
+    "recovered-apps": {
+      "passed": true,
+      "restoredStartup": true,
+      "initialResumeUncertainHeldWithoutPending": true,
+      "readOnlyIdentityVersionAndHealthCheckedBeforeExplicitRetry": true,
+      "initialAppRoutes": {
+        "hello": 503,
+        "notebook": 503,
+        "exactBody": "App activation paused"
+      },
+      "exactResumeRequired": true,
+      "helloHTTP": 200,
+      "notebookHTTP": 200,
+      "D1R2DORestored": true,
+      "postRecoveryWrite": true,
+      "recordCountAfterWrite": 2,
+      "sourceStartupRefusedWhileTargetRunning": true,
+      "sourceRemainsStopped": true,
+      "httpsCertificateRestored": true
+    }
+  },
+  "snapshot": {
+    "format": "fogd-stopped-durable-v1",
+    "manifest": {
+      "sha256": "069a94ed00d63a52e86e9fdc4efc8e4f55e370dc3a57c4af08238ce77e27ccf9",
+      "bytes": 3271
+    },
+    "files": {
+      "bucket.tar": {
+        "bytes": 1546240,
+        "sha256": "cee6e0d5351d324da58b1c50e376b2ce9e3f7964ecad6f9d513584090b26c375"
+      },
+      "compose.json": {
+        "bytes": 15730,
+        "sha256": "7f32ac39c8003764353a8e23f45c716af4419d9a53de173387668592f7b2155d"
+      },
+      "controller.tar": {
+        "bytes": 624640,
+        "sha256": "7527daeb424194192b85c9ac8a752fc3d20398625fb853a76c214113bcf95d13"
+      },
+      "images.tar": {
+        "bytes": 920989696,
+        "sha256": "6db3f639a519eec1462f686b78e601311071b3c3bea48787ebb921255cbe85ae"
+      },
+      "route-authority.tar": {
+        "bytes": 10240,
+        "sha256": "7967b81f7d7fa8ab4f8ed5195d7f942845fc6999b1b35f2ff64311e77c2590bc"
+      },
+      "slot-1-a.tar": {
+        "bytes": 10240,
+        "sha256": "5ad0f929b183832d5f2d0bc01728faa955a42a7e844dfd21efaa6f933ae14ff0"
+      },
+      "slot-1-b.tar": {
+        "bytes": 10240,
+        "sha256": "f645b1e84949e48dc3b484f6465a313ff814bd9f5f3970fbfacc69e76115eca1"
+      },
+      "slot-2-a.tar": {
+        "bytes": 10240,
+        "sha256": "b75f10dcff4b0603f7d03f13368d2f18038c1c46284d0fce63c91c2de6e597c7"
+      },
+      "slot-2-b.tar": {
+        "bytes": 30720,
+        "sha256": "56e1980ec5ba81f98e0ed994163dc1caf4ae9c0c2bda8a2a54e99153212e0ac2"
+      },
+      "tls.tar": {
+        "bytes": 10240,
+        "sha256": "ea81216e08243729615cd540add4e5dbb8b6bde9dbc3e5efb5f8d380d945eabd"
+      }
+    },
+    "sourceIdentityRecordedBeforeBackup": true,
+    "archivedInstalledPolicyAndEnrollmentGrants": false
+  },
+  "artifacts": {
+    "desktopScreenshot": {
+      "sha256": "7295e21cf1b2c1e9a2a9935ea0fc074dbc90a503803d3f3a13464ca2ab4204e9",
+      "bytes": 119735
+    },
+    "mobileScreenshot": {
+      "sha256": "1fe7810a4285466875039b00a0a2c6d7232b8651d353e2d42bbbefd26c600a02",
+      "bytes": 110534
+    }
+  },
+  "observedFailures": [
+    {
+      "stage": "browser probe",
+      "cause": "Node fetch did not preserve the intended HTTPS Host header, so the probe observed Unknown app.",
+      "resolution": "Verified paused response independently with curl and node:https, corrected the probe to use node:https, inspected state and explicitly resumed the selected approval before rerunning.",
+      "productCodeChanged": false
+    },
+    {
+      "stage": "first resume after restored startup",
+      "cause": "Unconfirmed; the public CLI reported an uncertain HTTP decision. No claim of a specific underlying readiness failure is made.",
+      "freshState": {
+        "state": "withheld",
+        "revision": "2",
+        "pending": null,
+        "startupBlocked": false
+      },
+      "readOnlyChecksBeforeNewDecision": {
+        "owner": "hello",
+        "nativeIdentities": "verified",
+        "bothReplicaVersionsMatchedApprovedVersion": true,
+        "bothReplicaHealthHTTP": 200,
+        "bothMembershipLeasesLive": true
+      },
+      "resolution": "A new explicitly selected resume succeeded after fresh status and read-only checks. No automatic mutation retry or grant reset.",
+      "diagnosticLimitation": "fogd observe refuses candidate families; its native interface remains unqualified for this family."
+    }
+  ],
+  "assistance": [
+    "Maintainer used the internal candidate enrollment and restore selection seams; ordinary public selectors remain closed.",
+    "Private certificate, explicit storage credentials and a scoped deployment credential were supplied.",
+    "Browser trusted only the certificate SPKI; CLI and application probes used normal CA/hostname verification.",
+    "A new selected resume followed fresh state inspection after the uncertain result."
+  ],
+  "remainingGates": [
+    "Distributed operator bundle and ordinary released-family installation",
+    "Native restricted recovery browser and crash ordering during publication/approval/migration/retirement",
+    "Failure, interruption and older-snapshot recovery matrix including background work",
+    "Application diagnostics, log disclosure and artifact quota/reclamation",
+    "Queue, cron and live-session regression on this family",
+    "Second physical machine and broader serving/capacity acceptance"
+  ]
+}
