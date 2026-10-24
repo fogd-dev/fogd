@@ -1017,8 +1017,8 @@ applications' data.
 These process-crash cases change timing and do not qualify power loss or normal-load
 performance. The ledger case observes both SQL and the controller ledger already
 committed; it does not target a crash between those commits or inside a native SQL
-transaction. First-claim and retirement crashes, restricted recovery browser
-interaction, broader serving measurements and ordinary family release remain open.
+transaction. Other first-claim boundaries and retirement crashes, restricted recovery
+browser interaction, broader serving measurements and ordinary family release remain open.
 The source durable retirement coordinator verifies the original snapshot pair and
 changes only the retired fleet's namespace and native identities. Its stopped helper
 removes the retired route and applies ordinary withheld-restoration rules to the
@@ -1046,3 +1046,16 @@ audits, pinned artifacts and all four retired namespace file maps.
 
 Native background retirement and process-crash gates remain open, and no migration
 from v2 is qualified. Both durable families retain candidate admission.
+
+The [native first-claim follow-up](evidence/operator-native-first-claim-crash.json)
+kills the controller after a successful private-directory fsync records ownership
+confirmation, before migrations or application publication. Captured private and
+public records bind the exact approval to a withheld route. After controller
+recovery, the native bucket has the expected owner and no deployment objects; the
+app returns 503 until explicit approval of the same artifact. That retry starts
+with no records and accepts a write, while the peer retains its record. Independent
+checks verify the captured route digest, host enrollment, seven artifact digests,
+and unchanged stored bytes across four retired namespaces. This covers one
+first-claim boundary on the same physical host, with HTTP-only fixtures. The full
+first-claim matrix, retirement process crashes, background retirement and ordinary
+candidate release remain open.

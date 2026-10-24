@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "kind": "operator-native-first-claim-crash",
+  "recordedAt": "2026-10-24T05:01:18.178213+00:00",
+  "hostCLICommit": "de1c9ce0636253d7ad59409571455335d97788c4",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "One first-claim ownership-confirmation process-crash boundary on a fresh restored two-fleet HTTPS installation, same physical host and isolated Linux arm64 overlay2 engine. HTTP-only fixtures; no background work.",
+  "method": {
+    "kernelSyscallExitTracing": true,
+    "successfulPrivateDirectoryFsyncBeforeSIGKILL": true,
+    "directoryDeviceAndInodeMatched": true,
+    "controllerContainerAndCommandMatched": true,
+    "leaderExitSignalObserved": 9,
+    "guestTracerHashMatched": "8c057b9bfae6244bebfd4644e7e21a5264afb806c4fcef2fa46e2a0fb09f422e",
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedBoundaryKilled": true,
+      "differentStepNotKilled": true,
+      "missingNewRouteNotKilled": true
+    }
+  },
+  "case": {
+    "boundary": "ownership-confirmed-before-migrations-and-publication",
+    "checkpoint": {
+      "phase": "claim-confirmed",
+      "kind": "first-claim",
+      "step": "preparing-activation",
+      "directory": "private",
+      "fsyncReturn": 0,
+      "pending": null,
+      "publicRevision": "4",
+      "publicRouteState": "withheld",
+      "privateRoute": "paused",
+      "privateClaim": null,
+      "active": null,
+      "publicSha256": "10ec5a08696a693e297e9568c131b6b87940f1090606e89c73968bfccfe227a1",
+      "privateSha256": "bd47d09bec3dae3ebd4da8241022f30d5176aa38dae8a74388ee2c20b7bf7351",
+      "pid": 142824,
+      "signal": 9,
+      "syscallExitObserved": true
+    },
+    "approvalExitCode": 1,
+    "privateClaimCleared": true,
+    "activeReleaseAtCrash": null,
+    "migrationLedgerEntriesAtCrash": 0,
+    "pendingRouteIntentAtCrash": null,
+    "exactApprovalWithholdingDigestVerified": true,
+    "nativeOwnerBeforeRetry": "firstclaim",
+    "nativeDeploymentObjectsBeforeRetry": false,
+    "HTTPAfterRecoveryBeforeRetry": 503,
+    "recovery": "explicit-same-artifact-approval",
+    "initialRowsAfterRecovery": 0,
+    "acknowledgedWritesAfterRetry": 1,
+    "peerRecordsPreserved": 1,
+    "retiredNamesHTTP": 404,
+    "sameControllerContainer": true,
+    "newControllerProcess": true
+  },
+  "independentChecks": {
+    "hostEnrollmentAndPlanMatched": true,
+    "capturedRouteDigestMatched": true,
+    "artifactDigestsVerified": 7,
+    "retiredNamespacesVerified": 4,
+    "retiredNamespaceFilesVerified": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "retainedNamedVolumes": 99,
+    "priorV2RecordsVerified": {
+      "hello": 9,
+      "notebook": 4
+    },
+    "rootDockerContext": "desktop-linux",
+    "candidateAdmission": "closed"
+  },
+  "probeCorrections": [
+    {
+      "issue": "Self-test attached before child exec completed",
+      "outcome": "Harness now waits for child startup marker; selected and negative tests pass."
+    },
+    {
+      "issue": "Initial native tracer assumed new host already had a public route",
+      "outcome": "Tracer detached without a kill; approval completed normally. Deployment inspected, retained stopped, and a fresh restored installation used. This run is not crash evidence."
+    },
+    {
+      "issue": "Initial inspection used a credential without the new app scope",
+      "outcome": "Read refused; corrected scoped read verified the already completed deployment. No approval repeated."
+    },
+    {
+      "issue": "Independent route-digest check passed the installation policy instead of the route policy",
+      "outcome": "Read-only audit refused; corrected policy projection and reran independently."
+    }
+  ],
+  "regressions": {
+    "command": "node --test packages/platform/test/claims.test.mjs packages/platform/test/route-publication.test.mjs packages/platform/test/controller-route-recovery.test.mjs",
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0,
+    "syntaxCheck": "node scripts/check.mjs passed"
+  },
+  "limitations": [
+    "Other first-claim boundaries, including backend owner-write uncertainty, remain open.",
+    "No retirement process-crash, native background retirement, power-loss, SQL-commit/ledger-gap, broader load or second-physical-machine qualification.",
+    "No v2-to-v3 migration or ordinary candidate release.",
+    "Private scripts, raw stores, credentials and logs remain outside the repository."
+  ],
+  "privateEvidenceFingerprints": {
+    "first-claim-verified-result.json": {
+      "bytes": 1718,
+      "sha256": "311a9ba6aaea7194d6906b79b6e3323bbe1fe7d75327cbb9081df61df9d7de83"
+    },
+    "first-claim-verified-processes.json": {
+      "bytes": 1348,
+      "sha256": "c7e22af1805360983c2a796f1a6ca93610114167e21c36197d296acfae993870"
+    },
+    "first-claim-verified-private.json": {
+      "bytes": 20511,
+      "sha256": "bd47d09bec3dae3ebd4da8241022f30d5176aa38dae8a74388ee2c20b7bf7351"
+    },
+    "first-claim-verified-public.json": {
+      "bytes": 483,
+      "sha256": "10ec5a08696a693e297e9568c131b6b87940f1090606e89c73968bfccfe227a1"
+    },
+    "first-claim-native-audit-verified.json": {
+      "bytes": 29932,
+      "sha256": "1dd2c624a4a063c5c99ed5a19def3c52217cf3418eacb08ef75d03207b0d757a"
+    },
+    "first-claim-fresh-stopped-survey.json": {
+      "bytes": 24770,
+      "sha256": "ab07682f8e6e1b6a9a345820eb312e3466b73d3dbff00c28b6bd4add73b114d2"
+    },
+    "first-claim-failed-probe-preserved.json": {
+      "bytes": 351,
+      "sha256": "3f5289e187b328ab05123c33fb21b53459c1093ac9f7fe3840dbb96c4cc31534"
+    },
+    "fogd-native-first-claim-verified.py": {
+      "bytes": 7406,
+      "sha256": "66cc9621814b038e84cd72070964858f8995ab3b6a194c8606ef906c484c82e3"
+    },
+    "fogd-first-claim-tracer.py": {
+      "bytes": 9554,
+      "sha256": "8c057b9bfae6244bebfd4644e7e21a5264afb806c4fcef2fa46e2a0fb09f422e"
+    },
+    "fogd-first-claim-selftest.py": {
+      "bytes": 2597,
+      "sha256": "7ab9842ae9804cec28df6e7e4b8c6289b3221d4344e6204d1084bf66010a966d"
+    },
+    "fogd-first-claim-native-audit.mjs": {
+      "bytes": 8665,
+      "sha256": "bbb94c0822d956a88cd96c6eaa9b5b60376f6bb65b93a797c536d1a44eb33810"
+    },
+    "fogd-first-claim-selftest-final.log": {
+      "bytes": 1383,
+      "sha256": "dd03a8721d08577893de89ab9853e6e1a084b7fd9e8d7109b157c66b038d9abb"
+    },
+    "fogd-first-claim-regressions.log": {
+      "bytes": 7689,
+      "sha256": "882715c52611ac2f5ee0d171d00253a2f3f4687cb07d9e983bdb08f9f4920919"
+    },
+    "fogd-first-claim-check.log": {
+      "bytes": 32,
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a"
+    }
+  }
+}
