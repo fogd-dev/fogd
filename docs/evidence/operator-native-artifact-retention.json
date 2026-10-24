@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "kind": "operator-native-artifact-retention",
+  "recordedAt": "2026-10-24T01:49:58.595322+00:00",
+  "family": "celld-durable-v2-linux-arm64",
+  "image": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "admission": "candidate",
+  "qualified": false,
+  "hostCLICommit": "57014c6d43bf26cf0e7b37640eb1e908d1ef7a21",
+  "scope": "Internal candidate selection, Linux arm64 classic-overlay2 Docker engine, two fleets with two native replicas, scoped HTTPS deployment and private stopped snapshots on the same physical host. Existing installations were not modified.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "quota": {
+    "maxArtifactBytes": 2097152,
+    "retainedArtifactBytes": 1947323,
+    "refusedIncomingBytes": 1048479,
+    "quotaRefused": true,
+    "directQuotaReasonConfirmed": true,
+    "refusedUploadLeftPlanUnchanged": true
+  },
+  "protection": {
+    "activeReleases": 2,
+    "pendingReleases": 1,
+    "operatorPinnedRejectedRelease": true,
+    "stalePlanRefusedWhilePinned": true,
+    "protectedArtifactTreesHashed": 3,
+    "protectedFiles": 12,
+    "hashesUnchangedAfterPrune": true
+  },
+  "interruption": {
+    "observationBeforeHostKill": {
+      "phase": "partial-deletion",
+      "operation": "925b678b-085c-47b7-be5f-48001d74baca",
+      "approvedFiles": 1505,
+      "remainingFiles": 1482
+    },
+    "hostDockerKillAcknowledged": true,
+    "pruneCommandExitCode": 1,
+    "existingControllerStartedAfterInspection": true,
+    "authenticatedStatusConfirmedPendingOperation": true,
+    "approvalAndBackupAttemptsWhilePending": {
+      "concurrent": true,
+      "bothRefused": true,
+      "snapshotDirectoryNotCreated": true
+    },
+    "explicitResume": true,
+    "repeatResumeSameReceipt": true,
+    "receipt": {
+      "schema": 1,
+      "id": "925b678b-085c-47b7-be5f-48001d74baca",
+      "plan": "e2d80ef1046aed5b67f31f3876ffebc693903376b9924e813556d77dac799d3a",
+      "artifacts": [
+        {
+          "id": "29719b84-2f8b-41b9-a678-6886d102c2fd",
+          "digest": "27981b70b927c4eb243a753b6ae3af0eb7528e944238eafb6d080b3e9850ac8c",
+          "bytes": 1048479
+        }
+      ],
+      "reclaimedArtifactBytes": 1048479
+    }
+  },
+  "afterPrune": {
+    "retainedArtifactBytes": 898844,
+    "quotaReaccounted": true,
+    "previouslyRefusedArtifactSubmitted": {
+      "id": "acf94b4c-ae03-4c76-96d2-c6f768898c55",
+      "digest": "27981b70b927c4eb243a753b6ae3af0eb7528e944238eafb6d080b3e9850ac8c"
+    },
+    "retainedPendingReleaseApproved": true,
+    "notebookDataPreserved": true
+  },
+  "retainedRecoveryPoint": {
+    "allArchiveHashesMatched": true,
+    "archiveCount": 10,
+    "snapshotContainedOperatorPin": true,
+    "sourceStoppedBeforeRestore": true,
+    "freshNonoverlappingVolumes": true,
+    "recovery": {
+      "passed": true,
+      "restoreAfterSourcePrune": true,
+      "initialResumeUncertainHeld": true,
+      "freshReadonlyNativeVerificationBeforeNewDecision": true,
+      "extraRestartPerformed": false,
+      "initialVerificationDelayCause": "not established",
+      "freshStoppedResources": true,
+      "initialHTTPWithheld": true,
+      "fourArtifactTreesMatchSnapshot": true,
+      "restoredPinnedArtifactPreviouslyPrunedAtSource": {
+        "id": "52ba3334-ed45-4bd1-9b8f-67037100f425",
+        "digest": "e4668a80e5a87c3a0b04c305c63c082f9213748509d76704fe9cae8a10f3b162"
+      },
+      "operatorPinRestored": true,
+      "explicitExactRoutingResume": true,
+      "D1R2DORecordRestored": true,
+      "postRecoveryWrite": true,
+      "recordCountAfterWrite": 2,
+      "restoredPendingReleaseApproved": true,
+      "sourceStartupRefusedWhileTargetRunning": true,
+      "sourceRemainsStopped": true
+    }
+  },
+  "attemptAccounting": {
+    "initialCLIErrorOracleCorrected": "The CLI withholds server error contents. Owner accounting and a direct native HTTP 400 response established quota refusal.",
+    "firstKillAttemptAcceptedAsInterruption": false,
+    "firstAttemptActuallyCompletedPrune": true,
+    "firstKillAttemptExplanation": "A signal from inside the PID namespace did not terminate its init process. The later Docker-level kill was independently acknowledged and left a pending operation.",
+    "restartProbeCorrection": "Unauthenticated /health was not a valid readiness probe; authenticated owner status established recovery without another restart.",
+    "failedAndUncertainAttemptsRetainedPrivately": true
+  },
+  "privateMaterialPublished": false,
+  "privateEvidenceFingerprints": {
+    "fixture-result.json": "d834be4960b52f4a0848a97f6f17ac58f2dc07469d330e3047983196734a3f92",
+    "backup-result.json": "7f06ccc677622c6c9182944e7b1ad1d14443dce3a117795b8b061ae33a7938c8",
+    "snapshot/manifest.json": "0e8e25af27092e6de1097acd220c8fa0117f8031bf868bb2e86c340fe61b20d3",
+    "reviewed-prune-second-plan.json": "0fab59d6066be3970d916efee00af282dc31b01ad8ade50ebd7b57bf86396315",
+    "interruption-processes.json": "ac33d015a49904b2ab696fb8e48ca0155795c4849772f95d84752dad42efc735",
+    "interruption-second-processes.json": "caad6b0191ffb724b617b307d23698afa85571a949abd7d26441adc37a598d1c",
+    "pending-prune-concurrent-refusals.json": "d712fc7ec33ed65c751119c6790993684a6b61647398afb99f854e4bbfa7c43e",
+    "prune-second-result.json": "477373624528f640ef59abe382cd2b04520720c27df35c19f1bfdaca3f240b23",
+    "protected-artifacts-before.json": "08b7230e906d84f05292b96d702c026e85abada8b059bb1090ccc8bb139b3b87",
+    "restore-result.json": "e4c99f52420a5a1cb2565b038777cea665d73830ccac51946c40dbb05fb05cf0",
+    "restored-artifact-hashes.json": "b7a941ea39c8ed87a23fb90178557789f03da0dac629992384d9641af2a880a9",
+    "restored-readonly-native-verification.json": "1393b5df4dea9e92c107d8dce8956a4f65bb17378779993f272c49772c90bb83",
+    "recovered-result.json": "23e5e4a6f83920545023976aa0326e3756286bea55cf55bc30eae239d4273292"
+  },
+  "limitations": [
+    "This evidence does not grant ordinary candidate admission or complete runtime-family qualification.",
+    "Approval and backup refusal was checked while the interrupted prune remained pending. Concurrent approval/backup during an otherwise uninterrupted deletion remains a separate native case.",
+    "Process termination is not disk power loss or a multi-host storage-failure test.",
+    "An initially uncertain restored route remained withheld. Fresh read-only identity/version/health checks preceded a new exact decision; the initial verification delay cause remains unestablished.",
+    "Raw logs, credentials, private configuration and snapshot contents remain private. Logical artifact bytes are distinct from filesystem allocation and app data."
+  ]
+}

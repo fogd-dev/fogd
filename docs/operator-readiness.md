@@ -155,9 +155,16 @@ deployment, and fresh-volume restore. Legacy and uncertain outputs remain kept.
 with an owner-only preview, exact-release pins, explicit pruning, quota
 re-accounting, and interrupted-prune resume. Temporary-filesystem tests cover
 process interruption, metadata write uncertainty, protected releases and completed
-stopped restore. The frozen server does not provide these endpoints. The full
-native quota-fill and reclamation gate below remains open and needs a newly
-qualified server runtime.
+stopped restore. The frozen server does not provide these endpoints. The
+[native candidate drill](evidence/operator-native-artifact-retention.json) covers
+quota refusal, protected artifacts and pins, interrupted pruning, explicit resume,
+quota reclamation, another deployment and restoration of a retained pre-prune
+snapshot. Approval and backup attempts while pruning remains pending refuse.
+Concurrent approval/backup during uninterrupted deletion and ordinary runtime-family
+release remain open.
+The retained-recovery drill also repeats an initially uncertain route resume that
+stays withheld until fresh native verification and a new exact decision. Diagnose
+that initial uncertainty before treating restored-route operation as fully qualified.
 
 The owner can inspect [backing filesystem space](storage-space.md) without
 starting services or recreating missing volumes. These observations are separate from

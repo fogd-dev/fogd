@@ -42,8 +42,11 @@ these current gaps:
   silently changing credentials on existing data. [Host build-cache retention](build-retention.md)
   now has local interrupted-prune and restore evidence. Owner-only
   [controller artifact retention](controller-artifacts.md) commands are implemented
-  in source, including explicit pruning and interrupted-prune resume. Native runtime
-  qualification and the quota-fill/reclamation gate remain open.
+  in source, including explicit pruning and interrupted-prune resume. The
+  [native candidate drill](evidence/operator-native-artifact-retention.json) covers
+  quota refusal, interrupted pruning, explicit reclamation and retained recovery.
+  Concurrent approval/backup during uninterrupted deletion and ordinary runtime-family
+  release remain open.
 - **Capacity and serving:** measure latency, throughput, memory, and controller-loss
   behavior across declared app counts and concurrent uploads. Use those results to
   decide app density and routing architecture; caching needs an explicit approval

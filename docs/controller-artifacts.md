@@ -7,6 +7,12 @@ implemented in source and require matching CLI/server support for
 frozen catalog family does not provide this endpoint; a new runtime still needs
 qualification before ordinary installation.
 
+The [native candidate drill](evidence/operator-native-artifact-retention.json)
+covers quota refusal, exact operator pins, stale-plan refusal, interrupted pruning,
+explicit resume and recovery of a retained pre-prune snapshot. It uses a separate
+two-fleet Linux arm64 Docker installation with a 2 MiB artifact quota. Ordinary
+candidate admission remains closed.
+
 Use the selected installation's administrator endpoint and credentials:
 
 ```sh
@@ -128,6 +134,20 @@ also cover process interruption during deletion and metadata write failures.
 They do not qualify a native runtime, disk power loss or independent installation.
 The controller queue does not fence privileged external filesystem writers.
 
-Native quota-fill/reclamation acceptance remains in the
-[operator-readiness contract](operator-readiness.md#4-retain-releases-deliberately).
+The native candidate drill reclaims 1,048,479 logical bytes and then admits the
+previously refused build. Active and pending artifact hashes remain unchanged.
+A Docker-level controller kill leaves a pending prune; startup does not continue
+deletion. Concurrent approval and backup attempts while that operation is pending
+refuse before changing their protected artifacts or producing a snapshot.
+
+Restoring the retained pre-prune snapshot recovers four exact artifact trees,
+including the operator pin and an artifact already pruned at the source. D1, R2
+and Durable Object data, new writes and a subsequent approval pass. An initially
+uncertain route resume stays withheld; fresh read-only runtime verification precedes
+a new exact decision. Its initial verification delay cause remains unestablished.
+
+Concurrent approval and backup during uninterrupted native deletion, disk power loss
+and ordinary runtime-family release remain outside this evidence. The
+[operator-readiness contract](operator-readiness.md#4-retain-releases-deliberately)
+retains the remaining acceptance conditions.
 [Host build-copy retention](build-retention.md) has separate commands and evidence.
