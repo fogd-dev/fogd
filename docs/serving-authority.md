@@ -1142,3 +1142,18 @@ checks verify the captured authority digest, network/object scope, seven artifac
 digests and four retired namespace file maps. This controlled response-loss case
 does not qualify network partitions, partial native object writes, service outages,
 power loss or ordinary runtime admission.
+
+The [native restricted browser drill](evidence/operator-native-restricted-browser.json)
+exercises `/routing` after two actual controller publication crashes. An interrupted
+private intent is withdrawn through the withholding form; an interrupted public
+commit is completed through verified reconciliation. Both use headless Chromium,
+HTTPS with the known fixture key, JavaScript disabled and exact approval/digest/intent
+fields. CSRF and stale-intent probes refuse without changing the routing view;
+resume and upload remain unavailable before and after the accepted decision. Each
+standard form submits once, redirects to a fresh GET and does not repeat its POST
+on refresh. Keyboard focus, selected-approval descriptions and desktop/mobile
+rendering pass, with private screenshots inspected. The recovery listener stays
+restricted after each decision, and gateway timestamps prove no ingress start
+during either browser session. Ordered stopped startup precedes ingress, and both
+apps retain their saved records. These two pending-decision paths do not complete
+broader browser coverage, independent human usability or ordinary family release.

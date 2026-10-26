@@ -1,0 +1,485 @@
+{
+  "schema": 1,
+  "kind": "operator-native-restricted-browser",
+  "recordedAt": "2026-10-26T15:47:47.878511+00:00",
+  "hostCLICommit": "643c4fd962c8151c09eb4e9f67fcf5a00a38def5",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Native restricted /routing browser interaction for exact pending withholding and reconciliation after two actual publication crashes. Same physical host, isolated Linux arm64 overlay2 Docker engine, two HTTP-only fixture apps over private-fixture HTTPS.",
+  "method": {
+    "realControllerSIGKILLAfterSuccessfulDirectoryFsync": true,
+    "directoryDeviceAndInodeMatched": true,
+    "targetControllerContainerAndCommandMatched": true,
+    "processExitSignalObserved": 9,
+    "guestTracerSha256Matched": "8c057b9bfae6244bebfd4644e7e21a5264afb806c4fcef2fa46e2a0fb09f422e",
+    "headlessBrowser": true,
+    "javaScriptEnabled": false,
+    "fixtureCertificateHostnameAndValidityChecked": true,
+    "fixturePublicKeyPinUsedForBrowser": true,
+    "actualStandardHTMLFormAndKeyboardSubmission": true,
+    "beforeAndAfterGatewayStateTimestampsMatched": true,
+    "desktopViewportWidth": 1280,
+    "mobileViewportWidth": 390,
+    "privateScreenshotsCaptured": 6,
+    "desktopAndMobileScreenshotsVisuallyInspected": true,
+    "runtimeProgramInventoryUnchanged": true
+  },
+  "cases": [
+    {
+      "phase": "private-intent",
+      "browserAction": "withhold-pending",
+      "checkpoint": {
+        "phase": "private-intent",
+        "kind": "active",
+        "directory": "private",
+        "fsyncReturn": 0,
+        "pending": {
+          "id": "active:9",
+          "kind": "active",
+          "app": "replylost"
+        },
+        "publicRevision": "8",
+        "publicRouteState": "withheld",
+        "privateRoute": "active",
+        "publicSha256": "5f9ae64e1eb1c5dab7643467cf1f8211c297939d711b3e378aa370c8c067bcb7",
+        "privateSha256": "ea9f62423723cd7b733cea97f01bf364254f5d4e03d6c52a2589c564f19901e1",
+        "pid": 235828,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "uncertainResumeExitCode": 1,
+      "nativeControllerKilled": true,
+      "sameServiceContainersRetained": true,
+      "exactApprovalDigestAndIntentInForm": true,
+      "javaScriptEnabled": false,
+      "singleStandardFormPOST": true,
+      "postRedirectHTTP": 303,
+      "refreshDidNotResubmit": true,
+      "badCSRFRefusedHTTP": 403,
+      "staleIntentRefusedHTTP": 503,
+      "negativeFormInputsLeftRoutingUnchanged": true,
+      "resumeAndUploadRefusedBeforeAndAfterDecision": true,
+      "noResumeOrDeploymentApprovalForms": true,
+      "keyboardFocusVisible": true,
+      "selectedApprovalDescribed": true,
+      "mobileNoHorizontalOverflow": true,
+      "gatewayStoppedThroughoutBrowser": true,
+      "restrictedListenerPersistedAfterDecision": true,
+      "orderedStartupBeforeIngress": true,
+      "bothSavedRecordsPreserved": true,
+      "browserVersion": "156.0.8078.4"
+    },
+    {
+      "phase": "public-commit",
+      "browserAction": "reconcile",
+      "checkpoint": {
+        "phase": "public-commit",
+        "kind": "active",
+        "directory": "public",
+        "fsyncReturn": 0,
+        "pending": {
+          "id": "active:15",
+          "kind": "active",
+          "app": "replylost"
+        },
+        "publicRevision": "15",
+        "publicRouteState": "active",
+        "privateRoute": "active",
+        "publicSha256": "8ed06e249a0ec1103062a943a8e6a0bae49b697d06ad52f47f939d1d99db7a88",
+        "privateSha256": "f799a43e1b0a5731f38d5fd7564f6fb839b5431c37a29d0ec672001b8a2ed5fe",
+        "pid": 239184,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "uncertainResumeExitCode": 1,
+      "nativeControllerKilled": true,
+      "sameServiceContainersRetained": true,
+      "exactApprovalDigestAndIntentInForm": true,
+      "javaScriptEnabled": false,
+      "singleStandardFormPOST": true,
+      "postRedirectHTTP": 303,
+      "refreshDidNotResubmit": true,
+      "badCSRFRefusedHTTP": 403,
+      "staleIntentRefusedHTTP": 503,
+      "negativeFormInputsLeftRoutingUnchanged": true,
+      "resumeAndUploadRefusedBeforeAndAfterDecision": true,
+      "noResumeOrDeploymentApprovalForms": true,
+      "keyboardFocusVisible": true,
+      "selectedApprovalDescribed": true,
+      "mobileNoHorizontalOverflow": true,
+      "gatewayStoppedThroughoutBrowser": true,
+      "restrictedListenerPersistedAfterDecision": true,
+      "orderedStartupBeforeIngress": true,
+      "bothSavedRecordsPreserved": true,
+      "browserVersion": "156.0.8078.4"
+    }
+  ],
+  "independentChecks": {
+    "capturedAuthorityDigestsAndExactPendingApprovalsVerified": true,
+    "browserPOSTFieldsAndRedirectsVerified": true,
+    "negativeControlsAndActualPostDecisionViewsVerified": true,
+    "gatewayStayedStoppedBetweenObservedStartStopTimestamps": true,
+    "orderedStopAndStartCommandsExitedSuccessfully": true,
+    "hostPolicyAndPlanMatched": true,
+    "currentRouteSnapshotValidated": true,
+    "artifactDigestsVerified": 7,
+    "retiredNamespacesVerified": 4,
+    "retiredNamespaceFilesVerified": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "retainedNamedVolumes": 286,
+    "currentBothSavedRecordsMatched": true,
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/admin-routing-page.test.mjs packages/platform/test/controller-service.test.mjs",
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "The browser entrypoint exercised here is /routing with two selected pending-active decisions. This is not comprehensive browser/accessibility coverage or independent human operator acceptance.",
+    "No native background retirement, SQL-commit/ledger-gap, broader load, second physical machine, physical storage/network failure or v2-to-v3 migration qualification.",
+    "No ordinary runtime admission or pinned source/image change. Private scripts, operator credentials, CSRF values, raw stores and screenshots remain outside the repository."
+  ],
+  "privateEvidenceFingerprints": {
+    "restricted-browser-private-intent/command-27.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "restricted-browser-private-intent/capture-private.json-9.json": {
+      "bytes": 25055,
+      "sha256": "a93e49500908f66299b1a19974294da758bf9a2d481d55cffc415f89c709ccad"
+    },
+    "restricted-browser-private-intent/command-11.json": {
+      "bytes": 20054,
+      "sha256": "a8ec73dd095b352aaa8cd8109f62e62f0a20add1a0217ff40a4d4d35ee67532d"
+    },
+    "restricted-browser-private-intent/result.json": {
+      "bytes": 4087,
+      "sha256": "d7ef4c0ac0a74f27cb4c7c394abdd9a19a68bf60925e155649c7734e61279294"
+    },
+    "restricted-browser-private-intent/http-1.json": {
+      "bytes": 292,
+      "sha256": "1cd259c1a216ab32165a46781dee8c87af2dbaef092cb31a361ddcb35c85db51"
+    },
+    "restricted-browser-private-intent/command-26.json": {
+      "bytes": 20054,
+      "sha256": "a3d7396f73e71096ee251561e9f59a6b99a1a4b64da4cae43a5d540b93633383"
+    },
+    "restricted-browser-private-intent/post-browser-admin.json": {
+      "bytes": 22275,
+      "sha256": "07b953f389a884a6fcd6039c935fb498bccc5ffc0cef1cffa1c160db6b8d64f7"
+    },
+    "restricted-browser-private-intent/command-6.json": {
+      "bytes": 342,
+      "sha256": "a1a0f3e3241d64e851d5659598fd519641eddee54e74bf0f9f9f670b4364899f"
+    },
+    "restricted-browser-private-intent/install-tracer-config-8.json": {
+      "bytes": 395,
+      "sha256": "0f79d8cf6c4dacf654ab8500184ff416f62f1d264255483ccecad78603a8eba2"
+    },
+    "restricted-browser-private-intent/private.json": {
+      "bytes": 22462,
+      "sha256": "ea9f62423723cd7b733cea97f01bf364254f5d4e03d6c52a2589c564f19901e1"
+    },
+    "restricted-browser-private-intent/observe-1-20.json": {
+      "bytes": 1512,
+      "sha256": "5f8418e823a72cf14eb0303eaf5bf22c8f531823e364716f9f81b39da2efd0da"
+    },
+    "restricted-browser-private-intent/ordered-start-after-browser-18.json": {
+      "bytes": 474,
+      "sha256": "86f0b989d142862c905b881601023323e31115531de387c807d7454fb81c2811"
+    },
+    "restricted-browser-private-intent/command-21.json": {
+      "bytes": 547,
+      "sha256": "ba6878dc31c11e97aa42beb8303f3e0bffd37aaa82abc094b08d49a673f83e4c"
+    },
+    "restricted-browser-private-intent/command-16.json": {
+      "bytes": 16212,
+      "sha256": "b7539e9f325bc467489f5d0b03654065752c62f79ea83dd6c8fa54a8dac1c891"
+    },
+    "restricted-browser-private-intent/command-7.json": {
+      "bytes": 20044,
+      "sha256": "e10838561fdcf26c52d1f490f367dedf32cb2a223b63a002c83431d307463520"
+    },
+    "restricted-browser-private-intent/after-decision.png": {
+      "bytes": 138366,
+      "sha256": "1b0eabd65216a1d52b0acf21f48d7780f0c79176497355096e14402b8a0f1c25"
+    },
+    "restricted-browser-private-intent/http-24.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "restricted-browser-private-intent/processes.json": {
+      "bytes": 1386,
+      "sha256": "afe3c6b6de70f9e549756338a64d22376895ed0d5da8ae423571c4b68560febb"
+    },
+    "restricted-browser-private-intent/command-4.json": {
+      "bytes": 510,
+      "sha256": "a4aaad930cf4ec8f6150542bed4b68abd9a18bcc0017a0094924956c319434e6"
+    },
+    "restricted-browser-private-intent/ordered-stop-after-browser-17.json": {
+      "bytes": 1984,
+      "sha256": "ba86d722c0ab08719b10f476c1f37f43caa39c9882c50f45ee99a5eddf33cfd0"
+    },
+    "restricted-browser-private-intent/command-19.json": {
+      "bytes": 547,
+      "sha256": "ba6878dc31c11e97aa42beb8303f3e0bffd37aaa82abc094b08d49a673f83e4c"
+    },
+    "restricted-browser-private-intent/tracer-config.json": {
+      "bytes": 645,
+      "sha256": "fe79df2ef8cb6af5b6389a7f04ad4752a662f58cd54f64d8d9a3dc9098c84137"
+    },
+    "restricted-browser-private-intent/command-22.json": {
+      "bytes": 661,
+      "sha256": "0959c2b6e81322b0728216404d4fd05188f93745a0cf155a53f88efbd19c7f5b"
+    },
+    "restricted-browser-private-intent/public.json": {
+      "bytes": 482,
+      "sha256": "5f9ae64e1eb1c5dab7643467cf1f8211c297939d711b3e378aa370c8c067bcb7"
+    },
+    "restricted-browser-private-intent/command-5.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "restricted-browser-private-intent/browser-result.json": {
+      "bytes": 2921,
+      "sha256": "a6a6485a11080f2497714f7cea07eee67af17c2db751b0c0535dba7caddf74f3"
+    },
+    "restricted-browser-private-intent/command-14.json": {
+      "bytes": 815,
+      "sha256": "7b26f073e4f9b6dd421bd6efab8d70a7d599498854c2eac5222d9a92807aff60"
+    },
+    "restricted-browser-private-intent/http-2.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "restricted-browser-private-intent/headless-native-restricted-form-15.json": {
+      "bytes": 433,
+      "sha256": "737c66b84820d8dd36f0bd8d3032de23b44b6243ca386328b2d94c3e86ed64e3"
+    },
+    "restricted-browser-private-intent/command-25.json": {
+      "bytes": 16740,
+      "sha256": "5796448875ec376e31bca0bd95ace186532c0a77def58b0fc13e37605db8098f"
+    },
+    "restricted-browser-private-intent/replylost-observation-20.json": {
+      "bytes": 1018,
+      "sha256": "4d80b8cc2a30a38b486a7b9e5275dff19bf24eb1f61426b4d3a38f6895ee92e0"
+    },
+    "restricted-browser-private-intent/command-13.json": {
+      "bytes": 16212,
+      "sha256": "b7539e9f325bc467489f5d0b03654065752c62f79ea83dd6c8fa54a8dac1c891"
+    },
+    "restricted-browser-private-intent/stop-owned-ingress-before-browser-12.json": {
+      "bytes": 227,
+      "sha256": "219215887a0d7afd6e7ca8dcf9af4b1b5d7bf5e9a24713e80f500f7840602a7b"
+    },
+    "restricted-browser-private-intent/command-3.json": {
+      "bytes": 544,
+      "sha256": "c8ba94dad116104b6f5dd10a61e3468a119f2ce47a644398e685bd937bec533d"
+    },
+    "restricted-browser-private-intent/command-28.json": {
+      "bytes": 342,
+      "sha256": "a1a0f3e3241d64e851d5659598fd519641eddee54e74bf0f9f9f670b4364899f"
+    },
+    "restricted-browser-private-intent/capture-public.json-10.json": {
+      "bytes": 807,
+      "sha256": "abca61c3fa1b7d80b737534a50d980396e7077d2ac36d7cf7af81747c0ff5ea2"
+    },
+    "restricted-browser-private-intent/browser-request.json": {
+      "bytes": 363,
+      "sha256": "a4646869ecba15d08c075df7639c7375b27753e4682b79a191e765c65c1d58db"
+    },
+    "restricted-browser-private-intent/http-23.json": {
+      "bytes": 292,
+      "sha256": "1cd259c1a216ab32165a46781dee8c87af2dbaef092cb31a361ddcb35c85db51"
+    },
+    "restricted-browser-private-intent/mobile-before.png": {
+      "bytes": 129956,
+      "sha256": "5555d7a8088eab331c1c70bde4ad4cc8338e26dd440e1de03355931f0a19fe80"
+    },
+    "restricted-browser-private-intent/desktop-before.png": {
+      "bytes": 138438,
+      "sha256": "4c754a4369c91aa05f928992359aa735cbf78c11be51ba4df89954a0e7f677d5"
+    },
+    "restricted-browser-public-commit/command-31.json": {
+      "bytes": 545,
+      "sha256": "b4823ebe549bc6194ae7095a20b3ef8834dfcc317dc79ba4d9fda709384af483"
+    },
+    "restricted-browser-public-commit/command-50.json": {
+      "bytes": 16739,
+      "sha256": "cfb7e322bec95314b9914f6a341c8518a16f7eef1e722f91f6f068a39e06a207"
+    },
+    "restricted-browser-public-commit/command-47.json": {
+      "bytes": 545,
+      "sha256": "2fde27ce35209889d39b8eb7208289e85c3186e370a73bdccfb7364c419ca41d"
+    },
+    "restricted-browser-public-commit/command-51.json": {
+      "bytes": 20054,
+      "sha256": "2364ce88cb3f689a0e9685c7cd445d94137b90e0f1a0f6d7da61f393ae000618"
+    },
+    "restricted-browser-public-commit/result.json": {
+      "bytes": 4223,
+      "sha256": "c80fe916dfa64c76f0d58d1d94d600ce57eb830f31fabee4b597d8935c4bfdc7"
+    },
+    "restricted-browser-public-commit/ordered-stop-after-browser-45.json": {
+      "bytes": 1984,
+      "sha256": "ba86d722c0ab08719b10f476c1f37f43caa39c9882c50f45ee99a5eddf33cfd0"
+    },
+    "restricted-browser-public-commit/post-browser-admin.json": {
+      "bytes": 22102,
+      "sha256": "5c00cdacd0f051ee54d72a98a8f409c162a9e099e0ddca850170d12d4b510970"
+    },
+    "restricted-browser-public-commit/http-30.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "restricted-browser-public-commit/private.json": {
+      "bytes": 22466,
+      "sha256": "f799a43e1b0a5731f38d5fd7564f6fb839b5431c37a29d0ec672001b8a2ed5fe"
+    },
+    "restricted-browser-public-commit/command-41.json": {
+      "bytes": 16212,
+      "sha256": "6d0278c96c1dd5409cae01ab5612fbd7b661bdb12b4d6b1ba78ad2c50cf35b2d"
+    },
+    "restricted-browser-public-commit/stop-owned-ingress-before-browser-40.json": {
+      "bytes": 227,
+      "sha256": "219215887a0d7afd6e7ca8dcf9af4b1b5d7bf5e9a24713e80f500f7840602a7b"
+    },
+    "restricted-browser-public-commit/capture-public.json-38.json": {
+      "bytes": 960,
+      "sha256": "86aa315cc8008f64355837ed71e91ee5f954bf2e2e4bb567d9de0614cc0043b0"
+    },
+    "restricted-browser-public-commit/after-decision.png": {
+      "bytes": 142364,
+      "sha256": "19180ed67a83cf4d550639958d599f7835db1c76706207c5e3346c00d9ca4c2d"
+    },
+    "restricted-browser-public-commit/command-42.json": {
+      "bytes": 966,
+      "sha256": "42393f629f1be1168b7d8026931462fbb929a811d82ed8be1eb9338d14eccef5"
+    },
+    "restricted-browser-public-commit/processes.json": {
+      "bytes": 1381,
+      "sha256": "4c3628574cc6a2cf86ed52362600536d94f14a75f536257418c29f938348a6ee"
+    },
+    "restricted-browser-public-commit/http-49.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "restricted-browser-public-commit/command-39.json": {
+      "bytes": 20054,
+      "sha256": "434b106e436e1ee0538a8b0b18eac4bc9430b5f404df9de499e54bd4bbc366ec"
+    },
+    "restricted-browser-public-commit/command-35.json": {
+      "bytes": 20054,
+      "sha256": "ebb7cdaf2f4430052d96d946edce694b37357de6444fab3bd8d52c674fbdc151"
+    },
+    "restricted-browser-public-commit/tracer-config.json": {
+      "bytes": 644,
+      "sha256": "20a36c4b34ea07ca4181f3f7ccc46c111be8e2a1072c73e4753d2d6f334e7cf8"
+    },
+    "restricted-browser-public-commit/command-34.json": {
+      "bytes": 342,
+      "sha256": "a1a0f3e3241d64e851d5659598fd519641eddee54e74bf0f9f9f670b4364899f"
+    },
+    "restricted-browser-public-commit/public.json": {
+      "bytes": 625,
+      "sha256": "8ed06e249a0ec1103062a943a8e6a0bae49b697d06ad52f47f939d1d99db7a88"
+    },
+    "restricted-browser-public-commit/http-29.json": {
+      "bytes": 292,
+      "sha256": "1cd259c1a216ab32165a46781dee8c87af2dbaef092cb31a361ddcb35c85db51"
+    },
+    "restricted-browser-public-commit/capture-private.json-37.json": {
+      "bytes": 25059,
+      "sha256": "b3c50af72cdfdf2885092fb77083d0b498de646da0f0ca8eace7dc5c1723b0cb"
+    },
+    "restricted-browser-public-commit/http-48.json": {
+      "bytes": 292,
+      "sha256": "1cd259c1a216ab32165a46781dee8c87af2dbaef092cb31a361ddcb35c85db51"
+    },
+    "restricted-browser-public-commit/browser-result.json": {
+      "bytes": 3061,
+      "sha256": "36113b3325436daee36fb5daaa25f29c6b673d4959e4b0d8dc8c1bbd4d11638a"
+    },
+    "restricted-browser-public-commit/install-tracer-config-36.json": {
+      "bytes": 395,
+      "sha256": "d5383e051ea29349b6c416be1412115765bd01c8f89fae1334db0f1ad835c508"
+    },
+    "restricted-browser-public-commit/command-33.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "restricted-browser-public-commit/command-44.json": {
+      "bytes": 16212,
+      "sha256": "6d0278c96c1dd5409cae01ab5612fbd7b661bdb12b4d6b1ba78ad2c50cf35b2d"
+    },
+    "restricted-browser-public-commit/command-52.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "restricted-browser-public-commit/ordered-start-after-browser-46.json": {
+      "bytes": 474,
+      "sha256": "86f0b989d142862c905b881601023323e31115531de387c807d7454fb81c2811"
+    },
+    "restricted-browser-public-commit/command-53.json": {
+      "bytes": 342,
+      "sha256": "a1a0f3e3241d64e851d5659598fd519641eddee54e74bf0f9f9f670b4364899f"
+    },
+    "restricted-browser-public-commit/browser-request.json": {
+      "bytes": 356,
+      "sha256": "633659d3a86668c5ef4b5693d24cd85304f3e77b396fb61e1e2013019d69a178"
+    },
+    "restricted-browser-public-commit/command-32.json": {
+      "bytes": 511,
+      "sha256": "dee86d64f3e5ebe145e0adedb33e43e7b1c68529045fd0fc623a0fb4a45e0c37"
+    },
+    "restricted-browser-public-commit/mobile-before.png": {
+      "bytes": 140360,
+      "sha256": "6c3ab666059722c618b2ba8a5336f21ac1fd0480c96b497c900249765d0030c0"
+    },
+    "restricted-browser-public-commit/desktop-before.png": {
+      "bytes": 149744,
+      "sha256": "c7aa44a0df043aa14d13b0db4f8d5b960356345b79e83bc6c8ec046b300a564e"
+    },
+    "restricted-browser-public-commit/headless-native-restricted-form-43.json": {
+      "bytes": 425,
+      "sha256": "c2511bd27fee1b597af84b2cb8e2feef6a5e1224fb28888a9a8d4c40a2b61079"
+    },
+    "native-restricted-browser-matrix-result.json": {
+      "bytes": 10621,
+      "sha256": "73ff4c5ad22654ddc6081af0cbed435fcb2854ac6f922dcf0b953151d77acd35"
+    },
+    "native-restricted-browser-audit.json": {
+      "bytes": 86856,
+      "sha256": "576f72a15e180f7164f91c2f743c55c59bb4406c8458a0285023603df587eb09"
+    },
+    "restricted-browser-preflight/browser-preflight.json": {
+      "bytes": 166,
+      "sha256": "d9c09462b837feead96ba874f0e864401b798c291ca9244bdd9d5660982adc6f"
+    },
+    "private-scripts/fogd-native-restricted-browser-matrix.py": {
+      "bytes": 7078,
+      "sha256": "63bb05136d17a0e17fc1072d94aa3b7b6a709063e1941672ff037a28aa3ff3f7"
+    },
+    "private-scripts/fogd-native-recovery-browser.mjs": {
+      "bytes": 8841,
+      "sha256": "1408b3dc25160c52e9dc7b7edcc1cde25faede851cb83c716d750e98588200d6"
+    },
+    "private-scripts/fogd-browser-publication-tracer.py": {
+      "bytes": 9554,
+      "sha256": "8c057b9bfae6244bebfd4644e7e21a5264afb806c4fcef2fa46e2a0fb09f422e"
+    },
+    "private-scripts/fogd-restricted-browser-native-audit.mjs": {
+      "bytes": 14233,
+      "sha256": "5309e33a36f19d1dc457a5fa266754b4733a14aedc706f6330cca05c0b56b576"
+    },
+    "private-scripts/fogd-restricted-browser-regressions.log": {
+      "bytes": 2959,
+      "sha256": "735653ce1c8aaf05de19f51fde7c046bc55d8621eb4c86066d6e1a1658642eb8"
+    }
+  }
+}

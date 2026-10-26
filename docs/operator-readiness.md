@@ -356,8 +356,12 @@ discards bucket responses after assignment. The controller records a failed clai
 and keeps HTTP withheld; exact retry preserves the original owner and peer data
 without restarting the controller.
 Ordinary released-family selection, other native owner-write failures, retirement
-crashes, restricted recovery browser interaction and the full recovery/load matrix
-remain open.
+crashes, broader recovery/browser coverage and the full recovery/load matrix remain
+open. [Native restricted browser interaction](evidence/operator-native-restricted-browser.json)
+now covers both exact pending decisions through JavaScript-disabled `/routing`
+forms, stale/CSRF refusal, keyboard/mobile behavior and refresh without replay. The
+listener stays restricted after the decision, ingress stays stopped until ordered
+startup, and both app records remain intact.
 
 Cached-image transfer remains useful without a source rebuild, and existing local
 qualification remains evidence for its recorded artifact. Neither closes the

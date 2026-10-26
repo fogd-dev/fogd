@@ -67,8 +67,13 @@ JavaScript disabled, refresh without replay and mobile rendering. The
 [native crash drill](evidence/operator-native-route-crashes.json) covers six
 pause/resume publication boundaries, restricted recovery APIs, both exact pending
 decisions and ordered restart. Its HTTP checks cover the restricted HTML page and
-absence of resume forms. Restricted browser interaction, broader lifecycle crashes
-and full family qualification remain open.
+absence of resume forms. The
+[native restricted browser drill](evidence/operator-native-restricted-browser.json)
+exercises both exact pending decisions through standard `/routing` forms over HTTPS
+with JavaScript turned off. It checks refusal of stale decisions and invalid request
+tokens, visible keyboard focus, mobile layout, and refresh without POST replay. Ingress stays stopped after each
+decision until ordered startup succeeds; both apps retain their saved records.
+Broader browser/lifecycle coverage and full family qualification remain open.
 
 ## Resolve an interrupted publication
 

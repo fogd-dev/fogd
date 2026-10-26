@@ -99,6 +99,9 @@ these current gaps:
   boundaries alongside the supported commands. The [standalone developer client](developer-client.md)
   supplies deployment and scoped status outside the checkout without operator images;
   app dependencies and operator approval remain prerequisites.
+  [Native restricted browser recovery](evidence/operator-native-restricted-browser.json)
+  now exercises exact pending withholding and reconciliation with JavaScript
+  disabled, keeping ingress stopped until ordered startup and retaining app data.
 
 The contract supplies acceptance conditions for each increment. These are product
 priorities, not newly qualified capabilities. Exact-artifact approval and
