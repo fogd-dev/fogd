@@ -68,7 +68,10 @@ these current gaps:
   [ownership confirmation gap](evidence/operator-native-ownership-confirmation-gap.json)
   also preserves an assigned owner before controller confirmation: rejection and
   alternate approval refuse, while the original approval recovers without changing
-  owner metadata. Native owner-write outcome uncertainty, retirement process-crash
+  owner metadata. A [lost owner-response drill](evidence/operator-native-owner-response-loss.json)
+  also records a failed claim after ownership is assigned but bucket responses are
+  lost; exact retry preserves the owner record and peer data without a controller
+  restart. Other owner-write failure modes, retirement process-crash
   matrices, broader counts and loads remain open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
   covers two retirements, different-name replacements, retained namespace bytes
   and ordinary recovery with both tombstones. An injected host error after native

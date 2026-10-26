@@ -350,8 +350,12 @@ two pristine reservations; exact approval of the third starts empty and writes.
 The [ownership confirmation gap](evidence/operator-native-ownership-confirmation-gap.json)
 checks a native owner assigned before the controller confirmation replaces durable
 state. Rejection and alternate approval refuse; the original approval recovers
-without changing owner metadata and retains the peer record.
-Ordinary released-family selection, native owner-write outcome uncertainty, retirement
+without changing owner metadata and retains the peer record. The
+[lost owner-response drill](evidence/operator-native-owner-response-loss.json)
+discards bucket responses after assignment. The controller records a failed claim
+and keeps HTTP withheld; exact retry preserves the original owner and peer data
+without restarting the controller.
+Ordinary released-family selection, other native owner-write failures, retirement
 crashes, restricted recovery browser interaction and the full recovery/load matrix
 remain open.
 

@@ -1,0 +1,297 @@
+{
+  "schema": 1,
+  "kind": "operator-native-owner-response-loss",
+  "recordedAt": "2026-10-26T15:19:20.987696+00:00",
+  "hostCLICommit": "5366cd698ee225dcd1abaf02627e48feee1bd9a7",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Lost bucket responses after native owner assignment during first claim. One fresh restored two-fleet HTTPS installation on the same physical host and isolated Linux arm64 overlay2 engine. HTTP-only fixtures.",
+  "method": {
+    "kernelSocketReadEntryAndExitTracing": true,
+    "actualBytesReadBeforeErrorInjection": true,
+    "socketPeerMatchedExactOwnedBucketContainerAddresses": true,
+    "ownerObjectPresentBeforeEachDroppedResponse": true,
+    "exactOriginalClaimPendingBeforeEachFault": true,
+    "ECONNRESETInjectedAndRegisterReadBack": true,
+    "rawResponseContentsPublished": false,
+    "guestTracerSha256Matched": "216c08a5040672d36fecb447b0aa269426d0754a998b2319277062dda6f9016a",
+    "controllerNeverRestarted": true,
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedPeerAndClaimFaulted": true,
+      "wrongPeerUnaffected": true,
+      "wrongApprovalUnaffected": true,
+      "missingOwnerUnaffected": true
+    }
+  },
+  "case": {
+    "responseFaults": [
+      {
+        "syscall": 63,
+        "kernelBytesRead": 553,
+        "injectedReturn": -104,
+        "registerReadbackVerified": true,
+        "peerMatchedBucketEndpoint": true,
+        "ownerObjectPresent": true,
+        "claimStillPending": true
+      },
+      {
+        "syscall": 63,
+        "kernelBytesRead": 1085,
+        "injectedReturn": -104,
+        "registerReadbackVerified": true,
+        "peerMatchedBucketEndpoint": true,
+        "ownerObjectPresent": true,
+        "claimStillPending": true
+      },
+      {
+        "syscall": 63,
+        "kernelBytesRead": 1085,
+        "injectedReturn": -104,
+        "registerReadbackVerified": true,
+        "peerMatchedBucketEndpoint": true,
+        "ownerObjectPresent": true,
+        "claimStillPending": true
+      }
+    ],
+    "checkpoint": {
+      "recordedFailureAtPreparingActivation": true,
+      "originalClaimRetained": true,
+      "publicWithheld": true,
+      "privateSha256": "a24adb754b3ea79331dd2be4a6e88ab9c4900c0492e74eedf2d066e7c31c5089",
+      "publicSha256": "b94793bb3be9e0a5239eae38d159c01a0bf86b42ff44d8de8dee84b13fa4e470"
+    },
+    "approvalExitCode": 1,
+    "failedOriginalClaimDurablyRecorded": true,
+    "HTTPBeforeRetry": 503,
+    "nativeOwnerBeforeRetry": "replylost",
+    "nativeDeploymentObjectsBeforeRetry": false,
+    "ownedClaimRejectionRefused": true,
+    "recovery": "explicit-same-artifact-approval",
+    "ownerRecordUnchangedAfterRetry": true,
+    "initialRowsAfterRecovery": 0,
+    "acknowledgedWritesAfterRetry": 1,
+    "peerRecordsPreserved": 1,
+    "sameControllerProcess": true,
+    "retiredNamesHTTP": 404
+  },
+  "independentChecks": {
+    "capturedPrivatePublicPairDigestVerified": true,
+    "capturedFailureAndExactClaimVerified": true,
+    "bucketEndpointsAndObjectPathBoundToOwnedContainers": true,
+    "hostPolicyAndPlanMatched": true,
+    "ownerRecordPreservedAcrossExplicitRetry": true,
+    "artifactDigestsVerified": 7,
+    "retiredNamespacesVerified": 4,
+    "retiredNamespaceFilesVerified": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "retainedNamedVolumes": 286,
+    "priorInstallationBothRecordsVerifiedBeforeStoppedRetention": true,
+    "currentDataMatched": true,
+    "candidateAdmission": "closed"
+  },
+  "probeCorrections": [
+    {
+      "issue": "Read-only network preflight assumed exactly one shared network",
+      "outcome": "Preflight stopped before approval or fault injection. The bucket intentionally joins multiple private networks; the corrected filter uses only addresses of that exact owned bucket container. The existing pending submission was reused without redeployment."
+    }
+  ],
+  "regressions": {
+    "command": "node --test packages/platform/test/claims.test.mjs packages/platform/test/platform.test.mjs",
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "This is a controlled socket-read error after owner-object creation, including the client retry responses. It is not a physical network partition, service outage, partial native object write or power-loss test.",
+    "No native background retirement, SQL-commit/ledger-gap, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No ordinary runtime admission or pinned source/image change. Private scripts, credentials, socket details and raw state remain outside the repository."
+  ],
+  "relatedEvidence": {
+    "ownershipConfirmationGap": {
+      "path": "operator-native-ownership-confirmation-gap.json",
+      "sha256": "5dd047899861521885af35544719b01b8190ba7d244f05bde37da8671e0f9ca6"
+    }
+  },
+  "privateEvidenceFingerprints": {
+    "owner-reply-result.json": {
+      "bytes": 2800,
+      "sha256": "d0eaa9329a65c742ac3160542d665afe0aba93522ec26a916b07372d37206e96"
+    },
+    "owner-reply-processes.json": {
+      "bytes": 1818,
+      "sha256": "69fe43eea655672850e0544c71d5e186db4121c4088b76ab544ba54e0914afe8"
+    },
+    "owner-reply-private.json": {
+      "bytes": 20764,
+      "sha256": "a24adb754b3ea79331dd2be4a6e88ab9c4900c0492e74eedf2d066e7c31c5089"
+    },
+    "owner-reply-public.json": {
+      "bytes": 482,
+      "sha256": "b94793bb3be9e0a5239eae38d159c01a0bf86b42ff44d8de8dee84b13fa4e470"
+    },
+    "owner-reply-native-audit.json": {
+      "bytes": 85571,
+      "sha256": "5edf790aacec305d4cefd9988cf1ee00df71fc6dff9aac6bb57d9225fc39b2e2"
+    },
+    "owner-reply-tracer-config.json": {
+      "bytes": 882,
+      "sha256": "4234c0299fdf95ce4841b1d1542929d4de9d93d1fa38fa866e2c3af5e79c1c4b"
+    },
+    "owner-reply-container-inspections.json": {
+      "bytes": 25826,
+      "sha256": "a3d9a1b7306d8e5bd7f841af7b160008ce6f443153ac0aba4b5caed2faa54d0d"
+    },
+    "owner-reply-retained-source.json": {
+      "bytes": 498,
+      "sha256": "bb153bbcacfaf147b4da98f967e06dd9423a9e330f03dfea9fd1560ff69808a1"
+    },
+    "owner-reply-fresh-stopped-survey.json": {
+      "bytes": 24770,
+      "sha256": "84c4657ab4dc3574130288ccaa34c30864f81119447e133518afd0cfcfc1566a"
+    },
+    "owner-reply-native-verified/assigned-owner-after-lost-response-15.json": {
+      "bytes": 560,
+      "sha256": "098229e88cc088a946577cc5920b6ca3db5242ac174e8e98b8f72929e67f69ce"
+    },
+    "owner-reply-native-verified/http-20.json": {
+      "bytes": 263,
+      "sha256": "b3aec393fd5b72d42c71dfb5b226f6c9def9bb86978a6eac23f38ed689d90171"
+    },
+    "owner-reply-native-verified/http-21.json": {
+      "bytes": 292,
+      "sha256": "1cd259c1a216ab32165a46781dee8c87af2dbaef092cb31a361ddcb35c85db51"
+    },
+    "owner-reply-native-verified/http-1.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "owner-reply-native-verified/http-17.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "owner-reply-native-verified/command-6.json": {
+      "bytes": 340,
+      "sha256": "5785a08c365d0991b51cd3a4801e3a08e9b5ede17b61b009db24aebd3c4958fb"
+    },
+    "owner-reply-native-verified/http-26.json": {
+      "bytes": 115,
+      "sha256": "c8930d4ce2569239baa9abc3ac3e07a2a0c7ba357bb41298fbc163d63f7cccd0"
+    },
+    "owner-reply-native-verified/http-27.json": {
+      "bytes": 118,
+      "sha256": "8fea5146c7a1cce0863497d7ae699e2ac4978fc9417015e5ef677a5116fb2b52"
+    },
+    "owner-reply-native-verified/install-tracer-config-9.json": {
+      "bytes": 392,
+      "sha256": "460bbb5da7f141302eebf70a1a0c8f5a22332b0bc7388ca03eae3eb282843189"
+    },
+    "owner-reply-native-verified/command-7.json": {
+      "bytes": 13344,
+      "sha256": "709c0f40ceabad05cb798a7c39aec9fc080db246da18471316770f5a2521c053"
+    },
+    "owner-reply-native-verified/command-4.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "owner-reply-native-verified/http-28.json": {
+      "bytes": 121,
+      "sha256": "f3d5b428d0ae3bc00cd26deac8b16fbaa579deb6402017ae979e5ec5130c1080"
+    },
+    "owner-reply-native-verified/command-18.json": {
+      "bytes": 1345,
+      "sha256": "28d2195ad2f50dc2f079c6c38ed0f3161daf61d1cbf9f894333c7b80ae84d00d"
+    },
+    "owner-reply-native-verified/owner-after-explicit-retry-23.json": {
+      "bytes": 559,
+      "sha256": "c60cbd7bfcc05cf0d25bda47d0a1830d437497f3d12e32e3b2d88718d301cb3d"
+    },
+    "owner-reply-native-verified/http-29.json": {
+      "bytes": 117,
+      "sha256": "ef4d0b4a245e08407c557f689907d0d62ae2242241b66e98e622e797e2f4cee2"
+    },
+    "owner-reply-native-verified/command-5.json": {
+      "bytes": 20044,
+      "sha256": "e10838561fdcf26c52d1f490f367dedf32cb2a223b63a002c83431d307463520"
+    },
+    "owner-reply-native-verified/capture-private.json-10.json": {
+      "bytes": 23177,
+      "sha256": "6367e218420102e7fda88c36b37aa085f686cfe1434be1588bc397ea3d66ea08"
+    },
+    "owner-reply-native-verified/command-25.json": {
+      "bytes": 345,
+      "sha256": "cb7dda3675a88757aafecd47448a5b62b5fede4171ae73bc3c9cb3ba66205df2"
+    },
+    "owner-reply-native-verified/http-14.json": {
+      "bytes": 138,
+      "sha256": "c6dfc019352ccc2af620c8ab4fe5f9206c73f02f30027ef55a7ba85c0bfbdf11"
+    },
+    "owner-reply-native-verified/refuse-owned-claim-rejection-16.json": {
+      "bytes": 358,
+      "sha256": "d073913be8088f3c4218f02e8b275f51f8806c976eed52d5e26e2b8f9b2eaea0"
+    },
+    "owner-reply-native-verified/http-22.json": {
+      "bytes": 268,
+      "sha256": "295740fdcbe2bb97e4a49ed17b698b6c9fa9347fe2185ac99521e17b9f7198fe"
+    },
+    "owner-reply-native-verified/command-13.json": {
+      "bytes": 546,
+      "sha256": "31544b938baab73e882b251577d5dabdc4888f118ef91fcb96782c6f225d00a0"
+    },
+    "owner-reply-native-verified/capture-public.json-11.json": {
+      "bytes": 806,
+      "sha256": "5c352bbae5aabab8a52babfb7cc0560f6d231358e42e559df26bae41b8452d6f"
+    },
+    "owner-reply-native-verified/command-2.json": {
+      "bytes": 496,
+      "sha256": "9cf01f6baa6623f194b80afd6370b0b18f9a4ea55a411690d14f7819d4d3eab2"
+    },
+    "owner-reply-native-verified/http-19.json": {
+      "bytes": 119,
+      "sha256": "bf803a15d0aa9c7a6a1eab33d5744eb03fa09b2b4582ca700c2db30a5c015aad"
+    },
+    "owner-reply-native-verified/empty-native-owner-before-approval-8.json": {
+      "bytes": 497,
+      "sha256": "c6311823e747eb6c19799ae6f9224363a96bc714c2a499049bb0f59460d4ffe0"
+    },
+    "owner-reply-native-verified/command-12.json": {
+      "bytes": 592,
+      "sha256": "e9de26b18413c4048fc1eb741fbc2946e71f106c91571c9fc392a18564ca72ea"
+    },
+    "owner-reply-native-verified/command-24.json": {
+      "bytes": 20044,
+      "sha256": "e10838561fdcf26c52d1f490f367dedf32cb2a223b63a002c83431d307463520"
+    },
+    "owner-reply-native-verified/http-3.json": {
+      "bytes": 128,
+      "sha256": "81ce313e268a7b56dadbc5ac0ea58694835ad166069a66e00679413b57f3b46b"
+    },
+    "private-scripts/fogd-native-owner-reply-verified.py": {
+      "bytes": 7220,
+      "sha256": "269926a92442c50d8cc3143bd314e66a687feecddd8841b102dd59e83944c84b"
+    },
+    "private-scripts/fogd-owner-reply-tracer.py": {
+      "bytes": 9472,
+      "sha256": "216c08a5040672d36fecb447b0aa269426d0754a998b2319277062dda6f9016a"
+    },
+    "private-scripts/fogd-owner-reply-selftest.py": {
+      "bytes": 3836,
+      "sha256": "5ae3fe69512d4d1752059b542c8e92c662e0ebbb5fc6ea22198af47e34ebb44d"
+    },
+    "private-scripts/fogd-owner-reply-native-audit.mjs": {
+      "bytes": 11291,
+      "sha256": "8614a672afc7b9676fb0d14b82148cb86ba579e62c13b1c39528c5e7e8cdc5da"
+    },
+    "private-scripts/fogd-owner-reply-selftest-verified.log": {
+      "bytes": 1850,
+      "sha256": "121fd8d1db03b5a7ebda3a49f59f485cbcd48987444dcc9671b94f0fc465de7a"
+    },
+    "private-scripts/fogd-owner-reply-regressions.log": {
+      "bytes": 4891,
+      "sha256": "845f1b9dfea525207184b819a50513fc26184f757938046b0af619e48c5bae28"
+    }
+  }
+}

@@ -1128,3 +1128,17 @@ both saved records, nine artifact digests and five retired namespaces unchanged.
 These controlled process/register injections do not reproduce physical disk failure,
 capacity exhaustion or machine power loss. Native background retirement and the
 broader release gates remain open.
+
+The [lost native owner-response drill](evidence/operator-native-owner-response-loss.json)
+discards three bucket responses only after the owner object exists and the exact
+original claim remains pending. Socket peers are bound to the owned bucket
+container's addresses, and injected connection-reset returns are read back from
+registers. The controller durably records failure at activation preparation,
+retains the original claim and keeps the app withheld. Native inspection finds its
+assigned owner and no deployment objects. Rejection refuses; explicit retry of the
+same artifact preserves the owner record, starts empty and accepts a write. The
+controller process stays running and the peer retains its record. Independent
+checks verify the captured authority digest, network/object scope, seven artifact
+digests and four retired namespace file maps. This controlled response-loss case
+does not qualify network partitions, partial native object writes, service outages,
+power loss or ordinary runtime admission.
