@@ -1113,3 +1113,18 @@ namespace file maps unchanged. No interrupted helper is replayed or partial targ
 repaired. Partial marker/file writes, injected I/O outcome uncertainty, power loss,
 background retirement and ordinary release remain outside these process cuts after
 successful system calls.
+
+The [native retirement I/O fault drill](evidence/operator-native-retirement-io-faults.json)
+adds three partial writes and three error reports after successful directory syncs.
+For the marker, private staging file and public staging file, the tracer limits the
+write count, verifies the actual short return and prefix bytes, then kills the helper.
+For the grant, private and public directory syncs, it observes kernel success, reports
+`EIO` to the process and verifies failure exit with restoration uncertainty.
+Every target retains incomplete enrollment and refuses startup before Docker access,
+including the malformed-marker case and a fully matching committed pair. Independent
+native reads verify the partial files, grant identities, inventory bindings and
+current store bytes after failure. The retained completed installation restarts with
+both saved records, nine artifact digests and five retired namespaces unchanged.
+These controlled process/register injections do not reproduce physical disk failure,
+capacity exhaustion or machine power loss. Native background retirement and the
+broader release gates remain open.

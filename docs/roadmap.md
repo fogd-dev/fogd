@@ -81,6 +81,10 @@ these current gaps:
   cover a consumed restoration grant, both staging-file syncs and both renames
   before directory sync. All interrupted targets stay fenced; the completed
   installation restarts with its saved records. The
+  [partial-write and I/O drill](evidence/operator-native-retirement-io-faults.json)
+  adds truncated marker/private/public writes and reported errors after successful
+  syncs. All six targets stay fenced, and the completed installation retains its
+  data through another restart. The
   [last-app follow-up](evidence/operator-native-zero-live-recovery.json) restores
   four tombstones with no live apps and then approves a fresh app in the freed
   capacity. Native background retirement, process-crash gates and ordinary release

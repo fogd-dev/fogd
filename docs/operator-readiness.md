@@ -332,6 +332,10 @@ Five [additional store cuts](evidence/operator-native-retirement-store-edges.jso
 cover the consumed grant, private/public staging-file syncs and private/public
 renames before directory sync. Their partial targets remain fenced, while the
 retained completed installation restarts with both saved records.
+The [native I/O fault drill](evidence/operator-native-retirement-io-faults.json)
+checks three partial writes and three reported errors after successful syncs.
+Malformed marker bytes, partial files and committed store pairs all remain fenced;
+the completed installation restarts with both records intact.
 [Zero-live-app recovery](evidence/operator-native-zero-live-recovery.json)
 also preserves four tombstones and restores two free slots; a new app starts empty
 and writes after exact approval. Native background retirement and v2-to-v3 migration

@@ -1,0 +1,896 @@
+{
+  "schema": 1,
+  "kind": "operator-native-retirement-io-faults",
+  "recordedAt": "2026-10-26T14:54:13.519261+00:00",
+  "hostCLICommit": "0cb91b80179e1e675667bc252ec111c09401af00",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Three native partial writes followed by process kill, and three injected EIO returns after successful directory syncs. Fresh stopped retirement targets on the same physical host and isolated Linux arm64 overlay2 engine; HTTP-only two-fleet HTTPS topology.",
+  "method": {
+    "nativeProgram": "packages/platform/src/import-retired-routes.mjs",
+    "kernelSyscallEntryAndExitTracing": true,
+    "ownedContainerCommandAndFileIdentitiesChecked": true,
+    "shortWriteCountPatchedAndReadBack": true,
+    "shortKernelReturnAndActualFilePrefixMatched": true,
+    "partialWriteLeaderExitSignalObserved": 9,
+    "actualSuccessfulFsyncReturnObservedBeforeErrorInjection": true,
+    "EIOReturnPatchedAndRegisterReadBack": true,
+    "uncertainIOLeaderExitCodeObserved": 1,
+    "uncertainIOHelperErrorCode": "ROUTE_RESTORATION_UNCERTAIN",
+    "guestTracerSha256Matched": "68fe0b71d1be75137c11412f03b0464ef5f57068cd82bf69cffea386cb907bab",
+    "inputHeldBeforeEffectsUntilTracerArmed": true,
+    "unchangedProductionHelperArgsExceptDiagnosticContainerName": true,
+    "networkNoneReadOnlyRootNoCapabilitiesPreserved": true,
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedFaultCases": 6,
+      "wrongSnapshotMarkerCasesUnaffected": 6,
+      "selfTestProcessObservedEIO": true
+    }
+  },
+  "cases": [
+    {
+      "phase": "partial-marker",
+      "mode": "partial",
+      "checkpoint": {
+        "phase": "partial-marker",
+        "mode": "partial",
+        "event": {
+          "kind": "short-write",
+          "role": "enrollment",
+          "syscall": 64,
+          "registerReadbackVerified": true
+        },
+        "kernelReturn": 147,
+        "privateRevision": "0",
+        "publicRevision": "0",
+        "privateSha256": "ba2ef69523248cc0f25fd2a58b3ba982c867bcc49f37a13825817c955fb362e0",
+        "publicSha256": "098ee411e5ec43b29e861a719e0cdd30f11893662564723eaadd3df77fb76931",
+        "markerSha256": "bf63ae02ed74e3bf42de546675b19dd47ee718ed1d3ffc784f4c00c3c60c77aa",
+        "requestedBytes": 294,
+        "writtenBytes": 147,
+        "prefixMatched": true,
+        "fileIdentityVerified": true,
+        "intendedSha256": "43836c61a6d18d682f7c30edfbbadd79ee192239f4c70b387d5e19a0a9ddd81f",
+        "partialSha256": "bf63ae02ed74e3bf42de546675b19dd47ee718ed1d3ffc784f4c00c3c60c77aa",
+        "pid": 208412,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "partial-private",
+      "mode": "partial",
+      "checkpoint": {
+        "phase": "partial-private",
+        "mode": "partial",
+        "event": {
+          "kind": "short-write",
+          "role": "private",
+          "syscall": 64,
+          "registerReadbackVerified": true
+        },
+        "kernelReturn": 11528,
+        "privateRevision": "0",
+        "publicRevision": "0",
+        "privateSha256": "2cbd2929a91ef2486e4eb63927367005c626b72eeba1c080890b04dec308c267",
+        "publicSha256": "a708846e4523dcb2eca0c786f447824703dab4b3509dca5de886fe596eaa3c56",
+        "markerSha256": "96ca8f9013f1ca8202ca9a6c4dea89f35ddddc448b341e3908a9eb96f15dd95b",
+        "requestedBytes": 23056,
+        "writtenBytes": 11528,
+        "prefixMatched": true,
+        "fileIdentityVerified": true,
+        "intendedSha256": "853063db5328273e3651fb2c67aa30c3589206133709e1dbce73b2b6313f1e82",
+        "partialSha256": "c211093599af247ac1b088724b6628d74e36013e130bd20b7d2998bcbb9803cf",
+        "pid": 211657,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "partial-public",
+      "mode": "partial",
+      "checkpoint": {
+        "phase": "partial-public",
+        "mode": "partial",
+        "event": {
+          "kind": "short-write",
+          "role": "public",
+          "syscall": 64,
+          "registerReadbackVerified": true
+        },
+        "kernelReturn": 119,
+        "privateRevision": "1",
+        "publicRevision": "0",
+        "privateSha256": "a4d6371658650a067b39950162f8dc6522a665567a2af51c8dfa0251c08199af",
+        "publicSha256": "aca1a87bee88c25ff6bee41e0882f6049bd93ccbfab5da5b6802acf3673f8c44",
+        "markerSha256": "da786e0301d966fd09b6d66615b003147511b5c8a833a4467b33f29a0e2564d0",
+        "requestedBytes": 238,
+        "writtenBytes": 119,
+        "prefixMatched": true,
+        "fileIdentityVerified": true,
+        "intendedSha256": "9214cf4950b389562453220314947b21b0d32becd59cc2512d367750e5d96ab6",
+        "partialSha256": "636ac85c8b51ae5c9b90d30aa6d601e5ed8ec61cb6d5188b1f11d30a53da961d",
+        "pid": 214898,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "uncertain-grant",
+      "mode": "uncertain",
+      "checkpoint": {
+        "phase": "uncertain-grant",
+        "mode": "uncertain",
+        "event": {
+          "kind": "directory-sync-error",
+          "role": "enrollment",
+          "syscall": 82
+        },
+        "kernelReturn": 0,
+        "privateRevision": "0",
+        "publicRevision": "0",
+        "privateSha256": "943a18ef83ba6254af4737633f89886abbcfdadcc1bb29cf5f2413ede6755b84",
+        "publicSha256": "f85a4e445b6884379f9a9faf67fa9c2dd1f04289bfee927f32c291bac3e78084",
+        "markerSha256": "427361cf2a0b8b8dda63a570e3dc00f7787ed811aa21395e5e0085b824a1f469",
+        "injectedReturn": -5,
+        "registerReadbackVerified": true,
+        "pid": 218153,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 1,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "uncertain-private",
+      "mode": "uncertain",
+      "checkpoint": {
+        "phase": "uncertain-private",
+        "mode": "uncertain",
+        "event": {
+          "kind": "directory-sync-error",
+          "role": "private",
+          "syscall": 82
+        },
+        "kernelReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "0",
+        "privateSha256": "1356966c5aff4cba638b7f8ee65d14bcd9c03ad587c2abb4235811a777717947",
+        "publicSha256": "00585ce087efb941d40c6c6be0ecbdded698b4f4775da8fe34e3db928a8ba993",
+        "markerSha256": "bb878d788e6745225f55ecdba2d7d75906d0768705a78a1052da593fdafba53f",
+        "injectedReturn": -5,
+        "registerReadbackVerified": true,
+        "pid": 221397,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 1,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "uncertain-public",
+      "mode": "uncertain",
+      "checkpoint": {
+        "phase": "uncertain-public",
+        "mode": "uncertain",
+        "event": {
+          "kind": "directory-sync-error",
+          "role": "public",
+          "syscall": 82
+        },
+        "kernelReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "1",
+        "privateSha256": "401d13558a7447e7c204e8665672a303ed241c1dc7ccb031727bfb704855cd5f",
+        "publicSha256": "11dfda22da73429f2a0c7252856e578f79665f735e5d371baf188e03d886fae5",
+        "markerSha256": "b3363e1176285e980b508954dd1428b021a158b47870e9821b8664567871a629",
+        "injectedReturn": -5,
+        "registerReadbackVerified": true,
+        "pid": 224631,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 1,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    }
+  ],
+  "retainedCompletedInstallation": {
+    "bothRecordsVerifiedBeforeStoppedMaintenance": true,
+    "allSixInterruptedTargetsRetained": true,
+    "interruptedTargetsRepaired": false,
+    "interruptedHelpersReplayed": false,
+    "retainedStartupCompleted": true,
+    "bothSavedRecordsVerifiedAfterRestart": true,
+    "retiredNamesHTTP": 404
+  },
+  "independentChecks": {
+    "sourceSnapshotMembersHashed": 10,
+    "sourceManifestSha256": "418a4ae305f5ad9e50fb1f5455de44c57536d36614ada8163e10a4e4ff668b1e",
+    "archivedSourceStateAndOriginalAuthorityMatched": true,
+    "partialPrefixesAndInvalidJSONVerified": true,
+    "privateProjectionOrFreshStateMatched": true,
+    "currentNativeStoreAndMarkerBytesMatchedCaptures": true,
+    "originalGrantAndNativeInventoryBindingsVerified": true,
+    "malformedPartialMarkerRetained": true,
+    "privateAndPublicTemporaryPartialFilesRetained": true,
+    "freshMismatchedAndMatchingPairsAllHostFenced": true,
+    "fortyEightInterruptedServiceContainersNeverStarted": true,
+    "artifactDigestsVerified": 9,
+    "retiredNamespacesVerified": 5,
+    "retiredNamespaceFilesVerified": 108,
+    "retiredNamespaceStoredBytes": 1658671,
+    "retainedNamedVolumes": 275,
+    "priorFourRetirementAuditsPreserved": true,
+    "completedCurrentDataMatched": true,
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/route-restoration.test.mjs",
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "Faults are controlled process/register injections. They do not reproduce physical media failure, disk exhaustion or machine power loss.",
+    "No native background retirement, SQL-commit/ledger-gap, native owner-write response uncertainty, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No ordinary runtime admission or pinned source/image change. Private scripts, raw stores, keys and command transcripts remain outside the repository."
+  ],
+  "relatedEvidence": {
+    "storeCuts": {
+      "path": "operator-native-retirement-store-edges.json",
+      "sha256": "e0f63f528e964cd0f6f780ca00fd3b0112da0672ab00f6a2d3e755f4c778771a"
+    }
+  },
+  "privateEvidenceFingerprints": {
+    "fault-partial-marker/request.json": {
+      "bytes": 1009,
+      "sha256": "abd461e74d5d5b34a26b8b288746a4c2d77817371e22ef852651120193e71147"
+    },
+    "fault-partial-marker/capture-private.json.json": {
+      "bytes": 1129,
+      "sha256": "58a584c8d596d235e7485a9f4f2474fe61ca2774af8b2adbadc3c97d4aa50f6d"
+    },
+    "fault-partial-marker/armed-helper-inspection.json": {
+      "bytes": 9980,
+      "sha256": "f26472815a49c9c1a616b54f6cac966dba64ea0139f2e2f8c045d9e7164a2744"
+    },
+    "fault-partial-marker/incomplete-start-refused-3.json": {
+      "bytes": 346,
+      "sha256": "bf9414c221e1db564eee01b096b88c387c3211eb42e274404cbb2b692182460d"
+    },
+    "fault-partial-marker/result.json": {
+      "bytes": 1440,
+      "sha256": "fc584702db19f6593c7b3f4b32a8c3bb242ed3742e8e933191c0ba9fcbaa653c"
+    },
+    "fault-partial-marker/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "fault-partial-marker/private.json": {
+      "bytes": 640,
+      "sha256": "ba2ef69523248cc0f25fd2a58b3ba982c867bcc49f37a13825817c955fb362e0"
+    },
+    "fault-partial-marker/helper-started.json": {
+      "bytes": 13,
+      "sha256": "c3cac668973024366ccefb876af27d0a4a0319c6c31df548bb28b3f5b49076d9"
+    },
+    "fault-partial-marker/processes.json": {
+      "bytes": 2037,
+      "sha256": "1654b2a57904fbb70406cbcad17dbaa0e8c0ac2c2b419b97868b828a7d6aa715"
+    },
+    "fault-partial-marker/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "fault-partial-marker/capture-marker.bin.json": {
+      "bytes": 467,
+      "sha256": "d3ef6d2e2fa036bfbb503e4c5c995235888d46825e3a879fd0d5ebc5ba141f60"
+    },
+    "fault-partial-marker/tracer-config.json": {
+      "bytes": 923,
+      "sha256": "ee2bd4265412b6823db168dcc4ee5c06ee4d7aa8de31d6a9b203f9c7eda44b3b"
+    },
+    "fault-partial-marker/public.json": {
+      "bytes": 138,
+      "sha256": "098ee411e5ec43b29e861a719e0cdd30f11893662564723eaadd3df77fb76931"
+    },
+    "fault-partial-marker/capture-public.json.json": {
+      "bytes": 456,
+      "sha256": "db5cab46b8599e630d32934cab06c5b1c0b0a191c8c41a3cf6c3009a65081cd1"
+    },
+    "fault-partial-marker/survey.json": {
+      "bytes": 7647,
+      "sha256": "44da335e8213404faec8782a86301c376afdb9f7f6fe8f5140edb5add22cdc09"
+    },
+    "fault-partial-marker/capture-intended.bin.json": {
+      "bytes": 665,
+      "sha256": "cd9c222bb6d67ac2473e34f346031c673b03f11d189f31fbc4450a4ca3440e06"
+    },
+    "fault-partial-marker/capture-partial.bin.json": {
+      "bytes": 468,
+      "sha256": "12ad61572f6aa706a145ea953fd2f19d2133ae230e4ce8ee1435af6537ad0e6c"
+    },
+    "fault-partial-marker/pending-target-survey-2.json": {
+      "bytes": 6165,
+      "sha256": "c43fe41d9df02e509921f3a34aa7b16e6105a8106c7220a3d3a6a5d9083fd049"
+    },
+    "fault-partial-marker/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "8a5bcd2793f65cb901068693e523c7289f37d1b19813a420ccd58be87eb61b12"
+    },
+    "fault-partial-marker/install-tracer-config-1.json": {
+      "bytes": 396,
+      "sha256": "33ff46b74ca8897d28bf3ef0604884c4a62a527574d887967a5754ba7ee10f8e"
+    },
+    "fault-partial-marker/helper-args.json": {
+      "bytes": 725,
+      "sha256": "ca0802c99328138208fcbf4fd7200431bd5ed7d385bde1c3b958ccb21e90c5b5"
+    },
+    "fault-partial-marker/partial.bin": {
+      "bytes": 147,
+      "sha256": "bf63ae02ed74e3bf42de546675b19dd47ee718ed1d3ffc784f4c00c3c60c77aa"
+    },
+    "fault-partial-marker/marker.bin": {
+      "bytes": 147,
+      "sha256": "bf63ae02ed74e3bf42de546675b19dd47ee718ed1d3ffc784f4c00c3c60c77aa"
+    },
+    "fault-partial-marker/intended.bin": {
+      "bytes": 294,
+      "sha256": "43836c61a6d18d682f7c30edfbbadd79ee192239f4c70b387d5e19a0a9ddd81f"
+    },
+    "fault-partial-private/request.json": {
+      "bytes": 1013,
+      "sha256": "27dca45f4cc5b65178f1ed2c228c871d722c8abdf3f1b81a49186651d2ddba65"
+    },
+    "fault-partial-private/capture-private.json.json": {
+      "bytes": 1129,
+      "sha256": "879b881890dbcf4b20a4e4fc7c7bb0df7a1c44d929c11a9fbdf40de70c01f6f7"
+    },
+    "fault-partial-private/armed-helper-inspection.json": {
+      "bytes": 9989,
+      "sha256": "f3f94358cf5cef8dfef63a7dc372cd9c19728feea666ff5b0ccdab81214cb722"
+    },
+    "fault-partial-private/result.json": {
+      "bytes": 1446,
+      "sha256": "7504e3ff2425fb3b497aefa6bf3437e8655caf77acd840b398546e5bc6d4d2f1"
+    },
+    "fault-partial-private/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "fault-partial-private/private.json": {
+      "bytes": 640,
+      "sha256": "2cbd2929a91ef2486e4eb63927367005c626b72eeba1c080890b04dec308c267"
+    },
+    "fault-partial-private/install-tracer-config-4.json": {
+      "bytes": 396,
+      "sha256": "b39b1923fca5a4f81bc77c945d49f6c0a8bf0cff89fc00cb87a92daae6f69d36"
+    },
+    "fault-partial-private/helper-started.json": {
+      "bytes": 13,
+      "sha256": "e378c7951be46cf84ee54a9f160615d87e3d98e68f979a83dcccc17cc291ecbe"
+    },
+    "fault-partial-private/pending-target-survey-5.json": {
+      "bytes": 6166,
+      "sha256": "730f8006fcedc7b294173a665a068da9a120488db2df3ce0852c74d04363d3ce"
+    },
+    "fault-partial-private/processes.json": {
+      "bytes": 2046,
+      "sha256": "d5ee5504a07218803e83e5c6d0b1bd7f0ca7cfa9771703525d4478aa875b80f1"
+    },
+    "fault-partial-private/incomplete-start-refused-6.json": {
+      "bytes": 347,
+      "sha256": "423171931607a0af2e9fdc803165f558f1f4b8fae67cec6c6b34fb2e9ceb26e4"
+    },
+    "fault-partial-private/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "fault-partial-private/capture-marker.bin.json": {
+      "bytes": 663,
+      "sha256": "64a52966ee04378f98b6b42f5368a7ae49badbf0bf7c53a97aaad35eba4a69a6"
+    },
+    "fault-partial-private/tracer-config.json": {
+      "bytes": 928,
+      "sha256": "be9a5c57da6f744944859556db7fcf2e3b37a4b3e3ac3e23e5b936bb04bb0672"
+    },
+    "fault-partial-private/public.json": {
+      "bytes": 138,
+      "sha256": "a708846e4523dcb2eca0c786f447824703dab4b3509dca5de886fe596eaa3c56"
+    },
+    "fault-partial-private/capture-public.json.json": {
+      "bytes": 456,
+      "sha256": "7bc5acfd5377b7d90a1e7180688088cec58d3bba198b2c5dffc71c4cbc0f041c"
+    },
+    "fault-partial-private/survey.json": {
+      "bytes": 7647,
+      "sha256": "3dda2be7350a7fbf5a30fed349d1923eae8cd1de3889270f67b298afa52d9a00"
+    },
+    "fault-partial-private/capture-intended.bin.json": {
+      "bytes": 31017,
+      "sha256": "c7f5f5f9dbd26c367168ab3858743795d5e171019f6aa9926fb4bd3ecd77c73c"
+    },
+    "fault-partial-private/capture-partial.bin.json": {
+      "bytes": 15644,
+      "sha256": "01d7c3c2cf0f8e31db0f468428aa91893105cbda33708d1592cba363df6383fc"
+    },
+    "fault-partial-private/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "f7a1008ef47a4091351e5cb10b2bd7b17a85c27a5e97c6fc9953f1390987a630"
+    },
+    "fault-partial-private/helper-args.json": {
+      "bytes": 729,
+      "sha256": "d4ff9f8d59c4ea0982aca3dc667ab94e84aa48b5b0b5d0b2e145f78a9efae3d9"
+    },
+    "fault-partial-private/partial.bin": {
+      "bytes": 11528,
+      "sha256": "c211093599af247ac1b088724b6628d74e36013e130bd20b7d2998bcbb9803cf"
+    },
+    "fault-partial-private/marker.bin": {
+      "bytes": 294,
+      "sha256": "96ca8f9013f1ca8202ca9a6c4dea89f35ddddc448b341e3908a9eb96f15dd95b"
+    },
+    "fault-partial-private/intended.bin": {
+      "bytes": 23056,
+      "sha256": "853063db5328273e3651fb2c67aa30c3589206133709e1dbce73b2b6313f1e82"
+    },
+    "fault-partial-public/request.json": {
+      "bytes": 1009,
+      "sha256": "2e8efec7b5695129a4a7c397631fc3952c5168dd59cf1ea81c16ec92d3831a36"
+    },
+    "fault-partial-public/capture-private.json.json": {
+      "bytes": 31017,
+      "sha256": "9b2cc957cc29b384295c6c73ab778f3a76728f85aeaa851e2353e9965c5d720b"
+    },
+    "fault-partial-public/armed-helper-inspection.json": {
+      "bytes": 9980,
+      "sha256": "8296c8544031c45839e14637a6676314a4ab61c688d82e270677d7dc09810d9d"
+    },
+    "fault-partial-public/result.json": {
+      "bytes": 1436,
+      "sha256": "bef0ad6423b576d6a3c9a550d934a1a5be8d171f947d3831ff930a6ed4442898"
+    },
+    "fault-partial-public/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "fault-partial-public/private.json": {
+      "bytes": 23056,
+      "sha256": "a4d6371658650a067b39950162f8dc6522a665567a2af51c8dfa0251c08199af"
+    },
+    "fault-partial-public/incomplete-start-refused-9.json": {
+      "bytes": 346,
+      "sha256": "dda9e093ca11baddc3f09c1f59f9fee76e6f806e3b3463c1b76f9f4752bce993"
+    },
+    "fault-partial-public/helper-started.json": {
+      "bytes": 13,
+      "sha256": "e98fc13727e04bedf70dd5bb68575b6d2d9ceff5dc781dd1d464956ff0cae8bc"
+    },
+    "fault-partial-public/processes.json": {
+      "bytes": 2029,
+      "sha256": "56611f2d4b500e673aa7404af84b76420b24d9bddd998d18cdce5e5c18a2c6a8"
+    },
+    "fault-partial-public/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "fault-partial-public/capture-marker.bin.json": {
+      "bytes": 663,
+      "sha256": "01f252866965553396496a180dabcec4776cab6db66a53605bd130329754457f"
+    },
+    "fault-partial-public/tracer-config.json": {
+      "bytes": 923,
+      "sha256": "fdeabde18830dc0c590bdd4a38f94dd636322cb890852fb3d121c09e5d1756f4"
+    },
+    "fault-partial-public/install-tracer-config-7.json": {
+      "bytes": 396,
+      "sha256": "de3435f859fbec9d29f26c5f1e48fdac5843e2ac4fb40c25b43fdb4413e706ec"
+    },
+    "fault-partial-public/public.json": {
+      "bytes": 138,
+      "sha256": "aca1a87bee88c25ff6bee41e0882f6049bd93ccbfab5da5b6802acf3673f8c44"
+    },
+    "fault-partial-public/pending-target-survey-8.json": {
+      "bytes": 23070,
+      "sha256": "81cf99be8ddf6a8658111d7682c1dc339b9b241a1d2d3ef8438ec95371120edd"
+    },
+    "fault-partial-public/capture-public.json.json": {
+      "bytes": 456,
+      "sha256": "d100fbc59fbeab6ec2dd880a4b23a892f4bcd00dce2a03ef7887fe409528941f"
+    },
+    "fault-partial-public/survey.json": {
+      "bytes": 31485,
+      "sha256": "9c3450ea3709f0a2d93af21d6feacd3e033bf69fc4b0c0bcde425d6b3173a973"
+    },
+    "fault-partial-public/capture-intended.bin.json": {
+      "bytes": 593,
+      "sha256": "c1a858c6f3bcbe577c0bb4e3bbb5da95724ffc6c4c58a0e16983bc4305146542"
+    },
+    "fault-partial-public/capture-partial.bin.json": {
+      "bytes": 432,
+      "sha256": "fec9145ef552573d2ddb5aa001210b57bae01f6c4ec75ddf3b78ab82afa9cbf3"
+    },
+    "fault-partial-public/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "14f3a1c1e80d629263cc6443577bc8c12302281d9411121448f2a5be0a663aad"
+    },
+    "fault-partial-public/helper-args.json": {
+      "bytes": 725,
+      "sha256": "d3c4d7a589ee616fb26fa75a765fad97a3f3c5d0c88a6578d1155a38b62f8f29"
+    },
+    "fault-partial-public/partial.bin": {
+      "bytes": 119,
+      "sha256": "636ac85c8b51ae5c9b90d30aa6d601e5ed8ec61cb6d5188b1f11d30a53da961d"
+    },
+    "fault-partial-public/marker.bin": {
+      "bytes": 294,
+      "sha256": "da786e0301d966fd09b6d66615b003147511b5c8a833a4467b33f29a0e2564d0"
+    },
+    "fault-partial-public/intended.bin": {
+      "bytes": 238,
+      "sha256": "9214cf4950b389562453220314947b21b0d32becd59cc2512d367750e5d96ab6"
+    },
+    "fault-uncertain-grant/request.json": {
+      "bytes": 1013,
+      "sha256": "8b4f9297c0fb89e69f44f6a75ee06c5b200daeb7fd59f1ba3ea29b9e2efc23e0"
+    },
+    "fault-uncertain-grant/capture-private.json.json": {
+      "bytes": 1129,
+      "sha256": "109ed7a65428058dc59bb037ba973df30918ef8570f3cac281bf8ed2306a09f3"
+    },
+    "fault-uncertain-grant/armed-helper-inspection.json": {
+      "bytes": 9990,
+      "sha256": "723a445417d8afbe7fbf94beaf352bd1707acd93e0ce7965a7759458e669d4c9"
+    },
+    "fault-uncertain-grant/result.json": {
+      "bytes": 1184,
+      "sha256": "7e62b845c1c86f720c6a91deccbd01f31433c03fee343943b6dcd9e85ff1a825"
+    },
+    "fault-uncertain-grant/coordinator-terminal.json": {
+      "bytes": 59,
+      "sha256": "8f26d0e80515874d60390bb9279814cce32080b9aaf7397a104d061b84c7be91"
+    },
+    "fault-uncertain-grant/private.json": {
+      "bytes": 640,
+      "sha256": "943a18ef83ba6254af4737633f89886abbcfdadcc1bb29cf5f2413ede6755b84"
+    },
+    "fault-uncertain-grant/helper-started.json": {
+      "bytes": 13,
+      "sha256": "f04efa27b0b41886027d1463a2dbb4679167ceb0c6c974b2d79950e751607429"
+    },
+    "fault-uncertain-grant/processes.json": {
+      "bytes": 1588,
+      "sha256": "b94051a192b79376cc04b068faee889d3f3292ff187f56522bfc88a46487bf45"
+    },
+    "fault-uncertain-grant/install-tracer-config-10.json": {
+      "bytes": 396,
+      "sha256": "e5506219c69fc72e57f1bb9a9fa25d94f2f72933ad764df539f4242bb407076f"
+    },
+    "fault-uncertain-grant/helper-terminal.json": {
+      "bytes": 148,
+      "sha256": "3073e9ebec0e6bc6ca81540b6bad440f9e51301d6d5d6f73f21463fece67c7fc"
+    },
+    "fault-uncertain-grant/incomplete-start-refused-12.json": {
+      "bytes": 347,
+      "sha256": "7d6158b72f2aded9dbbdc972cf6b9d13be96200c63271967ef6c0454476ac7b0"
+    },
+    "fault-uncertain-grant/capture-marker.bin.json": {
+      "bytes": 663,
+      "sha256": "fea63bdb2f59c5fca5db924230a4267cbbd4dadd296796e1d1ec37575c0b18d1"
+    },
+    "fault-uncertain-grant/tracer-config.json": {
+      "bytes": 930,
+      "sha256": "666e6dfa7ee691e8ecbfe4a1b7725a9bf3ea72d86f6c7a4ad45ddc910b301dc9"
+    },
+    "fault-uncertain-grant/public.json": {
+      "bytes": 138,
+      "sha256": "f85a4e445b6884379f9a9faf67fa9c2dd1f04289bfee927f32c291bac3e78084"
+    },
+    "fault-uncertain-grant/capture-public.json.json": {
+      "bytes": 456,
+      "sha256": "88dfe5ee2d4849a023a06da8ddfe0ecff8f37e2b0638161d8eceeeba7bd2694f"
+    },
+    "fault-uncertain-grant/survey.json": {
+      "bytes": 7647,
+      "sha256": "23edb84ed98717ce83d02e0a8dac221ca15d2d8436d333d613efeb8b032c6606"
+    },
+    "fault-uncertain-grant/pending-target-survey-11.json": {
+      "bytes": 6166,
+      "sha256": "c33eadc9ba122feed411b23971968ebb73ef720fe4c655b88d2fa1f2e4e9ebf9"
+    },
+    "fault-uncertain-grant/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "9e6b77c6492d3efc8c23ff65662c93f6589980456ace9856038c99731a3c295f"
+    },
+    "fault-uncertain-grant/helper-args.json": {
+      "bytes": 729,
+      "sha256": "feafa3aada2a4c5866464bca86b68c7c27f891e3231bea25c97f101ec2091e60"
+    },
+    "fault-uncertain-grant/marker.bin": {
+      "bytes": 294,
+      "sha256": "427361cf2a0b8b8dda63a570e3dc00f7787ed811aa21395e5e0085b824a1f469"
+    },
+    "fault-uncertain-private/request.json": {
+      "bytes": 1021,
+      "sha256": "f6b017e1e99793134a9a965bd3efe68203d6566ce8f882a695ef18adf802f80c"
+    },
+    "fault-uncertain-private/capture-private.json.json": {
+      "bytes": 31017,
+      "sha256": "f5dbfc50a1f8533d6e5c0cc0db45874eb7cb25e701390e63ff98f67b5505290e"
+    },
+    "fault-uncertain-private/armed-helper-inspection.json": {
+      "bytes": 10010,
+      "sha256": "3dae366759736278e9c7d4553e58f5cbde4cb66e3cfbd11fe055a19b3ab52f38"
+    },
+    "fault-uncertain-private/result.json": {
+      "bytes": 1187,
+      "sha256": "1c72aa645f4753a0cc4ccb39581e510e0438f4c54407f63e84c217c9fc19d3f6"
+    },
+    "fault-uncertain-private/coordinator-terminal.json": {
+      "bytes": 59,
+      "sha256": "8f26d0e80515874d60390bb9279814cce32080b9aaf7397a104d061b84c7be91"
+    },
+    "fault-uncertain-private/private.json": {
+      "bytes": 23056,
+      "sha256": "1356966c5aff4cba638b7f8ee65d14bcd9c03ad587c2abb4235811a777717947"
+    },
+    "fault-uncertain-private/helper-started.json": {
+      "bytes": 13,
+      "sha256": "f57260e85dcb9aa835ab0761a3c45f64193c5a5e461677735c4a17709485ea6d"
+    },
+    "fault-uncertain-private/install-tracer-config-13.json": {
+      "bytes": 396,
+      "sha256": "43c430a41b603e8a22b75d5a9b73a9642c007d96bff97974f140e061716301af"
+    },
+    "fault-uncertain-private/pending-target-survey-14.json": {
+      "bytes": 23073,
+      "sha256": "0966840d70362a3516acd080b83e3cbcef59549c3513b1dfebfb722bf1acc692"
+    },
+    "fault-uncertain-private/processes.json": {
+      "bytes": 1588,
+      "sha256": "31fcdd8351b686772793fd02e217f9d32a9370118f479ea0cabdb319c9554acb"
+    },
+    "fault-uncertain-private/helper-terminal.json": {
+      "bytes": 148,
+      "sha256": "3073e9ebec0e6bc6ca81540b6bad440f9e51301d6d5d6f73f21463fece67c7fc"
+    },
+    "fault-uncertain-private/capture-marker.bin.json": {
+      "bytes": 663,
+      "sha256": "cbe27e7929ec7d0b703680ed5de43c9a554a27d658c41490a8c171cc02839d1b"
+    },
+    "fault-uncertain-private/tracer-config.json": {
+      "bytes": 940,
+      "sha256": "ad825485ba3d6c813feb0b61ea3a6ddab998cffc47aad0e3762620e4df650abe"
+    },
+    "fault-uncertain-private/public.json": {
+      "bytes": 138,
+      "sha256": "00585ce087efb941d40c6c6be0ecbdded698b4f4775da8fe34e3db928a8ba993"
+    },
+    "fault-uncertain-private/capture-public.json.json": {
+      "bytes": 456,
+      "sha256": "1fa1291926e0d5484ee521105d2525b02ed1943f00cde76dd2ee74db42e3fa59"
+    },
+    "fault-uncertain-private/survey.json": {
+      "bytes": 31485,
+      "sha256": "e54845afbf5293f7fc16b502284422da1673d53b896d8ffdadbcc3b24b305751"
+    },
+    "fault-uncertain-private/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "b9435f370ebfbf2cffa1b36ada49bf4c5399a1106c6b79630ddbd1e4501f6a09"
+    },
+    "fault-uncertain-private/incomplete-start-refused-15.json": {
+      "bytes": 349,
+      "sha256": "be5ce08ac7f44f9f255c5068fa286cc58be435128c6010efcbd3508c77c2426f"
+    },
+    "fault-uncertain-private/helper-args.json": {
+      "bytes": 737,
+      "sha256": "6a541b3e466dbbbdd7970d383c89fc5d76186b614ac5d0c7ec0368a76f93da30"
+    },
+    "fault-uncertain-private/marker.bin": {
+      "bytes": 294,
+      "sha256": "bb878d788e6745225f55ecdba2d7d75906d0768705a78a1052da593fdafba53f"
+    },
+    "fault-uncertain-public/request.json": {
+      "bytes": 1017,
+      "sha256": "ec57a941a61e63bcbfacd86421786c255b7e9bc34dd65e5f3b662a0b77fd9dc3"
+    },
+    "fault-uncertain-public/capture-private.json.json": {
+      "bytes": 31017,
+      "sha256": "183ce88c1e5d2e31b87410f3d173716d55c024d98f31178454f502ffc9ecb68a"
+    },
+    "fault-uncertain-public/armed-helper-inspection.json": {
+      "bytes": 10000,
+      "sha256": "3c0db046d33b1d10c3c404f3b616ac7799527a475f64c6b5740a803628207004"
+    },
+    "fault-uncertain-public/result.json": {
+      "bytes": 1183,
+      "sha256": "3fe6990626459b1e7418557d87b4cac92913befff1c68ced96797ddaee7f3337"
+    },
+    "fault-uncertain-public/coordinator-terminal.json": {
+      "bytes": 59,
+      "sha256": "8f26d0e80515874d60390bb9279814cce32080b9aaf7397a104d061b84c7be91"
+    },
+    "fault-uncertain-public/private.json": {
+      "bytes": 23056,
+      "sha256": "401d13558a7447e7c204e8665672a303ed241c1dc7ccb031727bfb704855cd5f"
+    },
+    "fault-uncertain-public/helper-started.json": {
+      "bytes": 13,
+      "sha256": "491a4cae261390f16d6332860061a7cf175f8c75712cc49a5cb373c2b5996280"
+    },
+    "fault-uncertain-public/processes.json": {
+      "bytes": 1583,
+      "sha256": "6a5e4a8dacf46c0a130e9a656feefb570da444e48d2073c05da72258a4e85aef"
+    },
+    "fault-uncertain-public/pending-target-survey-17.json": {
+      "bytes": 23147,
+      "sha256": "a61eaa70b1c7237a46bc21f5ac33a1f646e0331dfed29808e49e30cb2ebe0ded"
+    },
+    "fault-uncertain-public/helper-terminal.json": {
+      "bytes": 148,
+      "sha256": "3073e9ebec0e6bc6ca81540b6bad440f9e51301d6d5d6f73f21463fece67c7fc"
+    },
+    "fault-uncertain-public/capture-marker.bin.json": {
+      "bytes": 663,
+      "sha256": "63a1b4ee4ebd2fda3f287b817c66e9ffc15123afc310786a71efb439ee7a03dd"
+    },
+    "fault-uncertain-public/tracer-config.json": {
+      "bytes": 935,
+      "sha256": "486a2d9287f7bdd34cff2d48e4ca01df4f1acdb710922ed9e2fcc6ac46c37c7f"
+    },
+    "fault-uncertain-public/public.json": {
+      "bytes": 238,
+      "sha256": "11dfda22da73429f2a0c7252856e578f79665f735e5d371baf188e03d886fae5"
+    },
+    "fault-uncertain-public/capture-public.json.json": {
+      "bytes": 592,
+      "sha256": "9b419af55c53b5f699673b6b6e339b0f57fde5c8abdb43f3d88bd3d084684262"
+    },
+    "fault-uncertain-public/survey.json": {
+      "bytes": 31621,
+      "sha256": "96672de7d2286d7bf66d06fbfbfdf34f11fc2052e01fbd343cbf5a6fe8a2b9f5"
+    },
+    "fault-uncertain-public/incomplete-start-refused-18.json": {
+      "bytes": 348,
+      "sha256": "77df3d4f853cff4f03c415d15d672f33fb9eb971cc245aa03f8ea5ebb3c61a35"
+    },
+    "fault-uncertain-public/install-tracer-config-16.json": {
+      "bytes": 396,
+      "sha256": "0381680bfd6dd4891f7ee0b78808faaf2ce9d7eacb6192c2e69fb79a09da821c"
+    },
+    "fault-uncertain-public/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "6418e8e0ce0ae253121452557f1129ef10aaf48d6e43015b96d44359993fcd12"
+    },
+    "fault-uncertain-public/helper-args.json": {
+      "bytes": 733,
+      "sha256": "ad8d52ad0944f671ca8b9979eb52a9794e3b71763278ca0ba3800a6732c552b9"
+    },
+    "fault-uncertain-public/marker.bin": {
+      "bytes": 294,
+      "sha256": "b3363e1176285e980b508954dd1428b021a158b47870e9821b8664567871a629"
+    },
+    "retirement-fault-matrix-result.json": {
+      "bytes": 10380,
+      "sha256": "8584d67ae9200f39fbbf99bccaaa99ab468cccdf242912e8c34dc3860e008ce1"
+    },
+    "retirement-crash-source.json": {
+      "bytes": 1405,
+      "sha256": "e6368975439db4cc1a5a932f6dc4aa9cee975b2f7348e27546666a4b8f5b08ea"
+    },
+    "retirement-crash-source-survey.json": {
+      "bytes": 30639,
+      "sha256": "6ae4df4ee3ebe15480d01fa23e9e98c730de3f4884f873a234ad8c6a484c0118"
+    },
+    "retirement-fault-live-baseline.json": {
+      "bytes": 1683,
+      "sha256": "de08c57f81f692e4c79588e6f4a0a1eef4fb04976630314e9244504c51bf2ea2"
+    },
+    "retirement-fault-restarted-result.json": {
+      "bytes": 1734,
+      "sha256": "c7ada75e7361f58601d796ee1d6c41bac1f34b1a42df82db63be7dceedeff6ed"
+    },
+    "retirement-fault-native-audit.json": {
+      "bytes": 84858,
+      "sha256": "62859061e4f9ed1bcf44865080653e2a22e53101d20fc11b66fee47beab5d742"
+    },
+    "retirement-crash-owner-namespace-before.json": {
+      "bytes": 3756,
+      "sha256": "d5411988f9b3ea48d01ddb3b776fdafb64f89aa1b42d872dd62d1014308213e3"
+    },
+    "private-scripts/fogd-native-retirement-fault-matrix.py": {
+      "bytes": 7692,
+      "sha256": "645f8b6852d30534aba6d84712fee55278508c46a53f4e3a568ad0e04700d87c"
+    },
+    "private-scripts/fogd-retirement-crash-coordinator.mjs": {
+      "bytes": 2080,
+      "sha256": "d6a32f0a7f0076cefc196465eca6aa858d756d687d79ae861ebd56156628171d"
+    },
+    "private-scripts/fogd-retirement-io-coordinator.mjs": {
+      "bytes": 2108,
+      "sha256": "aefa38f121b1862cc0c58a3861d835eca4b037db0e749dd2c293e400d4f00ead"
+    },
+    "private-scripts/fogd-retirement-fault-tracer.py": {
+      "bytes": 11090,
+      "sha256": "68fe0b71d1be75137c11412f03b0464ef5f57068cd82bf69cffea386cb907bab"
+    },
+    "private-scripts/fogd-retirement-fault-selftest.py": {
+      "bytes": 3207,
+      "sha256": "d5f9cd5bd871b1658391089430921e61efc7014840deb3112759a4078a688368"
+    },
+    "private-scripts/fogd-retirement-fault-selftest.log": {
+      "bytes": 10038,
+      "sha256": "b365c2f13420c3f06efcc28460cd28a37b31a92a4fde9ffa3ee1950753572acf"
+    },
+    "private-scripts/fogd-retirement-fault-native-audit.mjs": {
+      "bytes": 15872,
+      "sha256": "f37c68b0503fe771e723db342a83eeccf9d2d4573d130ad854d014fd66c2a754"
+    },
+    "private-scripts/fogd-retirement-fault-restart.py": {
+      "bytes": 1082,
+      "sha256": "4a781f0e30e74d31f5b5925e4e5051deb709aeb92455af11155ae986a8147968"
+    },
+    "private-scripts/fogd-retirement-fault-regressions.log": {
+      "bytes": 3064,
+      "sha256": "9cadae1f4df486466f7276f35f27fe0e203c62f196f85a9d819a137d3130ecaa"
+    }
+  }
+}
