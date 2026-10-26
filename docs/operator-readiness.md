@@ -322,6 +322,14 @@ Eight [native update crash cases](evidence/operator-native-activation-crashes.js
 also cover selected activation, migration-ledger and active-publication boundaries,
 with nine retained SQL rows, four peer records and a fresh stopped snapshot. They
 do not cover the gap between native SQL commit and controller ledger commit.
+The [controller recovery regression](../packages/platform/test/controller-route-recovery.test.mjs)
+now covers fully and partially committed backend ledgers when saving controller
+hashes fails. Reload preserves uncertainty and HTTP withholding. For the tested
+HTTP update path, source code skips another backend migration call for the original
+uncertain retry with every declared migration already recorded with a matching
+database, name and digest.
+Partial completion keeps the existing migration path. These component tests use a
+controlled backend; a new runtime build and native qualification remain required.
 The durable snapshot retirement coordinator has component checks for source
 verification, fresh replacement identities and disks, survivor holds and incomplete
 enrollment after faults. The [v3 candidate package](evidence/operator-durable-retirement-package.json)

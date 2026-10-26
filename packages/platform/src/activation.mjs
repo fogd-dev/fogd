@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import { prepareQueue, markQueueApplication } from './queue-activation.mjs';
 import { prepareCron, markCronApplication } from './cron-activation.mjs';
 
@@ -18,10 +19,12 @@ async function publish(controller, request, slot, execution, step) {
   }
 }
 
-async function migrate(controller, request, app, slot, execution, step) {
+async function migrate(controller, request, app, slot, execution, step, retrying) {
   if (app.uncertain && app.uncertain !== request.id) throw new Error('Reconcile the original migration attempt before starting another');
   app.uncertain = request.id; await step('checking-migration-ledger');
   await controller.reconcile(app, slot);
+  // This request's uncertain attempt may have committed every declared migration before its hashes were saved.
+  if (retrying && request.migrations.length && request.migrations.every(m => app.migrations?.some(old => isDeepStrictEqual(old, m)))) return;
   app.uncertain = request.id; await step('migrating');
   await controller.backend.migrate(slot, execution, request.resources);
   await controller.reconcile(app, slot);
@@ -44,7 +47,7 @@ async function failed(controller, request, app, slot) {
   catch (error) { request.error += app.privateConfiguration ? '; migration reconciliation pending' : `; migration reconciliation pending: ${error.message}`; }
 }
 
-export async function activateRelease(controller, request, app, slot, selected) {
+export async function activateRelease(controller, request, app, slot, selected, retrying = false) {
   let execution = controller.artifact(request.id);
   const step = async value => { request.step = value; await controller.save(); };
   try {
@@ -53,7 +56,7 @@ export async function activateRelease(controller, request, app, slot, selected) 
     execution = await controller.secrets.materialize(request, execution, selected.values);
     const background = await prepareBackground(controller, request, app, slot, execution, step);
     if (!app.active && !background) await publish(controller, request, slot, execution, step);
-    await migrate(controller, request, app, slot, execution, step);
+    await migrate(controller, request, app, slot, execution, step, retrying);
     if (background) await background.mark(app, background.control, step);
     if (app.active || background) await publish(controller, request, slot, execution, step);
     if (background) {

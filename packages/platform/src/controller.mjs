@@ -257,6 +257,7 @@ export class Controller {
     }
   }
   async prepareActivation(request, app, slot, selected, replaces) {
+    const retrying = app?.uncertain === request.id;
     app = await this.#withholdActivation(request, app, slot, selected, replaces);
     try {
       await this.backend.claim(slot, request.app, { unpublished: Boolean(app.claim) });
@@ -273,7 +274,7 @@ export class Controller {
       await this.save();
       throw new Error(request.error);
     }
-    return activateRelease(this, request, app, slot, selected);
+    return activateRelease(this, request, app, slot, selected, retrying);
   }
   setArtifactPin(id, digest, kept) { return setArtifactPin(this, id, digest, kept); }
   pruneArtifacts(plan) { return this.exclusive(() => pruneArtifacts(this, plan), { artifactPrune: true }); }
