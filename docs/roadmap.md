@@ -55,8 +55,12 @@ these current gaps:
   exercises local two-fleet reads during uploads, peer activation and controller
   interruption. Two [native candidate write runs](evidence/operator-durable-write-serving-local.json)
   retain all 11,672 acknowledged writes in first ledger reads and sample no errors
-  during peer uploads, activation or controller interruption. Broader application
-  counts, concurrent application writers and density limits remain open.
+  during peer uploads, activation or controller interruption. Two
+  [concurrent-app write runs](evidence/operator-concurrent-write-serving-local.json)
+  also retain all 14,816 acknowledged writes. They record 48 gateway HTTP 503
+  responses during the writing peer's activation, with no sampled errors for the
+  other app or through controller interruption. These observations do not qualify
+  zero-downtime updates. Broader application counts and density limits remain open.
   [Native candidate restart and crash checks](evidence/operator-native-route-crashes.json)
   cover paused/resumed authority and recovery; the
   [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving

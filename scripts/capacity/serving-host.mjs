@@ -6,26 +6,39 @@ import { servingSession, markServing } from './serving-session.mjs';
 import { servingReport, interferenceRequests } from './serving-observer.mjs';
 
 export async function observeWindow(host, observer, name, settings, action) {
-  const session = await servingSession(host, observer, name, settings);
-  let interference = null, started = false;
+  return (await observeWindows(host, [{ observer, settings }], name, action))[0];
+}
+
+// All observers are ready before the one shared host action begins. Each process
+// records its own markers in the same monotonic clock as its request samples.
+export async function observeWindows(host, observers, name, action) {
+  const windows = [];
   try {
-    await session.ready;
+    for (const { observer, settings } of observers) {
+      const diagnostic = observers.length === 1 ? name : `${name}-${windows.length}`;
+      windows.push({ observer, session: await servingSession(host, observer, diagnostic, settings) });
+    }
+    await Promise.all(windows.map(window => window.session.ready));
     if (action) {
-      const start = await markServing(host, observer, 'start'); started = true;
-      const outcome = await action(), end = await markServing(host, observer, 'end');
-      interference = { start, end, outcome };
+      await Promise.all(windows.map(async window => { window.start = await markServing(host, window.observer, 'start'); }));
+      const outcome = await action();
+      await Promise.all(windows.map(async window => { window.end = await markServing(host, window.observer, 'end'); window.outcome = outcome; }));
     }
-    const report = await session.done; assert.equal(report.truncated, false); assert.deepEqual(report.summaries, servingReport(report.samples));
-    for (const sample of report.samples) assert.ok(sample.startedMs >= report.startedMs && sample.finishedMs <= report.finishedMs);
-    if (interference) {
-      assert.equal(interference.start.time, report.markers.start); assert.equal(interference.end.time, report.markers.end);
-      report.interference = { ...interference, overlappingRequests: interferenceRequests(report) };
-    }
-    return report;
+    return await Promise.all(windows.map(checkedWindow));
   } catch (error) {
-    if (started && !interference) await markServing(host, observer, 'end').catch(() => {});
-    await session.done.catch(() => {}); throw error;
+    await Promise.all(windows.filter(window => window.start && !window.end).map(window => markServing(host, window.observer, 'end').catch(() => {})));
+    await Promise.allSettled(windows.map(window => window.session.done)); throw error;
   }
+}
+
+async function checkedWindow({ session, start, end, outcome }) {
+  const report = await session.done; assert.equal(report.truncated, false); assert.deepEqual(report.summaries, servingReport(report.samples));
+  for (const sample of report.samples) assert.ok(sample.startedMs >= report.startedMs && sample.finishedMs <= report.finishedMs);
+  if (start) {
+    assert.equal(start.time, report.markers.start); assert.equal(end.time, report.markers.end);
+    report.interference = { start, end, outcome, overlappingRequests: interferenceRequests(report) };
+  }
+  return report;
 }
 
 export async function startObserver(host, name, fleet) {

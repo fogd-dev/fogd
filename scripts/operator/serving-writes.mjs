@@ -1,20 +1,16 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { setTimeout as delay } from 'node:timers/promises';
 import { selectedHostTrial } from '../cron-probe/selected/selected-trial.mjs';
-import { httpsClient, scopedClient, waitFor } from '../cron-probe/selected/https.mjs';
 import { scanPublicSurfaces } from '../cron-probe/selected/privacy.mjs';
 import { stopSelectedHost } from '../cron-probe/selected/shutdown.mjs';
-import { observeWindow, startObserver, ownCompose, hardware, stackMetrics } from '../capacity/serving-host.mjs';
-import { writeFixture } from '../capacity/write-fixture.mjs';
-import { reconcileWrites } from '../capacity/write-ledger.mjs';
-import { paddedUpload } from '../capacity/padded-upload.mjs';
+import { observeWindow, startObserver, hardware, stackMetrics } from '../capacity/serving-host.mjs';
+import { writeFixtures, writePhases, recordWriteLedger } from '../capacity/write-workload.mjs';
 import { writeServingOptions } from '../capacity/serving-options.mjs';
 
 const options = writeServingOptions(process.argv.slice(2));
 await selectedHostTrial(options.output, 'Paced D1 writes on the explicitly selected local two-fleet family: one approved app versus an idle approved peer, concurrent maximum peer uploads, peer approval, controller interruption, response/ledger reconciliation and an explicit post-commit error control. No mutation replay, density limit, cross-host or power-loss durability claim.', async context => {
-  const { source: host, evidence } = context, f = await fixtures(host), observer = `${host.project}-observer`;
+  const { source: host, evidence } = context, f = await writeFixtures(host), observer = `${host.project}-observer`;
   evidence.hardware = await hardware(host); evidence.routing = host.policy.routing ?? 'legacy'; evidence.phases = {}; evidence.postCommitErrorControl = f.control;
   evidence.submissions = f.submissions; evidence.baseline = f.baseline;
   await startObserver(host, observer, f.fleet);
@@ -23,11 +19,11 @@ await selectedHostTrial(options.output, 'Paced D1 writes on the explicitly selec
   evidence.readControl = await observeWindow(host, observer, 'read-control', { ...settings, durationMs: 3000, bodySha256: createHash('sha256').update(read.text).digest('hex') });
   assert.equal(evidence.readControl.summaries.gateway.errors, 0); assert.equal(evidence.readControl.summaries.direct.errors, 0);
   const attempts = [f.control.attempt];
-  for (const [name, durationMs, action] of phases(host, f)) {
+  for (const [name, durationMs, action] of writePhases(host, f)) {
     context.phase = name;
     const report = await observeWindow(host, observer, name, { ...settings, workload: 'writes', phase: name, durationMs }, action);
     evidence.phases[name] = report; attempts.push(...report.samples);
-    await recordLedger(f, attempts, report);
+    await recordWriteLedger(f, attempts, report);
     const state = (await f.request('/v1/admin')).json();
     report.approvedApps = Object.keys(state.apps).length; report.components = await stackMetrics(host);
     report.routing = Object.fromEntries(Object.entries(state.apps).map(([app, value]) => [app, { slot: value.slot, active: value.active }]));
@@ -46,56 +42,3 @@ await selectedHostTrial(options.output, 'Paced D1 writes on the explicitly selec
   context.phase = 'clean-shutdown'; evidence.shutdown = await stopSelectedHost(host); host.closed = true;
   return f;
 }, options.enrollment, options.hostOptions);
-
-async function fixtures(host) {
-  const request = await httpsClient(host); await waitFor('write measurement owner API', async () => (await request('/v1/admin')).status === 200);
-  const token = (await host.json(['admin', 'issue-token', 'write-builder', 'baseline,peer'])).token, submissions = [];
-  for (const app of ['baseline', 'peer']) {
-    const project = await writeFixture(host, app), submitted = await host.json(['deploy', '--name', app], { env: { ...host.env, FOGD_DEPLOY_TOKEN: token }, cwd: project });
-    assert.equal(submitted.status, 'pending'); submissions.push(submitted);
-    if (app === 'baseline') await host.command(['admin', 'approve', submitted.id, submitted.digest]);
-  }
-  const state = (await request('/v1/admin')).json(), fleet = host.policy.fleets.find(f => f.id === state.apps.baseline.slot); assert.ok(fleet);
-  const response = await request('/api/write-probe', { app: 'baseline', method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'post-commit-error-control' }) });
-  assert.equal(response.status, 502);
-  const attempt = { writeId: 'post-commit-error-control', status: response.status, correct: false };
-  const recorded = await request('/api/write-probe', { app: 'baseline' }); assert.equal(recorded.status, 200);
-  const control = reconcileWrites([attempt], recorded.json()); assert.deepEqual(control.unacknowledgedCommitted, [{ writeId: attempt.writeId, status: 502 }]);
-  const artifact = await request(`/v1/deployments/${submissions[1].id}/artifact`); assert.equal(artifact.status, 200);
-  const upload = paddedUpload(artifact.json()); assert.ok(state.quota.maxArtifactBytes - state.quota.retainedArtifactBytes >= upload.artifactBytes * 2);
-  return { request, scoped: await scopedClient(host, token), tokens: { builder: token }, secret: token, submissions, fleet, upload,
-    baseline: { id: submissions[0].id, digest: submissions[0].digest }, initialRetainedBytes: state.quota.retainedArtifactBytes, control: { attempt, reconciliation: control } };
-}
-function phases(host, f) {
-  return [
-    ['one-app', 10000, null],
-    ['peer-approval', 45000, async () => { const peer = f.submissions[1], approved = await host.json(['admin', 'approve', peer.id, peer.digest]); assert.equal(approved.status, 'active'); return { peerApproved: true, activeDigest: approved.digest }; }],
-    ['two-apps', 10000, null],
-    ['uploads', 20000, async () => {
-      const responses = await Promise.all([1, 2].map(() => f.scoped('/v1/deployments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: f.upload.payload, timeoutMs: 120000 })));
-      for (const response of responses) { assert.equal(response.status, 201); const submitted = response.json(); assert.equal(submitted.status, 'pending'); assert.equal(submitted.digest, f.upload.digest); f.submissions.push(submitted); }
-      const state = (await f.request('/v1/admin')).json(); assert.equal(state.quota.retainedArtifactBytes, f.initialRetainedBytes + f.upload.artifactBytes * 2);
-      return { simultaneousUploads: 2, artifactBytesEach: f.upload.artifactBytes, pendingOnly: true };
-    }],
-    ['activation', 45000, async () => { const peer = f.submissions[2], approved = await host.json(['admin', 'approve', peer.id, peer.digest]); assert.equal(approved.status, 'active'); return { app: 'peer', activeDigest: approved.digest }; }],
-    ['controller-outage', 30000, async () => {
-      await ownCompose(host, ['stop', 'controller']); await delay(3000); await ownCompose(host, ['start', 'controller']);
-      await waitFor('write controller restart', async () => (await f.request('/v1/admin')).status === 200);
-      await waitFor('write gateway recovery', async () => (await f.request('/api/write-probe', { app: 'baseline' })).status === 200);
-      return { controllerStoppedAndStarted: true, intentionalStoppedDelayMs: 3000 };
-    }],
-    ['recovered', 10000, null],
-  ];
-}
-async function recordLedger(f, attempts, report) {
-  const began = performance.now(); report.ledgerRead = { startedAt: new Date().toISOString(), readCount: 1, status: null };
-  let response;
-  try { response = await f.request('/api/write-probe', { app: 'baseline' }); }
-  finally { report.ledgerRead.elapsedMs = performance.now() - began; }
-  report.ledgerRead.status = response.status;
-  assert.equal(response.status, 200); report.ledgerRows = response.json();
-  report.cumulativeReconciliation = reconcileWrites(attempts, report.ledgerRows);
-  const phaseIds = new Set(report.samples.map(sample => sample.writeId));
-  report.phaseReconciliation = reconcileWrites(report.samples, report.ledgerRows.filter(row => phaseIds.has(row.id)));
-  assert.deepEqual(report.cumulativeReconciliation.acknowledgedMissing, [], 'An acknowledged write is absent from the first recorded ledger read');
-}

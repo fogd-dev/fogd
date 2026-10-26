@@ -5,6 +5,40 @@ import { createHash } from 'node:crypto';
 import { observeServing, summarizeRequests } from '../../../scripts/capacity/serving-observer.mjs';
 import { reconcileWrites } from '../../../scripts/capacity/write-ledger.mjs';
 import { writeServingOptions } from '../../../scripts/capacity/serving-options.mjs';
+import { writeOverlap } from '../../../scripts/capacity/write-overlap.mjs';
+
+test('the same operation ID can commit independently in the peer application', () => {
+  const attempts = [{ writeId: 'same-operation', status: 200, correct: true }];
+  assert.deepEqual(reconcileWrites(attempts, [{ id: 'same-operation', app: 'peer' }], 'peer'), {
+    attempts: 1, committed: 1, acknowledged: 1, acknowledgedMissing: [], unacknowledgedCommitted: [], unacknowledgedAbsent: [],
+  });
+});
+test('a peer ledger cannot acknowledge a baseline row with a matching operation ID', () => {
+  assert.throws(() => reconcileWrites([{ writeId: 'same-operation', status: 200, correct: true }], [{ id: 'same-operation', app: 'baseline' }], 'peer'), /Unexpected or duplicate/);
+});
+test('unknown application identity cannot select a ledger', () => {
+  assert.throws(() => reconcileWrites([{ writeId: 'a', status: 200, correct: true }], [], 'other'), /Unknown write fixture application/);
+});
+test('overlap uses the common engine clock rather than comparing process-relative times', () => {
+  assert.deepEqual(writeOverlap([
+    { startedAt: '2026-10-26T00:00:00.000Z', startedMs: 100, samples: [{ writeId: 'shared', startedMs: 110, finishedMs: 210 }] },
+    { startedAt: '2026-10-26T00:00:00.050Z', startedMs: 5000, samples: [{ writeId: 'shared', startedMs: 5010, finishedMs: 5110 }] },
+  ]), { overlapMs: 50, sharedOperationIds: 1 });
+});
+test('non-overlapping writes cannot support a concurrency claim', () => {
+  assert.throws(() => writeOverlap([
+    { startedAt: '2026-10-26T00:00:00.000Z', startedMs: 0, samples: [{ writeId: 'a', startedMs: 10, finishedMs: 20 }] },
+    { startedAt: '2026-10-26T00:00:01.000Z', startedMs: 0, samples: [{ writeId: 'a', startedMs: 10, finishedMs: 20 }] },
+  ]), /do not overlap/);
+});
+for (const [name, reports, error] of [
+  ['missing app', [], /Expected two/],
+  ['missing samples', [{ startedAt: '2026-10-26T00:00:00.000Z', startedMs: 0, samples: [] }, {}], /Missing concurrent/],
+  ['invalid clock', [{ startedAt: 'invalid', startedMs: 0, samples: [{}] }, {}], /Missing concurrent/],
+  ['reversed request', [{ startedAt: '2026-10-26T00:00:00.000Z', startedMs: 0, samples: [{ startedMs: 20, finishedMs: 10 }] }, {}], /Invalid concurrent/],
+]) test(`write overlap refuses ${name}`, () => {
+  assert.throws(() => writeOverlap(reports), error);
+});
 
 test('write qualification defaults to the qualified legacy runtime', () => {
   assert.deepEqual(writeServingOptions(['/private/fresh']), { output: '/private/fresh', enrollment: 'public',

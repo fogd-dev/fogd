@@ -260,3 +260,80 @@ concurrent application writers, broader app counts, saturation, density limits,
 separate-machine operation or production availability. Container CPU limits do not
 establish per-worker budgets. The variation between runs is another reason to
 retain the workload and resource records rather than choose a capacity limit here.
+
+### Two apps writing concurrently
+
+The [concurrent write evidence](evidence/operator-concurrent-write-serving-local.json)
+records two native runs with both approved apps writing on separate fleets:
+
+```sh
+node scripts/operator/concurrent-writes.mjs --runtime celld-durable-v3-linux-arm64 \
+  --candidate --retain-resources /private/new-concurrent-write-observation
+```
+
+This command shares the fixtures, interference actions and first-read ledger checks
+with the one-writer probe. It approves both apps before observation and measures
+idle operation, two simultaneous 32 MiB peer uploads, peer activation, controller
+interruption and recovered operation. Minimum windows are 10, 20, 45, 30 and
+10 seconds. There are two workers per path per app, eight workers in total, with
+the same deadlines and pacing. Each app has its own observer, limited to one CPU
+and 128 MiB. These are container limits, not application worker budgets.
+
+Both observers must be ready before a single shared interference action starts.
+Each observer records markers with its own monotonic request clock. The probe maps
+request intervals onto the common engine clock and requires their shared window to
+cover at least the phase minimum minus two seconds. The measured overlaps were
+9.89–10.00, 19.90–19.94, 44.96–44.97, and 29.93 seconds for the corresponding
+10-, 20-, 45-, and 30-second windows. These observations concern one engine;
+they do not establish clock alignment across machines.
+
+The apps intentionally use matching operation IDs, including the post-commit error
+control. Correct responses must name the intended app and operation. Each app's
+ledger must contain its own app label, reject foreign or unexpected rows, and retain
+every acknowledged write. Each phase records one ledger read per app after both
+observers finish. Raw records retain rejected operations and unknown outcomes.
+The probe never replays them or polls a missing acknowledgment away.
+
+Both runs used the same shared two-vCPU, approximately 5.8 GiB arm64 Docker engine,
+with classic overlay2 and 21 unrelated running containers. Backing-filesystem
+observations retained about 26.5 GB available. The physical host's recorded
+one-minute load averages were 17.42 and 16.50. This remains a paced shared-host
+measurement, not a saturation test or an isolated cost comparison.
+
+The table gives whole-phase p95 ranges across both apps and both runs. Error counts
+sum both apps and runs, excluding the four deliberate post-commit controls. Latency
+distributions include failed requests. These ranges are not confidence intervals.
+
+| Phase | Gateway p95, ms | Direct p95, ms | Gateway errors | Direct errors |
+| --- | ---: | ---: | ---: | ---: |
+| Two writing apps | 30.51–82.59 | 22.98–58.73 | 0 | 0 |
+| Peer uploads | 35.95–79.70 | 26.90–69.87 | 0 | 0 |
+| Peer activation | 40.60–78.81 | 29.39–62.52 | 48 | 0 |
+| Controller interruption | 38.16–107.80 | 28.68–89.67 | 0 | 0 |
+| Recovered writes | 41.94–107.65 | 34.47–71.92 | 0 | 0 |
+
+Whole-phase observed rates ranged from 13.22 to 17.56 requests per second for each
+app's gateway path and 14.31 to 17.90 for each direct path. The receipt retains
+per-phase rates, durations, response counts, distributions and resource counters.
+Closed-loop pacing lowers the offered rate as responses slow; these rates are not
+maximum throughput or density recommendations.
+
+All 14,816 acknowledged writes appeared in their first ledger reads. Each app's
+post-commit HTTP 502 control also appeared as committed in both runs. The updating
+app received 24 gateway HTTP 503 responses per run during activation. Those IDs
+were absent at the retained snapshots, including the final reads. Their later
+absence is not permission to replay mutations blindly. The unchanged app had no
+sampled errors. Both apps had no sampled errors during controller interruption.
+Direct replica traffic bypasses ingress withholding, so its successful writes do
+not establish public availability during the peer update.
+
+Independent checks verified twelve observer exits, ten first-read phase ledgers,
+940 archived source files, the actual installed policy volume and complete native
+logs per run. Each run retained eight stopped installation containers, two stopped
+observers, three networks and eleven volumes. Inventories of 266 and 276 unrelated
+containers stayed unchanged from their recorded checkpoints during the runs.
+
+This completes the bounded two-writer observation while documenting an activation
+interruption. It does not qualify zero-downtime updates, broader app counts,
+saturation, density limits or ordinary candidate admission. The failed legacy
+write trial remains unaccepted.

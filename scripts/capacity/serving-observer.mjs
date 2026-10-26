@@ -72,7 +72,7 @@ async function run(settings) {
     while (samplingContinues(performance.now(), markers, deadline, maximumEnd)) { samples.push(await observeServing(settings, kind, `${settings.phase}-${kind}-${worker}-${sequence++}`)); await delay(100); }
   })));
   await new Promise(resolve => server.close(resolve));
-  console.log(JSON.stringify({ startedAt, finishedAt: new Date().toISOString(), startedMs, finishedMs: performance.now(), concurrencyPerPath: settings.concurrency, delayPerWorkerMs: 100, keepAlive: true, minimumWindowMs: settings.durationMs, maximumSchedulingWindowMs: settings.maxDurationMs, postActionTailMs: 5000,
+  console.log(JSON.stringify({ app: settings.app || 'baseline', startedAt, finishedAt: new Date().toISOString(), startedMs, finishedMs: performance.now(), concurrencyPerPath: settings.concurrency, delayPerWorkerMs: 100, keepAlive: true, minimumWindowMs: settings.durationMs, maximumSchedulingWindowMs: settings.maxDurationMs, postActionTailMs: 5000,
     truncated: markers.start !== undefined && (markers.end === undefined || markers.end + 5000 > maximumEnd),
     summaries: servingReport(samples), markers, resourcesBefore, resourcesAfter: resources(), samples }));
   if (markers.start !== undefined && (markers.end === undefined || markers.end + 5000 > maximumEnd)) process.exitCode = 1;

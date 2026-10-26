@@ -1,6 +1,7 @@
-export function reconcileWrites(attempts, rows) {
+export function reconcileWrites(attempts, rows, app = 'baseline') {
+  if (!['baseline', 'peer'].includes(app)) throw new Error('Unknown write fixture application');
   if (!Array.isArray(attempts) || !attempts.length || !Array.isArray(rows)) throw new Error('Missing write ledger evidence');
-  const expected = attemptedWrites(attempts), committed = committedWrites(rows, expected);
+  const expected = attemptedWrites(attempts), committed = committedWrites(rows, expected, app);
   const acknowledgedMissing = [], unacknowledgedCommitted = [], unacknowledgedAbsent = [];
   let acknowledged = 0;
   for (const [id, sample] of expected) {
@@ -20,10 +21,10 @@ function attemptedWrites(attempts) {
   }
   return expected;
 }
-function committedWrites(rows, expected) {
+function committedWrites(rows, expected, app) {
   const committed = new Set();
   for (const row of rows) {
-    if (!row || row.app !== 'baseline' || !expected.has(row.id) || committed.has(row.id)) throw new Error('Unexpected or duplicate committed write');
+    if (!row || row.app !== app || !expected.has(row.id) || committed.has(row.id)) throw new Error('Unexpected or duplicate committed write');
     committed.add(row.id);
   }
   return committed;

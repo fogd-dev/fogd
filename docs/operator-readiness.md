@@ -200,9 +200,13 @@ HTTP 507 responses and low Docker backing-filesystem headroom. Two
 [durable candidate write runs](evidence/operator-durable-write-serving-local.json)
 pass the bounded workload with 11,672 acknowledged writes present in first ledger
 reads, zero sampled write errors through controller interruption and complete native
-health checks. Ordinary candidate admission and the legacy repeat remain open.
-Broader app-count, concurrent-app write-load and density
-acceptance below remain open.
+health checks. Two [concurrent-app write runs](evidence/operator-concurrent-write-serving-local.json)
+also retain all 14,816 acknowledged writes in first ledger reads. They record 24
+gateway HTTP 503 responses per run for the updating app, while the other app and
+both apps through controller interruption have no sampled errors. This measures the
+activation interruption rather than qualifying zero-downtime updates. Ordinary
+candidate admission, the legacy repeat, broader app counts and density acceptance
+below remain open.
 
 Measure end-to-end latency, throughput, memory, and failure behavior across the
 currently supported app counts, with idle apps, active traffic, and concurrent
