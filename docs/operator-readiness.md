@@ -328,6 +328,10 @@ kill the stopped helper after private-state and public-route directory fsyncs.
 Both interrupted targets retain incomplete enrollment and refuse startup before
 Docker. Fresh retirement from the original snapshot preserves survivor data and
 allows a new app to start empty and write, without repairing either partial target.
+Five [additional store cuts](evidence/operator-native-retirement-store-edges.json)
+cover the consumed grant, private/public staging-file syncs and private/public
+renames before directory sync. Their partial targets remain fenced, while the
+retained completed installation restarts with both saved records.
 [Zero-live-app recovery](evidence/operator-native-zero-live-recovery.json)
 also preserves four tombstones and restores two free slots; a new app starts empty
 and writes after exact approval. Native background retirement and v2-to-v3 migration

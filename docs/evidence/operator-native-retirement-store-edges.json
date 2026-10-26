@@ -1,0 +1,726 @@
+{
+  "schema": 1,
+  "kind": "operator-native-retirement-store-edges",
+  "recordedAt": "2026-10-26T14:29:44.939285+00:00",
+  "hostCLICommit": "f3c88e113b2495be4499955c41b68b9419bed484",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Five stopped retirement finalizer process cuts: consumed restoration grant, private/public staging-file syncs and private/public renames before directory sync. Same physical host, isolated Linux arm64 overlay2 engine, HTTP-only two-fleet HTTPS topology.",
+  "method": {
+    "nativeProgram": "packages/platform/src/import-retired-routes.mjs",
+    "kernelSyscallExitTracing": true,
+    "successfulSyscallExitBeforeSIGKILL": true,
+    "directoryOrFileIdentityCheckedByDeviceAndInode": true,
+    "renamePathsReadFromTraceeArguments": true,
+    "renameDestinationInodeMatchedOriginalTemporaryFile": true,
+    "nativeHelperContainerAndCommandMatched": true,
+    "processExitSignalObserved": 9,
+    "guestTracerSha256Matched": "d2adda83bb5edb5f9da25d550522f216d097674301734a939a0e2e4e2f7f5dca",
+    "inputHeldBeforeEffectsUntilTracerArmed": true,
+    "unchangedProductionHelperArgsExceptDiagnosticContainerName": true,
+    "networkNoneReadOnlyRootNoCapabilitiesPreserved": true,
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedBoundariesKilled": 5,
+      "wrongSnapshotMarkerCasesNotKilled": 5
+    }
+  },
+  "cases": [
+    {
+      "phase": "grant-spent",
+      "checkpoint": {
+        "kind": "retirement-edge",
+        "phase": "grant-spent",
+        "event": {
+          "kind": "directory-sync",
+          "role": "enrollment",
+          "syscall": 82
+        },
+        "syscallReturn": 0,
+        "privateRevision": "0",
+        "publicRevision": "0",
+        "restorationMarkerSpent": true,
+        "privateSha256": "8e3eab5919bb4ca1b0d19b5e47d6d86c10eed8233d939c2385b673fbd45e71c4",
+        "publicSha256": "4214d89ec75445f592df52bf907f735faded63a1195e35f0a9ec8a1dae4070f7",
+        "markerSha256": "78b0025915e60dbee020a7f2792ab0cb32aef8ef26bf630a0c2fc1e004ba76da",
+        "pid": 187762,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "private-file",
+      "checkpoint": {
+        "kind": "retirement-edge",
+        "phase": "private-file",
+        "event": {
+          "kind": "file-sync",
+          "role": "private",
+          "syscall": 82,
+          "fileIdentityVerified": true
+        },
+        "syscallReturn": 0,
+        "privateRevision": "0",
+        "publicRevision": "0",
+        "restorationMarkerSpent": true,
+        "privateSha256": "47dab24d5e26321df8a29e5cccc44953735af659a146e27a566db6624bd2a396",
+        "publicSha256": "9a652ec685d2b16bec388e76489d2f73ac838c7050af11e2382d67de5c554869",
+        "markerSha256": "60c08d3ab79dba95e8e5b0a186fffebe3f974f16d44995702f9b078167ded0ed",
+        "stagedSha256": "fe9e4496e07051aa2031e93b55f93b4b57c1d7d6629385cdc25783d1f22b9587",
+        "pid": 191010,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "public-file",
+      "checkpoint": {
+        "kind": "retirement-edge",
+        "phase": "public-file",
+        "event": {
+          "kind": "file-sync",
+          "role": "public",
+          "syscall": 82,
+          "fileIdentityVerified": true
+        },
+        "syscallReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "0",
+        "restorationMarkerSpent": true,
+        "privateSha256": "0c4ec4619aec8fa9e77748c62d339d3a5b8e27759096fc143286c4acae4e970a",
+        "publicSha256": "fffeffcf77bb8162efc97fd9bdeac41dbebe1abbd9153a62dcd28fc5d7e4dfce",
+        "markerSha256": "46ad1ba13be22cd8009e118f6bda454df365d459ed21bae14f0bec187074ed6f",
+        "stagedSha256": "a6868e2c1b51a15eaa5ea99217beac4038bd6b1c83a199a0703252ef3cfe675c",
+        "pid": 194260,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "private-rename",
+      "checkpoint": {
+        "kind": "retirement-edge",
+        "phase": "private-rename",
+        "event": {
+          "kind": "rename",
+          "role": "private",
+          "syscall": 38,
+          "renameInodeVerified": true
+        },
+        "syscallReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "0",
+        "restorationMarkerSpent": true,
+        "privateSha256": "73a520bb402b5641f8b918334402842cce90b0d80d1e09b3567ee550e3288dfc",
+        "publicSha256": "05f1300651110ab9e46d7c899a6bcdf39d30fb595953adbaae07a1aca7be2bc0",
+        "markerSha256": "72ede3b15f51353bc61632629db18242b87c09ed034e8670020cceaf420cbc91",
+        "pid": 197492,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "public-rename",
+      "checkpoint": {
+        "kind": "retirement-edge",
+        "phase": "public-rename",
+        "event": {
+          "kind": "rename",
+          "role": "public",
+          "syscall": 38,
+          "renameInodeVerified": true
+        },
+        "syscallReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "1",
+        "restorationMarkerSpent": true,
+        "privateSha256": "c58f657dbdd031fb642778775f4e48654c515041dbbea977b3359776066233c8",
+        "publicSha256": "4929ed1f162b7b012be2f5ecf93d276832d67ad115844cb209f122450a79af42",
+        "markerSha256": "5d838ae1a99af6f3cacee97f27c4e94f6c218918775760ca6ed7119c1ff22049",
+        "pid": 200717,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    }
+  ],
+  "retainedCompletedInstallation": {
+    "bothRecordsVerifiedBeforeStoppedMaintenance": true,
+    "allFiveInterruptedTargetsRetained": true,
+    "interruptedTargetsRepaired": false,
+    "interruptedHelpersReplayed": false,
+    "retainedStartupCompleted": true,
+    "bothSavedRecordsVerifiedAfterRestart": true,
+    "retiredNamesHTTP": 404
+  },
+  "independentChecks": {
+    "sourceSnapshotMembersHashed": 10,
+    "sourceManifestSha256": "418a4ae305f5ad9e50fb1f5455de44c57536d36614ada8163e10a4e4ff668b1e",
+    "archivedSourceStateAndOriginalAuthorityMatched": true,
+    "privateOrStagedProjectionMatchedWhereWritten": true,
+    "nativeInventoryBindingAndHostPlanMatched": true,
+    "spentMarkersBoundToSnapshotAndTarget": true,
+    "freshOrPartialOrMatchingPairsAllHostFenced": true,
+    "fortyInterruptedServiceContainersNeverStarted": true,
+    "artifactDigestsVerified": 9,
+    "retiredNamespacesVerified": 5,
+    "retiredNamespaceFilesVerified": 108,
+    "retiredNamespaceStoredBytes": 1658671,
+    "retainedNamedVolumes": 209,
+    "priorFourRetirementAuditsPreserved": true,
+    "completedCurrentDataMatched": true,
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/route-enrollment.test.mjs packages/platform/test/route-record-store.test.mjs",
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "These are selected successful-system-call process cuts, not power-loss or injected write-error/write-outcome-uncertainty tests. Partial write and partial marker creation cases remain outside this drill.",
+    "No native background retirement, SQL-commit/ledger-gap, native owner-write response uncertainty, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No ordinary runtime admission or pinned source/image change. Private scripts, raw stores, keys and command transcripts remain outside the repository."
+  ],
+  "relatedEvidence": {
+    "directoryFsyncCuts": {
+      "path": "operator-native-retirement-process-crashes.json",
+      "sha256": "6127a52a8b1c86fc466a8092b140987d7730e1b61b960505eb6f032dfd7a19fa"
+    }
+  },
+  "privateEvidenceFingerprints": {
+    "edge-grant-spent/request.json": {
+      "bytes": 994,
+      "sha256": "8d1e0b90611d23cf80d0c410e3989ff5c232494eb5055de784a9d6c2223a84e3"
+    },
+    "edge-grant-spent/armed-helper-inspection.json": {
+      "bytes": 9941,
+      "sha256": "05dfe44a8411daaec2fdfb5446af91ba5d188bd7e5dd4d29e1a5d23a5e7b5b2e"
+    },
+    "edge-grant-spent/marker.json": {
+      "bytes": 314,
+      "sha256": "35db545ec75382b46b257be6f3a42706d5b1ca282bd3ff387085f7a8deda6809"
+    },
+    "edge-grant-spent/result.json": {
+      "bytes": 1140,
+      "sha256": "68d3bbca02cee2d4d36657a76cfaf0a7ad8a97fa709ad636a43f89964d10f8fa"
+    },
+    "edge-grant-spent/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "edge-grant-spent/private.json": {
+      "bytes": 640,
+      "sha256": "8e3eab5919bb4ca1b0d19b5e47d6d86c10eed8233d939c2385b673fbd45e71c4"
+    },
+    "edge-grant-spent/capture-public.json-3.json": {
+      "bytes": 421,
+      "sha256": "2fed64c7dcaa48b80b1ccab6d2f05264baa3753c9d138a1252bc65ca5e6e0cc8"
+    },
+    "edge-grant-spent/capture-private.json-2.json": {
+      "bytes": 995,
+      "sha256": "948cb55d23b9253295ad03b210aaf548c061c1ddc88e8038676b82880ca42b04"
+    },
+    "edge-grant-spent/helper-started.json": {
+      "bytes": 13,
+      "sha256": "29aff822c9c47a726bd3f549b02351fd9598e4ca6c3174ef091309ca91b99341"
+    },
+    "edge-grant-spent/pending-target-survey-5.json": {
+      "bytes": 6161,
+      "sha256": "7ba957bca2f28b643ce37bca19e5b762b1a3e0d6cf93727ac27dd86c2bfa501c"
+    },
+    "edge-grant-spent/processes.json": {
+      "bytes": 1487,
+      "sha256": "63159fc54d228b2fa66d3619b6e742214113e5e8c8957294adb6b4a8d86ab4e0"
+    },
+    "edge-grant-spent/incomplete-start-refused-6.json": {
+      "bytes": 342,
+      "sha256": "ed993914ecd8a73022ff239d41141543eab96579b0aa101055bb5b41b1fff2ba"
+    },
+    "edge-grant-spent/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "edge-grant-spent/tracer-config.json": {
+      "bytes": 882,
+      "sha256": "9db0822f488929ec2ea61c2a5b99c9cd9a929ecc5d1d90ff82163a1d1a1e8a98"
+    },
+    "edge-grant-spent/public.json": {
+      "bytes": 138,
+      "sha256": "4214d89ec75445f592df52bf907f735faded63a1195e35f0a9ec8a1dae4070f7"
+    },
+    "edge-grant-spent/survey.json": {
+      "bytes": 7647,
+      "sha256": "7bee115a5078c6ab44107eb62b7dd99d5938db2b83d98eb888ddf7c76e4982ec"
+    },
+    "edge-grant-spent/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "15d1ff8db527db2977839cf89a551db6f10a56aed29a12ed483970c073cd8c97"
+    },
+    "edge-grant-spent/install-tracer-config-1.json": {
+      "bytes": 396,
+      "sha256": "06c2fbbb927f6c6f6307f5828e5c988bcbce99462928d991e618a1032098ee9e"
+    },
+    "edge-grant-spent/capture-marker.json-4.json": {
+      "bytes": 579,
+      "sha256": "b635663a613f8eef68d89dcd67075d0ebc9a02deb379ba657fd571a4f5034f7b"
+    },
+    "edge-grant-spent/helper-args.json": {
+      "bytes": 710,
+      "sha256": "c67385d69514d4a319b794f832fed19a89e9757bf823a3d1ecfb80d740620d15"
+    },
+    "edge-private-file/request.json": {
+      "bytes": 998,
+      "sha256": "46d4dd278fe28beafed91eaedc1ad0336054d672e8188f8bab0ae9587ff203ea"
+    },
+    "edge-private-file/armed-helper-inspection.json": {
+      "bytes": 9951,
+      "sha256": "72327392011d785cca39f11ac1a130e04363f4fc27da13da0f593384bed6dce6"
+    },
+    "edge-private-file/capture-public.json-9.json": {
+      "bytes": 421,
+      "sha256": "1d4dc313d5742447b01b12dc5a071a92f643ac74d66acdba27a9b5bb1713dc7b"
+    },
+    "edge-private-file/marker.json": {
+      "bytes": 314,
+      "sha256": "e2ffd3bc693b5aa5bdccaa0570cf11dc78a959090b862cfcb7fc828588fb7156"
+    },
+    "edge-private-file/result.json": {
+      "bytes": 1259,
+      "sha256": "64101babb7fb0b5e8961b264d01ae47a470ef50c62483ca12a8371f5aa9f8ef3"
+    },
+    "edge-private-file/pending-target-survey-12.json": {
+      "bytes": 6162,
+      "sha256": "1676b9cc9c0f64a3be649a3cf29a4a91ea7c02e62dc896a0d1cd8e226fea1ea2"
+    },
+    "edge-private-file/capture-private.json-8.json": {
+      "bytes": 995,
+      "sha256": "f7a7337363c03fa31bd0ea04f4fdf4896d56a55950a17700b833aaa50a2d4a93"
+    },
+    "edge-private-file/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "edge-private-file/private.json": {
+      "bytes": 640,
+      "sha256": "47dab24d5e26321df8a29e5cccc44953735af659a146e27a566db6624bd2a396"
+    },
+    "edge-private-file/staged.json": {
+      "bytes": 23056,
+      "sha256": "fe9e4496e07051aa2031e93b55f93b4b57c1d7d6629385cdc25783d1f22b9587"
+    },
+    "edge-private-file/capture-marker.json-10.json": {
+      "bytes": 579,
+      "sha256": "7964fa03480434b0684563f92227ce670ebc8b9e869bf202bde2868e7631a635"
+    },
+    "edge-private-file/helper-started.json": {
+      "bytes": 13,
+      "sha256": "722653c54ec18f8c497e7fccdf06e26c9837b8c6beef7b2e88a808305c1c4293"
+    },
+    "edge-private-file/processes.json": {
+      "bytes": 1706,
+      "sha256": "ae94e3afeafa4a518c571c4ff820fd4f4d42d11923129ef2027a448b81f84f84"
+    },
+    "edge-private-file/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "edge-private-file/tracer-config.json": {
+      "bytes": 887,
+      "sha256": "2b875bbbeec7d94dba939f16001f98c2c55583e409657e80f070ac0987f5c403"
+    },
+    "edge-private-file/install-tracer-config-7.json": {
+      "bytes": 396,
+      "sha256": "a223d15f6008ff73988914ec420f8be3647f1a6f3d8e98aa7a46d9f51b89b962"
+    },
+    "edge-private-file/incomplete-start-refused-13.json": {
+      "bytes": 343,
+      "sha256": "aa90be66dbd782bf0410c1c17876c3a5c3d4ea1166976c714feea33f31b11b08"
+    },
+    "edge-private-file/public.json": {
+      "bytes": 138,
+      "sha256": "9a652ec685d2b16bec388e76489d2f73ac838c7050af11e2382d67de5c554869"
+    },
+    "edge-private-file/survey.json": {
+      "bytes": 7647,
+      "sha256": "d5903dae7b2fb33a276c202dcf3e0d665d22201f8f153cfb5e5ec9618c2639aa"
+    },
+    "edge-private-file/capture-staged.json-11.json": {
+      "bytes": 25689,
+      "sha256": "02abde4e8dbe9f87d8270ea0618f7721d4600a8e07aaf3ac05a2ed6c8bbab448"
+    },
+    "edge-private-file/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "0f9cc6571e6d5b2c3ac2339beb5239a43c43a727a62a7eb66e583c85025d3c38"
+    },
+    "edge-private-file/helper-args.json": {
+      "bytes": 714,
+      "sha256": "58970e411ad84ac619d3804b8f2bb7c984d3c7c9f7d88bf8ffc227a69fe5f80d"
+    },
+    "edge-public-file/request.json": {
+      "bytes": 994,
+      "sha256": "2ef33cff311a099e0388f357789b56325f176d3d29952c1a1962ea4571f5ec5b"
+    },
+    "edge-public-file/capture-staged.json-18.json": {
+      "bytes": 539,
+      "sha256": "67fdc860668558c63c622eddbaa1a30f693bdd2ccdd120c786bff2f4a3a8d00d"
+    },
+    "edge-public-file/capture-marker.json-17.json": {
+      "bytes": 579,
+      "sha256": "3c8f65168d091791a120daa96f4e92ce7bd2f886045ff4d2c7cba89e675bc7eb"
+    },
+    "edge-public-file/incomplete-start-refused-20.json": {
+      "bytes": 342,
+      "sha256": "1eb8dbfea4b6767055a9b5e169e0c675391cc9ff44ae557b129d6c696f8f8805"
+    },
+    "edge-public-file/install-tracer-config-14.json": {
+      "bytes": 396,
+      "sha256": "740648e6e417c0158a4ffabc4aa9e45149570ef7006937e847d7b01c4885a1ef"
+    },
+    "edge-public-file/armed-helper-inspection.json": {
+      "bytes": 9941,
+      "sha256": "b71510c11c61df3af257f7276fd564634d1b51de8291b30790de50b32418f678"
+    },
+    "edge-public-file/marker.json": {
+      "bytes": 314,
+      "sha256": "e5fd665371f3c4ab0100935e771695a6f485bb0907ef00905889db64b531081a"
+    },
+    "edge-public-file/result.json": {
+      "bytes": 1255,
+      "sha256": "71a7d4cf90822a4505ef3751ca6bac5a6b0f68ce5dd0b0e8c0123da0c84e29c7"
+    },
+    "edge-public-file/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "edge-public-file/private.json": {
+      "bytes": 23056,
+      "sha256": "0c4ec4619aec8fa9e77748c62d339d3a5b8e27759096fc143286c4acae4e970a"
+    },
+    "edge-public-file/pending-target-survey-19.json": {
+      "bytes": 23066,
+      "sha256": "03952330e98e45aef4c7aa305fca3dbcb09c9d095171cad43b6f7b03b9315e2f"
+    },
+    "edge-public-file/staged.json": {
+      "bytes": 238,
+      "sha256": "a6868e2c1b51a15eaa5ea99217beac4038bd6b1c83a199a0703252ef3cfe675c"
+    },
+    "edge-public-file/capture-private.json-15.json": {
+      "bytes": 25690,
+      "sha256": "f80061ec5c6b8c2c8938ad517a7983e43083d12edf2187bca3089c2fb50a1bf3"
+    },
+    "edge-public-file/helper-started.json": {
+      "bytes": 13,
+      "sha256": "5ce49dacdd89224378005121eaf407c79ecbcc565dde0f4da374dfceb0314723"
+    },
+    "edge-public-file/processes.json": {
+      "bytes": 1701,
+      "sha256": "fe4e4bea29123626376e80553ee830cd98bcae1f9aae9f188388efc18c95f964"
+    },
+    "edge-public-file/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "edge-public-file/tracer-config.json": {
+      "bytes": 882,
+      "sha256": "69862732341711a1a79c72c22e4f0f06095cf0bb5e716ce434cfab9fee0ec9ae"
+    },
+    "edge-public-file/public.json": {
+      "bytes": 138,
+      "sha256": "fffeffcf77bb8162efc97fd9bdeac41dbebe1abbd9153a62dcd28fc5d7e4dfce"
+    },
+    "edge-public-file/survey.json": {
+      "bytes": 31485,
+      "sha256": "cc33c17afb9b1d1d21ab8c3f573c720367f76692ef93ae4a65d1677208bd11d4"
+    },
+    "edge-public-file/capture-public.json-16.json": {
+      "bytes": 421,
+      "sha256": "7f6061d1c92ba8c93feac2e226e348cb52f92f7ddcfe81d60150a51044e2f835"
+    },
+    "edge-public-file/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "49639c6fb74f509077faaafc7b3b7bd85a6ee473cb29216446fa7dc0739d0c5e"
+    },
+    "edge-public-file/helper-args.json": {
+      "bytes": 710,
+      "sha256": "f1da1f98a3491265866c4401013858b36b91aba368bb4be589b40264bced7665"
+    },
+    "edge-private-rename/request.json": {
+      "bytes": 1006,
+      "sha256": "0a639cecfe7fd3f0af4f70a07b425aa7c19e4a0783a07d94e4bea86d20af8d72"
+    },
+    "edge-private-rename/pending-target-survey-25.json": {
+      "bytes": 23069,
+      "sha256": "9320865aa70fc64e90341b063f66b9b98d8dd24fea371bc4768dd69f8b58b445"
+    },
+    "edge-private-rename/armed-helper-inspection.json": {
+      "bytes": 9971,
+      "sha256": "0388462be38e64d576b56b14e0dfcb2a466ece90704354368138f29309a620b4"
+    },
+    "edge-private-rename/marker.json": {
+      "bytes": 314,
+      "sha256": "06240781b1ea795f48c6e52df394c5d0b4735360e07cc2ce550db6e0023943eb"
+    },
+    "edge-private-rename/result.json": {
+      "bytes": 1173,
+      "sha256": "b741c58e29d09b2c9a70c1ac810f7fc34671b228ae1a476ebd3694fbe21c2ef3"
+    },
+    "edge-private-rename/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "edge-private-rename/capture-private.json-22.json": {
+      "bytes": 25690,
+      "sha256": "70ac7a32e00ec94db01e4b9aef84e70646441ba9d4bfb6617c3728b6d976d46d"
+    },
+    "edge-private-rename/incomplete-start-refused-26.json": {
+      "bytes": 345,
+      "sha256": "ac1ed1d90a74a321ea41e1166d7b1d81ea53c59f3511846ffb122d776909b61d"
+    },
+    "edge-private-rename/private.json": {
+      "bytes": 23056,
+      "sha256": "73a520bb402b5641f8b918334402842cce90b0d80d1e09b3567ee550e3288dfc"
+    },
+    "edge-private-rename/capture-public.json-23.json": {
+      "bytes": 421,
+      "sha256": "a6aa48b543873cbbaa13b1c00008f82353d2fde482a58a3c3d3cf2766686e7e0"
+    },
+    "edge-private-rename/helper-started.json": {
+      "bytes": 12,
+      "sha256": "db91459282f8524c7cf60aa92adb668e232d7f1dd13bca13811472efa13be2a6"
+    },
+    "edge-private-rename/processes.json": {
+      "bytes": 1532,
+      "sha256": "2084ae9fa0991ba3562a5860bd138d82d08241c580c01f413c5a0c60a3a5e1a6"
+    },
+    "edge-private-rename/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "edge-private-rename/tracer-config.json": {
+      "bytes": 897,
+      "sha256": "54ab7f4b264c79e4572a52c63ed63cf0d8a550f81d694ef01a0303f3952f4500"
+    },
+    "edge-private-rename/public.json": {
+      "bytes": 138,
+      "sha256": "05f1300651110ab9e46d7c899a6bcdf39d30fb595953adbaae07a1aca7be2bc0"
+    },
+    "edge-private-rename/capture-marker.json-24.json": {
+      "bytes": 579,
+      "sha256": "34e3ec1c58dd51090b5e61f75312c396379ddb67c21c091c8943544054a9f627"
+    },
+    "edge-private-rename/survey.json": {
+      "bytes": 31485,
+      "sha256": "28245600b977d6c75849124878c2c60966e202d73d78c369dab7797720901267"
+    },
+    "edge-private-rename/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "ea70b2332ff39a7e121732d8cf1c430b01ddf46255b3d3eeba2dd3134cbcf8f1"
+    },
+    "edge-private-rename/helper-args.json": {
+      "bytes": 722,
+      "sha256": "5137a811613537b1cc9552a1eeeb8c4f04d4bebb50c8f7e5f9282352313edea6"
+    },
+    "edge-private-rename/install-tracer-config-21.json": {
+      "bytes": 396,
+      "sha256": "2eab3ccd2d737316356cd3a93b7fc44edd04b12227956f0daf148a17368fec46"
+    },
+    "edge-public-rename/capture-private.json-28.json": {
+      "bytes": 25690,
+      "sha256": "7351e4cffd8bcef652b05bf7401c1edc44aaf2be67990cbf6df42c7bac83e5b0"
+    },
+    "edge-public-rename/request.json": {
+      "bytes": 1002,
+      "sha256": "97dbf4a77e27b844e0d49c2adb8833eb91b521aa801b64d746618e15eb17005b"
+    },
+    "edge-public-rename/capture-public.json-29.json": {
+      "bytes": 539,
+      "sha256": "702e47d55f2ea4af7b4904fdff77c6f699ef0827e2c5b6c3faecce8ad03eb7b0"
+    },
+    "edge-public-rename/armed-helper-inspection.json": {
+      "bytes": 9961,
+      "sha256": "865ea5b69c12afd460805f703759e8b35140f57b7a788d40419a013454d5d985"
+    },
+    "edge-public-rename/marker.json": {
+      "bytes": 314,
+      "sha256": "a0139b16ebe04e1de8284cabc2dbc67ba227d0b980a57d0ecc4b64bdf3911e03"
+    },
+    "edge-public-rename/result.json": {
+      "bytes": 1169,
+      "sha256": "b2fa2c54df3bef6d2ee311386298a1ab4be6f1b987cef1a2b3a62a1cd2aa93d1"
+    },
+    "edge-public-rename/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "edge-public-rename/private.json": {
+      "bytes": 23056,
+      "sha256": "c58f657dbdd031fb642778775f4e48654c515041dbbea977b3359776066233c8"
+    },
+    "edge-public-rename/helper-started.json": {
+      "bytes": 13,
+      "sha256": "dd8210271e0ba324c45e36b4409bc9de801c2e22bfca65772ce3b8403b19ce12"
+    },
+    "edge-public-rename/capture-marker.json-30.json": {
+      "bytes": 579,
+      "sha256": "46237b8477fba5dcfb1fc59eb8cad18d8477b28d252ad2d6d98ff50585d62dac"
+    },
+    "edge-public-rename/processes.json": {
+      "bytes": 1527,
+      "sha256": "868aacb4218acf2e275b9d9054127d2ff6f55dbf7e54fd70468d1e934013c9ce"
+    },
+    "edge-public-rename/incomplete-start-refused-32.json": {
+      "bytes": 344,
+      "sha256": "217b4af88bada4cd6d00bcae7f8dbb7a46c1db729a3269342621f51d7659db95"
+    },
+    "edge-public-rename/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "edge-public-rename/tracer-config.json": {
+      "bytes": 892,
+      "sha256": "ea9fa04d4d4f286c28afb6c91c4267d868b55b818246f0d639165ea9037e6ce0"
+    },
+    "edge-public-rename/public.json": {
+      "bytes": 238,
+      "sha256": "4929ed1f162b7b012be2f5ecf93d276832d67ad115844cb209f122450a79af42"
+    },
+    "edge-public-rename/install-tracer-config-27.json": {
+      "bytes": 396,
+      "sha256": "7d32c84c3a1d8c7711574b8a7b7a98882d8f6c30687f6debf021fec225b12a28"
+    },
+    "edge-public-rename/survey.json": {
+      "bytes": 31621,
+      "sha256": "73c8c55b0b5f55bc5612cd7fbcb5d513a627e68b76b31b0687c8ac1dc3feab70"
+    },
+    "edge-public-rename/pending-target-survey-31.json": {
+      "bytes": 23143,
+      "sha256": "4cb6932fa8cd5903c41ab5df1394c802704b44bcccbdf52e5816cdcce660b656"
+    },
+    "edge-public-rename/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "9ec9a98b5c765e491b1628c87a4a4fea132a2eca74e0c103f078d701c9b9c928"
+    },
+    "edge-public-rename/helper-args.json": {
+      "bytes": 718,
+      "sha256": "e180ec18813f30da3a6602a4cfc95f70899601b882eacbee6ebbe16d4df9c39d"
+    },
+    "retirement-edge-matrix-result.json": {
+      "bytes": 8298,
+      "sha256": "e02db875c250f5ff3085b421e6eaf3ce9697826aaceea42b109c644cbb1f4203"
+    },
+    "retirement-crash-source.json": {
+      "bytes": 1405,
+      "sha256": "e6368975439db4cc1a5a932f6dc4aa9cee975b2f7348e27546666a4b8f5b08ea"
+    },
+    "retirement-crash-source-survey.json": {
+      "bytes": 30639,
+      "sha256": "6ae4df4ee3ebe15480d01fa23e9e98c730de3f4884f873a234ad8c6a484c0118"
+    },
+    "retirement-edge-live-baseline.json": {
+      "bytes": 1512,
+      "sha256": "9be0db9d3f1612699ca91f1363eb68a9a3a03cec99d4a7d5fd2078c644eb3712"
+    },
+    "retirement-edge-restarted-result.json": {
+      "bytes": 1683,
+      "sha256": "de08c57f81f692e4c79588e6f4a0a1eef4fb04976630314e9244504c51bf2ea2"
+    },
+    "retirement-edge-native-audit.json": {
+      "bytes": 64615,
+      "sha256": "b77099117ce795abe00835fff7d3e07c73525874d8d620fd7365b470fed3ef16"
+    },
+    "retirement-crash-owner-namespace-before.json": {
+      "bytes": 3756,
+      "sha256": "d5411988f9b3ea48d01ddb3b776fdafb64f89aa1b42d872dd62d1014308213e3"
+    },
+    "private-scripts/fogd-native-retirement-edge-matrix.py": {
+      "bytes": 6907,
+      "sha256": "5504a272e8b0851544e55177ba1236e21bd86bd56e502422198c9cce11dcd688"
+    },
+    "private-scripts/fogd-retirement-crash-coordinator.mjs": {
+      "bytes": 2080,
+      "sha256": "d6a32f0a7f0076cefc196465eca6aa858d756d687d79ae861ebd56156628171d"
+    },
+    "private-scripts/fogd-retirement-edge-tracer.py": {
+      "bytes": 10275,
+      "sha256": "d2adda83bb5edb5f9da25d550522f216d097674301734a939a0e2e4e2f7f5dca"
+    },
+    "private-scripts/fogd-retirement-edge-selftest.py": {
+      "bytes": 2818,
+      "sha256": "61535c96bd4c17556d4972e4e4fdd10d41e04f2e388cad2e25840f45ba39f667"
+    },
+    "private-scripts/fogd-retirement-edge-selftest.log": {
+      "bytes": 7392,
+      "sha256": "35f8ea0ea8712f5060d2e9cfcb0450cf7a47131d154de959ac84db40755fe73e"
+    },
+    "private-scripts/fogd-retirement-edge-native-audit.mjs": {
+      "bytes": 14184,
+      "sha256": "b6c19e94a3b9df25fc35d03b59c4b29004057ab9d36621298677732dbcadd7d1"
+    },
+    "private-scripts/fogd-retirement-edge-restart.py": {
+      "bytes": 1080,
+      "sha256": "f8fdba2a8ea8e6fd198e19cee6c384da0d06a0bf3ee6c699f290b75d395e2eba"
+    },
+    "private-scripts/fogd-retirement-edge-regressions.log": {
+      "bytes": 4957,
+      "sha256": "e35f15eb7753f07b0c3a932acc20e3e28a8e918bee41472e12fc12e3573a2307"
+    }
+  }
+}

@@ -1095,5 +1095,21 @@ resumes the survivor only after exact approval and deploys a replacement app tha
 starts empty and accepts a write. Independent checks verify the original archived
 state, native inventory bindings, helper restrictions, nine artifact digests and
 unchanged bytes across five retired namespaces. No partial target is repaired or
-helper replayed. Grant-spend interruption, partial writes, rename-before-directory-fsync,
-write outcome uncertainty, background retirement and ordinary release remain open.
+helper replayed. Those two cuts do not cover interruption during marker creation,
+partial writes or write outcome uncertainty. Background retirement and ordinary
+release remain open.
+
+The [additional retirement store cuts](evidence/operator-native-retirement-store-edges.json)
+kill the native finalizer after consumption of the restoration grant, after each
+staging-file sync and after each rename before directory sync. The tracer verifies
+the rename paths and destination inode against the original temporary file. Captured
+views include the fresh pair, staged projections, a mismatched pair and a matching
+pair; every interrupted target remains stopped with incomplete host enrollment.
+Startup refuses before Docker access in all five cases. Independent native readback
+confirms the current private/public stores, spent markers and both retained staged
+files, with archive and inventory bindings checked separately. The retained completed
+installation restarts with its two saved records, nine artifacts and five retired
+namespace file maps unchanged. No interrupted helper is replayed or partial target
+repaired. Partial marker/file writes, injected I/O outcome uncertainty, power loss,
+background retirement and ordinary release remain outside these process cuts after
+successful system calls.

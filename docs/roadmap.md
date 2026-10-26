@@ -76,7 +76,11 @@ these current gaps:
   [native retirement process cuts](evidence/operator-native-retirement-process-crashes.json)
   after private-state and public-route directory fsyncs also preserve incomplete
   enrollment and refuse startup before Docker. A fresh target from the original
-  snapshot retains survivor data and supports a new empty app and write. The
+  snapshot retains survivor data and supports a new empty app and write. Five
+  [additional store cuts](evidence/operator-native-retirement-store-edges.json)
+  cover a consumed restoration grant, both staging-file syncs and both renames
+  before directory sync. All interrupted targets stay fenced; the completed
+  installation restarts with its saved records. The
   [last-app follow-up](evidence/operator-native-zero-live-recovery.json) restores
   four tombstones with no live apps and then approves a fresh app in the freed
   capacity. Native background retirement, process-crash gates and ordinary release
