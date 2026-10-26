@@ -64,9 +64,12 @@ these current gaps:
   while retaining the peer record. Three earlier
   [withholding crash boundaries](evidence/operator-native-first-claim-withholding-crashes.json)
   recover without native ownership or deployment objects; exact rejection releases
-  pristine reservations and exact approval starts an empty app. Native owner-write
-  uncertainty, retirement process-crash matrices, broader counts and loads remain
-  open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
+  pristine reservations and exact approval starts an empty app. A native
+  [ownership confirmation gap](evidence/operator-native-ownership-confirmation-gap.json)
+  also preserves an assigned owner before controller confirmation: rejection and
+  alternate approval refuse, while the original approval recovers without changing
+  owner metadata. Native owner-write outcome uncertainty, retirement process-crash
+  matrices, broader counts and loads remain open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
   covers two retirements, different-name replacements, retained namespace bytes
   and ordinary recovery with both tombstones. An injected host error after native
   finalization preserves incomplete enrollment and refuses startup. The

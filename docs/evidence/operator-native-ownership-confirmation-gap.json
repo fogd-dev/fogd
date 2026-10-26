@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "kind": "operator-native-ownership-confirmation-gap",
+  "recordedAt": "2026-10-26T13:56:46.474691+00:00",
+  "hostCLICommit": "87c25b8b068e0b1d40c698268ea212f11fb2ca80",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "One controller process crash after native ownership assignment and successful confirmation staging-file fsync, before rename over durable state. Fresh restored two-fleet HTTPS installation on the same physical host and isolated Linux arm64 overlay2 engine. HTTP-only fixtures.",
+  "method": {
+    "kernelSyscallExitTracing": true,
+    "successfulStagingFileFsyncBeforeRename": true,
+    "fileIdentityCheckedByDeviceAndInode": true,
+    "temporaryFileNameAndVolumeChecked": true,
+    "targetContainerAndControllerCommandChecked": true,
+    "leaderExitSignalObserved": 9,
+    "guestTracerSha256Matched": "17cb81140357d0e12ca1d3fed3eb8f9fab5c156ca8deddfe211b72ed91f89087",
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedBoundaryKilled": true,
+      "differentStepNotKilled": true
+    }
+  },
+  "case": {
+    "checkpoint": {
+      "kind": "owner-gap",
+      "phase": "claim-file-sync",
+      "fsyncReturn": 0,
+      "fileIdentityVerified": true,
+      "privateClaimPresent": true,
+      "stagedClaimPresent": false,
+      "pending": null,
+      "publicRevision": "4",
+      "publicRouteState": "withheld",
+      "active": null,
+      "privateSha256": "6440e3149b7a33c17072ec2c1908d471febab48ecbffc1565f08505ecdaf5929",
+      "publicSha256": "b213917591e5b72efc8f1790fc02d80f0d9ebcf1500dee21a0d0d229f7925e05",
+      "stagedSha256": "4cd487b7ac208e45b09371a670ed4254cd8ab40a9621695bd1f6c463d6acb5ec",
+      "pid": 165084,
+      "signal": 9,
+      "syscallExitObserved": true
+    },
+    "uncertainApprovalExitCode": 1,
+    "durableClaimPresentAtCrash": true,
+    "stagedClaimRemovedAtCrash": true,
+    "stagedStateDiffersOnlyByClaimRemoval": true,
+    "activeReleaseAtCrash": null,
+    "migrationLedgerEntriesAtCrash": 0,
+    "nativeOwnerBeforeRetry": "ownergap",
+    "nativeDeploymentObjectsBeforeRetry": false,
+    "HTTPBeforeRetry": 503,
+    "ownedClaimRejectionRefused": true,
+    "alternateArtifactApprovalRefused": true,
+    "recovery": "explicit-same-artifact-approval",
+    "initialRowsAfterRecovery": 0,
+    "acknowledgedWritesAfterRetry": 1,
+    "peerRecordsPreserved": 1,
+    "nativeOwnerMetadataUnchangedAfterRetry": true,
+    "sameControllerContainer": true,
+    "newControllerProcess": true,
+    "retiredNamesHTTP": 404
+  },
+  "independentChecks": {
+    "capturedPublicRouteDigestVerified": true,
+    "committedAndStagedStateDeltaVerified": true,
+    "hostEnrollmentAndPlanMatched": true,
+    "artifactDigestsVerified": 8,
+    "retiredNamespacesVerified": 4,
+    "retiredNamespaceFilesVerified": 92,
+    "retiredNamespaceStoredBytes": 1343438,
+    "retainedNamedVolumes": 121,
+    "priorTargetBothSavedRecordsVerifiedBeforeStoppedRetention": true,
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/claims.test.mjs packages/platform/test/platform.test.mjs",
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0
+  },
+  "probeCorrections": [
+    {
+      "issue": "Independent audit declared a local name already used by its namespace check",
+      "outcome": "Audit failed syntax parsing before native reads; renamed the local and reran the read-only audit. The native mutation was not repeated."
+    }
+  ],
+  "limitations": [
+    "This observes a completed backend claim before confirmation rename. It does not cover an uncertain owner-write response or process loss inside the native owner write.",
+    "No power-loss, retirement process-crash, native background retirement, SQL-commit/ledger-gap, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No runtime admission or pinned source/image changes. Private scripts, raw records and credentials remain outside the repository."
+  ],
+  "relatedEvidence": {
+    "ownershipConfirmed": {
+      "path": "operator-native-first-claim-crash.json",
+      "sha256": "7caaf92caaeb975a1b04f1d025a73959b992795b143924c139acf4ae4daab5bd"
+    },
+    "withholding": {
+      "path": "operator-native-first-claim-withholding-crashes.json",
+      "sha256": "f8726870b10fee6b733d1bda898bb433ef942160936e3f015763fe52ff15c422"
+    }
+  },
+  "privateEvidenceFingerprints": {
+    "owner-gap-result.json": {
+      "bytes": 2305,
+      "sha256": "5c26435791b79c38706fc6140379b4db1c683492a98c482077c8bd9a18a0864b"
+    },
+    "owner-gap-processes.json": {
+      "bytes": 1470,
+      "sha256": "49b46f5c57b80257df77beba8431513a5040a732ff943455295284a18ff28256"
+    },
+    "owner-gap-private.json": {
+      "bytes": 20725,
+      "sha256": "6440e3149b7a33c17072ec2c1908d471febab48ecbffc1565f08505ecdaf5929"
+    },
+    "owner-gap-public.json": {
+      "bytes": 479,
+      "sha256": "b213917591e5b72efc8f1790fc02d80f0d9ebcf1500dee21a0d0d229f7925e05"
+    },
+    "owner-gap-staged.json": {
+      "bytes": 20471,
+      "sha256": "4cd487b7ac208e45b09371a670ed4254cd8ab40a9621695bd1f6c463d6acb5ec"
+    },
+    "owner-gap-native-audit.json": {
+      "bytes": 36660,
+      "sha256": "1161502dc07fb3592dd782166103672bf6dd79036bddbfbfe644d9ead31a3135"
+    },
+    "owner-gap-retained-source.json": {
+      "bytes": 493,
+      "sha256": "8a68c01fcd283e638f49d156a79305db1da219551c8b61b4e3eb5e455179cd99"
+    },
+    "owner-gap-fresh-stopped-survey.json": {
+      "bytes": 24770,
+      "sha256": "71938f60bb33145ca4ebf1fe5a26d235e8076bc9618bd18a00547c111a556145"
+    },
+    "fogd-native-owner-gap.py": {
+      "bytes": 8689,
+      "sha256": "17df19bec0231fc7f24da8f1f8ef64075615162d56f0e61d45f8a4bdf1a85204"
+    },
+    "fogd-owner-gap-tracer.py": {
+      "bytes": 8019,
+      "sha256": "17cb81140357d0e12ca1d3fed3eb8f9fab5c156ca8deddfe211b72ed91f89087"
+    },
+    "fogd-owner-gap-selftest.py": {
+      "bytes": 2577,
+      "sha256": "5df8dc73b67c2a9c333cf8cc36a465733b19c06dcb7eb9cb66f936d7d7ce404a"
+    },
+    "fogd-owner-gap-native-audit.mjs": {
+      "bytes": 9212,
+      "sha256": "8ad0e27ffc015e85d9f358db18d42d0e4d238034096744fb9d64b2e28db30ec1"
+    },
+    "fogd-owner-gap-selftest.log": {
+      "bytes": 1384,
+      "sha256": "c5160b6c2dbef7a84b4706af8c6ea2e9c8f184b3f35c6bcf1b02af2853a3807c"
+    },
+    "fogd-owner-gap-regressions.log": {
+      "bytes": 4896,
+      "sha256": "2fc2912eef2af85306c76a4abb17e2b14dfc688eb9f53603dc4a59489bd88d9e"
+    }
+  }
+}

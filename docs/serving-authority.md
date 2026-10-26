@@ -1069,5 +1069,17 @@ removes their public entries and releases the slot without assigning ownership o
 publishing code. Exact approval of the third starts an empty app and permits a write. The peer retains its
 record across all three kills. Independent checks validate each captured record
 pair, all nine retained artifact digests and unchanged bytes across four retired
-namespaces. Native owner-write uncertainty and interruption before private ownership
-confirmation remain untested; these three cuts precede native ownership.
+namespaces. These three cuts precede native ownership and do not cover owner-write
+uncertainty or interruption before private ownership confirmation.
+
+The [native ownership confirmation gap](evidence/operator-native-ownership-confirmation-gap.json)
+kills the controller after its confirmation staging-file fsync succeeds, before
+rename over durable state. Captured durable state retains the original claim;
+captured staged state differs only by removing that claim. The public route remains
+withheld. After restart, native inspection finds the assigned owner and no deployment
+objects. Rejection and approval of a different artifact refuse. Explicit approval of
+the original artifact recovers without changing owner metadata, starts empty and
+accepts a write while retaining the peer record. Independent checks verify both
+state versions, the route digest, eight artifact digests and four retired namespace
+file maps. This closes that process-crash boundary, not owner-write response
+uncertainty, power-loss durability or ordinary runtime admission.

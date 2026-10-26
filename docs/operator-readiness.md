@@ -333,7 +333,11 @@ The peer record and retired namespaces remain intact. Three earlier
 [withholding publication crashes](evidence/operator-native-first-claim-withholding-crashes.json)
 recover without native ownership or deployment objects. Exact rejection releases
 two pristine reservations; exact approval of the third starts empty and writes.
-Ordinary released-family selection, native owner-write uncertainty, retirement
+The [ownership confirmation gap](evidence/operator-native-ownership-confirmation-gap.json)
+checks a native owner assigned before the controller confirmation replaces durable
+state. Rejection and alternate approval refuse; the original approval recovers
+without changing owner metadata and retains the peer record.
+Ordinary released-family selection, native owner-write outcome uncertainty, retirement
 crashes, restricted recovery browser interaction and the full recovery/load matrix
 remain open.
 
