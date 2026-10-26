@@ -72,7 +72,11 @@ these current gaps:
   matrices, broader counts and loads remain open. The [v3 native retirement drill](evidence/operator-native-durable-retirement.json)
   covers two retirements, different-name replacements, retained namespace bytes
   and ordinary recovery with both tombstones. An injected host error after native
-  finalization preserves incomplete enrollment and refuses startup. The
+  finalization preserves incomplete enrollment and refuses startup. Two
+  [native retirement process cuts](evidence/operator-native-retirement-process-crashes.json)
+  after private-state and public-route directory fsyncs also preserve incomplete
+  enrollment and refuse startup before Docker. A fresh target from the original
+  snapshot retains survivor data and supports a new empty app and write. The
   [last-app follow-up](evidence/operator-native-zero-live-recovery.json) restores
   four tombstones with no live apps and then approves a fresh app in the freed
   capacity. Native background retirement, process-crash gates and ordinary release

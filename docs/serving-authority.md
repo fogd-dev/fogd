@@ -1083,3 +1083,17 @@ accepts a write while retaining the peer record. Independent checks verify both
 state versions, the route digest, eight artifact digests and four retired namespace
 file maps. This closes that process-crash boundary, not owner-write response
 uncertainty, power-loss durability or ordinary runtime admission.
+
+The [native retirement process-crash drill](evidence/operator-native-retirement-process-crashes.json)
+kills the unmodified stopped finalizer at two completed directory-fsync boundaries.
+After the private write, the target pair intentionally mismatches: private revision
+1 and public revision 0. After the public write, both revisions match, but host
+enrollment remains incomplete. Both targets retain their spent restoration markers,
+unstarted services and empty replacement disks; startup refuses before contacting
+Docker. A fresh target from the retained original snapshot completes retirement,
+resumes the survivor only after exact approval and deploys a replacement app that
+starts empty and accepts a write. Independent checks verify the original archived
+state, native inventory bindings, helper restrictions, nine artifact digests and
+unchanged bytes across five retired namespaces. No partial target is repaired or
+helper replayed. Grant-spend interruption, partial writes, rename-before-directory-fsync,
+write outcome uncertainty, background retirement and ordinary release remain open.

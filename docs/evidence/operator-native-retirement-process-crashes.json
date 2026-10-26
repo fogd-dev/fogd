@@ -1,0 +1,356 @@
+{
+  "schema": 1,
+  "kind": "operator-native-retirement-process-crashes",
+  "recordedAt": "2026-10-26T14:12:41.550465+00:00",
+  "hostCLICommit": "e08ce099cec1dd173a0cd53fac2fea1573e872d1",
+  "family": "celld-durable-v3-linux-arm64",
+  "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "admission": "candidate",
+  "qualified": false,
+  "scope": "Two stopped retirement finalizer process-kill boundaries, followed by fresh retirement from the retained original snapshot. Same physical host and isolated Linux arm64 overlay2 engine, two-fleet HTTPS topology, HTTP-only fixtures.",
+  "method": {
+    "nativeProgram": "packages/platform/src/import-retired-routes.mjs",
+    "kernelSyscallExitTracing": true,
+    "completedDirectoryFsyncBeforeSIGKILL": true,
+    "directoryDeviceAndInodeMatched": true,
+    "nativeHelperContainerAndCommandMatched": true,
+    "processExitSignalObserved": 9,
+    "guestTracerSha256Matched": "cce20b8d5d91c2fee7096ff8734cfa281ae362851db34e8c2085efd89436c87c",
+    "inputHeldBeforeEffectsUntilTracerArmed": true,
+    "unchangedProductionHelperArgsExceptDiagnosticContainerName": true,
+    "networkNoneReadOnlyRootNoCapabilitiesPreserved": true,
+    "runtimeProgramInventoryUnchanged": true,
+    "selfTests": {
+      "selectedBoundariesKilled": 2,
+      "unselectedDeploymentStatusCasesNotKilled": 2
+    }
+  },
+  "cases": [
+    {
+      "phase": "retirement-private",
+      "checkpoint": {
+        "phase": "retirement-private",
+        "kind": "retirement",
+        "directory": "private",
+        "fsyncReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "0",
+        "retiredApp": "ownergap",
+        "pending": null,
+        "restorationMarkerSpent": true,
+        "privateSha256": "81d4bef977481c068f0ff50c04a2e7ba64c4d7a4b6ff072ed628de28abd0b62e",
+        "publicSha256": "d0e11b2682b39c6a826ec23903f4b010bbfcf9bb58c00640af53df5bc1afccb3",
+        "markerSha256": "44ac59e19f4bd70aa1e60d1f62d91a35d37fe22335636c8c4ad7d45ac6967210",
+        "pid": 171461,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    },
+    {
+      "phase": "retirement-public",
+      "checkpoint": {
+        "phase": "retirement-public",
+        "kind": "retirement",
+        "directory": "public",
+        "fsyncReturn": 0,
+        "privateRevision": "1",
+        "publicRevision": "1",
+        "retiredApp": "ownergap",
+        "pending": null,
+        "restorationMarkerSpent": true,
+        "privateSha256": "4a60fa9db49c52a8629fe8d7775fb948e3e16852d9f3cbee384c638a9d741c7c",
+        "publicSha256": "1014f62e61b378fc2c7f903096a588ce47e7a66bcbafcee5c746009e5c7af65d",
+        "markerSha256": "d9222df798d8daf61233dff18c18ba09b3024c53be658a29e6011807cedaf5af",
+        "pid": 174693,
+        "signal": 9,
+        "syscallExitObserved": true
+      },
+      "nativeHelperExitCode": 137,
+      "hostRefusal": "DURABLE_RESTORE_UNCONFIRMED",
+      "hostEnrollmentPending": true,
+      "hostCompletionAbsent": true,
+      "hostSuccessFilesAbsent": true,
+      "startupRefusedBeforeDocker": true,
+      "allEightTargetContainersNeverStarted": true,
+      "replacementDisksEmpty": true,
+      "sourceSnapshotStillVerified": true,
+      "partialStoresRetained": true,
+      "nativeHelperReplayed": false
+    }
+  ],
+  "freshRecovery": {
+    "originalSourceSnapshotUsed": true,
+    "interruptedTargetsRepaired": false,
+    "interruptedHelpersReplayed": false,
+    "freshRetirementCompleted": true,
+    "survivorHeldUntilExactResume": true,
+    "survivorRecordsPreserved": 1,
+    "replacementInitiallyEmpty": true,
+    "replacementAcknowledgedWrites": 1,
+    "fiveRetiredNamesHTTP": 404
+  },
+  "independentChecks": {
+    "sourceSnapshotMembersHashed": 10,
+    "sourceManifestSha256": "418a4ae305f5ad9e50fb1f5455de44c57536d36614ada8163e10a4e4ff668b1e",
+    "archivedSourceStateAndOriginalAuthorityMatched": true,
+    "retirementProjectionMatchedCapturedPrivateState": true,
+    "nativeInventoryBindingAndHostPlanMatched": true,
+    "spentMarkersBoundToSnapshotAndTarget": true,
+    "privateCutIntentionallyMismatchedAndFenced": true,
+    "publicCutMatchingPairStillHostFenced": true,
+    "sixteenInterruptedServiceContainersNeverStarted": true,
+    "artifactDigestsVerified": 9,
+    "retiredNamespacesVerified": 5,
+    "retiredNamespaceFilesVerified": 108,
+    "retiredNamespaceStoredBytes": 1658671,
+    "retainedNamedVolumes": 154,
+    "priorFourRetirementAuditsPreserved": true,
+    "freshCurrentDataMatched": true,
+    "candidateAdmission": "closed"
+  },
+  "regressions": {
+    "command": "node --test packages/platform/test/route-retirement-restoration.test.mjs",
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "Only these two completed-directory-fsync process cuts are covered. Grant-spend interruption, partial file writes, rename-before-directory-fsync and write outcome uncertainty remain outside this drill.",
+    "No power-loss, native background retirement, SQL-commit/ledger-gap, native owner-write response uncertainty, broader load, second physical machine or v2-to-v3 migration qualification.",
+    "No ordinary runtime admission or pinned source/image change. Private scripts, raw stores, keys and command transcripts remain outside the repository."
+  ],
+  "privateEvidenceFingerprints": {
+    "crash-retirement-private/request.json": {
+      "bytes": 1013,
+      "sha256": "861fc555f47bd271f41a2cf3922bc89c29f848f27ce0ab7115f7275ddb513162"
+    },
+    "crash-retirement-private/armed-helper-inspection.json": {
+      "bytes": 9911,
+      "sha256": "981b4a0910eb54de036ead31f8f757139c631ad96c0246168bd13655192938ce"
+    },
+    "crash-retirement-private/marker.json": {
+      "bytes": 314,
+      "sha256": "8ed2dae839abb989fc49a3d4a9f79996005387105b572ee0596227166c2785e3"
+    },
+    "crash-retirement-private/result.json": {
+      "bytes": 1120,
+      "sha256": "60e63a9eb8e7474ece5989bfe4622921867b1e2db390ee0149d1c8ebc2c1cc69"
+    },
+    "crash-retirement-private/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "crash-retirement-private/private.json": {
+      "bytes": 23056,
+      "sha256": "81d4bef977481c068f0ff50c04a2e7ba64c4d7a4b6ff072ed628de28abd0b62e"
+    },
+    "crash-retirement-private/capture-public.json-3.json": {
+      "bytes": 421,
+      "sha256": "6228da7c1d04ac3c1dcbc918f52ff0b08c4c5a9581c457c2f4511c39ce87fbd8"
+    },
+    "crash-retirement-private/capture-private.json-2.json": {
+      "bytes": 25690,
+      "sha256": "939c72649f638337e7e16ab948c85c10b79fe1f6da38f3d1d1d8ac23b1338a03"
+    },
+    "crash-retirement-private/helper-started.json": {
+      "bytes": 13,
+      "sha256": "c7ec12fb8678ab7856ae54cfccdd00157cb7d5e63db8c620386f8571ff190b37"
+    },
+    "crash-retirement-private/pending-target-survey-5.json": {
+      "bytes": 23062,
+      "sha256": "33c3f1a7905ca06de3fda2f620097fee451bb3cf6fb9c7700b4b893c3d33c50f"
+    },
+    "crash-retirement-private/processes.json": {
+      "bytes": 1473,
+      "sha256": "deb255baffeb42ec0a82c8378267426489ab295aa9a807e790e33513897769d3"
+    },
+    "crash-retirement-private/incomplete-start-refused-6.json": {
+      "bytes": 338,
+      "sha256": "7bd4bbe5c650878f05a01cba1e219e5014ee7e3caecf70ea9e89a871b9487054"
+    },
+    "crash-retirement-private/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "crash-retirement-private/tracer-config.json": {
+      "bytes": 868,
+      "sha256": "298989ef2410638fb7399d6e1083271687693fa406dba2fd4962ad0e8789f55a"
+    },
+    "crash-retirement-private/public.json": {
+      "bytes": 138,
+      "sha256": "d0e11b2682b39c6a826ec23903f4b010bbfcf9bb58c00640af53df5bc1afccb3"
+    },
+    "crash-retirement-private/survey.json": {
+      "bytes": 31485,
+      "sha256": "f48d8ea2a6df60a05fbcc22270889916967a14f2702ca83bbfa7ff6be95e35f2"
+    },
+    "crash-retirement-private/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "9b227b1069185d5251776387943689bcf3e3a3e0889c6a2bf664bdf324e74911"
+    },
+    "crash-retirement-private/install-tracer-config-1.json": {
+      "bytes": 396,
+      "sha256": "75eed543cef33b8dde302418e0c6dd473db6887004cba45bfb74c26e71954be2"
+    },
+    "crash-retirement-private/capture-marker.json-4.json": {
+      "bytes": 579,
+      "sha256": "9e15b64f3872b839b5ed20bdb884a80024b7329b0b227fa0f2dd3ba6abe0f23a"
+    },
+    "crash-retirement-private/helper-args.json": {
+      "bytes": 705,
+      "sha256": "e354140449d577cd618c6ab9674a8998097c58e72c7289329ae45e31d9554080"
+    },
+    "crash-retirement-public/request.json": {
+      "bytes": 1009,
+      "sha256": "153b54695db353a6869f8c475658b7ceb3a5fd56c854142ab23c83fabf130035"
+    },
+    "crash-retirement-public/armed-helper-inspection.json": {
+      "bytes": 9902,
+      "sha256": "5945fa3224cea9aed1efbb9ea74aeb36b981b8d046b2f47ff08a78d032cdc05b"
+    },
+    "crash-retirement-public/capture-public.json-9.json": {
+      "bytes": 539,
+      "sha256": "7bd208c8d2334b97712f80253becda27e50220a0dd961e7d0a4864c31cd4cee0"
+    },
+    "crash-retirement-public/marker.json": {
+      "bytes": 314,
+      "sha256": "6f0527e20193346ae1e866c6fa05d200d60aa074a6d481ed69ce44213b4fc06b"
+    },
+    "crash-retirement-public/result.json": {
+      "bytes": 1116,
+      "sha256": "71cf6e9aea1dc422b563e2158c72888721efad48e2771a473ca6f0314edb49ec"
+    },
+    "crash-retirement-public/capture-private.json-8.json": {
+      "bytes": 25690,
+      "sha256": "ed04207ba5aaad78071f2c49b98fd522bcb6ea258d414a17ef3235f5884ab180"
+    },
+    "crash-retirement-public/coordinator-terminal.json": {
+      "bytes": 58,
+      "sha256": "81202e708bf4f1477143a6cf0af7ea339f664e61f0834f0c07c1815af1dd0d81"
+    },
+    "crash-retirement-public/private.json": {
+      "bytes": 23056,
+      "sha256": "4a60fa9db49c52a8629fe8d7775fb948e3e16852d9f3cbee384c638a9d741c7c"
+    },
+    "crash-retirement-public/capture-marker.json-10.json": {
+      "bytes": 579,
+      "sha256": "8d2c5a7c568d94d66695f7127f5de108e3ae64966ea06357e1379c5c6ca0dfa8"
+    },
+    "crash-retirement-public/helper-started.json": {
+      "bytes": 13,
+      "sha256": "c15832a705d7904718f1506462e249ece4087dff691f10cb8b5a84d72ae20408"
+    },
+    "crash-retirement-public/processes.json": {
+      "bytes": 1468,
+      "sha256": "d0da774048b07d3a7c7fee27eb4ac275fd8964226a190c78e278a2ab3314338a"
+    },
+    "crash-retirement-public/helper-terminal.json": {
+      "bytes": 50,
+      "sha256": "3a3ba6892829dc260d994d02374156963f92a626359155ff99621ae04251d042"
+    },
+    "crash-retirement-public/incomplete-start-refused-12.json": {
+      "bytes": 337,
+      "sha256": "9e6a025c53e2dde2442f003fee2f8226567b67964d3fbe0a5ecf41fbd2c6ce8d"
+    },
+    "crash-retirement-public/tracer-config.json": {
+      "bytes": 863,
+      "sha256": "508d765a4b991aafc855cae28bb2f7ae90e74a8a6cbf26435cb4abada5b1866f"
+    },
+    "crash-retirement-public/install-tracer-config-7.json": {
+      "bytes": 396,
+      "sha256": "b04346fc945e711d6ec041fec1d84a9861df72f59f2cc969e37ddacb54b558bf"
+    },
+    "crash-retirement-public/public.json": {
+      "bytes": 238,
+      "sha256": "1014f62e61b378fc2c7f903096a588ce47e7a66bcbafcee5c746009e5c7af65d"
+    },
+    "crash-retirement-public/survey.json": {
+      "bytes": 31621,
+      "sha256": "0f65d37553c9d56ada53157292faf312f8baffb5afcb8a9b23f91d919e7ce670"
+    },
+    "crash-retirement-public/pending-target-survey-11.json": {
+      "bytes": 23136,
+      "sha256": "12d50253f5bfcc705a7656207be0fe94e34ee825061c55a7c97aa7fd00416b60"
+    },
+    "crash-retirement-public/helper-input.json": {
+      "bytes": 18959,
+      "sha256": "0e7f69fb807019d74482ba4b2ae21a9464c777306cafc115715cf0350633b5a6"
+    },
+    "crash-retirement-public/helper-args.json": {
+      "bytes": 701,
+      "sha256": "473987a92ba48f2a607c4f3dfd1b6e4bec0395710277b836ea4d511f132f1e53"
+    },
+    "retirement-crash-matrix-result.json": {
+      "bytes": 4072,
+      "sha256": "dc30c7a80042ddf9341d6cd34f7b6c8a161a23791ee32ab7438ffe15450b20fe"
+    },
+    "retirement-crash-source.json": {
+      "bytes": 1405,
+      "sha256": "e6368975439db4cc1a5a932f6dc4aa9cee975b2f7348e27546666a4b8f5b08ea"
+    },
+    "retirement-crash-source-survey.json": {
+      "bytes": 30639,
+      "sha256": "6ae4df4ee3ebe15480d01fa23e9e98c730de3f4884f873a234ad8c6a484c0118"
+    },
+    "retirement-crash-fresh-result.json": {
+      "bytes": 1512,
+      "sha256": "9be0db9d3f1612699ca91f1363eb68a9a3a03cec99d4a7d5fd2078c644eb3712"
+    },
+    "retirement-crash-fresh-survey.json": {
+      "bytes": 31621,
+      "sha256": "803e10ea717cbb0b28d1c5fc854c84d05feeb59b6758d654016d5423e5811a7c"
+    },
+    "retirement-crash-native-audit-sealed.json": {
+      "bytes": 47161,
+      "sha256": "e64d9124b39df55e608ef61b1de0fff567f290f323afbf28fb485775e1e63804"
+    },
+    "retirement-crash-owner-namespace-before.json": {
+      "bytes": 3756,
+      "sha256": "d5411988f9b3ea48d01ddb3b776fdafb64f89aa1b42d872dd62d1014308213e3"
+    },
+    "private-scripts/fogd-native-retirement-crash-matrix.py": {
+      "bytes": 6719,
+      "sha256": "b923a85f40de2874a104f8c857d4476bac736d1ecad70572c1763adf1dc38a74"
+    },
+    "private-scripts/fogd-retirement-crash-coordinator.mjs": {
+      "bytes": 2080,
+      "sha256": "d6a32f0a7f0076cefc196465eca6aa858d756d687d79ae861ebd56156628171d"
+    },
+    "private-scripts/fogd-retirement-crash-tracer.py": {
+      "bytes": 7742,
+      "sha256": "cce20b8d5d91c2fee7096ff8734cfa281ae362851db34e8c2085efd89436c87c"
+    },
+    "private-scripts/fogd-retirement-crash-selftest.py": {
+      "bytes": 2666,
+      "sha256": "85552d76ad967f1f51e0e5bd854f4b5cc57720156227c4e85485f6112596dfb0"
+    },
+    "private-scripts/fogd-retirement-crash-selftest.log": {
+      "bytes": 2776,
+      "sha256": "0f38ddce37432492f40d827ac9f259ca470415b7e47d2f11b29db5c593de8361"
+    },
+    "private-scripts/fogd-retirement-crash-native-audit.mjs": {
+      "bytes": 12088,
+      "sha256": "a562557e6a3eb5ff492812eaafe7712aa81dcbec00a1d185921d0e3d0e64fae5"
+    },
+    "private-scripts/fogd-retirement-crash-fresh-success.py": {
+      "bytes": 3749,
+      "sha256": "796742f3f7e0786aedbb7e65936ef7a8e468f4a3d924917e6fa4f3574500c784"
+    },
+    "private-scripts/fogd-retirement-crash-regressions.log": {
+      "bytes": 2626,
+      "sha256": "aca2b6c681e0a509c79c77b5503bc21ab88464dcbcc327e8af7dc39b6398c1de"
+    }
+  }
+}

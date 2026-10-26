@@ -322,7 +322,13 @@ retirement and same-family recovery have [bounded native evidence](evidence/oper
 from a fresh two-fleet installation. Two retirements preserve prior history,
 different-name replacements use fresh storage, and recovered apps retain data and
 accept new writes. The post-finalizer host-error case keeps its target unstarted
-and enrollment incomplete. [Zero-live-app recovery](evidence/operator-native-zero-live-recovery.json)
+and enrollment incomplete. Two
+[native retirement process cuts](evidence/operator-native-retirement-process-crashes.json)
+kill the stopped helper after private-state and public-route directory fsyncs.
+Both interrupted targets retain incomplete enrollment and refuse startup before
+Docker. Fresh retirement from the original snapshot preserves survivor data and
+allows a new app to start empty and write, without repairing either partial target.
+[Zero-live-app recovery](evidence/operator-native-zero-live-recovery.json)
 also preserves four tombstones and restores two free slots; a new app starts empty
 and writes after exact approval. Native background retirement and v2-to-v3 migration
 remain unqualified. The [native first-claim crash](evidence/operator-native-first-claim-crash.json)
