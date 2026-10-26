@@ -10,10 +10,12 @@ import { observeWindow, startObserver, ownCompose, hardware, stackMetrics } from
 import { writeFixture } from '../capacity/write-fixture.mjs';
 import { reconcileWrites } from '../capacity/write-ledger.mjs';
 import { paddedUpload } from '../capacity/padded-upload.mjs';
+import { writeServingOptions } from '../capacity/serving-options.mjs';
 
-await selectedHostTrial(process.argv[2], 'Paced D1 writes on the frozen local two-fleet family: one approved app versus an idle approved peer, concurrent maximum peer uploads, peer approval, controller interruption, response/ledger reconciliation and an explicit post-commit error control. No mutation replay, density limit, cross-host or power-loss durability claim.', async context => {
+const options = writeServingOptions(process.argv.slice(2));
+await selectedHostTrial(options.output, 'Paced D1 writes on the explicitly selected local two-fleet family: one approved app versus an idle approved peer, concurrent maximum peer uploads, peer approval, controller interruption, response/ledger reconciliation and an explicit post-commit error control. No mutation replay, density limit, cross-host or power-loss durability claim.', async context => {
   const { source: host, evidence } = context, f = await fixtures(host), observer = `${host.project}-observer`;
-  evidence.hardware = await hardware(host); evidence.phases = {}; evidence.postCommitErrorControl = f.control;
+  evidence.hardware = await hardware(host); evidence.routing = host.policy.routing ?? 'legacy'; evidence.phases = {}; evidence.postCommitErrorControl = f.control;
   evidence.submissions = f.submissions; evidence.baseline = f.baseline;
   await startObserver(host, observer, f.fleet);
   const settings = { targets: { gateway: 'workerd', direct: f.fleet.nodes[0].host }, ca: await readFile(host.env.NODE_EXTRA_CA_CERTS, 'utf8'), concurrency: 2, maxDurationMs: 300000 };
@@ -34,12 +36,16 @@ await selectedHostTrial(process.argv[2], 'Paced D1 writes on the frozen local tw
     const peerRows = await f.request('/api/write-probe', { app: 'peer' });
     if (name === 'one-app') assert.equal(peerRows.status, 404); else { assert.notEqual(state.apps.baseline.slot, state.apps.peer.slot); assert.equal(peerRows.status, 200); assert.deepEqual(peerRows.json(), []); }
     if (['one-app', 'two-apps', 'recovered'].includes(name)) { assert.equal(report.summaries.direct.errors, 0); assert.equal(report.summaries.gateway.errors, 0); }
-    if (name === 'controller-outage') assert.ok(report.interference.overlappingRequests.gateway.statuses[503] > 0);
+    if (name === 'controller-outage') {
+      assert.equal(report.summaries.direct.errors, 0);
+      if (host.policy.routing === 'durable') assert.equal(report.summaries.gateway.errors, 0);
+      else assert.ok(report.interference.overlappingRequests.gateway.statuses[503] > 0);
+    }
   }
   evidence.privacy = await scanPublicSurfaces(host, (path, options = {}) => f.request(path, { ...options, maxResponseBytes: path.endsWith('/artifact') ? 64 * 1024 ** 2 : 4 * 1024 ** 2 }), f.submissions, f.tokens.builder, [], evidence);
   context.phase = 'clean-shutdown'; evidence.shutdown = await stopSelectedHost(host); host.closed = true;
   return f;
-}, 'public');
+}, options.enrollment, options.hostOptions);
 
 async function fixtures(host) {
   const request = await httpsClient(host); await waitFor('write measurement owner API', async () => (await request('/v1/admin')).status === 200);

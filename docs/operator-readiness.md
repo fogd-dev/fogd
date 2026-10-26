@@ -195,9 +195,13 @@ two-fleet read workload during maximum-size uploads, peer activation and control
 interruption. It compares the complete gateway path with one direct replica and
 retains raw errors and resource counters. The [write workload](serving-measurement.md#write-workload-and-response-reconciliation)
 adds response/ledger reconciliation with one writing app and an idle or deploying
-peer. Its corrected local trial failed the native storage-health check with
-HTTP 507 responses and low Docker backing-filesystem headroom, so write-performance
-acceptance remains open. Broader app-count, concurrent-app write-load and density
+peer. Its corrected legacy-family trial failed the native storage-health check with
+HTTP 507 responses and low Docker backing-filesystem headroom. Two
+[durable candidate write runs](evidence/operator-durable-write-serving-local.json)
+pass the bounded workload with 11,672 acknowledged writes present in first ledger
+reads, zero sampled write errors through controller interruption and complete native
+health checks. Ordinary candidate admission and the legacy repeat remain open.
+Broader app-count, concurrent-app write-load and density
 acceptance below remain open.
 
 Measure end-to-end latency, throughput, memory, and failure behavior across the

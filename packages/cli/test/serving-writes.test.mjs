@@ -4,6 +4,28 @@ import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
 import { observeServing, summarizeRequests } from '../../../scripts/capacity/serving-observer.mjs';
 import { reconcileWrites } from '../../../scripts/capacity/write-ledger.mjs';
+import { writeServingOptions } from '../../../scripts/capacity/serving-options.mjs';
+
+test('write qualification defaults to the qualified legacy runtime', () => {
+  assert.deepEqual(writeServingOptions(['/private/fresh']), { output: '/private/fresh', enrollment: 'public',
+    hostOptions: { runtime: 'celld-cron-v2-linux-arm64', retainResources: false } });
+});
+test('explicit candidate write qualification can retain all owned resources', () => {
+  const runtime = 'celld-durable-v3-linux-arm64';
+  assert.deepEqual(writeServingOptions(['--runtime', runtime, '--candidate', '--retain-resources', '/private/fresh']), {
+    output: '/private/fresh', enrollment: 'candidate', hostOptions: { runtime, retainResources: true },
+  });
+});
+for (const [name, args, error] of [
+  ['ordinary candidate admission', ['--runtime', 'celld-durable-v3-linux-arm64', '/private/fresh'], /ordinary enrollment remains closed/],
+  ['implicit candidate runtime', ['--candidate', '/private/fresh'], /explicit runtime family/],
+  ['unshipped candidate', ['--runtime', 'unshipped', '--candidate', '/private/fresh'], /Unknown shipped/],
+  ['missing output', [], /one new private output directory/],
+  ['multiple outputs', ['one', 'two'], /one new private output directory/],
+  ['unknown option', ['--unknown', 'one'], /Unknown option/],
+]) test(`write qualification refuses ${name}`, () => {
+  assert.throws(() => writeServingOptions(args), error);
+});
 
 async function server(t, respond) {
   const received = [], instance = createServer(async (req, res) => {

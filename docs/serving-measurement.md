@@ -77,8 +77,8 @@ The recorded start time identifies the reset after the deliberate restart. Obser
 counters are also cumulative for its container. Compare counter deltas only within
 the same start interval.
 
-Gateway errors during controller interruption are expected evidence of the current
-routing dependency. Direct reads must continue and recovered gateway reads must
+Gateway errors during controller interruption are expected evidence of the default
+legacy family's routing dependency. Direct reads must continue and recovered gateway reads must
 succeed. Upload/activation errors remain in the report; they are not filtered out
 or converted into a passing availability claim. No routing cache or approval/pause
 semantics change is part of this probe.
@@ -178,7 +178,7 @@ resources are start-of-run snapshots; the host and VM are shared with other work
 CPU limits do not establish per-worker isolation or CPU budgets. This paced workload
 measures neither saturation nor the maximum safe number of applications.
 
-### Current write-run status
+### Legacy write-run status
 
 The [write evidence record](evidence/operator-write-serving-local.json) records no
 accepted write-performance baseline. The corrected trial completed all seven
@@ -199,3 +199,64 @@ An earlier reported pass used ledger polling and is rejected as measurement
 evidence. Another attempt failed on missing test-certificate hostname coverage;
 the test certificate now covers the peer and TLS verification stays enabled.
 All attempt volumes and raw diagnostics remain retained.
+
+### Durable candidate write observations
+
+The [durable write evidence](evidence/operator-durable-write-serving-local.json)
+records two completed native runs with fresh installations of
+`celld-durable-v3-linux-arm64`. Explicit internal qualification uses:
+
+```sh
+node scripts/operator/serving-writes.mjs --runtime celld-durable-v3-linux-arm64 \
+  --candidate --retain-resources /private/new-write-observation
+```
+
+Candidate qualification requires an explicit shipped family. Omitting `--candidate`
+refuses this family under ordinary admission. The default command still selects
+the qualified legacy family. `--retain-resources` stops the probe's containers and
+observer while keeping its containers, networks and volumes, including on failure.
+It does not stop existing installations. Without that flag, cleanup removes only
+the probe's containers and networks and retains all volumes.
+
+Both runs used a shared Linux arm64 Docker engine with two vCPUs, approximately
+5.8 GiB of memory, classic overlay2 and 21 unrelated running containers. The
+physical host was also busy; recorded one-minute load averages were 33.65 and
+20.14 at the workload snapshots. Docker backing-filesystem observations during
+uploads retained 26.84 and 26.70 GB available. These are shared-host observations,
+not isolated performance comparisons with the earlier legacy runs.
+
+The seven write phases acknowledged 5,998 and 5,674 operations. Every acknowledged
+operation appeared in the first ledger read after its phase. Each run's separate
+post-commit HTTP 502 control also appeared as committed. Neither run had a sampled
+write error or another unknown outcome. Raw observer exits, summaries, seven ledger
+snapshots per run, archived source hashes, native logs and retained container
+identities were checked independently of the reported pass. Native shutdown and
+storage-error checks passed. The inventories of 248 and 257 unrelated containers
+remained unchanged from fixture preparation through shutdown.
+
+The table gives the range of the two runs' whole-phase p95 values, including body
+consumption. These ranges are not confidence intervals or isolated ingress costs.
+
+| Phase | Gateway p95, ms | Direct p95, ms | Errors on either path |
+| --- | ---: | ---: | ---: |
+| One approved app | 21.21–52.22 | 18.77–37.76 | 0 |
+| Peer approval | 29.54–63.12 | 24.35–52.54 | 0 |
+| Two approved apps, peer idle | 35.41–78.97 | 27.63–60.08 | 0 |
+| Two 32 MiB uploads | 34.21–79.98 | 20.88–59.29 | 0 |
+| Peer activation | 30.80–53.92 | 22.67–43.66 | 0 |
+| Controller interruption | 15.82–50.77 | 11.19–39.04 | 0 |
+| Recovered writes | 15.70–86.38 | 12.16–62.21 | 0 |
+
+Durable routing requires zero sampled errors on both paths during controller
+interruption. Its unchanged approved app kept serving throughout both 30-second
+observation windows; the recorded stop/start action intervals were 5.74 and
+5.76 seconds. The baseline approval remained unchanged and the peer's table stayed
+empty. Each run retained eight installation containers, one stopped observer, three
+networks and eleven volumes.
+
+This accepts the bounded candidate workload, while the failed legacy write trial
+remains unaccepted. It does not open ordinary candidate admission or qualify
+concurrent application writers, broader app counts, saturation, density limits,
+separate-machine operation or production availability. Container CPU limits do not
+establish per-worker budgets. The variation between runs is another reason to
+retain the workload and resource records rather than choose a capacity limit here.

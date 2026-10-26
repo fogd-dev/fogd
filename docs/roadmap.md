@@ -53,7 +53,11 @@ these current gaps:
   decide app density and routing architecture; caching needs an explicit approval
   and pause contract. The [paired serving probe](serving-measurement.md) now
   exercises local two-fleet reads during uploads, peer activation and controller
-  interruption. [Native candidate restart and crash checks](evidence/operator-native-route-crashes.json)
+  interruption. Two [native candidate write runs](evidence/operator-durable-write-serving-local.json)
+  retain all 11,672 acknowledged writes in first ledger reads and sample no errors
+  during peer uploads, activation or controller interruption. Broader application
+  counts, concurrent application writers and density limits remain open.
+  [Native candidate restart and crash checks](evidence/operator-native-route-crashes.json)
   cover paused/resumed authority and recovery; the
   [gateway restart drill](evidence/operator-native-gateway-restart.json) covers serving
   through controller loss. Eight [native update crash cases](evidence/operator-native-activation-crashes.json)

@@ -1,0 +1,2164 @@
+{
+  "scope": "Two native durable-candidate paced write observations on one shared Linux arm64 Docker engine. No ordinary candidate admission, saturation, density limit, separate-machine, power-loss durability or production availability qualification.",
+  "nativeAcceptance": "passed-bounded-workload",
+  "runtimeFamily": "celld-durable-v3-linux-arm64",
+  "routing": "durable",
+  "ordinaryAdmission": "closed",
+  "workload": {
+    "writingApps": 1,
+    "approvedApps": [
+      1,
+      2
+    ],
+    "peer": "idle, uploading or activating",
+    "workersPerPath": 2,
+    "delayAfterCompletionMs": 100,
+    "requestDeadlineMs": 5000,
+    "observerCpuLimit": 1,
+    "observerMemoryBytes": 134217728,
+    "maxConcurrentPeerUploads": 2,
+    "artifactBytesEach": 33554432,
+    "mutationReplay": false,
+    "firstLedgerReadsPerPhase": 1,
+    "postCommitErrorControlStatus": 502
+  },
+  "runs": [
+    {
+      "directory": "durable-write-serving-v3-20261026-01",
+      "baseCommit": "cd00d6434b2a0c06fb96487107036e8761f4e016",
+      "runtimeFamily": "celld-durable-v3-linux-arm64",
+      "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+      "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+      "hardware": {
+        "hostNode": "v26.2.0",
+        "host": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "cpus": 10,
+          "totalMemoryBytes": 68719476736,
+          "availableMemoryBytes": 206553088,
+          "loadAverage": [
+            33.65185546875,
+            30.33642578125,
+            24.94970703125
+          ]
+        },
+        "engine": {
+          "version": "29.5.2",
+          "os": "linux",
+          "architecture": "aarch64",
+          "cpus": 2,
+          "memoryBytes": 6199001088,
+          "driver": "overlay2"
+        },
+        "observer": {
+          "memoryBytes": 134217728,
+          "cpuLimit": 1
+        },
+        "unrelatedContainers": 21
+      },
+      "attemptsIncludingControl": 5999,
+      "finalReconciliation": {
+        "attempts": 5999,
+        "committed": 5999,
+        "acknowledged": 5998,
+        "acknowledgedMissing": [],
+        "unacknowledgedCommitted": [
+          {
+            "writeId": "post-commit-error-control",
+            "status": 502
+          }
+        ],
+        "unacknowledgedAbsent": []
+      },
+      "phases": {
+        "one-app": {
+          "summaries": {
+            "gateway": {
+              "requests": 180,
+              "errors": 0,
+              "statuses": {
+                "200": 180
+              },
+              "latencyMs": {
+                "p50": 9.745138999999654,
+                "p95": 21.208213999999998,
+                "p99": 51.316028,
+                "max": 53.79915899999992
+              }
+            },
+            "direct": {
+              "requests": 186,
+              "errors": 0,
+              "statuses": {
+                "200": 186
+              },
+              "latencyMs": {
+                "p50": 6.070807999999943,
+                "p95": 18.771716999999626,
+                "p99": 32.51617400000032,
+                "max": 36.63702699999976
+              }
+            }
+          },
+          "attempts": 366,
+          "reconciliation": {
+            "attempts": 366,
+            "committed": 366,
+            "acknowledged": 366,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:07:59.457Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 9.429125000002387
+          },
+          "observedSeconds": 10.113475853,
+          "interferenceSeconds": null
+        },
+        "peer-approval": {
+          "summaries": {
+            "gateway": {
+              "requests": 791,
+              "errors": 0,
+              "statuses": {
+                "200": 791
+              },
+              "latencyMs": {
+                "p50": 9.99316700000054,
+                "p95": 29.53628700000263,
+                "p99": 66.37027899999885,
+                "max": 105.53728299999784
+              }
+            },
+            "direct": {
+              "requests": 818,
+              "errors": 0,
+              "statuses": {
+                "200": 818
+              },
+              "latencyMs": {
+                "p50": 6.63657400000011,
+                "p95": 24.34615500000109,
+                "p99": 47.444587999998475,
+                "max": 70.20469199999934
+              }
+            }
+          },
+          "attempts": 1609,
+          "reconciliation": {
+            "attempts": 1609,
+            "committed": 1609,
+            "acknowledged": 1609,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:08:45.336Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 15.905291000002762
+          },
+          "observedSeconds": 45.04466835,
+          "interferenceSeconds": 2.584049544
+        },
+        "two-apps": {
+          "summaries": {
+            "gateway": {
+              "requests": 176,
+              "errors": 0,
+              "statuses": {
+                "200": 176
+              },
+              "latencyMs": {
+                "p50": 9.342843999999786,
+                "p95": 35.41390500000034,
+                "p99": 43.470328999999765,
+                "max": 49.64070999999967
+              }
+            },
+            "direct": {
+              "requests": 180,
+              "errors": 0,
+              "statuses": {
+                "200": 180
+              },
+              "latencyMs": {
+                "p50": 7.159791000000041,
+                "p95": 27.633193000000006,
+                "p99": 33.56436600000052,
+                "max": 70.14944100000002
+              }
+            }
+          },
+          "attempts": 356,
+          "reconciliation": {
+            "attempts": 356,
+            "committed": 356,
+            "acknowledged": 356,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:08:56.248Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 17.728541999997105
+          },
+          "observedSeconds": 10.068420302999998,
+          "interferenceSeconds": null
+        },
+        "uploads": {
+          "summaries": {
+            "gateway": {
+              "requests": 354,
+              "errors": 0,
+              "statuses": {
+                "200": 354
+              },
+              "latencyMs": {
+                "p50": 8.911527000000206,
+                "p95": 34.21111300000001,
+                "p99": 61.38193200000023,
+                "max": 75.05831199999989
+              }
+            },
+            "direct": {
+              "requests": 368,
+              "errors": 0,
+              "statuses": {
+                "200": 368
+              },
+              "latencyMs": {
+                "p50": 5.4979070000008505,
+                "p95": 20.876629999999977,
+                "p99": 46.193951000000006,
+                "max": 68.91844700000001
+              }
+            }
+          },
+          "attempts": 722,
+          "reconciliation": {
+            "attempts": 722,
+            "committed": 722,
+            "acknowledged": 722,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:09:17.110Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 18.13187499999185
+          },
+          "observedSeconds": 20.088604521,
+          "interferenceSeconds": 1.6377131350000003
+        },
+        "activation": {
+          "summaries": {
+            "gateway": {
+              "requests": 790,
+              "errors": 0,
+              "statuses": {
+                "200": 790
+              },
+              "latencyMs": {
+                "p50": 10.326110999998491,
+                "p95": 30.798015000000305,
+                "p99": 62.065363999998226,
+                "max": 107.05871499999921
+              }
+            },
+            "direct": {
+              "requests": 819,
+              "errors": 0,
+              "statuses": {
+                "200": 819
+              },
+              "latencyMs": {
+                "p50": 6.998112999999648,
+                "p95": 22.673335999999836,
+                "p99": 50.49532800000088,
+                "max": 95.73875899999985
+              }
+            }
+          },
+          "attempts": 1609,
+          "reconciliation": {
+            "attempts": 1609,
+            "committed": 1609,
+            "acknowledged": 1609,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:10:03.065Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 26.461333000013838
+          },
+          "observedSeconds": 45.110973458000004,
+          "interferenceSeconds": 1.5177100669999999
+        },
+        "controller-outage": {
+          "summaries": {
+            "gateway": {
+              "requests": 499,
+              "errors": 0,
+              "statuses": {
+                "200": 499
+              },
+              "latencyMs": {
+                "p50": 15.079166000000441,
+                "p95": 50.77448000000004,
+                "p99": 97.4554879999996,
+                "max": 242.71779600000082
+              }
+            },
+            "direct": {
+              "requests": 524,
+              "errors": 0,
+              "statuses": {
+                "200": 524
+              },
+              "latencyMs": {
+                "p50": 9.782177999999476,
+                "p95": 39.04452200000014,
+                "p99": 74.28220800000054,
+                "max": 112.51934799999799
+              }
+            }
+          },
+          "attempts": 1023,
+          "reconciliation": {
+            "attempts": 1023,
+            "committed": 1023,
+            "acknowledged": 1023,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:10:33.995Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 32.87083299999358
+          },
+          "observedSeconds": 30.097654346,
+          "interferenceSeconds": 5.737007172
+        },
+        "recovered": {
+          "summaries": {
+            "gateway": {
+              "requests": 150,
+              "errors": 0,
+              "statuses": {
+                "200": 150
+              },
+              "latencyMs": {
+                "p50": 27.067385000000286,
+                "p95": 86.38043000000016,
+                "p99": 135.1038349999999,
+                "max": 158.06291799999963
+              }
+            },
+            "direct": {
+              "requests": 163,
+              "errors": 0,
+              "statuses": {
+                "200": 163
+              },
+              "latencyMs": {
+                "p50": 17.71330899999998,
+                "p95": 62.213303999999994,
+                "p99": 101.25609900000018,
+                "max": 150.9105810000001
+              }
+            }
+          },
+          "attempts": 313,
+          "reconciliation": {
+            "attempts": 313,
+            "committed": 313,
+            "acknowledged": 313,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:10:45.016Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 31.14687500000582
+          },
+          "observedSeconds": 10.102718023,
+          "interferenceSeconds": null
+        }
+      },
+      "readControl": {
+        "gateway": {
+          "requests": 56,
+          "errors": 0,
+          "statuses": {
+            "200": 56
+          },
+          "latencyMs": {
+            "p50": 5.553627000000006,
+            "p95": 13.904297999999983,
+            "p99": 49.494465000000005,
+            "max": 49.494465000000005
+          }
+        },
+        "direct": {
+          "requests": 58,
+          "errors": 0,
+          "statuses": {
+            "200": 58
+          },
+          "latencyMs": {
+            "p50": 2.882746999999995,
+            "p95": 9.658445999999998,
+            "p99": 31.366313000000005,
+            "max": 31.366313000000005
+          }
+        }
+      },
+      "controllerPeakBytes": 329412608,
+      "resourceCounters": {
+        "one-app": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:07:24.85772079Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "59834368",
+                "memory.peak": "66482176",
+                "cpu.stat": "usage_usec 719371\nuser_usec 563474\nsystem_usec 155897\ncore_sched.force_idle_usec 0\nnr_periods 64\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "93741056",
+                "memory.peak": "95031296",
+                "cpu.stat": "usage_usec 749179\nuser_usec 560425\nsystem_usec 188754\ncore_sched.force_idle_usec 0\nnr_periods 98\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "75218944",
+                "memory.peak": "76730368",
+                "cpu.stat": "usage_usec 1359183\nuser_usec 1059633\nsystem_usec 299550\ncore_sched.force_idle_usec 0\nnr_periods 194\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "44584960",
+                "memory.peak": "54030336",
+                "cpu.stat": "usage_usec 929651\nuser_usec 736942\nsystem_usec 192709\ncore_sched.force_idle_usec 0\nnr_periods 189\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "5685248",
+                "memory.peak": "10362880",
+                "cpu.stat": "usage_usec 413248\nuser_usec 371725\nsystem_usec 41522\ncore_sched.force_idle_usec 0\nnr_periods 25\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "5578752",
+                "memory.peak": "10420224",
+                "cpu.stat": "usage_usec 414668\nuser_usec 375979\nsystem_usec 38689\ncore_sched.force_idle_usec 0\nnr_periods 23\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "30920704",
+                "memory.peak": "32321536",
+                "cpu.stat": "usage_usec 366639\nuser_usec 288006\nsystem_usec 78633\ncore_sched.force_idle_usec 0\nnr_periods 143\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "25948160",
+            "memory.peak": "30519296",
+            "cpu.stat": "usage_usec 262169\nuser_usec 218474\nsystem_usec 43694\ncore_sched.force_idle_usec 0\nnr_periods 35\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31256576",
+            "memory.peak": "31330304",
+            "cpu.stat": "usage_usec 573615\nuser_usec 482124\nsystem_usec 91490\ncore_sched.force_idle_usec 0\nnr_periods 137\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "peer-approval": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:07:24.85772079Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54235136",
+                "memory.peak": "70483968",
+                "cpu.stat": "usage_usec 902188\nuser_usec 689672\nsystem_usec 212515\ncore_sched.force_idle_usec 0\nnr_periods 89\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "149311488",
+                "memory.peak": "150724608",
+                "cpu.stat": "usage_usec 1158624\nuser_usec 810055\nsystem_usec 348569\ncore_sched.force_idle_usec 0\nnr_periods 290\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "72732672",
+                "memory.peak": "90218496",
+                "cpu.stat": "usage_usec 4236806\nuser_usec 3054895\nsystem_usec 1181910\ncore_sched.force_idle_usec 0\nnr_periods 652\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "51920896",
+                "memory.peak": "54931456",
+                "cpu.stat": "usage_usec 2153093\nuser_usec 1478346\nsystem_usec 674747\ncore_sched.force_idle_usec 0\nnr_periods 645\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "37531648",
+                "memory.peak": "52555776",
+                "cpu.stat": "usage_usec 786438\nuser_usec 619709\nsystem_usec 166728\ncore_sched.force_idle_usec 0\nnr_periods 258\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "26931200",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 732887\nuser_usec 586512\nsystem_usec 146375\ncore_sched.force_idle_usec 0\nnr_periods 257\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "46575616",
+                "memory.peak": "47562752",
+                "cpu.stat": "usage_usec 1420161\nuser_usec 1184607\nsystem_usec 235553\ncore_sched.force_idle_usec 0\nnr_periods 597\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26169344",
+            "memory.peak": "31330304",
+            "cpu.stat": "usage_usec 641420\nuser_usec 539706\nsystem_usec 101713\ncore_sched.force_idle_usec 0\nnr_periods 140\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "36917248",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 1912426\nuser_usec 1641300\nsystem_usec 271126\ncore_sched.force_idle_usec 0\nnr_periods 590\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "two-apps": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:07:24.85772079Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54251520",
+                "memory.peak": "70483968",
+                "cpu.stat": "usage_usec 911253\nuser_usec 696722\nsystem_usec 214530\ncore_sched.force_idle_usec 0\nnr_periods 91\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "158965760",
+                "memory.peak": "160456704",
+                "cpu.stat": "usage_usec 1238686\nuser_usec 862339\nsystem_usec 376347\ncore_sched.force_idle_usec 0\nnr_periods 335\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "82874368",
+                "memory.peak": "90218496",
+                "cpu.stat": "usage_usec 4816489\nuser_usec 3455777\nsystem_usec 1360712\ncore_sched.force_idle_usec 0\nnr_periods 760\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "50700288",
+                "memory.peak": "54931456",
+                "cpu.stat": "usage_usec 2384043\nuser_usec 1614175\nsystem_usec 769867\ncore_sched.force_idle_usec 0\nnr_periods 752\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "52150272",
+                "memory.peak": "58568704",
+                "cpu.stat": "usage_usec 888427\nuser_usec 688758\nsystem_usec 199669\ncore_sched.force_idle_usec 0\nnr_periods 316\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "26853376",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 766969\nuser_usec 609720\nsystem_usec 157248\ncore_sched.force_idle_usec 0\nnr_periods 305\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "49614848",
+                "memory.peak": "50814976",
+                "cpu.stat": "usage_usec 1630430\nuser_usec 1366089\nsystem_usec 264340\ncore_sched.force_idle_usec 0\nnr_periods 702\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26230784",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 1979412\nuser_usec 1695157\nsystem_usec 284255\ncore_sched.force_idle_usec 0\nnr_periods 593\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31256576",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 2291922\nuser_usec 1968998\nsystem_usec 322924\ncore_sched.force_idle_usec 0\nnr_periods 693\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "uploads": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:07:24.85772079Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "244416512",
+                "memory.peak": "329412608",
+                "cpu.stat": "usage_usec 1842263\nuser_usec 1223922\nsystem_usec 618340\ncore_sched.force_idle_usec 0\nnr_periods 114\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "176332800",
+                "memory.peak": "177602560",
+                "cpu.stat": "usage_usec 1385742\nuser_usec 954622\nsystem_usec 431119\ncore_sched.force_idle_usec 0\nnr_periods 411\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "82743296",
+                "memory.peak": "90218496",
+                "cpu.stat": "usage_usec 5979029\nuser_usec 4259542\nsystem_usec 1719486\ncore_sched.force_idle_usec 0\nnr_periods 968\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54079488",
+                "memory.peak": "55517184",
+                "cpu.stat": "usage_usec 2888630\nuser_usec 1909333\nsystem_usec 979297\ncore_sched.force_idle_usec 0\nnr_periods 957\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "39022592",
+                "memory.peak": "58568704",
+                "cpu.stat": "usage_usec 958198\nuser_usec 728556\nsystem_usec 229642\ncore_sched.force_idle_usec 0\nnr_periods 414\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "26923008",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 827496\nuser_usec 649219\nsystem_usec 178277\ncore_sched.force_idle_usec 0\nnr_periods 403\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54861824",
+                "memory.peak": "56303616",
+                "cpu.stat": "usage_usec 2036363\nuser_usec 1727526\nsystem_usec 308836\ncore_sched.force_idle_usec 0\nnr_periods 907\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26632192",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 2349954\nuser_usec 2010807\nsystem_usec 339147\ncore_sched.force_idle_usec 0\nnr_periods 695\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "35627008",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 3065059\nuser_usec 2624515\nsystem_usec 440543\ncore_sched.force_idle_usec 0\nnr_periods 896\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "activation": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:07:24.85772079Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "239689728",
+                "memory.peak": "329412608",
+                "cpu.stat": "usage_usec 2463669\nuser_usec 1698409\nsystem_usec 765260\ncore_sched.force_idle_usec 0\nnr_periods 139\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "237768704",
+                "memory.peak": "239149056",
+                "cpu.stat": "usage_usec 1872405\nuser_usec 1277323\nsystem_usec 595082\ncore_sched.force_idle_usec 0\nnr_periods 601\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "105009152",
+                "memory.peak": "106774528",
+                "cpu.stat": "usage_usec 8552019\nuser_usec 6022548\nsystem_usec 2529470\ncore_sched.force_idle_usec 0\nnr_periods 1428\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54390784",
+                "memory.peak": "55861248",
+                "cpu.stat": "usage_usec 3984023\nuser_usec 2542721\nsystem_usec 1441302\ncore_sched.force_idle_usec 0\nnr_periods 1414\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "46092288",
+                "memory.peak": "75091968",
+                "cpu.stat": "usage_usec 1234439\nuser_usec 952665\nsystem_usec 281774\ncore_sched.force_idle_usec 0\nnr_periods 639\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "35778560",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 996509\nuser_usec 767990\nsystem_usec 228518\ncore_sched.force_idle_usec 0\nnr_periods 613\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "68247552",
+                "memory.peak": "69795840",
+                "cpu.stat": "usage_usec 2986020\nuser_usec 2554451\nsystem_usec 431569\ncore_sched.force_idle_usec 0\nnr_periods 1362\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "25878528",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 3121080\nuser_usec 2669413\nsystem_usec 451666\ncore_sched.force_idle_usec 0\nnr_periods 898\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "37519360",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 4380221\nuser_usec 3795498\nsystem_usec 584723\ncore_sched.force_idle_usec 0\nnr_periods 1349\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "controller-outage": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:10:08.354020676Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "38428672",
+                "memory.peak": "39919616",
+                "cpu.stat": "usage_usec 223754\nuser_usec 184840\nsystem_usec 38913\ncore_sched.force_idle_usec 0\nnr_periods 12\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "251281408",
+                "memory.peak": "252784640",
+                "cpu.stat": "usage_usec 2119305\nuser_usec 1433589\nsystem_usec 685716\ncore_sched.force_idle_usec 0\nnr_periods 720\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "116592640",
+                "memory.peak": "118099968",
+                "cpu.stat": "usage_usec 10514941\nuser_usec 7357387\nsystem_usec 3157553\ncore_sched.force_idle_usec 0\nnr_periods 1738\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "56074240",
+                "memory.peak": "61104128",
+                "cpu.stat": "usage_usec 4802799\nuser_usec 3048879\nsystem_usec 1753919\ncore_sched.force_idle_usec 0\nnr_periods 1721\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "46198784",
+                "memory.peak": "75091968",
+                "cpu.stat": "usage_usec 1378373\nuser_usec 1052351\nsystem_usec 326022\ncore_sched.force_idle_usec 0\nnr_periods 801\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "35770368",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 1089906\nuser_usec 821605\nsystem_usec 268300\ncore_sched.force_idle_usec 0\nnr_periods 763\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "76005376",
+                "memory.peak": "77488128",
+                "cpu.stat": "usage_usec 3626878\nuser_usec 3100331\nsystem_usec 526546\ncore_sched.force_idle_usec 0\nnr_periods 1668\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26304512",
+            "memory.peak": "48590848",
+            "cpu.stat": "usage_usec 4441471\nuser_usec 3837564\nsystem_usec 603907\ncore_sched.force_idle_usec 0\nnr_periods 1352\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "37203968",
+            "memory.peak": "48971776",
+            "cpu.stat": "usage_usec 5425577\nuser_usec 4668690\nsystem_usec 756887\ncore_sched.force_idle_usec 0\nnr_periods 1653\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "recovered": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:10:08.354020676Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "38424576",
+                "memory.peak": "39919616",
+                "cpu.stat": "usage_usec 236214\nuser_usec 192908\nsystem_usec 43305\ncore_sched.force_idle_usec 0\nnr_periods 19\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:07:22.152756885Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "256315392",
+                "memory.peak": "257650688",
+                "cpu.stat": "usage_usec 2219944\nuser_usec 1497986\nsystem_usec 721957\ncore_sched.force_idle_usec 0\nnr_periods 771\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:07:24.144168533Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "115085312",
+                "memory.peak": "118161408",
+                "cpu.stat": "usage_usec 11131160\nuser_usec 7786899\nsystem_usec 3344261\ncore_sched.force_idle_usec 0\nnr_periods 1847\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:07:24.300689501Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "55738368",
+                "memory.peak": "61104128",
+                "cpu.stat": "usage_usec 5099756\nuser_usec 3232837\nsystem_usec 1866919\ncore_sched.force_idle_usec 0\nnr_periods 1828\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:07:24.466176149Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "63119360",
+                "memory.peak": "75091968",
+                "cpu.stat": "usage_usec 1464148\nuser_usec 1116180\nsystem_usec 347967\ncore_sched.force_idle_usec 0\nnr_periods 853\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:07:24.654459543Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "35803136",
+                "memory.peak": "50642944",
+                "cpu.stat": "usage_usec 1150269\nuser_usec 866436\nsystem_usec 283832\ncore_sched.force_idle_usec 0\nnr_periods 815\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:07:27.417514254Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "79081472",
+                "memory.peak": "80338944",
+                "cpu.stat": "usage_usec 3820894\nuser_usec 3256467\nsystem_usec 564427\ncore_sched.force_idle_usec 0\nnr_periods 1774\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26091520",
+            "memory.peak": "48971776",
+            "cpu.stat": "usage_usec 5499865\nuser_usec 4719683\nsystem_usec 780181\ncore_sched.force_idle_usec 0\nnr_periods 1656\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31211520",
+            "memory.peak": "48971776",
+            "cpu.stat": "usage_usec 5770676\nuser_usec 4960264\nsystem_usec 810412\ncore_sched.force_idle_usec 0\nnr_periods 1757\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        }
+      },
+      "backingFilesystemObservation": {
+        "observedAt": "2026-10-26T16:09:49.162113+00:00",
+        "phase": "uploads",
+        "stdout": "Filesystem       1B-blocks       Used   Available Use% Mounted on\n/dev/vdb1      31524294656 3055218688 26841792512  11% /var/lib/docker\n",
+        "stderr": "",
+        "exitCode": 0
+      },
+      "independentChecks": {
+        "rawObserverExitCodesChecked": 8,
+        "sourceArchiveFilesChecked": 937,
+        "phaseLedgersRecomputed": 7,
+        "firstLedgerReadsPerPhase": 1,
+        "nativeLogCheckPassed": true,
+        "unrelatedContainersUnchanged": 248,
+        "retained": {
+          "project": "fogd-selected-activation-e4940162b101336a",
+          "containers": 8,
+          "observers": 1,
+          "networks": 3,
+          "volumes": 11
+        }
+      },
+      "rawSha256": {
+        "result.json": "94162a8f2bcb3d4e5010d22ac0adb8863f588a8999a6a9a7933a821db01b4ac1",
+        "runtime.log": "e2527386cff03b78d9f79c181d9b43c40ec14b4f8f1e855b8824d6a20b8dde1a",
+        "executed-source-inventory.json": "a2597e5d72d968bddcfad715fe8b3d1bfba5db71ad6e21ecbe3782aa2b7a5c1d",
+        "post-write-privacy.json": "36ba9bfb5d9249223d91741c7068393c345db2c8ee6ca3c7ab268f14a552f9dd",
+        "independent-audit.json": "300815170e95170af8d8e75f2ad98163f58151089d9fd380ff001ad8c40a0b32",
+        "backing-space-during-run.json": "d3825ad36684b83d6861ce9dd42aacc932b20d364aa10eabb0b77f964780355e",
+        "unrelated-before-phases.json": "9653094b51b5734ac7b4bdc126b7d8c5bdefbccee981b2f28ef2fc5233ed4009",
+        "observer-read-control.json": "714e687909a141822512b76ea4ccf07da28b1009d5afe2f8ee0686fb309cfe2c",
+        "observer-one-app.json": "f9abecebf30910b93c7884d22fdc21a355282d118ed8ab94976d04a4ada928c6",
+        "observer-peer-approval.json": "5824e8baa27627a1cbd5f527881c386c1a31c2e27ecf47ab5e842ff6fe6422b9",
+        "observer-two-apps.json": "87d79e6a06c9a632f7b89962a2b219b376e5d5cdb88b43b39cd0902e8b43af9d",
+        "observer-uploads.json": "deee23916b74a9b8336d37f89b81f59aee229500319497b261a8fdc2dbc6f78d",
+        "observer-activation.json": "f8e78004b5300e6c550e325cc1816f5f430fa98f113499b36c984f144e63e389",
+        "observer-controller-outage.json": "c33bfac55708ba2c4b2661572fe140f4c9441e5eeea1bc2ee5d08e5e851154a4",
+        "observer-recovered.json": "14a9d1501b7b07cba9e19a073eb2325dc73c2070b59d9eaaef7202dbeb34d375"
+      },
+      "executedProbeSources": {
+        "scripts/capacity-comparison.mjs": "84e5caa80013997ea6fef5ef52f513356d543c0d4272e96ac4b181fe59d57d3e",
+        "scripts/capacity.mjs": "e5cdce7d88948cdb689c861f2ba7e151373e002a0c052cd5ba7c4762c3a8d138",
+        "scripts/capacity/load.mjs": "6978b63178b6b999c53dd853b524b49abc17c4cc9a26e6d02d3d4df01fdebc4e",
+        "scripts/capacity/metrics.mjs": "7d8a170637d89dd9117b21257dde5ae6c1cad91e320e013b7bc7684e73118cc6",
+        "scripts/capacity/padded-upload.mjs": "935e44f86e8bdc3c30f7bf09ad8134c0952fb60aeea42ad26e3d42b83872b74a",
+        "scripts/capacity/serving-host.mjs": "846e13d9137b3e39aef1c77104c4710d4454e07353f286e9b0cfb85789425281",
+        "scripts/capacity/serving-observer.mjs": "604e8a83ea620d8fd1421aa1a0268670afd05f80b7bf2690ef1f4eb23d4d34e2",
+        "scripts/capacity/serving-options.mjs": "41aa4ef8b930583d6472150008e32fb475a93a0a2c1e082b4a46ddf50f1515cf",
+        "scripts/capacity/serving-session.mjs": "8d0e802189a606fcd54e64d2f0efc5a22438ab503bf41b83b11087d11e08b2a6",
+        "scripts/capacity/write-fixture.mjs": "04b94c2b6c12dd466c9d7f303864daab4069fd780f204a29b5556dbeefe485ea",
+        "scripts/capacity/write-ledger.mjs": "e797c6fa3a45afbab1936373a1cb450ab30847fc8f1a6abf64490e8f26e8478b",
+        "scripts/cron-probe/selected/host.mjs": "4cb5c9fc9396df6edad7b2fae415c1e6a78810ffe143f94c552477ad763ad0d1",
+        "scripts/cron-probe/selected/selected-trial.mjs": "73e73487e0b1189e0f70c4ba915bc7ae2e9844a924660375eec74b6333fcec62",
+        "scripts/cron-probe/selected/shutdown.mjs": "0db160eebc1d38e77fe769c0aa80b736dfd3cb95d3014caf176fde9e1cc411cb",
+        "scripts/operator/serving-writes.mjs": "d7b99377af892cc207051218b6312449a101ec898e8ad0c87e1a8b64dfac9129"
+      }
+    },
+    {
+      "directory": "durable-write-serving-v3-20261026-02",
+      "baseCommit": "cd00d6434b2a0c06fb96487107036e8761f4e016",
+      "runtimeFamily": "celld-durable-v3-linux-arm64",
+      "image": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+      "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+      "hardware": {
+        "hostNode": "v26.2.0",
+        "host": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "cpus": 10,
+          "totalMemoryBytes": 68719476736,
+          "availableMemoryBytes": 176242688,
+          "loadAverage": [
+            20.1416015625,
+            29.49560546875,
+            26.75537109375
+          ]
+        },
+        "engine": {
+          "version": "29.5.2",
+          "os": "linux",
+          "architecture": "aarch64",
+          "cpus": 2,
+          "memoryBytes": 6199001088,
+          "driver": "overlay2"
+        },
+        "observer": {
+          "memoryBytes": 134217728,
+          "cpuLimit": 1
+        },
+        "unrelatedContainers": 21
+      },
+      "attemptsIncludingControl": 5675,
+      "finalReconciliation": {
+        "attempts": 5675,
+        "committed": 5675,
+        "acknowledged": 5674,
+        "acknowledgedMissing": [],
+        "unacknowledgedCommitted": [
+          {
+            "writeId": "post-commit-error-control",
+            "status": 502
+          }
+        ],
+        "unacknowledgedAbsent": []
+      },
+      "phases": {
+        "one-app": {
+          "summaries": {
+            "gateway": {
+              "requests": 162,
+              "errors": 0,
+              "statuses": {
+                "200": 162
+              },
+              "latencyMs": {
+                "p50": 20.62909999999829,
+                "p95": 52.221433999999135,
+                "p99": 80.737191,
+                "max": 97.7823529999996
+              }
+            },
+            "direct": {
+              "requests": 168,
+              "errors": 0,
+              "statuses": {
+                "200": 168
+              },
+              "latencyMs": {
+                "p50": 16.449259000000012,
+                "p95": 37.76159400000006,
+                "p99": 63.16730200000001,
+                "max": 70.24509299999954
+              }
+            }
+          },
+          "attempts": 330,
+          "reconciliation": {
+            "attempts": 330,
+            "committed": 330,
+            "acknowledged": 330,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:12:34.240Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 8.658042000002752
+          },
+          "observedSeconds": 10.106983895,
+          "interferenceSeconds": null
+        },
+        "peer-approval": {
+          "summaries": {
+            "gateway": {
+              "requests": 693,
+              "errors": 0,
+              "statuses": {
+                "200": 693
+              },
+              "latencyMs": {
+                "p50": 25.02714399999968,
+                "p95": 63.121218000000226,
+                "p99": 96.68570199999886,
+                "max": 127.59188199999699
+              }
+            },
+            "direct": {
+              "requests": 729,
+              "errors": 0,
+              "statuses": {
+                "200": 729
+              },
+              "latencyMs": {
+                "p50": 20.31663000000026,
+                "p95": 52.535218999997596,
+                "p99": 82.86279099999956,
+                "max": 111.01497100000051
+              }
+            }
+          },
+          "attempts": 1422,
+          "reconciliation": {
+            "attempts": 1422,
+            "committed": 1422,
+            "acknowledged": 1422,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:13:20.093Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 14.513958000010462
+          },
+          "observedSeconds": 45.078551917999995,
+          "interferenceSeconds": 3.712695712
+        },
+        "two-apps": {
+          "summaries": {
+            "gateway": {
+              "requests": 146,
+              "errors": 0,
+              "statuses": {
+                "200": 146
+              },
+              "latencyMs": {
+                "p50": 33.762228999999934,
+                "p95": 78.97026000000005,
+                "p99": 117.00309099999959,
+                "max": 122.04429299999993
+              }
+            },
+            "direct": {
+              "requests": 157,
+              "errors": 0,
+              "statuses": {
+                "200": 157
+              },
+              "latencyMs": {
+                "p50": 24.225663000000168,
+                "p95": 60.07774700000027,
+                "p99": 86.0251870000011,
+                "max": 110.0207679999994
+              }
+            }
+          },
+          "attempts": 303,
+          "reconciliation": {
+            "attempts": 303,
+            "committed": 303,
+            "acknowledged": 303,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:13:31.113Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 13.449332999996841
+          },
+          "observedSeconds": 10.129426706,
+          "interferenceSeconds": null
+        },
+        "uploads": {
+          "summaries": {
+            "gateway": {
+              "requests": 300,
+              "errors": 0,
+              "statuses": {
+                "200": 300
+              },
+              "latencyMs": {
+                "p50": 27.721727999999985,
+                "p95": 79.97940000000017,
+                "p99": 106.06931299999997,
+                "max": 131.26376299999902
+              }
+            },
+            "direct": {
+              "requests": 318,
+              "errors": 0,
+              "statuses": {
+                "200": 318
+              },
+              "latencyMs": {
+                "p50": 20.927444999997533,
+                "p95": 59.28942500000085,
+                "p99": 93.78567700000008,
+                "max": 106.52420100000018
+              }
+            }
+          },
+          "attempts": 618,
+          "reconciliation": {
+            "attempts": 618,
+            "committed": 618,
+            "acknowledged": 618,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:13:51.976Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 16.209582999988925
+          },
+          "observedSeconds": 20.083446743,
+          "interferenceSeconds": 1.40465763
+        },
+        "activation": {
+          "summaries": {
+            "gateway": {
+              "requests": 741,
+              "errors": 0,
+              "statuses": {
+                "200": 741
+              },
+              "latencyMs": {
+                "p50": 16.129690000001574,
+                "p95": 53.92094100000031,
+                "p99": 88.63297200000034,
+                "max": 137.83216299999913
+              }
+            },
+            "direct": {
+              "requests": 770,
+              "errors": 0,
+              "statuses": {
+                "200": 770
+              },
+              "latencyMs": {
+                "p50": 12.1204089999992,
+                "p95": 43.6559529999995,
+                "p99": 66.06078999999954,
+                "max": 188.6055520000009
+              }
+            }
+          },
+          "attempts": 1511,
+          "reconciliation": {
+            "attempts": 1511,
+            "committed": 1511,
+            "acknowledged": 1511,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:14:37.949Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 25.00558400002774
+          },
+          "observedSeconds": 45.101588129999996,
+          "interferenceSeconds": 1.6524113240000002
+        },
+        "controller-outage": {
+          "summaries": {
+            "gateway": {
+              "requests": 550,
+              "errors": 0,
+              "statuses": {
+                "200": 550
+              },
+              "latencyMs": {
+                "p50": 7.599171999999953,
+                "p95": 15.82013999999981,
+                "p99": 42.717554,
+                "max": 54.38217900000018
+              }
+            },
+            "direct": {
+              "requests": 568,
+              "errors": 0,
+              "statuses": {
+                "200": 568
+              },
+              "latencyMs": {
+                "p50": 4.1600210000001425,
+                "p95": 11.191983000000619,
+                "p99": 24.20217600000001,
+                "max": 52.46976200000063
+              }
+            }
+          },
+          "attempts": 1118,
+          "reconciliation": {
+            "attempts": 1118,
+            "committed": 1118,
+            "acknowledged": 1118,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:15:08.837Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 25.48187499999767
+          },
+          "observedSeconds": 30.104674297000003,
+          "interferenceSeconds": 5.758715047
+        },
+        "recovered": {
+          "summaries": {
+            "gateway": {
+              "requests": 184,
+              "errors": 0,
+              "statuses": {
+                "200": 184
+              },
+              "latencyMs": {
+                "p50": 7.800539999999273,
+                "p95": 15.701987999999972,
+                "p99": 56.430285999999796,
+                "max": 60.562770999999884
+              }
+            },
+            "direct": {
+              "requests": 188,
+              "errors": 0,
+              "statuses": {
+                "200": 188
+              },
+              "latencyMs": {
+                "p50": 5.070631999999932,
+                "p95": 12.163006999999993,
+                "p99": 47.232294999999795,
+                "max": 47.59652100000039
+              }
+            }
+          },
+          "attempts": 372,
+          "reconciliation": {
+            "attempts": 372,
+            "committed": 372,
+            "acknowledged": 372,
+            "acknowledgedMissing": [],
+            "unacknowledgedCommitted": [],
+            "unacknowledgedAbsent": []
+          },
+          "ledgerRead": {
+            "startedAt": "2026-10-26T16:15:19.718Z",
+            "readCount": 1,
+            "status": 200,
+            "elapsedMs": 24.316791999997804
+          },
+          "observedSeconds": 10.096252570999999,
+          "interferenceSeconds": null
+        }
+      },
+      "readControl": {
+        "gateway": {
+          "requests": 58,
+          "errors": 0,
+          "statuses": {
+            "200": 58
+          },
+          "latencyMs": {
+            "p50": 4.556928999999855,
+            "p95": 11.054971000000023,
+            "p99": 51.413325,
+            "max": 51.413325
+          }
+        },
+        "direct": {
+          "requests": 58,
+          "errors": 0,
+          "statuses": {
+            "200": 58
+          },
+          "latencyMs": {
+            "p50": 2.704601000000139,
+            "p95": 11.085634000000027,
+            "p99": 20.040501000000006,
+            "max": 20.040501000000006
+          }
+        }
+      },
+      "controllerPeakBytes": 361799680,
+      "resourceCounters": {
+        "one-app": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:11:58.879728527Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "55001088",
+                "memory.peak": "60694528",
+                "cpu.stat": "usage_usec 655713\nuser_usec 493796\nsystem_usec 161916\ncore_sched.force_idle_usec 0\nnr_periods 65\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "92495872",
+                "memory.peak": "93921280",
+                "cpu.stat": "usage_usec 653012\nuser_usec 497346\nsystem_usec 155665\ncore_sched.force_idle_usec 0\nnr_periods 104\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "71942144",
+                "memory.peak": "73363456",
+                "cpu.stat": "usage_usec 1314389\nuser_usec 1069491\nsystem_usec 244898\ncore_sched.force_idle_usec 0\nnr_periods 193\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "43835392",
+                "memory.peak": "53764096",
+                "cpu.stat": "usage_usec 879852\nuser_usec 714267\nsystem_usec 165584\ncore_sched.force_idle_usec 0\nnr_periods 186\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "5885952",
+                "memory.peak": "10407936",
+                "cpu.stat": "usage_usec 401974\nuser_usec 369221\nsystem_usec 32753\ncore_sched.force_idle_usec 0\nnr_periods 22\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "5623808",
+                "memory.peak": "10371072",
+                "cpu.stat": "usage_usec 397984\nuser_usec 365951\nsystem_usec 32032\ncore_sched.force_idle_usec 0\nnr_periods 20\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "31617024",
+                "memory.peak": "32792576",
+                "cpu.stat": "usage_usec 341322\nuser_usec 275796\nsystem_usec 65526\ncore_sched.force_idle_usec 0\nnr_periods 143\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26013696",
+            "memory.peak": "30547968",
+            "cpu.stat": "usage_usec 248378\nuser_usec 198702\nsystem_usec 49675\ncore_sched.force_idle_usec 0\nnr_periods 36\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31051776",
+            "memory.peak": "31051776",
+            "cpu.stat": "usage_usec 511456\nuser_usec 435723\nsystem_usec 75732\ncore_sched.force_idle_usec 0\nnr_periods 137\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "peer-approval": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:11:58.879728527Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "50155520",
+                "memory.peak": "65646592",
+                "cpu.stat": "usage_usec 860961\nuser_usec 643954\nsystem_usec 217006\ncore_sched.force_idle_usec 0\nnr_periods 93\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "149598208",
+                "memory.peak": "151105536",
+                "cpu.stat": "usage_usec 1055753\nuser_usec 763391\nsystem_usec 292362\ncore_sched.force_idle_usec 0\nnr_periods 308\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "85532672",
+                "memory.peak": "88915968",
+                "cpu.stat": "usage_usec 3831190\nuser_usec 2804816\nsystem_usec 1026374\ncore_sched.force_idle_usec 0\nnr_periods 652\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "48840704",
+                "memory.peak": "55791616",
+                "cpu.stat": "usage_usec 1986698\nuser_usec 1359060\nsystem_usec 627638\ncore_sched.force_idle_usec 0\nnr_periods 643\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "38023168",
+                "memory.peak": "54788096",
+                "cpu.stat": "usage_usec 770975\nuser_usec 650888\nsystem_usec 120086\ncore_sched.force_idle_usec 0\nnr_periods 238\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "27684864",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 650701\nuser_usec 553198\nsystem_usec 97502\ncore_sched.force_idle_usec 0\nnr_periods 225\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "43278336",
+                "memory.peak": "44535808",
+                "cpu.stat": "usage_usec 1244417\nuser_usec 1042835\nsystem_usec 201581\ncore_sched.force_idle_usec 0\nnr_periods 597\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26402816",
+            "memory.peak": "31109120",
+            "cpu.stat": "usage_usec 565488\nuser_usec 483085\nsystem_usec 82402\ncore_sched.force_idle_usec 0\nnr_periods 139\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "35512320",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 1669483\nuser_usec 1443659\nsystem_usec 225823\ncore_sched.force_idle_usec 0\nnr_periods 590\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "two-apps": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:11:58.879728527Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "50102272",
+                "memory.peak": "65646592",
+                "cpu.stat": "usage_usec 870789\nuser_usec 652084\nsystem_usec 218705\ncore_sched.force_idle_usec 0\nnr_periods 98\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "157147136",
+                "memory.peak": "158343168",
+                "cpu.stat": "usage_usec 1131678\nuser_usec 803847\nsystem_usec 327831\ncore_sched.force_idle_usec 0\nnr_periods 355\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "87588864",
+                "memory.peak": "89079808",
+                "cpu.stat": "usage_usec 4378604\nuser_usec 3162551\nsystem_usec 1216052\ncore_sched.force_idle_usec 0\nnr_periods 760\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "50388992",
+                "memory.peak": "55791616",
+                "cpu.stat": "usage_usec 2216115\nuser_usec 1474764\nsystem_usec 741351\ncore_sched.force_idle_usec 0\nnr_periods 748\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "54169600",
+                "memory.peak": "58925056",
+                "cpu.stat": "usage_usec 860110\nuser_usec 717775\nsystem_usec 142335\ncore_sched.force_idle_usec 0\nnr_periods 300\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "27152384",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 685933\nuser_usec 577896\nsystem_usec 108037\ncore_sched.force_idle_usec 0\nnr_periods 278\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "46145536",
+                "memory.peak": "47923200",
+                "cpu.stat": "usage_usec 1450738\nuser_usec 1218101\nsystem_usec 232637\ncore_sched.force_idle_usec 0\nnr_periods 702\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26095616",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 1734820\nuser_usec 1500222\nsystem_usec 234598\ncore_sched.force_idle_usec 0\nnr_periods 593\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31498240",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 1997741\nuser_usec 1730303\nsystem_usec 267437\ncore_sched.force_idle_usec 0\nnr_periods 694\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "uploads": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:11:58.879728527Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "198864896",
+                "memory.peak": "361799680",
+                "cpu.stat": "usage_usec 1768538\nuser_usec 1135271\nsystem_usec 633267\ncore_sched.force_idle_usec 0\nnr_periods 118\nnr_throttled 1\nthrottled_usec 4382\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "177807360",
+                "memory.peak": "179818496",
+                "cpu.stat": "usage_usec 1293492\nuser_usec 899333\nsystem_usec 394158\ncore_sched.force_idle_usec 0\nnr_periods 448\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "91873280",
+                "memory.peak": "95834112",
+                "cpu.stat": "usage_usec 5561533\nuser_usec 3993105\nsystem_usec 1568427\ncore_sched.force_idle_usec 0\nnr_periods 968\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "53252096",
+                "memory.peak": "55791616",
+                "cpu.stat": "usage_usec 2726094\nuser_usec 1770061\nsystem_usec 956033\ncore_sched.force_idle_usec 0\nnr_periods 956\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "39391232",
+                "memory.peak": "58925056",
+                "cpu.stat": "usage_usec 929185\nuser_usec 764791\nsystem_usec 164394\ncore_sched.force_idle_usec 0\nnr_periods 412\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "27398144",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 747301\nuser_usec 618138\nsystem_usec 129163\ncore_sched.force_idle_usec 0\nnr_periods 377\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "51126272",
+                "memory.peak": "52572160",
+                "cpu.stat": "usage_usec 1854724\nuser_usec 1555092\nsystem_usec 299632\ncore_sched.force_idle_usec 0\nnr_periods 907\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26320896",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 2058129\nuser_usec 1780031\nsystem_usec 278098\ncore_sched.force_idle_usec 0\nnr_periods 697\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "36261888",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 2701217\nuser_usec 2347306\nsystem_usec 353910\ncore_sched.force_idle_usec 0\nnr_periods 898\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "activation": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:11:58.879728527Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "197218304",
+                "memory.peak": "361799680",
+                "cpu.stat": "usage_usec 2335280\nuser_usec 1572149\nsystem_usec 763130\ncore_sched.force_idle_usec 0\nnr_periods 149\nnr_throttled 1\nthrottled_usec 4382\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "240693248",
+                "memory.peak": "242446336",
+                "cpu.stat": "usage_usec 1806670\nuser_usec 1264669\nsystem_usec 542001\ncore_sched.force_idle_usec 0\nnr_periods 644\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "121585664",
+                "memory.peak": "122843136",
+                "cpu.stat": "usage_usec 8167489\nuser_usec 5771788\nsystem_usec 2395701\ncore_sched.force_idle_usec 0\nnr_periods 1427\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "49840128",
+                "memory.peak": "55791616",
+                "cpu.stat": "usage_usec 3850775\nuser_usec 2419594\nsystem_usec 1431181\ncore_sched.force_idle_usec 0\nnr_periods 1411\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "51568640",
+                "memory.peak": "80568320",
+                "cpu.stat": "usage_usec 1196258\nuser_usec 973366\nsystem_usec 222892\ncore_sched.force_idle_usec 0\nnr_periods 629\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "19505152",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 917338\nuser_usec 741856\nsystem_usec 175481\ncore_sched.force_idle_usec 0\nnr_periods 586\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "62799872",
+                "memory.peak": "64192512",
+                "cpu.stat": "usage_usec 2769066\nuser_usec 2349389\nsystem_usec 419677\ncore_sched.force_idle_usec 0\nnr_periods 1361\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26488832",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 2761018\nuser_usec 2396241\nsystem_usec 364776\ncore_sched.force_idle_usec 0\nnr_periods 901\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "37363712",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 3954403\nuser_usec 3462385\nsystem_usec 492017\ncore_sched.force_idle_usec 0\nnr_periods 1352\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "controller-outage": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:14:43.14431569Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "38473728",
+                "memory.peak": "39878656",
+                "cpu.stat": "usage_usec 222811\nuser_usec 184699\nsystem_usec 38112\ncore_sched.force_idle_usec 0\nnr_periods 11\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "254857216",
+                "memory.peak": "256389120",
+                "cpu.stat": "usage_usec 2004427\nuser_usec 1390232\nsystem_usec 614195\ncore_sched.force_idle_usec 0\nnr_periods 771\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "127799296",
+                "memory.peak": "130383872",
+                "cpu.stat": "usage_usec 9821382\nuser_usec 6943250\nsystem_usec 2878132\ncore_sched.force_idle_usec 0\nnr_periods 1734\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "53088256",
+                "memory.peak": "55791616",
+                "cpu.stat": "usage_usec 4497803\nuser_usec 2820315\nsystem_usec 1677488\ncore_sched.force_idle_usec 0\nnr_periods 1717\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "51617792",
+                "memory.peak": "80568320",
+                "cpu.stat": "usage_usec 1274386\nuser_usec 1022768\nsystem_usec 251617\ncore_sched.force_idle_usec 0\nnr_periods 753\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "30519296",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 1037541\nuser_usec 828974\nsystem_usec 208566\ncore_sched.force_idle_usec 0\nnr_periods 713\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "72146944",
+                "memory.peak": "73400320",
+                "cpu.stat": "usage_usec 3305964\nuser_usec 2816491\nsystem_usec 489472\ncore_sched.force_idle_usec 0\nnr_periods 1666\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26136576",
+            "memory.peak": "48758784",
+            "cpu.stat": "usage_usec 4016734\nuser_usec 3511472\nsystem_usec 505262\ncore_sched.force_idle_usec 0\nnr_periods 1354\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "36864000",
+            "memory.peak": "48816128",
+            "cpu.stat": "usage_usec 4780597\nuser_usec 4170610\nsystem_usec 609987\ncore_sched.force_idle_usec 0\nnr_periods 1655\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        },
+        "recovered": {
+          "components": {
+            "controller": {
+              "startedAt": "2026-10-26T16:14:43.14431569Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "38518784",
+                "memory.peak": "39878656",
+                "cpu.stat": "usage_usec 234019\nuser_usec 193704\nsystem_usec 40314\ncore_sched.force_idle_usec 0\nnr_periods 16\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "minio": {
+              "startedAt": "2026-10-26T16:11:57.143381205Z",
+              "memoryLimitBytes": 805306368,
+              "nanoCPUs": 2000000000,
+              "counters": {
+                "memory.current": "259305472",
+                "memory.peak": "260571136",
+                "cpu.stat": "usage_usec 2079107\nuser_usec 1442009\nsystem_usec 637097\ncore_sched.force_idle_usec 0\nnr_periods 816\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-a": {
+              "startedAt": "2026-10-26T16:11:58.154227667Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "132374528",
+                "memory.peak": "135995392",
+                "cpu.stat": "usage_usec 10338264\nuser_usec 7312456\nsystem_usec 3025808\ncore_sched.force_idle_usec 0\nnr_periods 1841\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-1-b": {
+              "startedAt": "2026-10-26T16:11:58.334657211Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "53727232",
+                "memory.peak": "58241024",
+                "cpu.stat": "usage_usec 4750572\nuser_usec 2993771\nsystem_usec 1756800\ncore_sched.force_idle_usec 0\nnr_periods 1826\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-a": {
+              "startedAt": "2026-10-26T16:11:58.519144378Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "59568128",
+                "memory.peak": "80568320",
+                "cpu.stat": "usage_usec 1353411\nuser_usec 1081502\nsystem_usec 271908\ncore_sched.force_idle_usec 0\nnr_periods 806\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "slot-2-b": {
+              "startedAt": "2026-10-26T16:11:58.682262131Z",
+              "memoryLimitBytes": 536870912,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "30527488",
+                "memory.peak": "51257344",
+                "cpu.stat": "usage_usec 1068962\nuser_usec 850286\nsystem_usec 218675\ncore_sched.force_idle_usec 0\nnr_periods 759\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            },
+            "workerd": {
+              "startedAt": "2026-10-26T16:12:01.186690375Z",
+              "memoryLimitBytes": 268435456,
+              "nanoCPUs": 1000000000,
+              "counters": {
+                "memory.current": "75198464",
+                "memory.peak": "76369920",
+                "cpu.stat": "usage_usec 3486284\nuser_usec 2980879\nsystem_usec 505405\ncore_sched.force_idle_usec 0\nnr_periods 1771\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+              }
+            }
+          },
+          "observerBefore": {
+            "memory.current": "26193920",
+            "memory.peak": "48816128",
+            "cpu.stat": "usage_usec 4838775\nuser_usec 4216213\nsystem_usec 622562\ncore_sched.force_idle_usec 0\nnr_periods 1658\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          },
+          "observerAfter": {
+            "memory.current": "31444992",
+            "memory.peak": "48816128",
+            "cpu.stat": "usage_usec 5067031\nuser_usec 4422375\nsystem_usec 644655\ncore_sched.force_idle_usec 0\nnr_periods 1759\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0"
+          }
+        }
+      },
+      "backingFilesystemObservation": {
+        "observedAt": "2026-10-26T16:14:08.405372+00:00",
+        "phase": "uploads",
+        "stdout": "Filesystem       1B-blocks       Used   Available Use% Mounted on\n/dev/vdb1      31524294656 3198210048 26698801152  11% /var/lib/docker\n",
+        "stderr": "",
+        "exitCode": 0
+      },
+      "independentChecks": {
+        "rawObserverExitCodesChecked": 8,
+        "sourceArchiveFilesChecked": 937,
+        "phaseLedgersRecomputed": 7,
+        "firstLedgerReadsPerPhase": 1,
+        "nativeLogCheckPassed": true,
+        "unrelatedContainersUnchanged": 257,
+        "retained": {
+          "project": "fogd-selected-activation-19587bfb1ba8a2a0",
+          "containers": 8,
+          "observers": 1,
+          "networks": 3,
+          "volumes": 11
+        }
+      },
+      "rawSha256": {
+        "result.json": "0bcf7d627e4ce232e4e55f0be33843d389d2fcdd8df2df28227d25e7bdc7f56b",
+        "runtime.log": "93733cd864811de85261686d4fccd806acd425ee18773e9b260d8d938f5439ff",
+        "executed-source-inventory.json": "a2597e5d72d968bddcfad715fe8b3d1bfba5db71ad6e21ecbe3782aa2b7a5c1d",
+        "post-write-privacy.json": "8bd6e240480e99da1fbf25de0902a7f7f353b4fd5c56e41018c59e2edcabe56a",
+        "independent-audit.json": "16fe9ce8483127af40996070d72d53556bc80412463c5e5ea1376e3ae0b6815c",
+        "backing-space-during-run.json": "19b0a22dd26fa29e1a2f0659027e93e434622f240b58d5687cfb27bc4f2567f4",
+        "unrelated-before-phases.json": "c16210bb2b8ddd08b75d9787cf4cc19f9f54e832f1c6648d9c85d04cb9254c39",
+        "observer-read-control.json": "ac6bf649bc2eea16179cc3c82c48871a4511320db27b7da5c06f3efad99518dc",
+        "observer-one-app.json": "facde80b0114f659fd78302d35804177c33bf71120230ae6c4c3e85f82eaa941",
+        "observer-peer-approval.json": "7f278fb39e19aff3c219f01eb849cf294d403c9e216d95e11addd9ab97de3e54",
+        "observer-two-apps.json": "45caa82949660a6a355884bf42f83820d38138dab67f1d3c0ee2f50e8cd34687",
+        "observer-uploads.json": "1dad4b7266dcc8cd174b721bd02472290120e82476275e56a08255cc52e945b1",
+        "observer-activation.json": "a1d97edc582e18cb58dab80ba726dd25dd97c02df7a0477becfc37093a4bc37b",
+        "observer-controller-outage.json": "602b4bde2e31bc25ea8289609947fa949f3638dcbae8aa0e2988f3d9e31f7869",
+        "observer-recovered.json": "0445599652770ace6e8870040be66504d5a4f31bf5f20c35a39fcfd485ae4463"
+      },
+      "executedProbeSources": {
+        "scripts/capacity-comparison.mjs": "84e5caa80013997ea6fef5ef52f513356d543c0d4272e96ac4b181fe59d57d3e",
+        "scripts/capacity.mjs": "e5cdce7d88948cdb689c861f2ba7e151373e002a0c052cd5ba7c4762c3a8d138",
+        "scripts/capacity/load.mjs": "6978b63178b6b999c53dd853b524b49abc17c4cc9a26e6d02d3d4df01fdebc4e",
+        "scripts/capacity/metrics.mjs": "7d8a170637d89dd9117b21257dde5ae6c1cad91e320e013b7bc7684e73118cc6",
+        "scripts/capacity/padded-upload.mjs": "935e44f86e8bdc3c30f7bf09ad8134c0952fb60aeea42ad26e3d42b83872b74a",
+        "scripts/capacity/serving-host.mjs": "846e13d9137b3e39aef1c77104c4710d4454e07353f286e9b0cfb85789425281",
+        "scripts/capacity/serving-observer.mjs": "604e8a83ea620d8fd1421aa1a0268670afd05f80b7bf2690ef1f4eb23d4d34e2",
+        "scripts/capacity/serving-options.mjs": "41aa4ef8b930583d6472150008e32fb475a93a0a2c1e082b4a46ddf50f1515cf",
+        "scripts/capacity/serving-session.mjs": "8d0e802189a606fcd54e64d2f0efc5a22438ab503bf41b83b11087d11e08b2a6",
+        "scripts/capacity/write-fixture.mjs": "04b94c2b6c12dd466c9d7f303864daab4069fd780f204a29b5556dbeefe485ea",
+        "scripts/capacity/write-ledger.mjs": "e797c6fa3a45afbab1936373a1cb450ab30847fc8f1a6abf64490e8f26e8478b",
+        "scripts/cron-probe/selected/host.mjs": "4cb5c9fc9396df6edad7b2fae415c1e6a78810ffe143f94c552477ad763ad0d1",
+        "scripts/cron-probe/selected/selected-trial.mjs": "73e73487e0b1189e0f70c4ba915bc7ae2e9844a924660375eec74b6333fcec62",
+        "scripts/cron-probe/selected/shutdown.mjs": "0db160eebc1d38e77fe769c0aa80b736dfd3cb95d3014caf176fde9e1cc411cb",
+        "scripts/operator/serving-writes.mjs": "d7b99377af892cc207051218b6312449a101ec898e8ad0c87e1a8b64dfac9129"
+      }
+    }
+  ],
+  "totals": {
+    "acknowledgedWrites": 11672,
+    "acknowledgedMissing": 0,
+    "sampledWriteErrors": 0,
+    "postCommitErrorControlsCommitted": 2
+  },
+  "checks": {
+    "syntax": "passed",
+    "focusedTests": 44,
+    "fullSuite": {
+      "tests": 2644,
+      "passed": 2644,
+      "failed": 0,
+      "scope": "Full suite passed before splitting the admission test into named cases; production sources unchanged, final focused suite passed afterward."
+    },
+    "qualityGate": "passed",
+    "candidateAdmissionBypassMutantKilled": true
+  },
+  "legacyFailedEvidence": "operator-write-serving-local.json",
+  "limitations": [
+    "The older legacy-family write trial remains unaccepted; these runs do not replace its evidence.",
+    "Both paths share the observer, Docker VM, storage and loaded physical host; timings do not isolate ingress CPU cost.",
+    "Paced closed-loop traffic reduces its offered rate when responses slow and does not measure saturation.",
+    "One writing application and one idle/deploying peer do not qualify concurrent application writers or broader app counts.",
+    "Container CPU limits and memory counters do not establish per-worker budgets or isolation.",
+    "Controller interruption is bounded and preserves unchanged baseline approval; broader failure combinations and ordinary release gates remain separate."
+  ]
+}

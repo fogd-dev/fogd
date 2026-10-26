@@ -19,20 +19,20 @@ const enrollmentMethods = {
   public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id, '--network-plan', join(host.output, 'network-plan.json')] },
 };
 
-export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo) {
+export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo, { runtime = 'celld-cron-v2-linux-arm64', retainResources = false } = {}) {
   const cli = join(programRoot, 'packages/cli/bin/fogd.js');
   const method = enrollmentMethods[enrollment]; if (!method) throw new Error('Unknown qualification enrollment method');
   if (enrollment === 'candidate' && resolve(programRoot) !== resolve(repo)) throw new Error('Alternate operator programs require public enrollment; candidate qualification uses this checkout');
+  const entry = runtimeFamily(runtime, method.intent); await verifyRuntimeFamily(entry);
   const output = resolve(directory); await mkdir(output, { mode: 0o700 });
   await mkdir(join(output, 'host'), { mode: 0o700 });
-  const entry = runtimeFamily('celld-cron-v2-linux-arm64', method.intent); await verifyRuntimeFamily(entry);
   const project = `fogd-selected-activation-${randomBytes(8).toString('hex')}`, adminPort = await loopbackPort(), gatewayPort = await loopbackPort();
   assert.notEqual(adminPort, gatewayPort);
   const env = selectedEnvironment(output, project, adminPort, gatewayPort, programRoot), run = commandRunner(output, env);
   await writeFile(env.FOGD_ENV_FILE, `FOGD_BUCKET_USER=${env.FOGD_BUCKET_USER}\nFOGD_BUCKET_PASSWORD=${env.FOGD_BUCKET_PASSWORD}\n`, { mode: 0o600, flag: 'wx' });
   const networks = await privateNetworks();
-  await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  const host = { output, project, entry, env, run, adminPort, gatewayPort, enrollment: { method: enrollment },
+  await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment, retainResources }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
+  const host = { output, project, entry, env, run, adminPort, gatewayPort, retainResources, enrollment: { method: enrollment },
     command: (args, options) => run(process.execPath, [cli, ...args], options),
     json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
   };
@@ -96,9 +96,10 @@ export async function cleanupSelectedHost(host) {
   const errors = [];
   try {
     const observers = (await docker(['ps', '-aq', '--filter', `label=fogd.qualifier.project=${host.project}`])).trim().split('\n').filter(Boolean);
-    if (observers.length) await docker(['rm', '-f', ...observers]);
+    if (observers.length) await docker([...(host.retainResources ? ['stop'] : ['rm', '-f']), ...observers]);
   } catch (error) { errors.push(error); }
-  for (const [kind, remove] of [['ps', ['rm', '-f']], ['network', ['network', 'rm']]]) {
+  const resources = host.retainResources ? [['ps', ['stop']]] : [['ps', ['rm', '-f']], ['network', ['network', 'rm']]];
+  for (const [kind, remove] of resources) {
     try {
       const args = kind === 'ps' ? ['ps', '-aq'] : ['network', 'ls', '-q'];
       const ids = (await docker([...args, '--filter', `label=com.docker.compose.project=${host.project}`])).trim().split('\n').filter(Boolean);

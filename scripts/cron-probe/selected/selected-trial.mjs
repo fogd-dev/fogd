@@ -17,8 +17,8 @@ export function selectedTrial(output, scope, scenario, enrollment = 'candidate')
   }, enrollment);
 }
 
-export async function selectedHostTrial(output, scope, scenario, enrollment = 'public') {
-  const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output, enrollment);
+export async function selectedHostTrial(output, scope, scenario, enrollment = 'public', hostOptions) {
+  const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(output, enrollment, undefined, hostOptions);
   const installations = [source], evidence = {};
   const context = { source, installations, evidence, phase: 'source-fixtures' }; let failure;
   const save = (name, value) => writeFile(join(source.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
