@@ -1,4 +1,9 @@
-import { appName, translateConfig } from '@fogd/runtime/artifact';
+import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { manifest, receiveArtifact, MAX_UPLOAD } from '@fogd/runtime/manifest';
+import { artifactProject } from '../local.mjs';
+import { appName, translateConfig, inside, regularFiles, stageArtifact } from '@fogd/runtime/artifact';
 import { buildMetadata } from '@fogd/runtime/deployment';
 import { readPrivateJSON, hash } from '../build-cache/paths.mjs';
 import { finding, reportStatus } from './report.mjs';
@@ -17,6 +22,49 @@ export async function inspectApplicationFile(path, app, negotiate) {
     catch { /* Report unavailable capabilities without transport or credential details. */ }
   }
   return { ...inspectApplicationConfig(input.value, app, capabilities, Boolean(negotiate)), configSha256: hash(input.bytes) };
+}
+
+export async function inspectBuiltProject(directory, app, negotiate) {
+  appName(app);
+  let project, settings, path;
+  try {
+    ({ project, settings } = await artifactProject(directory, app));
+    path = join(inside(project, settings.buildOutput ?? 'dist/ssr'), 'wrangler.json');
+  } catch {
+    return { ...applicationReport(app, [finding('project-files', 'unverified', 'Project metadata could not be read.',
+      'Check package.json and fogd.json; no build plugins were executed.')]), scope: 'application-build' };
+  }
+  let capabilities;
+  const report = { ...await inspectApplicationFile(path, app, negotiate ? async name => {
+    capabilities = await negotiate(name); return capabilities;
+  } : undefined), scope: 'application-build' };
+  if (!report.declarations) return report;
+  const target = typeof capabilities?.cronApps === 'boolean' ? capabilities : { cronApps: true };
+  let temporary;
+  try { temporary = await mkdtemp(join(tmpdir(), 'fogd-doctor-build-')); }
+  catch {
+    replaceBuildFinding(report, finding('build-output', 'unverified', 'Private temporary staging is unavailable.',
+      'Check that the operating system temporary directory exists and is writable. No project or client build-cache files were created.'));
+    return report;
+  }
+  try {
+    const staged = join(temporary, 'staged');
+    const release = await stageArtifact({ projectDir: project, outputDir: staged, app,
+      buildOutput: settings.buildOutput, migrationsDir: settings.migrationsDir, capabilities: target });
+    const inventory = await artifactInventory(staged);
+    const payload = await manifest(staged, release);
+    const verified = await receiveArtifact(payload, join(temporary, 'verified'), target);
+    const bytes = await readFile(join(staged, 'wrangler.json')), config = JSON.parse(bytes);
+    report.declarations = { ...describeDeclarations(config, config), requiredSecrets: verified.requiredSecrets.length };
+    report.configSha256 = hash(bytes);
+    report.artifact = { digest: verified.digest, ...inventory, migrations: verified.migrations.length };
+    replaceBuildFinding(report, finding('build-output', 'supported', 'Existing worker, assets and migration files pass shared staging and artifact validation.',
+      'These are observed build bytes, not proof of current sources or native execution. Deployment builds and validates again.'));
+  } catch (error) {
+    replaceBuildFinding(report, buildFailure(error));
+  } finally { await rm(temporary, { recursive: true, force: true }); }
+  report.status = reportStatus(report.findings);
+  return report;
 }
 
 export function inspectApplicationConfig(input, app, capabilities, online = false) {
@@ -73,4 +121,33 @@ function configFailure(error) {
   ];
   return messages.find(([prefix]) => error?.message?.startsWith(prefix))?.[1] ||
     'Configuration declarations are invalid or outside the supported fogd profile; private input details are omitted.';
+}
+
+function replaceBuildFinding(report, value) {
+  report.findings = report.findings.map(item => item.id === 'build-output' ? value : item);
+}
+
+function buildFailure(error) {
+  const messages = [
+    ['celld requires a single JavaScript module', 'The build must contain one JavaScript worker module.'],
+    ['Worker main must identify', 'The configured worker entry is missing or invalid.'],
+    ['Migration order must have', 'SQL migration filenames must have strictly increasing numeric prefixes.'],
+    ['Symlinks are not allowed', 'Build inputs include a symbolic link; artifact files must be regular files.'],
+    ['Path escapes project', 'A configured build or asset path leaves the project directory.'],
+    ['Artifact exceeds the receiver byte limit', 'The staged artifact exceeds the receiver byte limit.'],
+  ];
+  return finding('build-output', ['ENOENT', 'EACCES', 'EPERM'].includes(error.code) ? 'unverified' : 'unsupported',
+    messages.find(([prefix]) => error.message?.startsWith(prefix))?.[1] ||
+      'Existing build files are missing, unreadable or outside the supported artifact profile; private details are omitted.',
+    'Regenerate a complete fogd-compatible build and check worker modules, assets and ordered SQL migrations. This command never builds or uploads.');
+}
+
+async function artifactInventory(directory) {
+  const files = (await regularFiles(directory)).filter(path => path !== 'fogd-release.json');
+  let bytes = 0;
+  for (const path of files) {
+    bytes += (await stat(join(directory, path))).size;
+    if (bytes > MAX_UPLOAD) throw new Error('Artifact exceeds the receiver byte limit');
+  }
+  return { files: files.length, bytes };
 }

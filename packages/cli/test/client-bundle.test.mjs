@@ -121,6 +121,40 @@ for (const credentials of ['absent', 'configured']) test(`standalone offline doc
   await assert.rejects(access(f.home), { code: 'ENOENT' });
   await assert.rejects(access(f.env.FOGD_HOME), { code: 'ENOENT' });
 });
+for (const online of [false, true]) test(`standalone existing-build doctor online=${online} inspects bytes without running the compiler or submitting`, async t => {
+  const f = await fixture(t, (_, response) => { response.end(JSON.stringify({ schema: 1, app: 'test-app', cronApps: true })); return true; });
+  const project = await application(f), temporary = join(f.root, 'temporary');
+  await mkdir(join(project, 'dist/ssr'), { recursive: true }); await mkdir(temporary);
+  await writeFile(join(project, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', triggers: { crons: ['* * * * *'] }, vars: { MESSAGE: 'private-variable' } }));
+  await writeFile(join(project, 'dist/ssr/index.js'), "throw new Error('private-worker-content');");
+  const before = await transferFiles(project);
+  for (const path of await transferFiles(f.bundle)) await chmod(join(f.bundle, path), 0o400);
+  await chmod(f.bundle, 0o500);
+  await assert.rejects(f.run(['doctor', '--project', project, '--name', 'test-app', ...(online ? ['--online'] : []), '--json'],
+    { PATH: '', TMPDIR: temporary, ...(online ? {} : { FOGD_SERVER: '', FOGD_DEPLOY_TOKEN: '' }) }), error => {
+    assert.equal(error.code, 2); assert.equal(error.stderr, '');
+    const report = JSON.parse(error.stdout); assert.equal(report.scope, 'application-build');
+    assert.equal(report.findings.find(item => item.id === 'build-output').status, 'supported');
+    assert.equal(report.capabilitySource, online ? 'controller' : 'offline'); assert.ok(report.artifact.bytes > 0);
+    assert.ok(!error.stdout.includes('private-')); return true;
+  });
+  assert.deepEqual(f.calls.map(({ url, method }) => ({ url, method })), online ? [{ url: '/v1/capabilities?app=test-app', method: 'GET' }] : []);
+  assert.deepEqual(await transferFiles(project), before); await assert.rejects(access(join(project, 'build-env.json')), { code: 'ENOENT' });
+  assert.deepEqual(await readdir(temporary), []);
+  await assert.rejects(access(f.home), { code: 'ENOENT' }); await assert.rejects(access(f.env.FOGD_HOME), { code: 'ENOENT' });
+});
+test('standalone existing-build doctor reports unavailable private staging without leaking its path', async t => {
+  const f = await fixture(t), project = await application(f);
+  await mkdir(join(project, 'dist/ssr'), { recursive: true });
+  await writeFile(join(project, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js' }));
+  await writeFile(join(project, 'dist/ssr/index.js'), 'export default {};');
+  await assert.rejects(f.run(['doctor', '--project', project, '--name', 'test-app', '--json'], { PATH: '', TMPDIR: join(f.root, 'private-missing-temporary') }), error => {
+    assert.equal(error.code, 2); assert.equal(error.stderr, '');
+    const report = JSON.parse(error.stdout); assert.equal(report.findings.find(item => item.id === 'build-output').status, 'unverified');
+    assert.equal(report.artifact, undefined); assert.ok(!error.stdout.includes('private-')); return true;
+  });
+  assert.deepEqual(f.calls, []); await assert.rejects(access(f.home), { code: 'ENOENT' });
+});
 for (const [name, status, body, headers] of [
   ['malformed capability', 200, 'private-capability-json', {}],
   ['credential refusal', 403, 'private-rejection', {}],

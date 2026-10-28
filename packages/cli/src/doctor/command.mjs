@@ -7,6 +7,6 @@ export { formatReport as formatHostReport } from './report.mjs';
 
 export async function doctorCommand(args) {
   const values = doctorOptions(args, true);
-  const report = values.config ? await diagnoseApplication(values) : await inspectHost(values.runtime);
+  const report = values.runtime ? await inspectHost(values.runtime) : await diagnoseApplication(values);
   printReport(report, values.json);
 }

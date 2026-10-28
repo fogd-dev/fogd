@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
-const help = 'node fogd.mjs deploy [--name APP]  Build the current Void app and submit for approval\nnode fogd.mjs status ID           Read a submission with its deploy credential\nnode fogd.mjs doctor --config FILE --name APP [--online] [--json]  Check JSON declarations without building\n\nRequires Node.js 24.21 or newer. Set FOGD_SERVER and FOGD_DEPLOY_TOKEN for network commands.\nFOGD_ENV_FILE selects an optional profile. Operator FOGD_HOME is ignored.\nLocal builds use FOGD_CLIENT_HOME (default: $XDG_STATE_HOME/fogd-client or ~/.local/state/fogd-client).';
+const help = 'node fogd.mjs deploy [--name APP]  Build the current Void app and submit for approval\nnode fogd.mjs status ID           Read a submission with its deploy credential\nnode fogd.mjs doctor --config FILE --name APP [--online] [--json]  Check JSON declarations without building\nnode fogd.mjs doctor --project DIR --name APP [--online] [--json]  Inspect an existing build without rebuilding or uploading\n\nRequires Node.js 24.21 or newer. Set FOGD_SERVER and FOGD_DEPLOY_TOKEN for network commands.\nFOGD_ENV_FILE selects an optional profile. Operator FOGD_HOME is ignored.\nLocal builds use FOGD_CLIENT_HOME (default: $XDG_STATE_HOME/fogd-client or ~/.local/state/fogd-client).';
 
 try {
   const [major, minor] = process.versions.node.split('.').map(Number);

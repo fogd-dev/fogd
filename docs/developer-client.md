@@ -78,11 +78,39 @@ exact operator approval retain all authoritative checks.
 
 Both output formats classify findings as `supported`, `unsupported` or
 `unverified`. Exit code `1` means an observed condition is unsupported; code `2`
-means compatibility remains unverified. This declaration-only scope never reports
+means compatibility remains unverified. Neither application-check scope reports
 full application readiness or exit code `0`. Missing, unreadable, malformed,
-linked or oversized JSON produces an unverified file finding. Raw configuration
+linked or oversized configuration JSON produces an unverified file finding. Raw configuration
 values and transport diagnostics stay out of reports. Omit `--json` for readable
 text. The operator CLI accepts the same application-check arguments.
+
+## Inspect an existing build before upload
+
+Use project preflight when generated worker output already exists:
+
+```sh
+node /absolute/path/to/client/fogd.mjs doctor \
+  --project /absolute/path/to/your-void-app --name my-app --json
+```
+
+This reads the existing `dist/ssr` output and `db/migrations`, honoring the same
+`fogd.json` `buildOutput` and `migrationsDir` settings as deployment. It runs neither
+Vite nor application code and never uploads. Missing output stays unverified;
+the command does not build it automatically.
+
+The `application-build` report uses the shared staging and server artifact
+validators to check worker/module layout, assets, migration ordering and hashes,
+canonical configuration and receiver limits. It reports the observed artifact
+digest, file count, bytes and migration count. Its `configSha256` identifies the
+canonical staged configuration; the configuration-only mode hashes its original
+JSON input. Disposable private temporary staging is removed on completion;
+project files and client build-cache state remain untouched.
+
+Add `--online` to query the scoped target capabilities with a read-only GET.
+The build can be stale relative to source files. JavaScript/Wasm execution, SQL
+execution, active-release resource changes, private secret values and capacity
+remain unverified. Deployment still rebuilds and validates, and exact approval
+remains required.
 
 ## Submit your application
 

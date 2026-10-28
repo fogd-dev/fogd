@@ -32,7 +32,8 @@ console.log('private-tool-output'); console.error('private-diagnostic'); process
     } else assert.match(failure.stdout, /\[unverified\] docker/);
   }
   await assert.rejects(exec(process.execPath, [cli, 'doctor'], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
-  for (const args of [['--config', 'absent'], ['--runtime', qualified.id, '--config', 'absent', '--name', 'demo'], ['--runtime', qualified.id, '--online']]) {
+  for (const args of [['--config', 'absent'], ['--project', 'absent'], ['--project', 'a', '--config', 'b', '--name', 'demo'],
+    ['--runtime', qualified.id, '--project', 'a', '--name', 'demo'], ['--runtime', qualified.id, '--config', 'absent', '--name', 'demo'], ['--runtime', qualified.id, '--online']]) {
     await assert.rejects(exec(process.execPath, [cli, 'doctor', ...args], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
   }
 });
