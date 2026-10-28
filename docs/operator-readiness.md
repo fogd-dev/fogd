@@ -288,6 +288,17 @@ apps and data after full stop/start pass. It uses internal candidate selection a
 prepared project dependencies; separate physical-machine and ordinary released-family
 installation remain open.
 
+The [v5 write checks](evidence/operator-native-write-serving-v5.json) retain all
+14,842 acknowledged writes in first ledger reads across a single-writer profile
+and a concurrent two-app profile. Controller interruption has no sampled request
+errors. Activation returns 20 gateway HTTP 503 responses on the updating peer; no
+zero-downtime update claim follows. The
+[restore-family refusal check](evidence/operator-v5-family-refusal.json) validates
+an actual v5 archive and a same-family plan, then verifies v4 and legacy cron-v2
+refusals before target allocation. Cross-family migration remains unsupported;
+the release target remains fresh installations. Broader application diagnosis,
+recovery and release gates remain open.
+
 The remaining release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,

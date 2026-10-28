@@ -149,6 +149,14 @@ Internal candidate selection and prepared project dependencies are explicit
 assistance. Separate physical-machine and ordinary released-family installation
 remain open.
 
+The [v5 write checks](evidence/operator-native-write-serving-v5.json) retain all
+14,842 acknowledged writes across single-writer and concurrent two-app profiles,
+including controller interruption. The updating peer returns 20 gateway HTTP 503 responses
+during activation; zero-downtime updates remain unqualified. An actual v5 archive
+also passes [unsupported-family refusal checks](evidence/operator-v5-family-refusal.json)
+before target allocation. These bounded checks leave ordinary v5 admission closed
+and do not add cross-family migration to the fresh-install release requirements.
+
 ## Milestones and acceptance gates
 
 | Milestone | Capability and goal | Exit evidence | Outside this milestone |

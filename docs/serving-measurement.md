@@ -337,3 +337,35 @@ This completes the bounded two-writer observation while documenting an activatio
 interruption. It does not qualify zero-downtime updates, broader app counts,
 saturation, density limits or ordinary candidate admission. The failed legacy
 write trial remains unaccepted.
+
+### V5 write observations
+
+The [v5 write evidence](evidence/operator-native-write-serving-v5.json) records one
+single-writer trial and one concurrent two-app trial against the immutable v5
+candidate. These are distinct profiles, not repeated trials of one workload. All
+14,842 acknowledged writes appear in their first ledger reads. Three separate
+controls deliberately commit an insert and return HTTP 502, demonstrating why an
+error response alone cannot establish whether a write committed.
+
+The single-writer trial acknowledges 6,321 writes with no sampled workload errors.
+The concurrent trial acknowledges 8,521 writes and records 20 gateway HTTP 503 responses
+on the updating peer during activation. Those requests remain absent from its
+ledger and are not replayed. The unchanged app has no sampled errors in any phase.
+Both apps have no sampled gateway or direct errors during controller interruption.
+Direct requests bypass gateway withholding; they do not establish public
+availability during activation.
+
+The receipt includes per-phase request counts, status codes, latency quantiles,
+observation windows, overlap and first-read reconciliation. Independent checks
+recompute summaries from raw observer samples, verify normal observer exits,
+rehash archived sources and active artifacts, inspect installed runtime policy
+and the final private/public route authority, and scan native logs. Earlier
+container states and volumes remain unchanged. Each trial retains its stopped
+installation, observers and data volumes.
+
+Both profiles run on the same two-vCPU Docker VM with 6,199,001,088 bytes of RAM
+and 21 unrelated QA containers. Each observer has a one-CPU, 128-MiB container
+budget; this is not a per-worker CPU quota. Host load and memory observations
+remain in the receipt. These measurements qualify the bounded workloads only;
+they do not establish saturation limits, density, zero-downtime updates or
+ordinary v5 admission.

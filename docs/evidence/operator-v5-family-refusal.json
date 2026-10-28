@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "kind": "operator-restore-family-refusal",
+  "sourceCommit": "83d75dd826fca58520f2618e4f8a48ed908801b0",
+  "passed": true,
+  "recordedAt": "2026-10-28T23:05:03.175Z",
+  "scope": "Actual v5 durable archive and host restore coordinator: valid same-family plans, then explicit v4 and legacy cron-v2 family refusals before target allocation. No source or destination runtime was started. This does not implement cross-family migration.",
+  "sourceFamily": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "snapshotSha256": "9982d3fe561157090da5a52184f9d4443661656f0569648216b647b8a3f02350",
+  "refusals": [
+    {
+      "family": "celld-durable-v4-linux-arm64",
+      "positiveSameFamilyPlanVerified": true,
+      "refused": true,
+      "outputCreated": false,
+      "enrollmentCreated": false,
+      "dockerResourcesCreated": false
+    },
+    {
+      "family": "celld-cron-v2-linux-arm64",
+      "positiveSameFamilyPlanVerified": true,
+      "refused": true,
+      "outputCreated": false,
+      "enrollmentCreated": false,
+      "dockerResourcesCreated": false
+    }
+  ],
+  "priorContainersUnchanged": 385,
+  "priorVolumesRetained": 517,
+  "priorNetworksUnchanged": 144,
+  "hostEnrollmentsUnchanged": 6,
+  "sourceManifestUnchanged": true,
+  "runnerSha256": "ed578250c59f2d131f10d431fae1d0b338715c77d5b4239da3c9ce9973c44d64",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "11382f3103702a54b5f4cce5f1f79f2c7f77380d7ca8003c31bd4dd76bdd4cf0",
+      "bytes": 1323
+    },
+    "runner.mjs": {
+      "sha256": "ed578250c59f2d131f10d431fae1d0b338715c77d5b4239da3c9ce9973c44d64",
+      "bytes": 4526
+    }
+  },
+  "limitations": [
+    "This host-coordinator probe validates an actual archive and a same-family restore plan before requesting each unsupported target family. It starts no application runtime and qualifies no native recovery or migration behavior.",
+    "There are no existing user installations. Cross-family migration remains unsupported and is not a prerequisite for the fresh-install release."
+  ]
+}

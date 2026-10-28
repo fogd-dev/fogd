@@ -1,0 +1,1161 @@
+{
+  "schema": 1,
+  "kind": "operator-native-write-serving",
+  "recordedAt": "2026-10-28T22:58:58.222820+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "83d75dd826fca58520f2618e4f8a48ed908801b0",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One single-writer trial and one concurrent two-app writer trial against v5 on the same existing Linux arm64 Docker engine. Upload, compatible peer activation and controller interruption while reconciling acknowledged responses against first-read SQL ledgers. These are distinct workload profiles, not repeats of the same profile.",
+  "verification": {
+    "independentlyRecomputedObserverSummariesAndLedgerReconciliation": true,
+    "canonicalApprovalArtifactDigestsVerified": true,
+    "installedRuntimePolicyVerified": true,
+    "finalPrivatePublicAuthorityPairVerified": true,
+    "nativeLogsChecked": true,
+    "acknowledgedWrites": 14842,
+    "acknowledgedWritesMissingInFirstRead": 0,
+    "intentionalCommittedHTTP502Controls": 3,
+    "updatingPeerGatewayHTTP503": 20,
+    "sampledErrorsDuringControllerInterruption": 0
+  },
+  "runs": [
+    {
+      "recordedAt": "2026-10-28T22:53:34.151792+00:00",
+      "sourceBaseCommit": "83d75dd826fca58520f2618e4f8a48ed908801b0",
+      "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+      "mode": "single",
+      "rawObserverExitsVerified": 8,
+      "ledgerSnapshotsIndependentlyRecomputed": 7,
+      "archivedSourcesVerified": 957,
+      "canonicalActiveArtifactDigestsVerified": true,
+      "unusedPeerUploadSupersededVerified": true,
+      "finalReconciliations": {
+        "baseline": {
+          "attempts": 6322,
+          "committed": 6322,
+          "acknowledged": 6321,
+          "acknowledgedMissing": [],
+          "unacknowledgedCommittedCount": 1,
+          "unacknowledgedAbsentCount": 0
+        }
+      },
+      "phases": {
+        "one-app": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 176,
+                "errors": 0,
+                "statuses": {
+                  "200": 176
+                },
+                "latencyMs": {
+                  "p50": 6.612660000000233,
+                  "p95": 25.67430300000001,
+                  "p99": 158.5300499999994,
+                  "max": 345.3713349999998
+                }
+              },
+              "direct": {
+                "requests": 180,
+                "errors": 0,
+                "statuses": {
+                  "200": 180
+                },
+                "latencyMs": {
+                  "p50": 4.808734000000186,
+                  "p95": 21.54298899999999,
+                  "p99": 165.3258369999994,
+                  "max": 239.69914900000003
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 356,
+              "committed": 356,
+              "acknowledged": 356,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:46:40.948Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 8.581416999993962
+            },
+            "observedSeconds": 10.093490754000001,
+            "interferenceSeconds": null
+          }
+        },
+        "peer-approval": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 832,
+                "errors": 0,
+                "statuses": {
+                  "200": 832
+                },
+                "latencyMs": {
+                  "p50": 6.639493000002403,
+                  "p95": 12.433274000002712,
+                  "p99": 34.486475000000006,
+                  "max": 160.56364399999984
+                }
+              },
+              "direct": {
+                "requests": 848,
+                "errors": 0,
+                "statuses": {
+                  "200": 848
+                },
+                "latencyMs": {
+                  "p50": 4.602940999997372,
+                  "p95": 10.111054000000877,
+                  "p99": 17.08471499999996,
+                  "max": 56.50250799999958
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1680,
+              "committed": 1680,
+              "acknowledged": 1680,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:47:26.760Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 13.517707999999402
+            },
+            "observedSeconds": 45.086708030000004,
+            "interferenceSeconds": 3.472574241
+          }
+        },
+        "two-apps": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 186,
+                "errors": 0,
+                "statuses": {
+                  "200": 186
+                },
+                "latencyMs": {
+                  "p50": 6.728036000000429,
+                  "p95": 11.493352999999843,
+                  "p99": 24.774839999999998,
+                  "max": 31.918962
+                }
+              },
+              "direct": {
+                "requests": 190,
+                "errors": 0,
+                "statuses": {
+                  "200": 190
+                },
+                "latencyMs": {
+                  "p50": 4.67031599999973,
+                  "p95": 11.146351000000323,
+                  "p99": 16.33779499999946,
+                  "max": 20.963903999999992
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 376,
+              "committed": 376,
+              "acknowledged": 376,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:47:37.562Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 14.625583000000915
+            },
+            "observedSeconds": 10.095140169,
+            "interferenceSeconds": null
+          }
+        },
+        "uploads": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 368,
+                "errors": 0,
+                "statuses": {
+                  "200": 368
+                },
+                "latencyMs": {
+                  "p50": 7.119453999999678,
+                  "p95": 14.956162999999833,
+                  "p99": 40.05679600000002,
+                  "max": 51.15447999999924
+                }
+              },
+              "direct": {
+                "requests": 375,
+                "errors": 0,
+                "statuses": {
+                  "200": 375
+                },
+                "latencyMs": {
+                  "p50": 5.096068999999943,
+                  "p95": 11.51610200000141,
+                  "p99": 30.153242999999975,
+                  "max": 63.58658700000012
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 743,
+              "committed": 743,
+              "acknowledged": 743,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:47:58.328Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 30.796374999990803
+            },
+            "observedSeconds": 20.072850041,
+            "interferenceSeconds": 1.246450871
+          }
+        },
+        "activation": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 830,
+                "errors": 0,
+                "statuses": {
+                  "200": 830
+                },
+                "latencyMs": {
+                  "p50": 6.895452999999179,
+                  "p95": 13.630780999999843,
+                  "p99": 28.4970679999999,
+                  "max": 53.55549299999984
+                }
+              },
+              "direct": {
+                "requests": 848,
+                "errors": 0,
+                "statuses": {
+                  "200": 848
+                },
+                "latencyMs": {
+                  "p50": 4.596648999999161,
+                  "p95": 10.386513000001287,
+                  "p99": 16.70579699999871,
+                  "max": 55.69783800000005
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1678,
+              "committed": 1678,
+              "acknowledged": 1678,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:48:44.158Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 22.339584000001196
+            },
+            "observedSeconds": 45.051188489,
+            "interferenceSeconds": 1.3100769170000002
+          }
+        },
+        "controller-outage": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 552,
+                "errors": 0,
+                "statuses": {
+                  "200": 552
+                },
+                "latencyMs": {
+                  "p50": 6.912035999997897,
+                  "p95": 14.14549099999931,
+                  "p99": 30.379786999998032,
+                  "max": 56.010339
+                }
+              },
+              "direct": {
+                "requests": 564,
+                "errors": 0,
+                "statuses": {
+                  "200": 564
+                },
+                "latencyMs": {
+                  "p50": 4.636441000000559,
+                  "p95": 12.96727699999974,
+                  "p99": 22.740703999999823,
+                  "max": 53.39103400000022
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1116,
+              "committed": 1116,
+              "acknowledged": 1116,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:49:15.068Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 36.36783299999661
+            },
+            "observedSeconds": 30.091107431,
+            "interferenceSeconds": 5.709069737
+          }
+        },
+        "recovered": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 184,
+                "errors": 0,
+                "statuses": {
+                  "200": 184
+                },
+                "latencyMs": {
+                  "p50": 7.215038999999706,
+                  "p95": 16.757130999999845,
+                  "p99": 53.774868999998944,
+                  "max": 55.6178370000016
+                }
+              },
+              "direct": {
+                "requests": 188,
+                "errors": 0,
+                "statuses": {
+                  "200": 188
+                },
+                "latencyMs": {
+                  "p50": 4.713734000000841,
+                  "p95": 12.910069000000021,
+                  "p99": 54.188537,
+                  "max": 55.21050099999957
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 372,
+              "committed": 372,
+              "acknowledged": 372,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:49:25.944Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 28.538916999998037
+            },
+            "observedSeconds": 10.104429201,
+            "interferenceSeconds": null
+          }
+        }
+      },
+      "hardware": {
+        "hostNode": "v26.2.0",
+        "host": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "cpus": 10,
+          "totalMemoryBytes": 68719476736,
+          "availableMemoryBytes": 207028224,
+          "loadAverage": [
+            24.96923828125,
+            32.0322265625,
+            35.14111328125
+          ]
+        },
+        "engine": {
+          "version": "29.5.2",
+          "os": "linux",
+          "architecture": "aarch64",
+          "cpus": 2,
+          "memoryBytes": 6199001088,
+          "driver": "overlay2"
+        },
+        "observer": {
+          "memoryBytes": 134217728,
+          "cpuLimit": 1
+        },
+        "unrelatedContainers": 21
+      },
+      "priorContainersUnchanged": 366,
+      "priorVolumesRetained": 495,
+      "retained": {
+        "containers": 8,
+        "observers": 1,
+        "volumes": 11
+      },
+      "finalRouteStoresMatch": true,
+      "independentAuditPassed": true,
+      "nativeLogHealthChecked": true,
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "a3e19d84d8929b3d9a5d738a74322fb9629f8109e6f6ceec8ece5157eb2863ab",
+          "bytes": 4243657
+        },
+        "post-write-privacy.json": {
+          "sha256": "1ebe23c00e014209264346c360f8df6e9e82b14cf0ae5a6cd3d471e8d0874cb2",
+          "bytes": 1220
+        },
+        "executed-source-inventory.json": {
+          "sha256": "4f674c0556ab5baa37f1bed5fbed0f743b1cf0b0b8e80f067fed23b64df48b55",
+          "bytes": 111915
+        },
+        "runner.mjs": {
+          "sha256": "ef71a2f5821c5a235123047438ecf4435f5ca0edae00c2fa2a4923dcd6ef37fb",
+          "bytes": 4105
+        },
+        "runtime.log": {
+          "sha256": "9109a3f83fd9437463d569d4c6184e21e7c7109ee262a35eecebed62d8af39d1",
+          "bytes": 8446791
+        },
+        "observer-read-control.json": {
+          "sha256": "92898b4da45b6ae2c7415402ad480209688cce2aa008eeaab18dc10464e9a968",
+          "bytes": 13782
+        },
+        "observer-one-app.json": {
+          "sha256": "2632c9b93b852f9467a065cc2823c6e08ccf3bdc97540e2c679ac22deaef3fa0",
+          "bytes": 52528
+        },
+        "observer-peer-approval.json": {
+          "sha256": "166df727d7f998a10945177e4b9afecec09d7ce668138a8acceaa298f1224bbf",
+          "bytes": 256921
+        },
+        "observer-two-apps.json": {
+          "sha256": "39a1a6630e4ab681011f9ae37eba4264e9f0a48d2ef27453984f7e99cd3540e3",
+          "bytes": 55786
+        },
+        "observer-uploads.json": {
+          "sha256": "aa2b36a61976e9fbc9dd8d4c095554d296ed432426760b26a027f83842c8f732",
+          "bytes": 109293
+        },
+        "observer-activation.json": {
+          "sha256": "5985a7471fc7ee531d41f730ca43b61c1a66f7c55f16e7ac43e1820bc3449406",
+          "bytes": 251547
+        },
+        "observer-controller-outage.json": {
+          "sha256": "5b42564ca5c77acd8a2398525fe34a2a9e1de75e15d5e729396ac2a7b2864deb",
+          "bytes": 175222
+        },
+        "observer-recovered.json": {
+          "sha256": "4316b11c850bc9d06994837022482703815b822a62159b62570b9efacdea703f",
+          "bytes": 55575
+        },
+        "independent-audit-source.py": {
+          "bytes": 11903,
+          "sha256": "e7d54c8aa1ac29f2961664af927a138558f4769f7e03d696eea6aee58ffdf3cc"
+        },
+        "stores-audit.json": {
+          "bytes": 282,
+          "sha256": "2e12e0b520b865d95877bb93e6288397675c6d2d3faba8099c736c7831ff2cef"
+        },
+        "stores-audit-source.mjs": {
+          "bytes": 3342,
+          "sha256": "35632839b02b38471d6230a4c20091264153fc2b4e70e324e3b789dce112fd7b"
+        },
+        "independent-audit.json": {
+          "sha256": "34b46f9a20701833fba01e2629c21383cecec58ac9b9b0999cb68fc745b69347",
+          "bytes": 13238
+        }
+      }
+    },
+    {
+      "recordedAt": "2026-10-28T22:58:58.222820+00:00",
+      "sourceBaseCommit": "83d75dd826fca58520f2618e4f8a48ed908801b0",
+      "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+      "mode": "concurrent",
+      "rawObserverExitsVerified": 12,
+      "ledgerSnapshotsIndependentlyRecomputed": 10,
+      "archivedSourcesVerified": 957,
+      "canonicalActiveArtifactDigestsVerified": true,
+      "unusedPeerUploadSupersededVerified": true,
+      "finalReconciliations": {
+        "baseline": {
+          "attempts": 4262,
+          "committed": 4262,
+          "acknowledged": 4261,
+          "acknowledgedMissing": [],
+          "unacknowledgedCommittedCount": 1,
+          "unacknowledgedAbsentCount": 0
+        },
+        "peer": {
+          "attempts": 4281,
+          "committed": 4261,
+          "acknowledged": 4260,
+          "acknowledgedMissing": [],
+          "unacknowledgedCommittedCount": 1,
+          "unacknowledgedAbsentCount": 20
+        }
+      },
+      "phases": {
+        "two-apps": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 184,
+                "errors": 0,
+                "statuses": {
+                  "200": 184
+                },
+                "latencyMs": {
+                  "p50": 7.212473999999929,
+                  "p95": 16.46354599999995,
+                  "p99": 38.26650599999999,
+                  "max": 58.61577700000001
+                }
+              },
+              "direct": {
+                "requests": 188,
+                "errors": 0,
+                "statuses": {
+                  "200": 188
+                },
+                "latencyMs": {
+                  "p50": 4.607680999999957,
+                  "p95": 10.493398999999954,
+                  "p99": 18.003198999999995,
+                  "max": 35.51178
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 372,
+              "committed": 372,
+              "acknowledged": 372,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:54:59.651Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 14.381375000004482
+            },
+            "observedSeconds": 10.029171021,
+            "interferenceSeconds": null
+          },
+          "peer": {
+            "summaries": {
+              "gateway": {
+                "requests": 184,
+                "errors": 0,
+                "statuses": {
+                  "200": 184
+                },
+                "latencyMs": {
+                  "p50": 7.579874000000018,
+                  "p95": 15.6423249999998,
+                  "p99": 46.59010099999999,
+                  "max": 70.18454599999998
+                }
+              },
+              "direct": {
+                "requests": 190,
+                "errors": 0,
+                "statuses": {
+                  "200": 190
+                },
+                "latencyMs": {
+                  "p50": 4.257241000000022,
+                  "p95": 8.952715999999782,
+                  "p99": 18.623983999999837,
+                  "max": 39.00984699999999
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 374,
+              "committed": 374,
+              "acknowledged": 374,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:54:59.653Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 13.683083000003535
+            },
+            "observedSeconds": 10.068262492,
+            "interferenceSeconds": null
+          },
+          "overlap": {
+            "overlapMs": 9926.84619140625,
+            "sharedOperationIds": 372
+          }
+        },
+        "uploads": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 368,
+                "errors": 0,
+                "statuses": {
+                  "200": 368
+                },
+                "latencyMs": {
+                  "p50": 7.510935000002064,
+                  "p95": 15.522679000000153,
+                  "p99": 34.73782199999914,
+                  "max": 58.67919299999994
+                }
+              },
+              "direct": {
+                "requests": 374,
+                "errors": 0,
+                "statuses": {
+                  "200": 374
+                },
+                "latencyMs": {
+                  "p50": 5.130123000000822,
+                  "p95": 13.887450000000001,
+                  "p99": 21.15234099999998,
+                  "max": 49.22917299999972
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 742,
+              "committed": 742,
+              "acknowledged": 742,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:55:20.462Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 16.05800000000454
+            },
+            "observedSeconds": 20.104144168999998,
+            "interferenceSeconds": 1.146030066
+          },
+          "peer": {
+            "summaries": {
+              "gateway": {
+                "requests": 369,
+                "errors": 0,
+                "statuses": {
+                  "200": 369
+                },
+                "latencyMs": {
+                  "p50": 6.875938999999562,
+                  "p95": 15.380753999999797,
+                  "p99": 35.453196000000005,
+                  "max": 62.5268329999999
+                }
+              },
+              "direct": {
+                "requests": 377,
+                "errors": 0,
+                "statuses": {
+                  "200": 377
+                },
+                "latencyMs": {
+                  "p50": 4.646674999999959,
+                  "p95": 12.468439999999873,
+                  "p99": 17.698491999999987,
+                  "max": 57.021231000000625
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 746,
+              "committed": 746,
+              "acknowledged": 746,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:55:20.463Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 17.66545899999619
+            },
+            "observedSeconds": 20.062162836,
+            "interferenceSeconds": 1.2077302260000002
+          },
+          "overlap": {
+            "overlapMs": 19918.5712890625,
+            "sharedOperationIds": 742
+          }
+        },
+        "activation": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 822,
+                "errors": 0,
+                "statuses": {
+                  "200": 822
+                },
+                "latencyMs": {
+                  "p50": 7.772982000000411,
+                  "p95": 17.274669999998878,
+                  "p99": 30.009543999996822,
+                  "max": 98.167848
+                }
+              },
+              "direct": {
+                "requests": 843,
+                "errors": 0,
+                "statuses": {
+                  "200": 843
+                },
+                "latencyMs": {
+                  "p50": 4.886139999999614,
+                  "p95": 13.210127000000057,
+                  "p99": 31.927733000000444,
+                  "max": 58.31833700000061
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1665,
+              "committed": 1665,
+              "acknowledged": 1665,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:06.323Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 36.69512499999837
+            },
+            "observedSeconds": 45.104368735,
+            "interferenceSeconds": 1.4347752029999998
+          },
+          "peer": {
+            "summaries": {
+              "gateway": {
+                "requests": 826,
+                "errors": 20,
+                "statuses": {
+                  "200": 806,
+                  "503": 20
+                },
+                "latencyMs": {
+                  "p50": 7.271518000001379,
+                  "p95": 16.392284000000018,
+                  "p99": 36.07224099999985,
+                  "max": 74.719112
+                }
+              },
+              "direct": {
+                "requests": 847,
+                "errors": 0,
+                "statuses": {
+                  "200": 847
+                },
+                "latencyMs": {
+                  "p50": 4.520775999997568,
+                  "p95": 11.95053899999948,
+                  "p99": 24.470130000000154,
+                  "max": 69.46710500000017
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1673,
+              "committed": 1653,
+              "acknowledged": 1653,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 20
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:06.324Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 25.30033299999195
+            },
+            "observedSeconds": 45.054893971000006,
+            "interferenceSeconds": 1.4992112850000001
+          },
+          "overlap": {
+            "overlapMs": 44932.539306640625,
+            "sharedOperationIds": 1665
+          }
+        },
+        "controller-outage": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 552,
+                "errors": 0,
+                "statuses": {
+                  "200": 552
+                },
+                "latencyMs": {
+                  "p50": 7.096740000000864,
+                  "p95": 15.17586300000039,
+                  "p99": 34.90781600000001,
+                  "max": 101.05877700000019
+                }
+              },
+              "direct": {
+                "requests": 562,
+                "errors": 0,
+                "statuses": {
+                  "200": 562
+                },
+                "latencyMs": {
+                  "p50": 4.848902999998245,
+                  "p95": 11.749181999999564,
+                  "p99": 26.940384999999992,
+                  "max": 108.33241299999918
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1114,
+              "committed": 1114,
+              "acknowledged": 1114,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:37.343Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 44.58199999999488
+            },
+            "observedSeconds": 30.081137791999996,
+            "interferenceSeconds": 5.752929969
+          },
+          "peer": {
+            "summaries": {
+              "gateway": {
+                "requests": 553,
+                "errors": 0,
+                "statuses": {
+                  "200": 553
+                },
+                "latencyMs": {
+                  "p50": 6.765480000000025,
+                  "p95": 15.985990000001038,
+                  "p99": 33.79665400000067,
+                  "max": 68.1810289999994
+                }
+              },
+              "direct": {
+                "requests": 564,
+                "errors": 0,
+                "statuses": {
+                  "200": 564
+                },
+                "latencyMs": {
+                  "p50": 4.801237000001493,
+                  "p95": 11.692626000000018,
+                  "p99": 26.156788999999662,
+                  "max": 57.1475989999999
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 1117,
+              "committed": 1117,
+              "acknowledged": 1117,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:37.344Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 48.75808300002245
+            },
+            "observedSeconds": 30.082060919,
+            "interferenceSeconds": 5.7292745080000005
+          },
+          "overlap": {
+            "overlapMs": 29911.47265625,
+            "sharedOperationIds": 1114
+          }
+        },
+        "recovered": {
+          "baseline": {
+            "summaries": {
+              "gateway": {
+                "requests": 182,
+                "errors": 0,
+                "statuses": {
+                  "200": 182
+                },
+                "latencyMs": {
+                  "p50": 9.016300999999999,
+                  "p95": 19.93107400000008,
+                  "p99": 58.606299000000035,
+                  "max": 61.167733999999655
+                }
+              },
+              "direct": {
+                "requests": 186,
+                "errors": 0,
+                "statuses": {
+                  "200": 186
+                },
+                "latencyMs": {
+                  "p50": 5.583524000000011,
+                  "p95": 17.141131999999743,
+                  "p99": 54.0808820000002,
+                  "max": 56.56352100000004
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 368,
+              "committed": 368,
+              "acknowledged": 368,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:48.241Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 36.03995800000848
+            },
+            "observedSeconds": 10.101580384,
+            "interferenceSeconds": null
+          },
+          "peer": {
+            "summaries": {
+              "gateway": {
+                "requests": 182,
+                "errors": 0,
+                "statuses": {
+                  "200": 182
+                },
+                "latencyMs": {
+                  "p50": 8.560109000000011,
+                  "p95": 20.654203999999936,
+                  "p99": 37.595542,
+                  "max": 50.98320300000023
+                }
+              },
+              "direct": {
+                "requests": 188,
+                "errors": 0,
+                "statuses": {
+                  "200": 188
+                },
+                "latencyMs": {
+                  "p50": 5.316966999999977,
+                  "p95": 12.680965000000015,
+                  "p99": 24.923783999999998,
+                  "max": 26.64657399999942
+                }
+              }
+            },
+            "phaseReconciliation": {
+              "attempts": 370,
+              "committed": 370,
+              "acknowledged": 370,
+              "acknowledgedMissing": [],
+              "unacknowledgedCommittedCount": 0,
+              "unacknowledgedAbsentCount": 0
+            },
+            "ledgerRead": {
+              "startedAt": "2026-10-28T22:56:48.242Z",
+              "readCount": 1,
+              "status": 200,
+              "elapsedMs": 31.770541999983834
+            },
+            "observedSeconds": 10.092243744,
+            "interferenceSeconds": null
+          },
+          "overlap": {
+            "overlapMs": 9934.30517578125,
+            "sharedOperationIds": 368
+          }
+        }
+      },
+      "hardware": {
+        "hostNode": "v26.2.0",
+        "host": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "cpus": 10,
+          "totalMemoryBytes": 68719476736,
+          "availableMemoryBytes": 191561728,
+          "loadAverage": [
+            45.75048828125,
+            32.16748046875,
+            32.05517578125
+          ]
+        },
+        "engine": {
+          "version": "29.5.2",
+          "os": "linux",
+          "architecture": "aarch64",
+          "cpus": 2,
+          "memoryBytes": 6199001088,
+          "driver": "overlay2"
+        },
+        "observer": {
+          "memoryBytes": 134217728,
+          "cpuLimit": 1,
+          "count": 2
+        },
+        "unrelatedContainers": 21
+      },
+      "priorContainersUnchanged": 375,
+      "priorVolumesRetained": 506,
+      "retained": {
+        "containers": 8,
+        "observers": 2,
+        "volumes": 11
+      },
+      "finalRouteStoresMatch": true,
+      "independentAuditPassed": true,
+      "nativeLogHealthChecked": true,
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "b8746697fbd1cbed8a32634c8ed7627b544c33b52d3545b624a4893c00ecb399",
+          "bytes": 5394829
+        },
+        "post-write-privacy.json": {
+          "sha256": "bd01443f6b10cc177ef2c801f4e8b8d445cad755f6b2102d56d281c738d74599",
+          "bytes": 1711
+        },
+        "executed-source-inventory.json": {
+          "sha256": "4f674c0556ab5baa37f1bed5fbed0f743b1cf0b0b8e80f067fed23b64df48b55",
+          "bytes": 111915
+        },
+        "runner.mjs": {
+          "sha256": "e9b430d174a16c62f3b73a69ec852877c0bbb4834914bcd6c3dd3df8aa90cf78",
+          "bytes": 5365
+        },
+        "runtime.log": {
+          "sha256": "48f3106c383001424af2e718547e0c988dab4dadf17e8bc9b01e943dfed5be5a",
+          "bytes": 11757940
+        },
+        "observer-read-control-0.json": {
+          "sha256": "6f48dfdea70f4ae757c095abf53a33a2b1b79b3d110e29b7646475563fbeb1b9",
+          "bytes": 13586
+        },
+        "observer-read-control-1.json": {
+          "sha256": "a5575ba19f59ca5b405ddbcb1f8e990e5aa5dd1b19f38fba5776e75a63ea884a",
+          "bytes": 13838
+        },
+        "observer-two-apps-0.json": {
+          "sha256": "82cca39c52f4eb881f8de21799cbb1ff11e07e7b020ae6de15bf3c8a9615a68d",
+          "bytes": 55208
+        },
+        "observer-two-apps-1.json": {
+          "sha256": "e6c9fc12ce2a7d17288fca0a99e187bd0bc19e79f1750a0ffca61f4f4ac1d8bd",
+          "bytes": 55485
+        },
+        "observer-uploads-0.json": {
+          "sha256": "c3d7b397f382415c6bcc1a1035de498a896a7d0709e5d3e802938fcbb6fc75b9",
+          "bytes": 109191
+        },
+        "observer-uploads-1.json": {
+          "sha256": "b70f43920de7ff28a7b8b47ba0be6a13d447dcfc7d157f4e0c242b603dbc785c",
+          "bytes": 109751
+        },
+        "observer-activation-0.json": {
+          "sha256": "4d71cc22d3aa79c55afc04ef11d4aabacd97ba0697a30b3b880ec534a5d79778",
+          "bytes": 249658
+        },
+        "observer-activation-1.json": {
+          "sha256": "c0dc68e7f36b27fbd18b7d1eac31e64462b16515fcab829aafa2fedbf192097e",
+          "bytes": 250861
+        },
+        "observer-controller-outage-0.json": {
+          "sha256": "087a92f595185c60e1bf4a0e52e9eaba1e7da9857ea5eb53e07097af5a2560ba",
+          "bytes": 174924
+        },
+        "observer-controller-outage-1.json": {
+          "sha256": "75af0279c8974d09b7646f80c5a75fb38423b0b9f6134db5cdfe5972c2a6445e",
+          "bytes": 175382
+        },
+        "observer-recovered-0.json": {
+          "sha256": "056da4dde4f19f6403078c4315203c880a37023ee836455e841cf3591e3c85cd",
+          "bytes": 55011
+        },
+        "observer-recovered-1.json": {
+          "sha256": "121a5daded780764d19a3ed933d3b8a2d2c0629a1653c81dc1744cf129128d16",
+          "bytes": 55290
+        },
+        "independent-audit-source.py": {
+          "bytes": 11903,
+          "sha256": "e7d54c8aa1ac29f2961664af927a138558f4769f7e03d696eea6aee58ffdf3cc"
+        },
+        "stores-audit.json": {
+          "bytes": 282,
+          "sha256": "9109241b64112e177626f9c8b06d90641d9b7269063a6a0408e57417ac292836"
+        },
+        "stores-audit-source.mjs": {
+          "bytes": 3342,
+          "sha256": "35632839b02b38471d6230a4c20091264153fc2b4e70e324e3b789dce112fd7b"
+        },
+        "independent-audit.json": {
+          "sha256": "882e8c1579bb1d7b6112d57b1d123e2939cba2d791a1ec03b7a7f8f0ed10f7e8",
+          "bytes": 22533
+        }
+      }
+    }
+  ],
+  "acceptance": {
+    "boundedSingleWriter": true,
+    "boundedConcurrentAppWriters": true,
+    "acknowledgedWritesPresentInFirstLedgerReads": true,
+    "controllerLossServing": true,
+    "zeroDowntimeActivation": false,
+    "saturationOrDensityLimit": false,
+    "perWorkerCPUQuota": false,
+    "powerLoss": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "limitations": [
+    "Each observer has a one-CPU/128-MiB container budget. This is not a per-worker runtime CPU quota or CPU-exhaustion qualification.",
+    "Both trials share one two-vCPU, 6199001088-byte Docker VM and the same physical Mac with 21 unrelated QA containers running. Host load and memory observations are included; latency is a bounded observation, not an isolated performance guarantee.",
+    "The single-writer peer is idle or updating. The concurrent profile overlaps two app-specific ledgers with shared operation IDs. Each path uses two workers with 100-ms delays; this is not a saturation test.",
+    "Twenty updating-peer gateway requests returned 503 during activation and were absent from its ledger. They were unacknowledged and were not replayed. Successful direct requests bypass gateway withholding and do not establish public update availability.",
+    "Three intentional controls committed an insert then returned HTTP 502. No other unacknowledged committed writes were observed.",
+    "All owned containers, observers and data volumes remain stopped and retained. Earlier fixtures and the ignored upstream harness edit remain preserved. Raw logs, credentials and application artifacts stay private.",
+    "The first single-writer audit rejected an incorrect expectation that an unused peer upload remained pending. The canonical controller correctly marked it superseded after exact approval. The corrected audit verifies both superseded uploads; the native workload itself completed successfully."
+  ]
+}
