@@ -258,7 +258,19 @@ Host-side work can continue while that build constraint remains in force.
 ### Next runtime release
 
 The next runtime release should remove installation and operating barriers before
-adding another binding family. These requirements remain open:
+adding another binding family.
+
+The initial release path is a fresh installation. Cross-family upgrades remain
+refused; implementing a data migration is not a prerequisite for that path.
+Same-family stopped backup and recovery still need qualification. The
+[v4 source-build candidate](evidence/operator-durable-v4-source-build.json) includes
+the controller migration-retry fix and shared artifact-validation changes. Its
+[native retry evidence](evidence/operator-native-migration-retry-v4.json) covers a
+fully committed HTTP migration with unsaved controller hashes. Background work,
+broader recovery and independent-installation acceptance remain open for this
+artifact, and ordinary admission remains closed.
+
+The remaining release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,
   dependency locks, toolchain and base-image inputs, and the resulting native,

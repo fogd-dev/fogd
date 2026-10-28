@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { SourceDebugger } from './source-debugger.mjs';
 import { DebuggerTransport } from './debugger-transport.mjs';
+import { controllerProcess } from './controller-debugger.mjs';
+import { runtimeFamily } from '../../../packages/cli/src/runtime/catalog.mjs';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -32,6 +34,23 @@ function fixture({ text = source, frame = {}, duplicates = false, moved = false,
   return { session: new SourceDebugger(transport, { [path]: digest }), commands, state };
 }
 const selected = { path, marker: 'return true;', functionName: 'migrate' };
+
+for (const [family, main] of [
+  ['celld-cron-v2-linux-arm64', 'packages/platform/src/main.mjs'],
+  ['celld-durable-v3-linux-arm64', 'packages/platform/src/main-durable.mjs'],
+]) test(`controller checkpoint identity binds the catalog launch for ${family}`, async () => {
+  const entry = runtimeFamily(family, 'enrolled'), container = 'c'.repeat(64), calls = [];
+  const actual = { Id: container, Image: entry.image, State: { Running: true, StartedAt: 'start' }, HostConfig: { ReadonlyRootfs: true },
+    Config: { Labels: { 'com.docker.compose.project': 'owned', 'com.docker.compose.service': 'controller' }, Entrypoint: ['/usr/local/bin/node'], Cmd: [main] } };
+  const run = async args => { calls.push(args); return JSON.stringify(args[0] === 'inspect' ? [actual] : { processStart: '123' }); };
+  const identity = await controllerProcess(container, 'owned', family, run);
+  assert.deepEqual(identity, { container, project: 'owned', family, image: entry.image, startedAt: 'start', processStart: '123' });
+  assert.equal(calls.length, 2);
+  assert.ok(calls[1].at(-1).includes(JSON.stringify(['/usr/local/bin/node', main])));
+  actual.Config.Cmd = [main === 'packages/platform/src/main.mjs' ? 'packages/platform/src/main-durable.mjs' : 'packages/platform/src/main.mjs'];
+  await assert.rejects(controllerProcess(container, 'owned', family, run), /identity or launch/);
+  assert.equal(calls.length, 3, 'wrong launch refuses before process inspection');
+});
 
 test('source-verified checkpoints bind the expected executable line and paused function', async () => {
   const f = fixture(), checkpoint = await f.session.breakpoint(selected), paused = await f.session.paused(checkpoint);

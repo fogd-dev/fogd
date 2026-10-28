@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "kind": "operator-durable-v4-source-build",
+  "recordedAt": "2026-10-28T20:10:04.046Z",
+  "sourceCommit": "57727f1982896d851f563d235df69039f4519f66",
+  "family": "celld-durable-v4-linux-arm64",
+  "image": "sha256:d851f33fc75e1b4e9923e1e20e2def887970837065c11f13e018be26a5e88ab9",
+  "parentImage": "sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Uncached source compilation and independent executable inspection on a previously used isolated Linux arm64 builder; no application or installation acceptance.",
+  "engine": {
+    "id": "6f115109-ab52-4282-98fe-5431033615ed",
+    "os": "linux",
+    "architecture": "aarch64",
+    "cpus": 4,
+    "memoryBytes": 12515160064,
+    "driver": "overlayfs"
+  },
+  "native": {
+    "repository": "https://github.com/denoland/celld.git",
+    "revision": "90b43017241f81189453d326d05948f388b34652",
+    "cargoLockSha256": "d6a17422788aa910ba76bed9cf59ac15767f93fe107ebdb336954d0e9efe052b",
+    "patches": [
+      {
+        "path": "patches/celld-0.6.2-preaccept-attachment.patch",
+        "sha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd"
+      },
+      {
+        "path": "patches/celld-0.6.2-cron-retry.patch",
+        "sha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19"
+      },
+      {
+        "path": "patches/celld-0.6.2-cron-controls.patch",
+        "sha256": "11460dd716730265b7506d28dc17e0353fdedfa447e2e15c6b42514114e7fb3a"
+      },
+      {
+        "path": "patches/celld-0.6.2-runtime-identity.patch",
+        "sha256": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3"
+      },
+      {
+        "path": "patches/celld-0.6.2-runtime-binding.patch",
+        "sha256": "2c6e3048e7bace0d53808bcf5a4aa0f1b37e96b7ad64410951406bf735f42907"
+      }
+    ],
+    "sourceFiles": 281,
+    "sourceInventorySha256": "fb9db4de87c2157b711cc55d0e3160c145b9aac205fcb445134b6b4da1961cf6"
+  },
+  "baseImages": {
+    "rust": "docker.io/library/rust:1.98.1-bookworm@sha256:5b993f23fb69746405496e76f91e511d96c82b5b23304fd5d20b4a80a8b223ea",
+    "node": "docker.io/library/node:26.2.0-bookworm-slim@sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0"
+  },
+  "contextInventorySha256": "0449078c8e125b617374386946fadf5a0d49172d765ecc5add18ec2e735f82f6",
+  "programInventorySha256": "b639a5e2c544178922f04da5c9334a6396ddbd62483afca3f2b0c6695a84c1bd",
+  "sourceFiles": 109,
+  "changedSinceV3": [
+    "packages/platform/src/activation.mjs",
+    "packages/platform/src/controller.mjs",
+    "packages/runtime/src/artifact.mjs"
+  ],
+  "outputs": {
+    "celld": {
+      "sha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+      "bytes": 64555080
+    },
+    "supervisor": {
+      "sha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+      "bytes": 860
+    },
+    "workerd": {
+      "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914",
+      "bytes": 143764176
+    }
+  },
+  "verification": {
+    "buildAttempt": {
+      "status": "captured",
+      "stdoutBytes": 0,
+      "stderrBytes": 63764,
+      "exitCode": 0,
+      "signal": null,
+      "reason": null
+    },
+    "noCache": true,
+    "privateSeedSelected": false,
+    "nativeTests": [
+      {
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      }
+    ],
+    "clippyAllTargetsDenyWarnings": true,
+    "sourceInventoryMatchesCapturedBuild": true,
+    "independentSha256sumMatches": true,
+    "cronHelpSha256": "3300cdcd48df694fedd85b1c0c1cba215fa6055bede47fc86879113f4e6d1139",
+    "noApplicationContainersStarted": true,
+    "priorBuilderVolumesUnchanged": true,
+    "oldCatalogEntriesUnchanged": true,
+    "installedStoreImageAndProgramsVerified": true,
+    "cronHelpCommand": [
+      "/usr/local/bin/celld",
+      "cron"
+    ],
+    "cronHelpExactStdout": true
+  },
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "bdb12a58c0469b04b9e2433784f4c2110115ed747f06c1a7695035117faf8f2f",
+      "bytes": 16534
+    },
+    "build-attempt.json": {
+      "sha256": "c1f32dceae089798dd59e364d3ff4bcca59964db37fb45e7712444e9d38af41f",
+      "bytes": 124
+    },
+    "build.stderr": {
+      "sha256": "bc21321e813ad0eb6962964f7e4d680068cb02a4da9499519dcc9156799d0359",
+      "bytes": 63764
+    },
+    "build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "native-source/receipt.json": {
+      "sha256": "1a8ab10f51cf53299cf7b0cf2e232d89f79473d53d4522e6a9445c687c94cac7",
+      "bytes": 1195
+    },
+    "build-inputs/receipt.json": {
+      "sha256": "c49133c4d21595f16168987a9b75580d26303d6e513a8b2fb547efcf4abe8b86",
+      "bytes": 15531
+    }
+  },
+  "acceptance": {
+    "freshBuilderThisAttempt": false,
+    "imageDigestReproducibility": false,
+    "independentInstallation": false,
+    "applicationLifecycle": false,
+    "migrationRetry": true,
+    "ordinaryAdmission": false,
+    "migrationRetryScope": "Fully committed HTTP update only; see operator-native-migration-retry-v4.json"
+  },
+  "releasePath": "Fresh installation; cross-family migration remains unqualified. Same-family stopped recovery still requires qualification.",
+  "sourceBuildImage": "sha256:10a9b46e7cca6937195a39d5619cb9ef678feef70de7b6c94e5ed2909a4f521d",
+  "imageStoreTransfer": {
+    "sourceImageIndex": "sha256:10a9b46e7cca6937195a39d5619cb9ef678feef70de7b6c94e5ed2909a4f521d",
+    "platformManifest": "sha256:169b6a795242b299d3b5be510a04b989ed80b7f9a31d5d76bfbe31d3886f3d4c",
+    "image": "sha256:d851f33fc75e1b4e9923e1e20e2def887970837065c11f13e018be26a5e88ab9",
+    "source": "fogd-clean-build",
+    "target": "fogd-bundle-recipient",
+    "archiveSha256": "d83a17c59ed10aedd9c699fab365fb470d747f925ed18185b0ac9f3673ae9863",
+    "archiveBytes": 208218624,
+    "descriptorHashesVerified": true,
+    "loadedRootfsMatchesConfig": true,
+    "applicationContainersStarted": false
+  }
+}

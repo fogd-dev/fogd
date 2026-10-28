@@ -35,6 +35,20 @@ test('retirement has a separate durable candidate and cannot open ordinary admis
   assert.throws(() => runtimeFamily('celld-durable-v3-linux-arm64'), /ordinary enrollment remains closed/);
 });
 
+test('source-built v4 is a separate closed candidate with the migration retry and artifact validation changes', () => {
+  const next = runtimeFamily('celld-durable-v4-linux-arm64', 'enrolled');
+  const previous = runtimeFamily('celld-durable-v3-linux-arm64', 'enrolled');
+  assert.equal(next.admission, 'candidate'); assert.equal(next.schema, 2); assert.equal(next.routing, 'durable');
+  assert.notEqual(next.image, previous.image);
+  assert.equal(next.storageImage, previous.storageImage);
+  assert.equal(next.supervisorSha256, previous.supervisorSha256);
+  assert.deepEqual(Object.keys(next.sourceFiles).filter(path => next.sourceFiles[path] !== previous.sourceFiles[path]), [
+    'packages/platform/src/activation.mjs', 'packages/platform/src/controller.mjs', 'packages/runtime/src/artifact.mjs',
+  ]);
+  assert.deepEqual(Object.keys(next.sourceFiles), Object.keys(previous.sourceFiles));
+  assert.throws(() => runtimeFamily(next.id), /ordinary enrollment remains closed/);
+});
+
 for (const [name, make] of [
   ['legacy entry with routing', () => ({ ...legacyEntry(), routing: 'durable' })],
   ['durable entry without routing', () => { const e = durableEntry(); delete e.routing; return e; }],

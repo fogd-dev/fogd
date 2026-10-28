@@ -10,6 +10,21 @@ The CLI requires the exact cached runtime and storage images listed in the
 replacement when those images are missing. Runtime distribution and the cached
 build's provenance limits are described below.
 
+The fresh-install release candidate is `celld-durable-v4-linux-arm64`. Its
+[source-build receipt](evidence/operator-durable-v4-source-build.json) records an
+uncached native build, nine passing native tests, strict Clippy and checked
+production fingerprints. The receipt distinguishes the builder's OCI index from
+the classic image-store configuration digest used by installation. Those identities
+are linked through the verified archive descriptors and loaded root filesystem.
+Ordinary enrollment remains closed while full-family qualification is incomplete.
+
+Two fresh [native migration-retry checks](evidence/operator-native-migration-retry-v4.json)
+cover application SQL and its native name ledger committed before the controller
+saves its migration hashes. The app stays withheld through controller interruption;
+exact-artifact retry succeeds without entering backend migration again. These checks
+do not cover partial native commits, interruption inside native SQL/bookkeeping,
+or power loss. Other families retain their existing pins.
+
 ## Installation authority
 
 Before enrollment, inspect the selected Docker engine without starting containers

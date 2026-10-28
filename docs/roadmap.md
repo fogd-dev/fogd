@@ -120,6 +120,14 @@ live application diagnosis. The [serving-authority proposal](serving-authority.m
 selects durable route authority and fresh-read/crash gates for a new runtime.
 Host CLI improvements do not close those release gaps.
 
+The next release targets fresh installations. The
+[v4 candidate](evidence/operator-durable-v4-source-build.json) now carries the
+source-only migration-retry fix in a source-built immutable image. Two fresh
+[native retry checks](evidence/operator-native-migration-retry-v4.json) verify the
+fully committed HTTP migration/controller-ledger gap. Full-family background,
+recovery and independent-installation qualification remain open. Cross-family
+migration remains refused and does not block the fresh-install release path.
+
 ## Milestones and acceptance gates
 
 | Milestone | Capability and goal | Exit evidence | Outside this milestone |
