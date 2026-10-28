@@ -277,7 +277,13 @@ deadline, HTTP/background independence and a stopped snapshot. Its
 [migration-retry check](evidence/operator-native-migration-retry-v5.json) repeats the
 fully committed HTTP gap on an independent engine on the same physical host.
 These do not qualify stopped restore, broader background failure and retirement,
-received-CLI installation or the complete runtime family.
+or the complete runtime family. A separate
+[received-code installation](evidence/operator-v5-received-installation.json) now
+uses the v5 offline bundle, received operator and standalone client on another
+existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
+apps and data after full stop/start pass. It uses internal candidate selection and
+prepared project dependencies; separate physical-machine and ordinary released-family
+installation remain open.
 
 The remaining release requirements are:
 

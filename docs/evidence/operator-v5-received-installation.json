@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "kind": "operator-received-installation",
+  "recordedAt": "2026-10-28T21:56:53.849022+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "qualificationSourceBaseCommit": "d8514ee3e1bece942f788df4aaded3da70423fcc",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Fresh two-fleet HTTPS installation on an independent classic-overlay2 Linux arm64 Docker engine on the same physical Mac. Received operator and standalone client product code executed outside the checkout. The engine already held prior qualification images and fixtures; this is not empty-engine or separate physical-machine acceptance.",
+  "sourceEngineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "targetEngineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "transfer": {
+    "format": "fogd-runtime-transfer-v1",
+    "bootstrapSha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98",
+    "manifestSha256": "8714500eeb2c18754c44ef71d9abe0782df598172a4d285948ad1a389fcea3ba",
+    "verifiedFiles": 427,
+    "receivedOperatorProgramFiles": 425,
+    "standaloneClientFiles": 36,
+    "clientBootstrapSha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98",
+    "clientManifestSha256": "7096fcece65283180fbbe9e7171f1da7e3b9e9b5aa9f6c5cf514fe4584ec2453",
+    "receivedOperatorUnchangedAfterUse": true,
+    "importServicesStarted": false
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "receivedCodeOutsideCheckout": true,
+    "canonicalApprovalsAndArtifactsVerified": true,
+    "explicitHTTPCheckpointAfterAdditionalRestart": true,
+    "nativeLogsChecked": true,
+    "priorContainersUnchanged": 48,
+    "priorVolumesRetained": 66,
+    "ownedContainersStoppedAndRetained": 8
+  },
+  "applications": {
+    "names": [
+      "baseline",
+      "peer"
+    ],
+    "initialSubmissions": "pending",
+    "finalApprovals": "active",
+    "acknowledgedWriteIds": [
+      "received-baseline",
+      "received-peer"
+    ],
+    "committedResponseErrorControl": "post-commit-error-control",
+    "afterRestartHTTP": {
+      "baseline": {
+        "ledgerStatus": 200,
+        "pageStatus": 200,
+        "retainedRows": 2
+      },
+      "peer": {
+        "ledgerStatus": 200,
+        "pageStatus": 200,
+        "retainedRows": 1
+      }
+    }
+  },
+  "acceptance": {
+    "authenticatedOfflineTransfer": true,
+    "receivedOperatorAndStandaloneClient": true,
+    "freshPrivateCredentialEnrollment": true,
+    "scopedDeployAndExactApproval": true,
+    "persistentDataAcrossFullStopStart": true,
+    "independentSupportedEngine": true,
+    "emptyTargetEngine": false,
+    "separatePhysicalMachine": false,
+    "uncachedApplicationDependencyInstall": false,
+    "ordinaryReleasedFamilyInstallation": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "assistance": [
+    "Provided an existing isolated Linux arm64 classic-overlay2 Docker engine with prior qualification fixtures; preserved all of them.",
+    "Retained verifier and manifest hashes independently before executing received code.",
+    "Used the internal candidate seam for export, import and initial enrollment. The ordinary candidate startup command was explicitly refused.",
+    "Supplied fresh private storage/admin credentials and a private certificate after import.",
+    "The qualification harness supplied prepared example projects and their declared existing Void/Vite dependency cache. Product deploy and admin commands used received code; harness Docker/HTTPS observations used checkout utilities.",
+    "A read-only HTTP corroboration after an additional received-operator restart retained explicit status codes and rows. The checkout qualification helper collected final shutdown logs."
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "a78ede0c09041f78916b0f8381a003c4dccdb03e87bdfb4bb51d8478b327eebc",
+      "bytes": 6413
+    },
+    "post-run-corroboration.json": {
+      "sha256": "fb71c9126a739a83e7f44b299aa740bf96c5d80c7813a37d4bcba5fc2593f682",
+      "bytes": 781
+    },
+    "runtime.log": {
+      "sha256": "c13d15f28ab826def9ab110e90bd664fbf9ac9467a819b12f6726ef0fb5d4f4f",
+      "bytes": 108794
+    },
+    "corroboration-runtime.log": {
+      "sha256": "d4b50719994fda2445c4825aa97e86cd4d1316905794e6206fbd067b9a08a70d",
+      "bytes": 160017
+    },
+    "qualification-runner.mjs": {
+      "sha256": "c15e6e27bab23ce0eadbda978b7f9afe554965ef09661882ce9db54e281db9e1",
+      "bytes": 8480
+    },
+    "corroboration-runner.mjs": {
+      "sha256": "8f5fabb893284ad1072c67297ec0ac81783842dacbbdd4cd90f0d07e7071d4ef",
+      "bytes": 2782
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "e2ba00b275117e65c70a603f2f4e26718f7241e91f405dfe0c3c05f83f497718",
+      "bytes": 7386
+    }
+  },
+  "remainingGates": [
+    "Separate physical-machine installation and ordinary released-family path",
+    "Stopped background restore, due/retry/older snapshots and broader failure/retirement gates",
+    "Broader serving, diagnosis and capacity requirements"
+  ]
+}

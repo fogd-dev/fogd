@@ -137,8 +137,14 @@ and [HTTP migration-retry evidence](evidence/operator-native-migration-retry-v5.
 on another isolated Docker engine on the same physical host. The background trial
 checks cron and queue resume with HTTP withheld, a controller outage across an
 observed cron deadline, and a stopped snapshot. Stopped restore, broader failure
-and retirement paths, independent received-CLI installation and full family
-acceptance remain open.
+and retirement paths, and full family acceptance remain open.
+
+The [v5 received-code installation](evidence/operator-v5-received-installation.json)
+checks the offline operator/client path on an independent existing Docker engine on
+the same physical Mac. Both scoped HTTP/D1 apps retain data after full stop/start.
+Internal candidate selection and prepared project dependencies are explicit
+assistance. Separate physical-machine and ordinary released-family installation
+remain open.
 
 ## Milestones and acceptance gates
 
