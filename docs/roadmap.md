@@ -136,8 +136,11 @@ V5 now has [bounded native background evidence](evidence/operator-native-backgro
 and [HTTP migration-retry evidence](evidence/operator-native-migration-retry-v5.json)
 on another isolated Docker engine on the same physical host. The background trial
 checks cron and queue resume with HTTP withheld, a controller outage across an
-observed cron deadline, and a stopped snapshot. Stopped restore, broader failure
-and retirement paths, and full family acceptance remain open.
+observed cron deadline, and a stopped snapshot. A
+[paused-snapshot restore](evidence/operator-native-background-recovery-v5.json)
+now verifies fresh target volumes, cold and acknowledged background holds, explicit
+resume and unchanged old occurrences. Due, retry and older snapshots, broader
+failure and retirement paths, and full family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on

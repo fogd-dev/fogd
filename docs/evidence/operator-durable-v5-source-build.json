@@ -157,13 +157,14 @@
     "freshBuilderThisAttempt": false,
     "imageDigestReproducibility": false,
     "applicationLifecycle": false,
-    "stoppedRecovery": false,
+    "stoppedRecovery": true,
     "independentInstallation": true,
     "ordinaryAdmission": false,
     "migrationRetry": true,
     "nativeBackgroundLifecycle": true,
     "fullFamilyQualification": false,
-    "independentInstallationScope": "Received operator/client on a separate existing Docker engine on the same physical host; candidate seam and prepared fixture dependencies."
+    "independentInstallationScope": "Received operator/client on a separate existing Docker engine on the same physical host; candidate seam and prepared fixture dependencies.",
+    "stoppedRecoveryScope": "Paused cron/queue snapshot onto fresh volumes; due/retry/older recovery remains open."
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -187,6 +188,7 @@
   "followupEvidence": [
     "operator-native-migration-retry-v5.json",
     "operator-native-background-v5.json",
-    "operator-v5-received-installation.json"
+    "operator-v5-received-installation.json",
+    "operator-native-background-recovery-v5.json"
   ]
 }

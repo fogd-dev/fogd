@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-recovery",
+  "recordedAt": "2026-10-28T22:12:40.829015+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceBaseCommit": "9c30b8a03ae4999dae4599f88a70db78338a50a9",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Same-family restore of the verified v5 paused cron/queue snapshot onto fresh volumes on one local Linux arm64 classic-overlay2 Docker engine. Native holds before ingress, explicit observation and verified recovery acknowledgment, continued background pause, explicit queue/cron resume and old occurrence preservation. This is not due, retry, older-snapshot or full recovery-family acceptance.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 956,
+    "freshTargetVolumes": 11,
+    "canonicalRecoveryAndArtifactDigestsVerified": true,
+    "privateJournalMatchesPublicAuthority": true,
+    "gatewayPolicyMatchesSealedRuntime": true,
+    "authoritySha256": "b07a8cf4884082590779b0bb3c23b0fc0a3ec68ac4607297f5849933dc8228ce",
+    "nativeLogsChecked": true,
+    "authoritativeEarlierContainerStatesUnchanged": 350,
+    "additionalPriorContainersRetainedStoppedBeforeAttempt": 8,
+    "priorVolumesRetained": 484,
+    "ownedContainersStoppedAndRetained": 8
+  },
+  "observations": {
+    "coldHeldMilliseconds": 75210,
+    "acknowledgedHeldMilliseconds": 76352,
+    "noOldOccurrenceReplayMilliseconds": 132469,
+    "initialRecordedObservationStates": {
+      "refresh": "paused",
+      "imports": "unknown"
+    },
+    "queuedResultLabels": [
+      "PAPAYA",
+      "FIG"
+    ],
+    "newCronResultJobs": [
+      "inventory",
+      "advisory"
+    ]
+  },
+  "acceptance": {
+    "freshSameFamilyRestore": true,
+    "coldBackendHoldBeforeControllerAndGateway": true,
+    "sourceCopiesRemainStopped": true,
+    "explicitObservationBeforeAcknowledgment": true,
+    "verifiedAcknowledgmentPreservesBackgroundPause": true,
+    "retainedDataAndMigrationHistory": true,
+    "explicitQueueAndCronResume": true,
+    "oldOccurrencesUnchangedAfterResume": true,
+    "settledPrivatePublicRoutingPair": true,
+    "dueTimerRestore": false,
+    "pendingRetryRestore": false,
+    "olderSnapshotRestore": false,
+    "powerLoss": false,
+    "nativeSQLBookkeepingAtomicity": false,
+    "retirementAndReuse": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "probeCorrectionsAndRetainedFailures": [
+    {
+      "attempt": 1,
+      "phase": "restore",
+      "reason": "Probe compared the ordering of a complete source-volume inventory; names and multiplicity match exactly.",
+      "failureSha256": "b601d3d15388f0aea1eb4a462bef39e789d2e801ada1cfeb9f2f332e36642623",
+      "ownedContainersRetained": 8
+    },
+    {
+      "attempt": 2,
+      "phase": "verified-acknowledgment",
+      "reason": "Probe invoked durable ingress-last startup with cold backend services still running. The launcher requires all retained services stopped before it checks both stores.",
+      "failureSha256": "bdd0ee3c9665e3e06f85f30b9a5e241ed844c6da829aeaf0bc4f755964020491",
+      "ownedContainersRetained": 8
+    },
+    {
+      "attempt": 3,
+      "phase": "verified-acknowledgment",
+      "reason": "Native process inventory was sampled during the declared 15-second supervisor startup delay. Durable startup had completed with routes withheld; the probe must wait for native process creation.",
+      "failureSha256": "68e530933864e274155a8569dfe4b95a7aca45afea01efcae0e5ee7654b0316e",
+      "ownedContainersRetained": 8
+    },
+    {
+      "attempt": 4,
+      "phase": "verified-acknowledgment",
+      "reason": "Cron recovery had been acknowledged with dispatch still paused. The probe then encountered an unknown queue observation with pending recovery and paused delivery intent after startup warming; it must explicitly observe each background app before acknowledgment.",
+      "failureSha256": "05fc9b601d11dabc9aa1c82f009240bb65e1634aa383b01d72ec42e92708b59a",
+      "ownedContainersRetained": 8
+    }
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "5a4727653e292637e64ebff3e523a5037e4416b8ab0fbe779d3d5a41ee2437fd",
+      "bytes": 318885
+    },
+    "executed-source-inventory.json": {
+      "sha256": "4889f82c2bd95545a2717d6a755cc5ce5f8d1e2bd4f5a493d4f2d0f702cf7605",
+      "bytes": 111948
+    },
+    "inputs.json": {
+      "sha256": "d7bed3270c8643e0c0d03d503b86c955dc61066a828a6465240042fde2c8d890",
+      "bytes": 383
+    },
+    "target/selection.json": {
+      "sha256": "4d7c238a75c7633575828b57076f31cd462bae5279c748fb6ec50904912d192c",
+      "bytes": 444
+    },
+    "target/runtime.log": {
+      "sha256": "33322e67b90a89b6ae160265dea6ca9ee7b5229e1cbf340d0d017a1491a5c378",
+      "bytes": 1183372
+    },
+    "stores-audit.json": {
+      "sha256": "dd7ccc5d0fe184d20ef0803146e9a2f109f2861a344af0c277b7945456a35a76",
+      "bytes": 269
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "68f02102909b5a18734fdfaa00cfee9c789f2934c8d6db7663af58fa60c27622",
+      "bytes": 3567
+    },
+    "independent-audit-source.py": {
+      "sha256": "a2ddda59ddecf7a9abe986b90975b00e5683518f610ef36a3b5dc398ff34e9e5",
+      "bytes": 9536
+    }
+  },
+  "limitations": [
+    "The source snapshot had already confirmed paused background controls; it contained no armed due timer or pending retry.",
+    "Native backends ran cold while controller and gateway remained unstarted. They were then stopped for normal ingress-last startup; the probe waited for the declared supervisor lease delay.",
+    "Startup retained an unknown queue observation while recovery and paused intent stayed in force. The operator explicitly observed each app before acknowledging recovery.",
+    "HTTP withholding and availability were asserted by the archived executed driver; this receipt retains native data observations and the final independently checked authority pair rather than raw per-request HTTP checkpoints.",
+    "The preservation audit compares 350 earlier container states with an authoritative pre-fourth-attempt snapshot. Eight fourth-attempt containers were verified stopped with FinishedAt before the fifth inputs record, then checked unchanged. The supplemental baseline was assembled after the fifth attempt began; it excludes fifth-attempt resources. All 484 prior volumes remain present.",
+    "All four earlier failed attempts remain separate failed records with stopped retained containers and volumes. They reflect corrected probe assumptions, not accepted recovery runs.",
+    "No per-worker CPU quota, exactly-once external effects, power-loss or broader density/performance qualification is claimed."
+  ]
+}

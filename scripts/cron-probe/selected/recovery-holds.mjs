@@ -28,14 +28,16 @@ export async function coldRecovery(target, point, installations) {
 
 export async function acknowledgeRecovery(target, point, installations, request) {
   const fence = await recoveryFence(target, installations);
-  await neverStartedIngress(target); await target.command(['up', '--installation', target.project]);
+  await neverStartedIngress(target);
+  const startup = await startRecovered(target);
   request ||= await httpsClient(target);
-  assert.deepEqual(await nativeProcesses(target), target.nativeBaseline);
   await waitFor('restored admin', async () => (await request('/v1/admin')).status === 200);
-  const pending = {}, acknowledged = {}, attempts = {};
+  const recorded = {}, pending = {}, acknowledged = {}, attempts = {};
   for (const [app, surface] of Object.entries(backgroundSurfaces(point))) {
     const active = point.approvals[app];
-    pending[app] = await target.json(['admin', surface, app, 'status']);
+    recorded[app] = await target.json(['admin', surface, app, 'status']);
+    assertRecoveryHeld(recorded[app], active);
+    pending[app] = await target.json(['admin', surface, app, 'observe']);
     assertPendingRecovery(pending[app], active);
     const route = await request(backgroundRoute(surface), { app }); assert.equal(route.status, 503);
     await expectRefusal(target, ['admin', surface, app, 'resume', active.id, active.digest], /Resume requires a completed activation/);
@@ -53,7 +55,23 @@ export async function acknowledgeRecovery(target, point, installations, request)
   const after = await recoveredData(target, point.approvals); assert.deepEqual(applicationData(after), point.before); assertHeld(after, point);
   for (const app of Object.keys(point.approvals)) assert.deepEqual(acknowledged[app].recovery.observation, after[app].status);
   assert.deepEqual(await nativeProcesses(target), target.nativeBaseline);
-  return { fence, pending, acknowledged, attempts, before, after, startedAt, endedAt: await vmTime(target) };
+  return { fence, startup, recorded, pending, acknowledged, attempts, before, after, startedAt, endedAt: await vmTime(target) };
+}
+
+async function startRecovered(target) {
+  const cold = await nativeProcesses(target);
+  assert.deepEqual(cold, target.nativeBaseline);
+  const restarted = target.entry.routing === 'durable';
+  if (restarted) {
+    await target.compose(['stop', ...target.policy.fleets.flatMap(fleet => fleet.nodes.map(node => node.host))]);
+    await target.compose(['stop', 'minio', 'bucket-init']);
+    await stopped(target.project, Object.values(target.config.volumes).map(volume => volume.name));
+  }
+  await target.command(['up', '--installation', target.project]);
+  const normal = await waitFor('restored native processes after normal startup', () => nativeProcesses(target), 30000);
+  if (!restarted) assert.deepEqual(normal, cold);
+  target.nativeBaseline = normal;
+  return { restarted, cold, normal };
 }
 
 async function heldUntil(target, point, until, cold) {
@@ -66,7 +84,10 @@ function assertHeld(observed, point) {
   assertBackgroundHeld(observed, point, backgroundSurfaces(point));
 }
 export function assertPendingRecovery(status, active) {
-  assert.equal(status.recovery.status, 'pending'); assert.equal(status.resumeAllowed, false); assert.equal(status.observed, 'paused');
+  assertRecoveryHeld(status, active); assert.equal(status.observed, 'paused');
+}
+function assertRecoveryHeld(status, active) {
+  assert.equal(status.recovery.status, 'pending'); assert.equal(status.resumeAllowed, false);
   assert.deepEqual(status.active, { deployment: active.id, digest: active.digest });
 }
 export async function acknowledgeApp(target, app, surface, active) {

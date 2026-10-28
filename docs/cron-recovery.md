@@ -137,3 +137,28 @@ after resume are assertions in the fingerprinted driver; the raw record stores
 native control and selected future rows rather than complete tables for those
 observations. Workerd's wrapper can exit 1 after forwarding SIGTERM; critical
 storage/controller processes must exit 0.
+
+## Paused snapshot on the next durable candidate
+
+The [v5 recovery receipt](evidence/operator-native-background-recovery-v5.json)
+covers a paused cron/queue snapshot restored onto fresh volumes on the same local
+Linux arm64 Docker engine. Its [driver](../scripts/operator/background-recovery.mjs)
+checks cold native holds before controller or gateway startup, explicit recovery
+acknowledgment, continued background pause, explicit resume and unchanged old
+occurrences. The final private/public routing pair and artifact hashes match.
+V5 ordinary admission remains closed. This receipt does not repeat the due,
+pending-retry or older-snapshot matrix described above.
+
+Normal durable startup requires all retained services stopped. After the cold
+hold check, the driver stops its backends before invoking that startup path and
+waits for the supervisor's declared lease-expiry delay. Startup can retain an
+unknown observation with pending recovery and paused intent. The operator
+explicitly refreshes each background observation before acknowledging recovery;
+acknowledgment verifies the approved runtime and restores HTTP while background
+work stays paused.
+
+The four earlier failed attempts remain failed records with their containers and
+volumes retained. The accepted attempt corrects probe assumptions about volume
+ordering, stopped startup, native process readiness and recorded observations.
+Its evidence records the preservation baseline's timing limits separately from
+the recovery result.

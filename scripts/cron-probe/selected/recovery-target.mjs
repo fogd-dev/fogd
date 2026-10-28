@@ -17,13 +17,16 @@ const repo = fileURLToPath(new URL('../../../', import.meta.url)), cli = join(re
 export async function recoveryTarget(source, bundle, output, installations = [source], snapshotImages) {
   const { target, destination, identity, networks, selector } = await recoveryTargetContext(source, bundle, output, installations);
   const { project, run } = target;
+  const errors = source.entry.routing === 'durable'
+    ? { noSelector: /Incomplete or unsupported backup manifest/, wrongIdentity: /Durable restore is unconfirmed/ }
+    : { noSelector: /Installed runtime requires a matching independently checked runtime profile/, wrongIdentity: /Snapshot storage identity differs from the independently expected identity/ };
   try {
     target.refusals.candidate = await expectRefusal(target, ['restore', bundle, '--project', project, '--output', destination, '--runtime', source.entry.id, '--expected-identity', identity], /candidate; ordinary enrollment remains closed/);
     await requireUnwritten(target, destination);
-    target.refusals.noSelector = await expectRefusal(target, ['restore', bundle, '--project', project, '--output', destination], /Installed runtime requires a matching independently checked runtime profile/);
+    target.refusals.noSelector = await expectRefusal(target, ['restore', bundle, '--project', project, '--output', destination], errors.noSelector);
     await requireUnwritten(target, destination);
     const wrongCode = `import{restore}from ${JSON.stringify(new URL('../../../packages/cli/src/recovery/restore.mjs', import.meta.url).href)};await restore(${JSON.stringify(bundle)},${JSON.stringify(project)},${JSON.stringify(destination)},${JSON.stringify({ ...selector, expectedIdentity: '0'.repeat(64) })});`;
-    target.refusals.wrongIdentity = await commandRefusal(run(process.execPath, ['--input-type=module', '-e', wrongCode]), /Snapshot storage identity differs from the independently expected identity/);
+    target.refusals.wrongIdentity = await commandRefusal(run(process.execPath, ['--input-type=module', '-e', wrongCode]), errors.wrongIdentity);
     await requireUnwritten(target, destination);
     const code = `import{stackRoot}from ${JSON.stringify(new URL('../../../packages/cli/src/local.mjs', import.meta.url).href)};if(stackRoot!==process.env.FOGD_HOME)throw Error('Recovery home mismatch');console.log(JSON.stringify({resolvedHome:stackRoot}));import{restore}from ${JSON.stringify(new URL('../../../packages/cli/src/recovery/restore.mjs', import.meta.url).href)};await restore(${JSON.stringify(bundle)},${JSON.stringify(project)},${JSON.stringify(destination)},${JSON.stringify(selector)});`;
     const restored = await run(process.execPath, ['--input-type=module', '-e', code], { timeout: 300000 });
@@ -42,7 +45,7 @@ export async function recoveryTargetContext(source, bundle, output, installation
   await mkdir(output, { mode: 0o700 });
   const project = `fogd-selected-recovery-${randomBytes(8).toString('hex')}`, destination = join(output, 'restored');
   const env = { ...source.env, COMPOSE_PROJECT_NAME: project }, run = commandRunner(output, env);
-  const target = { output, project, sourceProject: source.project, env, run, entry: source.entry, adminPort: source.adminPort, gatewayPort: source.gatewayPort,
+  const target = { output, project, sourceProject: source.project, env, run, entry: source.entry, adminPort: source.adminPort, gatewayPort: source.gatewayPort, retainResources: source.retainResources,
     command: (args, options) => run(process.execPath, [cli, ...args], options),
     json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
   };
@@ -65,7 +68,7 @@ export async function loadRecoveryTarget(source, target, destination, expectedPo
   assert.equal(summary.identitySha256, runtimePolicyIdentity(expectedPolicy)); assert.equal(summary.runtimeFamily, source.entry.id);
   await assert.rejects(access(join(canonical, 'restore.pending.json')), { code: 'ENOENT' });
   const relation = JSON.parse(await readFile(join(canonical, 'recovery-source.json'))); assert.equal(relation.sourceProject, source.project);
-  assert.deepEqual(relation.volumes, Object.keys(source.config.volumes).sort().map(name => source.config.volumes[name].name));
+  assert.deepEqual([...relation.volumes].sort(), Object.values(source.config.volumes).map(volume => volume.name).sort());
   for (const name of Object.keys(source.config.volumes)) assert.notEqual(target.config.volumes[name].name, source.config.volumes[name].name);
   Object.assign(target, await createdRuntime(target, snapshotImages));
   // Later backups must use the restored namespace and node bindings, not the source template.
