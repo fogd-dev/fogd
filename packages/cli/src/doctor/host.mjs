@@ -1,9 +1,9 @@
 import { runtimeFamily, assertRuntimeHost } from '../runtime/catalog.mjs';
 import { assertTransferImageStore } from '../distribution/host.mjs';
 import { docker } from '../recovery/docker.mjs';
+import { finding, reportStatus } from './report.mjs';
 
 const options = { timeoutMs: 15000, maxOutputBytes: 1024 * 1024 };
-const finding = (id, status, message, nextStep) => ({ id, status, message, nextStep });
 
 // Metadata only: no image execution, pulls, containers, mounts or host changes.
 export async function inspectHost(family, run = docker) {
@@ -39,7 +39,7 @@ export async function inspectHost(family, run = docker) {
     ['application', 'Application declarations and build compatibility have not been checked.', 'Deployment negotiation and server-side artifact validation remain required.'],
   ]) findings.push(finding(id, 'unverified', message, nextStep));
   return { schema: 1, family: entry.id, scope: 'docker-host-metadata', readOnly: true,
-    status: findings.some(item => item.status === 'unsupported') ? 'unsupported' : 'unverified',
+    status: reportStatus(findings),
     capacityReservation: 'none', findings };
 }
 

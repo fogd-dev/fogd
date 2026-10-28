@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { translateConfig, inside } from '../src/artifact.mjs';
 
+test('configuration translation rejects nonobjects and multiple databases before staging', () => {
+  for (const input of [null, [], 'private-input']) assert.throws(() => translateConfig(input, 'hello'), /configuration object/);
+  assert.throws(() => translateConfig({ d1_databases: [{ binding: 'FIRST' }, { binding: 'SECOND' }] }, 'hello'), /one D1 database/);
+});
+
 test('rejects requested unsupported bindings instead of silently dropping them', () => {
   for (const key of ['ai', 'dispatch_namespaces', 'hyperdrive', 'services', 'triggers']) {
     assert.throws(() => translateConfig({ [key]: { binding: 'secret' } }, 'hello'), /Unsupported/);

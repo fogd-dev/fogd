@@ -103,6 +103,57 @@ test('copied read-only client reads scoped status without creating any state dir
   await assert.rejects(access(f.home), { code: 'ENOENT' });
   await assert.rejects(access(f.env.FOGD_HOME), { code: 'ENOENT' });
 });
+for (const credentials of ['absent', 'configured']) test(`standalone offline doctor with ${credentials} credentials needs no build toolchain, Docker or state writes`, async t => {
+  const f = await fixture(t), config = join(f.root, 'config.json');
+  await writeFile(config, JSON.stringify({ triggers: { crons: ['* * * * *'] }, vars: { MESSAGE: 'private-variable' } }));
+  for (const path of await transferFiles(f.bundle)) await chmod(join(f.bundle, path), 0o400);
+  await chmod(f.bundle, 0o500);
+  const env = credentials === 'absent' ? { FOGD_SERVER: '', FOGD_DEPLOY_TOKEN: '' } : {};
+  await assert.rejects(f.run(['doctor', '--config', config, '--name', 'test-app', '--json'], env), error => {
+    assert.equal(error.code, 2);
+    const report = JSON.parse(error.stdout);
+    assert.equal(report.capabilitySource, 'offline');
+    assert.equal(report.declarations.cronExpressions, 1);
+    assert.ok(!error.stdout.includes('private-')); assert.equal(error.stderr, '');
+    return true;
+  });
+  assert.deepEqual(f.calls, []);
+  await assert.rejects(access(f.home), { code: 'ENOENT' });
+  await assert.rejects(access(f.env.FOGD_HOME), { code: 'ENOENT' });
+});
+for (const [name, status, body, headers] of [
+  ['malformed capability', 200, 'private-capability-json', {}],
+  ['credential refusal', 403, 'private-rejection', {}],
+  ['redirect', 307, '', { Location: '/private-destination' }],
+]) test(`standalone doctor keeps admission unverified after ${name}`, async t => {
+  const f = await fixture(t, (_, response) => { response.writeHead(status, headers); response.end(body); return true; });
+  const config = join(f.root, 'config.json');
+  await writeFile(config, JSON.stringify({ triggers: { crons: ['* * * * *'] } }));
+  await assert.rejects(f.run(['doctor', '--config', config, '--name', 'test-app', '--online', '--json']), error => {
+    assert.equal(error.code, 2);
+    const report = JSON.parse(error.stdout);
+    assert.equal(report.capabilitySource, 'unavailable');
+    assert.equal(report.findings.find(item => item.id === 'cron-admission').status, 'unverified');
+    assert.ok(!error.stdout.includes('private-')); assert.equal(error.stderr, '');
+    return true;
+  });
+  assert.deepEqual(f.calls.map(({ method, url }) => ({ method, url })), [{ method: 'GET', url: '/v1/capabilities?app=test-app' }]);
+  await assert.rejects(access(f.home), { code: 'ENOENT' });
+});
+for (const [allowed, exit] of [[false, 1], [true, 2]]) test(`standalone online doctor observes cron admission ${allowed} using a scoped GET only`, async t => {
+  const f = await fixture(t, (_, response) => { response.end(JSON.stringify({ schema: 1, app: 'test-app', cronApps: allowed })); return true; });
+  const config = join(f.root, 'config.json');
+  await writeFile(config, JSON.stringify({ triggers: { crons: ['* * * * *'] } }));
+  await assert.rejects(f.run(['doctor', '--config', config, '--name', 'test-app', '--online', '--json']), error => {
+    assert.equal(error.code, exit);
+    const report = JSON.parse(error.stdout);
+    assert.equal(report.capabilitySource, 'controller');
+    assert.ok(!error.stdout.includes('private-')); assert.equal(error.stderr, '');
+    return true;
+  });
+  assert.deepEqual(f.calls.map(({ url, method, token }) => ({ url, method, token })), [{ url: '/v1/capabilities?app=test-app', method: 'GET', token: 'Bearer private-deploy-token' }]);
+  await assert.rejects(access(f.home), { code: 'ENOENT' });
+});
 for (const args of [['up'], ['admin', 'list'], ['deploy', 'extra'], ['deploy', '--name'], ['status'], ['status', '../escape']]) test(`invalid client command refuses before state or network: ${args.join(' ')}`, async t => {
   const f = await fixture(t); await assert.rejects(f.run(args), { code: 1 });
   assert.deepEqual(f.calls, []); await assert.rejects(access(f.home), { code: 'ENOENT' });

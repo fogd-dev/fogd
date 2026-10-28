@@ -102,6 +102,7 @@ try {
   }
   else if (!command || command === '--help' || command === 'help') {
     console.log('fogd doctor --runtime FAMILY [--json]  Inspect Docker host metadata without changes');
+    console.log('fogd doctor --config FILE --name APP [--online] [--json]  Check JSON declarations without building');
     console.log('fogd admin routing APP [status | pause|resume ID SHA | reconcile|withhold-pending ID SHA INTENT]  Inspect and control durable HTTP routing');
     console.log('fogd logs APP --installation PROJECT --output NEW_DIRECTORY [--tail COUNT]  Save private replica logs');
     console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');

@@ -29,6 +29,7 @@ const keys = (object, allowed) => {
   for (const key of Object.keys(object)) if (!allowed.includes(key)) throw new Error(`Unsupported nested config: ${key}`);
 };
 function validateStorage(input, app) {
+  if (input.d1_databases?.length > 1) throw new Error('v0 supports one D1 database per app; multiple migration mappings need explicit support');
   for (const b of input.r2_buckets || []) keys(b, ['binding', 'bucket_name', 'preview_bucket_name']);
   for (const b of input.d1_databases || []) keys(b, ['binding', 'database_name', 'database_id', 'preview_database_id', 'migrations_dir']);
   for (const binding of [...(input.d1_databases || []), ...(input.r2_buckets || [])]) {
@@ -37,6 +38,7 @@ function validateStorage(input, app) {
 }
 export function translateConfig(input, app, capabilities) {
   appName(app);
+  if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Expected a configuration object');
   buildMetadata(input);
   validateConfigFields(input);
   const queues = translateQueues(input.queues, app);
@@ -156,7 +158,6 @@ export async function stageArtifact({ projectDir, outputDir, app, buildOutput = 
     const assets = inside(projectDir, resolve(bundleDir, input.assets.directory));
     await stageAssets(assets, join(outputDir, 'assets'), await regularFiles(assets));
   }
-  if (config.d1_databases.length > 1) throw new Error('v0 supports one D1 database per app; multiple migration mappings need explicit support');
   const migrations = [];
   for (const binding of config.d1_databases) {
     const source = inside(projectDir, migrationsDir);

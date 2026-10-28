@@ -42,6 +42,48 @@ unexpected, and linked members refuse verification. Keep a verified bundle read-
 and under your control after verification; the launcher does not reauthenticate
 its files on every invocation.
 
+## Check JSON declarations without building
+
+Run configuration preflight on an existing regular JSON file. For a previously
+built app, use its generated configuration:
+
+```sh
+node /absolute/path/to/client/fogd.mjs doctor \
+  --config /absolute/path/to/your-void-app/dist/ssr/wrangler.json \
+  --name my-app --json
+```
+
+This offline check needs no credentials, Docker, build toolchain or client state
+directory. It uses fogd's shared configuration translator and reports declaration
+counts and the hash of the JSON it read. It never evaluates Vite, JavaScript,
+TypeScript or JSONC configuration and never builds or submits an artifact. You can
+check plain JSON declarations before building, but that cannot establish what a
+plugin will generate. Existing generated JSON can also be stale.
+
+With an explicit endpoint and scoped deploy token configured as described below,
+add `--online` to query that controller's advertised capability for the named app:
+
+```sh
+node /absolute/path/to/client/fogd.mjs doctor \
+  --config /absolute/path/to/your-void-app/dist/ssr/wrangler.json \
+  --name my-app --online --json
+```
+
+Capability negotiation currently reports cron admission; the other declaration
+checks use the local translator. Offline or failed negotiation leaves target
+admission unverified. Native cron grammar, worker/asset/SQL files, changes against
+the active release, private secret values and operating capacity remain unverified.
+Online checking makes read-only requests and reserves no capacity. Deployment and
+exact operator approval retain all authoritative checks.
+
+Both output formats classify findings as `supported`, `unsupported` or
+`unverified`. Exit code `1` means an observed condition is unsupported; code `2`
+means compatibility remains unverified. This declaration-only scope never reports
+full application readiness or exit code `0`. Missing, unreadable, malformed,
+linked or oversized JSON produces an unverified file finding. Raw configuration
+values and transport diagnostics stay out of reports. Omit `--json` for readable
+text. The operator CLI accepts the same application-check arguments.
+
 ## Submit your application
 
 Set the installation endpoint and your scoped deploy credential in your shell.

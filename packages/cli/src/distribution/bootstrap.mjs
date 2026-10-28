@@ -10,7 +10,8 @@ export const transferFormat = 'fogd-runtime-transfer-v1';
 export const clientFormat = 'fogd-client-bundle-v1';
 export const ignoreFiles = ['LICENSE-MIT', 'README.md', 'index.d.ts', 'index.js', 'legacy.js', 'package.json'];
 export const clientModules = {
-  cli: ['client/main', 'deploy-command', 'local', 'build', 'build-env', 'build-cache/lifecycle', 'build-cache/paths', 'deploy-capabilities', 'client-http', 'status-command', 'submitter-status'],
+  cli: ['client/main', 'deploy-command', 'local', 'build', 'build-env', 'build-cache/lifecycle', 'build-cache/paths', 'deploy-capabilities', 'client-http', 'status-command', 'submitter-status',
+    'doctor/application', 'doctor/application-command', 'doctor/options', 'doctor/report'],
   runtime: ['artifact', 'assets', 'files', 'manifest', 'deployment', 'queues', 'crons'],
   platform: ['deployment-status', 'runtime-policy', 'runtime-identity-proof'],
 };
