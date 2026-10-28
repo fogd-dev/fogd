@@ -301,8 +301,12 @@ zero-downtime update claim follows. The
 [restore-family refusal check](evidence/operator-v5-family-refusal.json) validates
 an actual v5 archive and a same-family plan, then verifies v4 and legacy cron-v2
 refusals before target allocation. Cross-family migration remains unsupported;
-the release target remains fresh installations. Broader application diagnosis,
-recovery and release gates remain open.
+the release target remains fresh installations. The
+[v5 diagnostic check](evidence/operator-native-diagnostics-v5.json) covers two
+apps with distinct private configuration, failed and corrected handlers,
+unavailable replicas, private process-log captures, paused request refusal and
+controller-loss serving. Native readiness stays distinct from application health.
+Broader failure, retirement and release gates remain open.
 
 The remaining release requirements are:
 

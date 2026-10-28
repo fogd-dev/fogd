@@ -1,10 +1,10 @@
 import { captureFailureLogs } from './failure-logs.mjs';
 import assert from 'node:assert/strict';
-import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
-import { sourceInventory, sourceState } from './evidence.mjs';
+import { archiveSources, sourceInventory, sourceState } from './evidence.mjs';
 import { scanOutputFiles } from './privacy.mjs';
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
@@ -24,10 +24,7 @@ export async function selectedHostTrial(output, scope, scenario, enrollment = 'p
   const save = (name, value) => writeFile(join(source.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
   const heartbeat = setInterval(() => console.log(`waiting: ${context.phase}`), 20000); heartbeat.unref();
   try {
-    await save('executed-source-inventory.json', { provenance, sources }); await cp(new URL(process.argv[1], `file://${process.cwd()}/`), join(source.output, 'runner.mjs'));
-    for (const path of Object.keys(sources)) {
-      const target = join(source.output, 'executed-source', path); await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(path, target);
-    }
+    await archiveSources(source.output, provenance, sources, new URL(process.argv[1], `file://${process.cwd()}/`));
     const fixture = await scenario(context);
     const receipt = { scope: scope, provenance, sources, family: source.entry.id, image: source.entry.image, sourcePolicy: source.policy, evidence };
     receipt.finalPrivacy = await scanOutputFiles(installations, fixture, receipt);

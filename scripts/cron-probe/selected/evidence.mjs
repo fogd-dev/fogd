@@ -2,11 +2,20 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, mkdir, cp, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
+export async function archiveSources(output, provenance, sources, runner) {
+  await writeFile(join(output, 'executed-source-inventory.json'), JSON.stringify({ provenance, sources }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
+  if (runner) await cp(runner, join(output, 'runner.mjs'));
+  for (const path of Object.keys(sources)) {
+    const target = join(output, 'executed-source', path);
+    await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(join(repo, path), target);
+  }
+}
+
 export async function sourceInventory() {
   const execute = promisify(execFile), scope = ['packages', 'examples/refresh', 'examples/imports', 'scripts', 'compose.yaml', 'pnpm-lock.yaml', 'package.json'];
   const [{ stdout }, { stdout: removed }] = await Promise.all([

@@ -272,10 +272,12 @@ outside this admission. Next, define and implement the
 [operator-readiness slice](#immediate-priorities) before another binding milestone. Owner application
 [inspection](application-inspection.md) connects recorded release and control state.
 The host [gateway request check](application-check.md) reports a requested endpoint's
-status and header timing without response contents; native acceptance,
-application-health assertions and shared logs remain open. The source
+status and header timing without response contents. The source
 [private replica-log capture](application-logs.md) selects one app's fleet for local
-Docker-owner files; native acceptance of that interface remains open.
+Docker-owner files. The [v5 diagnostic check](evidence/operator-native-diagnostics-v5.json)
+covers failed and corrected handlers, distinct private configuration, unavailable
+replicas, paused routing and controller loss. Application-health assertions and
+submitter-facing logs remain open.
 
 ## Opportunities to explore later
 

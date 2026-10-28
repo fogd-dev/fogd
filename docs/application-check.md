@@ -18,6 +18,9 @@ scoped HTTPS responses from failing and corrected handlers, a healthy peer,
 serving through controller loss and refusal to request an app while routing is
 paused. The durable check uses the selected fleet network because its gateway has
 no control-network attachment.
+The [v5 diagnostic check](evidence/operator-native-diagnostics-v5.json) repeats
+failed and corrected handlers, a healthy peer, paused request refusal and serving
+with the controller stopped on a fresh candidate installation.
 Ordinary CLI use still requires a qualified family; candidate checks use an
 internal maintainer selection and do not qualify another runtime or topology.
 

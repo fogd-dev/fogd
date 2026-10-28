@@ -1,0 +1,307 @@
+{
+  "schema": 1,
+  "kind": "operator-native-diagnostics",
+  "recordedAt": "2026-10-28T23:48:44.462551+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "60f6342be3e094653a5376d721fe3190ac22ad3d",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh two-app HTTPS installation on the existing local Linux arm64 two-fleet engine. Docker-owner native observation, explicit gateway GET and unredacted private process-log capture with distinct app secrets; failed handler, unavailable replica, paused routing, corrected exact approval and controller loss. Candidate enrollment is internal.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "archivedExecutedSourcesVerified": 960,
+    "canonicalArtifactDigestsAndSecretRevisionsVerified": true,
+    "nativeLogHealthChecked": true,
+    "priorContainersUnchanged": 433,
+    "priorVolumesRetained": 583,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumes": 11
+  },
+  "observations": {
+    "failedHandler": {
+      "nativeReadiness": "confirmed",
+      "httpStatus": 500,
+      "responseContents": "withheld",
+      "applicationHealth": "not-observed"
+    },
+    "healthyPeerHTTPStatus": 200,
+    "unavailableReplicaReadiness": "uncertain",
+    "replicaRestartFirstRead": "uncertain",
+    "replicaRestartLaterRead": "confirmed",
+    "pausedRoutingCheck": "not-requested",
+    "correctedHandlerHTTPStatus": 200,
+    "originalSecretRevisionRetained": true,
+    "bothAppRecordsRetained": true,
+    "controllerLoss": {
+      "recordedProcess": "not-running",
+      "nativeReadiness": "uncertain",
+      "baselineHTTPStatus": 200,
+      "peerHTTPStatus": 200,
+      "privateLogsCaptured": true
+    }
+  },
+  "logCaptures": [
+    {
+      "case": "failed",
+      "app": "baseline",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    },
+    {
+      "case": "peer",
+      "app": "peer",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    },
+    {
+      "case": "unavailable",
+      "app": "baseline",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    },
+    {
+      "case": "paused",
+      "app": "baseline",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    },
+    {
+      "case": "corrected",
+      "app": "baseline",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    },
+    {
+      "case": "controllerLoss",
+      "app": "baseline",
+      "status": "captured",
+      "selectedReplicaIdsVerified": 2,
+      "selectedSecretPresentInPrivateFiles": true,
+      "otherAppSecretAbsent": true,
+      "terminalAndManifestWithholdSecrets": true,
+      "privateDirectoryMode": "0700",
+      "privateFileMode": "0600"
+    }
+  ],
+  "installedPolicyAndFinalPrivatePublicAuthorityVerified": true,
+  "privacy": {
+    "adminJSON": true,
+    "adminHTML": true,
+    "scopedStatuses": 3,
+    "decodedArtifacts": 3,
+    "privateDiagnosticsChecked": 1,
+    "completeReceiptChecked": true
+  },
+  "qualificationProgramFingerprints": {
+    "scripts/cron-probe/selected/evidence.mjs": "15963c575aaa84ac2d565456660aaabc967488a27e5b3d63ac665ea9af3c4dae",
+    "scripts/cron-probe/selected/selected-trial.mjs": "acbd9e3c0237b8bff5e46bcee115cc8508bce700c24409d619c78e2f21f4c852",
+    "scripts/operator/diagnostics-checks.mjs": "696cc0052b0962f148bb9c875d2207799866cda0f8f6cee57b6a34c86e1bc493",
+    "scripts/operator/diagnostics-fixture.mjs": "42c56c925712892e119416a49bd7325852e4ba0e8140e1b91648291ae47bc450",
+    "scripts/operator/diagnostics.mjs": "84c2e832802c2b645ea21b5988a3f19ba9602d70a12a3cda61d44f677777944b"
+  },
+  "acceptance": {
+    "boundedTwoAppOwnerDiagnostics": true,
+    "failureThenCorrection": true,
+    "selectedReplicaProcessSources": true,
+    "distinctPrivateConfiguration": true,
+    "unavailableReplicaAndControllerLoss": true,
+    "pausedRoutingDoesNotRequestHandler": true,
+    "publicDeveloperLogAPI": false,
+    "appBusinessHealthAssertions": false,
+    "completeLogHistory": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "privateEvidenceFingerprints": {
+    "failed-logs/slot-1-a.stdout.log": {
+      "bytes": 15886,
+      "sha256": "a4265466da458fcca496f69f9ef8b25e50d3b660f206740f8b9bd9315a9dbbe8"
+    },
+    "failed-logs/slot-1-a.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failed-logs/slot-1-b.stdout.log": {
+      "bytes": 15872,
+      "sha256": "29ee528f4ad2aab3998c457f30fda0dd32854fe530abc0aa6dfed7557a1ef470"
+    },
+    "failed-logs/slot-1-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "failed-logs/capture.json": {
+      "bytes": 1380,
+      "sha256": "19c5d16e03a0ff25bfe213126f510b0f7252a6156fa912ca946ff8f67af45cc1"
+    },
+    "peer-logs/slot-2-a.stdout.log": {
+      "bytes": 16131,
+      "sha256": "dc8109b0aee1bc62b50a7353c0a47282102c3db13a1cdca319f71be80cb30cc9"
+    },
+    "peer-logs/slot-2-a.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "peer-logs/slot-2-b.stdout.log": {
+      "bytes": 16728,
+      "sha256": "1d10fe7f968906bffeefa695afc711280fb4623889ef802e41d4ec178b2b83cf"
+    },
+    "peer-logs/slot-2-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "peer-logs/capture.json": {
+      "bytes": 1376,
+      "sha256": "1b00fd0a37a68cd357ea9a6eca635be80ceca77cc718dbb470702e3563a4df4a"
+    },
+    "stopped-replica-logs/slot-1-a.stdout.log": {
+      "bytes": 23650,
+      "sha256": "ca51951afadfef955bf8618d254fbf1b94417021c74325cd9da1f6e34851399b"
+    },
+    "stopped-replica-logs/slot-1-a.stderr.log": {
+      "bytes": 62,
+      "sha256": "7698bcf27dd142f08d9f46f5b0fa4c4ce1076cb865c96dc8a9d1c90ce725e9ca"
+    },
+    "stopped-replica-logs/slot-1-b.stdout.log": {
+      "bytes": 25748,
+      "sha256": "25a0c673370bb31c7b4052346359d447dc498242a61462d8fc07f1a234270c59"
+    },
+    "stopped-replica-logs/slot-1-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stopped-replica-logs/capture.json": {
+      "bytes": 1381,
+      "sha256": "c738f287968bf1c3105a27ba7a5fc1dcee6e6f8884bf4a153cc668b46faf5686"
+    },
+    "paused-logs/slot-1-a.stdout.log": {
+      "bytes": 29985,
+      "sha256": "46b04d12d997aeed3085740915f3740b0ee5210a0914c870419dd45593b8e73b"
+    },
+    "paused-logs/slot-1-a.stderr.log": {
+      "bytes": 62,
+      "sha256": "7698bcf27dd142f08d9f46f5b0fa4c4ce1076cb865c96dc8a9d1c90ce725e9ca"
+    },
+    "paused-logs/slot-1-b.stdout.log": {
+      "bytes": 36686,
+      "sha256": "0ac2f6e1f369f0f66914bd2fcbbc7c6b986492dc407c82cdcb3d4aec28fc5fa7"
+    },
+    "paused-logs/slot-1-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "paused-logs/capture.json": {
+      "bytes": 1381,
+      "sha256": "7d9fa65bcb8c373d03b84e769858e4cef1639664c856278189c5e75a71350a43"
+    },
+    "corrected-logs/slot-1-a.stdout.log": {
+      "bytes": 35899,
+      "sha256": "ad23e6b913943fc3be43914ceffdec6e453ac421975bbd1ce9341631c59e3c8a"
+    },
+    "corrected-logs/slot-1-a.stderr.log": {
+      "bytes": 62,
+      "sha256": "7698bcf27dd142f08d9f46f5b0fa4c4ce1076cb865c96dc8a9d1c90ce725e9ca"
+    },
+    "corrected-logs/slot-1-b.stdout.log": {
+      "bytes": 46163,
+      "sha256": "8267a286fa95f71a58f7b806a590d86559a0f91fe0dbee215fb548773801805b"
+    },
+    "corrected-logs/slot-1-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "corrected-logs/capture.json": {
+      "bytes": 1381,
+      "sha256": "24afe7508dcd03ce8e8c60a39bce4aada077f655ee3f0fe0f754740f46229351"
+    },
+    "controller-stopped-logs/slot-1-a.stdout.log": {
+      "bytes": 40843,
+      "sha256": "c2cb098ce28da676fef8bef443bcea0e69234b5517a819247aba43e94036136b"
+    },
+    "controller-stopped-logs/slot-1-a.stderr.log": {
+      "bytes": 62,
+      "sha256": "7698bcf27dd142f08d9f46f5b0fa4c4ce1076cb865c96dc8a9d1c90ce725e9ca"
+    },
+    "controller-stopped-logs/slot-1-b.stdout.log": {
+      "bytes": 51275,
+      "sha256": "0a16a92e45cefab206f2c80bb47bd5b4eadb02ead60a5a44746a82ab1af584ba"
+    },
+    "controller-stopped-logs/slot-1-b.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "controller-stopped-logs/capture.json": {
+      "bytes": 1381,
+      "sha256": "2e66b14ca553f23866f8f58a77d6637dc0dbd65dd229e4474099ce2bd74fe7a7"
+    },
+    "result.json": {
+      "bytes": 151223,
+      "sha256": "161ec73e3444c74cf2401189b8abdb30f0d42fa8186556052e5a805991cc5533"
+    },
+    "executed-source-inventory.json": {
+      "bytes": 112476,
+      "sha256": "8e0d0008c15f5279416a7784f4215189a07297b3e10ca36146d53422f225d150"
+    },
+    "inputs.json": {
+      "bytes": 415,
+      "sha256": "8e5152f0b943755cc6ba31a7dd4aab60455cb00e54984b9d84898bd63fcc0ba2"
+    },
+    "runner.mjs": {
+      "bytes": 6712,
+      "sha256": "84c2e832802c2b645ea21b5988a3f19ba9602d70a12a3cda61d44f677777944b"
+    },
+    "runtime.log": {
+      "bytes": 219375,
+      "sha256": "dbdc19590d33f931cac04fb6990ac4c30a157202ae86a49c7ab838643e4407b7"
+    },
+    "stores-audit.json": {
+      "bytes": 282,
+      "sha256": "6729d9436b3abe863f2bdf6034b8e2c39209050f7170d6587d972397ddb5294e"
+    },
+    "stores-audit-source.mjs": {
+      "bytes": 3342,
+      "sha256": "35632839b02b38471d6230a4c20091264153fc2b4e70e324e3b789dce112fd7b"
+    },
+    "independent-audit-source.py": {
+      "bytes": 8150,
+      "sha256": "5719d1cc19626fcc6da30b5e076394aaf814060a7f54f4c8b6f8426c9bfd1edf"
+    },
+    "independent-audit.json": {
+      "bytes": 8472,
+      "sha256": "fbb1b5ebd2a99060ba19f7afb6af903f092dfbc8f7680fdd02f6beceba809c4c"
+    }
+  },
+  "limitations": [
+    "All resources are fresh qualification fixtures on one previously used two-vCPU Linux arm64 Docker engine on the same physical Mac, with 21 unrelated QA containers running. There are no existing user installations.",
+    "Captured streams intentionally contain selected app secrets and mixed runtime diagnostics. They are unredacted private Docker-owner files, not a public or developer log API. The receipt contains hashes and verified metadata only.",
+    "Log scope identifies exact replica process sources, not the sensitivity or origin of each line. Lines may span old and corrected releases; this trial does not establish complete log history or per-line release attribution.",
+    "The gateway check observes status and header timing, with response contents withheld. Native readiness does not establish application health: the failing handler returns 500 while native readiness is confirmed.",
+    "The replica restart and controller restart are deliberate fixture operations. No ownership-loss retry, power-loss, capacity, saturation or complete family qualification follows. The pinned runtime image and programs are unchanged."
+  ]
+}

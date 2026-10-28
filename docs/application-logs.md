@@ -9,6 +9,10 @@ The interface has temporary-process/filesystem and mocked-Docker checks. The
 [native candidate evidence](evidence/operator-native-diagnostics.json) also covers
 two apps with distinct private configuration, failing and corrected handlers,
 stopped replicas, paused routing, private file modes and process-source isolation.
+The [v5 diagnostic check](evidence/operator-native-diagnostics-v5.json) repeats
+those checks on a fresh candidate installation and captures private logs while
+the controller is stopped. Selected secret values appear only in private streams;
+the peer's value is absent and terminal reports and capture manifests withhold both.
 Ordinary CLI use still requires a qualified family; these candidate checks use an
 internal maintainer selection. Capture does not enable runtime logging, change log
 drivers or qualify a new runtime family. Follow the [operator-readiness contract](operator-readiness.md)
