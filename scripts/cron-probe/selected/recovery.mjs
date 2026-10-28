@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { writeFile, mkdir, cp } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
 import { recoveryFixtures, importJob, recoveredData } from './recovery-fixtures.mjs';
-import { normalSnapshot, preserveSource } from './recovery-snapshot.mjs';
+import { normalSnapshot, preserveSource, verifyRecoveryBundle } from './recovery-snapshot.mjs';
 import { recoveryTarget } from './recovery-target.mjs';
 import { coldRecovery, acknowledgeRecovery } from './recovery-holds.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
@@ -12,18 +12,25 @@ import { setFaultPolicy, nativeObservation, vmTime } from './observations.mjs';
 import { sourceInventory, sourceState } from './evidence.mjs';
 import { httpsClient, waitFor } from './https.mjs';
 import { scanPublicSurfaces, scanOutputFiles } from './privacy.mjs';
-import { verifyBundle } from '../../../packages/cli/src/recovery/bundle.mjs';
+import { selectedHostOptions } from './options.mjs';
+import { fileURLToPath } from 'node:url';
 import { rows, assertRetainedInput } from './recovery-ledger.mjs';
 import { nativeProcesses } from './recovery-fence.mjs';
 import { recordRequests, retainedInstallations } from './recovery-evidence.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/recovery.mjs PRIVATE_OUTPUT_DIRECTORY');
-const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(process.argv[2]);
+const options = selectedHostOptions(process.argv.slice(2));
+const provenance = await sourceState(), sources = await sourceInventory(), source = await selectedHost(options.output, options.enrollment, undefined, options.hostOptions);
 const installations = [source], evidence = {}, journal = [];
 let phase = 'source-fixtures', failure;
 const save = (name, value) => writeFile(join(source.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {
+  const repo = fileURLToPath(new URL('../../../', import.meta.url));
+  await save('executed-source-inventory.json', { provenance, sources });
+  for (const path of Object.keys(sources)) {
+    const target = join(source.output, 'executed-source', path);
+    await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(join(repo, path), target);
+  }
   const fixture = await recoveryFixtures(source, recordRequests(source, await httpsClient(source), journal));
   await importJob(fixture.request, 'before-a', 'apple\npear');
   await completeImport(source, fixture, 'before-a', ['APPLE', 'PEAR']);
@@ -112,7 +119,7 @@ try {
 }
 
 async function restoreProfile(parent, point, label) {
-  assert.deepEqual((await verifyBundle(point.bundle)).manifest, point.manifest, 'Snapshot changed before reuse');
+  assert.deepEqual((await verifyRecoveryBundle(parent, point.bundle)).manifest, point.manifest, 'Snapshot changed before reuse');
   phase = `${label}-restore`; const target = await recoveryTarget(parent, point.bundle, join(source.output, label), installations, point.manifest.images); installations.push(target);
   phase = `${label}-cold-hold`; const cold = await coldRecovery(target, point, installations);
   target.request = recordRequests(target, await httpsClient(target), journal);

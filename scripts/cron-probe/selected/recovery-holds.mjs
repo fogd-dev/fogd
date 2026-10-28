@@ -29,7 +29,7 @@ export async function coldRecovery(target, point, installations) {
 export async function acknowledgeRecovery(target, point, installations, request) {
   const fence = await recoveryFence(target, installations);
   await neverStartedIngress(target);
-  const startup = await startRecovered(target);
+  const startup = await startRecovered(target, point);
   request ||= await httpsClient(target);
   await waitFor('restored admin', async () => (await request('/v1/admin')).status === 200);
   const recorded = {}, pending = {}, acknowledged = {}, attempts = {};
@@ -58,7 +58,7 @@ export async function acknowledgeRecovery(target, point, installations, request)
   return { fence, startup, recorded, pending, acknowledged, attempts, before, after, startedAt, endedAt: await vmTime(target) };
 }
 
-async function startRecovered(target) {
+async function startRecovered(target, point) {
   const cold = await nativeProcesses(target);
   assert.deepEqual(cold, target.nativeBaseline);
   const restarted = target.entry.routing === 'durable';
@@ -71,7 +71,12 @@ async function startRecovered(target) {
   const normal = await waitFor('restored native processes after normal startup', () => nativeProcesses(target), 30000);
   if (!restarted) assert.deepEqual(normal, cold);
   target.nativeBaseline = normal;
-  return { restarted, cold, normal };
+  const ready = await waitFor('approved native data after normal startup', async () => {
+    const observed = await recoveredData(target, point.approvals);
+    assert.deepEqual(applicationData(observed), point.before); assertHeld(observed, point);
+    return observed;
+  }, 60000);
+  return { restarted, cold, normal, ready };
 }
 
 async function heldUntil(target, point, until, cold) {

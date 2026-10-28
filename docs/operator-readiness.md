@@ -278,9 +278,14 @@ deadline, HTTP/background independence and a stopped snapshot. Its
 fully committed HTTP gap on an independent engine on the same physical host.
 The [paused-snapshot recovery check](evidence/operator-native-background-recovery-v5.json)
 now restores both apps to fresh volumes, verifies cold and acknowledged holds,
-then confirms explicit resume and retained old occurrences. Due, retry and older
-snapshots, broader background failure and retirement, and complete runtime-family
-acceptance remain open. A separate
+then confirms explicit resume and retained old occurrences. The
+[v5 recovery matrix](evidence/operator-native-background-full-recovery-v5.json)
+also checks due timers, a pending retry with unattempted queued input, and an
+older snapshot on three fresh targets. Cold and acknowledged holds precede
+explicit resume; future work leaves old occurrences unchanged. The queued input
+completes without resubmission. The older snapshot requires acknowledgment of
+possible lost results or replayed external effects. Broader background failure,
+retirement and complete runtime-family acceptance remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1

@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { join, basename } from 'node:path';
 import { verifyBundle, composeResolved } from '../../../packages/cli/src/recovery/bundle.mjs';
+import { verifyDurableBundle, durableSnapshotLayout } from '../../../packages/cli/src/recovery/durable-bundle.mjs';
 import { snapshotState } from '../../../packages/cli/src/recovery/snapshot-state.mjs';
 import { readPolicyVolume } from '../../../packages/cli/src/runtime/policy-volume.mjs';
 import { compareSourceVolumes } from '../recovery/preservation.mjs';
@@ -16,6 +17,10 @@ import { stopSelectedHost } from './shutdown.mjs';
 export async function normalSnapshot(host, fixture, bundle, expectedAlarm, installations) {
   const point = await backgroundSnapshot(host, fixture.approvals, bundle, [{ app: 'refresh', due: expectedAlarm }], installations);
   return { ...point, prepared: point.manifest.cronRecovery.apps.refresh, preparationLatencyMs: point.manifest.cronRecovery.apps.refresh.completedAt - point.requestedAt, queueMessages: point.sourceObservation.imports.queuePeek.messages };
+}
+
+export function verifyRecoveryBundle(host, bundle) {
+  return host.entry.routing === 'durable' ? verifyDurableBundle(bundle, host.policy) : verifyBundle(bundle);
 }
 
 export async function backgroundSnapshot(host, approvals, bundle, alarms, installations) {
@@ -43,8 +48,8 @@ export async function backgroundSnapshot(host, approvals, bundle, alarms, instal
   assert.equal(new Set(alarms.map(alarm => alarm.app)).size, alarms.length);
   for (const alarm of alarms) { assert.ok(approvals[alarm.app]); assert.ok(alarm.due > requestedAt); }
   // One attempt only. Any preparation failure invalidates the selected timers.
-  await host.command(['backup', bundle], { timeout: 300000 });
-  const verified = await verifyBundle(bundle), archived = await snapshotState(bundle);
+  await host.command(['backup', bundle, '--installation', host.project], { timeout: 300000 });
+  const verified = await verifyRecoveryBundle(host, bundle), archived = verified.state || await snapshotState(bundle);
   assert.deepEqual(history(archived), liveHistory, 'Backup changed or dropped retirement history');
   const canonicalAfter = await readFile(canonicalFile), expectedConfig = composeResolved(JSON.parse(canonical));
   assert.ok(isDeepStrictEqual(composeResolved(JSON.parse(canonicalAfter)), expectedConfig), 'Backup changed the installed launch configuration');
@@ -75,12 +80,13 @@ export async function backgroundSnapshot(host, approvals, bundle, alarms, instal
 }
 
 export async function preserveSource(host, point) {
-  const names = recoveryLayout(host.config).archiveVolumes;
+  const layout = host.entry.routing === 'durable' ? durableSnapshotLayout(host.config, host.policy) : recoveryLayout(host.config);
+  const names = layout.archiveVolumes;
   const config = { ...host.config, volumes: Object.fromEntries(names.map(name => [name, host.config.volumes[name]])) };
   const compared = await compareSourceVolumes({ config }, point.bundle);
   const policy = await readPolicyVolume(host.entry.image, host.config.volumes['runtime-policy'].name, host.config.services.controller.environment);
   assert.deepEqual(policy, point.policy);
-  await verifyBundle(point.bundle);
+  await verifyRecoveryBundle(host, point.bundle);
   return { ...compared, independentPolicyUnchanged: true };
 }
 

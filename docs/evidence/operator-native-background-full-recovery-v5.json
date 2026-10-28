@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-stopped-recovery",
+  "recordedAt": "2026-10-28T23:39:46.989893+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "7fe57a6bc9097796f65f82104286a4fc7e0fa9f4",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh v5 due-timer source, then three same-family stopped restores onto fresh volumes: due timer, pending retry with unattempted queued input, and reuse of the older snapshot. Cold and acknowledged holds, explicit resume, future work and unchanged old occurrences. No complete family qualification.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "archivedExecutedSourcesVerified": 957,
+    "priorContainersUnchanged": 401,
+    "priorVolumesRetained": 539,
+    "ownedContainersStoppedAndRetained": 32,
+    "freshVolumes": 44,
+    "nativeLogHealthChecked": true,
+    "canonicalApprovalAndArtifactDigestsVerified": true,
+    "finalPrivatePublicAuthorityPairsVerified": 4,
+    "installedRuntimePoliciesVerified": 4
+  },
+  "snapshots": {
+    "a": {
+      "manifestSha256": "b9ef7569a65a40a304d27ca93c06ec283bd9455e539e7ca924fd09cafc7c0d51",
+      "preparedBeforeDeadlineMs": 30587,
+      "archivedFilesVerified": 10
+    },
+    "b": {
+      "manifestSha256": "3d2fa124738dd673f46c8302ee1769a83f36959a4e883038d073ff4331bddd9b",
+      "preparedBeforeDeadlineMs": 7215,
+      "archivedFilesVerified": 10
+    }
+  },
+  "restores": {
+    "a": {
+      "project": "fogd-selected-recovery-f0b0e0315be40e2d",
+      "coldHeldMilliseconds": 73841,
+      "acknowledgedHeldMilliseconds": 74969,
+      "noReplayMilliseconds": 131948,
+      "crossedRecordedDeadline": true,
+      "futureJobPairVerified": true,
+      "oldOccurrencesUnchanged": true
+    },
+    "b": {
+      "project": "fogd-selected-recovery-d9e184d9ab6e88f5",
+      "coldHeldMilliseconds": 73378,
+      "acknowledgedHeldMilliseconds": 75505,
+      "noReplayMilliseconds": 132446,
+      "crossedRecordedDeadline": true,
+      "futureJobPairVerified": true,
+      "oldOccurrencesUnchanged": true
+    },
+    "older-a": {
+      "project": "fogd-selected-recovery-e95c24bfc078f951",
+      "coldHeldMilliseconds": 73610,
+      "acknowledgedHeldMilliseconds": 75340,
+      "noReplayMilliseconds": 132417,
+      "crossedRecordedDeadline": true,
+      "futureJobPairVerified": true,
+      "oldOccurrencesUnchanged": true
+    }
+  },
+  "pendingRetry": {
+    "scheduledTime": 1793229900000,
+    "selectedSettledFailures": 3,
+    "futurePersistedWakeVerified": true,
+    "snapshotPreparedBeforeWake": true,
+    "oldOccurrenceUnchangedAfterExplicitResume": true
+  },
+  "pendingQueue": {
+    "unattemptedMessagePreserved": true,
+    "originalInputHashAndCreatedAtRetained": true,
+    "completedWithoutApplicationPOST": true,
+    "completedLabels": [
+      "KIWI",
+      "LIME"
+    ],
+    "emptyQueueAfterCompletion": true
+  },
+  "olderSnapshot": {
+    "distinctRecoveryAcknowledgmentIDs": true,
+    "possibleLossOrReplayNoticeVerified": true,
+    "laterResultsAbsent": true,
+    "futureWorkAfterExplicitResume": true
+  },
+  "priorUnacceptedAttempt": {
+    "phase": "a-acknowledged-hold",
+    "reason": "The probe attempted admin dispatch observation about one second after restarted native runtime identity listeners opened, before serving readiness opened. Process inventory alone did not prove approved native data readiness. Add a bounded approved-data observation before admin observation, retaining all recovery guards.",
+    "priorContainersUnchanged": 385,
+    "priorVolumesRetained": 517,
+    "ownedContainersStoppedAndRetained": 16,
+    "recoveryRemainedPending": true,
+    "HTTPRoutesWithheld": true,
+    "failureAuditFingerprint": {
+      "bytes": 694,
+      "sha256": "be1a746e85aea52ff67b8496668dc6ab49d15126a89ba438f6f54eb46cf7e1f4"
+    }
+  },
+  "qualificationProgramFingerprints": {
+    "scripts/cron-probe/selected/recovery-evidence.mjs": "dca8cfaee5270f39f01518bacf98ca6a7bc6aa2eb24eee9411b407391ac77a73",
+    "scripts/cron-probe/selected/recovery-holds.mjs": "17da93cf9ece04fc3ba66d99881731cc11fa955b7e63ba3cc3d68a468ee76cac",
+    "scripts/cron-probe/selected/recovery-snapshot.mjs": "e39e8531dec28a6fe835159e718d906782a1e452bb684639ad1d0e8c8ca3e170",
+    "scripts/cron-probe/selected/recovery.mjs": "7ac2659c6e26d7d22d36a2c8ce560d0192010f9cd3a2a99c979886834626b0d5"
+  },
+  "acceptance": {
+    "sameFamilyDueTimerStoppedRestore": true,
+    "sameFamilyPendingRetryStoppedRestore": true,
+    "unattemptedQueuedInputRestore": true,
+    "olderStoppedSnapshotRestoreWithPossibleLossAcknowledgment": true,
+    "coldAndAcknowledgedBackgroundHolds": true,
+    "explicitResumeWithoutOldOccurrenceReplay": true,
+    "retirementAndReuse": false,
+    "backgroundMigrationCrashRetry": false,
+    "nativeSQLBookkeepingAtomicity": false,
+    "powerLoss": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "privateEvidenceFingerprints": {
+    "snapshot-a/manifest.json": {
+      "sha256": "b9ef7569a65a40a304d27ca93c06ec283bd9455e539e7ca924fd09cafc7c0d51",
+      "bytes": 5225
+    },
+    "snapshot-b/manifest.json": {
+      "sha256": "3d2fa124738dd673f46c8302ee1769a83f36959a4e883038d073ff4331bddd9b",
+      "bytes": 5234
+    },
+    "runtime.log": {
+      "sha256": "8d81c4199562107d2ebff870b3b38c391df8de30035acbe6f1667009b3bf6f73",
+      "bytes": 123766
+    },
+    "a/runtime.log": {
+      "sha256": "87eee70d55275532fd86630f737549c1da8222f2a3ac724f1b1012b4d9e14974",
+      "bytes": 1015987
+    },
+    "b/runtime.log": {
+      "sha256": "a51b66fd91f336dec786ab4119bfb64aed8296d994bfb8652956bf1efa4d95d0",
+      "bytes": 820266
+    },
+    "older-a/runtime.log": {
+      "sha256": "c599f442bda486a9e0bcdd1e50a33625a821f894d58f70186b834e4639516586",
+      "bytes": 852061
+    },
+    "result.json": {
+      "sha256": "2b37b1336030cb152d5e82150edad596c6dac735c5ddfdef1de530bd7b9984c5",
+      "bytes": 683278
+    },
+    "executed-source-inventory.json": {
+      "sha256": "fcc030323411f6c13a8e594451744ddd757c20887fa0137bb9a88f865611d500",
+      "bytes": 112119
+    },
+    "inputs.json": {
+      "sha256": "980becffcf8589b8a3ea4ebbc16b27292c5270791091b3025f9dc01dcd797014",
+      "bytes": 415
+    },
+    "snapshot-a-evidence.json": {
+      "sha256": "2fd54094c8917bbec2d9ccbd61c1636936971b80ab2402441f76f0257e091cdb",
+      "bytes": 20996
+    },
+    "snapshot-b-evidence.json": {
+      "sha256": "69bc2d25d3319bc6744f3b061bca7fb4b66cedefda3ee56c98ccc8f3eb08dd4c",
+      "bytes": 46320
+    },
+    "a/selection.json": {
+      "sha256": "ac79278831784e15e6f0eb680f3c97bd2d387980682775699dc6ea63489e5230",
+      "bytes": 442
+    },
+    "b/selection.json": {
+      "sha256": "45e6496d0c6cf7dab4c4ef2a702ddc0f83037e6ef9d89500d7ec4452f6755cf4",
+      "bytes": 440
+    },
+    "older-a/selection.json": {
+      "sha256": "1e1e4ef224b8891efdf3d59929b247dc2dc70362e7059a97d8325f1d00bb82a4",
+      "bytes": 442
+    },
+    "stores-audit.json": {
+      "sha256": "75fb3b26e08cf2e2e9ab38bf17fe494aefea4f30e193a9fed21b8a640e4a0152",
+      "bytes": 1773
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "a117d6be69507b2e23c4f44854236752da897f07375d515cc5f356901ce2132e",
+      "bytes": 4970
+    },
+    "independent-audit-source.py": {
+      "sha256": "1ebeada0832ae183e87c259605b886a0a35d8e48eafce56772dd73d463a02205",
+      "bytes": 10396
+    },
+    "independent-audit.json": {
+      "bytes": 4647,
+      "sha256": "a42e753488101db6cd0ca4e28f03123473d1c763e75a181e22be4b1d28b17c00"
+    }
+  },
+  "limitations": [
+    "All four installations are retained qualification fixtures on the same existing two-vCPU Linux arm64 Docker VM on one physical Mac, with 21 unrelated QA containers running. There are no existing user installations.",
+    "Backup pauses background work before stopping. Restored due and pending-retry occurrences remain held through explicit possible-loss acknowledgment. Resume schedules future work; this trial does not demonstrate completion of the old retry after restore.",
+    "The older snapshot deliberately lacks results acknowledged after it was taken. Recovery acknowledgment warns about possible loss or replay of external effects. No exactly-once external-effect guarantee follows.",
+    "The first attempt failed because the probe used native process existence as a readiness check. The new probe verifies approved native data before admin observation. The failed attempt remains unaccepted, stopped and retained.",
+    "The candidate image and its runtime programs are unchanged. These changes extend qualification helpers and do not open ordinary admission. Raw logs, credentials, SQL rows and application artifacts remain private."
+  ]
+}

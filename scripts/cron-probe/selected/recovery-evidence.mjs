@@ -9,7 +9,7 @@ export function recordRequests(host, request, journal) {
 }
 export async function retainedInstallations(installations) {
   const volumes = installations.flatMap(host => Object.values(host.config.volumes).map(volume => volume.name));
-  assert.equal(volumes.length, 32); assert.equal(new Set(volumes).size, 32);
+  assert.equal(installations.length, 4); assert.equal(new Set(volumes).size, volumes.length);
   const inspected = await json(['volume', 'inspect', ...volumes]); assert.deepEqual(inspected.map(volume => volume.Name).sort(), volumes.toSorted());
   for (const host of installations) await stopped(host.project, Object.values(host.config.volumes).map(volume => volume.name));
   return volumes;

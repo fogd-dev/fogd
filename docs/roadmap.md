@@ -139,8 +139,13 @@ checks cron and queue resume with HTTP withheld, a controller outage across an
 observed cron deadline, and a stopped snapshot. A
 [paused-snapshot restore](evidence/operator-native-background-recovery-v5.json)
 now verifies fresh target volumes, cold and acknowledged background holds, explicit
-resume and unchanged old occurrences. Due, retry and older snapshots, broader
-failure and retirement paths, and full family acceptance remain open.
+resume and unchanged old occurrences. The
+[v5 recovery matrix](evidence/operator-native-background-full-recovery-v5.json)
+adds due timers, a pending retry with original queued input, and an older snapshot
+on fresh targets. Background work stays held until explicit resume; the original
+queued input completes without resubmission. Older recovery acknowledges possible
+lost results or replayed effects. Broader failure and retirement paths and full
+family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on
