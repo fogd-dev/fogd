@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-lifecycle",
+  "recordedAt": "2026-10-28T21:08:37.223659+00:00",
+  "family": "celld-durable-v4-linux-arm64",
+  "image": "sha256:d851f33fc75e1b4e9923e1e20e2def887970837065c11f13e018be26a5e88ab9",
+  "passed": false,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Fresh two-fleet HTTPS fixture on one Linux arm64 engine; failed background acceptance attempt. Earlier recorded phases are diagnostic evidence, not family qualification.",
+  "failedPhase": "scheduled-work-with-http-paused",
+  "failure": "Cron resume refused after a plain operator HTTP pause because resumability incorrectly requires active HTTP routing.",
+  "exitCode": 1,
+  "completedPhases": [
+    "unapproved",
+    "approvals",
+    "queueBaseline",
+    "initialResume",
+    "initialWork",
+    "noRetry",
+    "update",
+    "retry",
+    "controllerLoss",
+    "queueAfterRestart",
+    "failureLogs"
+  ],
+  "notReached": [
+    "completed HTTP/dispatch separation",
+    "privacy scan",
+    "verified stopped durable snapshot"
+  ],
+  "verification": {
+    "priorContainersUnchanged": 310,
+    "priorVolumesRetained": 418,
+    "ownedContainersStoppedAndRetained": 8,
+    "acceptedResultAbsent": true
+  },
+  "privateEvidenceFingerprints": {
+    "inputs.json": {
+      "sha256": "c6b0e54e55daef488757513dfa3ea1565ae6d0109f96469bc5147c453353f0cb",
+      "bytes": 415
+    },
+    "failure.json": {
+      "sha256": "6ea4df08851175f679c7005be3ffe28a2f5ac6108b4710eba6407a03b90e7ffe",
+      "bytes": 302639
+    },
+    "executed-source-inventory.json": {
+      "sha256": "d2322e55e19908998c9feacab8f8807a4701ebeeff0e7dacd9c0169671eb8bb0",
+      "bytes": 111987
+    },
+    "command-failure-e94d5bcf-df02-4d25-8561-11c3561719be.json": {
+      "sha256": "0001f5f70a728a80ba9867a972c3ed8e9a40b66db8fe92ba57f34d8d26a48d00",
+      "bytes": 148
+    }
+  },
+  "nextGate": "Fix route-state coupling in source, build a new immutable candidate and rerun acceptance. V4 pins remain unchanged."
+}

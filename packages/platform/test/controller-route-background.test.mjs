@@ -5,6 +5,50 @@ import { join } from 'node:path';
 import { fixture as queueFixture } from './fixtures/queue-controller.mjs';
 import { fixture as cronFixture } from './fixtures/cron-controller.mjs';
 import { authorityFixture } from './fixtures/route-authority.mjs';
+import { operateDispatch, dispatchView } from '../src/admin-dispatch.mjs';
+import { operateDelivery, deliveryView } from '../src/admin-delivery.mjs';
+
+for (const [name, fixture, operate, view, paused] of [
+  ['imports', queueFixture, operateDelivery, deliveryView, f => f.paused()],
+  ['refresh', cronFixture, operateDispatch, dispatchView, async f => (await f.runtime()).paused],
+]) {
+  test(`${name} background resume is independent of a plain durable HTTP pause`, async t => {
+    const authority = await authorityFixture(t), f = await fixture(t, { routeAuthority: authority.options });
+    const request = await f.request(); await f.c.mutate(request.id, request.digest, 'approve');
+    const selected = { deployment: request.id, digest: request.digest };
+    await operate(f.c, name, 'pause'); await f.c.decideRoute(name, 'pause', selected);
+    const restored = f.create(); await restored.init();
+    assert.equal(view(restored, name).resumeAllowed, true);
+    await assert.rejects(operate(restored, name, 'resume', { ...selected, digest: '0'.repeat(64) }), /changed/);
+    assert.equal(await paused(f), true);
+    await operate(restored, name, 'resume', selected);
+    assert.equal(await paused(f), false);
+    assert.equal((await authority.record()).routes[0].state, 'withheld');
+    assert.equal(restored.state.apps[name].route, 'paused');
+    await operate(restored, name, 'pause'); assert.equal(await paused(f), true);
+  });
+  test(`${name} legacy HTTP pause still blocks background resume`, async t => {
+    const f = await fixture(t), request = await f.request();
+    await f.c.mutate(request.id, request.digest, 'approve'); await operate(f.c, name, 'pause');
+    f.c.state.apps[name].route = 'paused'; await f.c.save();
+    assert.equal(view(f.c, name).resumeAllowed, false);
+    await assert.rejects(operate(f.c, name, 'resume', { deployment: request.id, digest: request.digest }), /completed activation/);
+    assert.equal(await paused(f), true);
+  });
+  test(`${name} background resume still refuses a failed HTTP verification hold`, async t => {
+    const authority = await authorityFixture(t, async () => { throw new Error('Runtime unavailable'); });
+    const f = await fixture(t, { routeAuthority: authority.options }), request = await f.request();
+    await f.c.mutate(request.id, request.digest, 'approve');
+    const selected = { deployment: request.id, digest: request.digest };
+    await operate(f.c, name, 'pause'); await f.c.decideRoute(name, 'pause', selected);
+    await assert.rejects(f.c.decideRoute(name, 'resume', selected), /uncertain/);
+    assert.equal(f.c.state.routeAuthority.holds[name].id, request.id);
+    assert.equal(view(f.c, name).resumeAllowed, false);
+    await assert.rejects(operate(f.c, name, 'resume', selected), /completed activation/);
+    assert.equal(await paused(f), true);
+    assert.equal((await authority.record()).routes[0].state, 'withheld');
+  });
+}
 
 for (const [name, fixture] of [['queue', queueFixture], ['cron', cronFixture]]) test(`${name} activation effects run only behind public withholding`, async t => {
   const authority = await authorityFixture(t), f = await fixture(t, { routeAuthority: authority.options });

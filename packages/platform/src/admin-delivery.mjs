@@ -3,9 +3,9 @@ import { deliveryFor } from './queue-activation.mjs';
 import { checkMutation } from './admin-secrets.mjs';
 import { recoveryPending, recoveryReview, prepareQueueSnapshot, acknowledgeQueueRecovery } from './queue-recovery.mjs';
 
-function resumable(controller, app) {
+function resumable(controller, name, app) {
   const active = controller.state.deployments[app.active];
-  return Boolean(active?.status === 'active' && app.route === 'active' && !app.quarantined && !app.retirement && !app.uncertain && !app.delivery.hold && !recoveryPending(app) && app.queueBootstrap?.phase === 'application' && active.version === app.delivery.version);
+  return Boolean(active?.status === 'active' && controller.routes.backgroundResumeAllowed(name) && !app.quarantined && !app.retirement && !app.uncertain && !app.delivery.hold && !recoveryPending(app) && app.queueBootstrap?.phase === 'application' && active.version === app.delivery.version);
 }
 
 export function deliveryView(controller, name) {
@@ -18,7 +18,7 @@ export function deliveryView(controller, name) {
     recovery: app.queueRecovery ? { id: app.queueRecovery.id, review: recoveryReview(app.queueRecovery), status: app.queueRecovery.status, diagnosis: app.queueRecovery.diagnosis || null, checkError: app.queueRecovery.checkError || null, checkedAt: app.queueRecovery.checkedAt || null, observation: app.queueRecovery.observation || null, firstObservation: app.queueRecovery.firstObservation || null } : null,
     active: active ? { deployment: active.id, digest: active.digest } : null,
     operationAllowed: !app.retirement && !app.quarantined && app.queueBootstrap.phase !== 'pending',
-    resumeAllowed: resumable(controller, app) };
+    resumeAllowed: resumable(controller, name, app) };
 }
 
 function deliveryTarget(controller, name) {
@@ -39,7 +39,7 @@ export async function operateDelivery(controller, name, action, input = {}) {
   if (action === 'snapshot') return prepareQueueSnapshot(controller, name, input);
   if (action === 'acknowledge-recovery') { await acknowledgeQueueRecovery(controller, name, input); return deliveryView(controller, name); }
   if (action === 'resume') {
-    if (!resumable(controller, app)) throw new Error('Resume requires a completed activation with no hold or uncertain migration');
+    if (!resumable(controller, name, app)) throw new Error('Resume requires a completed activation with no hold or uncertain migration');
     const active = controller.state.deployments[app.active];
     if (input.deployment !== active.id || input.digest !== active.digest) throw new Error('Active deployment/digest changed; inspect delivery before resuming');
   }

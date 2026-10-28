@@ -37,11 +37,15 @@ export async function approveImports(host, token, app = 'imports') {
   assert.equal(submitted.status, 'pending'); await host.command(['admin', 'approve', submitted.id, submitted.digest]);
   return approved(host, submitted);
 }
-export async function backgroundFixtures(host, request) {
+export async function prepareBackgroundFixtures(host, request) {
   const credentials = await backgroundCredentials(host, request), project = await privateFaultProject(host, 'refresh-source');
   const submitted = await host.json(['deploy', '--name', 'refresh'], { env: { ...host.env, FOGD_DEPLOY_TOKEN: credentials.tokens.refresh }, cwd: project });
-  const refresh = await approveRefresh(host, submitted, credentials.secret), imports = await approveImports(host, credentials.tokens.imports);
-  return { ...credentials, project, approvals: { refresh, imports } };
+  return { ...credentials, project, submitted };
+}
+export async function backgroundFixtures(host, request) {
+  const fixture = await prepareBackgroundFixtures(host, request);
+  const refresh = await approveRefresh(host, fixture.submitted, fixture.secret), imports = await approveImports(host, fixture.tokens.imports);
+  return { ...fixture, approvals: { refresh, imports } };
 }
 async function approved(host, submitted) {
   const state = await controllerState(host), app = state.apps[submitted.app], active = state.deployments[app.active];

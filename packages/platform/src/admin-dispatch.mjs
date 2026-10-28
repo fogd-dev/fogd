@@ -5,9 +5,9 @@ import { cronUpdateNotice } from './cron-dispatch.mjs';
 import { dispatchFor } from './cron-activation.mjs';
 import { checkMutation } from './admin-secrets.mjs';
 
-function resumable(controller, app) {
+function resumable(controller, name, app) {
   const active = controller.state.deployments[app.active];
-  return Boolean(active?.status === 'active' && app.route === 'active' && !app.quarantined && !app.retirement && !app.uncertain && !app.dispatch.hold && !cronRecoveryPending(app) && app.cronBootstrap?.phase === 'application' && active.version === app.dispatch.version);
+  return Boolean(active?.status === 'active' && controller.routes.backgroundResumeAllowed(name) && !app.quarantined && !app.retirement && !app.uncertain && !app.dispatch.hold && !cronRecoveryPending(app) && app.cronBootstrap?.phase === 'application' && active.version === app.dispatch.version);
 }
 
 export function dispatchView(controller, name) {
@@ -23,7 +23,7 @@ export function dispatchView(controller, name) {
     active: active ? { deployment: active.id, digest: active.digest } : null,
     approval: approval ? { deployment: approval.id, digest: approval.digest, status: approval.status, step: approval.step } : null,
     updateNotice: cronUpdateNotice,
-    applicationOutcomes: 'not-observed', operationAllowed, resumeAllowed: operationAllowed && resumable(controller, app) };
+    applicationOutcomes: 'not-observed', operationAllowed, resumeAllowed: operationAllowed && resumable(controller, name, app) };
 }
 
 function dispatchTarget(controller, name) {
@@ -45,7 +45,7 @@ export async function operateDispatch(controller, name, action, input = {}) {
   if (action === 'snapshot') return prepareCronSnapshot(controller, name, input);
   if (action === 'acknowledge-recovery') { await acknowledgeCronRecovery(controller, name, input); return dispatchView(controller, name); }
   if (action === 'resume') {
-    if (!resumable(controller, app)) throw new Error('Resume requires a completed activation with no hold or uncertain migration');
+    if (!resumable(controller, name, app)) throw new Error('Resume requires a completed activation with no hold or uncertain migration');
     const active = controller.state.deployments[app.active];
     if (input.deployment !== active.id || input.digest !== active.digest) throw new Error('Active deployment/digest changed; inspect dispatch before resuming');
   }

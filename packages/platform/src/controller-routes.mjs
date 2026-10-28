@@ -25,6 +25,7 @@ class LookupRoutes {
   assertEnrollment() {}
   assertStorage() {}
   async checkReady() {}
+  backgroundResumeAllowed(name) { return this.controller.state.apps[name]?.route === 'active'; }
   async snapshotReady() {}
   beforeEffect() {}
   assertReject() {}
@@ -85,6 +86,13 @@ class DurableRoutes extends LookupRoutes {
   async checkReady() { this.controller.assertRoutingStartup(true); this.controller.assertStorage(); if (this.startupError) throw this.startupError; this.publication.assertReady(); await this.publication.verifySettled(); }
   snapshotReady(name, active) { this.controller.assertRoutingStartup(true); this.controller.assertStorage(); return this.publication.assertServing(name, active.id, active.digest); }
   recoveryAllowed() { return this.controller.state.routeAuthority.pending === null; }
+  backgroundResumeAllowed(name) {
+    const { state } = this.controller, app = state.apps[name];
+    if (!this.controller.routingStartupComplete || this.startupError || state.routeAuthority.pending || routeHold(state.routeAuthority.holds, name) ||
+      !app || app.claim || !['active', 'paused'].includes(app.route)) return false;
+    try { completedRoute(state, name, this.controller.baseDomain); return true; }
+    catch { return false; }
+  }
   async reconcilePaused() {
     this.startupError = null;
     const state = this.controller.state, pending = state.routeAuthority.pending;

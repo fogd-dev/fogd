@@ -14,6 +14,11 @@ hold, recorded runtime observation, unfinished operations and approval progress.
 Application results belong to the application: the
 [refresh example](../examples/refresh/README.md) displays saved results and failures.
 HTTP route state is independent of scheduled dispatch.
+With durable routing, a plain operator HTTP pause permits an explicit dispatch
+resume for the completed approval. Activation, recovery and failed HTTP verification
+holds still block resume. This source behavior needs a new candidate; the
+[v4 native attempt](evidence/operator-native-background-v4.json) exposed the coupling
+and did not pass acceptance. Snapshot preparation still requires active HTTP routing.
 
 Use the usual admin credentials and explicit installation configuration:
 

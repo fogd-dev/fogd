@@ -34,6 +34,10 @@ hold or clears a pending command. Use `pause` to reconcile pause intent.
 Pause does not drain running handlers. It changes the durable operator preference,
 which remains paused through later successful approvals. HTTP routing and queue
 delivery are separate: an app can serve HTTP while its queue is paused.
+With durable routing, an operator can also explicitly resume delivery while HTTP
+stays paused, provided the completed approval has no activation, recovery or failed
+HTTP verification hold. This source change awaits native candidate acceptance.
+Snapshot preparation still requires active HTTP routing.
 
 Resume requires a completed active deployment, reconciled migrations, no hold, and
 matching approval identifiers. The runtime gate then verifies both replica versions
