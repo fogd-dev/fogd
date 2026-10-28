@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "kind": "operator-durable-v5-source-build",
+  "recordedAt": "2026-10-28T21:16:43.648Z",
+  "sourceCommit": "bee6540c7ceeaac9e7f9231d19d27b486dc58ad5",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "parentImage": "sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "Uncached source build on a previously used isolated Linux arm64 builder, followed by verified transfer and independent executable/program inspection on a classic-overlay2 engine. No native application acceptance or independent installation.",
+  "native": {
+    "repository": "https://github.com/denoland/celld.git",
+    "revision": "90b43017241f81189453d326d05948f388b34652",
+    "cargoLockSha256": "d6a17422788aa910ba76bed9cf59ac15767f93fe107ebdb336954d0e9efe052b",
+    "patches": [
+      {
+        "path": "patches/celld-0.6.2-preaccept-attachment.patch",
+        "sha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd"
+      },
+      {
+        "path": "patches/celld-0.6.2-cron-retry.patch",
+        "sha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19"
+      },
+      {
+        "path": "patches/celld-0.6.2-cron-controls.patch",
+        "sha256": "11460dd716730265b7506d28dc17e0353fdedfa447e2e15c6b42514114e7fb3a"
+      },
+      {
+        "path": "patches/celld-0.6.2-runtime-identity.patch",
+        "sha256": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3"
+      },
+      {
+        "path": "patches/celld-0.6.2-runtime-binding.patch",
+        "sha256": "2c6e3048e7bace0d53808bcf5a4aa0f1b37e96b7ad64410951406bf735f42907"
+      }
+    ],
+    "sourceFiles": 281,
+    "sourceInventorySha256": "fb9db4de87c2157b711cc55d0e3160c145b9aac205fcb445134b6b4da1961cf6"
+  },
+  "baseImages": {
+    "rust": "docker.io/library/rust:1.98.1-bookworm@sha256:5b993f23fb69746405496e76f91e511d96c82b5b23304fd5d20b4a80a8b223ea",
+    "node": "docker.io/library/node:26.2.0-bookworm-slim@sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0"
+  },
+  "contextInventorySha256": "530fae47ec30753bbcfbec51cff7e9e374e20d7d05e4c3a0ed70942f08c1e6c9",
+  "sourceFiles": 109,
+  "changedSinceV4": [
+    "packages/platform/src/admin-delivery.mjs",
+    "packages/platform/src/admin-dispatch.mjs",
+    "packages/platform/src/controller-routes.mjs"
+  ],
+  "outputs": {
+    "celld": {
+      "sha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+      "bytes": 64555080
+    },
+    "supervisor": {
+      "sha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+      "bytes": 860
+    },
+    "workerd": {
+      "sha256": "dda318c3469f1982612a08f45501b36f8d657bcdd111b6ad6e8e27fa13a75914",
+      "bytes": 143764176
+    }
+  },
+  "verification": {
+    "buildAttempt": {
+      "status": "captured",
+      "stdoutBytes": 0,
+      "stderrBytes": 63911,
+      "exitCode": 0,
+      "signal": null,
+      "reason": null
+    },
+    "noCache": true,
+    "nativeTests": [
+      {
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "passed": 0,
+        "failed": 0
+      }
+    ],
+    "clippyAllTargetsDenyWarnings": true,
+    "sourceInventoryMatchesCapturedBuild": true,
+    "installedStoreImageAndProgramsVerified": true,
+    "cronHelpExactStdout": true,
+    "oldCatalogEntriesUnchanged": true
+  },
+  "imageStoreTransfer": {
+    "sourceImageIndex": "sha256:9bf2c4627eb05db4ac2bbd9db21274fc562262d99488334e6dee700768aa61f9",
+    "platformManifest": "sha256:c415479cb5c004d9b76087b7cca6011e7375dcedb065b4e27fc9c1b6e0e86fce",
+    "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+    "source": "fogd-clean-build",
+    "target": "fogd-bundle-recipient",
+    "archiveSha256": "12b94aba532deee91a2312906e62c2dfeb5590cbf32036eb1cce4d60b80842aa",
+    "archiveBytes": 208216576,
+    "descriptorHashesVerified": true,
+    "loadedRootfsMatchesConfig": true,
+    "applicationContainersStarted": false
+  },
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "0215678b61f00db297a0f027fac195df5e2e1a1bf3a5e73dfed4df55f183902e",
+      "bytes": 16534
+    },
+    "build-attempt.json": {
+      "sha256": "527d734e82709e1c4270b63f3ba1e91952c94d9b1395bb85be572fec448b3836",
+      "bytes": 124
+    },
+    "build.stderr": {
+      "sha256": "7d7d4ce52b0a88bc6c118b6bae91da7b03d9561d76f5b88147b7f5c613403072",
+      "bytes": 63911
+    },
+    "build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "native-source/receipt.json": {
+      "sha256": "1a8ab10f51cf53299cf7b0cf2e232d89f79473d53d4522e6a9445c687c94cac7",
+      "bytes": 1195
+    },
+    "build-inputs/receipt.json": {
+      "sha256": "978dcf9105ea603d44262a0a28c87efa1141f97908ee908e3e9064778ea7f202",
+      "bytes": 15531
+    },
+    "image-transfer.json": {
+      "sha256": "6c0c3f5168bec05c6c0e519f5840e500486ede4f7d14a65004c9d278a38e7b44",
+      "bytes": 582
+    },
+    "transfer-audit.py": {
+      "sha256": "e7112e69ec52a2814862ef28ccb006e72972c29f5e2cace0f55713a72e9f324a",
+      "bytes": 2538
+    },
+    "record-build-audit.mjs": {
+      "sha256": "ded8b3f1754916852d0366c792f006bbe9baed194511ac5ebb8929d613770c28",
+      "bytes": 5133
+    }
+  },
+  "acceptance": {
+    "freshBuilderThisAttempt": false,
+    "imageDigestReproducibility": false,
+    "applicationLifecycle": false,
+    "stoppedRecovery": false,
+    "independentInstallation": false,
+    "ordinaryAdmission": false
+  },
+  "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
+  "engines": {
+    "builder": {
+      "ID": "6f115109-ab52-4282-98fe-5431033615ed",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "NCPU": 4,
+      "MemTotal": 12515160064,
+      "Driver": "overlayfs"
+    },
+    "inspection": {
+      "ID": "2a142e44-1892-474f-b159-e319964a6c59",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "NCPU": 2,
+      "MemTotal": 6199001088,
+      "Driver": "overlay2"
+    }
+  }
+}

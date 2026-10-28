@@ -129,8 +129,9 @@ recovery and independent-installation qualification remain open. Cross-family
 migration remains refused and does not block the fresh-install release path.
 The [v4 background lifecycle attempt](evidence/operator-native-background-v4.json)
 failed because a plain HTTP pause blocked explicit cron resume. The source fix
-separates those permissions while preserving activation and recovery holds. A new
-immutable candidate must pass native acceptance before this path is admitted.
+separates those permissions while preserving activation and recovery holds. The
+[v5 source build](evidence/operator-durable-v5-source-build.json) carries that fix
+under a new immutable identity. It must pass native acceptance before admission.
 
 ## Milestones and acceptance gates
 
