@@ -11,6 +11,7 @@ import { checkCommand } from '../src/check/command.mjs';
 import { logsCommand } from '../src/logs/command.mjs';
 import { buildsCommand } from '../src/build-cache/command.mjs';
 import { runtimeCommand } from '../src/distribution/command.mjs';
+import { doctorCommand } from '../src/doctor/command.mjs';
 import { expansionCommand } from '../src/recovery/expand.mjs';
 import { dockerCommand } from '../src/compose/render.mjs';
 import { retirementCommand } from '../src/recovery/retire.mjs';
@@ -24,7 +25,9 @@ import { up, deploy, admin, adminDelivery, adminDispatch, adminRepair, adminAckn
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  if (command === 'storage') {
+  if (command === 'doctor') {
+    await doctorCommand(args);
+  } else if (command === 'storage') {
     await storageCommand(args);
   } else if (command === 'client') {
     await clientCommand(args);
@@ -98,6 +101,7 @@ try {
     }
   }
   else if (!command || command === '--help' || command === 'help') {
+    console.log('fogd doctor --runtime FAMILY [--json]  Inspect Docker host metadata without changes');
     console.log('fogd admin routing APP [status | pause|resume ID SHA | reconcile|withhold-pending ID SHA INTENT]  Inspect and control durable HTTP routing');
     console.log('fogd logs APP --installation PROJECT --output NEW_DIRECTORY [--tail COUNT]  Save private replica logs');
     console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');

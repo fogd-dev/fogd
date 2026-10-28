@@ -79,6 +79,9 @@ export async function verifyRuntimeFamily(entry, run) {
 
 export async function verifyRuntimeHost(run = docker) {
   const host = JSON.parse(await run(['info', '--format', '{{json .}}'], { timeoutMs: 15000 }));
-  if (host.OSType !== 'linux' || !['aarch64', 'arm64'].includes(host.Architecture)) throw new Error('Shipped runtime requires a Linux arm64 Docker host');
+  assertRuntimeHost(host);
   return host;
+}
+export function assertRuntimeHost(host) {
+  if (host.OSType !== 'linux' || !['aarch64', 'arm64'].includes(host.Architecture)) throw new Error('Shipped runtime requires a Linux arm64 Docker host');
 }

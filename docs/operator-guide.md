@@ -40,6 +40,16 @@ development credentials.
 
 ## Enroll and start
 
+Inspect the host prerequisites with the read-only
+[runtime metadata check](runtime-selection.md#installation-authority):
+
+```sh
+node packages/cli/bin/fogd.js doctor --runtime celld-cron-v2-linux-arm64
+```
+
+Review each finding and its next step. Exit code `2` means readiness remains
+unverified; this check does not validate the private installation configuration.
+
 Enroll a fresh project using the explicit runtime family:
 
 ```sh

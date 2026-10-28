@@ -12,6 +12,29 @@ build's provenance limits are described below.
 
 ## Installation authority
 
+Before enrollment, inspect the selected Docker engine without starting containers
+or changing host configuration:
+
+```sh
+node packages/cli/bin/fogd.js doctor --runtime celld-cron-v2-linux-arm64
+node packages/cli/bin/fogd.js doctor --runtime celld-cron-v2-linux-arm64 --json
+```
+
+This host metadata check reports Docker access, runtime architecture,
+offline-transfer image-store qualification, Compose availability, and exact cached
+image IDs and platforms. `supported` applies only to the named check. It does not
+verify image programs or source bytes, installation ports/subnets, backing storage,
+TLS, or application compatibility. These appear as `unverified` findings with
+next steps. Startup and deployment retain their authoritative checks.
+
+The command exits with code `1` when an observed condition is unsupported and `2`
+when readiness remains unverified. This metadata-only scope never reports full
+installation readiness or exit code `0`. A failed image inspection cannot
+distinguish a missing image from access failure. Diagnostics exclude raw Docker
+output and private host configuration. The selected Docker context is inherited;
+no context is switched, image pulled, resource created, or capacity reserved.
+Candidate families can be diagnosed but remain closed to ordinary enrollment.
+
 The host CLI owns the [catalog](../packages/cli/src/runtime/catalog.json).
 It verifies the Docker host architecture, cached runtime and storage images,
 native executable, supervisor and complete production source inventory before
