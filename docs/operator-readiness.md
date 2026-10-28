@@ -268,7 +268,16 @@ the controller migration-retry fix and shared artifact-validation changes. Its
 [native retry evidence](evidence/operator-native-migration-retry-v4.json) covers a
 fully committed HTTP migration with unsaved controller hashes. Background work,
 broader recovery and independent-installation acceptance remain open for this
-artifact, and ordinary admission remains closed.
+artifact, and ordinary admission remains closed. The
+[v5 candidate](evidence/operator-durable-v5-source-build.json) separates explicit
+background resume from a plain operator HTTP pause. Its
+[native lifecycle check](evidence/operator-native-background-v5.json) covers fresh
+cron/queue work, compatible update, retry, paused controller loss across an observed
+deadline, HTTP/background independence and a stopped snapshot. Its
+[migration-retry check](evidence/operator-native-migration-retry-v5.json) repeats the
+fully committed HTTP gap on an independent engine on the same physical host.
+These do not qualify stopped restore, broader background failure and retirement,
+received-CLI installation or the complete runtime family.
 
 The remaining release requirements are:
 

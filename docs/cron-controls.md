@@ -18,7 +18,8 @@ With durable routing, a plain operator HTTP pause permits an explicit dispatch
 resume for the completed approval. Activation, recovery and failed HTTP verification
 holds still block resume. The
 [v5 candidate](evidence/operator-durable-v5-source-build.json) carries this behavior;
-native acceptance remains open. The
+the [native lifecycle check](evidence/operator-native-background-v5.json) verifies it
+on a fresh two-fleet installation. Full family acceptance remains open. The
 [v4 native attempt](evidence/operator-native-background-v4.json) exposed the coupling
 and did not pass acceptance. Snapshot preparation still requires active HTTP routing.
 

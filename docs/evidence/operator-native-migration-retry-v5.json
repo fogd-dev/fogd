@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "kind": "operator-native-migration-retry",
+  "recordedAt": "2026-10-28T21:31:05.398505+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "15f907d98d9059861ee1b30fc409f6ed28e3d8fc",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh two-fleet HTTPS installation on an independent classic-overlay2 Linux arm64 Docker engine on the same physical host. Fully committed HTTP update with stale controller hashes; no received-CLI installation acceptance.",
+  "engineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "method": {
+    "sourceVerifiedDebuggerCheckpoints": true,
+    "controllerCheckpoint": "reconcileLedger before saving new migration hashes",
+    "retryCheckpoint": "Backend.migrate entry remains armed until exact approval completes",
+    "runtimeProgramFilesModified": false,
+    "controllerProcessInterruption": true
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": true,
+    "canonicalControllerStateAndArtifactDigestsVerified": true,
+    "migrationSQLDigestsVerified": true,
+    "nativeLogHealthChecked": true,
+    "priorQualificationContainersUnchanged": 40,
+    "priorVolumesRetained": 55,
+    "auditScriptSha256": "b730f34b329d09eae1ccaffa7924d3a5f69e93d34d4aad7740a5e5c581d44aa3"
+  },
+  "runs": [
+    {
+      "run": "01",
+      "project": "fogd-selected-activation-a0afff2faea5c61b",
+      "sourceCount": 955,
+      "retainedContainers": 8,
+      "retainedVolumes": 11,
+      "artifactVerified": true,
+      "migrationFileDigestsVerified": true,
+      "canonicalControllerStateMatches": true,
+      "sqlObservationBeforeHashSave": {
+        "nativeLedgerRows": 2,
+        "controllerHashRows": 1,
+        "markerRows": 1
+      },
+      "afterRetry": {
+        "nativeLedgerRows": 2,
+        "controllerHashRows": 2,
+        "markerRows": 1
+      },
+      "explicitHTTPObservations": true,
+      "http": {
+        "beforeInterruption": {
+          "baselineStatus": 503,
+          "peerStatus": 200,
+          "peerRows": [
+            {
+              "id": "peer-record",
+              "app": "peer"
+            }
+          ]
+        },
+        "afterRestart": {
+          "baselineStatus": 503,
+          "peerStatus": 200,
+          "peerRows": [
+            {
+              "id": "peer-record",
+              "app": "peer"
+            }
+          ]
+        },
+        "afterRetry": {
+          "baselineStatus": 200,
+          "peerStatus": 200,
+          "peerRows": [
+            {
+              "id": "peer-record",
+              "app": "peer"
+            }
+          ],
+          "baselineRows": [
+            {
+              "id": "post-commit-error-control",
+              "app": "baseline"
+            }
+          ]
+        }
+      },
+      "recovered": {
+        "status": "failed",
+        "step": "migrating",
+        "uncertain": "5eb08a09-c5ad-4f8e-9cba-9df13c788483"
+      },
+      "interruption": {
+        "exitCode": 137,
+        "oomKilled": false,
+        "stopped": true,
+        "restartCount": 0
+      },
+      "peerRows": [
+        {
+          "id": "peer-record",
+          "app": "peer"
+        }
+      ],
+      "files": {
+        "result.json": {
+          "sha256": "0bf3099f747e6994ad6339db0ba5243054c35e76d6e40a019d3e9a8cda55b15a",
+          "bytes": 124791
+        },
+        "post-write-privacy.json": {
+          "sha256": "49139e54c237cb8682b2b07406f0b8329b18304e86006ddbd8d4ad0e27b73a4a",
+          "bytes": 437
+        },
+        "executed-source-inventory.json": {
+          "sha256": "6d6c3b9c45edda493d8502213126624e009bcf7130256a2b195d5777223b5f9c",
+          "bytes": 111684
+        },
+        "runner.mjs": {
+          "sha256": "308cbcf75608c62363cb21df7d2ea5b264ae36173e2a911552a9a530c65e31b8",
+          "bytes": 8374
+        },
+        "runtime.log": {
+          "sha256": "069bc57acec7c71e026038e718776885342c8320ddb8dbfeb374f03c37eee683",
+          "bytes": 91426
+        }
+      }
+    }
+  ],
+  "acceptance": {
+    "freshInstallation": true,
+    "nativeSQLAheadOfControllerHashes": true,
+    "explicitSameArtifactRetry": true,
+    "noBackendMigrationReentryOnRetry": true,
+    "peerAcknowledgedRecordRetained": true,
+    "baselineCommittedResponseErrorRowRetained": true,
+    "partialNativeMigrationRetry": false,
+    "afterLedgerStagingSyncInterruption": false,
+    "nativeSQLBookkeepingAtomicity": false,
+    "powerLoss": false,
+    "backgroundMigrationRetry": false,
+    "independentReceivedCLIInstallation": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "limitations": [
+    "The controller was interrupted before saving its new hashes, after application SQL and the native migration-name ledger had committed. This is not an interruption inside native SQL or bookkeeping.",
+    "The baseline row deliberately returned HTTP 502 after committing. The peer row was acknowledged with HTTP 200.",
+    "All eight fixture containers and eleven data volumes remain stopped and retained. Raw logs, credentials and application artifacts remain private."
+  ]
+}

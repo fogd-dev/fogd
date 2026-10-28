@@ -132,6 +132,13 @@ failed because a plain HTTP pause blocked explicit cron resume. The source fix
 separates those permissions while preserving activation and recovery holds. The
 [v5 source build](evidence/operator-durable-v5-source-build.json) carries that fix
 under a new immutable identity. It must pass native acceptance before admission.
+V5 now has [bounded native background evidence](evidence/operator-native-background-v5.json)
+and [HTTP migration-retry evidence](evidence/operator-native-migration-retry-v5.json)
+on another isolated Docker engine on the same physical host. The background trial
+checks cron and queue resume with HTTP withheld, a controller outage across an
+observed cron deadline, and a stopped snapshot. Stopped restore, broader failure
+and retirement paths, independent received-CLI installation and full family
+acceptance remain open.
 
 ## Milestones and acceptance gates
 

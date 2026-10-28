@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-lifecycle",
+  "recordedAt": "2026-10-28T21:35:38.551769+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "15f907d98d9059861ee1b30fc409f6ed28e3d8fc",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh two-fleet HTTPS installation on a local classic-overlay2 Linux arm64 engine. Scoped inert submissions, exact secret approval, cron and queue work, noRetry, compatible SQL/cadence update, original-occurrence retry, paused controller loss across an observed deadline, HTTP/background independence, privacy and a verified stopped snapshot. No complete runtime-family qualification.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 955,
+    "canonicalControllerMatchesVerifiedArchive": true,
+    "snapshotFileDigestsVerified": true,
+    "nativeLogHealthChecked": true,
+    "priorContainersUnchanged": 318,
+    "priorVolumesRetained": 429,
+    "ownedContainersStoppedAndRetained": 8,
+    "auditScriptSha256": "ef95c6d418fae2f26b7edd11f2d7e18a09a54decd82fb6ccb8b46b4a5a8a2d26"
+  },
+  "observations": {
+    "inertMilliseconds": 70825,
+    "inertSamples": 7,
+    "controllerDownStartedAt": 1793222837168,
+    "controllerDownEndedAt": 1793223004641,
+    "observedNaturalDeadline": 1793223000000,
+    "controllerDownHTTPSamples": 15,
+    "queuedInputsCompleted": [
+      "baseline-input",
+      "held-input",
+      "http-paused-input"
+    ],
+    "retryOccurrence": 1793222820000,
+    "retryAttempts": 6,
+    "noRetryOccurrences": [
+      1793222520000,
+      1793222580000
+    ],
+    "cronHTTPStatusSequence": [
+      503,
+      503,
+      200
+    ],
+    "queueHTTPStatusSequence": [
+      503,
+      503,
+      200
+    ]
+  },
+  "acceptance": {
+    "inertScopedUploadAcrossMinute": true,
+    "exactSecretRevisionApproval": true,
+    "nativeAutonomousCronAndQueue": true,
+    "noRetryAndFutureHealthyWork": true,
+    "compatibleSQLAndCadenceUpdate": true,
+    "originalOccurrenceRetryWithUniqueBusinessRows": true,
+    "persistedPauseAcrossControllerLossAndObservedDeadline": true,
+    "HTTPServingDuringPausedControllerLoss": true,
+    "queuedInputPreservedThroughControllerRestart": true,
+    "explicitBackgroundResumeWhileHTTPWithheld": true,
+    "privacy": true,
+    "stoppedDurableSnapshot": true,
+    "sameFamilyStoppedRestore": false,
+    "dueTimerRestore": false,
+    "pendingRetryRestore": false,
+    "olderSnapshotRestore": false,
+    "retirementAndReuse": false,
+    "ownerLoss": false,
+    "terminalRetryCeiling": false,
+    "backgroundMigrationCrashRetry": false,
+    "powerLoss": false,
+    "independentReceivedCLIInstallation": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "279ad594b5af76540601867329172d0ec00ca8715ab45f5d8410cf1886604544",
+      "bytes": 553480
+    },
+    "post-write-privacy.json": {
+      "sha256": "8fcafd8f549847cbae07165ebbf029565f7cea2417f11d7ced4c2b8192e67778",
+      "bytes": 1779
+    },
+    "executed-source-inventory.json": {
+      "sha256": "6d6c3b9c45edda493d8502213126624e009bcf7130256a2b195d5777223b5f9c",
+      "bytes": 111684
+    },
+    "stopped-snapshot/manifest.json": {
+      "sha256": "9982d3fe561157090da5a52184f9d4443661656f0569648216b647b8a3f02350",
+      "bytes": 5225
+    },
+    "runtime.log": {
+      "sha256": "e16e4e8a7714c10d08acadd35bbdeabab46b20c2551bed2ef3c077921b8ff686",
+      "bytes": 2040016
+    }
+  },
+  "limitations": [
+    "All resources belong to retained qualification fixtures, not user installations. Both apps use the same bounded two-fleet layout.",
+    "The compatible-update fixture retains its historical v4-update label and v4_background_update SQL table name; the runtime family and image are v5.",
+    "Pause does not drain arbitrary callbacks. The fixture waited for its recorded callbacks to settle before comparing data.",
+    "A stopped snapshot was verified, but this trial did not restore it or test due, pending-retry or older snapshots.",
+    "No per-worker CPU quota, exactly-once external effects or broader density/performance qualification is claimed."
+  ]
+}

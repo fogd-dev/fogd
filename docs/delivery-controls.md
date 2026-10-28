@@ -36,7 +36,8 @@ which remains paused through later successful approvals. HTTP routing and queue
 delivery are separate: an app can serve HTTP while its queue is paused.
 With durable routing, an operator can also explicitly resume delivery while HTTP
 stays paused, provided the completed approval has no activation, recovery or failed
-HTTP verification hold. This source change awaits native candidate acceptance.
+HTTP verification hold. The [v5 native lifecycle check](evidence/operator-native-background-v5.json)
+verifies this on a fresh two-fleet installation. Full family acceptance remains open.
 Snapshot preparation still requires active HTTP routing.
 
 Resume requires a completed active deployment, reconciled migrations, no hold, and

@@ -159,7 +159,10 @@
     "applicationLifecycle": false,
     "stoppedRecovery": false,
     "independentInstallation": false,
-    "ordinaryAdmission": false
+    "ordinaryAdmission": false,
+    "migrationRetry": true,
+    "nativeBackgroundLifecycle": true,
+    "fullFamilyQualification": false
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -179,5 +182,9 @@
       "MemTotal": 6199001088,
       "Driver": "overlay2"
     }
-  }
+  },
+  "followupEvidence": [
+    "operator-native-migration-retry-v5.json",
+    "operator-native-background-v5.json"
+  ]
 }
