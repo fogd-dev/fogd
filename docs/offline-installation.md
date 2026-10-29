@@ -140,3 +140,10 @@ ordinary `fogd runtime` commands and public enrollment still refuse the candidat
 No public candidate flag or image override is available. This evidence uses separate engines
 on one physical machine and does not complete released-family or separate-machine
 acceptance.
+
+The [v5 proposed-release rehearsal](evidence/operator-v5-release-rehearsal.json)
+uses the public commands with a private copy of the proposed catalog admission
+change. Received operator/client deployment, an exact update, pending-code
+isolation, restart, stopped backup and fresh recovery pass on another existing
+engine on the same physical host. The repository catalog remains closed; this
+rehearsal is not an actual released-family or separate-machine installation.

@@ -323,7 +323,14 @@ uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
 apps and data after full stop/start pass. It uses internal candidate selection and
 prepared project dependencies; separate physical-machine and ordinary released-family
-installation remain open.
+installation remain open. The
+[proposed-release rehearsal](evidence/operator-v5-release-rehearsal.json) uses a
+private copy with only v5's catalog admission changed. Public export/import,
+received-client update, restart, stopped backup and fresh recovery pass on the
+independent engine. Pending code stays inert through restart and recovery; the
+new migration commits once and saved rows remain. Native observations and fresh
+routing status precede explicit HTTP resumes. This tests the proposed public
+command path without opening admission in the repository or publishing a release.
 
 The [v5 write checks](evidence/operator-native-write-serving-v5.json) retain all
 14,842 acknowledged writes in first ledger reads across a single-writer profile

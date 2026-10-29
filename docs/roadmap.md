@@ -174,7 +174,12 @@ and full family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on
-the same physical Mac. Both scoped HTTP/D1 apps retain data after full stop/start.
+the same physical Mac. Both scoped HTTP/D1 apps retain data after full stop/start. The
+[proposed-release rehearsal](evidence/operator-v5-release-rehearsal.json) adds the
+public command path through received-client update, stopped backup and fresh
+recovery. Its private catalog changes only v5's admission field; the repository
+stays closed. Exact approvals, native readiness observations and separate HTTP
+resumes preserve saved rows and leave the pending peer update inert.
 Internal candidate selection and prepared project dependencies are explicit
 assistance. Separate physical-machine and ordinary released-family installation
 remain open.

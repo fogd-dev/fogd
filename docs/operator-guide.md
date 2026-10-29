@@ -293,6 +293,23 @@ restore old credentials and secret revisions. Queues and scheduled apps require
 resume; backup can leave background work paused even on the original installation.
 Follow the [recovery guide](recovery.md) for those boundaries.
 
+A cold start can finish before native identity, leases and approved replica
+versions are ready. For an admitted durable-routing family, inspect the application
+and its HTTP authority before selecting an exact resume:
+
+```sh
+node packages/cli/bin/fogd.js observe APP --installation my-cloud-recovered
+node packages/cli/bin/fogd.js admin routing APP status
+node packages/cli/bin/fogd.js admin routing APP resume DEPLOYMENT_ID SHA256
+```
+
+While HTTP is withheld, the overall observation can remain `uncertain`. Check for
+`runtimeIdentity: verified`, `runtimeLeases: current`, and two replicas with
+matching versions and HTTP 200 state/health responses. Routing status must show
+`startupBlocked: false`, `pending: null`, and the held approval you intend to
+resume. An uncertain resume requires fresh routing inspection before another
+decision; retain the original outcome rather than automatically replaying it.
+
 Runtime-family migration and cross-version restore are not qualified. Before
 changing software, retain the matching program and a stopped backup; a new checkout
 or image tag is not an upgrade procedure. Do not change the enrolled policy or

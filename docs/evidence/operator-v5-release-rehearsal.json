@@ -1,0 +1,291 @@
+{
+  "schema": 1,
+  "kind": "proposed-release-public-command-rehearsal",
+  "recordedAt": "2026-10-29T15:15:04.097365+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "qualificationSourceBaseCommit": "408ca3733c59dd741c337c4ad4b519d813ce778e",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "actualReleasedFamilyAcceptance": false,
+  "fullFamilyQualification": false,
+  "scope": "Private proposed-release rehearsal on a distinct existing classic-overlay2 Linux arm64 Docker engine on the same physical Mac. The received operator and client execute outside the checkout. This is not publication, an empty-engine trial or separate physical-machine acceptance.",
+  "proposal": {
+    "onlyCatalogSemanticChange": "v5 admission: candidate to qualified in a private copy.",
+    "catalogDelta": {
+      "path": "packages/cli/src/runtime/catalog.json",
+      "family": "celld-durable-v5-linux-arm64",
+      "before": "a6905fb080077eaeb78478cebb689fe12077715edf76cd9453879008c68325e6",
+      "after": "fe287f60584843bf3687413f7562408483df6d4275b769c704323051003b8769",
+      "change": "candidate to qualified in a private rehearsal copy only"
+    },
+    "allOtherProgramFilesMatchSource": true,
+    "repositoryCatalogUnchanged": true,
+    "repositoryAdmissionStillCandidate": true,
+    "internalCandidateSeamUsedForProductOperations": false
+  },
+  "transfer": {
+    "format": "fogd-runtime-transfer-v1",
+    "bootstrapSha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98",
+    "manifestSha256": "8c08a6e7727d73661c46e3b52719965f34d8abcc1272d3d582582beacf77c356",
+    "transferMembersVerified": 427,
+    "receivedOperatorFilesVerifiedAfterUse": 425,
+    "standaloneClientFilesVerifiedAfterUse": 36,
+    "importContainerAndVolumeInventoryUnchanged": true
+  },
+  "publicWorkflow": {
+    "freshPublicSelectorEnrollment": true,
+    "missingTLSRefusesWithEightNeverStartedServices": true,
+    "receivedClientScopedDeployments": true,
+    "initialPeerPendingCodeWithheld": true,
+    "pendingUpdateEndpoint404AndNewSQLTableAbsent": true,
+    "exactUpdateApproval": true,
+    "newMigrationLedgerRows": 1,
+    "releaseMarkerRows": [
+      {
+        "id": "v2"
+      }
+    ],
+    "pendingPeerUpdateAcrossRestartAndRecovery": "pending; endpoint stays HTTP 404",
+    "fullStopStartRetainsAcknowledgedRows": true,
+    "stoppedBackupArchiveMembersRehashed": 10,
+    "publicRestoreOnFreshVolumes": true,
+    "targetInitiallyWithheld": true,
+    "nativeObservationAndFreshRoutingStatusBeforeResume": true,
+    "explicitExactHTTPResumes": 2,
+    "sourceStartupRefusedWhileTargetRuns": true,
+    "newAcknowledgedWriteOnRecoveredTarget": "after-recovery",
+    "savedDataRetained": true
+  },
+  "readiness": {
+    "coldStartIsNotNativeReadiness": true,
+    "beforeEachResume": {
+      "runtimeIdentity": "verified",
+      "runtimeLeases": "current",
+      "replicas": 2,
+      "stateAndHealthHTTPStatus": 200,
+      "approvedVersions": "matches",
+      "routingState": "withheld",
+      "startupBlocked": false,
+      "pending": null
+    },
+    "samplesPerApplication": {
+      "baseline": 4,
+      "peer": 1
+    },
+    "overallObservationCanRemainUncertainWhileRoutingWithheld": true,
+    "noAutomaticMutationRetries": true
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 971,
+    "installedRuntimePoliciesVerified": 2,
+    "privatePublicAuthorityPairsVerified": 2,
+    "canonicalApprovedArtifactDigestsVerified": 4,
+    "canonicalPendingArtifactDigestsVerified": 2,
+    "allMigrationSQLDigestsVerified": true,
+    "publicAndFinalPrivacyScansPassed": true,
+    "capturedPostRestartNativeLogsChecked": true,
+    "engines": [
+      {
+        "context": "fogd-bundle-recipient",
+        "id": "2a142e44-1892-474f-b159-e319964a6c59",
+        "priorContainersUnchanged": 627,
+        "priorVolumesRetained": 849
+      },
+      {
+        "context": "fogd-independent-install",
+        "id": "043a9734-e319-4236-861d-1dbb7108b664",
+        "priorContainersUnchanged": 88,
+        "priorVolumesRetained": 121
+      }
+    ],
+    "ownedContainersStoppedAndRetained": 16,
+    "freshVolumesRetained": 22
+  },
+  "unacceptedEarlierAttempts": [
+    {
+      "attempt": "01",
+      "accepted": false,
+      "reason": "Initial HTTP resume was uncertain during cold native readiness. Canonical records remained withheld with no pending publication. Separate retained-target corroboration observed expired/unknown native facts, waited for current verified matching replicas and completed new explicit resume decisions with saved data intact. Fresh rehearsal adds those observations before mutation.",
+      "corroborationPassed": true,
+      "engines": [
+        {
+          "context": "fogd-bundle-recipient",
+          "priorContainersUnchanged": 627,
+          "priorVolumesRetained": 849
+        },
+        {
+          "context": "fogd-independent-install",
+          "priorContainersUnchanged": 56,
+          "priorVolumesRetained": 77
+        }
+      ],
+      "ownedContainersStoppedAndRetained": 16,
+      "freshVolumesRetained": 22,
+      "privateFailureAudit": {
+        "bytes": 797,
+        "sha256": "504df53cc8ffdee83c3861081b1a85aed1c27c95e353a35bc189c83ff8b09042"
+      }
+    },
+    {
+      "attempt": "02",
+      "accepted": false,
+      "reason": "Readiness qualifier used server hold.id rather than the normalized public CLI hold.deployment. It refused before any HTTP resume. Corrected guard now has six clock-controlled public-view regression tests and detects a private mutant restoring the wrong field.",
+      "engines": [
+        {
+          "context": "fogd-bundle-recipient",
+          "priorContainersUnchanged": 627,
+          "priorVolumesRetained": 849
+        },
+        {
+          "context": "fogd-independent-install",
+          "priorContainersUnchanged": 72,
+          "priorVolumesRetained": 99
+        }
+      ],
+      "ownedContainersStoppedAndRetained": 16,
+      "freshVolumesRetained": 22,
+      "privateFailureAudit": {
+        "bytes": 648,
+        "sha256": "5883b916664f98205e2cab56625807083f9baf6eae3f0d2c1da32e21f722b9a2"
+      }
+    }
+  ],
+  "postFailureCorroboration": {
+    "scope": "Retained first target only; does not convert the initial rehearsal to acceptance.",
+    "expiredLeasesAndUnknownVersionsObservedBeforeFreshFacts": true,
+    "newExplicitResumeDecisionsPassedWithSavedRows": true,
+    "privateResultFingerprint": {
+      "bytes": 10442,
+      "sha256": "4cdc3686e15406d66928e93901114e4c4505aba78ae92cb9ec66a0071b3c76a5"
+    }
+  },
+  "hostChecks": {
+    "canonicalTests": 2734,
+    "failures": 0,
+    "cancellations": 0,
+    "skips": 0,
+    "focusedTransferTests": 47,
+    "clockControlledReadinessRegressions": 6,
+    "readinessRegressionsPassOnRepeat": true,
+    "originalFieldNameMutantDetected": true,
+    "syntax": "PASS",
+    "antiSlop": "PASS",
+    "postRunQualificationToolFollowup": {
+      "path": "scripts/operator/release-transfer.mjs",
+      "change": "Decode the source filesystem URL with fileURLToPath.",
+      "executedSha256": "41136f4257c978c4abe066ba0c10040d1e13d55eabcc038ab283fd41fe29f98a",
+      "finalSha256": "669a40200997e2e98d71e490f7e82fd7a5ddac9a6ddd302e5d23e1285fb491e5",
+      "sourceRootEquivalentForRecordedCheckout": true,
+      "escapedSpaceURLDecodesCorrectly": true,
+      "syntaxChecked": true,
+      "productCLIAndRuntimeCodeUnchanged": true
+    }
+  },
+  "reproduce": "DOCKER_CONFIG=PRIVATE_DOCKER_CONFIG DOCKER_CONTEXT=TARGET_ENGINE node scripts/operator/release-rehearsal.mjs --source-context SOURCE_ENGINE NEW_PRIVATE_OUTPUT_DIRECTORY",
+  "assistance": [
+    "Existing supported Docker engines and cached pinned images; no daemon configuration changes.",
+    "Trusted current source staged into a private operator copy with one declared admission-field change.",
+    "Prepared fixture projects and declared existing Void/Vite dependencies supplied by the qualification harness.",
+    "Fresh private credentials, scoped builder token and private test certificate supplied through the normal commands.",
+    "Checkout utilities collect scoped Docker/HTTPS and read-only SQL/canonical-store evidence; all product mutations use received public commands."
+  ],
+  "limitations": [
+    "Repository admission remains closed; this tests the proposed command path, not an actual released catalog.",
+    "No new native image build, registry publication, app dependency installation, empty engine or second physical-machine claim.",
+    "Two HTTP/D1 apps with one active update and one inert pending peer update; no broader app-count or performance claim.",
+    "Same-family recovery only; unsupported cross-family migration remains refused."
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "bytes": 150927,
+      "sha256": "5f5a7454629859afb61055e42f37b395d8b905af4731859dbe0dc8a0ebd3b0fb"
+    },
+    "post-write-privacy.json": {
+      "bytes": 651,
+      "sha256": "d6b3a56f0f9c7d2c42eb8ba18e411f667cce2f6243108fcfc616cff49d9fd257"
+    },
+    "executed-source-inventory.json": {
+      "bytes": 113814,
+      "sha256": "740df44e118530e358604a61a8033d259e489254b20fa2f2d4c4567febc11a3d"
+    },
+    "runner.mjs": {
+      "bytes": 6256,
+      "sha256": "9d37f280de4542f2f9ffe7896c2592d14adbbd5a11f2d9c9b06a567edbd053a1"
+    },
+    "proposal-inventory.json": {
+      "bytes": 72687,
+      "sha256": "1785d6587e7c90a9617de4953fdd51e13b15d7c306daed894f78deb76ec8c71d"
+    },
+    "transfer/manifest.json": {
+      "bytes": 86146,
+      "sha256": "8c08a6e7727d73661c46e3b52719965f34d8abcc1272d3d582582beacf77c356"
+    },
+    "transfer/verify-transfer.mjs": {
+      "bytes": 7346,
+      "sha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98"
+    },
+    "snapshot/manifest.json": {
+      "bytes": 3273,
+      "sha256": "dbffb77f3bb68169d831760769bdb92dc40521fe26b03ecfc86c81ef8f3817c3"
+    },
+    "installation/runtime.log": {
+      "bytes": 135279,
+      "sha256": "177e4bb584d103596c45729dd80cf89f3ded15df0d71313a975ba221c2596e63"
+    },
+    "recovery/runtime.log": {
+      "bytes": 49653,
+      "sha256": "ef8bd8541a2e0f9232b8024c66fff1e2f73feaad160ca4387ee1dbfca12c402e"
+    },
+    "stores-audit.json": {
+      "bytes": 654,
+      "sha256": "b8fd56183acd2eed22678e6579606321b3e266591ce1192459500e7339639d0e"
+    },
+    "stores-audit-source.mjs": {
+      "bytes": 4827,
+      "sha256": "bac6647141b630c5f4efd9d7f06d619c330ae083df8a7040c7b33b371ada030a"
+    },
+    "independent-audit-source.py": {
+      "bytes": 9763,
+      "sha256": "27334e486379818b4b79ee6b3c81194f3a8fbde114f85ae1705c650e9fd43b27"
+    },
+    "independent-audit.json": {
+      "bytes": 3209,
+      "sha256": "9b7859afbdbfaaf61032e9a107c87044f64c8ac1ffbcd442a5860b291c92690d"
+    },
+    "canonical-tests.log": {
+      "bytes": 240600,
+      "sha256": "07bf5f8f7a07afa230ebab5048242f163f44f27f1c253685aaebc77e2719c5c1"
+    },
+    "transfer-tests.log": {
+      "bytes": 4178,
+      "sha256": "a4c38888d1412770e82749dfc80f4d8247ef2a761d2fe31af4241532a71cb6ad"
+    },
+    "readiness-tests.log": {
+      "bytes": 610,
+      "sha256": "0c4a93cb9e3ca77aea8fc449af00ef1ee49dec7835e3ca403892015bccbadb36"
+    },
+    "readiness-tests-repeat.log": {
+      "bytes": 615,
+      "sha256": "e0f35e1d684831b8854cf469010cad3e55452c6936965650cf8052cca12dc6c6"
+    },
+    "readiness-mutant.log": {
+      "bytes": 2456,
+      "sha256": "7fecf7af2a2f3d1f7f62884f0a57c28e7230294a3283a9aa831186135590766c"
+    },
+    "quality.log": {
+      "bytes": 1676,
+      "sha256": "7b00ef779d3270b77eb6341d376fb7e688c5f5103c915c37c252131f5fe8ecfc"
+    },
+    "tooling-followup.json": {
+      "bytes": 459,
+      "sha256": "c4ee66b8a2d88946be5e4b2c19bd439b22b7c5f343ad4e1de7ae0c94fa54c9fe"
+    },
+    "final-quality.log": {
+      "bytes": 1676,
+      "sha256": "2fb172cb56441143766e30e4fe8a08671ea6bff55165420e7872535be696c54e"
+    }
+  }
+}

@@ -163,7 +163,7 @@
     "migrationRetry": true,
     "nativeBackgroundLifecycle": true,
     "fullFamilyQualification": false,
-    "independentInstallationScope": "Received operator/client on a separate existing Docker engine on the same physical host; candidate seam and prepared fixture dependencies.",
+    "independentInstallationScope": "Received operator/client and private proposed-release public-command rehearsal on another existing Docker engine on the same physical host; prepared fixture dependencies. Main admission remains closed.",
     "stoppedRecoveryScope": "Paused, due-timer, pending-retry with unattempted input, and older stopped snapshots onto fresh volumes; broader failure and retirement gates remain open.",
     "boundedWriteServing": true,
     "unsupportedRestoreFamilyRefusal": true,
@@ -180,7 +180,10 @@
     "nativeCronTerminalRetry": true,
     "localRecordedArtifactBuild": true,
     "boundedRetirementFinalizerEvidenceReuse": true,
-    "newV5RetirementInterruptionRun": false
+    "newV5RetirementInterruptionRun": false,
+    "publicCommandReleaseRehearsal": true,
+    "receivedUpdateAndStoppedRecovery": true,
+    "actualReleasedFamilyInstallation": false
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -215,6 +218,7 @@
     "operator-native-migration-rollback-v5.json",
     "operator-native-background-failures-v5.json",
     "operator-native-cron-terminal-v5.json",
-    "operator-v5-retirement-evidence-map.json"
+    "operator-v5-retirement-evidence-map.json",
+    "operator-v5-release-rehearsal.json"
   ]
 }
