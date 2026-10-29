@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import { selectedTrial } from './selected-trial.mjs';
+import { selectedHostOptions } from './options.mjs';
+import { backgroundFixtures, importJob } from './background-fixtures.mjs';
+import { FailureAccess } from './failure-access.mjs';
+import { failureObserver } from './failure-observer.mjs';
+import { prepareOwnerWaker } from './failure-waker-preparation.mjs';
+import { selectedOwnerLoss } from './failure-owner-case.mjs';
+import { selectedDowntime } from './failure-downtime-case.mjs';
+import { beginFailurePhase, firstFailureOccurrence, assertHealthyOccurrence, pauseFailureWork } from './failure-phases.mjs';
+import { nativeObservation, vmTime } from './observations.mjs';
+import { nativeProcesses } from './recovery-fence.mjs';
+import { verifiedObservationKeys } from './failure-authority.mjs';
+import { rows } from './recovery-ledger.mjs';
+import { waitFor } from './https.mjs';
+import { scanPublicSurfaces } from './privacy.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
+
+const options = selectedHostOptions(process.argv.slice(2));
+await selectedTrial(options.output, 'Fresh v5 native cron owner/waker loss during a pending retry, owner rejoin and full-fleet downtime across scheduled ticks with a recorded quiet restart window. Peer queue records and native identities remain unchanged. No power-loss or broad availability claim.', async context => {
+  const { source: host, evidence } = context, fixture = await backgroundFixtures(host), active = fixture.approvals.refresh;
+  assert.equal(host.entry.routing, 'durable'); assert.equal(active.slot, host.policy.fleets[0].id);
+  evidence.approvals = fixture.approvals;
+  host.nativeBaseline = await nativeProcesses(host);
+  const clockNode = host.policy.fleets[1].nodes[0].host, access = new FailureAccess(clockNode), clock = () => vmTime(host, clockNode);
+  access.install(host);
+  const configured = await fixture.request('/api/refresh', { app: 'refresh', method: 'POST', headers: { Origin: `https://refresh.localhost:${host.gatewayPort}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'healthy' }) });
+  assert.equal(configured.status, 200); assert.deepEqual(configured.json(), { mode: 'healthy' });
+  const imported = fixture.approvals.imports;
+  await importJob(fixture.request, 'owner-control', 'kiwi\nlime');
+  evidence.untouchedBefore = await waitFor('completed peer queue records', async () => {
+    const observed = await nativeObservation(host, imported.slot, imported.id, { persistedRecords: true, captureProofs: true });
+    return rows(observed, 'import_jobs').some(row => row.id === 'owner-control' && row.status === 'complete') && rows(observed, 'import_results').filter(row => row.job_id === 'owner-control').length === 2 && observed;
+  });
+  const native = await failureObserver(host, active), storage = await failureObserver(host, active, 'storage');
+  evidence.readers = [native.inspect, storage.inspect];
+  try {
+    context.phase = 'paused-owner-waker-preparation'; evidence.preparation = {};
+    await prepareOwnerWaker({ host, active, clock, native, storage, defaults: evidence.defaults, evidence: evidence.preparation });
+    context.phase = 'pending-retry-owner-loss'; evidence.ownerLoss = {};
+    await selectedOwnerLoss({ host, active, clock, native, storage, defaults: evidence.defaults, evidence: evidence.ownerLoss });
+    context.phase = 'healthy-after-owner-rejoin';
+    evidence.healthy = await beginFailurePhase(host, active, 'owner-loss-future', clock);
+    evidence.healthy.first = await firstFailureOccurrence(host, active, evidence.healthy); assertHealthyOccurrence(evidence.healthy.first);
+    context.phase = 'full-cron-fleet-downtime'; evidence.downtime = {};
+    await selectedDowntime({ host, active, clock, native, storage, access, evidence: evidence.downtime });
+    context.phase = 'final-pause-and-peer-audit';
+    evidence.finalPause = await pauseFailureWork(host, active, clock);
+    evidence.final = evidence.finalPause.observed;
+    evidence.untouchedAfter = await nativeObservation(host, imported.slot, imported.id, { persistedRecords: true, captureProofs: true });
+    assert.deepEqual(evidence.untouchedAfter.databases, evidence.untouchedBefore.databases);
+    assert.deepEqual(verifiedObservationKeys(host.policy, imported.slot, evidence.untouchedAfter), verifiedObservationKeys(host.policy, imported.slot, evidence.untouchedBefore));
+    evidence.finalProcesses = await nativeProcesses(host); assert.deepEqual(evidence.finalProcesses, host.nativeBaseline);
+    assert.ok(!access.events.some(event => event.refused)); evidence.accesses = access.events;
+    evidence.privacy = [];
+    for (const app of ['refresh', 'imports']) evidence.privacy.push(await scanPublicSurfaces(host, fixture.request, [fixture.approvals[app]], fixture.tokens[app], [fixture.secret], evidence));
+  } finally { await native.close(); await storage.close(); }
+  context.phase = 'clean-shutdown'; evidence.shutdown = await stopSelectedHost(host); host.closed = true;
+  return fixture;
+}, options.enrollment, options.hostOptions);

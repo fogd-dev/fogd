@@ -8,13 +8,13 @@ import { archiveSources, sourceInventory, sourceState } from './evidence.mjs';
 import { scanOutputFiles } from './privacy.mjs';
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 
-export function selectedTrial(output, scope, scenario, enrollment = 'candidate') {
+export function selectedTrial(output, scope, scenario, enrollment = 'candidate', hostOptions) {
   return selectedHostTrial(output, scope, async context => {
     const { source, evidence } = context;
     evidence.defaults = await checkedNativeDefaults();
     evidence.sourceTiming = await verifyNativeTimingEnvironment({ ...source, slots: source.policy.fleets.map(fleet => ({ nodes: fleet.nodes.map(node => node.host) })) });
     return scenario(context);
-  }, enrollment);
+  }, enrollment, hostOptions);
 }
 
 export async function selectedHostTrial(output, scope, scenario, enrollment = 'public', hostOptions) {

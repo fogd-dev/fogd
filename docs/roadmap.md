@@ -158,8 +158,12 @@ restore audits. The
 [v5 dual-cron check](evidence/operator-native-background-retirement-dual-v5.json)
 adds retirement beside another live cron across a shared deadline, explicit
 survivor resume and a verified no-replay interval. Both source snapshots restore
-with their recorded data and retirement history. Broader failure paths and full
-family acceptance remain open.
+with their recorded data and retirement history. The
+[v5 scheduler failure check](evidence/operator-native-background-failures-v5.json)
+adds owner/waker loss during a pending retry, lease-bounded takeover and owner
+rejoin, followed by full cron-fleet downtime. A recorded quiet restart completes
+the overdue occurrence and skips missed natural ticks; peer queue records remain
+unchanged. Other failure paths and full family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on

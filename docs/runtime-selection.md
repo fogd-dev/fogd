@@ -10,20 +10,26 @@ The CLI requires the exact cached runtime and storage images listed in the
 replacement when those images are missing. Runtime distribution and the cached
 build's provenance limits are described below.
 
-The fresh-install release candidate is `celld-durable-v4-linux-arm64`. Its
-[source-build receipt](evidence/operator-durable-v4-source-build.json) records an
+The fresh-install release candidate is `celld-durable-v5-linux-arm64`. Its
+[source-build receipt](evidence/operator-durable-v5-source-build.json) records an
 uncached native build, nine passing native tests, strict Clippy and checked
 production fingerprints. The receipt distinguishes the builder's OCI index from
 the classic image-store configuration digest used by installation. Those identities
 are linked through the verified archive descriptors and loaded root filesystem.
 Ordinary enrollment remains closed while full-family qualification is incomplete.
 
-Two fresh [native migration-retry checks](evidence/operator-native-migration-retry-v4.json)
-cover application SQL and its native name ledger committed before the controller
+The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
+covers application SQL and its native name ledger committed before the controller
 saves its migration hashes. The app stays withheld through controller interruption;
-exact-artifact retry succeeds without entering backend migration again. These checks
-do not cover partial native commits, interruption inside native SQL/bookkeeping,
-or power loss. Other families retain their existing pins.
+exact-artifact retry succeeds without entering backend migration again. This check
+does not cover interruption inside native SQL/bookkeeping or power loss. A separate
+[SQL rollback check](evidence/operator-native-migration-rollback-v5.json) verifies
+ordinary failure between application SQL and ledger insertion. The
+[scheduler failure check](evidence/operator-native-background-failures-v5.json)
+covers owner/waker takeover and full-fleet downtime. The
+[release contract](operator-readiness.md#next-runtime-release) records the bounded
+lifecycle, recovery, retirement, diagnosis and installation evidence and remaining
+gates. Other families retain their existing pins.
 
 ## Installation authority
 

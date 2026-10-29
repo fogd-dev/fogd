@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-failures",
+  "recordedAt": "2026-10-29T14:01:10.695038+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "d1fb901acb0db2035defea225e19c2c6148df733",
+  "admission": "candidate",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "Fresh two-fleet HTTPS installation on an isolated classic-overlay2 Linux arm64 Docker engine on the same physical Mac. Native cron owner/waker loss during a pending retry, owner rejoin and full cron-fleet downtime. Peer queue data and authority remain unchanged.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "method": {
+    "driver": "scripts/cron-probe/selected/failure-recovery.mjs",
+    "runtimeProgramsOrImagesModified": false,
+    "faultControls": "Scoped application fixture policy; SIGKILL through Docker stop suppresses automatic restart on only the selected new native containers.",
+    "nativeDefaultTimingOverrides": false,
+    "defaultTimingSourceFilesVerifiedAgainstV5Build": 10,
+    "readerPortability": "Hash-verified program transfer into two engine-local volumes mounted read-only by pinned reader containers; no host checkout bind mounts.",
+    "quietWindow": "Runner request journal permits only bucket reads, Docker inspection/start and an untouched-fleet clock. No runner native status, identity, SQL or app request precedes the recorded first read. This is not a packet trace."
+  },
+  "ownerLoss": {
+    "ownerAndWakerCoincideBeforeCut": true,
+    "cutPrecedesPersistedRetryDeadline": true,
+    "stoppedNodeExitCode": 137,
+    "automaticRestarts": 0,
+    "noOOM": true,
+    "fullFleetGuardRefusesUnavailableMemberBeforeCommand": true,
+    "ordinaryObserveRecordsUnknown": true,
+    "stoppedLeaseDoesNotRenew": true,
+    "takeoverAfterLeaseExpiry": true,
+    "ownerEpochIncreases": true,
+    "originalScheduledTimeRetained": true,
+    "inventoryAttemptOutcomes": [
+      "success",
+      "success",
+      "success"
+    ],
+    "advisoryAttemptOutcomes": [
+      "thrown",
+      "thrown",
+      "success"
+    ],
+    "recoveryMilliseconds": 168692,
+    "boundedObservationDeadlineMilliseconds": 231424,
+    "restartedOwnerKeyRotates": true,
+    "survivorKeyUnchanged": true,
+    "explicitObserveConfirmsRunningAfterRejoin": true
+  },
+  "fullFleetDowntime": {
+    "replicasStopped": 2,
+    "stoppedAcrossAtLeastTwoNaturalTicks": true,
+    "quietRestartMillisecondsBeforeFirstNativeRead": 45371,
+    "overdueOccurrenceCompletesOnceBeforeFirstNativeRead": true,
+    "nextNaturalWakePersistedBeforeFirstNativeRead": true,
+    "missedNaturalTicksSkipped": 2,
+    "futureOccurrenceCompletesOnce": true,
+    "bothRestartedKeysRotate": true,
+    "finalCronState": "paused with no next alarm"
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 963,
+    "recordedIdentitySignaturesIndependentlyVerified": 214,
+    "distinctSignedChallenges": 214,
+    "installedRuntimePolicyVerified": true,
+    "privatePublicAuthorityPairVerified": true,
+    "canonicalApprovalsAndArtifactDigestsVerified": 2,
+    "allMigrationSQLDigestsVerified": true,
+    "readerProgramFilesIndependentlyRehashed": 8,
+    "nativeLogHealthChecked": true,
+    "publicAndFinalPrivacyScansPassed": true,
+    "peerQueueRecordsAndSigningKeysUnchanged": true,
+    "priorContainersUnchanged": 585,
+    "priorVolumesRetained": 792,
+    "ownedContainersStoppedAndRetained": 10,
+    "freshVolumesRetained": 13,
+    "applicationVolumes": 11,
+    "readerProgramVolumes": 2
+  },
+  "unacceptedEarlierAttempt": {
+    "reason": "Legacy reader host-bind assumption failed on the isolated engine before native fault injection. Replaced with hash-verified engine-local program volume staging.",
+    "beforeNativeFaultInjection": true,
+    "priorContainersUnchanged": 577,
+    "priorVolumesRetained": 781,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumesRetained": 11,
+    "privateFailureAudit": {
+      "sha256": "ce5d4ce7a43c0d11b1b75cf1b1651a66a65f9494f1b705a5a1bc94fac74c703d",
+      "bytes": 330
+    }
+  },
+  "hostChecks": {
+    "focusedFailureTests": 133,
+    "failures": 0,
+    "cancellations": 0,
+    "skips": 0,
+    "syntax": "PASS",
+    "antiSlop": "PASS",
+    "canonicalBaseline": "2,728 passing at 74799110bc44a4be2617672b61a6fe5795d06e94. Shared product code unchanged; this increment changes qualification helpers only."
+  },
+  "reproduce": "DOCKER_CONFIG=PRIVATE_DOCKER_CONFIG DOCKER_CONTEXT=ISOLATED_CLASSIC_OVERLAY2_ENGINE node scripts/cron-probe/selected/failure-recovery.mjs --runtime celld-durable-v5-linux-arm64 --candidate --retain-resources NEW_PRIVATE_OUTPUT_DIRECTORY",
+  "limitations": [
+    "No power-loss, disk-failure or kernel-tracing claim.",
+    "One owner-loss and one full-fleet-downtime scenario; observed timing is not a general recovery SLA.",
+    "No HTTP availability, broad performance, app-density or per-worker CPU-quota claim.",
+    "No separate physical-machine installation or complete family qualification.",
+    "Sparse terminal retry, retirement interruption and ordinary released installation remain separate gates."
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "75b1d68fb010c3a7df8c111a58e80ef3e0d6f72811ee8082bf5d519ad6562288",
+      "bytes": 2342260
+    },
+    "inputs.json": {
+      "sha256": "6c1ee299c69d4ef43096d159608f3950e9eede4018f7ae9325b1fe9c1d3753b5",
+      "bytes": 412
+    },
+    "runner.mjs": {
+      "sha256": "913e8ec3915468f2acfc8239e2ce220921f3140d91263efeb875790aa40dd903",
+      "bytes": 5088
+    },
+    "executed-source-inventory.json": {
+      "sha256": "c149a1994bbf376141cbd027c4d3fc6e0ba75500315e62b52f8cf9e1695093f8",
+      "bytes": 112772
+    },
+    "post-write-privacy.json": {
+      "sha256": "73316149a3c92b9c915adc5adc80f1846c25c2787b696ba55ba38a87159f1d14",
+      "bytes": 5020
+    },
+    "runtime.log": {
+      "sha256": "226e46728dc3242a2f346eea08039937d09d7cd3d201778b596477ab45c95c67",
+      "bytes": 1383746
+    },
+    "stores-audit.json": {
+      "sha256": "7621a5fe2c324eaf1f19d3045e6fa11c5295a2d34f560607be8b3fc2d2e70b35",
+      "bytes": 502
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "b577745fc9c26cdfd32e649a13f7577d4dfa7b356f365ecd675310c2ccb14f0c",
+      "bytes": 5927
+    },
+    "independent-audit-source.py": {
+      "sha256": "720c396a8627853bcc07fe2830cfe106568ceaaa0dcb5f5f003c9a3ac76e4ca1",
+      "bytes": 12155
+    },
+    "independent-audit.json": {
+      "sha256": "6b27f48e8a797ba5da02bbe90fd18914dfc0171b76dbf6214ee41b2f74306c19",
+      "bytes": 2228
+    },
+    "focused-tests.log": {
+      "sha256": "a941e12c0dc6c8c388930bf0a266b83891aac01b7e9e90e9d5daef0687f257b1",
+      "bytes": 10258
+    },
+    "quality.log": {
+      "sha256": "ede80a618ea8b49151fdeab23641a11fc429e72497e96ebe0083d269e83bf770",
+      "bytes": 1675
+    },
+    "timing-source-map.json": {
+      "sha256": "197d993ef9c574ea623583309e689a9594d926ed31d51214000313f2aefcf19e",
+      "bytes": 1187
+    }
+  }
+}

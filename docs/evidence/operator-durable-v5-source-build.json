@@ -174,7 +174,9 @@
     "sequentialBackgroundRetirement": true,
     "zeroLiveStoppedRecovery": true,
     "dualCronRetirement": true,
-    "nativeSQLLedgerFailureRollback": true
+    "nativeSQLLedgerFailureRollback": true,
+    "nativeCronOwnerLossRecovery": true,
+    "nativeCronFleetDowntimeRecovery": true
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -206,6 +208,7 @@
     "operator-native-diagnostics-v5.json",
     "operator-native-background-retirement-v5.json",
     "operator-native-background-retirement-dual-v5.json",
-    "operator-native-migration-rollback-v5.json"
+    "operator-native-migration-rollback-v5.json",
+    "operator-native-background-failures-v5.json"
   ]
 }

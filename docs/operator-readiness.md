@@ -300,8 +300,14 @@ keys within unchanged processes. The
 [v5 dual-cron check](evidence/operator-native-background-retirement-dual-v5.json)
 adds retirement beside another live cron: a shared-deadline snapshot, cold and
 acknowledged holds, explicit survivor resume, unchanged old rows and both source
-restore audits. Retirement crashes, broader failure paths and complete family
-acceptance remain open. A separate
+restore audits. The
+[v5 scheduler failure check](evidence/operator-native-background-failures-v5.json)
+cuts the owner/waker during a persisted retry and verifies takeover after lease
+expiry, exact original-occurrence completion and fresh owner rejoin. Both cron
+replicas then stay down across scheduled ticks; a quiet restart completes the
+overdue occurrence once and advances to future work without replaying two missed
+ticks. The peer queue records and signing keys remain unchanged. Retirement
+crashes, other failure paths and complete family acceptance remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
