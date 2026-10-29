@@ -12,6 +12,7 @@ import { runtimePolicyIdentity } from '../../../packages/platform/src/runtime-po
 import { privateNetworks, loopbackPort } from './resources.mjs';
 import { commandRunner, commandJson } from './commands.mjs';
 import { expectRefusal } from './evidence.mjs';
+import { stopRetainedContainers } from './retained-shutdown.mjs';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const enrollmentMethods = {
@@ -98,7 +99,11 @@ export async function cleanupSelectedHost(host) {
     const observers = (await docker(['ps', '-aq', '--filter', `label=fogd.qualifier.project=${host.project}`])).trim().split('\n').filter(Boolean);
     if (observers.length) await docker([...(host.retainResources ? ['stop'] : ['rm', '-f']), ...observers]);
   } catch (error) { errors.push(error); }
-  const resources = host.retainResources ? [['ps', ['stop']]] : [['ps', ['rm', '-f']], ['network', ['network', 'rm']]];
+  if (host.retainResources) {
+    try { await stopRetainedContainers(host.project, await projectContainers(host.project)); }
+    catch (error) { errors.push(error); }
+  }
+  const resources = host.retainResources ? [] : [['ps', ['rm', '-f']], ['network', ['network', 'rm']]];
   for (const [kind, remove] of resources) {
     try {
       const args = kind === 'ps' ? ['ps', '-aq'] : ['network', 'ls', '-q'];

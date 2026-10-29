@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "kind": "operator-native-cron-activation-interruption-matrix",
+  "recordedAt": "2026-10-29T16:30:07.243Z",
+  "sourceCommit": "de9d2a45def6137c7723bd8fe72b2ab3cbb1ccb8",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "Three source-verified controller-only interruption cases in one fresh two-fleet HTTPS v5 installation on an isolated Linux arm64 Docker engine on the same physical Mac. Native resume, durable dispatch release and operator-paused update; confirmed rehold, held-minute checks, alternative refusal, exact retry and future native jobs before app HTTP.",
+  "engineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "method": {
+    "sourceVerifiedApplicationDebugger": true,
+    "nativeResumeCondition": "verb === \"resume\" && releaseHold === true",
+    "controllerExitCodes": [
+      137,
+      137,
+      137
+    ],
+    "sameRetainedControllerContainerAndConfiguration": true,
+    "nativeFleetProcessesKeptRunning": true,
+    "legacyInstrumentationExecuted": false,
+    "kernelTracingExecuted": false
+  },
+  "cases": [
+    {
+      "label": "resume-cut-v2",
+      "cut": "resume",
+      "desired": "running",
+      "checkpointSourceSha256": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+      "processExitCode": 137,
+      "confirmedReholdAcrossMinute": true,
+      "alternativeApprovalRefused": true,
+      "originalApprovalAndRevisionRetained": true,
+      "authorizedOccurrenceKeysBeforeRehold": 0,
+      "pausedUpdateRemainsPausedUntilExplicitResume": false,
+      "futureOriginalReleaseResultsBeforeAppHTTP": true,
+      "nativeLedgerNamesMatchDeclaredMigrations": true
+    },
+    {
+      "label": "release-cut-v3",
+      "cut": "release",
+      "desired": "running",
+      "checkpointSourceSha256": "763a6a2faff68ad028d03701758fb79b2a119713350a64a195ce24bbb9d089e7",
+      "processExitCode": 137,
+      "confirmedReholdAcrossMinute": true,
+      "alternativeApprovalRefused": true,
+      "originalApprovalAndRevisionRetained": true,
+      "authorizedOccurrenceKeysBeforeRehold": 0,
+      "pausedUpdateRemainsPausedUntilExplicitResume": false,
+      "futureOriginalReleaseResultsBeforeAppHTTP": true,
+      "nativeLedgerNamesMatchDeclaredMigrations": true
+    },
+    {
+      "label": "paused-update-v4",
+      "cut": "release",
+      "desired": "paused",
+      "checkpointSourceSha256": "763a6a2faff68ad028d03701758fb79b2a119713350a64a195ce24bbb9d089e7",
+      "processExitCode": 137,
+      "confirmedReholdAcrossMinute": true,
+      "alternativeApprovalRefused": true,
+      "originalApprovalAndRevisionRetained": true,
+      "authorizedOccurrenceKeysBeforeRehold": 0,
+      "pausedUpdateRemainsPausedUntilExplicitResume": true,
+      "futureOriginalReleaseResultsBeforeAppHTTP": true,
+      "nativeLedgerNamesMatchDeclaredMigrations": true
+    }
+  ],
+  "verification": {
+    "archivedExecutedSourcesVerified": 975,
+    "distinctSignedChallenges": 4,
+    "alteredSignatureRefusals": 4,
+    "activeFleetMembershipBeforeAndAfterVerified": true,
+    "unusedFleetSignedBootstrapOnly": true,
+    "sourceVerifiedApplicationDebuggerCheckpoints": 3,
+    "canonicalArtifactsVerified": 7,
+    "allMigrationSQLHashesAndNativeLedgerNamesVerified": true,
+    "threeAlternativeArtifactsNeverActivatedAndSuperseded": true,
+    "installedPolicyAndPrivatePublicAuthorityPairVerified": true,
+    "finalReceiptAndRuntimeLogsPrivateValuesChecked": 5,
+    "priorContainersUnchanged": 136,
+    "priorVolumesRetained": 187,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumesRetained": 11
+  },
+  "privacy": {
+    "adminJSON": true,
+    "adminHTML": true,
+    "scopedStatuses": 7,
+    "decodedArtifacts": 7,
+    "privateDiagnosticsChecked": 12,
+    "completeReceiptChecked": true
+  },
+  "hostChecks": {
+    "canonicalTests": {
+      "passed": 2750,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 496808.137709
+    },
+    "focusedShutdownRestartAndDurableStopTests": 41,
+    "newRetainedShutdownTests": 7,
+    "privateShutdownMutantsDetected": 3,
+    "syntaxChecksPassed": true,
+    "antiSlopPassed": true
+  },
+  "unacceptedEarlierAttempts": [
+    {
+      "attempt": "01",
+      "phase": "resume-cut-v2",
+      "accepted": false,
+      "reason": "The older probe expected the cron-specific held-approval error; v5 correctly refused earlier at the durable HTTP hold.",
+      "retainedContainers": 8,
+      "retainedVolumes": 11,
+      "privateFingerprints": {
+        "failure.json": {
+          "sha256": "1b23ca461814557044390f25e4543e7955d668d04044662d8b4f36613ee4cb95",
+          "bytes": 265
+        },
+        "resume-cut-v2-paused.json": {
+          "sha256": "a3467acb19e947e6dbab57a5497e99f5da1f74ef866879176f217acd708824cc",
+          "bytes": 8875
+        }
+      }
+    },
+    {
+      "attempt": "02",
+      "phase": "release-cut-v3",
+      "accepted": false,
+      "reason": "The native resume cut completed, but the release checkpoint still named the older four-argument finish call. Source verification refused it before the next approval.",
+      "retainedContainers": 8,
+      "retainedVolumes": 11,
+      "privateFingerprints": {
+        "failure.json": {
+          "sha256": "6aa099663ef941f9cf0bc2cabee0a6401b63481222869b1d5ad6a4fc99bc5107",
+          "bytes": 119
+        },
+        "resume-cut-v2-paused.json": {
+          "sha256": "3c9c47fecbf07f094588abcf4d7fa55862544717e7333ffe7150889d51f20e58",
+          "bytes": 8875
+        },
+        "resume-cut-v2-result.json": {
+          "sha256": "a8d7c832101e494c1470e4040ed3c82f709375a8356cc28db329b9c01d947a9c",
+          "bytes": 56707
+        },
+        "cleanup-order-audit.json": {
+          "sha256": "0320491f4a134e49a130d77caf05612575efe9efeb8eb595adb3c5572eaf529a",
+          "bytes": 1721
+        }
+      }
+    }
+  ],
+  "cleanupFix": {
+    "retainedShutdownOrdersIngressControllerNativeThenStorage": true,
+    "uncertainStopPreventsDependencyShutdown": true,
+    "secondFailedAttemptNativeExitCodes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "secondFailedAttemptNodesStoppedBeforeStorage": true,
+    "failureAttemptMatrixAcceptance": false
+  },
+  "reproduce": "DOCKER_CONTEXT=ISOLATED_CONTEXT node scripts/cron-probe/selected/activation-matrix.mjs NEW_PRIVATE_OUTPUT --runtime celld-durable-v5-linux-arm64 --retain-resources",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "1f6bbf0edca9e408ce0c36675a9665e7481e6c03ef83ae5cf12a81a93659d99b",
+      "bytes": 413165
+    },
+    "independent-audit.json": {
+      "sha256": "8cae8fdb6104294519366e704f38ccf23b0b0b884ae33d4f7e0b84fdec5e41b3",
+      "bytes": 4931
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "ea9eb115c22431b96a181c74c22fd3892092ed304a11e99a5736e38f0c2318a5",
+      "bytes": 17136
+    },
+    "executed-source-inventory.json": {
+      "sha256": "21d958e22d6fa5bd4ce51aafaf17f4f4917287ac9a94140075f041f03009e38c",
+      "bytes": 114322
+    },
+    "runner.mjs": {
+      "sha256": "bce873689906329d46fc80762ae36fbff34b61b8d0618bd1808a4f159ee0e559",
+      "bytes": 8553
+    },
+    "runtime.log": {
+      "sha256": "022cafd8381acb9b8c6a6b2bc7d5751fa11bc9ae80cba46c05d61976e7bd924d",
+      "bytes": 644868
+    },
+    "fogd-v5-activation-matrix-audit.log": {
+      "sha256": "4cde84d529a9eefc0c365798e6da0d6953445ab6d060fbdcd5c728ee94adde4e",
+      "bytes": 2437
+    },
+    "fogd-v5-activation-matrix-canonical-tests.log": {
+      "sha256": "6e27ac4a1e88c60fe78ddab7c79575bc17ae60f6e84b45b027cba923fbac9bf4",
+      "bytes": 242087
+    },
+    "fogd-v5-matrix-checkpoint-preflight.json": {
+      "sha256": "31fedb87a3fab191661422e5f93857d3a885c987dcfb62dfc1f3ba11bc673578",
+      "bytes": 486
+    },
+    "shutdown-mutants/result.json": {
+      "sha256": "c4ac2e634b23652db8b964c80990683ab5f82da0aecdd7efe1f8f7f76802aabf",
+      "bytes": 262
+    }
+  },
+  "limitations": [
+    "One matrix installation and three controller process cuts; no ordinary full-install startup, power-loss or native transaction-crash claim.",
+    "Case labels retain their historical v2/v3/v4 names; the selected image and installed policy are v5 throughout.",
+    "Resume can authorize callbacks before the controller confirms its post-crash hold. These captured cases record zero new occurrence keys in that interval; that is not a universal no-callback guarantee. Confirmed pause does not drain in-flight work.",
+    "Five private operator/application values are independently checked against the final receipt and runtime log; the live driver separately scans the builder credential, seven decoded artifacts/statuses and ordinary errors. The unused fleet has signed bootstrap identities without active memberships.",
+    "The canonical suite began before the qualification-only release marker was corrected. Registered tests and product runtime sources were unchanged by that correction; the pinned-image preflight and this native matrix separately exercise the corrected marker.",
+    "Prepared local dependencies and ordinary scoped builds; no network-isolated build, separate physical-machine, per-worker CPU quota or exactly-once external-effects claim.",
+    "In-flight compatible replacement, unreachable-member pause and offline-build evidence remain to be resolved before final v5 admission."
+  ]
+}

@@ -8,7 +8,7 @@ import { restartInterruptedController } from './controller-restart.mjs';
 
 const checkpoints = {
   resume: { path: 'packages/platform/src/dispatch-control.mjs', marker: "if (status?.paused !== (verb === 'pause'))", functionName: '#apply', condition: 'verb === "resume" && releaseHold === true' },
-  release: { path: 'packages/platform/src/activation.mjs', marker: 'await finish(controller, request, app, step);', functionName: 'activateRelease' },
+  release: { path: 'packages/platform/src/activation.mjs', marker: 'await finish(controller, request, app', functionName: 'activateRelease' },
 };
 
 export async function interruptApproval(host, submitted, revision, cut, desired = 'running') {

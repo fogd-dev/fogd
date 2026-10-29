@@ -62,7 +62,8 @@ try {
     assert.equal(reheldAfter.status.paused, true); assert.equal(reheldAfter.status.nextAlarm, null);
     assert.deepEqual(ledgerRows(reheldAfter), ledgerRows(reheldBefore));
     const stateBeforeRefusal = await controllerState(host);
-    const refusal = await expectRefusal(host, ['admin', 'approve', forbidden.id, forbidden.digest, revision], /Retry the held cron activation before changing its approval/);
+    const heldApproval = host.entry.routing === 'durable' ? /Select the held HTTP approval before a corrected release/ : /Retry the held cron activation before changing its approval/;
+    const refusal = await expectRefusal(host, ['admin', 'approve', forbidden.id, forbidden.digest, revision], heldApproval);
     assert.deepEqual(await controllerState(host), stateBeforeRefusal);
     const afterRefusal = await nativeObservation(host, slot, submitted.id);
     assert.deepEqual(ledgerRows(afterRefusal), ledgerRows(reheldBefore));

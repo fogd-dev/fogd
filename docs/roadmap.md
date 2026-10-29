@@ -141,9 +141,13 @@ observed cron deadline, and a stopped snapshot. A
 also checks unpublished and held-migration minutes, controller loss after
 publication, confirmed rehold, pinned secret-revision refusal and original retry.
 The corrected probe restarts only the verified controller; the earlier ordinary
-startup refusal remains unaccepted. The native resume/release/paused-update matrix,
-in-flight replacement, unreachable-member pause and offline-build evidence still
-need resolution for v5 admission. A
+startup refusal remains unaccepted. The
+[v5 activation matrix](evidence/operator-native-cron-activation-matrix-v5.json)
+adds native resume, durable dispatch release and operator-paused update cuts.
+Each requires confirmed rehold and exact retry; the paused update remains paused
+until a separate resume. Two earlier probe failures remain unaccepted. In-flight
+replacement, unreachable-member pause and offline-build evidence still need
+resolution for v5 admission. A
 [native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
 verifies failure after application SQL but before migration-name bookkeeping.
 Two failed exact approvals leave no new row or ledger entry; removing the SQL

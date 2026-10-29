@@ -357,6 +357,16 @@ before the first app HTTP read. This tests controller-only recovery. Ordinary
 durable startup requires the retained installation to be stopped first; the
 earlier probe's use of legacy startup semantics remains unaccepted.
 
+The [v5 activation matrix](evidence/operator-native-cron-activation-matrix-v5.json)
+adds three controller cuts at native resume and durable release, including an
+operator-paused update. Each restores the original hold, preserves its pinned
+approval and secret revision, refuses another approval, and keeps the ledgers
+unchanged across a held minute. Explicit retry produces future saved work; the
+paused update requires a separate resume first. Seven canonical artifacts, SQL
+hashes, native migration names and the installed authority stores match. Retained
+failure cleanup stops native nodes before storage and leaves dependencies running
+if a stop is uncertain. These bounded checks keep ordinary admission closed.
+
 The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,
