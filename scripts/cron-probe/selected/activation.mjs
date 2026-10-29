@@ -9,12 +9,12 @@ import { controllerState, nativeObservation } from './observations.mjs';
 import { openControllerDebugger, killController } from './controller-debugger.mjs';
 import { archiveSources, sourceInventory, sourceState, expectRefusal, assertEmptyJobs, assertActive } from './evidence.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
-import { activationInputs } from './activation-inputs.mjs';
+import { qualificationInputs } from './qualification-inputs.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
 import { restartInterruptedController } from './controller-restart.mjs';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
-const inputs = activationInputs(process.argv.slice(2));
+const inputs = qualificationInputs(process.argv.slice(2));
 const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions), events = [];
 let phase = 'https-ready', session, closed = false;
 const note = (name, value = {}) => { events.push({ at: Date.now(), name, ...value }); console.log(name); };

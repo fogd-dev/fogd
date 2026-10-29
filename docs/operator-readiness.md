@@ -367,6 +367,15 @@ hashes, native migration names and the installed authority stores match. Retaine
 failure cleanup stops native nodes before storage and leaves dependencies running
 if a stop is uncertain. These bounded checks keep ordinary admission closed.
 
+The [v5 unreachable-member check](evidence/operator-native-unreachable-pause-v5.json)
+stops a non-owner replica and records an unconfirmed pause while native work
+continues across controller restart. Rejoin changes only the stopped member's
+process and signing key. Explicit pause then confirms; the next held minute and
+deadline margin leave the recorded ledgers unchanged. The peer's acknowledged
+import and saved result remain intact. Durable HTTP authority stays active, but
+gateway availability during this outage is not measured. The stopped member was
+not the recorded waker, so this case does not establish waker takeover timing.
+
 The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,

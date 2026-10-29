@@ -10,10 +10,10 @@ import { scanPublicSurfaces } from './privacy.mjs';
 import { deployFixture } from './fixture.mjs';
 import { interruptApproval } from './interruption.mjs';
 import { futureJobs, occurrenceKeys, ledgerRows } from './future-jobs.mjs';
-import { activationInputs } from './activation-inputs.mjs';
+import { qualificationInputs } from './qualification-inputs.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
 
-const inputs = activationInputs(process.argv.slice(2));
+const inputs = qualificationInputs(process.argv.slice(2));
 const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions), cases = [], submissions = [];
 const save = (name, value) => writeFile(join(host.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 let phase = 'baseline', closed = false;

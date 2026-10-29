@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "kind": "operator-native-unreachable-member-pause",
+  "recordedAt": "2026-10-29T16:44:26.721Z",
+  "sourceCommit": "a049df2991e8a25d17e6d380b06f5327d9ccab16",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "One fresh local Linux arm64 two-fleet HTTPS v5 installation on an isolated independent Docker engine on the same physical Mac. Graceful stop of a non-owner cron member, persisted unconfirmed pause across controller restart, future native work while the member stays stopped, rejoin and explicit confirmed pause. A completed acknowledged peer import and its saved results remain unchanged.",
+  "engineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "method": {
+    "memberSignal": "SIGTERM",
+    "memberExitCode": 0,
+    "selectedMemberWasCronOwner": false,
+    "selectedMemberWasWaker": false,
+    "controllerSignal": "SIGKILL",
+    "controllerExitCode": 137,
+    "sameRetainedContainers": true,
+    "fixedReadOnlyDiagnostic": true,
+    "legacyInstrumentationExecuted": false,
+    "kernelTracingExecuted": false
+  },
+  "pause": {
+    "initialRefusal": "Scheduled operation could not be confirmed; inspect recorded dispatch and refresh status before retrying",
+    "desiredDuringOutage": "paused",
+    "operationDuringOutage": "pause",
+    "observedDuringOutage": "unknown",
+    "nativeDispatchDuringOutage": "running",
+    "journalPreservedAcrossControllerRestart": true,
+    "futureSuccessfulJobsBeforeMemberRejoin": [
+      "inventory",
+      "advisory"
+    ],
+    "explicitRetryAfterRejoinConfirmed": true,
+    "confirmedHeldDurationMs": 66264,
+    "heldAcrossNextMinuteAndNativeDeadlineMargin": true,
+    "fullRecordedLedgersUnchangedDuringHeldWindow": true,
+    "confirmedPauseDrainsCallbacks": false
+  },
+  "peer": {
+    "acknowledgedJob": "pause-peer-sentinel",
+    "completedJobRows": 1,
+    "savedResultRows": 1,
+    "dataUnchanged": true,
+    "nativeProcessesAndSigningKeysUnchanged": true
+  },
+  "verification": {
+    "archivedExecutedSourcesVerified": 975,
+    "distinctSignedChallenges": 15,
+    "alteredSignatureRefusals": 15,
+    "nativeTimingSourceFilesMatchedV5": 10,
+    "rejoinedMemberKeyChangedOnly": true,
+    "recordedDurableHTTPAuthorityUnchanged": true,
+    "canonicalApprovedArtifactsAndSQLHashesVerified": 2,
+    "installedPolicyAndPrivatePublicAuthorityPairVerified": true,
+    "readerProgramSourcesVerified": 5,
+    "finalReceiptAndRuntimeLogPrivateValuesChecked": 5,
+    "priorContainersUnchanged": 144,
+    "priorVolumesRetained": 198,
+    "ownedContainersStoppedAndRetained": 9,
+    "freshVolumesRetained": 12,
+    "applicationVolumes": 11,
+    "readerProgramVolumes": 1
+  },
+  "hostChecks": {
+    "focusedTestsPassed": 48,
+    "focusedTestsFailed": 0,
+    "syntaxChecksPassed": true,
+    "antiSlopPassed": true
+  },
+  "reproduce": "DOCKER_CONTEXT=ISOLATED_CONTEXT node scripts/cron-probe/selected/pause-unreachable.mjs NEW_PRIVATE_OUTPUT --runtime celld-durable-v5-linux-arm64 --retain-resources",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "78c9c561f27f7c89e6b345a0ed97c00a6edb3e3841fe5b194f89b5a1a09becee",
+      "bytes": 239011
+    },
+    "independent-audit.json": {
+      "sha256": "a08108cb2c632fbb597f8f59b19111bad5cfc73e4c983c40b2dde9455646c1aa",
+      "bytes": 2146
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "388ce01d9cf16aa20534f7e63b6d45165faacade8de0a65a73d000d1dc01fd5f",
+      "bytes": 16024
+    },
+    "executed-source-inventory.json": {
+      "sha256": "f1fb6979492b68ef4b5d358db4afaa0823c447314f43587dd43c0dcb0fffba08",
+      "bytes": 114370
+    },
+    "runner.mjs": {
+      "sha256": "477ef49fe591d795e119d069f7f642724993a0f1496becd9e44aa1c268f7778b",
+      "bytes": 8868
+    },
+    "runtime.log": {
+      "sha256": "78b2bc358dd023435446ccc2522afb70f27f954f7ea3df50ccbbfc4980220dd9",
+      "bytes": 518036
+    },
+    "post-write-privacy.json": {
+      "sha256": "1797a73171c049d6d4ad1c4924956769b1c7caea67f8a2926e4b8b94e677cc51",
+      "bytes": 3418
+    },
+    "fogd-v5-pause-timing-preflight.json": {
+      "sha256": "2435836942b84241ed9e7f4c8ef44ad1e04b3868e0bf39bcd10035e63d7af1b3",
+      "bytes": 1422
+    },
+    "fogd-v5-pause-focused-tests.log": {
+      "sha256": "d93b2bc26ccb36e3ca40378b1600249bccc5f0cbe191c1cbcfb31f1def76992b",
+      "bytes": 3817
+    },
+    "fogd-v5-unreachable-pause-audit.log": {
+      "sha256": "6ebf148217a298ca950fe5af3a26483ece99912b8bf452e65f6cfd45177a31a2",
+      "bytes": 1166
+    }
+  },
+  "limitations": [
+    "One gracefully stopped non-owner member. It did not hold the recorded waker role; this run does not measure stopped-waker takeover.",
+    "Recorded durable HTTP authority remains active. Gateway HTTP availability during the member outage is not measured.",
+    "An unconfirmed pause is persisted intent, not a dispatch fence; native work can continue. Confirmed pause does not drain arbitrary in-flight callbacks or waitUntil work.",
+    "The held fixture has no pending callbacks before its observation window. The deadline margin does not prove arbitrary callback termination.",
+    "Prepared local dependencies and ordinary scoped builds; no network-isolated build, separate physical-machine, native transaction/power-loss, app-density or per-worker CPU-quota claim.",
+    "In-flight compatible replacement and offline-build evidence still require resolution before final v5 admission."
+  ]
+}

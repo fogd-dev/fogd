@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
 
-export function activationInputs(args) {
+export function qualificationInputs(args) {
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: {
     runtime: { type: 'string', default: 'celld-cron-v2-linux-arm64' },
     'retain-resources': { type: 'boolean', default: false },

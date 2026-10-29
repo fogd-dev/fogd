@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { selectedTrial } from './selected-trial.mjs';
-import { backgroundFixtures } from './background-fixtures.mjs';
+import { backgroundFixtures, importJob } from './background-fixtures.mjs';
 import { nativeObservation, setFaultPolicy, controllerState, vmTime } from './observations.mjs';
 import { nativeProcesses } from './recovery-fence.mjs';
 import { resumeCron, futurePhase } from './recovery-work.mjs';
@@ -14,13 +14,19 @@ import { waitFor } from './https.mjs';
 import { commandRefusal } from './evidence.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
+import { qualificationInputs } from './qualification-inputs.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/pause-unreachable.mjs NEW_PRIVATE_OUTPUT');
-await selectedTrial(process.argv[2], 'Selected frozen-image operator pause with an unreachable member: intent remains unconfirmed, native work continues across controller restart, explicit retry confirms pause after rejoin. Full M11c acceptance and public admission remain open.', async context => {
+const inputs = qualificationInputs(process.argv.slice(2));
+await selectedTrial(inputs.output, 'Selected frozen-image operator pause with an unreachable member: intent remains unconfirmed, native work continues across controller restart, explicit retry confirms pause after rejoin. Full M11c acceptance and public admission remain open.', async context => {
   const { source: host, evidence } = context, fixture = await backgroundFixtures(host), active = fixture.approvals.refresh;
   host.nativeBaseline = await nativeProcesses(host); evidence.nativeBefore = host.nativeBaseline; evidence.active = active;
   const control = host.policy.fleets.find(fleet => fleet.id !== active.slot), clock = () => vmTime(host, control.nodes[0].host);
-  evidence.untouchedBefore = await nativeObservation(host, control.id, fixture.approvals.imports.id, { captureProofs: true, persistedRecords: true });
+  evidence.peerSubmission = await importJob(fixture.request, 'pause-peer-sentinel', 'peer sentinel');
+  evidence.untouchedBefore = await waitFor('acknowledged peer import completed before cron fault', async () => {
+    const observed = await nativeObservation(host, control.id, fixture.approvals.imports.id, { captureProofs: true, persistedRecords: true });
+    return observed.databases.some(db => db.data.import_jobs?.some(row => row.id === 'pause-peer-sentinel' && row.status === 'complete') &&
+      db.data.import_results?.some(row => row.job_id === 'pause-peer-sentinel')) && observed;
+  });
   context.phase = 'source-policy'; await setFaultPolicy(host, active.slot, active.id, 'healthy', 'after-a');
   evidence.initialResume = await resumeCron(host, active); context.phase = 'healthy-source';
   evidence.initialFuture = await futurePhase(host, active, 'after-a', evidence.initialResume.requestedAt);
@@ -79,4 +85,4 @@ await selectedTrial(process.argv[2], 'Selected frozen-image operator pause with 
   assert.deepEqual(verifiedObservationKeys(host.policy, control.id, evidence.untouchedAfter), verifiedObservationKeys(host.policy, control.id, evidence.untouchedBefore));
   for (const active of Object.values(fixture.approvals)) await scanPublicSurfaces(host, fixture.request, [active], fixture.tokens[active.app], [fixture.secret], evidence);
   evidence.shutdown = await stopSelectedHost(host); host.closed = true; return fixture;
-});
+}, 'candidate', inputs.hostOptions);
