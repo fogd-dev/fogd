@@ -311,7 +311,12 @@ ticks. The peer queue records and signing keys remain unchanged. The
 verifies six attempts per job with native backoff, advancement to the next
 three-minute tick, and corrected future success without replaying the failed
 occurrence. Its recorded local artifact build does not establish network-isolated
-building. Retirement crashes, other failure paths and complete family acceptance
+building. The [retirement evidence map](evidence/operator-v5-retirement-evidence-map.json)
+reuses 13 retained v3 finalizer interruption/I/O cases for the unchanged v5 store
+and fencing mechanism. It verifies 38 identical dependency files, the unchanged
+used exports of one changed module, identical Node/shared-library bytes and the
+host coordinator contract. This is bounded evidence reuse, not a new v5 fault
+execution or a power-loss claim. Other failure paths and complete family acceptance
 remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another

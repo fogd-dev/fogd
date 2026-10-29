@@ -178,7 +178,9 @@
     "nativeCronOwnerLossRecovery": true,
     "nativeCronFleetDowntimeRecovery": true,
     "nativeCronTerminalRetry": true,
-    "localRecordedArtifactBuild": true
+    "localRecordedArtifactBuild": true,
+    "boundedRetirementFinalizerEvidenceReuse": true,
+    "newV5RetirementInterruptionRun": false
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -212,6 +214,7 @@
     "operator-native-background-retirement-dual-v5.json",
     "operator-native-migration-rollback-v5.json",
     "operator-native-background-failures-v5.json",
-    "operator-native-cron-terminal-v5.json"
+    "operator-native-cron-terminal-v5.json",
+    "operator-v5-retirement-evidence-map.json"
   ]
 }

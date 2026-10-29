@@ -165,7 +165,12 @@ rejoin, followed by full cron-fleet downtime. A recorded quiet restart completes
 the overdue occurrence and skips missed natural ticks; peer queue records remain
 unchanged. A [sparse terminal retry check](evidence/operator-native-cron-terminal-v5.json)
 also verifies the six-attempt ceiling, native backoff, future correction and no
-failed-occurrence replay. Other failure paths and full family acceptance remain open.
+failed-occurrence replay. The
+[retirement evidence map](evidence/operator-v5-retirement-evidence-map.json) links
+13 retained v3 finalizer interruption/I/O cases to the unchanged v5 store/fencing
+mechanism, with dependency, runtime and coordinator checks. It records inference
+from existing evidence, without claiming a new v5 fault run. Other failure paths
+and full family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on

@@ -1,0 +1,245 @@
+{
+  "schema": 1,
+  "kind": "bounded-retirement-finalizer-evidence-reuse",
+  "recordedAt": "2026-10-29T14:28:33.268280+00:00",
+  "sourceCommit": "81362d6beaa5767d878d3773355a94c5573fcb02",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceFamily": "celld-durable-v3-linux-arm64",
+  "sourceImage": "sha256:9500fd20b8b92397cdcc05753479b639a02d471a269979d9ea2796114bde190e",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "newV5InterruptionRun": false,
+  "scope": "Reuse the existing 13 v3 stopped retirement-finalizer interruption/I/O cases for the unchanged v5 finalizer store and fencing mechanism. This is an inference from verified code/runtime equivalence and retained evidence, not a new v5 fault execution.",
+  "basis": {
+    "entry": "packages/platform/src/import-retired-routes.mjs",
+    "nativeBinarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+    "nativeBinaryAndStorageImageUnchanged": true,
+    "cachedImageAndCompleteProductionInventoriesVerified": true,
+    "dependencyFiles": 39,
+    "wholeFilesWithIdenticalHashes": 38,
+    "unchangedFileHashes": {
+      "packages/platform/src/artifact-inventory.mjs": "52c63bff25c51d1dd39d1459707241948f5ec8a94844314656eccdbda689092c",
+      "packages/platform/src/artifact-pins.mjs": "c31a284431a99a3a8d71ab1f2ba92849c04d7514f96840ee7ee615aa196118ab",
+      "packages/platform/src/artifact-prune-manifest.mjs": "454a4730683992cbbcb92c400c3be349aa6a008758c1dcc69c8e1b834b33d48b",
+      "packages/platform/src/artifact-prune-state.mjs": "0f95e70f04c7a304c6ee08e9fc10000f94f3b557bf574bc6ba49ffc1adeaaf43",
+      "packages/platform/src/atomic-file.mjs": "1118245be955084856fdaa460208b4ce73a0ca918027e6e94c80597534c3137c",
+      "packages/platform/src/background-history.mjs": "e15bdb71756dd5c83138b75258272eb3d84d9710a20a238cffee76683fc033bc",
+      "packages/platform/src/claims.mjs": "d0b0f5f1f4552e7ffce44dfd20dbec6b20491d9c4b9a623b0dad08abe73e036f",
+      "packages/platform/src/cron-dispatch.mjs": "6ac1cb769c3ed6dd93ff14226f1d83141d7d215701abfb38c3a748669dc8e34e",
+      "packages/platform/src/cron-history.mjs": "11d1dc96b8212ae5bfdd0cd84343ade17f3410b02afd32757b30c5e7d8d503f0",
+      "packages/platform/src/cron-retirement.mjs": "36874b20884a60d227025b3f4b4c49c362ee390c69687a625fe9680f6bc45e8c",
+      "packages/platform/src/cron-snapshot.mjs": "4ba23bd2b39c39fe2b8eae122fd89706e222ff2f5c380becf41dcc699e8d3746",
+      "packages/platform/src/delivery.mjs": "3da91897dfacb701fc940618ce0012af091042e2697a94da799cb9f04fe85369",
+      "packages/platform/src/dispatch-control.mjs": "285331cb04f98bd99e55c6cb4caee57b74db5c0d1fa61068651bcfa0cf969794",
+      "packages/platform/src/import-retired-routes.mjs": "b228b2c5282b03f431da33c64e1087b7160529523c574f8f73d2c27a5cb83230",
+      "packages/platform/src/queue-activation.mjs": "951e71ada24d512328a5fe3141865424eba4870b2283a3033dc1520e5b5e8cc8",
+      "packages/platform/src/queue-history.mjs": "d5aea93f441ae3561b1243e520401550a1cda241a8697c1ef8b7a4f66f1e90b5",
+      "packages/platform/src/queue-recovery.mjs": "f9de729bf455404ab0454b0106e9cb3c2a7966dfbcd675c7dc79604d2c0430e5",
+      "packages/platform/src/queue-retirement.mjs": "2aa5ebc863621d376fd707961eb362f7436c95b847d8c1e3b3486d14e70e086d",
+      "packages/platform/src/queue-snapshot.mjs": "d279921ea91aa11b717ce8aeb807a5962f82da4f26a5e0cf635f1d3752ece8e0",
+      "packages/platform/src/recovery-review.mjs": "68f730d7be4a395b40c2c38b73065cb25222cae7d274d9aaaf3f9bc18dc92bb4",
+      "packages/platform/src/retirement.mjs": "35ce81575433364b355b0ac22b05b0be099cc03c039311ec1f1e77ce398ca613",
+      "packages/platform/src/route-enrollment.mjs": "9fa258c5723c750da2640394020e818476c4379a5e47fdbf04d60835d64554ef",
+      "packages/platform/src/route-preflight.mjs": "e0f10cd9171e38f2928c738df714849e5cc2ad91f548cba4137f611c2d71b51f",
+      "packages/platform/src/route-publication.mjs": "16993e9dec3a3e8b7ccbe23b819275979c29bf63e9231a66b44cfe34b733b5e6",
+      "packages/platform/src/route-record-store.mjs": "6beaebe4260760cfc6fb71d4974007abad84316c35363a63cce265f2331eab75",
+      "packages/platform/src/route-restoration-plan.mjs": "dac2ce62595094763b704e84332c79e3a340ac4ce9d9f4e93c80c2b1ab8df50d",
+      "packages/platform/src/route-restoration.mjs": "faa0a175ed67920d7d055a2752556e28c8f94db3b3502622d227f8e12ba90779",
+      "packages/platform/src/route-retirement-restoration.mjs": "4e7a8ac27d189cc934535455953bb77ba3b6164fc0c85330efb17ba78866d54e",
+      "packages/platform/src/route-retirement.mjs": "db19170ada27d049037646e628fa62495447453d16eefed85c47a8bcc2c60926",
+      "packages/platform/src/route-snapshot.mjs": "c315190188999e79f946101a00d23e0271be2643515ba4482e50faaa89e0c8b1",
+      "packages/platform/src/runtime-identity-proof.mjs": "12b82639bae9b984deb0a7acacf34bd2ed9b272192e6d0430d169a2069534a55",
+      "packages/platform/src/runtime-policy.mjs": "27a99905a82d2e88bd1077cf7aca62206273217647da33518176d085d595d67f",
+      "packages/runtime/src/assets.mjs": "4eddd14ff6c344461674b8c6f42e3f0780d454a11ebe9d80448f1daa68d68eb1",
+      "packages/runtime/src/crons.mjs": "a487f481f5e227fe306ff02a352bb34c4a7ea4ae78be406d27284817076d6e18",
+      "packages/runtime/src/deployment.mjs": "ec38b0083a7ec776a469eb89f4587b513cd8b83e9acf904d4f48f1026b43af1c",
+      "packages/runtime/src/files.mjs": "ba76bca333878955b4571b17079d27372e482cd6ea21d22cd892d1d5fc62b779",
+      "packages/runtime/src/queues.mjs": "c4ad9681617dcdd2a7d66d9286648db0e02086e1c20139b7ff33cb2832fedbc9",
+      "packages/runtime/src/route-record.mjs": "2389b5a3968aafb245d0a4ee1f1c9632b18d61e39a48d86c9d7a3c7a104efc32"
+    },
+    "changedDependency": {
+      "path": "packages/runtime/src/artifact.mjs",
+      "sourceSha256": "9c26a044112c503788ec47a4d47ba673bcdd8a235a5ccb9087c8ce6f53c258d3",
+      "targetSha256": "d4503f9ff8049b70babcc114af6e6c4062d266d802f94a8526e7e5b06a224015",
+      "usedExportsAndDependenciesIdentical": [
+        {
+          "name": "appName",
+          "sha256": "c22ee39a6b0bd2b8898316e030b762e94f136189e18a5a03f39f3e78dc6b99d0"
+        },
+        {
+          "name": "regularFiles and artifactDigest",
+          "sha256": "9a9ede98ad28ee7d13ef2d7de7e53ac581361c94ccbe0a7e78d98a34846663fc"
+        }
+      ],
+      "importers": [
+        {
+          "path": "packages/platform/src/retirement.mjs",
+          "names": [
+            "appName"
+          ]
+        },
+        {
+          "path": "packages/platform/src/claims.mjs",
+          "names": [
+            "artifactDigest"
+          ]
+        }
+      ],
+      "changeOutsideUsedExports": "Configuration-object guard and earlier single-D1 validation; staging removes the now-redundant late check. These functions are not called by the stopped finalizer.",
+      "moduleInitializationBehaviorUnchanged": true
+    },
+    "hostCoordinators": [
+      {
+        "receipt": "operator-native-retirement-process-crashes.json",
+        "commit": "e08ce099cec1dd173a0cd53fac2fea1573e872d1",
+        "unchangedRecoveryAndRuntimeFilesExceptCatalog": true,
+        "existingV3CatalogEntryUnchanged": true,
+        "hostCheckOnlyExtractedWithoutBehaviorChange": true
+      },
+      {
+        "receipt": "operator-native-retirement-store-edges.json",
+        "commit": "f3c88e113b2495be4499955c41b68b9419bed484",
+        "unchangedRecoveryAndRuntimeFilesExceptCatalog": true,
+        "existingV3CatalogEntryUnchanged": true,
+        "hostCheckOnlyExtractedWithoutBehaviorChange": true
+      },
+      {
+        "receipt": "operator-native-retirement-io-faults.json",
+        "commit": "0cb91b80179e1e675667bc252ec111c09401af00",
+        "unchangedRecoveryAndRuntimeFilesExceptCatalog": true,
+        "existingV3CatalogEntryUnchanged": true,
+        "hostCheckOnlyExtractedWithoutBehaviorChange": true
+      }
+    ],
+    "executionEnvironment": {
+      "nodeExecutableSha256": "cf28b26a3331f8b0c637a46b9940015143ade010b5c4debeeec7b682a2c8150c",
+      "ignoreModuleSha256": "7f3345bf31f8a3b24cd28b0e63415c759c95b56af409d4fac877b0942ef47662",
+      "allLoadedSharedObjectHashesIdentical": true,
+      "sharedObjects": {
+        "/lib/aarch64-linux-gnu/libatomic.so.1": "c90c21008853899dfa102eeaa43b703c2bf41553dd56b13aac6da2803d5884b7",
+        "/lib/aarch64-linux-gnu/libdl.so.2": "e5e9474a683596d59cc9e13246bc83878433e53c3befbabd73e3da9ccb5fe174",
+        "/lib/aarch64-linux-gnu/libm.so.6": "3c4cb3be0b974edf05f023f85ab15107fb5afc2687163593d0d4cf8e80c17b39",
+        "/lib/aarch64-linux-gnu/libstdc++.so.6": "532f3a12d7b8fef6cc7a064ea106b6c4ab2365674b73e743e4a385d4ffb6c8ab",
+        "/lib/aarch64-linux-gnu/libgcc_s.so.1": "046856f95f4636f1fc7c3a12bf4f3cd5634c2fc5145c3fdf7395d4f349fa69c7",
+        "/lib/aarch64-linux-gnu/libpthread.so.0": "434dcd27f22fc8bf236c0c00541a1e503d302aa796c333729a2cd15a4cfe4814",
+        "/lib/aarch64-linux-gnu/libc.so.6": "e4ac8ae1d81e4865e3aadedb962879cf9415903b3f2ba81ec75e9962b86ab8b0",
+        "/lib/ld-linux-aarch64.so.1": "17538b8f9889a470c061f69a8fea8124da89627311cd16546c133a89f09056df"
+      },
+      "nodeVersionsIdentical": true,
+      "nodeVersion": "26.2.0",
+      "sameDockerEngineAsRetainedCases": true
+    }
+  },
+  "mappedEvidence": [
+    {
+      "receipt": "operator-native-retirement-process-crashes.json",
+      "receiptFingerprint": {
+        "bytes": 14877,
+        "sha256": "6127a52a8b1c86fc466a8092b140987d7730e1b61b960505eb6f032dfd7a19fa"
+      },
+      "cases": [
+        "retirement-private",
+        "retirement-public"
+      ],
+      "retainedEvidenceMembersVerified": 47,
+      "provenanceScriptReferencesVerifiedAndArchived": 8
+    },
+    {
+      "receipt": "operator-native-retirement-store-edges.json",
+      "receiptFingerprint": {
+        "bytes": 28986,
+        "sha256": "e0f63f528e964cd0f6f780ca00fd3b0112da0672ab00f6a2d3e755f4c778771a"
+      },
+      "cases": [
+        "grant-spent",
+        "private-file",
+        "public-file",
+        "private-rename",
+        "public-rename"
+      ],
+      "retainedEvidenceMembersVerified": 111,
+      "provenanceScriptReferencesVerifiedAndArchived": 8
+    },
+    {
+      "receipt": "operator-native-retirement-io-faults.json",
+      "receiptFingerprint": {
+        "bytes": 36232,
+        "sha256": "869a6557116f819cfc2c297305fe2b850f6b825505896c8b396714a8a9a75e3c"
+      },
+      "cases": [
+        "partial-marker",
+        "partial-private",
+        "partial-public",
+        "uncertain-grant",
+        "uncertain-private",
+        "uncertain-public"
+      ],
+      "retainedEvidenceMembersVerified": 139,
+      "provenanceScriptReferencesVerifiedAndArchived": 9
+    }
+  ],
+  "verification": {
+    "mappedCases": 13,
+    "retainedEvidenceAndScriptReferencesVerified": 322,
+    "checkpointPrivatePublicMarkerAndStagedBytesRehashed": true,
+    "capturedHelperExitsAndIncompleteEnrollmentFencesVerified": true,
+    "capturedAllEightTargetServicesNeverStartedPerCase": true,
+    "sourceSnapshotsRehashed": 1,
+    "sourceSnapshotArchiveMembersRehashed": 10,
+    "priorContainersUnchanged": 627,
+    "priorVolumesUnchanged": 849,
+    "nativeProgramsOrImagesModified": false,
+    "legacyInstrumentationExecuted": false,
+    "newApplicationResourcesCreated": false
+  },
+  "v5IntegrationEvidence": [
+    "operator-native-background-retirement-v5.json",
+    "operator-native-background-retirement-dual-v5.json"
+  ],
+  "regressions": {
+    "tests": 156,
+    "failures": 0,
+    "cancellations": 0,
+    "skips": 0,
+    "scope": "Current finalizer, route store/enrollment/restoration and host durable/cron retirement tests."
+  },
+  "limitations": [
+    "The mapped original cases use stopped HTTP-only fixtures; the separate v5 receipts cover successful queue/cron retirement projections and recovery.",
+    "Inference is limited to this finalizer dependency/export closure, execution environment and unchanged coordinator protocol. Other changed controller modules are outside the map.",
+    "No new v5 process cut, new I/O injection, live background-handler fault, physical media failure, disk exhaustion or power-loss claim.",
+    "No cross-family migration: all actual installations retain their original family and data.",
+    "Ordinary admission and complete family qualification remain closed."
+  ],
+  "privateEvidenceFingerprints": {
+    "source-map.json": {
+      "bytes": 17384,
+      "sha256": "efb2e85ab54e690701434f248fdfbbab3d61eced18296950d3a7b5afb58a68d8"
+    },
+    "independent-audit.json": {
+      "bytes": 6239,
+      "sha256": "6ffe95899c1bb753a84016b06d266d111f57bb0f695a46a03461f22918d1a5df"
+    },
+    "snapshot-audit.json": {
+      "bytes": 183,
+      "sha256": "861e69cefe69625876bf8776746417207aa301835a1bf3c604771865d2f44cf8"
+    },
+    "engine-before.json": {
+      "bytes": 401518,
+      "sha256": "78ec6deed2efc63f4c48c0c8785c4f3296ff60a505903688da1045d5a77cf45c"
+    },
+    "source-map-auditor.mjs": {
+      "bytes": 6286,
+      "sha256": "ab8ab29bd080fc6e5583ca3ee4d60663a83d13404df47a9443932a73d9ea756b"
+    },
+    "retained-evidence-auditor.py": {
+      "bytes": 5386,
+      "sha256": "26e0e953c652ba9540c286bcc5f1c64a401b4f4069746e535e49221ec04af3fe"
+    },
+    "focused-tests.log": {
+      "bytes": 14434,
+      "sha256": "6db92d64a8ac45b661faedd154772442f2598c1821bcc77aef7a55e05d629ddd"
+    }
+  }
+}
