@@ -33,7 +33,22 @@ console.log('private-tool-output'); console.error('private-diagnostic'); process
   }
   await assert.rejects(exec(process.execPath, [cli, 'doctor'], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
   for (const args of [['--config', 'absent'], ['--project', 'absent'], ['--project', 'a', '--config', 'b', '--name', 'demo'],
-    ['--runtime', qualified.id, '--project', 'a', '--name', 'demo'], ['--runtime', qualified.id, '--config', 'absent', '--name', 'demo'], ['--runtime', qualified.id, '--online']]) {
+    ['--runtime', qualified.id, '--project', 'a', '--name', 'demo'], ['--runtime', qualified.id, '--config', 'absent', '--name', 'demo'], ['--runtime', qualified.id, '--online'],
+    ['--installation', 'sample', '--runtime', qualified.id], ['--installation', 'sample', '--project', 'app', '--name', 'demo'], ['--installation', 'sample', '--online'], ['--installation', 'sample', '--name', 'demo']]) {
     await assert.rejects(exec(process.execPath, [cli, 'doctor', ...args], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
   }
+});
+
+test('missing installation diagnosis emits a private-safe unverified report without creating configuration', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'fogd-doctor-installation-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const env = { PATH: '', FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'private-absent.env'), FOGD_ADMIN_PASSWORD: 'private-admin-value' };
+  let failure;
+  try { await exec(process.execPath, [cli, 'doctor', '--installation', 'absent', '--json'], { env }); }
+  catch (error) { failure = error; }
+  assert.equal(failure.code, 2); assert.equal(failure.stderr, '');
+  const report = JSON.parse(failure.stdout);
+  assert.equal(report.installation, 'absent'); assert.equal(report.status, 'unverified');
+  assert.equal(report.findings[0].id, 'installation-policy'); assert.ok(!failure.stdout.includes('private-'));
+  const { readdir } = await import('node:fs/promises'); assert.deepEqual(await readdir(root), []);
 });

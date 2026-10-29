@@ -7,15 +7,17 @@ import { runtimeCli } from './runtime-cli.mjs';
 import { prebootFixture } from './cron-preboot.mjs';
 import { freshRuntimePlan } from '../../src/runtime/selection-plan.mjs';
 const exec = promisify(execFile);
-export async function spaceFixture(t) {
+export async function spaceFixture(t, { durable = false } = {}) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-space-')); t.after(() => rm(root, { recursive: true, force: true }));
   const client = await runtimeCli(root, 'qualified'), { source } = prebootFixture();
   for (const [role, service] of Object.entries(source.services)) service.image = role === 'minio' ? 'fogd-minio:local' : 'fogd-runtime:local';
-  const { config } = freshRuntimePlan(source, client.entry), directory = join(root, '.fogd/installations', config.name);
+  const entry = durable ? { ...client.entry, schema: 2, routing: 'durable' } : client.entry;
+  if (durable) { const catalog = JSON.parse(await readFile(client.catalog, 'utf8')); catalog[0] = entry; await writeFile(client.catalog, JSON.stringify(catalog)); }
+  const { config, policy } = freshRuntimePlan(source, entry), directory = join(root, '.fogd/installations', config.name);
   await mkdir(directory, { recursive: true, mode: 0o700 });
   const file = join(directory, 'compose.json'); await writeFile(file, JSON.stringify(config), { mode: 0o600 });
   const data = join(root, 'data.json'), log = join(root, 'calls.jsonl'), bin = join(root, 'bin'); await mkdir(bin);
-  await writeFile(data, JSON.stringify({ config, entry: client.entry }));
+  await writeFile(data, JSON.stringify({ config, entry, policy }));
   await writeFile(join(bin, 'docker'), '#!/bin/sh\nexec "$FOGD_TEST_NODE" "$FOGD_TEST_DRIVER" "$@"\n', { mode: 0o700 });
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FOGD_HOME: root, FOGD_ENV_FILE: join(root, 'must-not-exist.env'),
     FOGD_ADMIN_PASSWORD: 'private-host-admin', FOGD_DEPLOY_TOKEN: 'private-host-token', COMPOSE_PROJECT_NAME: 'wrong-project', FOGD_COMPOSE_FILE: '/private/wrong-template',

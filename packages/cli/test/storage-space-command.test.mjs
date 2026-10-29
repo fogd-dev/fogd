@@ -78,3 +78,20 @@ for (const mode of ['image mismatch', 'candidate family', 'missing policy declar
   await writeFile(f.file, JSON.stringify(config));
   await assert.rejects(f.run(), /enrolled catalog-pinned configuration/); assert.deepEqual(await f.calls(), []);
 });
+
+test('durable storage observation validates its independent policy and samples the extra authority volumes', async t => {
+  const f = await spaceFixture(t, { durable: true }), before = await readFile(f.file);
+  const report = JSON.parse((await f.run()).stdout);
+  assert.equal(report.status, 'observed');
+  for (const role of ['route-authority', 'gateway-policy', 'route-enrollment']) assert.ok(report.volumes.some(volume => volume.role === role && volume.state === 'sampled'));
+  const calls = await f.calls(); assert.ok(calls.some(args => args[0] === 'run' && args.at(-1).includes('readRuntimePolicy')));
+  assert.deepEqual(await readFile(f.file), before);
+});
+
+test('durable storage observation refuses changed authority mounts before sampling data', async t => {
+  const f = await spaceFixture(t, { durable: true }), config = JSON.parse(await readFile(f.file));
+  config.services.workerd.volumes.find(mount => mount.source === 'route-authority').read_only = false;
+  await writeFile(f.file, JSON.stringify(config));
+  await assert.rejects(f.run(), /Durable runtime|Storage configuration differs/);
+  assert.ok(!(await f.calls()).some(args => args[0] === 'run' && args.at(-1).includes('statfsSync')));
+});

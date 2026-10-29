@@ -56,6 +56,11 @@ distinguish a missing image from access failure. Diagnostics exclude raw Docker
 output and private host configuration. The selected Docker context is inherited;
 no context is switched, image pulled, resource created, or capacity reserved.
 Candidate families can be diagnosed but remain closed to ordinary enrollment.
+For an enrolled durable-routing installation, use
+[`doctor --installation PROJECT`](installation-preflight.md) to inspect sealed
+Docker networks/listeners, backing space, TLS keypair validity and lifecycle markers.
+This mode uses restricted cached-image readers and still leaves client trust and
+application health unverified.
 For application declarations, use the separate
 [JSON configuration check](developer-client.md#check-json-declarations-without-building).
 The operator CLI and standalone developer client both provide that check.

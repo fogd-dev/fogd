@@ -15,6 +15,7 @@ else if (args[0] === 'run') {
   const code = args.at(-1);
   if (code.includes('Runtime program must not be a symlink')) output({ binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256 });
   else if (code.includes('programInventory')) output(entry.sourceFiles);
+  else if (code.includes('readRuntimePolicy')) output(state.policy);
   else if (code.includes('statfsSync')) {
     state.sampled = true; state.helper = process.env.FOGD_SPACE_LEFTOVER === '1'; writeFileSync(file, JSON.stringify(state));
     if (process.env.FOGD_SPACE_HELPER_FAIL) { console.log('private-helper-diagnostic'); process.exit(17); }

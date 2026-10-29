@@ -16,6 +16,9 @@ storage. It requires the catalog-pinned controller/storage images in the saved
 configuration and existing local volumes with matching project and role ownership.
 The currently qualified reader family requires Linux arm64.
 A missing volume is reported as missing; foreign or unsupported storage refuses.
+Durable-routing configurations require a readable independent installed policy
+and verify their exact seal before sampling authority and gateway volumes. A
+missing or unreadable durable policy refuses before data sampling.
 
 ## Interpret the report
 

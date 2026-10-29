@@ -9,11 +9,12 @@ import { spaceInventory } from './inventory.mjs';
 import { sampleSpace } from './worker.mjs';
 import { decodeSpaceSample } from './model.mjs';
 import { hasRuntimePolicy } from '../recovery/layout.mjs';
+import { durableLegacyBase, isDurableConfig } from '../runtime/durable-config.mjs';
+import { readInstalledPolicy } from '../runtime/installed-policy.mjs';
+import { selectedRuntimeConfig } from '../runtime/selection-plan.mjs';
 
 export async function storageSpace(project) {
-  const config = await readEnrolledConfiguration(project); validateTopology(config);
-  const entry = runtimeFamilies().find(value => value.admission === 'qualified' && value.image === config.services.controller.image && value.storageImage === config.services.minio.image);
-  if (!entry || !hasRuntimePolicy(config)) throw new Error('Storage observation requires an enrolled catalog-pinned configuration');
+  const { config, entry } = await spaceConfiguration(project);
   const before = await spaceInventory(config);
   let sample = { filesystems: [], mounts: [] };
   if (before.volumes.length) {
@@ -29,6 +30,17 @@ export async function storageSpace(project) {
     volumes: [...before.volumes.map((volume, index) => ({ role: volume.role, name: volume.name, state: 'sampled', filesystem: mapping.get(index) })),
       ...before.missing.map(volume => ({ ...volume, state: 'missing', filesystem: null }))].sort((a, b) => a.role.localeCompare(b.role)),
     filesystems: sample.filesystems };
+}
+async function spaceConfiguration(project) {
+  const config = await readEnrolledConfiguration(project);
+  const entry = runtimeFamilies().find(value => value.admission === 'qualified' && value.image === config.services.controller.image && value.storageImage === config.services.minio.image);
+  if (!entry || !hasRuntimePolicy(config)) throw new Error('Storage observation requires an enrolled catalog-pinned configuration');
+  if (isDurableConfig(config)) {
+    const installed = await readInstalledPolicy(config);
+    if (!installed || !isDeepStrictEqual(selectedRuntimeConfig(config, installed.entry, installed.policy), config)) throw new Error('Storage configuration differs from its independent durable policy');
+  }
+  validateTopology(durableLegacyBase(config));
+  return { config, entry };
 }
 async function observeSpace(project, image, volumes) {
   const nonce = randomUUID(), name = `fogd-space-${nonce}`, paths = volumes.map((_, index) => `/space/v${index}`);

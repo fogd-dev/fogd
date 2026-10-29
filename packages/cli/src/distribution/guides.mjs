@@ -2,6 +2,7 @@
 // Historical reviews, private state and qualification receipts are not package inputs.
 export const operatorGuides = [
   'docs/releases.md',
+  'docs/installation-preflight.md',
   'docs/operator-package.md',
   'docs/operator-guide.md',
   'docs/runtime-selection.md',

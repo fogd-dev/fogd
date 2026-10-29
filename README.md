@@ -34,6 +34,10 @@ Developers receive the standalone client and an app-scoped credential from their
 operator. Application build dependencies remain separate prerequisites. See the
 [developer client guide](docs/developer-client.md).
 
+Owners can [inspect installation configuration](docs/installation-preflight.md)
+with `fogd doctor --installation PROJECT`, including sealed networks/listeners,
+backing space, TLS keypair validity and retained lifecycle markers.
+
 Owners can [inspect an application's recorded release and control state](docs/application-inspection.md)
 with `fogd admin inspect APP`; submitters can [diagnose their releases](docs/submission-status.md)
 with `fogd status ID`. Local Docker owners can [observe native replicas](docs/application-observation.md)
