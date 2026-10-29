@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "kind": "operator-native-migration-rollback",
+  "recordedAt": "2026-10-29T01:26:54.028Z",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "cf49788292b0f22f86578f83cf4b4d61d668cef9",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "fullFamilyQualification": false,
+  "scope": "One fresh two-fleet HTTPS installation on an isolated classic-overlay2 Linux arm64 Docker engine on the same physical Mac. Ordinary SQL failure at migration-name bookkeeping after application SQL; not native interruption or power-loss acceptance.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "method": {
+    "fixture": "New private baseline/peer HTTP and D1 applications only.",
+    "fault": "SQLite BEFORE INSERT trigger on the selected d1_migrations name; ABORT only when the new application marker is visible.",
+    "transactionControl": "Trigger aborts only the ledger statement, so native migration rollback must remove the application marker.",
+    "faultFixtureSelfTest": {
+      "passed": true,
+      "localInMemoryOnly": true,
+      "deliberatelyBrokenNonAtomicControlDetected": true,
+      "transactionalFailureMarkerRows": 0,
+      "nonAtomicFailureMarkerRows": 1
+    },
+    "runtimeProgramOrImageModified": false,
+    "debuggerOrTracingUsed": false,
+    "controllerOrNativeProcessInterruption": false
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 962,
+    "canonicalControllerAndArtifactHashesVerified": true,
+    "migrationSQLDigestsVerified": true,
+    "afterMarkerDiagnosticVerified": true,
+    "nativeLogHealthChecked": true,
+    "privacyScansPassed": true,
+    "priorContainersUnchanged": 569,
+    "priorVolumesRetained": 770,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumes": 11
+  },
+  "run": {
+    "project": "fogd-selected-activation-b3b201ff1bb18035",
+    "failedExactApprovals": 2,
+    "failureStep": "migrating",
+    "markerRowsAfterEachFailure": 0,
+    "newLedgerRowsAfterEachFailure": 0,
+    "controllerHashLedgerAfterEachFailure": "Unchanged; successful reconciliation clears uncertainty.",
+    "failedAppHTTPStatus": 503,
+    "peerHTTPStatus": 200,
+    "peerRows": [
+      {
+        "id": "peer-record",
+        "app": "peer"
+      }
+    ],
+    "explicitFaultRemovalBeforeRetry": true,
+    "sameArtifactRetry": true,
+    "successfulRetryMarkerRows": 1,
+    "successfulRetryNewLedgerRows": 1,
+    "successfulRetryHTTPStatus": 200,
+    "originalCommitted502ControlRowPreserved": true
+  },
+  "unacceptedEarlierAttempt": {
+    "reason": "Driver expected exit zero for intentionally failed approval; CLI correctly returned code 1 with selected ledger-trigger diagnostic. No rollback acceptance claimed.",
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumes": 11,
+    "priorContainersUnchanged": 561,
+    "priorVolumesRetained": 759,
+    "privateFailureAudit": {
+      "sha256": "28d54eaaccf6d2c409915cd3adcc6b8a8a502deb48afaad9fe6301281ec742a1",
+      "bytes": 311
+    }
+  },
+  "hostChecks": {
+    "syntax": "node scripts/check.mjs and final driver node --check pass.",
+    "regressions": {
+      "runtimeTests": 294,
+      "platformAndStatusTests": 67,
+      "failures": 0,
+      "cancellations": 0,
+      "skips": 0
+    },
+    "canonicalBaseline": "2,728 passing tests at 74799110bc44a4be2617672b61a6fe5795d06e94; shared product code unchanged by this qualification.",
+    "antiSlop": "PASS; pre-existing gateway complexity unchanged.",
+    "review": "Focused standards self-review; no new external-model review."
+  },
+  "reproduce": "DOCKER_CONFIG=PATH_TO_PRIVATE_DOCKER_CONFIG DOCKER_CONTEXT=ISOLATED_CLASSIC_OVERLAY2_ENGINE node scripts/operator/migration-rollback.mjs --runtime celld-durable-v5-linux-arm64 --candidate --retain-resources NEW_PRIVATE_OUTPUT_DIRECTORY",
+  "limitations": [
+    "No native crash, interrupted COMMIT, staging-file sync or power-loss acceptance.",
+    "No performance, app-density or per-worker CPU-quota claim.",
+    "Same physical host; no separate physical-machine installation claim.",
+    "Full-family acceptance and ordinary admission remain closed."
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "feb34b60c6f17a5d241fcb1ff7bb1c2587b971723b239ca1ef33ca56d598ca2d",
+      "bytes": 130138
+    },
+    "inputs.json": {
+      "sha256": "a34effaf9d08c421cb336d741eeab12d267449c4e38ac81f743b4a3e20ac00a6",
+      "bytes": 412
+    },
+    "post-write-privacy.json": {
+      "sha256": "33c91340984871455178b6fa5e61337f8e36f2a594311f0d343b0ca9ee6d1806",
+      "bytes": 586
+    },
+    "executed-source-inventory.json": {
+      "sha256": "dd7757e84001ae2aa9d342748443ba55c366817a1b0d9981307aa747ba93b897",
+      "bytes": 112535
+    },
+    "runner.mjs": {
+      "sha256": "99795cf5ba14c63c78eb60ff15c7ebde53645d3aa06e7a2c764862030c3b5dce",
+      "bytes": 7782
+    },
+    "runtime.log": {
+      "sha256": "f83abf42bcada74acdc999605ef926bb9594abec2a25a94263dd091d462151cb",
+      "bytes": 84092
+    },
+    "independent-audit.json": {
+      "sha256": "e08503c56ccce89354e10b14470f83e3070b6fda709485df6c3e6cea02a45c9f",
+      "bytes": 1623
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "86b20a81662bc11b7c9e0b0909b9ad0ce2f8a843face7a6bd617a7d04394ce40",
+      "bytes": 8749
+    },
+    "fault-fixture-self-test.json": {
+      "sha256": "3a166be0f5b8cdc313963299089de338a294b349ba4efb6d0024e1309c98e1aa",
+      "bytes": 428
+    },
+    "fault-fixture-self-test.py": {
+      "sha256": "ce26d50dfd6f4b7eb9dc6ed2eab9b3265b8494c5924eb63f3a1e0e188af83a28",
+      "bytes": 1997
+    },
+    "runtime-tests.log": {
+      "sha256": "37cce8662e4e815925c29a4aeda46dab64d3cbc33fb5c4c17df3b84d2058006b",
+      "bytes": 26224
+    },
+    "platform-tests.log": {
+      "sha256": "9e37fcc90e4a415078ac29bd70e75f7fb77133226e84ce0f8656104895424380",
+      "bytes": 6519
+    }
+  }
+}

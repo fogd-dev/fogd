@@ -137,6 +137,12 @@ and [HTTP migration-retry evidence](evidence/operator-native-migration-retry-v5.
 on another isolated Docker engine on the same physical host. The background trial
 checks cron and queue resume with HTTP withheld, a controller outage across an
 observed cron deadline, and a stopped snapshot. A
+[native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
+verifies failure after application SQL but before migration-name bookkeeping.
+Two failed exact approvals leave no new row or ledger entry; removing the SQL
+fault permits one successful commit of the same artifact while preserving peer
+data. Native process interruption and power-loss behavior remain outside this
+check. A
 [paused-snapshot restore](evidence/operator-native-background-recovery-v5.json)
 now verifies fresh target volumes, cold and acknowledged background holds, explicit
 resume and unchanged old occurrences. The

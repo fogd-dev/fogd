@@ -276,6 +276,12 @@ cron/queue work, compatible update, retry, paused controller loss across an obse
 deadline, HTTP/background independence and a stopped snapshot. Its
 [migration-retry check](evidence/operator-native-migration-retry-v5.json) repeats the
 fully committed HTTP gap on an independent engine on the same physical host.
+The [SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
+injects a ledger-insertion error only after the migration's new row is visible.
+Two failed approvals leave neither the row nor the migration name committed;
+removing the fault lets the same artifact commit once. HTTP stays withheld on
+the failed app while its peer serves its saved record. This covers ordinary SQL
+failure, without a native process interruption or power-loss claim.
 The [paused-snapshot recovery check](evidence/operator-native-background-recovery-v5.json)
 now restores both apps to fresh volumes, verifies cold and acknowledged holds,
 then confirms explicit resume and retained old occurrences. The
