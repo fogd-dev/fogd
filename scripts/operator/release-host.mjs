@@ -19,7 +19,7 @@ export async function loadReceivedHost(host) {
   assert.equal(host.policy.admission, 'qualified');
   return host;
 }
-export async function freshReceivedHost(program, output, hosts) {
+export async function freshReceivedHost(program, output, hosts, { runtime = 'celld-durable-v5-linux-arm64' } = {}) {
   await mkdir(output, { mode: 0o700 }); await mkdir(join(output, 'home'), { mode: 0o700 });
   const { runtimeFamily } = await import(join(program, 'packages/cli/src/runtime/catalog.mjs'));
   const project = `fogd-release-${randomBytes(8).toString('hex')}`, adminPort = await loopbackPort(), gatewayPort = await loopbackPort(); assert.notEqual(adminPort, gatewayPort);
@@ -29,7 +29,7 @@ export async function freshReceivedHost(program, output, hosts) {
     FOGD_BASE_DOMAIN: 'localhost', FOGD_SERVER: `https://localhost:${adminPort}`, NODE_EXTRA_CA_CERTS: join(output, 'certificate.pem'),
     FOGD_BUCKET_USER: `fogd-release-${randomBytes(8).toString('hex')}`, FOGD_BUCKET_PASSWORD: randomBytes(32).toString('hex') });
   await writeFile(env.FOGD_ENV_FILE, `FOGD_BUCKET_USER=${env.FOGD_BUCKET_USER}\nFOGD_BUCKET_PASSWORD=${env.FOGD_BUCKET_PASSWORD}\n`, { flag: 'wx', mode: 0o600 });
-  const host = receivedCommands(program, { program, output, project, env, run: commandRunner(output, env), entry: runtimeFamily('celld-durable-v5-linux-arm64'), adminPort, gatewayPort, retainResources: true }); hosts.push(host);
+  const host = receivedCommands(program, { program, output, project, env, run: commandRunner(output, env), entry: runtimeFamily(runtime), adminPort, gatewayPort, retainResources: true }); hosts.push(host);
   await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: host.entry.id, image: host.entry.image, program, adminPort, gatewayPort, retainResources: true }, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   await host.run('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', join(output, 'private-key.pem'), '-out', env.NODE_EXTRA_CA_CERTS, '-days', '2', '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost,DNS:baseline.localhost,DNS:peer.localhost,IP:127.0.0.1']);
   await chmod(join(output, 'private-key.pem'), 0o600);

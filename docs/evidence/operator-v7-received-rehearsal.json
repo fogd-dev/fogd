@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "kind": "operator-v7-received-rehearsal",
+  "recordedAt": "2026-10-29T23:12:03.612637+00:00",
+  "sourceCommit": "922199da6981fe7c2267056b0baf60c4f214694e",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "actualReleasedCatalog": false,
+  "mainAdmission": "candidate",
+  "family": "celld-approval-v7-linux-arm64",
+  "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+  "scope": "Private proposed-release rehearsal only. One catalog admission field changed in a private exported copy; main admission stays closed. Public transfer, enrollment, received client update/restart and fresh stopped recovery on a distinct existing Docker engine on the same physical host. Prepared fixture dependencies supplied; no registry publication or separate-machine claim.",
+  "independentAudit": {
+    "passed": true,
+    "privateProposalOnly": true,
+    "onlyCatalogChange": "selected v7 admission candidate -> qualified in private exported copy",
+    "archivedSourcesRehashed": 1012,
+    "transferMembersRehashed": 457,
+    "receivedProgramFilesRehashed": 455,
+    "standaloneClientMembersRehashed": 36,
+    "operatorDecisionGuidesIncluded": 2,
+    "qualificationAndReviewDocsExcluded": true,
+    "snapshotMembersRehashed": 10,
+    "artifactDigestsIndependentlyRecomputed": 3,
+    "authenticatedDecisionRowsRetained": 3,
+    "pendingCodeAndSQLRemainWithheld": true,
+    "exactUpdateMigrationAppliedOnce": true,
+    "nativeRowsSurviveRestartAndRestore": true,
+    "postRecoveryWriteVerified": true,
+    "httpResumesRequireVerifiedNativeFacts": true,
+    "sourceFenceRefusalVerified": true,
+    "sourceAndTargetVolumesDisjoint": true,
+    "newPinnedContainersStopped": 16,
+    "preExistingComposeContainerStatesPreserved": 192,
+    "preExistingVolumeIdentitiesPreserved": 295,
+    "scope": "Private proposed-release rehearsal only. One catalog admission field changed in a private exported copy; main admission stays closed. Public transfer, enrollment, received client update/restart and fresh stopped recovery on a distinct existing Docker engine on the same physical host. Prepared fixture dependencies supplied; no registry publication or separate-machine claim."
+  },
+  "engines": {
+    "source": {
+      "ID": "3fcf088e-b5b0-407a-b4b7-0993b4fccdc3",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "Driver": "overlay2",
+      "NCPU": 3,
+      "MemTotal": 8308510720,
+      "context": "fogd-release-recipient"
+    },
+    "recipient": {
+      "ID": "043a9734-e319-4236-861d-1dbb7108b664",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "Driver": "overlay2",
+      "NCPU": 3,
+      "MemTotal": 8308510720,
+      "context": "fogd-independent-install"
+    }
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2881,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 550197.832042,
+    "focusedChecksPassed": 38,
+    "newCases": 3,
+    "syntaxAndQualityPassed": true
+  },
+  "sourceInputsMatchExecutedArchive": [
+    "packages/cli/src/distribution/guides.mjs",
+    "scripts/operator/release-host.mjs",
+    "scripts/operator/release-rehearsal.mjs",
+    "scripts/operator/release-transfer.mjs",
+    "scripts/operator/release-catalog.test.mjs"
+  ],
+  "mainCatalogUnchanged": true,
+  "privateRoot": "~/.local/share/fogd-qualifications/approval-v7-received-20261029-01",
+  "reproduce": "DOCKER_CONTEXT=RECIPIENT node scripts/operator/release-rehearsal.mjs NEW_PRIVATE_OUTPUT --source-context SOURCE --runtime celld-approval-v7-linux-arm64",
+  "privateEvidenceFingerprints": {
+    "audited-engines.json": {
+      "sha256": "afe5b836c2a8ea708f860fdcb358ac48b1bdb3e5d348cb4fe0873b0c3009a7df",
+      "bytes": 472
+    },
+    "audited-restored-state.json": {
+      "sha256": "76f37777c18b40dd66d94151865025483a5e23ed89cc979da3bbfa421fb88301",
+      "bytes": 8668
+    },
+    "executed-source-inventory.json": {
+      "sha256": "73ee8f38034a468004c2a9d69f2eba390cef828ff6a7737318a00dd1f6870b6c",
+      "bytes": 118722
+    },
+    "fogd-audit-v7-received.log": {
+      "sha256": "0bc6aeaa2903371cef7616a86ed6417615ed6d7105ecaeff74f80ee308bfa215",
+      "bytes": 1280
+    },
+    "fogd-audit-v7-received.py": {
+      "sha256": "e2f80473a08fe46c920ddcc7289726d75ef4cb3bf54651c1bf3e15223c47b7dc",
+      "bytes": 7043
+    },
+    "fogd-v7-received-focused.log": {
+      "sha256": "298eff390566b4e23d5692a82b7e9c273da3274b12e10b44180bc4eddfc4c0c6",
+      "bytes": 2956
+    },
+    "fogd-v7-received-self-review.md": {
+      "sha256": "d97572581666ba2d81802c136e329fc02f8640e3df2e199cee861d9dbae6dd48",
+      "bytes": 3735
+    },
+    "fogd-v7-received.log": {
+      "sha256": "9766a059a01f28a161e02216ca3ab475e92dcb3c0e7031c65bf06984bd6dab51",
+      "bytes": 514
+    },
+    "fogd-v7-recipient-after.json": {
+      "sha256": "183f1bab99af4855c70637e10d0a57b16243c690fa9d00cec79e8ac60577b797",
+      "bytes": 260831
+    },
+    "fogd-v7-recipient-before.json": {
+      "sha256": "e2785b9fa5cd4048e059f3689d1ee067e394ca670a71db100626de9f03e96caf",
+      "bytes": 241282
+    },
+    "fogd-v7-recipient-inventory.py": {
+      "sha256": "fcbc45fcfc468b8e02d327f1628bfce1a52371ddbb47928465919be826a214e8",
+      "bytes": 1340
+    },
+    "fogd-v7-transfer-canonical.log": {
+      "sha256": "38221bd03d051194aedf85a1d2594c771a631d90d4d354973b3ca435ae8d7575",
+      "bytes": 256645
+    },
+    "fogd-v7-transfer-quality.log": {
+      "sha256": "37b1ade6a2a9c825c5c16edb58f99dbb9888a5cca099dae1133d8d0abb7d7fbd",
+      "bytes": 1670
+    },
+    "fogd-v7-transfer-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "independent-audit.json": {
+      "sha256": "9ccbc50d47372a87fcde5b3cc4bcd21aa50aa4cddfe5f4e2a3ae5c34d6bc44dc",
+      "bytes": 1328
+    },
+    "post-write-privacy.json": {
+      "sha256": "a1cb72a142ae69faeb85b815ac098ce42d3dd3f0a36559a775d0de00f48297c0",
+      "bytes": 651
+    },
+    "proposal-inventory.json": {
+      "sha256": "c2356c03f615f34333e48f0cd8f45066371008a719a0790806bf6f9704d812b0",
+      "bytes": 77847
+    },
+    "result.json": {
+      "sha256": "56441b384d35380745a396ec08d18cb6c8ed8045696bf6927bfcca5104c5bb2a",
+      "bytes": 153902
+    },
+    "runner.mjs": {
+      "sha256": "9acacb2294bd769cfd6334bbf17ddf53c5126a2091d1cda8712c2b15b03dac15",
+      "bytes": 6945
+    },
+    "fogd-v7-received-package-writing.log": {
+      "sha256": "fcd3867b8d99b8d9dabc1b000b3ea6a36c2b5eb5523f862a920dd27761587236",
+      "bytes": 1381
+    },
+    "fogd-v7-received-runtime-writing.log": {
+      "sha256": "a4b760594ddf71afcf69f2c90e3ad1b3ea08088211c7eab1912ed81e010f5ed8",
+      "bytes": 12129
+    }
+  },
+  "limits": [
+    "Private proposed-release rehearsal: only selected v7 admission changes in the private copied catalog. Main, earlier catalog entries and ordinary v7 admission remain unchanged. No public image/download release is published.",
+    "Uses the ordinary received operator and exported standalone client outside the checkout. Prepared app projects/SDK dependencies are supplied separately; unaided human onboarding is not established.",
+    "Source and recipient are distinct existing Linux arm64 classic-overlay2 engines on the same physical Mac, not separate physical machines.",
+    "Before/after observation preserves 192 existing Compose container identities/states and 295 volume identities. It does not assert that unrelated running applications had no independent data changes. All 16 new containers are stopped and their data retained.",
+    "Native HTTP/D1 update, restart, snapshot and fresh restore are covered, including pending isolation and exact migration application. This does not qualify cron/queue behavior on the received engine, broad density/performance or per-worker CPU quotas.",
+    "This uses runtime transfer, not a versioned v7 release or its empty-engine onboarding flow. Retirement/history and the final admission audit remain separate gates.",
+    "Product-guide navigation and receipt links are edited after the exported snapshot. The executable/test inputs listed above match the executed archive; transferred guide bytes remain authenticated and unmodified.",
+    "No exactly once external effects, power-loss behavior or user-installation migration is claimed. There are no existing user installations; retained stacks are QA fixtures.",
+    "No external review approval is claimed."
+  ]
+}

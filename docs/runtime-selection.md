@@ -30,6 +30,10 @@ The separate [v6 background restore](evidence/operator-native-background-recover
 checks paused cron/queue recovery and explicit resume. These bounded checks do not
 qualify the whole v7 family. Ordinary enrollment and export remain refused;
 earlier family image and source pins are unchanged.
+The [received-operator rehearsal](evidence/operator-v7-received-rehearsal.json)
+checks transfer, installation, update, restart and fresh recovery on another
+existing Docker engine. Its single admission change exists only in a private
+exported copy; it does not open the repository catalog or publish a v7 release.
 
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller
