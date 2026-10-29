@@ -77,5 +77,5 @@ qualification volumes. Its scope is the frozen local two-fleet runtime.
 
 The source controller's [administrator decision history](decision-history.md)
 records authenticated HTTP approval/rejection decisions. Its runtime release
-qualification is separate from the current frozen v5 artifact. Verified browser
-code/SQL comparisons remain tracked in issue 7.
+qualification is separate from the current frozen v5 artifact. The [verified browser comparison](browser-release-review.md) is also implemented
+in source; new runtime qualification remains tracked in issue 7.

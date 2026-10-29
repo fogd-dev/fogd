@@ -1,3 +1,4 @@
+import { approvalButtons } from '../src/admin-approval-controls.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
@@ -176,10 +177,12 @@ test('HTTP and CLI replacement approval bind both digests and preserve the admin
   await new Promise(resolve => http.listen(0, '127.0.0.1', resolve)); t.after(() => new Promise(resolve => http.close(resolve)));
   const origin = `http://127.0.0.1:${http.address().port}`, auth = { authorization: `Basic ${Buffer.from('admin:password').toString('base64')}` };
   const { csrf } = await (await fetch(origin + '/v1/admin', { headers: auth })).json();
-  const page = await (await fetch(origin, { headers: auth })).text();
+  // This private activation fixture bypasses artifact canonicalization.
+  assert.equal((await fetch(origin + '/admin/review/' + next.id, { headers: auth })).status, 409);
+  const page = approvalButtons(f.c, next, '0'.repeat(64));
   assert.ok(page.includes(`data-replaces="${f.old.id}"`)); assert.ok(page.includes('Approve replacement'));
   next.replaces = { deployment: 'earlier', digest: '0'.repeat(64) };
-  const stale = await (await fetch(origin, { headers: auth })).text();
+  const stale = approvalButtons(f.c, next, '0'.repeat(64));
   assert.equal(stale.includes(`data-id="${next.id}" data-digest="${next.digest}" data-action="approve"`), false);
   assert.ok(stale.includes('Resubmit the artifact')); delete next.replaces;
   const post = (replaces, extra = {}) => fetch(`${origin}/v1/deployments/${next.id}/approve`, { method: 'POST', headers: { ...auth, 'Content-Type': 'application/json', 'X-Fogd-CSRF': csrf, ...extra }, body: JSON.stringify({ digest: next.digest, replaces }) });

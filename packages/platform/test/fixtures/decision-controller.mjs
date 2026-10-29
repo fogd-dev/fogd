@@ -17,10 +17,14 @@ export async function decisionFixture(t, options = {}) {
   const settings = { dir: join(root, 'controller'), slots: [{ id: 'one', prefix: 'one', nodes: ['a', 'b'] }, { id: 'two', prefix: 'two', nodes: ['c', 'd'] }], backend, reportStorageFailure: () => {}, ...options };
   const controller = new Controller(settings); await controller.init();
   let sequence = 0;
-  const submit = async (app = 'demo') => {
+  const submit = async (app = 'demo', { config = {}, files = {} } = {}) => {
     const project = join(root, `project-${sequence++}`); await mkdir(join(project, 'dist/ssr'), { recursive: true });
     await writeFile(join(project, 'dist/ssr/index.js'), `export default {fetch(){return new Response(${sequence})}}`);
-    await writeFile(join(project, 'dist/ssr/wrangler.json'), '{"main":"index.js","vars":{"STATIC":"private-artifact-literal"}}');
+    await writeFile(join(project, 'dist/ssr/wrangler.json'), JSON.stringify({ main: 'index.js', vars: { STATIC: 'private-artifact-literal' }, ...config }));
+    for (const [path, content] of Object.entries(files)) {
+      const { dirname } = await import('node:path');
+      await mkdir(dirname(join(project, path)), { recursive: true }); await writeFile(join(project, path), content);
+    }
     const staged = join(project, 'artifact'), release = await stageArtifact({ projectDir: project, outputDir: staged, app });
     return controller.submit(await manifest(staged, release), 'team-token');
   };

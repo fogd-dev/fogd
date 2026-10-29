@@ -6,7 +6,7 @@ import { readAdminSnapshot } from '../inspect-command.mjs';
 import { uuid, exists, privateJSON, controllerOrigin } from '../build-cache/paths.mjs';
 import { reviewSelection } from './selection.mjs';
 import { downloadReviewArtifact } from './artifact.mjs';
-import { artifactComparison } from './model.mjs';
+import { artifactComparison } from '@fogd/platform/artifact-comparison';
 
 export async function reviewCommand(args) {
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: { output: { type: 'string' } } });

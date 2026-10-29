@@ -63,5 +63,6 @@ credential identity.
 [Source integration evidence](evidence/operator-decision-history-source.json)
 covers durable intent, attributed outcomes, interrupted final persistence,
 restart without replay and a headless browser. It uses a controlled in-process
-backend and does not qualify native runtime behavior. Verified browser code/SQL
-comparison and its decision controls remain separate work under issue 7.
+backend and does not qualify native runtime behavior. The [verified browser comparison](browser-release-review.md) and contextual
+decision controls are implemented in source; new runtime qualification remains
+open under issue 7.

@@ -20,6 +20,7 @@
     "./runtime-identity-proof": "./src/runtime-identity-proof.mjs",
     "./runtime-policy": "./src/runtime-policy.mjs",
     "./route-snapshot": "./src/route-snapshot.mjs",
-    "./route-restoration": "./src/route-restoration.mjs"
+    "./route-restoration": "./src/route-restoration.mjs",
+    "./artifact-comparison": "./src/artifact-comparison.mjs"
   }
 }

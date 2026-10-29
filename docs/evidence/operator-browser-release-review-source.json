@@ -1,0 +1,300 @@
+{
+  "schema": 1,
+  "kind": "operator-browser-release-review-source",
+  "recordedAt": "2026-10-29T21:55:38.859840+00:00",
+  "sourceCommit": "398d97da16b904bc2fdbd99bd71fe48c91edb818",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "scope": "Verified browser artifact comparison and contextual decisions through actual source controller/HTTP and headless Chrome with a controlled in-process backend.",
+  "verification": {
+    "passed": true,
+    "archivedSourcesVerified": 1008,
+    "artifactDigestsIndependentlyRecomputed": 2,
+    "fileDifferenceHashesAndSizesVerified": 5,
+    "durableAuthenticatedDecisionsVerified": 8,
+    "browserApprovalBoundToDisplayedGuard": true,
+    "staleAndTamperedDecisionsHaveNoEffects": true,
+    "twoAppsRemainIsolated": true,
+    "failedActivationIsNotPresentedAsHealth": true,
+    "privateStagingRemoved": true,
+    "browserErrors": 0,
+    "scope": "Actual source controller and headless browser with a controlled in-process backend; no native runtime qualification."
+  },
+  "coreImplementationMatchesExecutedArchive": [
+    "packages/cli/src/review/command.mjs",
+    "packages/platform/package.json",
+    "packages/platform/src/decision-history.mjs",
+    "packages/platform/src/http.mjs",
+    "packages/platform/src/artifact-comparison.mjs",
+    "packages/platform/src/artifact-review.mjs",
+    "packages/platform/src/review-artifact.mjs",
+    "packages/platform/src/admin-review.mjs",
+    "packages/platform/src/admin-review-page.mjs",
+    "packages/platform/src/admin-approval-controls.mjs"
+  ],
+  "hostChecks": {
+    "canonicalTestsPassed": 2849,
+    "canonicalFailed": 0,
+    "canonicalSkipped": 0,
+    "canonicalCancelled": 0,
+    "canonicalDurationMs": 482650.191333,
+    "focusedTestsPassed": 88,
+    "additionalCorrectedRouteAndBrowserChecksPassed": 19,
+    "newBrowserReviewCases": 14,
+    "syntaxAndQualityPassed": true
+  },
+  "testNotes": [
+    "The first canonical run exposed one remaining dashboard-layout assertion. The corrected test preserves HTTP predecessor/control assertions and confirms noncanonical private fixtures cannot enter verified review. The complete rerun passes.",
+    "After the browser snapshot, the missing-secret test was strengthened to target the actual disabled approval button, and the legacy routing test was adapted to the new review location. Production modules are unchanged from source run 02."
+  ],
+  "independentReview": {
+    "provider": "Gemini 4 Argon (Medium)",
+    "status": "unverified",
+    "clientExitCode": 0,
+    "stdoutBytes": 0,
+    "reason": "The print client reached its eight-minute observation timeout with a turn reported in progress, returned no review text and supplied no recoverable result handle. No review approval is inferred.",
+    "firstAttempt": "Unsupported --effort flag refused before review; corrected to the Medium model without that flag."
+  },
+  "candidatePackaging": {
+    "passed": true,
+    "archivedSourcesVerified": 1008,
+    "programInputsRehashed": 117,
+    "identicalUncachedBuilds": 2,
+    "image": "sha256:6ec914e60968487c7af46763196f550539ed1ae69bb31616ef64b22bb6051ea9",
+    "parent": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+    "parentLayersPreserved": true,
+    "containersUnchanged": 8,
+    "volumesUnchanged": 11,
+    "retainedLaunchMarkerUnchanged": true,
+    "defaultContextUnchanged": true,
+    "admission": "candidate",
+    "nativeRebuild": false,
+    "nativeQualification": false
+  },
+  "reproduce": {
+    "browser": "/admin/review/SUBMISSION_ID",
+    "json": "/v1/deployments/SUBMISSION_ID/review",
+    "privateRoot": "~/.local/share/fogd-qualifications/browser-review-source-20261029-02",
+    "candidateRoot": "~/.local/share/fogd-qualifications/approval-runtime-v6-20261029-01"
+  },
+  "privateEvidenceFingerprints": {
+    "code.png": {
+      "sha256": "c7ea6770fcc9c88ad46a0a8890fefd74ec6776465dccb34996befa793a4e01b8",
+      "bytes": 95242
+    },
+    "comparison.html": {
+      "sha256": "9e9b5cd22ef72f402c132c2d999de41cb7e11a65c10f34ddc934dc8d05924667",
+      "bytes": 9626
+    },
+    "comparison.png": {
+      "sha256": "c61cc781fb275b9bcf085c3442551dd051966322f4982ed00ad78d0289ca26c6",
+      "bytes": 389689
+    },
+    "executed-source-inventory.json": {
+      "sha256": "e5b8b05d00754e94eee728da3adc478c1c0dbf74d33b39ad76bc091cbbf2347d",
+      "bytes": 118930
+    },
+    "failed.png": {
+      "sha256": "47f5ad4966404046ef574efa294733627c871e6ffea1eb71fa7f26531f8a2bc9",
+      "bytes": 317640
+    },
+    "fogd-audit-browser-review.py": {
+      "sha256": "51d65d792d06bf08778a8ef7e2eaffde03c91a26f44b30608395927c7e478a11",
+      "bytes": 3375
+    },
+    "fogd-browser-review-api-final.log": {
+      "sha256": "42b563e6294ed6ff9484c6883fced87d374678e2eb4dd8b802a6e3f900318290",
+      "bytes": 1601
+    },
+    "fogd-browser-review-argon-02.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "fogd-browser-review-argon-02.stderr": {
+      "sha256": "82a53025ecca52dfc9f9c8e3f9461e8e940e3b25e33e91fe10e8c3702e94a32c",
+      "bytes": 157
+    },
+    "fogd-browser-review-argon-prompt.md": {
+      "sha256": "f5195507c8eb364d23a25fbe488d901d2c8b17e4a79c7ce56b988a6c44155cff",
+      "bytes": 6057
+    },
+    "fogd-browser-review-argon.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "fogd-browser-review-argon.stderr": {
+      "sha256": "347f0df34cdd0bae39a6c4d7508f193228914b270abca848093c9a0b5cf7157a",
+      "bytes": 148
+    },
+    "fogd-browser-review-audit.log": {
+      "sha256": "c494a90970fe53e38c28ebaea6c40ef9bf9b6492031bf41d4383740b62c82aa5",
+      "bytes": 535
+    },
+    "fogd-browser-review-canonical-final.log": {
+      "sha256": "56a8a32737db24cc6a9b215a036034b2d1519dfa58b17a7488ab9607aa2cf726",
+      "bytes": 251630
+    },
+    "fogd-browser-review-canonical.log": {
+      "sha256": "c811cec87825bf861b7f88eb09db5b99b7ebe60c2745649a3972b582a8fb3e5b",
+      "bytes": 252392
+    },
+    "fogd-browser-review-cli-guide-writing.log": {
+      "sha256": "f57c746f2b10407d5434ad241364ad6f2cd7eab6117f26717a5290fc47ff0db5",
+      "bytes": 2302
+    },
+    "fogd-browser-review-existing-refined.log": {
+      "sha256": "22d0196fc8869e9a9d3dc970b8511fb8d5a5a0ce83c9c671409590d636d645e4",
+      "bytes": 9204
+    },
+    "fogd-browser-review-existing.log": {
+      "sha256": "11fa3913d2d7a6de3914a7072c4e480311b144147093d0f0a8b256b9d6930ba9",
+      "bytes": 6703
+    },
+    "fogd-browser-review-focused-accepted.log": {
+      "sha256": "300ef9239392acd4f8190abaf4fa8d82a94901e967f2cb056166deedeb759605",
+      "bytes": 8984
+    },
+    "fogd-browser-review-focused-current.log": {
+      "sha256": "7e3a95806a4254f763eaf8593f479e50c9ebc3f7f5d0e1b75a1d7815a39a794b",
+      "bytes": 8977
+    },
+    "fogd-browser-review-focused-final.log": {
+      "sha256": "e56385ad3554598892c7e9f3a359e52bdd9f636f5c28e3ebcf88fdb0e1a79c5e",
+      "bytes": 8685
+    },
+    "fogd-browser-review-focused.log": {
+      "sha256": "33ea9b08cf5f948d1dbc16fc1928177856416396de6cf9105a2bd98ef12b51fe",
+      "bytes": 8552
+    },
+    "fogd-browser-review-guide-writing-final.log": {
+      "sha256": "20e186587df321f2fe4c12de6e7218c146e6c8975c3cef207d99c3fb3e5d479a",
+      "bytes": 2936
+    },
+    "fogd-browser-review-guide-writing.log": {
+      "sha256": "712e643a75c52c9f61d121bf2a470157588cd5811658f1f529089f1a0b4c05cc",
+      "bytes": 2750
+    },
+    "fogd-browser-review-history-guide-writing.log": {
+      "sha256": "a95ef85ac238f2732a49dee9199d9a703d7fa7f648bb795fc2b705f56da495c4",
+      "bytes": 2441
+    },
+    "fogd-browser-review-quality-accepted.log": {
+      "sha256": "d8241be647421161f98b3959a573ab3f9c4544b7dfdcf356002ab9c1a245c1c8",
+      "bytes": 1670
+    },
+    "fogd-browser-review-quality-complete.log": {
+      "sha256": "1dd2559c5f558b94b678ae013433a5ea06cad5050a751c205ebd3aa7d5bf090b",
+      "bytes": 1670
+    },
+    "fogd-browser-review-quality-final.log": {
+      "sha256": "2b33d4c25a41636709a0f8e8762529b308444fb1c86bb3c68c50e515c9e47595",
+      "bytes": 1670
+    },
+    "fogd-browser-review-quality-refined.log": {
+      "sha256": "7ebd2184661fd8241c0789d48a0ad5f45c039e96d4c77be3ce12b6347fc2503a",
+      "bytes": 1670
+    },
+    "fogd-browser-review-quality-tests.log": {
+      "sha256": "a37c4583284c64c231ac5e29e678cf1a77981c60017a2c042bdb7e0663dfc16d",
+      "bytes": 1670
+    },
+    "fogd-browser-review-quality.log": {
+      "sha256": "a6804c0d819a83003d1390237e019fb81df5d46180cf06a3bb5a9969d7cd4107",
+      "bytes": 1876
+    },
+    "fogd-browser-review-route-regression.log": {
+      "sha256": "7f2f0564c7fc322abc9e6cc9bf1531da7fb37d83cd4cf138274c6cb66137ce41",
+      "bytes": 2059
+    },
+    "fogd-browser-review-self-review.md": {
+      "sha256": "deaf8ac8fcad8450a00327022d92870413ff579618c536b3989516bebf02dfa8",
+      "bytes": 6540
+    },
+    "fogd-browser-review-source-02.log": {
+      "sha256": "58b710629353b712620de346730018a6c9e5d55dfe5e1e7466128974dbe1c104",
+      "bytes": 115
+    },
+    "fogd-browser-review-source.log": {
+      "sha256": "58b710629353b712620de346730018a6c9e5d55dfe5e1e7466128974dbe1c104",
+      "bytes": 115
+    },
+    "fogd-browser-review-syntax-final.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-browser-review-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-browser-review-tracker-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "history.json": {
+      "sha256": "d5f1faf4ad21f351e52caebb0a9887235af044bea40caceab3e668da323c5e6e",
+      "bytes": 5015
+    },
+    "independent-audit.json": {
+      "sha256": "505cf6c4aeb722a4b02361364db2f4ea1741223c500d6f27bff478096b9ac2fc",
+      "bytes": 561
+    },
+    "initial-review.json": {
+      "sha256": "c82675bbc650fb77bfe7c4afe73e19d212130d4336294f8b26b06659dcc556e6",
+      "bytes": 3956
+    },
+    "result.json": {
+      "sha256": "367d335b2a7b8baa0a668f24b664e0fd1b6414bab71ece954874351cfb01de84",
+      "bytes": 120115
+    },
+    "runner.mjs": {
+      "sha256": "9c55cf57f6d1c5404c28bb68eb83cee9583b86734b6082e6a565549ab54f691e",
+      "bytes": 7884
+    },
+    "stale.png": {
+      "sha256": "1320968453f7395acb093c49951a71bd77932abbe266036246d6c7cbc32efc3d",
+      "bytes": 325663
+    }
+  },
+  "candidateEvidenceFingerprints": {
+    "after.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "before.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "candidate.json": {
+      "sha256": "b7cf92cb63638c3c27409fba813f57fe9d62ec7b9dc2a1378bc5f1b92537bd4f",
+      "bytes": 14188
+    },
+    "executed-source-inventory.json": {
+      "sha256": "ba08cbb48e1b37bfa348013ac7a21f23c4160a3ccf52c98eea9e253f16da2332",
+      "bytes": 118988
+    },
+    "independent-audit.json": {
+      "sha256": "8f44fb052533f90e8ad4607b20eab829d01aab7325bffa36a3e21e76b4b2efa4",
+      "bytes": 542
+    },
+    "result.json": {
+      "sha256": "69f7cf90da0e2e50d8fd1e4db88b12a3153023e6c67cde33c3b14f7b048e3ec3",
+      "bytes": 133998
+    },
+    "runner.mjs": {
+      "sha256": "1ca718c20e39c28b8ab0d46eec4dce1fdd324348fa1c2aa5087494c959840f6e",
+      "bytes": 5185
+    }
+  },
+  "limitations": [
+    "Source/browser/backend integration does not qualify native runtime behavior, SQL execution, density or throughput.",
+    "The private candidate is reproducible COPY-only packaging with unchanged native binary/dependency bytes; it has not passed application/native acceptance gates and is absent from the shipped catalog.",
+    "Frozen v5 images, source inventories and admission remain unchanged. The earlier authenticated artifact retains its prior UI.",
+    "Current platform source differs from the frozen family; ordinary export retains its source-drift refusal until a matching new family is qualified.",
+    "Authored artifacts may contain sensitive literals. Operator-supplied secret values and private execution directories are outside reviewed artifacts.",
+    "Artifact comparisons are not a live SQL schema, execution plan, application health proof, capacity reservation or global writer fence.",
+    "Review reads serialize with controller operations and repeatedly perform bounded validation/staging; native performance remains to be measured.",
+    "There are no existing user installations; retained stacks and controller fixtures are QA data.",
+    "Independent external review remains unverified; no approval is inferred from the client exit status."
+  ]
+}

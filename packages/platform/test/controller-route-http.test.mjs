@@ -1,3 +1,4 @@
+import { approvalButtons } from '../src/admin-approval-controls.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { server } from '../src/http.mjs';
@@ -60,7 +61,10 @@ test('pending HTTP withdrawal requires the exact app, intent and approval', asyn
 });
 test('approval page selects the failed non-queue HTTP predecessor for corrected approval', async t => {
   const f = await httpFixture(t), failed = await f.request(); f.fail('publish'); await f.c.mutate(failed.id, failed.digest, 'approve');
-  await f.request();
+  const corrected = await f.request();
   const response = await fetch(f.origin + '/', { headers: f.auth }); assert.equal(response.status, 200);
-  const page = await response.text(); assert.ok(page.includes(`data-replaces="${failed.id}"`)); assert.ok(page.includes('HTTP hold and applied migrations'));
+  assert.ok((await response.text()).includes(`/admin/review/${corrected.id}`));
+  // This private routing fixture deliberately omits canonical artifact fields.
+  assert.equal((await fetch(f.origin + '/admin/review/' + corrected.id, { headers: f.auth })).status, 409);
+  const page = approvalButtons(f.c, corrected, '0'.repeat(64)); assert.ok(page.includes(`data-replaces="${failed.id}"`)); assert.ok(page.includes('HTTP hold and applied migrations'));
 });

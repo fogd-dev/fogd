@@ -1,3 +1,4 @@
+import { verifyReviewedDecision } from './review-artifact.mjs';
 import { appName } from '@fogd/runtime/artifact';
 import { randomUUID, randomBytes, createHmac } from 'node:crypto';
 
@@ -19,9 +20,13 @@ export function decisionReviewToken(controller, id) {
   const request = controller.state.deployments[id];
   if (!request) throw new Error('Deployment/digest mismatch');
   const app = controller.state.apps[request.app] || null;
-  const revision = request.secretRevision || ((request.requiredSecrets || []).length ? controller.secrets.index[request.app]?.revision || null : null);
+  const revision = selectedSecretRevision(controller, request);
   if (!reviewKeys.has(controller)) reviewKeys.set(controller, randomBytes(32));
   return createHmac('sha256', reviewKeys.get(controller)).update(JSON.stringify({ request, app, active: controller.state.deployments[app?.active] || null, revision })).digest('hex');
+}
+
+export function selectedSecretRevision(controller, request) {
+  return (request.requiredSecrets || []).length ? request.secretRevision || controller.secrets.index[request.app]?.revision || null : null;
 }
 
 export function validateDecisionHistory(state) {
@@ -86,9 +91,10 @@ export async function authenticatedDecision(controller, id, digest, action, secr
   await controller.save();
   let effectsStarted = false;
   try {
-    if (entry.review && entry.review !== decisionReviewToken(controller, id)) {
+    if (entry.review && (entry.review !== decisionReviewToken(controller, id) || entry.secretRevision !== selectedSecretRevision(controller, controller.state.deployments[id]))) {
       const error = new Error('Review context changed; reload the exact submission before deciding'); error.code = 'DECISION_REVIEW_STALE'; throw error;
     }
+    if (entry.review) await verifyReviewedDecision(controller, id);
     const result = await perform(() => { effectsStarted = true; });
     entry.outcome = result.status === 'failed' ? 'activation-failed' : 'succeeded';
     entry.applicationStatus = result.status; entry.completedAt = new Date().toISOString();

@@ -1,3 +1,4 @@
+import { approvalButtons } from '../src/admin-approval-controls.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -86,11 +87,14 @@ test('resume requires the current approved identity and refuses holds, uncertain
   assert.equal((await f.post('resume', { deployment: f.active.id, digest: f.active.digest })).status, 400);
   assert.equal((await f.post('observe')).status, 200); assert.equal(f.c.state.apps.refresh.dispatch.hold, update.id);
   const alternate = await f.request();
-  const page = await (await fetch(f.origin + '/', { headers: f.auth })).text();
+  // Private activation fixtures omit canonical artifact metadata; keep the verified route closed.
+  assert.equal((await fetch(f.origin + '/admin/review/' + update.id, { headers: f.auth })).status, 409);
+  const page = approvalButtons(f.c, update, '0'.repeat(64));
+  const alternatePage = approvalButtons(f.c, alternate, '0'.repeat(64));
   assert.ok(page.includes(`data-id="${update.id}" data-digest="${update.digest}" data-action="approve"`));
   assert.ok(!page.includes(`data-id="${update.id}" data-digest="${update.digest}" data-action="reject"`));
-  assert.ok(!page.includes(`data-id="${alternate.id}" data-digest="${alternate.digest}" data-action="approve"`));
-  assert.ok(page.includes(`data-id="${alternate.id}" data-digest="${alternate.digest}" data-action="reject"`)); assert.match(page, /Wait for or retry that activation/);
+  assert.ok(!alternatePage.includes(`data-id="${alternate.id}" data-digest="${alternate.digest}" data-action="approve"`));
+  assert.ok(alternatePage.includes(`data-id="${alternate.id}" data-digest="${alternate.digest}" data-action="reject"`)); assert.match(alternatePage, /Wait for or retry that activation/);
   app.dispatchRecoveryError = 'Cron pause could not be confirmed; retry the held activation after restoring its fleet';
   const paused = await (await f.post('pause')).json();
   assert.equal(paused.hold, update.id); assert.equal(paused.desired, 'paused'); assert.equal(paused.recoveryError, null);

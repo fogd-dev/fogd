@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { artifactComparison } from '../src/review/model.mjs';
+import { artifactComparison } from '../src/artifact-comparison.mjs';
 
 test('declaration comparison identifies changed resource categories and secret names without treating retained names as changes', () => {
   const before = { files: [], release: { resources: { script: 'app', r2: [] }, requiredSecrets: ['KEPT', 'OLD'], migrations: [] } };
