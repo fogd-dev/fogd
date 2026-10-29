@@ -11,6 +11,29 @@ for trusted, reviewed application code. Compare fogd, celld, workerd, Void, and 
 Cloudflare in the [feature table](docs/features.md). Read [the report](docs/report.md) for tested
 behavior, limitations, and the decisions behind it.
 
+## Install or deploy
+
+Operators can receive a [versioned release](docs/releases.md) containing the
+qualified runtime images, matching operator CLI, dependencies and developer client.
+The receiving Docker engine must be Linux arm64 with the classic `overlay2` image
+store. Node.js 24.21.0 or later, Docker Compose, `tar` and `sha256sum` are prerequisites.
+Authenticate the release, import its images, then follow the
+[installation guide](docs/offline-installation.md#enroll-fresh-storage) for private
+credentials, TLS, the app URL and first exact approval. No source checkout or
+package installation is needed for the received operator.
+
+Release preparation is available locally; a public download service or registry
+release has not been published. Maintainers prepare a new artifact with:
+
+```sh
+node packages/cli/bin/fogd.js release export /releases/fogd-0.1.0-linux-arm64 \
+  --version 0.1.0 --runtime celld-durable-v5-linux-arm64
+```
+
+Developers receive the standalone client and an app-scoped credential from their
+operator. Application build dependencies remain separate prerequisites. See the
+[developer client guide](docs/developer-client.md).
+
 Owners can [inspect an application's recorded release and control state](docs/application-inspection.md)
 with `fogd admin inspect APP`; submitters can [diagnose their releases](docs/submission-status.md)
 with `fogd status ID`. Local Docker owners can [observe native replicas](docs/application-observation.md)
@@ -41,7 +64,7 @@ They include optional Filecoin storage and recovery as future work. See the
 [Claude/Gemini vision review response](docs/reviews/vision-response.md) for the review
 record and subsequent user input. These are proposals, not supported features.
 
-## Start from a clean checkout
+## Develop from source
 
 Requirements: Docker with Compose, Node.js 24.21 or newer, and pnpm 10.16.1.
 Dependencies stay in the workspace. No Cloudflare account, credentials, or API calls

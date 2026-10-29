@@ -8,6 +8,7 @@ import { isDeepStrictEqual } from 'node:util';
 
 export const transferFormat = 'fogd-runtime-transfer-v1';
 export const clientFormat = 'fogd-client-bundle-v1';
+export const releaseFormat = 'fogd-release-v1';
 export const ignoreFiles = ['LICENSE-MIT', 'README.md', 'index.d.ts', 'index.js', 'legacy.js', 'package.json'];
 export const clientModules = {
   cli: ['client/main', 'deploy-command', 'local', 'build', 'build-env', 'build-cache/lifecycle', 'build-cache/paths', 'deploy-capabilities', 'client-http', 'status-command', 'submitter-status',
@@ -22,8 +23,9 @@ export function clientProgramPaths() {
   })];
 }
 const profiles = {
-  [transferFormat]: { roots: ['images.tar', 'verify-transfer.mjs'] },
-  [clientFormat]: { roots: ['fogd.mjs', 'verify-client.mjs'] },
+  [transferFormat]: { roots: ['images.tar', 'verify-transfer.mjs'], prefixes: ['program/'], largeFiles: ['images.tar'] },
+  [clientFormat]: { roots: ['fogd.mjs', 'verify-client.mjs'], prefixes: ['program/'], largeFiles: [] },
+  [releaseFormat]: { roots: ['verify-release.mjs'], prefixes: ['operator/', 'client/'], largeFiles: ['operator/images.tar'] },
 };
 export async function ordinaryDirectory(path) {
   if (!(await lstat(path)).isDirectory()) throw new Error('Transfer paths must be ordinary directories');
@@ -62,6 +64,22 @@ export async function verifyClientFiles(directory, expectedManifest) {
   if (!isDeepStrictEqual(Object.keys(manifest).sort(), ['files', 'format']) || !isDeepStrictEqual(Object.keys(manifest.files).sort(), expected)) throw new Error('Invalid developer client inventory');
   return manifest;
 }
+export function validateReleaseVersion(version) {
+  if (typeof version !== 'string' || version.length > 48 || !/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version)) throw new Error('Release version must have three numeric components, for example 0.1.0');
+  return version;
+}
+export async function verifyReleaseFiles(directory, expectedManifest) {
+  const manifest = await verifyBundleFiles(directory, expectedManifest, releaseFormat);
+  if (!isDeepStrictEqual(Object.keys(manifest).sort(), ['clientManifestSha256', 'files', 'format', 'runtime', 'runtimeManifestSha256', 'version'])) throw new Error('Invalid release metadata');
+  validateReleaseVersion(manifest.version);
+  const operator = await verifyTransferFiles(join(directory, 'operator'), manifest.runtimeManifestSha256);
+  await verifyClientFiles(join(directory, 'client'), manifest.clientManifestSha256);
+  if (operator.runtime?.id !== manifest.runtime || operator.runtime?.admission !== 'qualified') throw new Error('Release runtime differs from its qualified operator bundle');
+  for (const path of ['operator/verify-transfer.mjs', 'client/verify-client.mjs']) {
+    if (!isDeepStrictEqual(manifest.files[path], manifest.files['verify-release.mjs'])) throw new Error('Release verifiers differ');
+  }
+  return manifest;
+}
 async function verifyBundleFiles(directory, expectedManifest, format) {
   if (!/^[a-f0-9]{64}$/.test(expectedManifest || '')) throw new Error('Transfer requires an independently retained manifest SHA256');
   await ordinaryDirectory(directory);
@@ -69,8 +87,8 @@ async function verifyBundleFiles(directory, expectedManifest, format) {
   if (!manifest || manifest.format !== format || !manifest.files || Array.isArray(manifest.files) || Object.keys(manifest.files).length > 2048) throw new Error('Unsupported transfer inventory');
   if (!isDeepStrictEqual(await transferFiles(directory), [...Object.keys(manifest.files), 'manifest.json'].sort())) throw new Error('Transfer has missing or unexpected members');
   for (const [path, expected] of Object.entries(manifest.files)) {
-    if (!safePath(path, profiles[format].roots) || !validTransferFingerprint(expected)) throw new Error('Invalid transfer member or fingerprint');
-    if (!isDeepStrictEqual(await transferFingerprint(join(directory, path), path === 'images.tar' ? 32 * 1024 ** 3 : 4 * 1024 ** 2), expected)) throw new Error('Transfer member checksum differs');
+    if (!safePath(path, profiles[format]) || !validTransferFingerprint(expected)) throw new Error('Invalid transfer member or fingerprint');
+    if (!isDeepStrictEqual(await transferFingerprint(join(directory, path), profiles[format].largeFiles.includes(path) ? 32 * 1024 ** 3 : 4 * 1024 ** 2), expected)) throw new Error('Transfer member checksum differs');
   }
   return manifest;
 }
@@ -90,9 +108,9 @@ export async function readTransferMetadata(path) {
     return parseTransferJson(await file.readFile('utf8'));
   } finally { await file.close(); }
 }
-function safePath(path, roots) {
+function safePath(path, profile) {
   return path.length <= 248 && /^[A-Za-z0-9@._/-]+$/.test(path) && path.split('/').every(part => part && part !== '.' && part !== '..') &&
-    (roots.includes(path) || path.startsWith('program/'));
+    (profile.roots.includes(path) || profile.prefixes.some(prefix => path.startsWith(prefix)));
 }
 async function readManifest(path, expected) {
   const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
@@ -109,8 +127,8 @@ async function readManifest(path, expected) {
 if (process.argv[1] && pathToFileURL(await realpath(process.argv[1])).href === import.meta.url) {
   try {
     if (process.argv.length !== 4) throw new Error('Usage: node verify-transfer.mjs DIRECTORY EXPECTED_MANIFEST_SHA256');
-    const verify = basename(process.argv[1]) === 'verify-client.mjs' ? verifyClientFiles : verifyTransferFiles;
+    const verify = { 'verify-client.mjs': verifyClientFiles, 'verify-release.mjs': verifyReleaseFiles }[basename(process.argv[1])] || verifyTransferFiles;
     const manifest = await verify(resolve(process.argv[2]), process.argv[3]);
-    console.log(JSON.stringify({ verifiedFiles: Object.keys(manifest.files).length, dockerContacted: false }));
+    console.log(JSON.stringify({ verifiedFiles: Object.keys(manifest.files).length, dockerContacted: false, ...(manifest.format === releaseFormat ? { version: manifest.version, runtime: manifest.runtime, runtimeManifestSha256: manifest.runtimeManifestSha256, clientManifestSha256: manifest.clientManifestSha256 } : {}) }));
   } catch (error) { console.error(`Transfer verification failed: ${error.message}`); process.exitCode = 1; }
 }

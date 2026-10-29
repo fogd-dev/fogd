@@ -11,6 +11,7 @@ import { checkCommand } from '../src/check/command.mjs';
 import { logsCommand } from '../src/logs/command.mjs';
 import { buildsCommand } from '../src/build-cache/command.mjs';
 import { runtimeCommand } from '../src/distribution/command.mjs';
+import { releaseCommand } from '../src/release/command.mjs';
 import { doctorCommand } from '../src/doctor/command.mjs';
 import { expansionCommand } from '../src/recovery/expand.mjs';
 import { dockerCommand } from '../src/compose/render.mjs';
@@ -43,6 +44,8 @@ try {
     await buildsCommand(args);
   } else if (command === 'runtime') {
     await runtimeCommand(args);
+  } else if (command === 'release') {
+    await releaseCommand(args);
   } else if (command === 'docker') {
     await dockerCommand(args);
   } else if (command === 'expand') {
@@ -114,6 +117,7 @@ try {
     console.log('fogd admin artifacts keep|unkeep ID SHA  Change explicit release retention');
     console.log('fogd admin artifacts prune PLAN_SHA | status | resume OPERATION_ID  Reclaim reviewed artifacts');
     console.log('fogd client export DIR     Export a standalone developer CLI without images\nfogd client verify DIR --expected-manifest SHA');
+    console.log('fogd release export DIR --version VERSION --runtime FAMILY  Prepare operator and client artifacts\nfogd release verify DIR --expected-manifest SHA  Verify both bundles without Docker');
     console.log('fogd observe APP --installation PROJECT  Observe native readiness locally\nfogd builds plan APP --output FILE  Review local build-copy retention\nfogd builds prune FILE --expected-plan SHA  Remove reviewed terminal copies\nfogd builds keep|unkeep APP BUILD_ID  Retain a local build explicitly\nfogd builds list APP        List local copies and unfinished pruning\nfogd builds resume APP BUILD_ID  Finish saved pruning without its plan file\nfogd runtime export DIR --runtime FAMILY  Export an offline runtime bundle\nfogd runtime verify DIR --runtime FAMILY --expected-manifest SHA\n                           Verify a trusted transfer without Docker\nfogd runtime import DIR --runtime FAMILY --expected-manifest SHA --output NEW\n                           Load images and install the matching operator CLI\nfogd docker render DIRECTORY --fleets 2|3  Write an unresolved Compose template\nfogd expand BUNDLE --fleets 3 --project NEW --output DIR\n                           Expand into a fresh stopped installation\nfogd retire BUNDLE --app NAME --digest SHA --project NEW --output DIR\n  [--stop-queued-work] [--stop-scheduled-work]\n  [--runtime FAMILY --expected-identity SHA256 [--network-plan FILE]]\n                           Retire into a fresh stopped Docker installation\nfogd kube render DIR --cert CERT --key KEY  Write experimental Kubernetes manifests\nfogd kube backup INSTALLATION BUNDLE --kubeconfig FILE --context NAME\nfogd kube restore BUNDLE --namespace NAME --output DIR --kubeconfig FILE --context NAME\nfogd backup DIRECTORY [--installation PROJECT]  Stop and snapshot\nfogd restore DIRECTORY --project NAME --output DIRECTORY\n  [--runtime FAMILY --expected-identity SHA256 [--network-plan FILE]]\n                           Restore onto fresh stopped volumes\nfogd tls import CERT KEY [--installation PROJECT]  Import while stopped\nfogd up [--shared] [--runtime FAMILY [--network-plan FILE]]  Start Docker\nfogd up --installation PROJECT  Start an enrolled installation without building\nfogd deploy [--name app]   Build and submit the current Void app for approval\nfogd status ID             Inspect a submission using its deploy credential\nfogd admin capacity        Inspect slot, pending, and artifact limits\nfogd admin inspect APP     Explain recorded app routing and activation state\nfogd admin delivery APP [status|observe|pause|resume ID SHA]  Control queue delivery\nfogd admin dispatch APP [status|observe|pause|resume ID SHA]  Control scheduled dispatch\nfogd admin dispatch APP recover ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss\n                           Acknowledge scheduled-work recovery\nfogd admin recover APP ID SHA RECOVERY_ID REVIEW_SHA --accept-possible-loss  Acknowledge recovery\nfogd admin list            List submissions and secret revision names\nfogd admin issue-token NAME APP[,APP]  Issue a scoped deploy token once\nfogd admin revoke-token ID  Revoke a deploy credential\nfogd admin secrets APP     Replace secrets from JSON on stdin\nfogd admin approve ID SHA [REV]  Approve exact artifact and secret revision\nfogd admin repair NEW_ID NEW_SHA HELD_ID HELD_SHA [REV]  Approve a corrected artifact\nfogd admin reject ID SHA   Reject an artifact\n\nSet FOGD_HOME to the fogd checkout when using the CLI elsewhere.');
   } else throw new Error(`Unknown command: ${command}`);
 } catch (error) { console.error(`fogd: ${error.message}`); process.exitCode = 1; }

@@ -11,12 +11,13 @@ import { loadRecoveryTarget } from '../cron-probe/selected/recovery-target.mjs';
 import { runtimePolicyIdentity } from '../../packages/platform/src/runtime-policy.mjs';
 import { receivedCommands } from './release-host.mjs';
 
-export async function receivedApplications(host, evidence, phase) {
-  const exported = await host.json(['client', 'export', join(host.output, 'client')]);
+export async function receivedApplications(host, evidence, phase, client) {
+  const exported = client || await host.json(['client', 'export', join(host.output, 'client')]);
+  const clientDirectory = exported.directory || join(host.output, 'client');
   const { verifyClientFiles } = await import(join(host.program, 'packages/cli/src/distribution/bootstrap.mjs'));
-  assert.equal(createHash('sha256').update(await readFile(join(host.output, 'client/verify-client.mjs'))).digest('hex'), exported.bootstrapSha256);
-  const verified = await verifyClientFiles(join(host.output, 'client'), exported.manifestSha256);
-  host.client = join(host.output, 'client/fogd.mjs'); evidence.client = { exported, verifiedFiles: Object.keys(verified.files).length };
+  assert.equal(createHash('sha256').update(await readFile(join(clientDirectory, 'verify-client.mjs'))).digest('hex'), exported.bootstrapSha256);
+  const verified = await verifyClientFiles(clientDirectory, exported.manifestSha256);
+  host.client = join(clientDirectory, 'fogd.mjs'); evidence.client = { exported, verifiedFiles: Object.keys(verified.files).length };
   phase('received-client-deployments'); const f = await writeFixtures(host), peer = f.submissions[1];
   assert.equal((await f.request('/api/write-probe', { app: 'peer' })).status, 404);
   const peerApproval = await host.json(['admin', 'approve', peer.id, peer.digest]); assert.equal(peerApproval.status, 'active');

@@ -17,9 +17,7 @@ const sourceRoot = fileURLToPath(new URL('../../../../', import.meta.url));
 export async function exportRuntimeBundle(directory, family, { candidateEnrollment = false } = {}) {
   const entry = requestedRuntime({ runtime: family, candidateEnrollment });
   if (!entry) throw new Error('Transfer requires an explicit shipped runtime family');
-  const output = await canonicalDestination(directory);
-  for (const path of ['packages', 'node_modules', 'docs']) if (inside(join(sourceRoot, path), output)) throw new Error('Transfer output must be outside public source directories');
-  await newDestination(output);
+  const output = await publicBundleDestination(directory);
   const inputs = await programInputs(sourceRoot), files = await programInventory(inputs);
   assertQualifiedSources(files, entry);
   const sourceEngine = await verifyTransferHost();
@@ -55,6 +53,12 @@ export async function importRuntimeBundle(directory, family, expected, destinati
     await copyProgram(inputs, output, manifest.files);
     return { directory: output, family, manifestSha256: expected, servicesStarted: false };
   });
+}
+export async function publicBundleDestination(directory) {
+  const output = await canonicalDestination(directory);
+  for (const path of ['packages', 'node_modules', 'docs']) if (inside(join(sourceRoot, path), output)) throw new Error('Transfer output must be outside public source directories');
+  await newDestination(output);
+  return output;
 }
 async function canonicalDestination(path) {
   const absolute = resolve(path);

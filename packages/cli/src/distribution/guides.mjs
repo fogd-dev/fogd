@@ -1,6 +1,7 @@
 // Explicit public operating instructions; never collect a documentation directory.
 // Historical reviews, private state and qualification receipts are not package inputs.
 export const operatorGuides = [
+  'docs/releases.md',
   'docs/operator-package.md',
   'docs/operator-guide.md',
   'docs/runtime-selection.md',

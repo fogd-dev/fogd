@@ -1,0 +1,218 @@
+{
+  "schema": 1,
+  "kind": "versioned-operator-and-client-release",
+  "sourceCommit": "d8dc688e9161d2b4f0bf3bb79ef6189b40caf3ec",
+  "executedTreeDirty": true,
+  "version": "0.1.0",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "qualifiedScope": "Versioned local artifact preparation, authentication and fresh installation on an empty Linux arm64 classic-overlay2 engine. No registry/npm/public download publication.",
+  "artifact": {
+    "directory": "~/.local/share/fogd-qualifications/release-v0.1.0-20261029-01/fogd-0.1.0-linux-arm64",
+    "version": "0.1.0",
+    "runtime": "celld-durable-v5-linux-arm64",
+    "manifestSha256": "919bad196f58667eea7241f525890a2a697e42bf9a362be1f79180f7bb881893",
+    "bootstrapSha256": "6cf656cef92c669f44609afa59a0d65a9c3d269a85292748ff52fd8cb979be39",
+    "runtimeManifestSha256": "84c6f976dccff33026a45a95f254f0b0cd78aad91279e13f4e0a98bad2204d2c",
+    "clientManifestSha256": "6c280971ca1ebbdae264874b327b98ac236597bc6272bd622f303235b115cc45",
+    "files": 469,
+    "bytes": 923007178,
+    "servicesStarted": false
+  },
+  "verification": {
+    "passed": true,
+    "version": "0.1.0",
+    "family": "celld-durable-v5-linux-arm64",
+    "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+    "releaseMembersRehashed": 469,
+    "operatorProgramFilesVerified": 428,
+    "includedClientFilesVerifiedAfterUse": 36,
+    "archivedSourcesRehashed": 982,
+    "emptyRecipientEngineId": "3fcf088e-b5b0-407a-b4b7-0993b4fccdc3",
+    "noApplicationImageSeed": true,
+    "exactRuntimeAndStorageImagesOnly": true,
+    "publicImportStartsNoServices": true,
+    "includedClientUsedForDeployment": true,
+    "freshTLSApprovalUpdatePendingIsolationAndRestart": true,
+    "retainedContainers": 8,
+    "retainedVolumes": 11,
+    "priorSourceContainersUnchanged": 627,
+    "priorSourceVolumesUnchanged": 849,
+    "registryOrNpmPublication": false,
+    "separatePhysicalMachine": false,
+    "files": {
+      "stores-audit.json": {
+        "bytes": 342,
+        "sha256": "cfd0390576a970289209e7d74e4ff9fc95041f1273e9dbe239f07e4ab6567622"
+      },
+      "stores-audit-source.mjs": {
+        "bytes": 4677,
+        "sha256": "4cacadf5c04fa4f28a88ccdc8e95f8a19c16eaecef14478af020644f15a73aae"
+      },
+      "independent-audit-source.py": {
+        "bytes": 5659,
+        "sha256": "511420c8bac0873e1736408c21a728c85d3118261c9fb16d0dbaa2a5c28d9aeb"
+      }
+    },
+    "installedRuntimePoliciesVerified": 1,
+    "privatePublicAuthorityPairsVerified": 1,
+    "canonicalApprovedArtifactsVerified": 2,
+    "canonicalPendingArtifactsVerified": 1,
+    "allMigrationSQLDigestsVerified": true,
+    "nativeLogHealthChecked": true,
+    "independentPrivateValuesChecked": 4
+  },
+  "observedRecipientResources": {
+    "virtualCPUs": 3,
+    "memoryGiB": 8,
+    "dataDiskGiB": 24,
+    "minimumOrCapacityGuarantee": false
+  },
+  "hostChecks": {
+    "focusedIntegrationTestsPassed": 9,
+    "canonicalTestsPassed": 2766,
+    "canonicalTestsFailed": 0,
+    "canonicalTestsCancelled": 0,
+    "canonicalTestsSkipped": 0,
+    "canonicalDurationMs": 599979.483292,
+    "syntaxPassed": true,
+    "qualityPassed": true,
+    "writingChecksPassed": true
+  },
+  "reproduce": {
+    "export": "node packages/cli/bin/fogd.js release export NEW_RELEASE_DIRECTORY --version 0.1.0 --runtime celld-durable-v5-linux-arm64",
+    "onboarding": "node scripts/operator/release-onboarding.mjs NEW_PRIVATE_OUTPUT --release RELEASE_DIRECTORY --expected-manifest INDEPENDENT_SHA --expected-bootstrap INDEPENDENT_VERIFIER_SHA",
+    "context": "fogd-release-recipient",
+    "engineId": "3fcf088e-b5b0-407a-b4b7-0993b4fccdc3",
+    "privateRoot": "~/.local/share/fogd-qualifications/release-v0.1.0-20261029-01"
+  },
+  "assistance": [
+    "A new Colima VM was configured with classic overlay2 before acquisition; its Docker image/container/volume inventories were empty.",
+    "The automated fixture creates a temporary self-signed localhost TLS keypair and supplies explicit CA trust without installing global trust.",
+    "Application author projects use prepared Void/Vite dependencies. No SDK image is loaded into the recipient engine.",
+    "The artifact retains its authenticated pre-qualification guide. Repository documentation subsequently adds observed resources, evidence links and wording clarifications; executable operator/client files match the tested artifact."
+  ],
+  "privateEvidenceFingerprints": {
+    "empty-engine-before.json": {
+      "sha256": "a0531cac491e2fd72b5fe32a9d1f501fb26ca659f2e5af85e740895baacffc81",
+      "bytes": 15897
+    },
+    "recipient-start.log": {
+      "sha256": "282dca85bb37489c7130872eba2290a65e4b0a0f96e70a439759171e6dce9397",
+      "bytes": 4804
+    },
+    "fogd-0.1.0-linux-arm64/manifest.json": {
+      "sha256": "919bad196f58667eea7241f525890a2a697e42bf9a362be1f79180f7bb881893",
+      "bytes": 83827
+    },
+    "onboarding/result.json": {
+      "sha256": "09bf07473d54e783fece8b4f5da5d926224a623551750a4b221510f85476bc1e",
+      "bytes": 144449
+    },
+    "onboarding/post-write-privacy.json": {
+      "sha256": "d9a55a3dfe91e2d4336a6ada34b2bd7d910c4e61c5829a97e67122f3d1739a45",
+      "bytes": 413
+    },
+    "onboarding/executed-source-inventory.json": {
+      "sha256": "69a297da3543d8881b414fc9830c9a29f7a39b658f1b7c84cfa367315e52fce3",
+      "bytes": 115275
+    },
+    "onboarding/runner.mjs": {
+      "sha256": "75b6da628e28563c1db11cd82a20952b950b5a52b58be550c4e1e42c540959a3",
+      "bytes": 5284
+    },
+    "onboarding/installation/runtime.log": {
+      "sha256": "989920cd950c19a477ce9d9d1ddc7503df803a623928db46d4a89be9780ad704",
+      "bytes": 146234
+    },
+    "onboarding/independent-audit.json": {
+      "sha256": "be2ff4a4cce42914fbaae51eaaf4c9018d183fd27a43e643a70dab7ac65f5520",
+      "bytes": 1549
+    },
+    "onboarding/independent-audit-source.py": {
+      "sha256": "511420c8bac0873e1736408c21a728c85d3118261c9fb16d0dbaa2a5c28d9aeb",
+      "bytes": 5659
+    },
+    "onboarding/stores-audit.json": {
+      "sha256": "cfd0390576a970289209e7d74e4ff9fc95041f1273e9dbe239f07e4ab6567622",
+      "bytes": 342
+    },
+    "onboarding/stores-audit-source.mjs": {
+      "sha256": "4cacadf5c04fa4f28a88ccdc8e95f8a19c16eaecef14478af020644f15a73aae",
+      "bytes": 4677
+    },
+    "fogd-release-export-01.log": {
+      "sha256": "4d3b1e8caa8018aa517e37804c53faa4de43964c8864e76d0f57d9d01d5242fc",
+      "bytes": 619
+    },
+    "fogd-release-onboarding-01.log": {
+      "sha256": "d7bf2dec227b51f2481e3a0b0a8a1dc7932dab8d95290d3625cae3cc91fd3ffc",
+      "bytes": 313
+    },
+    "fogd-release-onboarding-audit.log": {
+      "sha256": "6fa6310bae421c6359e4f55737e96a59b3f1b995a189563287f85214cb0f8312",
+      "bytes": 775
+    },
+    "fogd-release-onboarding-stores.log": {
+      "sha256": "263ad2fd13849c5e6e719c9f4a0719dcde763d1cc256f45227303183cff657dc",
+      "bytes": 264
+    },
+    "fogd-release-bundle-tests-01.log": {
+      "sha256": "c27250ac8826420c9069672981963018249c449ece407604383d97cb5b41fe52",
+      "bytes": 986
+    },
+    "fogd-release-quality-with-onboarding.log": {
+      "sha256": "f45c1fab14b06d5741e9d6720855edd3f3a2c773658b0740ae007d257782b607",
+      "bytes": 1676
+    },
+    "fogd-release-canonical-tests.log": {
+      "sha256": "859261d7d62c32864c84717420485492a354d78907df8b18d06e44caad440542",
+      "bytes": 243497
+    },
+    "fogd-release-syntax-with-onboarding.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-release-guide-writing-final.log": {
+      "sha256": "fb04a2d1a4afa3ec52068ff042b14fa931799da9d6bfbbf6d25d891fb43d4e2b",
+      "bytes": 2891
+    },
+    "fogd-release-readme-writing-final.log": {
+      "sha256": "2cbff19173275831c481bd1246a8578d2b934969b86ddd1225f15c0294b1f02a",
+      "bytes": 9138
+    },
+    "fogd-release-standards-review.md": {
+      "sha256": "ecd586d7d44f72734237768f65af601628005c98d91fe846d6a09af303b94bfe",
+      "bytes": 2731
+    },
+    "recipient-vm-resources.json": {
+      "sha256": "f526b408b58a0c3810d0ad16b5b206856adc2d16cba77a62b521fc3073158fc3",
+      "bytes": 168
+    },
+    "post-qualification-program-comparison.json": {
+      "sha256": "f4368808041ead8df6a426dee9987f29063905ccf7412d855cba693b268d0cea",
+      "bytes": 161
+    },
+    "fogd-versioned-release-roadmap-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    }
+  },
+  "limitations": [
+    "All engines run on the same physical Mac; no separate physical-machine qualification.",
+    "The source exporter has declared qualified images and operator dependency available. Recipients need only the verified release and documented host prerequisites.",
+    "No public download location, publisher signature, registry/npm publication or autonomous dependency installation is claimed. Independently trusted manifest and verifier hashes are required.",
+    "Same-family fresh installation only. Cross-family migration remains refused; existing QA data remains retained.",
+    "No per-worker CPU quota, exactly once external effects or broader density/performance claim."
+  ],
+  "recordedAt": "2026-10-29T18:22:04.869404+00:00",
+  "passed": true,
+  "postQualificationProgramComparison": {
+    "currentProgramMembers": 428,
+    "identicalMembers": 427,
+    "documentationChangesOnly": [
+      "program/docs/releases.md"
+    ],
+    "executableDifferences": []
+  }
+}

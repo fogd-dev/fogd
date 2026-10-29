@@ -161,7 +161,10 @@ unchanged ledgers during confirmed pause. The first timing-window failure remain
 unaccepted and retained. The [final v5 acceptance audit](operator-v5-acceptance.md)
 now qualifies explicit fresh-install selection and verifies the actual public
 catalog through transfer, deployment, update, restart and fresh recovery. Default
-cron admission remains closed; distribution and broader preflight remain open. A
+cron admission remains closed. [Versioned release artifacts](releases.md) now
+combine the operator/runtime bundle and standalone client, with verified
+[empty-engine onboarding](evidence/operator-versioned-release.json). Public
+publication and broader preflight remain open. A
 [native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
 verifies failure after application SQL but before migration-name bookkeeping.
 Two failed exact approvals leave no new row or ledger entry; removing the SQL
