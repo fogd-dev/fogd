@@ -2,15 +2,17 @@ import { runtimeFamily, assertRuntimeHost } from '../runtime/catalog.mjs';
 import { assertTransferImageStore } from '../distribution/host.mjs';
 import { docker } from '../recovery/docker.mjs';
 import { finding, reportStatus } from './report.mjs';
+import { inspectClientTools } from './client-tools.mjs';
 
 const options = { timeoutMs: 15000, maxOutputBytes: 1024 * 1024 };
 
-// Metadata only: no image execution, pulls, containers, mounts or host changes.
-export async function inspectHost(family, run = docker) {
+// Docker metadata and bounded client-tool probes; no image execution, pulls,
+// containers, mounts or host changes.
+export async function inspectHost(family, run = docker, clientTools = {}) {
   const entry = runtimeFamily(family, 'enrolled');
   const findings = [finding('admission', entry.admission === 'qualified' ? 'supported' : 'unsupported',
     entry.admission === 'qualified' ? 'Family permits ordinary enrollment.' : 'Candidate family: ordinary enrollment is closed.',
-    'Keep runtime admission gates in force; diagnosis does not enroll a runtime.')];
+    'Keep runtime admission gates in force; diagnosis does not enroll a runtime.'), ...await inspectClientTools(clientTools)];
   let host;
   try {
     host = JSON.parse(await run(['info', '--format', '{{json .}}'], options));

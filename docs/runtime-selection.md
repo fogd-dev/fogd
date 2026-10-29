@@ -42,19 +42,22 @@ node packages/cli/bin/fogd.js doctor --runtime celld-cron-v2-linux-arm64
 node packages/cli/bin/fogd.js doctor --runtime celld-cron-v2-linux-arm64 --json
 ```
 
-This host metadata check reports Docker access, runtime architecture,
-offline-transfer image-store qualification, Compose availability, and exact cached
-image IDs and platforms. `supported` applies only to the named check. It does not
+This host check reports Docker access, runtime architecture,
+offline-transfer image-store qualification, Compose availability and exact cached
+image IDs and platforms. It also checks the operator client Node version against
+the declared minimum, recognizes GNU/BSD tar version output, and verifies
+`sha256sum` using known stdin. These client-tool checks run on the machine
+executing the CLI, separately from the Linux Docker engine and its pinned Node. `supported` applies only to the named check. It does not
 verify image programs or source bytes, installation ports/subnets, backing storage,
 TLS, or application compatibility. These appear as `unverified` findings with
 next steps. Startup and deployment retain their authoritative checks.
 
 The command exits with code `1` when an observed condition is unsupported and `2`
-when readiness remains unverified. This metadata-only scope never reports full
+when readiness remains unverified. This scope never reports full
 installation readiness or exit code `0`. A failed image inspection cannot
 distinguish a missing image from access failure. Diagnostics exclude raw Docker
-output and private host configuration. The selected Docker context is inherited;
-no context is switched, image pulled, resource created, or capacity reserved.
+or client-tool output and private host configuration. The selected Docker context is inherited;
+no context is switched, image pulled, Docker resource created or capacity reserved.
 Candidate families can be diagnosed but remain closed to ordinary enrollment.
 For an enrolled durable-routing installation, use
 [`doctor --installation PROJECT`](installation-preflight.md) to inspect sealed

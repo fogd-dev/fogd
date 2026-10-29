@@ -19,6 +19,7 @@ command; existing artifacts keep their authenticated original CLI features.
 
 | Finding | What it establishes | What remains unverified |
 | --- | --- | --- |
+| `client-node`, `client-tar`, `client-checksum` | Client Node meets the declared minimum; tar has a recognized GNU/BSD banner; sha256sum hashes known stdin correctly | Full archive compatibility, publisher identity or installation readiness |
 | `installation-policy` | Saved configuration, verified cached programs and installed policy agree | Permission to start, app health or available capacity |
 | `lifecycle-fence` | Whether a retained launch/shutdown marker was observed | The outcome of an interrupted operation; doctor never clears it |
 | `network-and-ports` | Owned networks, subnets, attachments and published-port declarations match sealed containers | Non-Docker listeners, external routes, firewalls and client reachability; stopped ports are not reserved |
@@ -41,7 +42,13 @@ complete-readiness verdict or reserve resources.
 
 ## Read-only scope
 
-Inspection uses short-lived restricted helpers from cached verified images.
+Client prerequisite probes use bounded `tar --version` output and hash known
+stdin without touching installation files. Unknown or failing tools stay
+unverified; raw process output is omitted. The
+[client-tool evidence](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-doctor-client-tools.json)
+records the real and negative cases.
+
+Installation inspection uses short-lived restricted helpers from cached verified images.
 Application services are not started, images are not pulled and installation
 configuration is not rewritten. Filesystem sampling and TLS reads use existing
 read-only backing-path bind mounts, so a missing source cannot create a new named

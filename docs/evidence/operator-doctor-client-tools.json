@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "kind": "operator-doctor-client-tools",
+  "recordedAt": "2026-10-29T19:26:32.232664+00:00",
+  "sourceCommit": "9acf75201c919d10be87258cbe73bcdab5508aea",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Client prerequisites observed by the local operator doctor; no runtime image, installation configuration or admission changes.",
+  "verification": {
+    "passed": true,
+    "archivedSourceFilesVerified": 989,
+    "nativeCasesVerified": 4,
+    "toolAndDockerCallsInspected": 22,
+    "dockerOperationsMetadataOnly": true,
+    "clientToolsUseOnlyVersionAndKnownStdin": true,
+    "wrongChecksumAndUnknownTarStayUnverified": true,
+    "missingToolsStayUnverified": true,
+    "rawToolDiagnosticsAbsent": true,
+    "containersUnchanged": 8,
+    "volumesUnchanged": 11,
+    "retainedLaunchMarkerUnchanged": true,
+    "explicitDockerContext": "fogd-release-recipient",
+    "defaultDockerContext": "desktop-linux",
+    "driverContextLabelNote": "The driver field records its explicit context. This audit checks the default context independently."
+  },
+  "coreImplementationMatchesExecutedArchive": [
+    "packages/cli/src/doctor/client-tools.mjs",
+    "packages/cli/src/doctor/host.mjs",
+    "packages/cli/test/doctor-client-tools.test.mjs",
+    "packages/cli/test/doctor-host.test.mjs"
+  ],
+  "hostChecks": {
+    "canonicalTestsPassed": 2789,
+    "canonicalFailed": 0,
+    "canonicalSkipped": 0,
+    "canonicalCancelled": 0,
+    "canonicalDurationMs": 469266.149083,
+    "focusedTestsPassed": 20,
+    "syntaxAndQualityPassed": true,
+    "baselineAndThreeRejectedMutants": {
+      "passed": true,
+      "results": [
+        {
+          "variant": "baseline",
+          "exitCode": 0,
+          "changed": false
+        },
+        {
+          "variant": "accept-any-checksum",
+          "exitCode": 1,
+          "changed": true
+        },
+        {
+          "variant": "ignore-node-minimum",
+          "exitCode": 1,
+          "changed": true
+        },
+        {
+          "variant": "accept-any-tar-banner",
+          "exitCode": 1,
+          "changed": true
+        }
+      ]
+    }
+  },
+  "reproduce": {
+    "command": "node packages/cli/bin/fogd.js doctor --runtime celld-durable-v5-linux-arm64 --json",
+    "privateRoot": "~/.local/share/fogd-qualifications/doctor-client-tools-v5-20261029-01",
+    "cases": [
+      "actual",
+      "wrong-checksum",
+      "unknown-tar",
+      "missing-tools"
+    ]
+  },
+  "privateEvidenceFingerprints": {
+    "actual.after.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "actual.before.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "actual.calls.jsonl": {
+      "sha256": "8e9d776213321b8f2246014d4b0009723047875ecea7abdbe1f9f6d3434c0052",
+      "bytes": 420
+    },
+    "actual.json": {
+      "sha256": "c8a2f9b579130e527cde9dfd17759031c9ede12273d867f8498415089004e918",
+      "bytes": 4161
+    },
+    "actual.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "executed-source-inventory.json": {
+      "sha256": "196db4b1daab9a011f616ff7d640b2351e722c00eaa6cc84282f4d466c2dc5d0",
+      "bytes": 115894
+    },
+    "fogd-audit-doctor-client-tools.py": {
+      "sha256": "72b2dd8af16cce800db23bca451a1bb33083143e28484744156b4b7a0a424f23",
+      "bytes": 2800
+    },
+    "fogd-doctor-client-tools-audit.log": {
+      "sha256": "77167c30a301d4ae82118e37279ddd1c2b7a2a6fd899ca8046c045c99cff3380",
+      "bytes": 630
+    },
+    "fogd-doctor-client-tools-canonical.log": {
+      "sha256": "1b670f3819e34d5759c785211274b0ed6dc7367076515777216f0ac5b9ab5ff8",
+      "bytes": 245430
+    },
+    "fogd-doctor-client-tools-existing.log": {
+      "sha256": "3219097b35352b5e32fe7061248f534d6869ae5d65a452d2b13441c86ab0d547",
+      "bytes": 929
+    },
+    "fogd-doctor-client-tools-focused-final.log": {
+      "sha256": "625ecf63bee2ac5b9da0608c7449bcb83ef03be300a3883353c4c9c38b9c3ba8",
+      "bytes": 1886
+    },
+    "fogd-doctor-client-tools-focused.log": {
+      "sha256": "47812953cb82e191286c594ee665cb5ff06984f6a02b6ac947885f64abb491e3",
+      "bytes": 1890
+    },
+    "fogd-doctor-client-tools-installation-writing.log": {
+      "sha256": "950828ce243f1c049277d1ac85faa045a0a7cf31125595f929e197034e5161c2",
+      "bytes": 3413
+    },
+    "fogd-doctor-client-tools-native.log": {
+      "sha256": "d5a47bb57ccd14bc3f631bb3dd0b96707d39442ed2f0075148dc0aed13c0add0",
+      "bytes": 68
+    },
+    "fogd-doctor-client-tools-quality.log": {
+      "sha256": "d9074bf1148446ebdae7a15b1090474bc004abaf84d605daaeb4d58d4a3cb542",
+      "bytes": 1676
+    },
+    "fogd-doctor-client-tools-review.md": {
+      "sha256": "27761dff6fa9d5f3e1c3391114de0495e7121adaafa2d1537be350d7e0d48cf7",
+      "bytes": 2176
+    },
+    "fogd-doctor-client-tools-runtime-writing.log": {
+      "sha256": "eb65484b9b0195203b8d2c5213d4e3c602ac84f474f781be9825f1baaec7934e",
+      "bytes": 11567
+    },
+    "fogd-doctor-client-tools-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "independent-audit.json": {
+      "sha256": "40b3b824d59b271cafc01bfbadd7a41e54152f12eba5004f20498f6942caabd9",
+      "bytes": 662
+    },
+    "missing-tools.after.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "missing-tools.before.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "missing-tools.calls.jsonl": {
+      "sha256": "85ba617e94a09e935b162ccd51b18db7a130ab9384a7b502435d5967c974fe03",
+      "bytes": 353
+    },
+    "missing-tools.json": {
+      "sha256": "e321135664b4f8d6eb83b485c9244ebbd9f278206387e8fe6df435b01071b1cd",
+      "bytes": 4212
+    },
+    "missing-tools.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "mutation-results.json": {
+      "sha256": "533dc4e8d56110f097bec6f3f8fd34a69aa1956190a364094d386ee825e25dab",
+      "bytes": 416
+    },
+    "result.json": {
+      "sha256": "8bb4d678ee6e31896909fef54c582418e0557aaefc7018ce5c734ec0a0242a12",
+      "bytes": 118800
+    },
+    "runner.mjs": {
+      "sha256": "1c78d5ae9c53e34e27e2d4fc566675854cb03c0ac256a7d09f5f2c3df387135e",
+      "bytes": 4525
+    },
+    "unknown-tar.after.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "unknown-tar.before.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "unknown-tar.calls.jsonl": {
+      "sha256": "a15671df5f478df2d2aaaa9ed6d7fc03265e4369d3ba301031a787695e84c173",
+      "bytes": 420
+    },
+    "unknown-tar.json": {
+      "sha256": "8eca236b4bdb58834ecbb95b0a29d284fa98c964839d38b810c1d4a13da12e26",
+      "bytes": 4168
+    },
+    "unknown-tar.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "wrong-checksum.after.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "wrong-checksum.before.json": {
+      "sha256": "e656a0de889be0a47a7dac52c5ce3c62c764d8b8c20d02225356e914b7b9848d",
+      "bytes": 102247
+    },
+    "wrong-checksum.calls.jsonl": {
+      "sha256": "8e9d776213321b8f2246014d4b0009723047875ecea7abdbe1f9f6d3434c0052",
+      "bytes": 420
+    },
+    "wrong-checksum.json": {
+      "sha256": "aa792878d56f9e242f18c9dbf1d6e0aa725d9465accf5eed6f10e10376fd7554",
+      "bytes": 4205
+    },
+    "wrong-checksum.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "limitations": [
+    "There are no existing user installations. Retained containers and volumes are development/qualification fixtures.",
+    "The Node finding concerns the CLI process, separately from pinned runtime Node.",
+    "A recognized tar banner does not establish all archive operations. A known stdin checksum does not establish publisher identity.",
+    "Tools come from the trusted operator PATH; raw outputs and errors are omitted from reports.",
+    "No complete readiness, available capacity, port reservation, TLS hostname or client trust is established.",
+    "The frozen 0.1.0 artifact predates this source CLI increment.",
+    "All qualification engines run on one physical Mac."
+  ]
+}

@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { inspectHost } from '../src/doctor/host.mjs';
+import { inspectHost as inspectHostWithTools } from '../src/doctor/host.mjs';
 import { formatHostReport } from '../src/doctor/command.mjs';
 import { runtimeFamilies } from '../src/runtime/catalog.mjs';
 
+const tool = async name => name === 'tar' ? 'bsdtar 3.5.3 - libarchive 3.5.3' : 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad  -\n';
+const inspectHost = (family, run) => inspectHostWithTools(family, run, { run: tool, nodeVersion: '24.21.0' });
 const qualified = runtimeFamilies().find(entry => entry.admission === 'qualified');
 const host = { OSType: 'linux', Architecture: 'aarch64', Driver: 'overlay2', DriverStatus: [] };
 function engine(entry = qualified, changes = {}, calls = []) {
@@ -23,7 +25,7 @@ test('host diagnosis uses metadata only and never declares an installation ready
   assert.equal(report.capacityReservation, 'none');
   assert.equal(report.readOnly, true);
   const checks = statuses(report);
-  for (const id of ['docker', 'admission', 'architecture', 'image-store', 'compose', 'runtime-image', 'storage-image']) assert.equal(checks[id], 'supported', id);
+  for (const id of ['client-node', 'client-tar', 'client-checksum', 'docker', 'admission', 'architecture', 'image-store', 'compose', 'runtime-image', 'storage-image']) assert.equal(checks[id], 'supported', id);
   for (const id of ['program-integrity', 'network', 'storage-space', 'tls', 'application']) assert.equal(checks[id], 'unverified', id);
   assert.deepEqual(calls, [
     ['info', '--format', '{{json .}}'], ['compose', 'version', '--short'],
