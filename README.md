@@ -412,7 +412,10 @@ Scheduled work is qualified on the cached `celld-cron-v2-linux-arm64` runtime fo
 local Linux arm64 Docker with two application fleets. Select the family explicitly
 through the [runtime installation guide](docs/runtime-selection.md); default
 installations keep cron admission closed. The [acceptance audit](docs/m11c-acceptance.md)
-records the nine gates and their limits.
+records the nine gates and their limits. The source-built
+`celld-durable-v5-linux-arm64` family also qualifies explicit fresh installations
+with durable HTTP routing and independent background controls; its
+[acceptance audit](docs/operator-v5-acceptance.md) records the release boundary.
 
 The [refresh app](examples/refresh/README.md) runs while its page is closed and
 shows saved results, failures, and unfinished work. App-scoped deployment and exact
@@ -425,5 +428,5 @@ due/retry/older recovery, surviving apps, fresh capacity after retirement, and t
 ordinary public CLI selectors. It does not qualify other architectures, three-fleet
 or Kubernetes scheduled recovery, Workflows, general Durable Object alarms, or
 per-worker CPU limits. Cached runtime availability and build-provenance limits are
-explicit in the installation guide. Transfer has same-engine evidence only; a
-second-machine installation remains unqualified.
+explicit in the installation guide. V5 transfer, received-client deployment and recovery pass on separate Docker
+engines on one physical host; a separate-machine installation remains unqualified.

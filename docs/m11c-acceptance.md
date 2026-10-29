@@ -3,7 +3,9 @@
 M11c is qualified for trusted, reviewed Void applications on
 `celld-cron-v2-linux-arm64`: local Linux arm64 Docker, two application fleets with
 two native nodes each, MinIO, and workerd ingress. The public release check uses HTTPS. Default installations and
-other runtime families do not gain scheduled admission.
+this audit does not grant admission to other families. The
+[v5 acceptance audit](operator-v5-acceptance.md) independently qualifies the
+source-built durable-routing family.
 
 An operator can approve unattended periodic work, inspect desired and observed
 dispatch state, pause new callbacks, and recover held work before separately

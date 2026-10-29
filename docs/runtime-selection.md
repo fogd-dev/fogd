@@ -10,13 +10,14 @@ The CLI requires the exact cached runtime and storage images listed in the
 replacement when those images are missing. Runtime distribution and the cached
 build's provenance limits are described below.
 
-The fresh-install release candidate is `celld-durable-v5-linux-arm64`. Its
+The fresh-install durable-routing family is `celld-durable-v5-linux-arm64`. Its
 [source-build receipt](evidence/operator-durable-v5-source-build.json) records an
 uncached native build, nine passing native tests, strict Clippy and checked
 production fingerprints. The receipt distinguishes the builder's OCI index from
 the classic image-store configuration digest used by installation. Those identities
 are linked through the verified archive descriptors and loaded root filesystem.
-Ordinary enrollment remains closed while full-family qualification is incomplete.
+Explicit ordinary enrollment is qualified within the [v5 acceptance boundary](operator-v5-acceptance.md).
+Default installations keep cron admission closed.
 
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller
@@ -101,7 +102,7 @@ unqualified entry; all image and topology checks remain in force.
 Enroll a fresh Compose project with the cached family:
 
 ```sh
-fogd up --shared --runtime celld-cron-v2-linux-arm64
+fogd up --shared --runtime celld-durable-v5-linux-arm64
 ```
 
 Fresh enrollment accepts `--network-plan FILE` with the same bounded private-subnet

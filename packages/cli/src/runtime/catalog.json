@@ -448,7 +448,7 @@
   {
     "schema": 2,
     "id": "celld-durable-v5-linux-arm64",
-    "admission": "candidate",
+    "admission": "qualified",
     "os": "linux",
     "architecture": "arm64",
     "parentImage": "sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0",

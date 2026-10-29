@@ -145,5 +145,8 @@ The [v5 proposed-release rehearsal](evidence/operator-v5-release-rehearsal.json)
 uses the public commands with a private copy of the proposed catalog admission
 change. Received operator/client deployment, an exact update, pending-code
 isolation, restart, stopped backup and fresh recovery pass on another existing
-engine on the same physical host. The repository catalog remains closed; this
-rehearsal is not an actual released-family or separate-machine installation.
+engine on the same physical host. That rehearsal used a private catalog. The
+[actual v5 admission check](operator-v5-acceptance.md) verifies the repository
+catalog without modification through public transfer, received-client update,
+restart, stopped backup and fresh recovery. Both checks use separate engines on
+the same physical machine; separate-machine installation remains unqualified.

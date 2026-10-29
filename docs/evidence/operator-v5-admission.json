@@ -1,0 +1,411 @@
+{
+  "schema": 1,
+  "kind": "operator-v5-bounded-admission",
+  "recordedAt": "2026-10-29T17:58:52.846327+00:00",
+  "sourceCommit": "f1967676e4667023a3b66a44f134719bb1c09b3c",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "ordinaryAdmission": "qualified-explicit-selection",
+  "defaultCronAdmission": "closed",
+  "qualified": true,
+  "fullFamilyQualification": true,
+  "scope": "Fresh local Linux arm64 Docker, two application fleets with two native nodes each, MinIO and workerd ingress. Same-family stopped recovery. All qualification stacks are QA fixtures.",
+  "eligibility": {
+    "passed": true,
+    "sourceCommit": "f1967676e4667023a3b66a44f134719bb1c09b3c",
+    "decision": "Eligible for explicit v5 ordinary admission. Verify actual qualified catalog public export/import/install/update/restart/recovery before declaring released-family installation complete.",
+    "family": "celld-durable-v5-linux-arm64",
+    "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+    "defaultCronAdmissionUnchanged": true,
+    "oldCatalogPinsUnchangedRequired": true,
+    "gates": [
+      {
+        "gate": "release.build",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-durable-v5-source-build.json",
+          "operator-v5-clean-recipe-evidence-map.json"
+        ]
+      },
+      {
+        "gate": "release.install",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-v5-release-rehearsal.json",
+          "operator-v5-received-installation.json"
+        ]
+      },
+      {
+        "gate": "release.serving",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-write-serving-v5.json",
+          "operator-v5-publication-evidence-map.json",
+          "operator-v5-retirement-evidence-map.json"
+        ]
+      },
+      {
+        "gate": "release.diagnostics",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-diagnostics-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.1",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-cron-activation-v5.json",
+          "operator-native-cron-activation-matrix-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.2",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-cron-activation-matrix-v5.json",
+          "operator-native-migration-retry-v5.json",
+          "operator-native-migration-rollback-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.3",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-unreachable-pause-v5.json",
+          "operator-native-compatible-replacement-v5.json",
+          "operator-native-background-recovery-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.4",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-compatible-replacement-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.5",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-background-v5.json",
+          "operator-native-background-failures-v5.json",
+          "operator-native-cron-terminal-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.6",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-diagnostics-v5.json",
+          "operator-native-compatible-replacement-v5.json"
+        ]
+      },
+      {
+        "gate": "m11c.7",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-background-full-recovery-v5.json",
+          "operator-v5-release-rehearsal.json"
+        ]
+      },
+      {
+        "gate": "m11c.8",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-background-retirement-v5.json",
+          "operator-native-background-retirement-dual-v5.json",
+          "operator-v5-retirement-evidence-map.json",
+          "operator-v5-family-refusal.json"
+        ]
+      },
+      {
+        "gate": "m11c.9",
+        "status": "bounded evidence accepted",
+        "receipts": [
+          "operator-native-offline-builds-v5.json",
+          "operator-native-compatible-replacement-v5.json"
+        ]
+      }
+    ],
+    "currentProgramPinsVerified": 109,
+    "rawInputAudit": {
+      "receipts": 25,
+      "membersRehashed": 329,
+      "archivedSourcesRehashed": 17359
+    },
+    "boundaries": [
+      "Fresh local Linux arm64 Docker installation; two application fleets with two native nodes each.",
+      "Same-family stopped recovery; no cross-family migration.",
+      "Private proposed-release installation on another existing Docker engine on the same physical Mac, not another physical host.",
+      "Recorded evidence maps reuse unchanged clean-build machinery, route publication and stopped-finalizer mechanisms; original missing temporary activation harnesses and no fresh v5 builder remain disclosed.",
+      "No per-worker CPU quota, exactly-once external effects, broad density, combined cron/queue app, Workflows, general DO alarms, expansion or Kubernetes scheduled admission.",
+      "No old kernel/syscall tracer executed."
+    ]
+  },
+  "actualReleasedCatalog": true,
+  "verification": {
+    "passed": true,
+    "recordedAt": "2026-10-29T17:58:52.846327+00:00",
+    "sourceCommit": "f1967676e4667023a3b66a44f134719bb1c09b3c",
+    "archivedExecutedSourcesVerified": 978,
+    "receivedProgramFilesVerified": 425,
+    "standaloneClientFilesVerifiedAfterUse": 36,
+    "transferMembersRehashed": 427,
+    "snapshotMembersRehashed": 10,
+    "actualCatalogUnmodifiedInTransferredProgram": true,
+    "onlyV5AdmissionChangedInMain": true,
+    "actualPublicCommandPathVerified": true,
+    "newSQLMigrationCommittedOnce": true,
+    "inertPendingCodeAcrossRestartAndRecovery": true,
+    "acknowledgedDataRetained": true,
+    "engines": [
+      {
+        "context": "fogd-bundle-recipient",
+        "id": "2a142e44-1892-474f-b159-e319964a6c59",
+        "priorContainersUnchanged": 627,
+        "priorVolumesRetained": 849
+      },
+      {
+        "context": "fogd-independent-install",
+        "id": "043a9734-e319-4236-861d-1dbb7108b664",
+        "priorContainersUnchanged": 197,
+        "priorVolumesRetained": 273
+      }
+    ],
+    "ownedContainersStoppedAndRetained": 16,
+    "freshVolumesRetained": 22,
+    "actualReleasedFamilyAcceptance": true,
+    "fullFamilyQualification": true,
+    "files": {
+      "result.json": {
+        "bytes": 151679,
+        "sha256": "6b4624fcbf6660d0e4f6417b6d613c733ea1a2d74622df01add366382ff1a8e1"
+      },
+      "post-write-privacy.json": {
+        "bytes": 651,
+        "sha256": "63c768d39f1c11b0687b5f65df7afe4bbcc00665d71220263927a12d8781bbeb"
+      },
+      "executed-source-inventory.json": {
+        "bytes": 114532,
+        "sha256": "3be0fedb2dc7738940d4384c58bf9854410624cfd28aa8cdb86c549c7cbd040c"
+      },
+      "runner.mjs": {
+        "bytes": 6853,
+        "sha256": "35027634b49bc66da4e75722176ec3c515e531e19e573698e4aabd039cc22d19"
+      },
+      "proposal-inventory.json": {
+        "bytes": 72684,
+        "sha256": "08032c2f55971d8a6575231b8536f6943718c58ac456b0b0347b8eed12e52560"
+      },
+      "transfer/manifest.json": {
+        "bytes": 86146,
+        "sha256": "b48aca3d336df07c203e392be8db414e04993c5337eb4a7613ae541796ad533b"
+      },
+      "transfer/verify-transfer.mjs": {
+        "bytes": 7346,
+        "sha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98"
+      },
+      "snapshot/manifest.json": {
+        "bytes": 3273,
+        "sha256": "8ea20a72a1045561d00c8e36f4618af934052f95a2859a2bc4a09f80997001e1"
+      },
+      "installation/runtime.log": {
+        "bytes": 125823,
+        "sha256": "5cc7303c28a5a1c9c7e8867b494b588589250d7245f3076f9615b516ae9becdb"
+      },
+      "recovery/runtime.log": {
+        "bytes": 58847,
+        "sha256": "661e0d0412e69bfc24fbd1514c8c6fc85579d9cb882fe14ba16081b143cc85a1"
+      },
+      "stores-audit.json": {
+        "bytes": 654,
+        "sha256": "4e7a7c334ee7e357e70315fba52505571057c3e631e1bd650544313930fc45d7"
+      },
+      "stores-audit-source.mjs": {
+        "bytes": 4839,
+        "sha256": "4dafeae572a89e0069973d424a6c5793c18a5d1992e1be8135751696f9057052"
+      },
+      "independent-audit-source.py": {
+        "bytes": 9961,
+        "sha256": "d86bdefa44f626828beaf0753c2bbade68770df5db9985ae9a84e83fcc3153b1"
+      }
+    },
+    "installedRuntimePoliciesVerified": 2,
+    "privatePublicAuthorityPairsVerified": 2,
+    "canonicalApprovedArtifactsVerified": 4,
+    "canonicalPendingArtifactsVerified": 2,
+    "allMigrationSQLDigestsVerified": true
+  },
+  "historicalEvidenceAudit": {
+    "receiptsAndRunEntries": 25,
+    "privateMembersRehashed": 329,
+    "archivedSourcesRehashed": 17359,
+    "currentRuntimeProgramPinsVerified": 109,
+    "archivedTracersExecuted": false
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2757,
+    "canonicalTestsFailed": 0,
+    "canonicalTestsCancelled": 0,
+    "canonicalTestsSkipped": 0,
+    "canonicalDurationMs": 468326.237333,
+    "syntaxCheckPassed": true,
+    "antiSlopPassed": true,
+    "localDocLinksChecked": 352,
+    "writingChecksPassed": true
+  },
+  "reproduce": {
+    "command": "node scripts/operator/release-rehearsal.mjs --released --source-context SOURCE_ENGINE NEW_PRIVATE_OUTPUT",
+    "environment": "DOCKER_CONFIG=PRIVATE_DOCKER_CONFIG DOCKER_CONTEXT=TARGET_ENGINE",
+    "sourceContext": "fogd-bundle-recipient",
+    "targetContext": "fogd-independent-install",
+    "privateRoot": "~/.local/share/fogd-qualifications/admission-v5-20261029-01",
+    "prerequisites": "Exact cached runtime/storage images, prepared application dependencies, two distinct supported engines; no registry publication."
+  },
+  "privateEvidenceFingerprints": {
+    "eligibility.json": {
+      "sha256": "9d4ed4374e8fd973e2869efdf3c0c61f500335d6276620b94de4bca93ba92948",
+      "bytes": 4455
+    },
+    "catalog-before.json": {
+      "sha256": "a6905fb080077eaeb78478cebb689fe12077715edf76cd9453879008c68325e6",
+      "bytes": 61453
+    },
+    "fogd-v5-acceptance-input-audit.py": {
+      "sha256": "898d80be00783dc76dcd90d0a893709f04b0dda8e3cba3e2e19a3dcdb7f4e7ac",
+      "bytes": 2906
+    },
+    "fogd-v5-acceptance-input-audit.json": {
+      "sha256": "48a7929940e52edeb794123d78715d2c3515b59bf6614ea56d28285e91ef0976",
+      "bytes": 8716
+    },
+    "public-installation/result.json": {
+      "sha256": "6b4624fcbf6660d0e4f6417b6d613c733ea1a2d74622df01add366382ff1a8e1",
+      "bytes": 151679
+    },
+    "public-installation/post-write-privacy.json": {
+      "sha256": "63c768d39f1c11b0687b5f65df7afe4bbcc00665d71220263927a12d8781bbeb",
+      "bytes": 651
+    },
+    "public-installation/executed-source-inventory.json": {
+      "sha256": "3be0fedb2dc7738940d4384c58bf9854410624cfd28aa8cdb86c549c7cbd040c",
+      "bytes": 114532
+    },
+    "public-installation/runner.mjs": {
+      "sha256": "35027634b49bc66da4e75722176ec3c515e531e19e573698e4aabd039cc22d19",
+      "bytes": 6853
+    },
+    "public-installation/proposal-inventory.json": {
+      "sha256": "08032c2f55971d8a6575231b8536f6943718c58ac456b0b0347b8eed12e52560",
+      "bytes": 72684
+    },
+    "public-installation/transfer/manifest.json": {
+      "sha256": "b48aca3d336df07c203e392be8db414e04993c5337eb4a7613ae541796ad533b",
+      "bytes": 86146
+    },
+    "public-installation/transfer/verify-transfer.mjs": {
+      "sha256": "446b19d10c128e505ac6597a72319a7e76f54e030aeb9e4f82938a1dc544df98",
+      "bytes": 7346
+    },
+    "public-installation/snapshot/manifest.json": {
+      "sha256": "8ea20a72a1045561d00c8e36f4618af934052f95a2859a2bc4a09f80997001e1",
+      "bytes": 3273
+    },
+    "public-installation/installation/runtime.log": {
+      "sha256": "5cc7303c28a5a1c9c7e8867b494b588589250d7245f3076f9615b516ae9becdb",
+      "bytes": 125823
+    },
+    "public-installation/recovery/runtime.log": {
+      "sha256": "661e0d0412e69bfc24fbd1514c8c6fc85579d9cb882fe14ba16081b143cc85a1",
+      "bytes": 58847
+    },
+    "public-installation/independent-audit.json": {
+      "sha256": "6493d7b186aa825f7a6456611c5a9e590f068d638659c4bc715ea13b6a6b47ba",
+      "bytes": 3217
+    },
+    "public-installation/independent-audit-source.py": {
+      "sha256": "d86bdefa44f626828beaf0753c2bbade68770df5db9985ae9a84e83fcc3153b1",
+      "bytes": 9961
+    },
+    "public-installation/stores-audit.json": {
+      "sha256": "4e7a7c334ee7e357e70315fba52505571057c3e631e1bd650544313930fc45d7",
+      "bytes": 654
+    },
+    "public-installation/stores-audit-source.mjs": {
+      "sha256": "4dafeae572a89e0069973d424a6c5793c18a5d1992e1be8135751696f9057052",
+      "bytes": 4839
+    },
+    "fogd-v5-public-catalog-01.log": {
+      "sha256": "12d44c1bce54d1e7fd00f5d0461e9ed20500c9dfceee2045db16f3e1f3fcbbee",
+      "bytes": 403
+    },
+    "fogd-v5-public-catalog-audit.log": {
+      "sha256": "157b3fb7aa6f53bde876835ebcec0a8eb28c1fe4bfb2aa20ab86e616ba6b62cf",
+      "bytes": 2238
+    },
+    "fogd-v5-public-catalog-stores.log": {
+      "sha256": "70c73f8a93c6a19ca29c29c890f372b61f77fa92b2daa0ff6a0305c4c3e6799e",
+      "bytes": 510
+    },
+    "fogd-v5-admission-canonical-tests.log": {
+      "sha256": "3d1f04344256457d31566624b5331a592035191649644b0832997bb7225198b4",
+      "bytes": 242535
+    },
+    "fogd-v5-admission-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-v5-admission-quality.log": {
+      "sha256": "ef28d4bc8deaa246342cf7f0c32a453cf4b2fc5e4a70575ab5f167fe14c539f5",
+      "bytes": 1676
+    },
+    "fogd-v5-admission-review.md": {
+      "sha256": "992824dc806700d1278a19dc6f272a82398e6f02dc62ae3f9cbcc7360bf3db1b",
+      "bytes": 1737
+    },
+    "fogd-v5-admission-acceptance-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "fogd-v5-admission-readme-writing.log": {
+      "sha256": "e32752cae871e86ac8f74f82c8eb45b22a964b3e170207997f58bcc7a66943db",
+      "bytes": 8386
+    },
+    "fogd-v5-admission-runtime-writing.log": {
+      "sha256": "1265c6a03a3e59ce89a555adffc6ff8c94cfd38b70c4a8bde4feda5666495a3f",
+      "bytes": 10869
+    },
+    "fogd-v5-admission-routing-writing.log": {
+      "sha256": "7891b64223cc8b6ad5e156320fc8b328cc90a52e074a819fb88491efa14a1075",
+      "bytes": 2386
+    },
+    "fogd-v5-admission-offline-writing.log": {
+      "sha256": "0c8006d2e036b8837efbf7fad75bc27c49b12799387421bfdb150782fa03fa2d",
+      "bytes": 2973
+    },
+    "fogd-v5-admission-readiness-writing.log": {
+      "sha256": "cdefdbb93fb663785fd5b4d53e125c4319621a681a1a54a89517bd3f249eebef",
+      "bytes": 12269
+    },
+    "fogd-v5-admission-roadmap-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "fogd-v5-admission-m11c-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    }
+  },
+  "limitations": [
+    "Fresh local Linux arm64 Docker installation; two application fleets with two native nodes each.",
+    "Same-family stopped recovery; no cross-family migration.",
+    "Private proposed-release installation on another existing Docker engine on the same physical Mac, not another physical host.",
+    "Recorded evidence maps reuse unchanged clean-build machinery, route publication and stopped-finalizer mechanisms; original missing temporary activation harnesses and no fresh v5 builder remain disclosed.",
+    "No per-worker CPU quota, exactly-once external effects, broad density, combined cron/queue app, Workflows, general DO alarms, expansion or Kubernetes scheduled admission.",
+    "No old kernel/syscall tracer executed.",
+    "The actual public command run covers two HTTP/D1 apps. Direct v5 cron acceptance uses the unchanged runtime programs and sealed candidate policy; changing catalog admission does not rebuild runtime behavior.",
+    "Image, registry and npm publication are not part of this admission. Distribution/acquisition work remains tracked separately."
+  ]
+}

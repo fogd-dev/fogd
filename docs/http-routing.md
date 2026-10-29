@@ -1,13 +1,10 @@
 # HTTP routing controls
 
 `fogd admin routing` inspects and controls an application's durable HTTP authority.
-The command is implemented in source for the candidate durable-routing controller;
-no shipped runtime family currently qualifies this interface. The cached legacy
-controller returns an unsupported-feature error. The
-[candidate native evidence](evidence/operator-durable-candidate.json) covers exact
-approval, CLI pause/resume, controller-stop serving and retained startup on an
-independent Docker engine. Browser, crash-ordering and full release acceptance
-remain open.
+The qualified `celld-durable-v5-linux-arm64` family provides this interface within
+its [bounded acceptance](operator-v5-acceptance.md). The cached legacy controller
+returns an unsupported-feature error. Select v5 explicitly for a fresh installation;
+cross-family migration remains refused.
 
 Configure `FOGD_SERVER` and owner credentials as described in the
 [operator guide](operator-guide.md). Routing uses administrator authentication;

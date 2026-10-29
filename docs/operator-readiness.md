@@ -257,6 +257,11 @@ Host-side work can continue while that build constraint remains in force.
 
 ### Next runtime release
 
+The [v5 acceptance audit](operator-v5-acceptance.md) qualifies the bounded fresh-install
+release described here. V5 is available through explicit ordinary selection;
+default cron admission remains closed. The earlier receipts below preserve the
+state and limits of each qualification attempt.
+
 The next runtime release should remove installation and operating barriers before
 adding another binding family.
 
@@ -430,13 +435,13 @@ The release requirements are:
   and pause acknowledgment before introducing a gateway cache or another routing
   mechanism. The [serving-authority proposal](serving-authority.md) selects a separate
   durable route record, fresh gateway reads and a crash-ordering contract before
-  implementation; no new route authority is enabled. Test controller loss alongside approval,
+  implementation. V5 now qualifies that bounded authority. Test controller loss alongside approval,
   migration, operator pause,
   retirement and restart. A warmed route must not bypass a required pause or serve
   another app's data; retain unknown outcomes and measure recovery. Gateway code is
   part of the pinned runtime program, so this change needs a new family too. The
   source [routing CLI](http-routing.md) supplies exact-approval operator controls;
-  native acceptance remains open.
+  native acceptance is recorded in the v5 audit.
 - **Inspect live applications.** Define an app-scoped diagnostic interface and
   its disclosure policy before exposing runtime logs. Test two applications,
   private configuration, unavailable replicas, and failure followed by correction.
