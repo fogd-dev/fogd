@@ -79,3 +79,18 @@ test('existing-build diagnosis refuses payload bytes above the authoritative rec
   const report = await inspectBuiltProject(project, 'demo');
   assert.equal(buildStatus(report), 'unsupported'); assert.equal(report.artifact, undefined);
 });
+
+test('installation comparison receives only a shared-validated release and affects the public finding', async t => {
+  const project = await fixture(t); let observed;
+  const report = await inspectBuiltProject(project, 'demo', async () => ({ cronApps: true }), async release => {
+    observed = release;
+    return { finding: { id: 'resource-changes', status: 'unsupported', message: 'Retained resource identity differs.', nextStep: 'Review the candidate.' },
+      comparison: { status: 'unsupported', reason: 'resource-identity' } };
+  });
+  assert.equal(observed.app, 'demo'); assert.equal(observed.migrations.length, 1);
+  assert.equal(report.status, 'unsupported'); assert.equal(report.comparison.reason, 'resource-identity');
+  assert.equal(report.findings.find(item => item.id === 'resource-changes').status, 'unsupported');
+  assert.ok(!JSON.stringify(report).includes('private-'));
+  await writeFile(join(project, 'dist/ssr/private-extra.js'), 'export const value=1;');
+  await inspectBuiltProject(project, 'demo', undefined, () => assert.fail('invalid artifact must not reach comparison'));
+});

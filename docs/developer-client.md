@@ -112,6 +112,11 @@ execution, active-release resource changes, private secret values and capacity
 remain unverified. Deployment still rebuilds and validates, and exact approval
 remains required.
 
+Local Docker owners can also [compare a generated build with installation records](installation-preflight.md#compare-an-existing-build-with-installation-records)
+using the operator program's `--against-installation PROJECT`. This requires local
+installation access; it is separate from the standalone client's scoped HTTP
+capability negotiation.
+
 ## Submit your application
 
 Set the installation endpoint and your scoped deploy credential in your shell.

@@ -24,7 +24,7 @@ export async function inspectApplicationFile(path, app, negotiate) {
   return { ...inspectApplicationConfig(input.value, app, capabilities, Boolean(negotiate)), configSha256: hash(input.bytes) };
 }
 
-export async function inspectBuiltProject(directory, app, negotiate) {
+export async function inspectBuiltProject(directory, app, negotiate, compareRelease) {
   appName(app);
   let project, settings, path;
   try {
@@ -40,7 +40,7 @@ export async function inspectBuiltProject(directory, app, negotiate) {
   } : undefined), scope: 'application-build' };
   if (!report.declarations) return report;
   const target = typeof capabilities?.cronApps === 'boolean' ? capabilities : { cronApps: true };
-  let temporary;
+  let temporary, candidate;
   try { temporary = await mkdtemp(join(tmpdir(), 'fogd-doctor-build-')); }
   catch {
     replaceBuildFinding(report, finding('build-output', 'unverified', 'Private temporary staging is unavailable.',
@@ -56,6 +56,7 @@ export async function inspectBuiltProject(directory, app, negotiate) {
     const verified = await receiveArtifact(payload, join(temporary, 'verified'), target);
     const bytes = await readFile(join(staged, 'wrangler.json')), config = JSON.parse(bytes);
     report.declarations = { ...describeDeclarations(config, config), requiredSecrets: verified.requiredSecrets.length };
+    candidate = verified;
     report.configSha256 = hash(bytes);
     report.artifact = { digest: verified.digest, ...inventory, migrations: verified.migrations.length };
     replaceBuildFinding(report, finding('build-output', 'supported', 'Existing worker, assets and migration files pass shared staging and artifact validation.',
@@ -63,6 +64,11 @@ export async function inspectBuiltProject(directory, app, negotiate) {
   } catch (error) {
     replaceBuildFinding(report, buildFailure(error));
   } finally { await rm(temporary, { recursive: true, force: true }); }
+  if (candidate && compareRelease) {
+    const observation = await compareRelease(candidate);
+    report.findings = report.findings.map(item => item.id === 'resource-changes' ? observation.finding : item);
+    if (observation.comparison) report.comparison = observation.comparison;
+  }
   report.status = reportStatus(report.findings);
   return report;
 }

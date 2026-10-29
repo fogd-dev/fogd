@@ -1,0 +1,323 @@
+{
+  "schema": 1,
+  "kind": "operator-installed-application-comparison",
+  "recordedAt": "2026-10-29T19:40:37.736158+00:00",
+  "sourceCommit": "8cfeb6c",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "passed": true,
+  "scope": "Local owner compares an existing shared-validated build with one read of selected installation controller metadata using its verified cached image.",
+  "verification": {
+    "sharedHelperTlsObservedAndPreserved": true,
+    "passed": true,
+    "archivedSourcesVerified": 995,
+    "nativeCasesVerified": 5,
+    "dockerCallsInspected": 115,
+    "boundedCompatibilityHelpersVerified": 5,
+    "metadataAndControllerHashesUnchanged": true,
+    "retainedLaunchMarkerUnchanged": true,
+    "candidateFilesMatchPreparedInputs": true,
+    "rawPrivateDiagnosticsAbsent": true,
+    "containersRetained": 8,
+    "volumesRetained": 11,
+    "defaultDockerContext": "desktop-linux",
+    "explicitDockerContext": "fogd-release-recipient"
+  },
+  "coreImplementationMatchesExecutedArchive": [
+    "packages/cli/bin/fogd.js",
+    "packages/cli/src/doctor/application.mjs",
+    "packages/cli/src/doctor/command.mjs",
+    "packages/cli/src/doctor/compatibility.mjs",
+    "packages/cli/src/doctor/installation-comparison.mjs",
+    "packages/cli/src/doctor/installation-tls.mjs",
+    "packages/cli/src/doctor/installed-application.mjs",
+    "packages/cli/src/doctor/options.mjs",
+    "packages/cli/src/observe/helper.mjs"
+  ],
+  "hostChecks": {
+    "canonicalTestsPassed": 2808,
+    "canonicalFailed": 0,
+    "canonicalSkipped": 0,
+    "canonicalCancelled": 0,
+    "canonicalDurationMs": 503710.561375,
+    "finalFocusedTestsPassed": 37,
+    "syntaxAndQualityPassed": true,
+    "mutations": {
+      "passed": true,
+      "results": [
+        {
+          "variant": "baseline",
+          "exitCode": 0,
+          "changed": false
+        },
+        {
+          "variant": "ignore-resource-floor",
+          "exitCode": 1,
+          "changed": true
+        },
+        {
+          "variant": "ignore-migration-differences",
+          "exitCode": 1,
+          "changed": true
+        },
+        {
+          "variant": "allow-retired-name",
+          "exitCode": 1,
+          "changed": true
+        },
+        {
+          "variant": "ignore-admission",
+          "exitCode": 1,
+          "changed": true
+        }
+      ]
+    }
+  },
+  "testTiming": "The canonical suite began before the final bounded-reader and policy-wording refinement and two additional integration cases. The 37-check focused run covers the final source; native run 02 executes that exact final implementation, including the bounded reader.",
+  "nativeCases": [
+    "unchanged active app",
+    "R2 addition",
+    "changed applied migration",
+    "removed D1 identity",
+    "new application"
+  ],
+  "reproduce": {
+    "command": "node packages/cli/bin/fogd.js doctor --project DIR --name APP --against-installation PROJECT --json",
+    "privateRoot": "~/.local/share/fogd-qualifications/doctor-comparison-v5-20261029-02"
+  },
+  "postQualificationChanges": [
+    "Two additional integration tests for the embedded reader and absent installation.",
+    "Developer guide link moved to the existing-build section.",
+    "This permanent evidence receipt.",
+    "Installation guide link to the permanent comparison receipt."
+  ],
+  "privateEvidenceFingerprints": {
+    "add-r2.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "add-r2.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "add-r2.calls.jsonl": {
+      "sha256": "885e6e4bc578e9a6eb9df8bb0c5e011299810a2167d4a176decee0663ba19665",
+      "bytes": 10249
+    },
+    "add-r2.json": {
+      "sha256": "51e3fa06b6d8b6568df20c8a83fb87a09f2b231f29401316d04bf5f5614296d5",
+      "bytes": 2726
+    },
+    "add-r2.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "baseline.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "baseline.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "baseline.calls.jsonl": {
+      "sha256": "708818433d4b002dab5fec8b9b95e3be701302a93102c7b6a5fae8f9cf644c6c",
+      "bytes": 10249
+    },
+    "baseline.json": {
+      "sha256": "0c6e178095904591ab9577231893a94743e0ac26defa300b8f31d9ddabd8428c",
+      "bytes": 2726
+    },
+    "baseline.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "changed-migration.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "changed-migration.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "changed-migration.calls.jsonl": {
+      "sha256": "bc9f81d824989349184141d3fe5853eab42d7df43d740fd64dd2386a646d3c69",
+      "bytes": 10249
+    },
+    "changed-migration.json": {
+      "sha256": "a0e5f4b638ac83754fb8954c09573cde55c476d1055f535e1f353c16110adb8a",
+      "bytes": 2578
+    },
+    "changed-migration.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "executed-source-inventory.json": {
+      "sha256": "08e549dcb5f4a39bffb3dbea3c20feea7e3e55ab7454f80c06d2200da4fd9a31",
+      "bytes": 117120
+    },
+    "fogd-audit-doctor-comparison.py": {
+      "sha256": "118b3d8547bd0187cfb5b8a7b67c55e4187ec21121e3a0b871732f5e32f79f6e",
+      "bytes": 4775
+    },
+    "fogd-doctor-comparison-audit-final.log": {
+      "sha256": "c08c967997448a55ddc681cb2f532462a1684c37c4522e239f1b618b97087534",
+      "bytes": 496
+    },
+    "fogd-doctor-comparison-audit.log": {
+      "sha256": "f9bf9d6ac047748b24514f36b94bc9d2314ca96bd31f3b694388e7db38978c62",
+      "bytes": 451
+    },
+    "fogd-doctor-comparison-canonical.log": {
+      "sha256": "e28cb0d842aff82b97af2d509d81b9c96a807f05b7773e74a11b7ae2b44a5708",
+      "bytes": 247381
+    },
+    "fogd-doctor-comparison-client-writing-final.log": {
+      "sha256": "e351c73f283544bcf736660c5b85d6747facf799434b5cfa5d5239c3b78b77dd",
+      "bytes": 4000
+    },
+    "fogd-doctor-comparison-client-writing.log": {
+      "sha256": "d59e2d6e818b4e4c6ea4c4dcdb9ae2b180b20603cd779ca8b06726aa63a74c8d",
+      "bytes": 4000
+    },
+    "fogd-doctor-comparison-focused-final.log": {
+      "sha256": "b886488b7143c9c808a951d2e89be47dde3e195bb219b57eb9cea27a0c259311",
+      "bytes": 3838
+    },
+    "fogd-doctor-comparison-focused.log": {
+      "sha256": "c4a5cf86b66c882e634b17b6ead5e762a49a555fa106f272d09a46ced5d819a8",
+      "bytes": 3606
+    },
+    "fogd-doctor-comparison-guide-writing.log": {
+      "sha256": "6ccd683ecea5c843de0c9b2be5e5e51cbb3176919f537bb96a2bf22ff127657b",
+      "bytes": 4347
+    },
+    "fogd-doctor-comparison-native-02.log": {
+      "sha256": "7231e4259dd4659510219a2a864f8705284dd87b177e811acad0a1e0369cdae4",
+      "bytes": 77
+    },
+    "fogd-doctor-comparison-native.log": {
+      "sha256": "7231e4259dd4659510219a2a864f8705284dd87b177e811acad0a1e0369cdae4",
+      "bytes": 77
+    },
+    "fogd-doctor-comparison-quality-final.log": {
+      "sha256": "273a5538384c7ffa86cd71ff99de50d48f24fa85252d3994815651adc0d5b499",
+      "bytes": 1670
+    },
+    "fogd-doctor-comparison-quality.log": {
+      "sha256": "045d5e58840c8e0b5ee94b5ca8fe9f33d08f2bbd483b594f4edbabf9d37068b7",
+      "bytes": 1670
+    },
+    "fogd-doctor-comparison-review.md": {
+      "sha256": "6aa6f39da4a2fd5f168a3517688c7521a33755d7a026eb6297c5175a4aef0b4c",
+      "bytes": 3563
+    },
+    "fogd-doctor-comparison-syntax-final.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-doctor-comparison-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-doctor-comparison-tls.log": {
+      "sha256": "50b3b770088ee62774672ca1a5c36096f4fe08107f2bf3980669f632fcf3737d",
+      "bytes": 72
+    },
+    "fogd-doctor-comparison-tls.mjs": {
+      "sha256": "215ee9d4dbb514a3fa741aeb60a5d3caeed9acefacbc37a39606ec93258c1987",
+      "bytes": 1902
+    },
+    "independent-audit.json": {
+      "sha256": "16134c36c5e6bccb394210b1be1d940828c4dc1cce934cb6bbbd4c0e2cd5d918",
+      "bytes": 526
+    },
+    "mutation-allow-retired-name.log": {
+      "sha256": "1c85dfee27c7c0fb2402a4bb809b9f5f8aaf9913bdc8ca24b3aa27336297e389",
+      "bytes": 2221
+    },
+    "mutation-baseline.log": {
+      "sha256": "c3143e79b649ba0d6eb113ce548152c4fb0f7145089a745e60533ca82ad21cda",
+      "bytes": 1064
+    },
+    "mutation-ignore-admission.log": {
+      "sha256": "352332261aa37375fa461af84a92e00bb664d31cac616797206af9ad96f8c35b",
+      "bytes": 3718
+    },
+    "mutation-ignore-migration-differences.log": {
+      "sha256": "d2a6738bb6593a3686a321a28915e3f581fcad79ab47e11eea3541ab48431601",
+      "bytes": 3822
+    },
+    "mutation-ignore-resource-floor.log": {
+      "sha256": "b7b46bc49fb742e227a417c8659109554863d87acb7a8f34a5f1cce50f9dfdfb",
+      "bytes": 2452
+    },
+    "mutation-results.json": {
+      "sha256": "b9f946068d9709ec8dcd1e7a83f454fed87a70a23304b4a89bbf2f45a397062a",
+      "bytes": 517
+    },
+    "new-app.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "new-app.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "new-app.calls.jsonl": {
+      "sha256": "8b302fb95aedd2a1fb14c62217765a410877c890a7f3f66318b47b5fa5aee399",
+      "bytes": 10249
+    },
+    "new-app.json": {
+      "sha256": "27280ecc2a57190f0ef2271d5cbe4756c2e72b060352537c7d17c7e63fb9162f",
+      "bytes": 2728
+    },
+    "new-app.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "remove-d1.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "remove-d1.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "remove-d1.calls.jsonl": {
+      "sha256": "a174e6c40fd3c5dba12a679048d67a1122276bb7f8d2495eefb1c49b7f5cdba1",
+      "bytes": 10249
+    },
+    "remove-d1.json": {
+      "sha256": "3ccbffc3b10e6d189aa9415b5e2255114d8a65cef56e9b864a11328a398049a2",
+      "bytes": 2586
+    },
+    "remove-d1.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "result.json": {
+      "sha256": "8c3f1fd3b316469772036aee2b9c7d776a7398bc490d004ec3938074834990c3",
+      "bytes": 118685
+    },
+    "runner.mjs": {
+      "sha256": "dbb7d4c4074f1f091c49eeac79ee47e650a3889f00c962e6180cdfd4e75bac5c",
+      "bytes": 5752
+    },
+    "shared-helper-tls.json": {
+      "sha256": "1c8120a74ea3e2f72a007070b0ad3c2d6d675cae77cb253ed10d6063871b64fb",
+      "bytes": 218281
+    }
+  },
+  "limitations": [
+    "There are no existing user installations; retained stacks are QA fixtures.",
+    "One metadata observation is not an atomic snapshot, SQL reconciliation, app health, credential authorization, a capacity reservation or a global writer fence.",
+    "Candidate build bytes can be stale relative to application source.",
+    "Native cases inspect a stopped retained installation with an existing uncertain lifecycle marker; they neither clear that marker nor authorize startup.",
+    "Quarantined/retired names, failed-activation resource floors and admission refusals have authoritative in-process regression and mutation tests; those states were not newly written to the native fixture.",
+    "Private controller metadata, migration SQL and arbitrary diagnostics are not reported.",
+    "The 0.25 CPU limit applies to the observation helper; it is not per-worker CPU enforcement.",
+    "The frozen 0.1.0 release artifact predates this source CLI increment.",
+    "All engines run on one physical Mac."
+  ]
+}

@@ -116,6 +116,7 @@ try {
     console.log('fogd admin artifacts plan  Inspect controller artifact retention without deleting');
     console.log('fogd admin artifacts keep|unkeep ID SHA  Change explicit release retention');
     console.log('fogd admin artifacts prune PLAN_SHA | status | resume OPERATION_ID  Reclaim reviewed artifacts');
+    console.log('fogd doctor --project DIR --name APP --against-installation PROJECT [--json]  Compare a build with local installation records');
     console.log('fogd doctor --installation PROJECT [--json]  Inspect installed networks, storage and TLS without starting apps');
     console.log('fogd client export DIR     Export a standalone developer CLI without images\nfogd client verify DIR --expected-manifest SHA');
     console.log('fogd release export DIR --version VERSION --runtime FAMILY  Prepare operator and client artifacts\nfogd release verify DIR --expected-manifest SHA  Verify both bundles without Docker');

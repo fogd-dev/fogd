@@ -34,7 +34,8 @@ console.log('private-tool-output'); console.error('private-diagnostic'); process
   await assert.rejects(exec(process.execPath, [cli, 'doctor'], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
   for (const args of [['--config', 'absent'], ['--project', 'absent'], ['--project', 'a', '--config', 'b', '--name', 'demo'],
     ['--runtime', qualified.id, '--project', 'a', '--name', 'demo'], ['--runtime', qualified.id, '--config', 'absent', '--name', 'demo'], ['--runtime', qualified.id, '--online'],
-    ['--installation', 'sample', '--runtime', qualified.id], ['--installation', 'sample', '--project', 'app', '--name', 'demo'], ['--installation', 'sample', '--online'], ['--installation', 'sample', '--name', 'demo']]) {
+    ['--installation', 'sample', '--runtime', qualified.id], ['--installation', 'sample', '--project', 'app', '--name', 'demo'], ['--installation', 'sample', '--online'], ['--installation', 'sample', '--name', 'demo'], ['--against-installation', 'sample', '--config', 'a', '--name', 'demo'],
+    ['--against-installation', 'sample', '--project', 'a', '--name', 'demo', '--online']]) {
     await assert.rejects(exec(process.execPath, [cli, 'doctor', ...args], { env }), error => error.code === 1 && /Usage: fogd doctor/.test(error.stderr));
   }
 });
@@ -51,4 +52,21 @@ test('missing installation diagnosis emits a private-safe unverified report with
   assert.equal(report.installation, 'absent'); assert.equal(report.status, 'unverified');
   assert.equal(report.findings[0].id, 'installation-policy'); assert.ok(!failure.stdout.includes('private-'));
   const { readdir } = await import('node:fs/promises'); assert.deepEqual(await readdir(root), []);
+});
+
+test('local candidate comparison keeps absent installation records unverified without creating configuration', async t => {
+  const { mkdir, readdir } = await import('node:fs/promises');
+  const root = await mkdtemp(join(tmpdir(), 'fogd-doctor-target-')); t.after(() => rm(root, { recursive: true, force: true }));
+  const project = join(root, 'candidate'), home = join(root, 'home');
+  await mkdir(join(project, 'dist/ssr'), { recursive: true }); await mkdir(home);
+  await writeFile(join(project, 'package.json'), '{"name":"demo","type":"module"}');
+  await writeFile(join(project, 'dist/ssr/wrangler.json'), '{"main":"index.js"}');
+  await writeFile(join(project, 'dist/ssr/index.js'), 'export default {fetch(){throw Error("must-never-execute")}}');
+  let failure;
+  try { await exec(process.execPath, [cli, 'doctor', '--project', project, '--name', 'demo', '--against-installation', 'absent', '--json'],
+    { env: { PATH: '', FOGD_HOME: home, FOGD_ENV_FILE: join(root, 'private-missing.env') } }); } catch (error) { failure = error; }
+  assert.equal(failure.code, 2); assert.equal(failure.stderr, '');
+  const report = JSON.parse(failure.stdout); assert.equal(report.againstInstallation, 'absent'); assert.ok(report.artifact);
+  assert.equal(report.findings.find(item => item.id === 'resource-changes').status, 'unverified');
+  assert.ok(!failure.stdout.includes('private-')); assert.deepEqual(await readdir(home), []);
 });

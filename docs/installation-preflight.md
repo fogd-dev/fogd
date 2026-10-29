@@ -64,5 +64,39 @@ Doctor does not import certificates, install global trust or repair a failed lau
 These checks are observations, not an atomic snapshot or a global writer lock.
 The [native evidence](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-installation-doctor.json) covers stopped and
 partially started v5 services, injected observation failures, private-data
-preservation and retained uncertain lifecycle state. Broader host-tool checks and
-active-release resource comparisons remain separate work.
+preservation and retained uncertain lifecycle state. Client prerequisites and
+local candidate comparisons have separate bounded checks.
+
+## Compare an existing build with installation records
+
+Use the operator program to compare a generated build before submission:
+
+```sh
+node packages/cli/bin/fogd.js doctor --project ./my-app --name my-app --against-installation my-cloud --json
+```
+
+This mode stages and validates existing worker, asset and migration bytes without
+running build plugins or uploading. It verifies the selected installation's saved
+configuration and installed policy, then invokes that cached image's controller
+compatibility rules through a restricted read-only reader. The controller does not
+need to be running. `--against-installation` requires `--project` and excludes
+`--online`; the standalone developer client keeps its separate scoped HTTP checks.
+
+The `resource-changes` finding compares retained resource identities, including
+identities from failed activations, applied migration names and digests, retired
+names, quarantined slots and configured queue admission. Compatible candidates
+report the count of R2 additions and pending migrations. Missing or incomplete
+controller records stay unverified; known incompatible changes are unsupported.
+Only classified reasons and counts leave the helper. Private controller records,
+SQL text and diagnostic output do not appear in the report.
+
+The comparison observes one metadata read. It does not reconcile SQL, inspect
+live resources, establish credential permissions or reserve a slot. Source files
+may be newer than the generated build. Secret values, native behavior and capacity
+remain unverified, and submission and exact approval repeat their checks. No
+operation marker is cleared. The prepared `0.1.0` artifact predates this command.
+
+The [native comparison receipt](evidence/operator-installed-application-comparison.json)
+records five comparisons on a stopped v5 QA installation, including incompatible
+migration and resource changes. Full fixture metadata, controller-state hashes
+and the retained operation-marker hash match before and after each case.
