@@ -154,8 +154,11 @@ ledgers unchanged and preserves an acknowledged peer import. The
 minute and three-minute fixtures through ordinary Void and fogd with networking
 disabled, then approves and executes both on v5. Read-only engine-local sources
 and retained outputs remove the host-path sharing dependency. The SDK dependency
-preparation uses networking and has its own receipt. In-flight compatible
-replacement still needs resolution before the final v5 admission audit. A
+preparation uses networking and has its own receipt. The
+[v5 compatible replacement check](evidence/operator-native-compatible-replacement-v5.json)
+now covers migration overlap, interrupted callbacks, lost acknowledgments and
+unchanged ledgers during confirmed pause. The first timing-window failure remains
+unaccepted and retained. The final v5 admission audit remains. A
 [native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
 verifies failure after application SQL but before migration-name bookkeeping.
 Two failed exact approvals leave no new row or ledger entry; removing the SQL

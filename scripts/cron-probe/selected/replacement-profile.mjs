@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
 import { replacementFixtures } from './replacement-fixtures.mjs';
 import { approveOffline, offlineSurfaces } from './offline-fixtures.mjs';
 import { nativeObservation, vmTime } from './observations.mjs';
-import { sourceInventory, sourceState } from './evidence.mjs';
+import { archiveSources, sourceInventory, sourceState } from './evidence.mjs';
 import { failureDiagnosticReceipt } from './failure-receipt.mjs';
 import { failureObserver } from './failure-observer.mjs';
 import { replacementObserver } from './replacement-observer.mjs';
@@ -24,18 +24,18 @@ import { openControllerDebugger, killController } from './controller-debugger.mj
 import { checkedNativeDefaults, verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 import { requestedRuntime } from '../../../packages/cli/src/runtime/catalog.mjs';
 import { translateConfig } from '../../../packages/runtime/src/artifact.mjs';
+import { qualificationInputs } from './qualification-inputs.mjs';
+import { offlineImage, checkOfflineInputs } from '../offline-build.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/replacement-profile.mjs NEW_PRIVATE_OUTPUT');
-const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(process.argv[2]);
+const inputs = qualificationInputs(process.argv.slice(2));
+await checkOfflineInputs(inputs.hostOptions.sdkImage || offlineImage);
+const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions);
 const evidence = {}, clock = () => vmTime(host, host.policy.fleets[1].nodes[0].host);
 const publication = { path: 'packages/platform/src/activation.mjs', marker: 'request.version = await controller.backend.publish(slot, execution);', functionName: 'publish' };
 let phase = 'builds', reader, session, failure;
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {
-  await writeFile(join(host.output, 'executed-source-inventory.json'), JSON.stringify({ provenance, sources }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  for (const path of Object.keys(sources)) {
-    const target = join(host.output, 'executed-source', path); await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(path, target);
-  }
+  await archiveSources(host.output, provenance, sources, new URL(import.meta.url));
   evidence.defaults = await checkedNativeDefaults();
   evidence.timingEnvironment = await verifyNativeTimingEnvironment({ ...host, slots: host.policy.fleets.map(fleet => ({ nodes: fleet.nodes.map(node => node.host) })) });
   const fixture = await replacementFixtures(host);
@@ -62,7 +62,7 @@ try {
   phase = 'interrupted-callbacks'; evidence.interruption = {};
   const final = await interruptedReplacement({ host, fixture, active: updated, reader, debuggerSession: session.debuggerSession, checkpoint: finalCheckpoint, defaults: evidence.defaults, evidence: evidence.interruption });
   await session.debuggerSession.close(); session = null; await reader.close(); reader = await replacementObserver(host, final);
-  phase = 'lost-acknowledgment'; evidence.retry = {}; await replacementLostReply({ host, fixture, reader, evidence: evidence.retry });
+  phase = 'lost-acknowledgment'; evidence.retry = {}; await replacementLostReply({ host, fixture, active: final, reader, clock, evidence: evidence.retry });
   const paused = await host.json(['admin', 'dispatch', 'refresh', 'pause']); assert.equal(paused.observed, 'paused');
   evidence.finalPauseAt = Date.parse(paused.observedAt); assert.ok(Number.isSafeInteger(evidence.finalPauseAt));
   evidence.final = await reader.observe(); assert.equal(evidence.final.info.paused, true);
@@ -98,6 +98,7 @@ try {
   throw error;
 } finally {
   clearInterval(heartbeat); const errors = [];
+  try { if (reader) await reader.close(); } catch (error) { errors.push(error); }
   try { if (session) await killController(session.identity); } catch (error) { errors.push(error); }
   try { if (!host.closed) await cleanupSelectedHost(host); } catch (error) { errors.push(error); }
   if (errors.length) throw new AggregateError([...(failure ? [failure] : []), ...errors], 'Replacement qualification cleanup failed');

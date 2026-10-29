@@ -1,9 +1,19 @@
 import assert from 'node:assert/strict';
 import { setRefreshSource } from './refresh-client.mjs';
 import { pollReplacement } from './replacement-migration.mjs';
+import { waitFailureTime } from './failure-phases.mjs';
 
-export async function replacementLostReply({ host, fixture, reader, evidence }) {
+export async function replacementLostReply({ host, fixture, active, reader, clock, evidence }) {
+  evidence.preparationPause = await host.json(['admin', 'dispatch', 'refresh', 'pause']);
+  assert.equal(evidence.preparationPause.observed, 'paused');
   evidence.source = await setRefreshSource(host, fixture, 'lost-ack-once');
+  evidence.preparationHeld = await reader.observe();
+  assert.equal(evidence.preparationHeld.info.paused, true); assert.equal(evidence.preparationHeld.info.nextAlarm, null);
+  const now = await clock();
+  if (now % 60000 > 40000) await waitFailureTime(clock, (Math.floor(now / 60000) + 1) * 60000 + 1000);
+  evidence.resumeRequestedAt = await clock();
+  evidence.preparationResume = await host.json(['admin', 'dispatch', 'refresh', 'resume', active.id, active.digest]);
+  assert.equal(evidence.preparationResume.observed, 'running');
   evidence.before = await reader.observe(); const time = evidence.before.info.nextAlarm; evidence.time = time;
   assert.ok(Number.isSafeInteger(time) && time % 60000 === 0 && time > evidence.before.completedAt + 5000);
   evidence.first = await pollReplacement('saved result and future persisted retry', reader, observed => {

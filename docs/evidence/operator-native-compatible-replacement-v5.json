@@ -1,0 +1,301 @@
+{
+  "schema": 1,
+  "kind": "operator-native-compatible-replacement-v5",
+  "recordedAt": "2026-10-29T17:50:15.060Z",
+  "sourceCommit": "b88a0acd6328a02970f8ee0aa4b01f58ecdb7608",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sdkImage": "sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "Bounded local Linux arm64 two-fleet Docker compatible replacement, interrupted callbacks and original-occurrence lost-acknowledgment retry. Fresh installation; no cross-family migration.",
+  "verification": {
+    "passed": true,
+    "recordedAt": "2026-10-29T17:50:15.060Z",
+    "sourceCommit": "b88a0acd6328a02970f8ee0aa4b01f58ecdb7608",
+    "family": "celld-durable-v5-linux-arm64",
+    "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+    "sdkImage": "sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8",
+    "archivedExecutedSourcesVerified": 978,
+    "stagedSourceFilesVerified": 1703,
+    "offlineOutputFilesVerified": 175,
+    "builds": [
+      {
+        "name": "old",
+        "cron": "* * * * *",
+        "digest": "309a73d4e61fe359d90951414463a7b660260f29c5cb3a04c0db66c2b9d73a94",
+        "builder": "ac2429641981160d2d74daa4211b162de7ea6b2ab59215e23431af9cb1b4121b",
+        "network": "none",
+        "stagedSourceFilesVerified": 567,
+        "outputFilesVerified": 57,
+        "sourceProjectFilesVerified": 17
+      },
+      {
+        "name": "new",
+        "cron": "* * * * *",
+        "digest": "1cd73bac25654bc79ce6d27e04647dafc40e8381e95eece4d1e259642cb75fb6",
+        "builder": "601e00fae650a50171c511bd2743c26c0701af3af8c32fecbc1f544d9e961466",
+        "network": "none",
+        "stagedSourceFilesVerified": 568,
+        "outputFilesVerified": 59,
+        "sourceProjectFilesVerified": 18
+      },
+      {
+        "name": "final",
+        "cron": "* * * * *",
+        "digest": "024a19138ee8296aa724c52f29f571774ee429d84712d9f8913b2b123ca94669",
+        "builder": "4c3289b0079eeee3a2814e4c48f26caa036bdc721db2d96f4ba0553f570a3468",
+        "network": "none",
+        "stagedSourceFilesVerified": 568,
+        "outputFilesVerified": 59,
+        "sourceProjectFilesVerified": 18
+      }
+    ],
+    "distinctSignedChallenges": 10,
+    "alteredSignatureRefusals": 10,
+    "canonicalArtifactsAndSQLHashesVerified": 4,
+    "oldCallbackCompletedAfterCompatibleMigrationBeforePublication": true,
+    "interruptedOldCallbacksRemainUnfinished": true,
+    "lostAcknowledgmentRetryKeepsOriginalOccurrenceAndOneBusinessRow": true,
+    "untouchedPeerImportUnchanged": true,
+    "installedPolicyAndPrivatePublicAuthorityPairVerified": true,
+    "privateValuesChecked": 5,
+    "priorContainersUnchanged": 181,
+    "priorVolumesRetained": 251,
+    "ownedContainersStoppedAndRetained": 16,
+    "freshVolumesRetained": 22,
+    "ordinaryAdmission": "closed",
+    "fullFamilyQualification": false
+  },
+  "builds": [
+    {
+      "name": "old",
+      "cron": "* * * * *",
+      "digest": "309a73d4e61fe359d90951414463a7b660260f29c5cb3a04c0db66c2b9d73a94",
+      "builder": "ac2429641981160d2d74daa4211b162de7ea6b2ab59215e23431af9cb1b4121b",
+      "network": "none",
+      "stagedSourceFilesVerified": 567,
+      "outputFilesVerified": 57,
+      "sourceProjectFilesVerified": 17
+    },
+    {
+      "name": "new",
+      "cron": "* * * * *",
+      "digest": "1cd73bac25654bc79ce6d27e04647dafc40e8381e95eece4d1e259642cb75fb6",
+      "builder": "601e00fae650a50171c511bd2743c26c0701af3af8c32fecbc1f544d9e961466",
+      "network": "none",
+      "stagedSourceFilesVerified": 568,
+      "outputFilesVerified": 59,
+      "sourceProjectFilesVerified": 18
+    },
+    {
+      "name": "final",
+      "cron": "* * * * *",
+      "digest": "024a19138ee8296aa724c52f29f571774ee429d84712d9f8913b2b123ca94669",
+      "builder": "4c3289b0079eeee3a2814e4c48f26caa036bdc721db2d96f4ba0553f570a3468",
+      "network": "none",
+      "stagedSourceFilesVerified": 568,
+      "outputFilesVerified": 59,
+      "sourceProjectFilesVerified": 18
+    }
+  ],
+  "nativeDefaults": {
+    "rebalanceTickMs": 5000,
+    "wakerTickMs": 60000,
+    "wakerLeaseTtlMs": 180000,
+    "nodeLeaseTtlMs": 10000,
+    "alarmRetryCeiling": 6,
+    "alarmBackoffBaseMs": 2000,
+    "alarmMaxBackoffShift": 6,
+    "generationReapIntervalMs": 30000,
+    "handlerBudgetSeconds": 300,
+    "operationDeadlineMs": 15000
+  },
+  "nativeDefaultSourcesVerifiedAgainstV5": {
+    "crates/celld/engine_api.rs": "54096f2a0bd95f54e272a5fb4356d2e800fe7aeb8fda868159c21145e3be3f10",
+    "crates/celld/actor.rs": "c2d3858bd223f8fe954b7042c57f5e2cf5abd600964ccb17cee691a4ce78989d",
+    "crates/celld/runtime.rs": "8ee9d4a8cdf1ef55a9a8b88f213d00aaccb0eaf15b0d13a9f28ed88abeeb0611",
+    "crates/celld/generation.rs": "a8f354593f275b23132dd46b087b1d639dd2a2c9558847e500cf86185ae2ec6c",
+    "crates/celld/pool.rs": "db6c210d5b5528d3ff715aa8f851cc7fb2f5203656e700476dcbe48543eb48ca",
+    "crates/logic/alarm.rs": "d6d85d890d0d0dceda5f8521a11dc215d36832833a0706a8269630014b2a7346",
+    "crates/logic/lib.rs": "c42a7598a2eac11ddb5d8e81f24cab545314a7c0f7a7180125e6a771c12a246b",
+    "crates/celld/main.rs": "0be1c7c027ea1ca7b7351f925793dbc7e98a39305952173f5bede6f459223ed9",
+    "crates/celld/wake.rs": "e51326d1cd216c86ddc35c2346e0677ac2867c90a10cc35d23755b9a7a8bb813",
+    "crates/celld/dead_node_gc.rs": "4b243a98b988f1da8179148c539b870f0c7cb98bbf2d75387e01aa72ca89c8a7"
+  },
+  "migrationOverlap": {
+    "scheduledTime": 1793295840000,
+    "completionAfterScheduledMs": 2563,
+    "resultSavedAt": 1793295842545
+  },
+  "interruption": {
+    "scheduledTime": 1793295900000,
+    "publicationRequestedAt": 1793295908127,
+    "approvedAt": 1793295908890,
+    "generationSwap": {
+      "at": 1793295908190,
+      "line": "2026-10-29T17:45:08.190184Z  INFO celld::runtime: cell left its isolate for a generation swap event=\"generation_swap_out\" scope=.cron:refresh epoch=1 generation=4"
+    },
+    "generationFreed": [
+      {
+        "at": 1793295933161,
+        "line": "2026-10-29T17:45:33.161540Z  INFO celld::runtime: application generation freed event=\"deployment_generation_freed\" generation=4 version=0c2d0b7cbffbd834",
+        "node": "slot-1-a-498909da-2306-4991-b7af-7f9cf4dac413"
+      },
+      {
+        "at": 1793295933182,
+        "line": "2026-10-29T17:45:33.182641Z  INFO celld::runtime: application generation freed event=\"deployment_generation_freed\" generation=4 version=0c2d0b7cbffbd834",
+        "node": "slot-1-b-498909da-2306-4991-b7af-7f9cf4dac413"
+      }
+    ],
+    "oldPrecommitAdvisoryRemainsUnfinished": true,
+    "postcommitInventoryResultPreserved": true
+  },
+  "lostAcknowledgment": {
+    "scheduledTime": 1793296020000,
+    "retryDue": 1793296024033,
+    "attemptsPerJob": 2,
+    "businessRowsPerJob": 1,
+    "duplicatesSkippedPerJob": 1,
+    "preparation": "Confirmed dispatch pause, source-mode preparation, minute-window alignment and exact final-release resume; original future-tick assertion retained."
+  },
+  "final": {
+    "history": {
+      "attempts": 10,
+      "results": 7,
+      "occurrences": 8,
+      "preservedBaselineAttempts": 0
+    },
+    "pausedAt": 1793296080696,
+    "heldTarget": 1793296160000,
+    "heldEnd": 1793296160586,
+    "heldDurationMs": 79890,
+    "allRecordedLedgersUnchanged": true,
+    "unfinishedCount": 1,
+    "headlessBrowserChecked": true,
+    "screenshotVisuallyInspected": true,
+    "untouchedImportUnchanged": true
+  },
+  "hostChecks": {
+    "focusedTestsPassed": 52,
+    "syntaxCheckPassed": true,
+    "antiSlopPassed": true,
+    "canonicalSuiteAtParentCommit": {
+      "passed": 2757,
+      "failures": 0,
+      "note": "Completed for b88a0ac offline runner work; final replacement driver changes use focused tests and native qualification, not another full canonical run."
+    }
+  },
+  "unacceptedAttempt": {
+    "privateRoot": "~/.local/share/fogd-qualifications/replacement-v5-20261029-01",
+    "phase": "lost-acknowledgment",
+    "cause": "Next timer was 3823ms beyond the snapshot, below the required 5000ms setup window. No pass accepted.",
+    "preservationAudit": {
+      "passed": true,
+      "acceptedReplacement": false,
+      "priorContainersUnchanged": 165,
+      "priorVolumesPreserved": 229,
+      "newContainersStoppedAndRetained": 16,
+      "newVolumesRetained": 22,
+      "failedQualifierReaderExplicitlyStopped": [],
+      "reason": "Lost-ack phase required a >5s observation window, but next tick was 3823ms after the snapshot; no replacement pass accepted."
+    },
+    "failureFingerprints": {
+      "run/failure.json": {
+        "sha256": "757f5176e1c2c4c656031ae558722961d3703fee38ada0e909b15e56800c1dca",
+        "bytes": 523188
+      },
+      "failure-preservation-audit.json": {
+        "sha256": "8fb17d740768dbfc1a075f567ea9e42dd20e497caa01d206fed8c6a8fa3ef832",
+        "bytes": 377
+      }
+    }
+  },
+  "reproduce": {
+    "dockerContext": "fogd-independent-install",
+    "dockerConfig": "~/.local/share/fogd-build-evidence/docker-config",
+    "command": "node scripts/cron-probe/selected/replacement-profile.mjs NEW_PRIVATE_OUTPUT --runtime celld-durable-v5-linux-arm64 --sdk-image sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8 --retain-resources",
+    "prerequisite": "Locally prepared immutable SDK from operator-v5-offline-sdk-preparation.json; its dependency preparation uses networking.",
+    "privateRoot": "~/.local/share/fogd-qualifications/replacement-v5-20261029-02/run"
+  },
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "2b158a621a9b2e98153958e6e19da2f474b4fcda7285ad6e3a4ae3e6b83a1791",
+      "bytes": 780719
+    },
+    "executed-source-inventory.json": {
+      "sha256": "ce5037f7135a27406c2a06f897433b9a9a12cef4a20fcf9a221a41aca0f9f6f7",
+      "bytes": 114515
+    },
+    "runner.mjs": {
+      "sha256": "adf610c16b886eebc433b259b6ce70c94adf1dcefd6d16682e56cde01d6c695b",
+      "bytes": 9913
+    },
+    "runtime.log": {
+      "sha256": "ea468bbb7641411fe43686b4141a2a4de2f60e38ea2ffd24d3569b51a732c94c",
+      "bytes": 1453021
+    },
+    "post-write-privacy.json": {
+      "sha256": "ddbb78f9634a4d28bbbba968542755a3cdf7921e2ca7716b64324e9873768a23",
+      "bytes": 1482
+    },
+    "independent-audit.json": {
+      "sha256": "903b3ace2245e0ab02429612e95e3f4c708bcfd23c7a1ba333069c92a6a072e1",
+      "bytes": 2238
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "e56be1798a37df1db50f060098753d93e7d439cbd96b0de4d9daa5b6d3475605",
+      "bytes": 16490
+    },
+    "replacement.png": {
+      "sha256": "7320649bae23fa949e8ae14e968a0b327d05f7c095165bdbacf3435d93131979",
+      "bytes": 196214
+    },
+    "offline-old/audited-output-inventory.json": {
+      "sha256": "4b85206f5c61751405549462998dad989684099b52b36ae54f456c4a7cffe779",
+      "bytes": 8715
+    },
+    "offline-new/audited-output-inventory.json": {
+      "sha256": "76d19fd383936ac9b06c6c8126eb2f7c69980e8dc3f794c3e1da78755442c1cb",
+      "bytes": 9089
+    },
+    "offline-final/audited-output-inventory.json": {
+      "sha256": "0032d23c23aa8acb03183d376941a7c3286a13cdcf1c2859cdf09b9462a3a74d",
+      "bytes": 9089
+    },
+    "fogd-v5-replacement-native-02.log": {
+      "sha256": "3bd1a44f55724d5f20ddf369a35569b561e39cdc8cec61dc356e01a479a795c2",
+      "bytes": 672
+    },
+    "fogd-v5-replacement-independent-audit.log": {
+      "sha256": "f66ecd456219c2d01d0314237c379949d01a01c0fef9e4e6f111a862f701319b",
+      "bytes": 1912
+    },
+    "fogd-v5-replacement-focused-tests-final.log": {
+      "sha256": "b157330f746ff58b797996f375198d35aa191316973ee43bbed1fe8f44ae4466",
+      "bytes": 4317
+    },
+    "fogd-v5-replacement-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-v5-replacement-quality-final.log": {
+      "sha256": "e3bd62a3125d6997d107e7b16d53987706f7f83f5e0643ee0786606598c25bc2",
+      "bytes": 1676
+    },
+    "fogd-v5-replacement-review.md": {
+      "sha256": "b13cda7457b7195545b3607febb0b277907c7b9ead1446f6cbd53aa01e76ff81",
+      "bytes": 1396
+    }
+  },
+  "limitations": [
+    "No public catalog admission or full-family qualification is granted by this receipt.",
+    "Local engine only; no hosted Cloudflare execution, second physical machine or broader density claim.",
+    "The saved-row idempotency test does not guarantee exactly-once arbitrary external effects.",
+    "Old interrupted callbacks remain unfinished; later healthy occurrences do not replay them.",
+    "Whole-replica and SDK-container CPU settings are not per-worker CPU quotas.",
+    "Fixed application-level publication checkpoint only; no kernel/syscall tracer was executed."
+  ]
+}

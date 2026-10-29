@@ -386,6 +386,16 @@ preserves old rows. The
 base and locked dependencies with networking enabled. That preparation is a
 separate prerequisite, not an offline build claim or runtime admission.
 
+The [v5 compatible replacement check](evidence/operator-native-compatible-replacement-v5.json)
+verifies an old callback committing under the compatible schema before publication.
+Replacing held precommit and postcommit callbacks preserves the unfinished advisory
+and saved inventory result. A lost acknowledgment retries the original occurrence
+without another business row; a later healthy tick completes normally. Confirmed
+pause preserves every recorded ledger through another minute boundary. The example
+shows unfinished work alongside saved results in a headless browser. The first
+setup-window failure stays unaccepted and retained. This check does not open
+admission or guarantee that external effects occur exactly once.
+
 The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,
