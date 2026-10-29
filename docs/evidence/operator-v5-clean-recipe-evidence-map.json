@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-29T15:46:00.312374+00:00",
+  "sourceCommit": "f1a1554ef03168076858b303f3e46e5e9dc09efd",
+  "scope": "Reuse the clean-engine build recipe evidence for identical build machinery and native inputs, with a separate uncached v5 build and individually fingerprinted program payload.",
+  "freshBuilderThisAttempt": false,
+  "newBuildExecuted": false,
+  "originalCleanEngineBuildReceipt": {
+    "sha256": "f46020622190036cf4c23f2e8b20f49e77461ec472c0c0d3eb0ec226de0d6b5d",
+    "bytes": 19052
+  },
+  "v5UncachedBuildReceipt": {
+    "sha256": "d14228c34515a9c57f5187ba6a9962db657f5be1b90b0d1be0e18af0c2a71cae",
+    "bytes": 8584
+  },
+  "sameDockerfileTemplateRootDependencyFilesBasesNativeInputs": true,
+  "sameNativeSupervisorWorkerdOutputHashes": true,
+  "retainedContextFilesVerified": {
+    "original": 398,
+    "v5": 401
+  },
+  "changedContextMembersOnlyDeclaredProgramFiles": [
+    "packages/platform/src/activation.mjs",
+    "packages/platform/src/admin-delivery.mjs",
+    "packages/platform/src/admin-dispatch.mjs",
+    "packages/platform/src/controller-routes.mjs",
+    "packages/platform/src/controller.mjs",
+    "packages/platform/src/import-retired-routes.mjs",
+    "packages/platform/src/route-restoration-plan.mjs",
+    "packages/platform/src/route-restoration.mjs",
+    "packages/platform/src/route-retirement-restoration.mjs",
+    "packages/runtime/src/artifact.mjs",
+    "packages/runtime/src/gateway-authority.mjs"
+  ],
+  "originalFailedAndSuccessfulBuildLogsRehashed": true,
+  "v5PrivateEvidenceMembersRehashed": 9,
+  "originalEngineInventoryFingerprint": {
+    "sha256": "55efe9aedfe0ecfd0a22c9ba03cf316723a614d9b6d1dbb3abc455bcbb7a3c39",
+    "bytes": 436
+  },
+  "originalBuildInputsFingerprint": {
+    "sha256": "94235ab7429e55f5a144082e86830d33542447f16aca2eafc68c34d5aced43a2",
+    "bytes": 15154
+  },
+  "v5BuildInputsFingerprint": {
+    "sha256": "978dcf9105ea603d44262a0a28c87efa1141f97908ee908e3e9064778ea7f202",
+    "bytes": 15531
+  },
+  "imageDigestReproducibility": false,
+  "separatePhysicalMachine": false,
+  "ordinaryAdmission": "closed",
+  "fullFamilyQualification": false,
+  "schema": 1,
+  "kind": "clean-build-recipe-evidence-reuse",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "qualified": false,
+  "privateEvidenceFingerprints": {
+    "clean-recipe-map.json": {
+      "sha256": "e123a51f8f859e910fd172caf4f2b2d25b65172e3dd37cc66a1cde57602aa5a2",
+      "bytes": 2143
+    },
+    "fogd-v5-clean-recipe-map.py": {
+      "sha256": "dbd8e4df9e9d11d1e6de70e556f10a94fbf600309b0ba392014ec9c80c67ec8c",
+      "bytes": 3957
+    }
+  },
+  "limitations": [
+    "The clean-engine build is the original recorded build, not a fresh builder in the v5 attempt.",
+    "Changed program payloads have individual hashes and separate v5 acceptance evidence.",
+    "This map does not establish image-digest reproducibility, a separate physical machine or full family qualification."
+  ]
+}

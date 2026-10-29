@@ -347,7 +347,7 @@ unavailable replicas, private process-log captures, paused request refusal and
 controller-loss serving. Native readiness stays distinct from application health.
 Broader failure and release gates remain open.
 
-The remaining release requirements are:
+The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,
   dependency locks, toolchain and base-image inputs, and the resulting native,
@@ -366,8 +366,12 @@ The remaining release requirements are:
   process/filesystem tests with a substituted Docker executable and
   [native build evidence](evidence/operator-source-build.json) from a fresh isolated
   engine without a private seed image. Native tests, strict lint and output
-  fingerprint checks pass. Separate-machine installation, image digest
-  reproducibility and application lifecycle qualification remain open.
+  fingerprint checks pass. The
+  [v5 recipe evidence map](evidence/operator-v5-clean-recipe-evidence-map.json)
+  verifies identical build machinery, root dependencies, bases and native inputs
+  against the later uncached v5 build. All changed context members are declared
+  program files. The v5 attempt uses a previously used builder; the map does not
+  claim another clean-engine build or image digest reproducibility.
 - **Install independently.** Follow the public installation procedure on a
   separate supported Docker engine using the distributed release and declared
   prerequisites. Deploy, approve, update, restart and recover an application while
@@ -411,6 +415,15 @@ Eight [native update crash cases](evidence/operator-native-activation-crashes.js
 also cover selected activation, migration-ledger and active-publication boundaries,
 with nine retained SQL rows, four peer records and a fresh stopped snapshot. They
 do not cover the gap between native SQL commit and controller ledger commit.
+The [v5 publication evidence map](evidence/operator-v5-publication-evidence-map.json)
+rechecks 86 retained evidence files and validates the 14 captured store pairs with
+the current route-record, journal and completed-approval code. The live publication
+modules and execution environment match; removing the declared retry/resume
+additions reproduces the older controller, activation and routing modules exactly.
+The captured activation states do not take the new migration-skip branch, which
+has separate direct v5 evidence. Five original temporary harness files are
+unavailable, so their recorded hashes are not independently reverified here.
+This is evidence reuse, not a new v5 interruption run or full-family acceptance.
 The [controller recovery regression](../packages/platform/test/controller-route-recovery.test.mjs)
 now covers fully and partially committed backend ledgers when saving controller
 hashes fails. Reload preserves uncertainty and HTTP withholding. For the tested

@@ -172,6 +172,15 @@ mechanism, with dependency, runtime and coordinator checks. It records inference
 from existing evidence, without claiming a new v5 fault run. Other failure paths
 and full family acceptance remain open.
 
+The [v5 publication map](evidence/operator-v5-publication-evidence-map.json) also
+maps 14 retained HTTP publication/activation cases to unchanged v5 paths. It
+rechecks captured stores and records the five unavailable original temporary
+harness files. The [clean-recipe map](evidence/operator-v5-clean-recipe-evidence-map.json)
+verifies the original clean-engine recipe against the later uncached v5 build:
+build machinery, native inputs and root dependencies match, while changed context
+members are declared program files. Neither map claims a new interruption run or
+a fresh v5 builder. Final family acceptance and ordinary admission remain open.
+
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on
 the same physical Mac. Both scoped HTTP/D1 apps retain data after full stop/start. The

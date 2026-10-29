@@ -1,0 +1,264 @@
+{
+  "schema": 1,
+  "kind": "bounded-http-publication-and-activation-evidence-reuse",
+  "recordedAt": "2026-10-29T15:45:36.539Z",
+  "sourceCommit": "f1a1554ef03168076858b303f3e46e5e9dc09efd",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceFamily": "celld-durable-v2-linux-arm64",
+  "sourceImage": "sha256:281be9fc7170768f5d6eda9dfbf2dc1bfdf72de4d41630396da548c0efa88359",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "newV5InterruptionRun": false,
+  "scope": "Evidence reuse for unchanged live HTTP publication and activation paths; changed stopped restoration and background resume paths require their separate v5 evidence. Not a new v5 interruption run.",
+  "basis": {
+    "nativeBinarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+    "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "cachedCompleteProgramInventoriesVerified": true,
+    "identicalNodeAndLoadedSharedLibraries": true,
+    "wholeProgramFilesIdentical": 99,
+    "changedProgramFiles": [
+      "packages/platform/src/activation.mjs",
+      "packages/platform/src/admin-delivery.mjs",
+      "packages/platform/src/admin-dispatch.mjs",
+      "packages/platform/src/controller-routes.mjs",
+      "packages/platform/src/controller.mjs",
+      "packages/platform/src/route-restoration.mjs",
+      "packages/runtime/src/artifact.mjs"
+    ],
+    "normalizedModules": [
+      {
+        "path": "packages/platform/src/controller.mjs",
+        "sourceSha256": "cf3d5b5d0fe6005a14cec7309a4ea3369ceab502f7900125783e1a7dd03b0cbb",
+        "targetSha256": "ac1d097542d19400c86b14ce8e72bc48d8c24cb060dec67f9779200dbb4d8cae",
+        "exactAfterRemovingDeclaredAdditions": true
+      },
+      {
+        "path": "packages/platform/src/activation.mjs",
+        "sourceSha256": "ab39be459e168f6dc9123aa8aefdfd5ec12a65f23da2721a402f634d708b5331",
+        "targetSha256": "763a6a2faff68ad028d03701758fb79b2a119713350a64a195ce24bbb9d089e7",
+        "exactAfterRemovingDeclaredAdditions": true
+      },
+      {
+        "path": "packages/platform/src/controller-routes.mjs",
+        "sourceSha256": "b329f71d54307c052636c83f36491f269869632406b1f29f5e04f1e398569264",
+        "targetSha256": "51ad61ecbd1187dad430106a33c69d257d9ea9259453b70e7e253c630592e249",
+        "exactAfterRemovingDeclaredAdditions": true
+      }
+    ],
+    "currentRouteRecordJournalAndActiveApprovalValidationCases": 14,
+    "allPublishedActiveTargetsMatchCompletedApprovals": true
+  },
+  "receipts": [
+    {
+      "receipt": "operator-native-route-crashes.json",
+      "fingerprint": {
+        "sha256": "57d8f022076371e01c29e2853bf29b9694598c15748977416c1dd0eef327e807",
+        "bytes": 10705
+      },
+      "rawEvidenceMembersRehashed": 31,
+      "unavailableOriginalTemporaryHarnessFiles": [],
+      "cases": [
+        {
+          "name": "withhold-private-intent",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "8",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        },
+        {
+          "name": "withhold-public-commit",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "12",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        },
+        {
+          "name": "withhold-private-settle",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "15",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        },
+        {
+          "name": "active-private-intent",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "19",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        },
+        {
+          "name": "active-public-commit",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "26",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        },
+        {
+          "name": "active-private-settle",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "29",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4
+        }
+      ]
+    },
+    {
+      "receipt": "operator-native-activation-crashes.json",
+      "fingerprint": {
+        "sha256": "d92a4816bdbf88b123f9a02db214125f48f5a5ed2191480c6cf33519b2a2e0a8",
+        "bytes": 16567
+      },
+      "rawEvidenceMembersRehashed": 55,
+      "unavailableOriginalTemporaryHarnessFiles": [
+        "fogd-activation-crash-tracer.py",
+        "fogd-activation-tracer-selftest.log",
+        "fogd-activation-step-selftest-second.log",
+        "fogd-native-activation-forensics-final.mjs",
+        "fogd-native-durable-retirement-gap.py"
+      ],
+      "cases": [
+        {
+          "name": "approved",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "32",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": false,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "before-migration",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "35",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": true,
+          "allDeclaredMigrationsInCapturedControllerLedger": false,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "ledger-recorded",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "38",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "before-publish",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "41",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "waiting-replicas",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "44",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "active-intent",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "47",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "active-public",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "50",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        },
+        {
+          "name": "active-settled",
+          "capturedStoresRehashed": true,
+          "capturedPublicRevision": "55",
+          "recordedProcessKill": true,
+          "retainedPeerRecords": 4,
+          "retryFlagAtCapturedState": false,
+          "allDeclaredMigrationsInCapturedControllerLedger": true,
+          "newSkipBranchTaken": false,
+          "newSkipBranchEvidence": "operator-native-migration-retry-v5.json"
+        }
+      ]
+    }
+  ],
+  "changedPathsCoveredSeparately": [
+    "operator-native-migration-retry-v5.json",
+    "operator-native-migration-rollback-v5.json",
+    "operator-native-background-v5.json",
+    "operator-native-background-recovery-v5.json",
+    "operator-native-background-full-recovery-v5.json",
+    "operator-native-background-retirement-v5.json",
+    "operator-native-background-retirement-dual-v5.json",
+    "operator-v5-retirement-evidence-map.json"
+  ],
+  "privateEvidenceFingerprints": {
+    "runtime-and-stores.json": {
+      "sha256": "11177f589a76469a59af624edb43494fde46c4d28386ce44c6de80a748b5b2c7",
+      "bytes": 4887
+    },
+    "fogd-v5-publication-runtime-map-final.log": {
+      "sha256": "cf1853e7568f5ce948fc07a61e465dcb128901586af04634af5871fe09fd7930",
+      "bytes": 98
+    },
+    "source-and-case-map.json": {
+      "sha256": "595dede284406f3199ff3da513cdd54e1e7f68e7cfbba3f08936b67209e0bebe",
+      "bytes": 19531
+    },
+    "fogd-v5-publication-runtime-map.log": {
+      "sha256": "9d3e4432aa31f530a3d75f30fd7557e643b10a68351fd685ad7684105dc6a1ea",
+      "bytes": 445
+    },
+    "fogd-v5-publication-evidence-map.py": {
+      "sha256": "158b1280f4fcb78e6550f4da012ef7fce43977cff3a5d50c43abf05458e40a86",
+      "bytes": 7146
+    },
+    "clean-recipe-map.json": {
+      "sha256": "e123a51f8f859e910fd172caf4f2b2d25b65172e3dd37cc66a1cde57602aa5a2",
+      "bytes": 2143
+    },
+    "fogd-v5-clean-recipe-map.py": {
+      "sha256": "dbd8e4df9e9d11d1e6de70e556f10a94fbf600309b0ba392014ec9c80c67ec8c",
+      "bytes": 3957
+    },
+    "fogd-v5-publication-runtime-map.mjs": {
+      "sha256": "b4a390f839de33cf1cc119489298e75b266bd162e69a159db6e02e62440f4c67",
+      "bytes": 3627
+    }
+  },
+  "limitations": [
+    "Inference from retained v2 cases and verified code/runtime equivalence; no new v5 interruption execution.",
+    "Five original temporary activation harness/self-test files are unavailable. Their previously recorded hashes remain in the original receipt; this audit verifies retained captures and case results, not those missing source files.",
+    "The first runtime-map audit used a nonexistent pending.next reference and failed closed; the corrected audit uses pending.record and pending.digest and passes all 14 cases. Both logs are retained.",
+    "Changed stopped restoration, artifact validation and background-resume behavior are not established by these older HTTP cases. Separate v5 evidence is required.",
+    "No power-loss, kernel, multi-controller, remote-filesystem or broader density qualification."
+  ]
+}
