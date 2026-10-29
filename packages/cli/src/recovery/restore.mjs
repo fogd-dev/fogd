@@ -1,3 +1,4 @@
+import { decisionHistoryCapability } from '@fogd/platform/decision-history';
 import { recoveryOptions } from '../runtime/recovery-options.mjs';
 import { assertDockerNetworkAvailability } from '../runtime/network-availability.mjs';
 import { parseArgs } from 'node:util';
@@ -136,6 +137,7 @@ async function loadRestoreImages(dir, snapshotImages, controller, state, change,
 
 export function requiredCapabilities(state, change) {
   const required = [];
+  if (state?.requirements?.includes(decisionHistoryCapability)) required.push(['decision-history', 'decisionHistoryCapability', decisionHistoryCapability]);
   if (change?.kind === 'retirement') required.push(['retirement', 'retirementCapability', retirementCapability]);
   if (state?.requirements?.includes(queueRecoveryCapability)) required.push(['queue-snapshot', 'queueRecoveryCapability', queueRecoveryCapability]);
   if (state?.requirements?.includes(queueRetirementCapability)) required.push(['queue-retirement', 'queueRetirementCapability', queueRetirementCapability]);

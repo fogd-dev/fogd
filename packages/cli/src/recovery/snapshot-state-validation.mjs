@@ -1,3 +1,4 @@
+import { validateDecisionHistory } from '@fogd/platform/decision-history';
 import { assertArtifactSnapshotReady } from '@fogd/platform/artifact-prune-state';
 import { validateArtifactPins } from '@fogd/platform/artifact-pins';
 
@@ -11,6 +12,7 @@ export function assertSnapshotStateShape(state) {
 
 export function assertSnapshotState(state, capabilities) {
   assertSnapshotStateShape(state);
+  validateDecisionHistory(state);
   validateArtifactPins(state);
   assertArtifactSnapshotReady(state);
   if (state.requirements?.some(value => !capabilities.includes(value))) throw new Error('Controller metadata requires an unsupported recovery capability');

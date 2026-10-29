@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from 'node:util';
+import { validateDecisionHistory } from '@fogd/platform/decision-history';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { hasCronHistory } from '@fogd/platform/cron-history';
@@ -12,10 +14,12 @@ import { fingerprint } from './bundle.mjs';
 export async function restoredInstallationState(dir, manifest, change, now = Date.now()) {
   const source = await snapshotState(dir); assertSnapshotStateShape(source);
   if (change && change.kind !== 'retirement' && hasCronHistory(source)) throw new Error('Scheduled history is not qualified for installation transformations; retain the source and snapshot');
-  if (change && change.kind !== 'retirement') { assertQueueFreeRecovery(source); return null; }
+  if (change && change.kind !== 'retirement') { assertQueueFreeRecovery(source); return source.decisions === undefined ? null : structuredClone(source); }
   if (change?.kind === 'retirement' && !change.state) throw new Error('Retirement requires a validated retirement plan');
   const inventory = validateBackgroundEvidence(source, manifest, now);
   const state = structuredClone(change?.state || source);
+  validateDecisionHistory(state);
+  if (!isDeepStrictEqual(state.decisions, source.decisions)) throw new Error('Installation transformation must retain decision history');
   const queues = inventory.queueRecovery.filter(name => !state.apps[name].retirement);
   const crons = inventory.cronRecovery.filter(name => !state.apps[name].retirement);
   if (queues.length || crons.length) {
@@ -23,7 +27,7 @@ export async function restoredInstallationState(dir, manifest, change, now = Dat
     if (queues.length) applyRecovery(state, queues, manifest.queueRecovery, snapshot, queueSnapshotProtocol);
     if (crons.length) applyRecovery(state, crons, manifest.cronRecovery, snapshot, cronSnapshotProtocol);
   }
-  return queues.length || state.requirements?.includes('fogd-queue-retirement-v1') || hasCronHistory(state) || change ? state : null;
+  return state.decisions !== undefined || queues.length || state.requirements?.includes('fogd-queue-retirement-v1') || hasCronHistory(state) || change ? state : null;
 }
 function applyRecovery(state, names, evidence, snapshot, protocol) {
   state.requirements = [...new Set([...(state.requirements || []), protocol.capability])];

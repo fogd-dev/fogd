@@ -39,6 +39,17 @@ Decision metadata carries a required platform capability so older readers refuse
 it instead of silently discarding history. History remains in controller metadata
 when artifact bytes are pruned; it has no automatic truncation policy.
 
+The current operator CLI validates history before backup and restore, preserves
+the saved rows and requires a runtime that understands their capability. Missing,
+malformed or mismatched history refuses recovery; installation transformations
+cannot discard it. Owner diagnostics validate private history or the authenticated
+count summary without treating a withheld app as ready.
+
+The [native recovery receipt](evidence/operator-decision-history-recovery-v6.json)
+records a fresh-volume restore, retained failed-approval hold, explicit corrected
+approval and retry, preserved app data, and a stopped cron/queue snapshot. It does
+not qualify background restore or ordinary admission of the candidate family.
+
 ## Query the authenticated feed
 
 The same administrator credential can read JSON:

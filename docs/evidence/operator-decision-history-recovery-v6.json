@@ -1,0 +1,275 @@
+{
+  "schema": 1,
+  "kind": "operator-decision-history-recovery-v6",
+  "recordedAt": "2026-10-29T22:38:13.418614+00:00",
+  "sourceCommit": "1ddc92a89af5141cc707ce345b373416bc97ddae",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "family": "celld-approval-v6-linux-arm64",
+  "image": "sha256:6ec914e60968487c7af46763196f550539ed1ae69bb31616ef64b22bb6051ea9",
+  "admission": "candidate",
+  "problem": "The new decision-history capability was unsupported by recovery and owner diagnostic readers, preventing native backup and observation after authenticated decisions.",
+  "change": "Validate and retain history through supported backup/restore and transformations, require its runtime capability, and validate private history separately from the authenticated public count summary.",
+  "nativeRecoveryAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1009,
+    "snapshotMembersRehashed": 10,
+    "originalDurableDecisionsPreserved": 8,
+    "additionalFailedAndSuccessfulAttemptsPreserved": 2,
+    "artifactDigestsRecomputed": 2,
+    "correctedNativeMigrationAppliedOnce": true,
+    "freshTargetStoppedContainers": 8,
+    "disjointSourceAndTargetVolumes": true,
+    "oldReaderAndStaleGuardRefused": true,
+    "failedHoldCannotBeBypassed": true,
+    "withheldPeerRequiresExplicitNativeVerifiedResume": true,
+    "sourceContainersUnchangedAfterMountOrderNormalization": 8,
+    "scope": "Stopped candidate restore onto fresh volumes preserves eight original authenticated decisions and failed approval holds. An explicitly corrected browser approval fails before migration while native leases are unavailable; its exact retry succeeds, retaining both new attempts. Native SQL and both app data sets survive restart; withheld peer resumes only after verified replica facts. The final driver completed all native work and graceful shutdown, then its raw Docker preservation comparison failed on mount-array order. This read-only finalizer accepts only a comparison normalized by mount destination; all other fields remain exactly equal. No full runtime-family admission, background restore, separate machine or power-loss qualification."
+  },
+  "backgroundSnapshotAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1009,
+    "snapshotMembersRehashed": 10,
+    "unchangedRuntimeProgramBodies": 115,
+    "inertUnapprovedMinuteVerified": true,
+    "nativeNoRetryAcrossTwoOccurrencesVerified": true,
+    "originalOccurrenceRetryWithoutDuplicateBusinessRowsVerified": true,
+    "pausedControllerLossIntervalMs": 169879,
+    "httpAndDispatchSeparationVerified": true,
+    "heldCronAndQueueSnapshotVerified": true,
+    "durableDecisionHistoryRetained": 4,
+    "privacyScanVerified": true,
+    "originalLifecycleDriverPassed": false,
+    "scope": "Corrected CLI completes a verified stopped snapshot of the same retained v6 cron/queue fixture. Reuses individually checked native phases from a driver that failed only at backup capability admission. The continuation completed backup and graceful shutdown, then its redundant second shutdown observer failed allocating an existing log. This read-only finalizer verifies the complete snapshot, unchanged decision history and stopped containers; it does not rerun native work or claim either failed driver passed."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2870,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 458587.635417,
+    "newDecisionReaderCases": 20,
+    "focusedRecoveryObservationRetentionPassed": 114,
+    "syntaxAndQualityPassed": true
+  },
+  "productionAndTestInputsMatchNativeArchives": [
+    "packages/platform/package.json",
+    "packages/cli/src/controller-schema.mjs",
+    "packages/cli/src/recovery/background-backup.mjs",
+    "packages/cli/src/recovery/background-restore.mjs",
+    "packages/cli/src/recovery/queue-safety.mjs",
+    "packages/cli/src/recovery/restore.mjs",
+    "packages/cli/src/recovery/snapshot-state-validation.mjs",
+    "packages/cli/test/decision-history-recovery.test.mjs"
+  ],
+  "catalogUnchanged": true,
+  "privateRoots": {
+    "recovery": "~/.local/share/fogd-qualifications/native-review-recovery-v6-20261029-08",
+    "snapshot": "~/.local/share/fogd-qualifications/native-background-snapshot-v6-20261029-01",
+    "originalLifecycle": "~/.local/share/fogd-qualifications/native-background-v6-20261029-01"
+  },
+  "recoveryEvidenceFingerprints": {
+    "command-failure-beacf83c-bcd9-4878-b685-be7fd6a47c81.json": {
+      "sha256": "c3aee735e8a4fcaa8955ca74f69e22fb4820fa376b5b405132e3b7da00199319",
+      "bytes": 197
+    },
+    "executed-source-inventory.json": {
+      "sha256": "7359c6d9c1e881a49ba323846bbfd6c6473454492f7a581800999f147de70e85",
+      "bytes": 118547
+    },
+    "failure.json": {
+      "sha256": "0e934aeb3cb500457b74d65204758430e849cedf95dfb151e64ed3e7ae3fc0af",
+      "bytes": 43757
+    },
+    "fogd-audit-recovery-and-background-v6.log": {
+      "sha256": "16aa627a2d39fb963722a2fd9b8e54fd294c0b079aaf9a43043c17b6c5a23248",
+      "bytes": 2314
+    },
+    "fogd-audit-recovery-and-background-v6.py": {
+      "sha256": "aa15bc881284170b353d4a1d92711704c9fe86cf635050b2369891d970012833",
+      "bytes": 7800
+    },
+    "fogd-decision-recovery-canonical-final.log": {
+      "sha256": "856134d0daa07918d63179410895a09a6c3ecce94204836d9a4dfc4c0c44b9cc",
+      "bytes": 350615
+    },
+    "fogd-decision-recovery-focused-final.log": {
+      "sha256": "53f4fdeb0d2d67700510d44ee784d60bbe185175af2f8e9c0f933b6225629959",
+      "bytes": 10372
+    },
+    "fogd-decision-recovery-guide-writing.log": {
+      "sha256": "e0d7f56160f865909b70f56329c51a7922708bc7caa01b91e8228d27a2eb246f",
+      "bytes": 2822
+    },
+    "fogd-decision-recovery-main-canonical.log": {
+      "sha256": "fe93cf62600d2b71f5f717c9b30f40a082561713407cd3899fc010da63537957",
+      "bytes": 255647
+    },
+    "fogd-decision-recovery-main-quality.log": {
+      "sha256": "df3390e79afb0bf1fe5a2a61d5d593b01f018438f2c83ef5e90a402178abedf6",
+      "bytes": 1670
+    },
+    "fogd-decision-recovery-main-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "fogd-decision-recovery-red.log": {
+      "sha256": "dbf9c5792378519da96d3b3d0832f3f37591ede086f2f15fa617570aa95c2d9e",
+      "bytes": 1982
+    },
+    "fogd-decision-recovery-self-review.md": {
+      "sha256": "50be015e569c353600921feb9fd4c9785c3ffc91288e0663a10477cb12bff70d",
+      "bytes": 4612
+    },
+    "fogd-finalize-review-recovery-v6.log": {
+      "sha256": "145e12003abd61168c0f0c94718fd3703f9e20121c3ae40b39318823d8311689",
+      "bytes": 39
+    },
+    "fogd-finalize-review-recovery-v6.mjs": {
+      "sha256": "b3fa966b5e07ee8d497473d98a5eac5b5a1e0ebc792dca7f3d3994875f201549",
+      "bytes": 3973
+    },
+    "fogd-review-recovery-v6-08.log": {
+      "sha256": "3d7f3e46d22add090ca62d21b421d4c7dfef0bf8548a84ad44bc8e203674bb83",
+      "bytes": 181044
+    },
+    "independent-audit.json": {
+      "sha256": "062a66ee32480e17e208961969178f4fdaaa2a7bfa4bbb5d45c59c6096426301",
+      "bytes": 1308
+    },
+    "restored-state.json": {
+      "sha256": "c65cc466bd31ab3216bb50fc4bba89661ddf8ed2518c6705d300adb429fe5a9e",
+      "bytes": 19305
+    },
+    "result.json": {
+      "sha256": "617ecbacca9a125d9b25b74b64b449ec11831be834890c425c59fde88b0ad5a6",
+      "bytes": 162474
+    },
+    "runner.mjs": {
+      "sha256": "7d7b8122ad28b428e5b23f785481f1d809456830f58b77a5a523215845e462a9",
+      "bytes": 10303
+    },
+    "runtime.log": {
+      "sha256": "be1cf52da42d41a09bd8484221b968f7c53dc14b4929c22baf7609c11feaf238",
+      "bytes": 617690
+    },
+    "source-after.json": {
+      "sha256": "be281299511ed0b2da96fba1ed457bd0e90d925aea1b77528e18f18953120d89",
+      "bytes": 93162
+    },
+    "source-before.json": {
+      "sha256": "7aa8bf52f505757d4b45e893a807fb2f44eac9772341b9352496767286467be7",
+      "bytes": 93162
+    },
+    "fogd-decision-recovery-guide-writing-final.log": {
+      "sha256": "00515a07c1f3f79cbb554f1245b213a8520dd204babee5791e3f8577053f6640",
+      "bytes": 2707
+    }
+  },
+  "backgroundEvidenceFingerprints": {
+    "executed-source-inventory.json": {
+      "sha256": "7359c6d9c1e881a49ba323846bbfd6c6473454492f7a581800999f147de70e85",
+      "bytes": 118547
+    },
+    "failure.json": {
+      "sha256": "63be4a8de1ef979a04c4384fe4aadbaf466b32adb5afdfeb9e9b626dc48bc7b6",
+      "bytes": 483647
+    },
+    "fogd-audit-recovery-and-background-v6.log": {
+      "sha256": "16aa627a2d39fb963722a2fd9b8e54fd294c0b079aaf9a43043c17b6c5a23248",
+      "bytes": 2314
+    },
+    "fogd-audit-recovery-and-background-v6.py": {
+      "sha256": "aa15bc881284170b353d4a1d92711704c9fe86cf635050b2369891d970012833",
+      "bytes": 7800
+    },
+    "fogd-background-snapshot-v6.log": {
+      "sha256": "8d0f102fcae50162af14806c54bc0f799f90b701e033f0eafec54d6b5803bb71",
+      "bytes": 902
+    },
+    "fogd-background-v6.log": {
+      "sha256": "b6810e8e766877e100b441c24bbbca092e9643c126cd90adfb9910e3ea722468",
+      "bytes": 2082
+    },
+    "fogd-decision-recovery-canonical-final.log": {
+      "sha256": "856134d0daa07918d63179410895a09a6c3ecce94204836d9a4dfc4c0c44b9cc",
+      "bytes": 350615
+    },
+    "fogd-decision-recovery-focused-final.log": {
+      "sha256": "53f4fdeb0d2d67700510d44ee784d60bbe185175af2f8e9c0f933b6225629959",
+      "bytes": 10372
+    },
+    "fogd-decision-recovery-guide-writing.log": {
+      "sha256": "e0d7f56160f865909b70f56329c51a7922708bc7caa01b91e8228d27a2eb246f",
+      "bytes": 2822
+    },
+    "fogd-decision-recovery-main-canonical.log": {
+      "sha256": "fe93cf62600d2b71f5f717c9b30f40a082561713407cd3899fc010da63537957",
+      "bytes": 255647
+    },
+    "fogd-decision-recovery-main-quality.log": {
+      "sha256": "df3390e79afb0bf1fe5a2a61d5d593b01f018438f2c83ef5e90a402178abedf6",
+      "bytes": 1670
+    },
+    "fogd-decision-recovery-main-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "fogd-decision-recovery-red.log": {
+      "sha256": "dbf9c5792378519da96d3b3d0832f3f37591ede086f2f15fa617570aa95c2d9e",
+      "bytes": 1982
+    },
+    "fogd-decision-recovery-self-review.md": {
+      "sha256": "50be015e569c353600921feb9fd4c9785c3ffc91288e0663a10477cb12bff70d",
+      "bytes": 4612
+    },
+    "fogd-finalize-background-snapshot-v6.log": {
+      "sha256": "bd9258b824ecd1d9c673a832abbbd6f8a585719a25f73fb294e9c1efb1190b50",
+      "bytes": 43
+    },
+    "fogd-finalize-background-snapshot-v6.mjs": {
+      "sha256": "8c9c2c26912283334b16b7cfadf6b5d55b0977a173d3721916940aca72300b51",
+      "bytes": 3482
+    },
+    "independent-audit.json": {
+      "sha256": "2868fc399b29c701a5c364722c2520dc3f9948d2073a32ab1181ac366afcacde",
+      "bytes": 1066
+    },
+    "result.json": {
+      "sha256": "ea25dc31c2c469071de225dd87ea8f70317c8c26ceea7c41851f6c4ac1d53cb1",
+      "bytes": 604495
+    },
+    "runner.mjs": {
+      "sha256": "3d6450dfc8d23eb5d54df2d416fde894f2f421789491352ee2f8657bd507b338",
+      "bytes": 6092
+    },
+    "runtime.log": {
+      "sha256": "6b6b9e5de67ea5a11232d0d75c6d17b9002a058590eb54cef1d439fd4bed40c2",
+      "bytes": 596924
+    },
+    "fogd-decision-recovery-guide-writing-final.log": {
+      "sha256": "00515a07c1f3f79cbb554f1245b213a8520dd204babee5791e3f8577053f6640",
+      "bytes": 2707
+    }
+  },
+  "evidenceCorrections": [
+    "Original native HTTP and background backups reproduced capability refusal before snapshot creation; neither was accepted as a passing driver.",
+    "The fixed CLI produced the native HTTP snapshot and fresh-volume restore. A later diagnostic refusal identified the additional owner-reader gap. A worktree dependency symlink was excluded from source archiving by making its node_modules parent an ordinary ignored directory.",
+    "Continuation mistakes about a local variable, failed holds and readiness were retained. The failed hold requires its exact corrected approval rather than resuming an older artifact. Withheld readiness stays uncertain even when replica identity/version/lease facts are verified.",
+    "The first corrected approval found unavailable native leases and failed before migration. Its exact retry later succeeded and retained both attempts. A browser response-body observer lost the response after the expected page navigation; durable success, exact identity, native ledger and served data independently establish the outcome.",
+    "The final native restore driver completed work and graceful shutdown, then rejected a Docker mount-array order change in source inspection. Read-only finalization normalizes only mount order by destination and requires every other field to match exactly.",
+    "The background continuation completed and verified its snapshot and graceful shutdown, then a redundant second shutdown observer refused an existing QA log. Read-only finalization rechecks the complete snapshot and stopped inventory. Original and continuation driver failures remain failures; individual native observations and finalization audits supply the bounded evidence.",
+    "The isolated-checkout suite encountered an existing /private/ stack matcher against macOS /private/tmp paths. The final authoritative main-workspace run passes with identical production/test bytes."
+  ],
+  "limits": [
+    "Candidate admission and default cron admission remain closed. No full runtime-family qualification is claimed.",
+    "The shared reader export changes platform package metadata. Frozen v6 image/source pins remain unchanged; matching packaging and remaining release qualification are still required.",
+    "The native runtime program bodies are unchanged; this fixes host CLI readers, not native binary or dependency bytes. No native rebuild or publication occurred.",
+    "Same physical Mac and existing Linux arm64 engine, with fresh restore volumes and prepared app dependencies. No separate-machine or unaided-human onboarding claim.",
+    "Native HTTP/D1 recovery and a held cron/queue stopped snapshot are covered. Background restore, full retirement/recovery matrices, density, performance, per-worker CPU quotas and power-loss behavior remain outside this evidence.",
+    "All eight original decisions survive restore; a later failed corrected approval and successful exact retry remain separate additional records. History is not proof of application health or exactly once external effects.",
+    "There are no existing user installations. Retained stacks are QA fixtures; source data and the earlier retained launch fence are preserved.",
+    "No external review approval is claimed."
+  ]
+}
