@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "kind": "operator-native-cron-terminal-retry",
+  "recordedAt": "2026-10-29T14:18:37.084324+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "7eb7b0a07c80f60dc75f1d19e12d78d18ab4f29c",
+  "admission": "candidate",
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "fullFamilyQualification": false,
+  "scope": "One fresh two-fleet HTTPS installation on an isolated classic-overlay2 Linux arm64 Docker engine on the same physical Mac. Sparse scheduled callback retry ceiling and backoff, future natural wake, correction and no failed-occurrence replay. Peer queue records remain unchanged.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "method": {
+    "driver": "scripts/cron-probe/selected/failure-terminal.mjs",
+    "build": "Existing local buildArtifact API used by deployment; negotiate cron capability, build and record immutable manifest before scoped upload and exact approval.",
+    "buildCredentialsAbsent": true,
+    "networkIsolatedBuild": false,
+    "cachedApplicationDependenciesRequired": true,
+    "ordinaryHTTPConfigurationBeforeFault": "healthy",
+    "fault": "Private fixture advisory callback throws on every terminal attempt; the inventory callback succeeds idempotently.",
+    "nativeDefaultTimingOverrides": false,
+    "defaultTimingSourceFilesVerifiedAgainstV5Build": 10,
+    "runtimeProgramsOrImagesModified": false,
+    "processInterruptionOrTracing": false
+  },
+  "terminal": {
+    "cron": "*/3 * * * *",
+    "originalScheduledTime": 1793283300000,
+    "countedAttemptsPerJob": 6,
+    "inventoryOutcomes": [
+      "success",
+      "success",
+      "success",
+      "success",
+      "success",
+      "success"
+    ],
+    "advisoryOutcomes": [
+      "thrown",
+      "thrown",
+      "thrown",
+      "thrown",
+      "thrown",
+      "thrown"
+    ],
+    "noRetryCalled": false,
+    "minimumBackoffBetweenCompletedAttemptAndNextEntryMilliseconds": [
+      4000,
+      8000,
+      16000,
+      32000,
+      64000
+    ],
+    "uniqueInventoryBusinessResultRows": 1,
+    "advisoryBusinessResultRows": 0,
+    "nativeWakeAdvancesToNextNaturalTick": true
+  },
+  "correction": {
+    "futureScheduledTime": 1793283480000,
+    "futureTickAfterExplicitHealthyPolicy": true,
+    "attemptsPerJob": 1,
+    "resultRowsPerJob": 1,
+    "originalFailedOccurrenceRowsUnchanged": true,
+    "noFailedOccurrenceReplay": true,
+    "finalDispatch": "paused with no next alarm"
+  },
+  "verification": {
+    "independentAuditPassed": true,
+    "archivedExecutedSourcesVerified": 965,
+    "recordedIdentitySignaturesIndependentlyVerified": 8,
+    "distinctSignedChallenges": 8,
+    "installedRuntimePolicyVerified": true,
+    "privatePublicAuthorityPairVerified": true,
+    "canonicalApprovalsAndArtifactDigestsVerified": 2,
+    "allMigrationSQLDigestsVerified": true,
+    "localBuildManifestMatchesApprovedArtifact": true,
+    "nativeLogHealthChecked": true,
+    "publicAndFinalPrivacyScansPassed": true,
+    "peerQueueRecordsAndBothFleetsSigningKeysUnchanged": true,
+    "priorContainersUnchanged": 619,
+    "priorVolumesRetained": 838,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumesRetained": 11
+  },
+  "unacceptedEarlierAttempts": [
+    {
+      "attempt": "01",
+      "accepted": false,
+      "reason": "Pinned isolated offline-build image is absent on the selected engine. Setup stopped before app submission or native terminal fault. Next trial uses the existing local buildArtifact API and makes no network-isolation claim.",
+      "priorContainersUnchanged": 595,
+      "priorVolumesRetained": 805,
+      "ownedContainersStoppedAndRetained": 8,
+      "freshVolumes": 11,
+      "privateFailureAudit": {
+        "sha256": "a015995ccd208ec69717512c076d0296068684c444e574f51d897b49e5500b20",
+        "bytes": 392
+      }
+    },
+    {
+      "attempt": "02",
+      "accepted": false,
+      "reason": "Local application build succeeded but receipt construction referenced undefined capabilities; stopped before submission or terminal fault. Fixed builder separately and verified a complete artifact/receipt against this retained project before allocating another installation.",
+      "standaloneBuilderPreflightPassed": true,
+      "priorContainersUnchanged": 603,
+      "priorVolumesRetained": 816,
+      "ownedContainersStoppedAndRetained": 8,
+      "freshVolumes": 11,
+      "privateFailureAudit": {
+        "sha256": "bb8edc0a639f3d6d0c56143b09454d1fdc557a323f8a12a5e9a8e1f43b6a56d8",
+        "bytes": 488
+      }
+    },
+    {
+      "attempt": "03",
+      "accepted": false,
+      "reason": "Terminal fixture policy setup refused the default retry-once application mode; driver had omitted the ordinary HTTP configuration to healthy. No terminal schedule resumed.",
+      "priorContainersUnchanged": 611,
+      "priorVolumesRetained": 827,
+      "ownedContainersStoppedAndRetained": 8,
+      "freshVolumes": 11,
+      "privateFailureAudit": {
+        "sha256": "2a3d4667d6c319345937f307cb081b6c10863941a070c8b32430bb570fb159b1",
+        "bytes": 341
+      }
+    }
+  ],
+  "hostChecks": {
+    "focusedTests": 60,
+    "failures": 0,
+    "cancellations": 0,
+    "skips": 0,
+    "syntax": "PASS",
+    "antiSlop": "PASS",
+    "canonicalBaseline": "2,728 passing at 74799110bc44a4be2617672b61a6fe5795d06e94. Shared product code unchanged; qualification-only increment."
+  },
+  "reproduce": "DOCKER_CONFIG=PRIVATE_DOCKER_CONFIG DOCKER_CONTEXT=ISOLATED_CLASSIC_OVERLAY2_ENGINE node scripts/cron-probe/selected/failure-terminal.mjs --runtime celld-durable-v5-linux-arm64 --candidate --retain-resources NEW_PRIVATE_OUTPUT_DIRECTORY",
+  "limitations": [
+    "Local builder with cached app dependencies; no fresh network-isolated build acceptance.",
+    "Repeated native callbacks require application idempotency; no general exactly-once side-effect guarantee.",
+    "One sparse terminal/correction scenario; no general performance or recovery SLA.",
+    "No native crash, disk failure, power-loss, separate physical-machine or complete-family qualification.",
+    "Retirement interruption and ordinary released installation remain separate release gates."
+  ],
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "8219ff271b205be227ea6ddec369bd86abb780243007d503ad0b5b639e2dd1fa",
+      "bytes": 235291
+    },
+    "inputs.json": {
+      "sha256": "21e47202668700e882d74abe636608d5cded9a350e09bf95523d560c79b24bc8",
+      "bytes": 412
+    },
+    "runner.mjs": {
+      "sha256": "199adf720242ee753920b7a5268d8bb4c06e491cf3b4a3ccf359b7d62ccd7ca6",
+      "bytes": 5027
+    },
+    "executed-source-inventory.json": {
+      "sha256": "982a8a03f44080dbcb1dacff00643b5104f25468715a3106a6f8dcf91f97a7ef",
+      "bytes": 112965
+    },
+    "post-write-privacy.json": {
+      "sha256": "9e271645f104e7120a3796b36599161c3dbd701b8f34529774b66175937a5895",
+      "bytes": 1332
+    },
+    "runtime.log": {
+      "sha256": "5bee147bfc45e1ae08d382ed0a437d23de85d964fe8d60d4aa30f366fd9fd877",
+      "bytes": 722784
+    },
+    "local-build.json": {
+      "sha256": "5441d3c155edbe8118df4f33c9f71bd11241f9694c6be2fb0f079f84ef562cb2",
+      "bytes": 223869
+    },
+    "stores-audit.json": {
+      "sha256": "f7d7c47c99e62d9d9d651cb13bc231cc738ff1d06c6de47de20c2e2d96b0f078",
+      "bytes": 230
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "c0a9fe5a3cd53a5cacc2a1d44dfbb943278fa34d1862f4bf0dfd7817dc5adf53",
+      "bytes": 5178
+    },
+    "independent-audit-source.py": {
+      "sha256": "0476f6d4307ba0f716546c9eecc3f650efc0fc1d32f892b9c69ec7b25ec22ade",
+      "bytes": 9367
+    },
+    "independent-audit.json": {
+      "sha256": "4314ec130c46017281273a2db83b7cf1da4aae5720e625804812435fcfa050bc",
+      "bytes": 2439
+    },
+    "focused-tests.log": {
+      "sha256": "6f94f100840ec71dff5195b5528f7141ea0694d74e650d65e8a276b7d2ebdb0d",
+      "bytes": 4969
+    },
+    "quality.log": {
+      "sha256": "8c8b2e8ee478f986656f253be307b1890b98900091258db91eb0f0c5c6f999e3",
+      "bytes": 1676
+    }
+  }
+}

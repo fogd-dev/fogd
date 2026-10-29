@@ -306,8 +306,13 @@ cuts the owner/waker during a persisted retry and verifies takeover after lease
 expiry, exact original-occurrence completion and fresh owner rejoin. Both cron
 replicas then stay down across scheduled ticks; a quiet restart completes the
 overdue occurrence once and advances to future work without replaying two missed
-ticks. The peer queue records and signing keys remain unchanged. Retirement
-crashes, other failure paths and complete family acceptance remain open. A separate
+ticks. The peer queue records and signing keys remain unchanged. The
+[sparse terminal retry check](evidence/operator-native-cron-terminal-v5.json)
+verifies six attempts per job with native backoff, advancement to the next
+three-minute tick, and corrected future success without replaying the failed
+occurrence. Its recorded local artifact build does not establish network-isolated
+building. Retirement crashes, other failure paths and complete family acceptance
+remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
