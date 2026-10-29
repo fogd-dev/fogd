@@ -290,8 +290,12 @@ adds four queue/cron retirements, fresh queued and scheduled capacity, retained
 survivor input, five snapshots and three restore audits including zero live apps.
 Each retirement keeps earlier namespaces and private recovery files unchanged.
 The audit verifies fresh process keys after deliberate startup restarts and stable
-keys within unchanged processes. Retirement beside another live cron, retirement
-crashes, broader failure paths and complete family acceptance remain open. A separate
+keys within unchanged processes. The
+[v5 dual-cron check](evidence/operator-native-background-retirement-dual-v5.json)
+adds retirement beside another live cron: a shared-deadline snapshot, cold and
+acknowledged holds, explicit survivor resume, unchanged old rows and both source
+restore audits. Retirement crashes, broader failure paths and complete family
+acceptance remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
@@ -312,7 +316,7 @@ the release target remains fresh installations. The
 apps with distinct private configuration, failed and corrected handlers,
 unavailable replicas, private process-log captures, paused request refusal and
 controller-loss serving. Native readiness stays distinct from application health.
-Broader failure, dual-cron retirement and release gates remain open.
+Broader failure and release gates remain open.
 
 The remaining release requirements are:
 

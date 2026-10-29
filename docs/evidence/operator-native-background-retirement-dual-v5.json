@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "kind": "operator-native-dual-cron-retirement",
+  "recordedAt": "2026-10-29T01:17:03.539130+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "74799110bc44a4be2617672b61a6fe5795d06e94",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh two-fleet Linux arm64 candidate trial: retire a queued app, install a second cron app on fresh capacity, run both schedules, snapshot before their shared deadline, retire one cron while preserving its peer, then audit both stopped source snapshots on fresh targets. No full family qualification.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "archivedExecutedSourcesVerified": 961,
+    "recordedIdentitySignaturesIndependentlyVerified": 42,
+    "canonicalActiveAndRetiredArtifactDigestsVerified": true,
+    "finalPrivatePublicAuthorityPairsVerified": 5,
+    "installedRuntimePoliciesVerified": 5,
+    "priorContainersUnchanged": 521,
+    "priorVolumesRetained": 704,
+    "ownedContainersStoppedAndRetained": 40,
+    "freshVolumes": 55,
+    "nativeLogHealthChecked": true
+  },
+  "retirements": [
+    {
+      "app": "imports",
+      "coldHeldMilliseconds": 66684,
+      "acknowledgedHeldMilliseconds": 67353,
+      "parkedNamespacesUnchanged": 1
+    },
+    {
+      "app": "refresh",
+      "coldHeldMilliseconds": 66654,
+      "acknowledgedHeldMilliseconds": 67625,
+      "parkedNamespacesUnchanged": 2
+    }
+  ],
+  "snapshots": [
+    {
+      "name": "source-snapshot",
+      "manifestSha256": "0835a7d9dfc6954ff4c19a8338135eb8112e25de533c0364ed4fb8db3a3ac9bf",
+      "archivedFilesVerified": 10,
+      "liveNames": [
+        "imports",
+        "refresh"
+      ],
+      "retiredNames": []
+    },
+    {
+      "name": "shared-snapshot",
+      "manifestSha256": "ce31958d74ba614f2055b9830e4a537181c71d5c7c9d0baaf58a0c9b317917bb",
+      "archivedFilesVerified": 10,
+      "liveNames": [
+        "refresh",
+        "scheduled-next"
+      ],
+      "retiredNames": [
+        "imports"
+      ]
+    }
+  ],
+  "installationChecks": [
+    {
+      "label": "source",
+      "project": "fogd-selected-activation-640222423e107613",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "90704b577e7eef600d5cb8d56bdba6122f77e4de522b2602ae323211eede75ac",
+      "canonicalArtifactDigestsVerified": 2,
+      "liveNames": [
+        "imports",
+        "refresh"
+      ],
+      "retiredNames": []
+    },
+    {
+      "label": "retired-imports",
+      "project": "fogd-selected-recovery-d060ce75078ced91",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "0381470208dce93de71aeb200d2c241a599befabbdbf9122e495f43a3aa18046",
+      "canonicalArtifactDigestsVerified": 3,
+      "liveNames": [
+        "refresh",
+        "scheduled-next"
+      ],
+      "retiredNames": [
+        "imports"
+      ]
+    },
+    {
+      "label": "dual-retired",
+      "project": "fogd-selected-recovery-746b9b0a0a18f51e",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "a9150b79bb514ddd6616769855e6aa57fb61adc23f000f62ed9e22d793a5a796",
+      "canonicalArtifactDigestsVerified": 3,
+      "liveNames": [
+        "scheduled-next"
+      ],
+      "retiredNames": [
+        "imports",
+        "refresh"
+      ]
+    },
+    {
+      "label": "dualAudit",
+      "project": "fogd-selected-recovery-6e8589888bf1fe9e",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "79e1138b644f15b87dc93b7923a2c4446150ad12a4bf00611d00202dd3891486",
+      "canonicalArtifactDigestsVerified": 3,
+      "liveNames": [
+        "refresh",
+        "scheduled-next"
+      ],
+      "retiredNames": [
+        "imports"
+      ]
+    },
+    {
+      "label": "originalAudit",
+      "project": "fogd-selected-recovery-55f214527ea1d8ca",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "d0d5bf709be0e260dbc1f519c40892a999f599a24f52b0eadb72db0863889710",
+      "canonicalArtifactDigestsVerified": 2,
+      "liveNames": [
+        "imports",
+        "refresh"
+      ],
+      "retiredNames": []
+    }
+  ],
+  "observations": {
+    "twoCronApps": [
+      "refresh",
+      "scheduled-next"
+    ],
+    "distinctFleetsAndSecretRevisions": true,
+    "secondCronStartsEmpty": true,
+    "bothSourceSchedulesProduceJobPairs": true,
+    "sharedDeadline": 1793235660000,
+    "bothPausedBeforeSharedDeadline": true,
+    "survivorColdHoldCrossesDeadline": true,
+    "explicitSurvivorResume": true,
+    "quietMilliseconds": 132139,
+    "eachJobHasAtLeastTwoDistinctFutureSuccesses": true,
+    "oldAttemptOccurrenceAndResultRowsUnchanged": true,
+    "retiredCronTokenApprovalAndResumeRefused": true,
+    "priorQueueRetirementAndParkedBytesPreserved": true,
+    "freedNamespaceHasNoApplicationDeployment": true,
+    "bothSourceSnapshotsAndStoppedVolumesCompared": true
+  },
+  "qualificationProgramFingerprints": {
+    "scripts/cron-probe/selected/retirement-dual.mjs": "dadacc86744a382410b88bccf6361c246c8c44cc7e75ab8a72e153a0b5ff0d78"
+  },
+  "hostChecks": {
+    "focusedProbeTestsPassed": 81,
+    "syntax": "passed",
+    "quality": "passed",
+    "fullCanonicalBaseline": {
+      "commit": "74799110bc44a4be2617672b61a6fe5795d06e94",
+      "testsPassed": 2728,
+      "scope": "The unchanged shared helpers and product code; the edited dual driver is exercised by this native trial."
+    }
+  },
+  "acceptance": {
+    "retirementBesideLiveCron": true,
+    "sharedDeadlineColdAndAcknowledgedHolds": true,
+    "freshScheduledCapacityWithDistinctConfiguration": true,
+    "explicitResumeWithoutOldOccurrenceReplay": true,
+    "stoppedSourceRecovery": true,
+    "retirementNativeProcessCrash": false,
+    "retirementIOFaultMatrix": false,
+    "powerLoss": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "privateEvidenceFingerprints": {
+    "source-snapshot/manifest.json": {
+      "bytes": 5236,
+      "sha256": "0835a7d9dfc6954ff4c19a8338135eb8112e25de533c0364ed4fb8db3a3ac9bf"
+    },
+    "shared-snapshot/manifest.json": {
+      "bytes": 5127,
+      "sha256": "ce31958d74ba614f2055b9830e4a537181c71d5c7c9d0baaf58a0c9b317917bb"
+    },
+    "runtime.log": {
+      "bytes": 184149,
+      "sha256": "eb5fc172b9e0cd3af8c58a57d9b19749acbb256186a6281697c6eaf396192527"
+    },
+    "retired/runtime.log": {
+      "bytes": 480791,
+      "sha256": "047a293b5b47663bf9ace5eb769517526de92040417591042c374a865d880bcb"
+    },
+    "dual-retired/runtime.log": {
+      "bytes": 425821,
+      "sha256": "e36075b08a8f13359f08fc3be08d2b69006c641861765870fda223f0a34957aa"
+    },
+    "dual-source-audit/runtime.log": {
+      "bytes": 447665,
+      "sha256": "b8096577a44c0f76d703ea042a439661c7a335f133d9e708a3f899fcb1b50c7e"
+    },
+    "original-source-audit/runtime.log": {
+      "bytes": 475984,
+      "sha256": "3435b505f5975f83648ffc97ba81abbcd943b568b6a9b5a6687416d37531d4a3"
+    },
+    "result.json": {
+      "bytes": 800313,
+      "sha256": "878feb114991aecf5d7a1bb39de9930e14d766c333967f82039d3012faa0f579"
+    },
+    "inputs.json": {
+      "bytes": 411,
+      "sha256": "c349331919536b67759a2ad38a25d37ee43e826217c3e88a08e51aff98fff6d6"
+    },
+    "runner.mjs": {
+      "bytes": 8018,
+      "sha256": "dadacc86744a382410b88bccf6361c246c8c44cc7e75ab8a72e153a0b5ff0d78"
+    },
+    "executed-source-inventory.json": {
+      "bytes": 112428,
+      "sha256": "fd1f2e5c3e84adf64139fe55d4bf51a43ddc18d82909ed124e95195b2b21ffcd"
+    },
+    "post-write-privacy.json": {
+      "bytes": 19674,
+      "sha256": "9b69c005227c5f9a0aa6fa5f4976cc271202b681537fc1e762dd0b659d9ac40d"
+    },
+    "stores-audit.json": {
+      "sha256": "40eca30359b1e6cf219eaf68b89fdf1fa08619761fbcbe286015acded9378d0f",
+      "bytes": 2273
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "062a0a1229809fd864d4470ef34a90ab6a25086ba98b2e9871deb0e6a68c00c2",
+      "bytes": 4893
+    },
+    "independent-audit-source.py": {
+      "sha256": "400774ca1dd136b0126c85ea767d8c8a5dd87fabf95cdcb0624288806271b23f",
+      "bytes": 14630
+    },
+    "host-probe-tests.log": {
+      "bytes": 5886,
+      "sha256": "4ef588470d6efe6188ff6226c679189d737ecbe6db13142afda26df50ef33b78"
+    },
+    "independent-audit.json": {
+      "bytes": 4100,
+      "sha256": "a963d71d1a0c6cf672e456121d8d05acd34dee01d9911bb3879ec7c9e42ba3d1"
+    }
+  },
+  "limitations": [
+    "All five installations are retained qualification fixtures on one previously used two-vCPU Linux arm64 Docker engine on the same physical Mac, alongside 21 unrelated QA containers. There are no existing user installations.",
+    "The source snapshot pauses both scheduled apps before stopping. Acknowledgment keeps background work paused; explicit resume produces future work without changing the old attempt, occurrence or result rows. This is not an exactly-once external-effects guarantee.",
+    "Signed binary, node and storage claims are verified independently. Active fleets require matching lease records; empty unassigned bootstrap fleets require empty lease and deployment inventories. Process keys rotate across deliberate startup restarts. This is not hardware attestation.",
+    "Native process cuts during retirement, the complete I/O fault matrix, power loss, saturation and ordinary family admission remain outside this trial. The immutable runtime image and programs are unchanged; raw logs, credentials, SQL data and artifacts remain private."
+  ]
+}

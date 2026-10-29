@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { selectedTrial } from './selected-trial.mjs';
+import { selectedHostTrial } from './selected-trial.mjs';
+import { selectedHostOptions } from './options.mjs';
 import { retireOriginalQueue } from './retirement-start.mjs';
 import { secondCron } from './retirement-second-cron.mjs';
 import { prefixFingerprints } from '../../queue-probe/prefix-fingerprints.mjs';
@@ -21,8 +22,9 @@ import { scanPublicSurfaces } from './privacy.mjs';
 import { waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/retirement-dual.mjs NEW_PRIVATE_OUTPUT');
-await selectedTrial(process.argv[2], 'Selected retirement beside another live cron with retained queue history and held source restoration. Complete M11c acceptance and public admission remain open.', async context => {
+const options = selectedHostOptions(process.argv.slice(2));
+assert.equal(options.enrollment, 'candidate', 'Selected retirement qualification requires explicit candidate selection');
+await selectedHostTrial(options.output, 'Selected retirement beside another live cron with retained queue history and held source restoration. Complete family acceptance and public admission remain open.', async context => {
   const { source, installations, evidence } = context;
   const first = await retireOriginalQueue(context), { fixture } = first, host = first.target;
   const firstResumeAt = evidence.survivorResume.requestedAt, original = fixture.approvals.refresh;
@@ -72,7 +74,7 @@ await selectedTrial(process.argv[2], 'Selected retirement beside another live cr
   evidence.snapshotsPreserved = await preserveSnapshots([{ host: source, point: first.point }, { host, point }]);
   evidence.shutdowns = installations.map(host => ({ project: host.project, closed: host.closed })); assert.ok(evidence.shutdowns.every(host => host.closed));
   return fixture;
-});
+}, options.enrollment, options.hostOptions);
 
 async function armedTogether(host, approvals) {
   return waitFor('two current minute alarms with one shared backup margin', async () => {

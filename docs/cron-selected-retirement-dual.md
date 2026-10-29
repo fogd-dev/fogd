@@ -106,12 +106,16 @@ and seven independent-audit guard mutations are rejected.
 
 ## Run and retain
 
-Use the commit introducing the receipt, with its pinned images, dependencies and
-checked native source tree already cached. Keep unrelated installations intact.
-The output directory must be new and private:
+The historical receipt identifies its executed commit and source inputs. The
+current driver requires an explicit candidate family; the
+[v5 receipt](evidence/operator-native-background-retirement-dual-v5.json) records
+the tested durable profile. Cache its pinned images and app dependencies, keep
+unrelated installations intact and choose a new private output directory:
 
 ```sh
-node scripts/cron-probe/selected/retirement-dual.mjs .fogd/selected-retirement-dual
+node scripts/cron-probe/selected/retirement-dual.mjs \
+  --runtime celld-durable-v5-linux-arm64 --candidate --retain-resources \
+  /private/new-dual-retirement-observation
 ```
 
 Keep terminal metadata, logs, snapshots, the archived sources, independent auditors

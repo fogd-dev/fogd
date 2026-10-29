@@ -148,8 +148,12 @@ lost results or replayed effects. The
 [v5 sequential retirement check](evidence/operator-native-background-retirement-v5.json)
 adds four retirements, fresh queue/cron capacity, retained survivor input and
 zero-live recovery. All five source snapshots retain their bytes after the three
-restore audits. Dual-cron retirement, broader failure paths and full family
-acceptance remain open.
+restore audits. The
+[v5 dual-cron check](evidence/operator-native-background-retirement-dual-v5.json)
+adds retirement beside another live cron across a shared deadline, explicit
+survivor resume and a verified no-replay interval. Both source snapshots restore
+with their recorded data and retirement history. Broader failure paths and full
+family acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on
