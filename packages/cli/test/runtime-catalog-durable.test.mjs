@@ -66,6 +66,22 @@ test('profile mode binds to matching catalog capability', () => {
   assert.deepEqual(authorizePolicyEntry(durablePolicy(), durableEntry()), durableEntry());
 });
 
+test('browser review runtime is a closed candidate with independent source pins', () => {
+  const next = runtimeFamily('celld-approval-v6-linux-arm64', 'candidate');
+  const previous = runtimeFamily('celld-durable-v5-linux-arm64');
+  assert.equal(next.admission, 'candidate');
+  assert.equal(next.routing, 'durable');
+  assert.equal(next.parentImage, previous.image);
+  assert.notEqual(next.image, previous.image);
+  for (const key of ['storageImage', 'binarySha256', 'supervisorSha256']) assert.equal(next[key], previous[key]);
+  for (const name of ['admin-review', 'review-artifact', 'decision-history']) {
+    assert.match(next.sourceFiles[`packages/platform/src/${name}.mjs`], /^[a-f0-9]{64}$/);
+  }
+  assert.equal(previous.sourceFiles['packages/platform/src/admin-review.mjs'], undefined);
+  assert.throws(() => runtimeFamily(next.id), /ordinary enrollment remains closed/);
+  assert.deepEqual(runtimeFamily(previous.id), previous);
+});
+
 test('cross-mode and mismatched authorization refuses', () => {
   const differs = /differs from the shipped catalog/;
   assert.throws(() => authorizePolicyEntry(durablePolicy(), legacyEntry()), differs);

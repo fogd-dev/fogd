@@ -1,0 +1,181 @@
+{
+  "schema": 1,
+  "kind": "operator-native-browser-review-v6",
+  "recordedAt": "2026-10-29T22:05:23.933418+00:00",
+  "sourceCommit": "21a318fae56a92d252686d9161286008535d396e",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "family": "celld-approval-v6-linux-arm64",
+  "image": "sha256:6ec914e60968487c7af46763196f550539ed1ae69bb31616ef64b22bb6051ea9",
+  "admission": "candidate",
+  "scope": "Fresh candidate installation on the same physical Mac: real native HTTP/D1, verified browser comparison and exact contextual approvals, stale/tampered refusal, failed SQL visibility, attributed history and retained restart. No full runtime-family, background, recovery, performance or fresh-machine qualification.",
+  "independentAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1008,
+    "runtimeProgramInputsRehashedFromContainer": 117,
+    "artifactDigestsIndependentlyRecomputed": 2,
+    "changedFilesRehashed": 2,
+    "durableAuthenticatedDecisionsVerified": 8,
+    "exactBrowserGuardMatched": true,
+    "staleAndTamperedRefusalsVerified": 2,
+    "nativePendingAndApprovedMigrationLedgersVerified": true,
+    "failedAppPausedAndPeerActiveAfterRestart": true,
+    "candidateContainersStoppedAndImagePinsVerified": 8,
+    "retainedContainersUnchanged": 16,
+    "ordinaryAdmission": "closed",
+    "scope": "Fresh candidate installation on the same physical Mac: real native HTTP/D1, verified browser comparison and exact contextual approvals, stale/tampered refusal, failed SQL visibility, attributed history and retained restart. No full runtime-family, background, recovery, performance or fresh-machine qualification."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2850,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 470294.022625,
+    "focusedCatalogTestsPassed": 16,
+    "syntaxAndQualityPassed": true
+  },
+  "unchangedPreviousFamilies": 5,
+  "privateEvidenceRoot": "~/.local/share/fogd-qualifications/native-browser-review-v6-20261029-02",
+  "evidenceFingerprints": {
+    "audited-containers.json": {
+      "sha256": "44fac626f3eda1e22c2f8a0c433d1b9a3203e6adb2ad21c5216ca3a858cbdfcc",
+      "bytes": 93162
+    },
+    "comparison.html": {
+      "sha256": "e1a7dbb50a7a4ced49349cda7531b69e70f699da0cd9c1c8d739b320f853926f",
+      "bytes": 9381
+    },
+    "comparison.png": {
+      "sha256": "ae02758468ad30654ed6eb0e002b0d3694f5015622ace858de032b9633ad3fb9",
+      "bytes": 342718
+    },
+    "continuation-02.mjs": {
+      "sha256": "5325579af8b0fed61135f668c6f05193ae22e43e7a909cb582d2608baf2e0640",
+      "bytes": 9250
+    },
+    "continuation-failure.json": {
+      "sha256": "90a3652539b1ed10080f5f3d346b78ecf98affe7a3ce4ef2b43b36092aaf378a",
+      "bytes": 12439
+    },
+    "continuation.mjs": {
+      "sha256": "c357c44d6cbe7be28d951976d083aac58e46bc8ae37b77890f7b3e39224b0bc2",
+      "bytes": 10129
+    },
+    "durable-state.json": {
+      "sha256": "78fb173bb9cbde2fab86ae7f2898f1b24f1a1d88df419a095c0dac035ec334e6",
+      "bytes": 16355
+    },
+    "executed-source-inventory.json": {
+      "sha256": "4b7c5d2c1a672cab43eb675463ac89dbead2ab0ec384222b3ca78876c2019338",
+      "bytes": 118127
+    },
+    "failed.png": {
+      "sha256": "e59c690380da9871a501bdbeaa498bfa909bf7277d77261fe6fdf6f7f035cd52",
+      "bytes": 346313
+    },
+    "failure.json": {
+      "sha256": "b8ad750f65a0c791781ee66a09c8dea85634502c5cfbd011ccd135f4e4a4efeb",
+      "bytes": 11024
+    },
+    "fogd-audit-native-review-v6.log": {
+      "sha256": "b53ff42391ace65e33baf74d1458babb4bc80ba7cf1de41aeda0bd3b9604a706",
+      "bytes": 842
+    },
+    "fogd-audit-native-review-v6.py": {
+      "sha256": "dec9b4226df369e18de1d573aab4ded91fd363bccea0f432be40dd70d12b288e",
+      "bytes": 4715
+    },
+    "fogd-native-review-v6-02.log": {
+      "sha256": "282a530dfb98c91e68979fd7ee1b8fd260d8c5327857917c3f15dbb23e7b711c",
+      "bytes": 491
+    },
+    "fogd-native-review-v6-continue-02.log": {
+      "sha256": "ecc64c01cfcbdd5fd242a6ba8d47fbd242d89510e492fc2ee6105207b075717d",
+      "bytes": 155
+    },
+    "fogd-native-review-v6-continue.log": {
+      "sha256": "8ea38c1418fc042d7269480ea433b72e9c96c68d33c71a5aac76aa4545913a62",
+      "bytes": 753
+    },
+    "fogd-native-review-v6.log": {
+      "sha256": "27fe60fe32055c7ed621cb6ab159d65201a2274c15f2c3998e7ff5360eae8c00",
+      "bytes": 595
+    },
+    "fogd-v6-browser-guide-writing.log": {
+      "sha256": "e7c61f36c1670ce315a5a79c507a06ad5a7458b6377deaeca906e0438876b397",
+      "bytes": 2977
+    },
+    "fogd-v6-candidate-self-review.md": {
+      "sha256": "497d9c7b58cb9dfe0f769b75834a594a8caf60b1d9f67a23702144b7d6c41cc9",
+      "bytes": 2879
+    },
+    "fogd-v6-catalog-canonical.log": {
+      "sha256": "4fb9fc108269da70593c0c7ff0048119dc8537e01a30eeb5cf2fe2d4588fc096",
+      "bytes": 253916
+    },
+    "fogd-v6-catalog-quality.log": {
+      "sha256": "74cc8021f7a34228db72b7059228b6569b8bca61527b8e1f13df3a3b098f7126",
+      "bytes": 1670
+    },
+    "fogd-v6-catalog-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "fogd-v6-catalog-tests.log": {
+      "sha256": "3c2beceacefb706208165ba58dc1bf56cd428f4c3db5b46c3b98506c78a65840",
+      "bytes": 1376
+    },
+    "fogd-v6-runtime-guide-writing.log": {
+      "sha256": "83a3c300d7d8584417e44fd418f550d861f9feb38980b46f86ca89669b3b612d",
+      "bytes": 12093
+    },
+    "independent-audit.json": {
+      "sha256": "bc6adb65f9fd0d47f1c0d3957ea7998ec3e641697158537d64747f404051767c",
+      "bytes": 872
+    },
+    "result.json": {
+      "sha256": "6494bd993f9bd521fd595d0f5dcd84a0c80b52c8a384c14bedee8468f7a8933c",
+      "bytes": 141359
+    },
+    "retained-after.json": {
+      "sha256": "532c5ed6ca982e9d593b43d90bc3bee62d83fa0b22f8a9473adc8bccc4cff7d1",
+      "bytes": 184575
+    },
+    "retained-before.json": {
+      "sha256": "532c5ed6ca982e9d593b43d90bc3bee62d83fa0b22f8a9473adc8bccc4cff7d1",
+      "bytes": 184575
+    },
+    "review.json": {
+      "sha256": "e23fe040c779c715b158f1c8aeb9aa5e3fd96354801f404d685d6fb91a4e7ff1",
+      "bytes": 3268
+    },
+    "runner.mjs": {
+      "sha256": "906d7ad1fcbef09b64501e6534cf4c920b3ce5ab5b61c57623f8e30804113027",
+      "bytes": 11417
+    },
+    "sql.png": {
+      "sha256": "60afa5099eace1d40ab01324947fda756703f8425a1d1170edb4d388bd0308c9",
+      "bytes": 95928
+    },
+    "stale.png": {
+      "sha256": "96cf567805dd8be16a64f869f28071de70d61b73cd2cf9152d3eee8405401ecf",
+      "bytes": 305436
+    }
+  },
+  "harnessCorrections": [
+    "Run 01 used the source SQL path instead of the built artifact path. It terminated and retained its fresh fixture; no pass was accepted.",
+    "Run 02 verified native SQL and browser approval, then terminated on an incorrect expectation that a superseded release remain pending. The recorded refusal was correct.",
+    "Continuation verified tampered rejection refusal, then hit the host shell argument limit during restoration of a large worker. A second continuation restored the worker from a local file whose SHA-256 matched the reviewed artifact, using file copy.",
+    "Corrected continuation reused the retained run-02 installation, completed explicit rejection, native SQL failure, durable history, full stop/start and graceful retained shutdown. Product sources and candidate image did not change."
+  ],
+  "limits": [
+    "Candidate only: ordinary enrollment and export remain closed. Existing family pins and default cron admission are unchanged.",
+    "The fresh installation uses a new project and storage on an existing Linux arm64 Docker engine on the same physical Mac, with prepared application dependencies. It does not prove a separate physical machine or unaided human onboarding.",
+    "The controlled invalid SQL fails an ordinary migration statement; no crash inside native SQL or power-loss behavior is claimed.",
+    "This covers browser/controller/native HTTP and D1 behavior, not complete runtime-family qualification, stopped restore, background execution, density, performance or per-worker CPU quotas.",
+    "Native binary/dependency bytes are inherited from the cached verified parent. Prior packaging records two identical uncached COPY-only image builds; no new native rebuild or registry publication occurred.",
+    "There are no existing user installations. All retained installations are QA fixtures; old resources and the earlier launch fence were preserved.",
+    "No independent external review approval is claimed."
+  ]
+}
