@@ -137,6 +137,13 @@ and [HTTP migration-retry evidence](evidence/operator-native-migration-retry-v5.
 on another isolated Docker engine on the same physical host. The background trial
 checks cron and queue resume with HTTP withheld, a controller outage across an
 observed cron deadline, and a stopped snapshot. A
+[cron activation interruption](evidence/operator-native-cron-activation-v5.json)
+also checks unpublished and held-migration minutes, controller loss after
+publication, confirmed rehold, pinned secret-revision refusal and original retry.
+The corrected probe restarts only the verified controller; the earlier ordinary
+startup refusal remains unaccepted. The native resume/release/paused-update matrix,
+in-flight replacement, unreachable-member pause and offline-build evidence still
+need resolution for v5 admission. A
 [native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
 verifies failure after application SQL but before migration-name bookkeeping.
 Two failed exact approvals leave no new row or ledger entry; removing the SQL

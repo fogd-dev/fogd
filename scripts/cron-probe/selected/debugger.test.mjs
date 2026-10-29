@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { SourceDebugger } from './source-debugger.mjs';
 import { DebuggerTransport } from './debugger-transport.mjs';
 import { controllerProcess } from './controller-debugger.mjs';
+import { restartInterruptedController } from './controller-restart.mjs';
 import { runtimeFamily } from '../../../packages/cli/src/runtime/catalog.mjs';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -34,6 +35,43 @@ function fixture({ text = source, frame = {}, duplicates = false, moved = false,
   return { session: new SourceDebugger(transport, { [path]: digest }), commands, state };
 }
 const selected = { path, marker: 'return true;', functionName: 'migrate' };
+
+function restartFixture() {
+  const identity = { container: 'c'.repeat(64), image: 'sha256:' + 'a'.repeat(64), project: 'owned', startedAt: '2026-10-29T10:00:00Z' };
+  const before = { Id: identity.container, Image: identity.image, Config: { Labels: { 'com.docker.compose.project': 'owned', 'com.docker.compose.service': 'controller' } },
+    HostConfig: { ReadonlyRootfs: true }, RestartCount: 0, State: { Running: false, Restarting: false, StartedAt: identity.startedAt, ExitCode: 137, OOMKilled: false } };
+  const after = structuredClone(before); Object.assign(after.State, { Running: true, StartedAt: '2026-10-29T10:01:00Z', ExitCode: 0 });
+  const calls = []; let inspections = 0;
+  const run = async args => { calls.push(args); return args[0] === 'inspect' ? JSON.stringify([++inspections === 1 ? before : after]) : ''; };
+  return { identity, before, after, calls, run };
+}
+
+test('interrupted controller restart touches only the verified retained controller and records its new process', async () => {
+  const f = restartFixture(), restarted = await restartInterruptedController(f.identity, f.run);
+  assert.deepEqual(f.calls, [['inspect', f.identity.container], ['start', f.identity.container], ['inspect', f.identity.container]]);
+  assert.equal(restarted.previousExitCode, 137); assert.equal(restarted.startedAt, f.after.State.StartedAt);
+  assert.equal(restarted.previousStartedAt, f.identity.startedAt); assert.equal(restarted.unchangedConfiguration, true);
+});
+
+for (const [name, alter] of [
+  ['wrong project', f => { f.before.Config.Labels['com.docker.compose.project'] = 'other'; }],
+  ['wrong image', f => { f.before.Image = 'sha256:' + 'b'.repeat(64); }],
+  ['another process', f => { f.before.State.StartedAt = '2026-10-29T09:59:00Z'; }],
+  ['running controller', f => { f.before.State.Running = true; }],
+  ['unconfirmed kill', f => { f.before.State.ExitCode = 0; }],
+]) test(`controller restart refuses ${name} before starting anything`, async () => {
+  const f = restartFixture(); alter(f);
+  await assert.rejects(restartInterruptedController(f.identity, f.run), { code: 'ERR_ASSERTION' });
+  assert.deepEqual(f.calls, [['inspect', f.identity.container]]);
+});
+
+for (const [name, alter] of [
+  ['replaced container', f => { f.after.Id = 'd'.repeat(64); }],
+  ['changed configuration', f => { f.after.Config.Cmd = ['different']; }],
+  ['unchanged process', f => { f.after.State.StartedAt = f.before.State.StartedAt; }],
+]) test(`controller restart does not accept ${name} as success`, async () => {
+  const f = restartFixture(); alter(f); await assert.rejects(restartInterruptedController(f.identity, f.run), { code: 'ERR_ASSERTION' });
+});
 
 for (const [family, main] of [
   ['celld-cron-v2-linux-arm64', 'packages/platform/src/main.mjs'],

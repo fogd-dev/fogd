@@ -7,17 +7,21 @@ import { selectedHost, cleanupSelectedHost } from './host.mjs';
 import { httpsClient, waitFor, crossMinute } from './https.mjs';
 import { controllerState, nativeObservation } from './observations.mjs';
 import { openControllerDebugger, killController } from './controller-debugger.mjs';
-import { sourceInventory, sourceState, expectRefusal, assertEmptyJobs, assertActive } from './evidence.mjs';
+import { archiveSources, sourceInventory, sourceState, expectRefusal, assertEmptyJobs, assertActive } from './evidence.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
+import { activationInputs } from './activation-inputs.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
+import { restartInterruptedController } from './controller-restart.mjs';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/activation.mjs PRIVATE_OUTPUT_DIRECTORY');
-const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(process.argv[2]), events = [];
-let phase = 'https-ready', session;
+const inputs = activationInputs(process.argv.slice(2));
+const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions), events = [];
+let phase = 'https-ready', session, closed = false;
 const note = (name, value = {}) => { events.push({ at: Date.now(), name, ...value }); console.log(name); };
 const save = (name, value) => writeFile(join(host.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {
+  await archiveSources(host.output, provenance, sources, new URL(import.meta.url));
   const request = await httpsClient(host);
   await waitFor('HTTPS admin', async () => (await request('/v1/admin')).status === 200);
   await waitFor('signed native bootstrap', async () => {
@@ -67,14 +71,14 @@ try {
   session.debuggerSession.assertPaused(publicationPause.pauseSequence);
   await save('publication-pause.json', { publicationPause, state: publishedState, native: nativePublished });
   assert.equal(approvalSettled, false); const killRequestedAt = Date.now();
-  const interruption = await killController(session.identity);
+  const interruptedIdentity = session.identity, interruption = await killController(interruptedIdentity);
   // A lost debugger connection after the confirmed daemon kill is expected.
   session = undefined;
   assert.deepEqual(await controllerState(host), publishedState);
   const interruptedApproval = await approval;
   assert.equal(interruptedApproval.ok, false); assert.ok(interruptedApproval.at >= killRequestedAt);
   note('publication-killed-with-durable-state-preserved', { interruption, killRequestedAt, interruptedApproval });
-  phase = 'normal-restart'; await host.command(['up', '--installation', host.project]);
+  phase = 'controller-restart'; const restart = await restartInterruptedController(interruptedIdentity);
   const recovered = await waitFor('interrupted approval rehold', async () => {
     const state = await controllerState(host), control = state.apps.refresh.dispatch;
     return state.deployments[submitted.id].status === 'failed' && control.hold === submitted.id && control.observed === 'paused' && control.operation === null && state;
@@ -105,8 +109,9 @@ try {
   const identities = [];
   for (const fleet of host.policy.fleets) identities.push(await nativeObservation(host, fleet.id, undefined, { captureProofs: true }));
   const receipt = { scope: 'Selected frozen-image migration hold and publication interruption; other M11c gates remain open', project: host.project, family: host.entry.id, image: host.entry.image,
-    policy: host.policy, submitted, revision, publishedVersion: nativePublished.stored.manifest.version, provenance, sources, interruption, refusal, active, retryRequestedAt, approvalReturnedAt, firstAppReadAt, autonomous, firstAppRead: firstAppRead.json(), identities, events };
+    policy: host.policy, submitted, revision, publishedVersion: nativePublished.stored.manifest.version, provenance, sources, interruption, restart, refusal, active, retryRequestedAt, approvalReturnedAt, firstAppReadAt, autonomous, firstAppRead: firstAppRead.json(), identities, events };
   receipt.privacy = await scanPublicSurfaces(host, request, [submitted], token.token, [initialSecretValue, changedSecretValue], receipt);
+  phase = 'retained-shutdown'; receipt.shutdown = await stopSelectedHost(host); closed = true;
   assert.deepEqual(await sourceInventory(), sources); assert.deepEqual(await sourceState(), provenance);
   await save('result.json', receipt); note('PASS-selected-migration-and-publication-slice');
 } catch (error) {
@@ -115,7 +120,7 @@ try {
   throw error;
 } finally {
   clearInterval(heartbeat);
-  try { if (session) await session.debuggerSession.close(); } finally { await cleanupSelectedHost(host); }
+  try { if (session) await session.debuggerSession.close(); } finally { if (!closed) await cleanupSelectedHost(host); }
 }
 
 async function migrationSnapshot(host, submitted, revision) {

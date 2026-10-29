@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { openControllerDebugger, killController } from './controller-debugger.mjs';
 import { controllerState, nativeObservation } from './observations.mjs';
 import { waitFor } from './https.mjs';
+import { restartInterruptedController } from './controller-restart.mjs';
 
 const checkpoints = {
   resume: { path: 'packages/platform/src/dispatch-control.mjs', marker: "if (status?.paused !== (verb === 'pause'))", functionName: '#apply', condition: 'verb === "resume" && releaseHold === true' },
@@ -34,7 +35,7 @@ export async function interruptApproval(host, submitted, revision, cut, desired 
     assert.equal(interruptedApproval.ok, false); assert.ok(interruptedApproval.at >= killRequestedAt);
     const evidence = { cut, desired, submitted, revision, identity, paused, state, native, killRequestedAt, interruption, interruptedApproval };
     await writeFile(join(host.output, `${submitted.label}-interruption.json`), JSON.stringify(evidence, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-    await host.command(['up', '--installation', host.project]);
+    evidence.restart = await restartInterruptedController(identity);
     const recovered = await waitFor('interrupted activation rehold', async () => {
       const state = await controllerState(host), control = state.apps.refresh.dispatch;
       return state.deployments[submitted.id].status === 'failed' && control.hold === submitted.id && control.observed === 'paused' && control.operation === null && state;

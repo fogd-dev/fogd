@@ -5,18 +5,21 @@ import { join } from 'node:path';
 import { selectedHost, cleanupSelectedHost } from './host.mjs';
 import { httpsClient, waitFor, crossMinute } from './https.mjs';
 import { controllerState, nativeObservation } from './observations.mjs';
-import { sourceInventory, sourceState, expectRefusal, assertActive } from './evidence.mjs';
+import { archiveSources, sourceInventory, sourceState, expectRefusal, assertActive } from './evidence.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
 import { deployFixture } from './fixture.mjs';
 import { interruptApproval } from './interruption.mjs';
 import { futureJobs, occurrenceKeys, ledgerRows } from './future-jobs.mjs';
+import { activationInputs } from './activation-inputs.mjs';
+import { stopSelectedHost } from './shutdown.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/activation-matrix.mjs PRIVATE_OUTPUT_DIRECTORY');
-const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(process.argv[2]), cases = [], submissions = [];
+const inputs = activationInputs(process.argv.slice(2));
+const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions), cases = [], submissions = [];
 const save = (name, value) => writeFile(join(host.output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-let phase = 'baseline';
+let phase = 'baseline', closed = false;
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {
+  await archiveSources(host.output, provenance, sources, new URL(import.meta.url));
   const request = await httpsClient(host);
   await waitFor('HTTPS admin', async () => (await request('/v1/admin')).status === 200);
   await waitFor('signed native fleets', async () => {
@@ -89,9 +92,10 @@ try {
   const receipt = { scope: 'Selected frozen-image native resume, durable release and paused update interruptions through ordinary HTTPS CLI', project: host.project, family: host.entry.id, image: host.entry.image,
     policy: host.policy, provenance, sources, baseline, baselineApprovedAt, baselineJobs, cases, identities };
   receipt.privacy = await scanPublicSurfaces(host, request, submissions, token, [secretValue], receipt);
+  phase = 'retained-shutdown'; receipt.shutdown = await stopSelectedHost(host); closed = true;
   assert.deepEqual(await sourceInventory(), sources); assert.deepEqual(await sourceState(), provenance);
   await save('result.json', receipt);
   console.log('PASS-selected-activation-matrix');
 } catch (error) {
   await save('failure.json', { phase, name: error.name, message: error.message }); throw error;
-} finally { clearInterval(heartbeat); await cleanupSelectedHost(host); }
+} finally { clearInterval(heartbeat); if (!closed) await cleanupSelectedHost(host); }

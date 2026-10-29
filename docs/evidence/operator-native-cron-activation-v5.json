@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "kind": "operator-native-cron-migration-and-publication-activation",
+  "recordedAt": "2026-10-29T16:07:18.572Z",
+  "sourceCommit": "fcef79ccc46bed1321d47efd8cc9c1154dc646aa",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "Fresh two-fleet HTTPS installation on the isolated Linux arm64 independent engine on the same physical Mac. Inert scoped upload and a source-verified migration hold across natural minute boundaries, controller-only interruption after application publication with dispatch held, confirmed rehold across another minute, pinned secret-revision refusal and explicit original-artifact retry.",
+  "engineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "method": {
+    "sourceVerifiedApplicationDebugger": true,
+    "pausedFunctions": [
+      "Backend.migrate",
+      "publish"
+    ],
+    "controllerExitCode": 137,
+    "controllerContainerAndConfigurationRetained": true,
+    "nativeFleetsKeptRunningDuringControllerRestart": true,
+    "legacyInstrumentationExecuted": false,
+    "kernelTracingExecuted": false
+  },
+  "acceptance": {
+    "unpublishedMinute": true,
+    "migrationHeldAcrossMinuteWithoutApplicationSchema": true,
+    "publicationProcessInterruption": true,
+    "confirmedHoldAcrossRestartAndMinute": true,
+    "changedSecretRevisionRefused": true,
+    "originalPinnedRetryAndAutonomousSuccessBeforeAppHTTP": true
+  },
+  "verification": {
+    "archivedExecutedSourcesVerified": 973,
+    "distinctSignedChallenges": 4,
+    "alteredSignatureRefusals": 4,
+    "sourceVerifiedApplicationDebuggerCheckpoints": 2,
+    "activeFleetMembershipBeforeAndAfterVerified": true,
+    "unusedFleetSignedBootstrapOnly": true,
+    "canonicalApprovalArtifactAndSQLHashesVerified": true,
+    "installedPolicyAndPrivatePublicAuthorityPairVerified": true,
+    "priorContainersUnchanged": 112,
+    "priorVolumesRetained": 154,
+    "ownedContainersStoppedAndRetained": 8,
+    "freshVolumesRetained": 11,
+    "nativeLedgerNamesMatchDeclaredMigrations": true
+  },
+  "unacceptedEarlierAttempt": {
+    "attempt": "01",
+    "phase": "normal-restart",
+    "reason": "The older probe invoked ordinary up after killing only the controller while other services still ran. Durable startup requires all retained services stopped and refused. The probe now explicitly restarts only the source-verified killed controller.",
+    "retainedContainers": 8,
+    "retainedVolumes": 11,
+    "corroboration": "A later full-start diagnostic succeeded in starting the installation, retained an unconfirmed pause during cold identity recovery, then timed out waiting for confirmation. Its log-health assertion also rejected the prior simultaneous-cleanup self-fencing records. This diagnostic is not accepted qualification.",
+    "privateFingerprints": {
+      "failure.json": {
+        "sha256": "2894f7db293066e8ecda85d0b4238d189ccecfbbd56b6ac1604ff04302d49a59",
+        "bytes": 1200
+      },
+      "migration-pause.json": {
+        "sha256": "9cdaff2e20038b42ed8996e69858791a98f796b8d44b9dd3e0ea5969bfcb1170",
+        "bytes": 11204
+      },
+      "publication-pause.json": {
+        "sha256": "8b38dcc017d1a0e4b68375776d03423af35a64f895fe6705c3a1afa3a6be397b",
+        "bytes": 6089
+      },
+      "restart-corroboration/runtime.log": {
+        "sha256": "453b49d89925e9cf122e63302aa5914cccc03f893bd4a0c1c57da70bd7cb08de",
+        "bytes": 257046
+      }
+    }
+  },
+  "hostChecks": {
+    "restartAndDurableLaunchTests": 40,
+    "failedMutantsDetected": 3,
+    "finalFocusedTests": 101,
+    "syntaxChecksPassed": true,
+    "antiSlopPassed": true
+  },
+  "testOnlyFollowup": {
+    "path": "scripts/cron-probe/selected/debugger.test.mjs",
+    "executedSha256": "7dbcb2a1244514d1b7c19334a83eb176542b3b111d4e8a93115e09ca32f718d4",
+    "finalSha256": "8ceaf6fa1552663df53d373d1b7f530d565e040b9397d98f4404b0d273cc24fe",
+    "change": "Require ERR_ASSERTION in restart refusal tests after the native run; no qualification driver or product source behavior changed."
+  },
+  "reproduce": "DOCKER_CONTEXT=ISOLATED_CONTEXT node scripts/cron-probe/selected/activation.mjs NEW_PRIVATE_OUTPUT --runtime celld-durable-v5-linux-arm64 --retain-resources",
+  "privateEvidenceFingerprints": {
+    "publication-pause.json": {
+      "bytes": 6089,
+      "sha256": "8c0a611e5553c1a60634ba32d35c688acb15cdf7f4af6d0c80e14fde945a5380"
+    },
+    "reheld-minute.json": {
+      "bytes": 7773,
+      "sha256": "acaf3aa90948324d663f87f7155f57885895092672badd1dcfc4d29dc4dfc62d"
+    },
+    "fogd-v5-cron-activation-audit-final.log": {
+      "bytes": 1063,
+      "sha256": "3dc8e1040ef87518056f2d6eb4bf2a095893833b5f3d45ce23707240033babdd"
+    },
+    "result.json": {
+      "bytes": 137249,
+      "sha256": "56c803977454b36a2aaacae63ec8784e2812bd392cafaf952d3d0dc1326cfc41"
+    },
+    "runner.mjs": {
+      "bytes": 11744,
+      "sha256": "ca7d2937d9ab54dcbc5bc97ae273a36f2a23954f21e332af557b7912c2e3760e"
+    },
+    "fogd-v5-cron-activation-audit.log": {
+      "bytes": 378,
+      "sha256": "c2d84cf0dee7358cadd434d644dcb5f010e156dd7ebf127103e10ea59e798b82"
+    },
+    "runtime.log": {
+      "bytes": 257882,
+      "sha256": "c676f9b0749ebdc1dbaaa863c79629e307c7e8d44d21c2ee190d560826c0f5c3"
+    },
+    "executed-source-inventory.json": {
+      "bytes": 114102,
+      "sha256": "64117f1faff829e241f95f466b14713937571754aff4f46318065141a11e2841"
+    },
+    "independent-audit.json": {
+      "bytes": 2364,
+      "sha256": "1d71f323329e14b0a756857b553dc79bfd07aada7f036b3ef6c59513fb346a63"
+    },
+    "test-followup.json": {
+      "bytes": 379,
+      "sha256": "214cf124e0dba472849696e10060cf479765c00a26b0888af317af7db5629a41"
+    },
+    "migration-pause.json": {
+      "bytes": 11204,
+      "sha256": "00482a298a6a1757ef91ad27b0758b894ea6ebb5a491cc172d9885bae26ecf0c"
+    },
+    "independent-audit-source.mjs": {
+      "bytes": 12752,
+      "sha256": "4ad40538b55036f4d8f638faeecc68f70d56036960bf32d51f97b07604934edb"
+    },
+    "independent-audit-initial.json": {
+      "bytes": 2312,
+      "sha256": "16ee7f7f5aa216a8b9cf232f6f19329b2b6c1a4f6d6fb2a0f418454c20a2694c"
+    },
+    "independent-audit-source-initial.mjs": {
+      "bytes": 12096,
+      "sha256": "68bad3d2829ef996455b058218767ce70f8208653459adf93350734626618c40"
+    },
+    "fogd-v5-cron-activation-audit-ledger.log": {
+      "bytes": 1111,
+      "sha256": "1c2ea8c06066c31e4b3e9eadd02156f4063084b9ef5f9c496643eb650690bbf3"
+    },
+    "fogd-v5-cron-activation-final-focused.log": {
+      "bytes": 8209,
+      "sha256": "f110d5f28ce78f1ed9d526de71e72f4bb6b3578fbe101dada245dc601964d27e"
+    },
+    "fogd-v5-activation-check.log": {
+      "bytes": 32,
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a"
+    },
+    "fogd-v5-cron-activation-final-quality.log": {
+      "bytes": 1676,
+      "sha256": "b3f70f91dd693a370486b3d3f766890d017ee847cb168227fb88cc8d60cb4f56"
+    }
+  },
+  "limitations": [
+    "Controller-only interruption and exact retained-container restart; not an ordinary full-install startup proof.",
+    "No kernel/syscall tracing, native transaction interruption, staging-sync or power-loss claim.",
+    "The first independent audit incorrectly required active leases for the unused fleet. It failed; the corrected audit validates both signed bootstrap identities and explicitly records that the unused fleet has no active membership. Both logs are retained.",
+    "The example was built through ordinary scoped deploy with prepared local dependencies; no network-isolated build claim.",
+    "Native resume/release/paused-update interruption matrix, in-flight replacement, unreachable-member pause and offline-build evidence remain to be resolved in the final v5 selected-admission audit.",
+    "No full-family acceptance, default admission, cross-family migration, separate physical-machine, per-worker CPU quota or exactly-once external-effects claim."
+  ]
+}

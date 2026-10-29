@@ -347,6 +347,16 @@ unavailable replicas, private process-log captures, paused request refusal and
 controller-loss serving. Native readiness stays distinct from application health.
 Broader failure and release gates remain open.
 
+The [v5 cron activation check](evidence/operator-native-cron-activation-v5.json)
+keeps a scoped upload unpublished across a minute, holds migration before
+application schema exists across another minute, and interrupts the controller
+after publication while dispatch remains held. Restarting that verified controller
+confirms the original hold; no jobs appear across the next minute. A changed secret
+revision refuses, and the original pinned retry produces autonomous saved jobs
+before the first app HTTP read. This tests controller-only recovery. Ordinary
+durable startup requires the retained installation to be stopped first; the
+earlier probe's use of legacy startup semantics remains unaccepted.
+
 The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,
