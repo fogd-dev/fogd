@@ -376,6 +376,16 @@ import and saved result remain intact. Durable HTTP authority stays active, but
 gateway availability during this outage is not measured. The stopped member was
 not the recorded waker, so this case does not establish waker takeover timing.
 
+The [v5 offline-build check](evidence/operator-native-offline-builds-v5.json)
+builds the minute and sparse cron fixtures through ordinary Void and fogd inside
+credential-free containers with networking disabled. Sources stay read-only in
+engine-local volumes, and copied artifacts match their recorded digests. Exact
+scoped approvals execute native jobs on both schedules; a paused cadence update
+preserves old rows. The
+[SDK preparation](evidence/operator-v5-offline-sdk-preparation.json) uses a pinned
+base and locked dependencies with networking enabled. That preparation is a
+separate prerequisite, not an offline build claim or runtime admission.
+
 The release requirements are:
 
 - **Build from declared inputs.** Record the native source revision, patches,

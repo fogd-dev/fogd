@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "kind": "operator-native-ordinary-offline-builds",
+  "recordedAt": "2026-10-29T17:20:08.699Z",
+  "sourceCommit": "60310ccfd6feacf72281155677db884c44404877",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sdkImage": "sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8",
+  "ordinaryAdmission": "closed",
+  "qualified": false,
+  "fullFamilyQualification": false,
+  "scope": "Ordinary Void and fogd buildArtifact execution for minute and three-minute fixture schedules with network disabled, followed by scoped HTTPS upload, exact approval and native v5 execution. The paused schedule update preserves old ledgers. One fresh two-fleet installation on an isolated Linux arm64 Docker engine on the same physical Mac.",
+  "engineId": "043a9734-e319-4236-861d-1dbb7108b664",
+  "dependencyPreparationReceipt": "operator-v5-offline-sdk-preparation.json",
+  "builds": [
+    {
+      "name": "minute",
+      "cron": "* * * * *",
+      "digest": "58dc6d3c7c3ab7d68337fff488d627f851dbfbb6e4da709de906fad59ebd95f2",
+      "builder": "f470df1cc14663bc1e5e9b243b555cc853db51b975cd795948df6347ab351a6f",
+      "network": "none",
+      "stagedSourceFilesVerified": 567,
+      "outputFilesVerified": 57,
+      "sourceProjectFilesVerified": 17,
+      "nativeScheduledTime": 1793293920000,
+      "businessRowsPerJobForObservedOccurrence": 1
+    },
+    {
+      "name": "sparse",
+      "cron": "*/3 * * * *",
+      "digest": "5c3322ee2e274a4e88437d6b0f7000dbf510fbd2fe33b03427d0055bd7a23a1b",
+      "builder": "267f47591bbc60d796ae50fc2ef4c14be0420ed6215aca110645f7766084fc33",
+      "network": "none",
+      "stagedSourceFilesVerified": 567,
+      "outputFilesVerified": 57,
+      "sourceProjectFilesVerified": 17,
+      "nativeScheduledTime": 1793294100000,
+      "businessRowsPerJobForObservedOccurrence": 1
+    }
+  ],
+  "buildPolicy": {
+    "network": "none",
+    "sourceTransport": "Engine-local named volumes with read-only source subdirectories; no host bind mounts.",
+    "credentialValuesPassed": false,
+    "memoryBytesPerBuilder": 2147483648,
+    "nanoCpusPerBuilder": 2000000000,
+    "limitsApplyTo": "Whole build containers; no per-worker CPU-quota claim.",
+    "retainedBuilders": true,
+    "sdkDependencyPreparationNetworkEnabled": true
+  },
+  "voidPatch": {
+    "path": "patches/void@1.1.11.patch",
+    "sha256": "cc05a1d875be406d488f98edf6652c1c90ddb58b7f268d3c9260b30ad322e024",
+    "bytes": 23891
+  },
+  "buildAdapterFiles": {
+    "packages/cli/src/build.mjs": "24e7cbb0e498fc71aefa7cb330e02e77371e9bba9ddc119c5c5d9acde305e518",
+    "packages/cli/src/local.mjs": "67f06fba255ef74f2450f2b0f4e61f5602d901e468bb8ea1c932ed79637a5d2b",
+    "packages/runtime/src/artifact.mjs": "d4503f9ff8049b70babcc114af6e6c4062d266d802f94a8526e7e5b06a224015",
+    "packages/cli/src/build-env.mjs": "a81479bcf9f3eec20d1a72c14cb5dc3feb493a10845d2a1f923c48c783feecda",
+    "packages/cli/src/build-cache/lifecycle.mjs": "9840997c3a1b6303118a44ecc095dd197d9c6e8d6d4d66c97080844acbb166c1"
+  },
+  "nativeRuntimePatches": [
+    {
+      "path": "patches/celld-0.6.2-preaccept-attachment.patch",
+      "sha256": "9a46a9d878df615eb3efad73ac501e1e5202b4b629c9c4082dbfb33c99e9b2dd"
+    },
+    {
+      "path": "patches/celld-0.6.2-cron-retry.patch",
+      "sha256": "6f549773e2c74f75639f8cf7584efd1529c338d3602ef3c2b7fd31253ce65b19"
+    },
+    {
+      "path": "patches/celld-0.6.2-cron-controls.patch",
+      "sha256": "11460dd716730265b7506d28dc17e0353fdedfa447e2e15c6b42514114e7fb3a"
+    },
+    {
+      "path": "patches/celld-0.6.2-runtime-identity.patch",
+      "sha256": "d39b2dcf010a98c3befeb8aeb8f9911276eb6f53bbee7e3a137ca80b4eb4d9b3"
+    },
+    {
+      "path": "patches/celld-0.6.2-runtime-binding.patch",
+      "sha256": "2c6e3048e7bace0d53808bcf5a4aa0f1b37e96b7ad64410951406bf735f42907"
+    }
+  ],
+  "verification": {
+    "archivedExecutedSourcesVerified": 978,
+    "stagedSourceFilesVerified": 1134,
+    "offlineOutputFilesVerified": 114,
+    "distinctSignedChallenges": 4,
+    "alteredSignatureRefusals": 4,
+    "canonicalArtifactsAndSQLHashesVerified": 3,
+    "nativeMigrationNamesMatchDeclaredMigrations": true,
+    "oldScheduleLedgersUnchangedAfterPausedUpdate": true,
+    "installedPolicyAndPrivatePublicAuthorityPairVerified": true,
+    "privateValuesChecked": 5,
+    "priorContainersUnchanged": 155,
+    "priorVolumesRetained": 214,
+    "ownedContainersStoppedAndRetained": 10,
+    "freshVolumesRetained": 15,
+    "applicationVolumes": 11,
+    "sdkInputAndOutputVolumes": 4
+  },
+  "hostChecks": {
+    "focusedTestsPassed": 30,
+    "newMountPolicyTests": 7,
+    "privateMountPolicyMutantsDetected": 3,
+    "canonicalTestsPassed": 2757,
+    "canonicalTestsFailed": 0,
+    "canonicalTestsCancelled": 0,
+    "canonicalTestsSkipped": 0,
+    "canonicalDurationMs": 492873.57425,
+    "syntaxCheckPassed": true,
+    "antiSlopPassed": true
+  },
+  "unacceptedPreparationPilot": {
+    "scope": "SDK/transport pilot only, not native acceptance.",
+    "reason": "Ordinary Void built, then fogd buildArtifact refused a missing declared FOGD_HOME. The worker now creates its new private home before calling the build API.",
+    "containerAndInputOutputVolumesRetained": true,
+    "privateFingerprints": {
+      "build.log": {
+        "sha256": "60791d299db9089ec098f752281096b4da3cc7dc078de86a50d3806fd05a6c2e",
+        "bytes": 2935
+      },
+      "container-before.json": {
+        "sha256": "0b71d1c5621b5fa4b4264053969a40aa2f46044a7e6c9e0066ce78af813e0ce3",
+        "bytes": 1620
+      },
+      "engine-inputs.json": {
+        "sha256": "4b1250346daa78487d3b0af5dbec25325f84fb71d2a4448c3922faa51ec265bf",
+        "bytes": 71350
+      }
+    }
+  },
+  "reproduce": "DOCKER_CONTEXT=ISOLATED_CONTEXT node scripts/cron-probe/selected/offline-smoke.mjs NEW_PRIVATE_OUTPUT --runtime celld-durable-v5-linux-arm64 --sdk-image sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8 --retain-resources",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "fa4346847f5fbf6c9b70f84076de7439435d9f1319b56ad969bcace74deed749",
+      "bytes": 353513
+    },
+    "independent-audit.json": {
+      "sha256": "4e40cbddfdc60e0330b74897443c4ed3d36a5040762e8368c9da8951de337301",
+      "bytes": 3193
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "cc9a8716e6ff70bac8b662c214bd5d264832762c2f80dcef7b4bec14e308dd2e",
+      "bytes": 16255
+    },
+    "executed-source-inventory.json": {
+      "sha256": "e88917ac2a2b0d44011fef374fdf993a711164d374dd98b9df2e5ac2fd57facd",
+      "bytes": 114905
+    },
+    "runner.mjs": {
+      "sha256": "f59d144767a68fd352d4a351494027ad86eabed8eda416b0ede199a6ac07ed95",
+      "bytes": 5099
+    },
+    "runtime.log": {
+      "sha256": "642d739b896a2e6266546f2dc317791f2bb8157de2024dc1780a4ea9ecbe1e74",
+      "bytes": 683848
+    },
+    "post-write-privacy.json": {
+      "sha256": "c4a4534fff6122bc67c6c6e4314c489b784dbdd7fa1040fd8c52b68866566183",
+      "bytes": 1631
+    },
+    "offline-minute/audited-output-inventory.json": {
+      "sha256": "f6e85ec0aeb52e7aa635d5e4f6f95e1ba5747f15a05de95c24d27a6197770284",
+      "bytes": 8691
+    },
+    "offline-sparse/audited-output-inventory.json": {
+      "sha256": "7a4bcb6c99e2766f7c9eeeb29ad81c407ebf9f905a9ad08ad3168a795ebfcd61",
+      "bytes": 8691
+    },
+    "fogd-v5-offline-audit.log": {
+      "sha256": "eeb55814c474f8ba8369ce679e0e58fc36ed3401dd12d280aee2be6af42cad82",
+      "bytes": 650
+    },
+    "fogd-v5-offline-audit-final.log": {
+      "sha256": "fe82f7a78426845cb35414c89826e8c8c9c8fd91985675500702a9ee1d416937",
+      "bytes": 1716
+    },
+    "fogd-v5-offline-focused-tests.log": {
+      "sha256": "aa71f6f01fc97e4180106e11cb50ef5469a013e9601a331ede79b40700d0491e",
+      "bytes": 2743
+    },
+    "mount-policy-mutants/result.json": {
+      "sha256": "c9e7e87bfb14df4f49be9a6a9be2a0819c36762ea54f66636a5c14ebfa6f5304",
+      "bytes": 273
+    },
+    "fogd-v5-offline-canonical-tests.log": {
+      "sha256": "b322aff45d13947a7a5b3e501956e3b950154b434d65bb029c08760b481af2ac",
+      "bytes": 242556
+    },
+    "fogd-v5-offline-check.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-v5-offline-final-quality.log": {
+      "sha256": "8ffacfd6c43f53c30a195161076ca56e5c2736710837257a3cb5ac81b2c56c63",
+      "bytes": 1676
+    }
+  },
+  "limitations": [
+    "The SDK dependency preparation used networking; only the two ordinary application build executions claim network isolation.",
+    "The source SDK image contains a declared dependency snapshot, not an exhaustively audited dependency supply chain or a digest-reproducible image. No image or package was published.",
+    "The initial audit looked one directory above the retained fixture source and failed. The corrected audit verifies the actual project subdirectory; both logs remain retained.",
+    "This is build and healthy native execution evidence. In-flight compatible replacement remains a separate acceptance gate.",
+    "No full runtime-family admission, separate physical-machine, power-loss, app-density, per-worker CPU-quota or exactly-once external-effects claim."
+  ]
+}

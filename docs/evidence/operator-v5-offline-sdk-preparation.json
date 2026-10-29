@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-29T17:11:53.731Z",
+  "sourceCommit": "60310ccfd6feacf72281155677db884c44404877",
+  "image": "sha256:9c876922156d33722ebb3eb7686f83b4232ce96e20d76d7da0f6c8a2486025a8",
+  "baseImage": "docker.io/library/node:26.2.0-bookworm-slim@sha256:445b8cda0ec3563106c5a62b4663b3831314ecc81d2645a774b308f203f25cf0",
+  "declaredContextFilesVerified": 1085,
+  "installedSourceFilesVerified": 1084,
+  "node": "v26.2.0",
+  "pnpm": "10.16.1",
+  "void": "1.1.11",
+  "vite": "8.1.0",
+  "priorContainersUnchanged": 153,
+  "priorVolumesRetained": 210,
+  "dependencyPreparationNetworked": true,
+  "offlineExecutionClaim": false,
+  "runtimeQualification": false,
+  "publication": false,
+  "schema": 1,
+  "kind": "qualification-sdk-source-preparation",
+  "scope": "Network-enabled locked dependency preparation on a previously used isolated Linux arm64 Docker engine. This image is a qualification build prerequisite, not an application runtime family or an offline-execution result.",
+  "recipe": {
+    "parent": "docker/verify.Dockerfile",
+    "sourceCommit": "60310ccfd6feacf72281155677db884c44404877",
+    "changes": [
+      "Pin the Node base to the declared immutable digest.",
+      "Install pnpm through docker/runtime-tools/package-lock.json with npm ci and assert pnpm 10.16.1."
+    ],
+    "noCache": true,
+    "freshBuilderThisAttempt": false
+  },
+  "imageDigestReproducibility": false,
+  "privateEvidenceFingerprints": {
+    "inputs.json": {
+      "sha256": "b632498c190f259a7967d34b8dfc29b4d49796a123874219a81d00d5517c943d",
+      "bytes": 175705
+    },
+    "build-terminal.json": {
+      "sha256": "6be2e64fbeca0fcf4adee3e61a1db3e5761905ec23982935974548d40caa3061",
+      "bytes": 33
+    },
+    "build.log": {
+      "sha256": "dc69c24f57ed803b979c936ef91e72a9464f8e7c0731fb9c07095c27eab697ec",
+      "bytes": 35280
+    },
+    "image-id": {
+      "sha256": "d3ba389c2efb68b1bc52027cb950c7d10b2a76d834008e30ea4c24371e7a36a9",
+      "bytes": 71
+    },
+    "engine-before.json": {
+      "sha256": "1aa62d4fe2ed0c77b36b6b6c697b10f5c346a5ec2dc7b7c95d335e903758606b",
+      "bytes": 97582
+    },
+    "prepare-source.py": {
+      "sha256": "600b01b90a4e1bace67f4b8d1c65c6fb59c32ad58daca792a325f95f04ab041b",
+      "bytes": 3482
+    },
+    "independent-audit-source.mjs": {
+      "sha256": "1ec134eb87053b2cb535cc2233ef7ceaab3d1099463d65fe8fd952942c250087",
+      "bytes": 4171
+    },
+    "independent-audit.json": {
+      "sha256": "6eff7db8c3a1d436fcfd52d34e8045746a84c5b5b3196e442ab9759ceed14d88",
+      "bytes": 1681
+    }
+  }
+}

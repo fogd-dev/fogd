@@ -149,8 +149,13 @@ until a separate resume. Two earlier probe failures remain unaccepted. The
 [v5 unreachable-member pause](evidence/operator-native-unreachable-pause-v5.json)
 preserves unconfirmed intent across controller restart while native work continues,
 then confirms explicit pause after rejoin. Its held minute leaves all recorded
-ledgers unchanged and preserves an acknowledged peer import. In-flight replacement
-and offline-build evidence still need resolution for v5 admission. A
+ledgers unchanged and preserves an acknowledged peer import. The
+[v5 offline build check](evidence/operator-native-offline-builds-v5.json) builds
+minute and three-minute fixtures through ordinary Void and fogd with networking
+disabled, then approves and executes both on v5. Read-only engine-local sources
+and retained outputs remove the host-path sharing dependency. The SDK dependency
+preparation uses networking and has its own receipt. In-flight compatible
+replacement still needs resolution before the final v5 admission audit. A
 [native SQL rollback check](evidence/operator-native-migration-rollback-v5.json)
 verifies failure after application SQL but before migration-name bookkeeping.
 Two failed exact approvals leave no new row or ledger entry; removing the SQL

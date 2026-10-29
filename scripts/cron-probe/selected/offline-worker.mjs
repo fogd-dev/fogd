@@ -1,7 +1,7 @@
 // Ordinary Void and fogd builds in the pinned SDK image, with networking absent.
 import assert from 'node:assert/strict';
 import { networkInterfaces } from 'node:os';
-import { cp, readFile, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { buildArtifact, run, stackRoot } from '../../../packages/cli/src/local.mjs';
@@ -12,6 +12,7 @@ import { manifest } from '../../../packages/runtime/src/manifest.mjs';
 const hash = value => createHash('sha256').update(value).digest('hex');
 assert.ok(Object.values(networkInterfaces()).flat().every(address => address.internal));
 assert.equal(stackRoot, '/results/home');
+await mkdir(stackRoot, { recursive: true, mode: 0o700 });
 assert.ok(!Object.keys(process.env).some(key => /^(AWS_|MINIO_|CLOUDFLARE_|CF_)/i.test(key) || /^FOGD_.*(TOKEN|PASSWORD|SECRET)/i.test(key)));
 const capabilities = JSON.parse(await readFile('/source/capabilities.json', 'utf8'));
 assert.deepEqual(capabilities, { cronApps: true });

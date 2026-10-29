@@ -6,17 +6,19 @@ import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { execute } from '../../packages/cli/src/recovery/execute.mjs';
+import { checkedOfflineMounts } from './offline-mounts.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const exec = promisify(execFile);
 export const offlineImage = 'sha256:2a8c24a10fcbb8d0fc0ed2c85c78115fab537ec4ee3c5679bc6238c0be84d4cf';
-export async function runOfflineBuild(args, name, log) {
+export async function runOfflineBuild(args, name, log, { image = offlineImage, retainResources = false } = {}) {
   assert.equal(args[0], 'run');
+  assert.match(image, /^sha256:[a-f0-9]{64}$/);
   let id, before, after, stdout = '', stderr = '', failure;
   try {
     id = (await exec('docker', ['create', '--label', `fogd.offline.build=${name}`, ...args.slice(1).filter(value => value !== '--rm')], { timeout: 30000 })).stdout.trim();
     assert.match(id, /^[a-f0-9]{64}$/);
-    before = await inspectBuild(id, name, args);
+    before = await inspectBuild(id, name, args, image);
     await writeFile(join(dirname(log), 'container-before.json'), JSON.stringify(before, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
     ({ stdout, stderr } = await exec('docker', ['start', '-a', id], { maxBuffer: 16 * 1024 * 1024, timeout: 15 * 60000 }));
     after = JSON.parse(await execute('docker', ['inspect', id]))[0];
@@ -26,27 +28,24 @@ export async function runOfflineBuild(args, name, log) {
   const errors = failure ? [failure] : [];
   try { await writeFile(log, stdout + stderr, { mode: 0o600, flag: 'wx' }); } catch (error) { errors.push(error); }
   try {
-    const owned = (await execute('docker', ['ps', '-aq', '--filter', `label=fogd.offline.build=${name}`])).trim().split(/\s+/).filter(Boolean);
-    if (owned.length) await execute('docker', ['rm', '-f', ...owned]);
+    if (id) {
+      const [owned] = JSON.parse(await execute('docker', ['inspect', id]));
+      assert.equal(owned.Config.Labels['fogd.offline.build'], name); assert.equal(owned.Id, id);
+      if (owned.State.Running) await execute('docker', ['stop', id]);
+      if (!retainResources) await execute('docker', ['rm', id]);
+    }
   } catch (error) { errors.push(error); }
   if (errors.length) throw new AggregateError(errors, 'Offline build failed; inspect its private build.log');
   return { ...before, exitCode: after.State.ExitCode, oomKilled: after.State.OOMKilled, restartCount: after.RestartCount };
 }
-async function inspectBuild(id, name, args) {
+async function inspectBuild(id, name, args, image) {
   const [container] = JSON.parse(await execute('docker', ['inspect', id]));
-  assert.equal(container.Image, offlineImage); assert.equal(container.Name, `/${name}`);
+  assert.equal(container.Image, image); assert.equal(container.Name, `/${name}`);
   assert.equal(container.HostConfig.NetworkMode, 'none'); assert.equal(container.HostConfig.Memory, 2 * 1024 ** 3); assert.equal(container.HostConfig.NanoCpus, 2000000000);
   assert.deepEqual(container.HostConfig.CapDrop, ['ALL']); assert.ok(container.HostConfig.SecurityOpt.includes('no-new-privileges'));
   assert.equal(container.HostConfig.Privileged, false); assert.equal(container.State.Status, 'created');
   assert.ok(container.Config.Env.every(value => /^(PATH|NODE_VERSION|VOID_REMOTE|WRANGLER_SEND_METRICS|FOGD_HOME|FOGD_FIXTURE_CRON)=/.test(value)), 'Offline build has an unexpected environment variable');
-  assert.ok(container.Mounts.some(value => value.Destination === '/results' && value.RW));
-  assert.ok(container.Mounts.every(value => value.Destination === '/results' || (!value.RW && /^\/(?:source|app)\//.test(value.Destination))));
-  const expected = args.flatMap((value, index) => value === '--mount' ? [args[index + 1]] : []).map(value => {
-    const fields = Object.fromEntries(value.split(',').map(field => field.split('=')));
-    return { source: fields.src, destination: fields.dst, writable: !value.split(',').includes('readonly') };
-  }).sort((a, b) => a.destination.localeCompare(b.destination));
-  const mounts = container.Mounts.map(value => ({ source: value.Source, destination: value.Destination, writable: value.RW })).sort((a, b) => a.destination.localeCompare(b.destination));
-  assert.deepEqual(mounts, expected, 'Offline bind mounts differ from requested paths');
+  const mounts = checkedOfflineMounts(container, args);
   return { id: container.Id, image: container.Image, network: container.HostConfig.NetworkMode, memoryBytes: container.HostConfig.Memory, nanoCpus: container.HostConfig.NanoCpus,
     mounts, credentialsAbsent: true, writableRootfs: !container.HostConfig.ReadonlyRootfs, memorySwapBytes: container.HostConfig.MemorySwap,
     capAdd: container.HostConfig.CapAdd, devices: container.HostConfig.Devices, pidsLimit: container.HostConfig.PidsLimit, user: container.Config.User };

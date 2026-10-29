@@ -20,7 +20,7 @@ const enrollmentMethods = {
   public: { intent: 'new', run: enrollPublic, start: host => ['up', '--shared', '--runtime', host.entry.id, '--network-plan', join(host.output, 'network-plan.json')] },
 };
 
-export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo, { runtime = 'celld-cron-v2-linux-arm64', retainResources = false } = {}) {
+export async function selectedHost(directory, enrollment = 'candidate', programRoot = repo, { runtime = 'celld-cron-v2-linux-arm64', retainResources = false, sdkImage } = {}) {
   const cli = join(programRoot, 'packages/cli/bin/fogd.js');
   const method = enrollmentMethods[enrollment]; if (!method) throw new Error('Unknown qualification enrollment method');
   if (enrollment === 'candidate' && resolve(programRoot) !== resolve(repo)) throw new Error('Alternate operator programs require public enrollment; candidate qualification uses this checkout');
@@ -33,7 +33,7 @@ export async function selectedHost(directory, enrollment = 'candidate', programR
   await writeFile(env.FOGD_ENV_FILE, `FOGD_BUCKET_USER=${env.FOGD_BUCKET_USER}\nFOGD_BUCKET_PASSWORD=${env.FOGD_BUCKET_PASSWORD}\n`, { mode: 0o600, flag: 'wx' });
   const networks = await privateNetworks();
   await writeFile(join(output, 'inputs.json'), JSON.stringify({ project, family: entry.id, image: entry.image, adminPort, gatewayPort, networks, enrollment, retainResources }, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-  const host = { output, project, entry, env, run, adminPort, gatewayPort, retainResources, enrollment: { method: enrollment },
+  const host = { output, project, entry, env, run, adminPort, gatewayPort, retainResources, sdkImage, enrollment: { method: enrollment },
     command: (args, options) => run(process.execPath, [cli, ...args], options),
     json: async (args, options) => commandJson(await run(process.execPath, [cli, ...args], options)),
   };

@@ -8,15 +8,19 @@ import { nativeProcesses } from './recovery-fence.mjs';
 import { beginFailurePhase, firstFailureOccurrence, assertHealthyOccurrence } from './failure-phases.mjs';
 import { assertOfflineLedger } from './offline-ledger.mjs';
 import { failureDiagnosticReceipt } from './failure-receipt.mjs';
-import { sourceInventory, sourceState } from './evidence.mjs';
+import { archiveSources, sourceInventory, sourceState } from './evidence.mjs';
 import { translateConfig } from '../../../packages/runtime/src/artifact.mjs';
 import { requestedRuntime } from '../../../packages/cli/src/runtime/catalog.mjs';
+import { qualificationInputs } from './qualification-inputs.mjs';
+import { offlineImage, checkOfflineInputs } from '../offline-build.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/offline-smoke.mjs NEW_PRIVATE_OUTPUT');
-const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(process.argv[2]);
+const inputs = qualificationInputs(process.argv.slice(2));
+await checkOfflineInputs(inputs.hostOptions.sdkImage || offlineImage);
+const provenance = await sourceState(), sources = await sourceInventory(), host = await selectedHost(inputs.output, 'candidate', undefined, inputs.hostOptions);
 const evidence = {}, clock = () => vmTime(host, host.policy.fleets[1].nodes[0].host); let phase = 'offline-builds', failure;
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {
+  await archiveSources(host.output, provenance, sources, new URL(import.meta.url));
   const fixture = await offlineFixtures(host); host.nativeBaseline = await nativeProcesses(host);
   evidence.builds = Object.fromEntries(Object.entries(fixture.builds).map(([name, build]) => [name, build.verification]));
   let final;
