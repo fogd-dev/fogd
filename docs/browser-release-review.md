@@ -4,10 +4,11 @@ The source controller provides verified release comparisons and separate approva
 controls at `/admin/review/SUBMISSION_ID`. This implementation is part of
 [issue 7](https://github.com/fogd-dev/fogd/issues/7). It is absent from the frozen v5
 runtime and prepared `0.1.0` artifact. The closed
-`celld-approval-v6-linux-arm64` candidate has
-[native browser evidence](evidence/operator-native-browser-review-v6.json), including
-SQL, serving and restart checks. Broader runtime acceptance remains pending before
-ordinary release availability.
+`celld-approval-v7-linux-arm64` candidate matches the current operator source and
+has a [fresh native browser check](evidence/operator-approval-v7-candidate.json).
+Earlier [v6 browser evidence](evidence/operator-native-browser-review-v6.json)
+covers SQL, serving and restart checks. Broader runtime acceptance remains pending
+before ordinary release availability.
 
 ## Inspect the exact proposal
 

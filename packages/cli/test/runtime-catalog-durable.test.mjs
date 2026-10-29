@@ -82,6 +82,16 @@ test('browser review runtime is a closed candidate with independent source pins'
   assert.deepEqual(runtimeFamily(previous.id), previous);
 });
 
+test('v7 matches the shared reader export while preserving v6 program bodies and closed admission', () => {
+  const next = runtimeFamily('celld-approval-v7-linux-arm64', 'candidate');
+  const previous = runtimeFamily('celld-approval-v6-linux-arm64', 'candidate');
+  assert.equal(next.parentImage, previous.image);
+  assert.equal(next.admission, 'candidate');
+  assert.deepEqual(Object.keys(next.sourceFiles).filter(path => next.sourceFiles[path] !== previous.sourceFiles[path]), ['packages/platform/package.json']);
+  for (const key of ['storageImage', 'binarySha256', 'supervisorSha256']) assert.equal(next[key], previous[key]);
+  assert.throws(() => runtimeFamily(next.id), /ordinary enrollment remains closed/);
+});
+
 test('cross-mode and mismatched authorization refuses', () => {
   const differs = /differs from the shipped catalog/;
   assert.throws(() => authorizePolicyEntry(durablePolicy(), legacyEntry()), differs);

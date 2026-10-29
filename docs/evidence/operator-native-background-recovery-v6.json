@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-recovery-v6",
+  "recordedAt": "2026-10-29T22:55:09.655986+00:00",
+  "sourceCommit": "86202be1e3da76f0a659144fa3b01d1f1b84925a",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "family": "celld-approval-v6-linux-arm64",
+  "image": "sha256:6ec914e60968487c7af46763196f550539ed1ae69bb31616ef64b22bb6051ea9",
+  "admission": "candidate",
+  "scope": "Same-family durable restore of a paused cron/queue snapshot onto fresh volumes: cold native holds, verified explicit recovery acknowledgment, HTTP availability with background work still paused, explicit live resume and retained rows. No due snapshot, pending retry snapshot, older snapshot, power-loss or full recovery-family acceptance.",
+  "independentAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1011,
+    "snapshotMembersRehashed": 10,
+    "artifactDigestsIndependentlyRecomputed": 2,
+    "originalDecisionRowsRetained": 4,
+    "coldNativeHoldMs": 72839,
+    "acknowledgedNativeHoldMs": 70863,
+    "explicitQueueResumeProducesExpectedRows": true,
+    "explicitCronResumeProducesFutureWork": true,
+    "noOldOccurrenceReplayIntervalMs": 135127,
+    "pinnedSecretRevisionRetained": true,
+    "freshDisjointVolumes": true,
+    "targetStoppedContainers": 8,
+    "sourceRemainsStopped": true,
+    "scope": "Same-family durable restore of a paused cron/queue snapshot onto fresh volumes: cold native holds, verified explicit recovery acknowledgment, HTTP availability with background work still paused, explicit live resume and retained rows. No due snapshot, pending retry snapshot, older snapshot, power-loss or full recovery-family acceptance."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2878,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 529169.287209,
+    "focusedTestsPassed": 24,
+    "newCases": 8,
+    "syntaxAndQualityPassed": true
+  },
+  "maintainedRunner": "node scripts/operator/background-recovery.mjs ACCEPTED_SNAPSHOT_OUTPUT NEW_PRIVATE_OUTPUT",
+  "sourceReceiptFormat": "audited-native-background-snapshot",
+  "privateRoot": "~/.local/share/fogd-qualifications/native-background-recovery-v6-20261029-01",
+  "sourceSnapshotRoot": "~/.local/share/fogd-qualifications/native-background-snapshot-v6-20261029-01",
+  "evidenceFingerprints": {
+    "audited-controller-state.json": {
+      "sha256": "a3f1d7600d4c1057c0497d3fa574504673ff0fce52cbf6abd92284a231778bf5",
+      "bytes": 14515
+    },
+    "executed-source-inventory.json": {
+      "sha256": "30783d66958720b7562007b65f9f386c8f188ace551f11e0cac41f4b4a9b0db3",
+      "bytes": 118624
+    },
+    "fogd-audit-background-recovery-v6.log": {
+      "sha256": "212c4c2b9ba4d989b362c2bdd05e7677d9aabdc734724d949965dcab2c31305e",
+      "bytes": 840
+    },
+    "fogd-audit-background-recovery-v6.py": {
+      "sha256": "575d6d99f597fa3abf78d2d119acd5d806b74b1c98614105890d40f8ce3cb1ed",
+      "bytes": 6037
+    },
+    "fogd-background-recovery-v6.log": {
+      "sha256": "e4617a35679b9bbdfd2c31d46cc2bd278ec63b6a2830f07ebf6f8f5e1ae6d1b8",
+      "bytes": 710
+    },
+    "fogd-v7-canonical.log": {
+      "sha256": "3fb23bc59e1191f34dc1f935e90e55dbd6952345511a7ba5f91eee716923d884",
+      "bytes": 256367
+    },
+    "fogd-v7-focused-final.log": {
+      "sha256": "a0e7175973fc489cb0994953caffa5c95b91ff2d6030e0926fef003cd5edf513",
+      "bytes": 2019
+    },
+    "fogd-v7-quality.log": {
+      "sha256": "30402637ac0def95a7e49601ff86bfd894eed411b7112363280eb62a7e564ccf",
+      "bytes": 1670
+    },
+    "fogd-v7-self-review.md": {
+      "sha256": "bbda84581b04bbe53bead4f3488699021c2fb1a279d440c2c3aecbd575057122",
+      "bytes": 3951
+    },
+    "fogd-v7-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "independent-audit.json": {
+      "sha256": "3bccaeaa7ba8bf265a507ce719f5105d5254a584595a7081872995426ae56736",
+      "bytes": 872
+    },
+    "inputs.json": {
+      "sha256": "f814c9b71e2e9388cce7f5ee1057432ea083e467f5ca532c029dd7af74e296d8",
+      "bytes": 493
+    },
+    "result.json": {
+      "sha256": "84f2e3bf2519ab59749273187382c4314c30deeab7b2b9c45ad71097404c7773",
+      "bytes": 351970
+    },
+    "fogd-v7-runtime-guide-writing.log": {
+      "sha256": "5d81f3e8f772d9176065ada6c7b2807f14ec6ec8c90c72bef177599b91f7f0d5",
+      "bytes": 11900
+    },
+    "fogd-v7-browser-guide-writing.log": {
+      "sha256": "d7c6344d8254958dc8cc1bf27f4fa02eef9668a5f606ea1f5149f8ae76aaec20",
+      "bytes": 2868
+    },
+    "fogd-v7-history-guide-writing.log": {
+      "sha256": "fae61fd4d184d1096517a8dfd6ce125163645c814345fbebb26f062d53592430",
+      "bytes": 2898
+    }
+  },
+  "limits": [
+    "Paused cron/queue snapshot on fresh disjoint volumes on the same physical Mac. No due, pending-retry or older-snapshot recovery, separate machine or power-loss qualification.",
+    "Explicit acknowledgment accepts possible snapshot loss; HTTP can be available while queue and cron work remain paused. Actual work resumes separately.",
+    "The measured no-replay interval supports only the recorded old occurrences, not exactly once external side effects or a complete missed-tick backlog.",
+    "The audited source snapshot reuses individually checked lifecycle observations from an earlier failed driver. This maintained restore run verifies the complete source bundle and finishes independently; it does not relabel earlier failures.",
+    "This runs frozen v6 programs with the current host reader/driver. It does not qualify the whole v6 or v7 family or open ordinary admission.",
+    "Native binary/dependency bytes are unchanged. There are no existing user installations; source QA data remains retained and stopped.",
+    "No external review approval is claimed."
+  ]
+}

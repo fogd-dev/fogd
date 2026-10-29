@@ -19,12 +19,12 @@ import { stopSelectedHost } from '../cron-probe/selected/shutdown.mjs';
 import { cleanupSelectedHost } from '../cron-probe/selected/host.mjs';
 import { sourceState, sourceInventory } from '../cron-probe/selected/evidence.mjs';
 import { captureFailureLogs } from '../cron-probe/selected/failure-logs.mjs';
+import { backgroundRecoverySource } from './background-source.mjs';
 
 if (process.argv.length !== 4) throw new Error('Usage: node scripts/operator/background-recovery.mjs ACCEPTED_LIFECYCLE_OUTPUT NEW_PRIVATE_OUTPUT');
-const sourceRoot = resolve(process.argv[2]), output = resolve(process.argv[3]);
+const output = resolve(process.argv[3]);
 const repo = fileURLToPath(new URL('../../', import.meta.url)), read = async file => JSON.parse(await readFile(file));
-const original = await read(join(sourceRoot, 'result.json')), inputs = await read(join(sourceRoot, 'inputs.json'));
-assert.ok(original.evidence.snapshot, 'A completed lifecycle snapshot is required');
+const { acceptedRoot, original, sourceRoot, inputs, bundle, approvals } = await backgroundRecoverySource(process.argv[2]);
 const entry = runtimeFamily(original.family, 'enrolled'); assert.equal(entry.routing, 'durable');
 assert.equal(entry.image, original.image); assert.equal(inputs.retainResources, true);
 const config = composeResolved(await read(join(sourceRoot, 'host/.fogd/installations', inputs.project, 'compose.json')));
@@ -34,15 +34,14 @@ const env = { ...process.env, ...parseEnv(await readFile(join(sourceRoot, 'opera
   FOGD_ADMIN_PORT: String(inputs.adminPort), FOGD_HTTP_PORT: String(inputs.gatewayPort), FOGD_TLS: '1', FOGD_PROFILE: 'shared', FOGD_QUEUE_APPS: '1' };
 const source = { output: sourceRoot, project: inputs.project, env, config, entry, policy: original.sourcePolicy, adminPort: inputs.adminPort, gatewayPort: inputs.gatewayPort, retainResources: true };
 source.run = commandRunner(sourceRoot, env);
-const bundle = join(sourceRoot, 'stopped-snapshot'), checked = await verifyDurableBundle(bundle, source.policy);
-const approvals = { ...original.evidence.approvals.approvals, refresh: original.evidence.update.active };
+const checked = await verifyDurableBundle(bundle, source.policy);
 const point = { before: applicationData(original.evidence.snapshot.before), sourceObservation: original.evidence.snapshot.before, approvals, manifest: checked.manifest };
 await mkdir(output, { mode: 0o700 });
 const provenance = await sourceState(), sources = await sourceInventory(), evidence = {};
 const save = (name, value) => writeFile(join(output, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 await save('executed-source-inventory.json', { provenance, sources });
 for (const path of Object.keys(sources)) { const target = join(output, 'executed-source', path); await mkdir(dirname(target), { recursive: true, mode: 0o700 }); await cp(join(repo, path), target); }
-await save('inputs.json', { sourceRoot, sourceProject: source.project, family: entry.id, image: entry.image, snapshot: createHash('sha256').update(await readFile(join(bundle, 'manifest.json'))).digest('hex') });
+await save('inputs.json', { acceptedRoot, sourceRoot, sourceProject: source.project, family: entry.id, image: entry.image, snapshot: createHash('sha256').update(await readFile(join(bundle, 'manifest.json'))).digest('hex') });
 let target, phase = 'restore', complete = false;
 const heartbeat = setInterval(() => console.log(`waiting: ${phase}`), 20000); heartbeat.unref();
 try {

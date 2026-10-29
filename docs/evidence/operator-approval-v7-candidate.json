@@ -1,0 +1,221 @@
+{
+  "schema": 1,
+  "kind": "operator-approval-v7-candidate",
+  "recordedAt": "2026-10-29T22:55:09.655986+00:00",
+  "sourceCommit": "86202be1e3da76f0a659144fa3b01d1f1b84925a",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "family": "celld-approval-v7-linux-arm64",
+  "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+  "admission": "candidate",
+  "scope": "Matching current program packaging and fresh native v7 HTTP/browser/writes/owner-observation/stopped snapshot checks. No full runtime-family qualification or ordinary admission.",
+  "packagingAudit": {
+    "passed": true,
+    "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+    "parent": "sha256:6ec914e60968487c7af46763196f550539ed1ae69bb31616ef64b22bb6051ea9",
+    "identicalUncachedBuilds": 2,
+    "archivedSourcesRehashed": 1009,
+    "programInputsRehashed": 117,
+    "onlyChangedProgramInput": "packages/platform/package.json",
+    "nativeProgramBodiesUnchanged": 115,
+    "parentLayersPreserved": true,
+    "retainedContainersUnchanged": 40,
+    "retainedVolumesUnchanged": 55,
+    "nativeRebuild": false,
+    "dependencyInstall": false,
+    "admission": "candidate",
+    "scope": "Private reproducible COPY-only packaging with verified cached parent and matching current program inputs. No native acceptance or full family qualification."
+  },
+  "nativeAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1011,
+    "actualContainerProgramInputsRehashed": 117,
+    "snapshotMembersRehashed": 10,
+    "artifactDigestsIndependentlyRecomputed": 2,
+    "durableAuthenticatedDecisionsVerified": 2,
+    "browserGuardMatchesDurableApproval": true,
+    "nativeWritesVerifiedAcrossTwoApps": true,
+    "activeOwnerObservationConfirmed": true,
+    "ordinaryCandidateObservationRefused": true,
+    "matchingPinnedContainersStopped": 8,
+    "admission": "candidate",
+    "scope": "Fresh closed v7 candidate using matching current source pins: shared reader export, two native HTTP/D1 apps, authenticated contextual browser approval, durable writes, owner observation and stopped snapshot retaining decision history. Same physical Mac; no complete family, restore, performance, background or ordinary admission qualification."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2878,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 529169.287209,
+    "focusedTestsPassed": 24,
+    "newCases": 8,
+    "syntaxAndQualityPassed": true
+  },
+  "sourceAndTestInputsMatchNativeArchives": [
+    "packages/cli/src/runtime/catalog.json",
+    "packages/cli/test/runtime-catalog-durable.test.mjs",
+    "scripts/operator/background-recovery.mjs",
+    "scripts/operator/background-source.mjs",
+    "scripts/operator/background-source.test.mjs"
+  ],
+  "previousCatalogEntriesUnchanged": 6,
+  "privateRoots": {
+    "packaging": "~/.local/share/fogd-qualifications/approval-runtime-v7-20261029-01",
+    "native": "~/.local/share/fogd-qualifications/native-approval-v7-20261029-02"
+  },
+  "packagingEvidenceFingerprints": {
+    "after.json": {
+      "sha256": "84808da80ca7c67d2fd55a02308d2b61fd7818e5a7a90db339edd8af0a8f6e06",
+      "bytes": 519043
+    },
+    "before.json": {
+      "sha256": "84808da80ca7c67d2fd55a02308d2b61fd7818e5a7a90db339edd8af0a8f6e06",
+      "bytes": 519043
+    },
+    "candidate.json": {
+      "sha256": "cb9d9bfdf041b9123a504f752f3779b0c726e2a5e43936e27d444266e14c32eb",
+      "bytes": 14188
+    },
+    "executed-source-inventory.json": {
+      "sha256": "4dd798ca025b1103028d716c3cfc9058bc17f3a2fc6af18ee67ed92ceaefe67b",
+      "bytes": 118158
+    },
+    "fogd-approval-v7-packaging.log": {
+      "sha256": "154d0896a633316716b790893ec90dbcce5101d51df77fa26c05fccb9150d6df",
+      "bytes": 269
+    },
+    "fogd-audit-approval-v7-packaging.log": {
+      "sha256": "7e4f970a999eec4a2c814326482c23cdf8113b68e8308155975727998f7fe439",
+      "bytes": 722
+    },
+    "fogd-audit-approval-v7-packaging.py": {
+      "sha256": "4edff4c8a41e2c22086c81bdc1133e4ca54e5da48e14cb46365b944bf57cb4d1",
+      "bytes": 2324
+    },
+    "fogd-v7-canonical.log": {
+      "sha256": "3fb23bc59e1191f34dc1f935e90e55dbd6952345511a7ba5f91eee716923d884",
+      "bytes": 256367
+    },
+    "fogd-v7-focused-final.log": {
+      "sha256": "a0e7175973fc489cb0994953caffa5c95b91ff2d6030e0926fef003cd5edf513",
+      "bytes": 2019
+    },
+    "fogd-v7-quality.log": {
+      "sha256": "30402637ac0def95a7e49601ff86bfd894eed411b7112363280eb62a7e564ccf",
+      "bytes": 1670
+    },
+    "fogd-v7-self-review.md": {
+      "sha256": "bbda84581b04bbe53bead4f3488699021c2fb1a279d440c2c3aecbd575057122",
+      "bytes": 3951
+    },
+    "fogd-v7-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "independent-audit.json": {
+      "sha256": "6f941130d2be169be64420bb9b830625924c3423c9e5c9082166be58597bc229",
+      "bytes": 754
+    },
+    "result.json": {
+      "sha256": "8913a39c89bb37794adfe106277c62a575ad1ff4b30800ae635fae6e520044f7",
+      "bytes": 133169
+    },
+    "runner.mjs": {
+      "sha256": "65a37c9fb9e10c247791f3e0b9cc3e98be42dd125fe38174720ba0d5f3aed429",
+      "bytes": 5197
+    },
+    "fogd-v7-runtime-guide-writing.log": {
+      "sha256": "5d81f3e8f772d9176065ada6c7b2807f14ec6ec8c90c72bef177599b91f7f0d5",
+      "bytes": 11900
+    },
+    "fogd-v7-browser-guide-writing.log": {
+      "sha256": "d7c6344d8254958dc8cc1bf27f4fa02eef9668a5f606ea1f5149f8ae76aaec20",
+      "bytes": 2868
+    },
+    "fogd-v7-history-guide-writing.log": {
+      "sha256": "fae61fd4d184d1096517a8dfd6ce125163645c814345fbebb26f062d53592430",
+      "bytes": 2898
+    }
+  },
+  "nativeEvidenceFingerprints": {
+    "executed-source-inventory.json": {
+      "sha256": "30783d66958720b7562007b65f9f386c8f188ace551f11e0cac41f4b4a9b0db3",
+      "bytes": 118624
+    },
+    "fogd-audit-native-v7.log": {
+      "sha256": "3406c260e318af1a6ca8c1b9ac2713f50b78087e6515c2314b98156982c4eee4",
+      "bytes": 808
+    },
+    "fogd-audit-native-v7.py": {
+      "sha256": "cc1d557433342a5c337dea848bbcef0a5e496bd2d855696e532fb6e73425873f",
+      "bytes": 3891
+    },
+    "fogd-native-v7-smoke-02.log": {
+      "sha256": "22e3fd16b54079e01d7999fd64b000a682fa62ba4194b0540db0fb4595bfc608",
+      "bytes": 169
+    },
+    "fogd-native-v7-smoke.log": {
+      "sha256": "fafbfc7b5e6823cfb005d6c1d09bfe420eaed9e1c92093b48596a126e96e5c7a",
+      "bytes": 759
+    },
+    "fogd-v7-canonical.log": {
+      "sha256": "3fb23bc59e1191f34dc1f935e90e55dbd6952345511a7ba5f91eee716923d884",
+      "bytes": 256367
+    },
+    "fogd-v7-focused-final.log": {
+      "sha256": "a0e7175973fc489cb0994953caffa5c95b91ff2d6030e0926fef003cd5edf513",
+      "bytes": 2019
+    },
+    "fogd-v7-quality.log": {
+      "sha256": "30402637ac0def95a7e49601ff86bfd894eed411b7112363280eb62a7e564ccf",
+      "bytes": 1670
+    },
+    "fogd-v7-self-review.md": {
+      "sha256": "bbda84581b04bbe53bead4f3488699021c2fb1a279d440c2c3aecbd575057122",
+      "bytes": 3951
+    },
+    "fogd-v7-syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    },
+    "independent-audit.json": {
+      "sha256": "73a9922d512c8f7ad40b2183176b620c716494c3f27c0ec564a7e3f6c35335f5",
+      "bytes": 836
+    },
+    "result.json": {
+      "sha256": "22f3f475e29f243e90b27fa9b3055f80b23441181008b759f3739e3462a7e70b",
+      "bytes": 135513
+    },
+    "review.png": {
+      "sha256": "73607521719133e60e4b5e9656c2fd1079ebc762dc545be4bd2624386515ef6d",
+      "bytes": 411637
+    },
+    "runner.mjs": {
+      "sha256": "d8cbf2fd2de0c4438582f72f854460b83f6010eb5122ccb89eb8e4adc2f7dfd9",
+      "bytes": 6859
+    },
+    "fogd-v7-runtime-guide-writing.log": {
+      "sha256": "5d81f3e8f772d9176065ada6c7b2807f14ec6ec8c90c72bef177599b91f7f0d5",
+      "bytes": 11900
+    },
+    "fogd-v7-browser-guide-writing.log": {
+      "sha256": "d7c6344d8254958dc8cc1bf27f4fa02eef9668a5f606ea1f5149f8ae76aaec20",
+      "bytes": 2868
+    },
+    "fogd-v7-history-guide-writing.log": {
+      "sha256": "fae61fd4d184d1096517a8dfd6ce125163645c814345fbebb26f062d53592430",
+      "bytes": 2898
+    }
+  },
+  "limits": [
+    "The only changed program input from v6 is platform package metadata. All 115 program bodies, native executable, supervisor and storage image are unchanged. This is not a native rebuild.",
+    "Two identical uncached builds reproduce COPY-only packaging from a verified cached parent; they do not prove reproducibility of all inherited native/dependency layers.",
+    "The initial reader-only inspection resolved the package from the image root, which has no @fogd/platform alias, and failed before creating an installation. The corrected check resolves the declared export from its own package scope. That initial attempt is retained and is not pass evidence.",
+    "Fresh v7 evidence uses two HTTP/D1 apps on the existing Linux arm64 engine on the same physical Mac, with prepared app dependencies. No separate-machine, unaided-user, background, restore, density or performance qualification is inferred.",
+    "The separate background restore receipt executes frozen v6 programs; unchanged body hashes explain reuse but do not convert it into a fresh v7 background run.",
+    "Default cron admission and ordinary candidate enrollment/export remain closed. No public image or release publication occurred.",
+    "No per-worker CPU quota, exactly once external effects or full family acceptance is claimed. There are no existing user installations; retained stacks are QA fixtures.",
+    "No external review approval is claimed."
+  ]
+}

@@ -49,6 +49,10 @@ The [native recovery receipt](evidence/operator-decision-history-recovery-v6.jso
 records a fresh-volume restore, retained failed-approval hold, explicit corrected
 approval and retry, preserved app data, and a stopped cron/queue snapshot. It does
 not qualify background restore or ordinary admission of the candidate family.
+Separate [background restore evidence](evidence/operator-native-background-recovery-v6.json)
+now covers a paused v6 cron/queue snapshot on fresh volumes, retained decision
+history, explicit recovery acknowledgment and separate live resumes. This bounded
+same-family check does not open v7 admission.
 
 ## Query the authenticated feed
 

@@ -19,13 +19,17 @@ are linked through the verified archive descriptors and loaded root filesystem.
 Explicit ordinary enrollment is qualified within the [v5 acceptance boundary](operator-v5-acceptance.md).
 Default installations keep cron admission closed.
 
-The `celld-approval-v6-linux-arm64` family is a closed candidate for verified
+The `celld-approval-v7-linux-arm64` family is a closed candidate for verified
 browser release comparisons and attributed administrator decisions. Its
-[native browser check](evidence/operator-native-browser-review-v6.json) covers a
-fresh QA installation, exact approvals, SQL withholding, stale/tampered refusals,
-failed activation, two apps and retained restart. It does not qualify the whole
-family, recovery or scheduled work. Ordinary enrollment and export remain refused;
-v5 image and source pins are unchanged.
+[matching-source check](evidence/operator-approval-v7-candidate.json) covers a
+fresh QA installation, exact browser approval, two native apps, persisted writes,
+owner observation and a stopped snapshot. Earlier v6 checks cover
+[failed/stale/tampered decisions](evidence/operator-native-browser-review-v6.json)
+and [HTTP recovery](evidence/operator-decision-history-recovery-v6.json).
+The separate [v6 background restore](evidence/operator-native-background-recovery-v6.json)
+checks paused cron/queue recovery and explicit resume. These bounded checks do not
+qualify the whole v7 family. Ordinary enrollment and export remain refused;
+earlier family image and source pins are unchanged.
 
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller
