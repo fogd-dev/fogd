@@ -1,3 +1,4 @@
+import { decisionHistoryCapability } from './decision-history.mjs';
 import { cronRetirementCapability, assertCronRetirement, retainRetiredCron, validateRetiredCron } from './cron-retirement.mjs';
 import { queueCapability } from './queue-activation.mjs';
 import { queueRecoveryCapability } from './queue-snapshot.mjs';
@@ -17,7 +18,7 @@ export function assertLiveName(state, name) {
 export function validateRetirementState(state, slots, { durableRoutes = false } = {}) {
   validateArtifactPins(state);
   validateArtifactPruning(state);
-  if ((state.requirements || []).some(value => ![retirementCapability, claimCapability, queueCapability, queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability, artifactPruneCapability, ...(durableRoutes ? [routeAuthorityCapability] : [])].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
+  if ((state.requirements || []).some(value => ![decisionHistoryCapability, retirementCapability, claimCapability, queueCapability, queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability, artifactPruneCapability, ...(durableRoutes ? [routeAuthorityCapability] : [])].includes(value))) throw new Error('Controller state requires an unsupported platform capability');
   for (const [name, app] of Object.entries(state.apps)) {
     if (!app.retirement) continue;
     if (!state.requirements?.includes(retirementCapability) || app.slot !== null || app.route !== 'retired') throw new Error('Invalid retirement tombstone; restore matching metadata');

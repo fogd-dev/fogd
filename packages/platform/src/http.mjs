@@ -1,3 +1,4 @@
+import { decisionHistoryRequest } from './admin-decisions.mjs';
 import { html } from './admin-html.mjs';
 import { routingPageRequest, routingPageLink } from './admin-routing-page.mjs';
 import { routeHold } from './route-publication.mjs';
@@ -60,6 +61,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
       if (await routingPageRequest(request, url, controller, csrf, send, recoveryOnly)) return;
       if (recoveryOnly) return await routingRecoveryRequest(request, url, controller, csrf, body, send);
       if (request.method === 'GET' && url.pathname === '/v1/admin') return send(200, { csrf, ...adminState(controller) });
+      if (await decisionHistoryRequest(request, url, controller, send)) return;
       if (await artifactRequest(request, url, controller, csrf, body, send)) return;
       if (await artifactPruneRequest(request, url, controller, csrf, body, send)) return;
       if (await ingressRequest(request, url, controller, csrf, body, send)) return;
@@ -77,12 +79,12 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
         try { checkMutation(request, csrf); }
         catch (error) { return send(403, { error: error.message }); }
         const input = await body(request);
-        return send(200, adminDeployment(await controller.mutate(match[1], input.digest, match[2], input.secretRevision, input.replaces)));
+        return send(200, adminDeployment(await controller.mutate(match[1], input.digest, match[2], input.secretRevision, input.replaces, { actor: { kind: 'basic', name: credentials.user }, review: input.review })));
       }
       if (request.method === 'GET' && url.pathname === '/') {
         const apps = Object.entries(controller.state.apps).map(([name, app]) => `<p><strong>${html(name)}</strong>: ${html(app.route)} (${html(app.slot)}) ${html(app.reason || '')}</p>`).join('');
         const rows = Object.values(controller.state.deployments).reverse().map(d => `<article><h2>${html(d.app)} — ${html(d.status)}</h2><p>Submitted by ${html(d.submitter)} at ${html(d.submittedAt)}</p><code>${html(d.digest)}</code><p>Secret revision: ${html(revision(d, controller) || 'none')}${d.secretRevision ? ' (pinned for retry)' : ''}</p><p>${html(d.step)} ${html(d.error || '')}</p>${backgroundNotice(d, html)}<details><summary>Resources and migrations</summary><pre>${html(JSON.stringify({ requiredSecrets: d.requiredSecrets || [], secretRevision: revision(d, controller), resourceChanges: d.resourceChanges, resources: d.resources, migrations: d.migrations }, null, 2))}</pre></details><p><a href="/v1/deployments/${d.id}/artifact">Review full artifact manifest</a></p>${approvalButtons(controller, d, html)}</article>`).join('');
-        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1>${routingPageLink(controller)}<p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${dispatchHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null,...(b.dataset.replaces?{replaces:{deployment:b.dataset.replaces,digest:b.dataset.replacesDigest}}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
+        return send(200, `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>fogd approvals</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:16px;background:#f7f8fa;color:#18212f}article{background:white;border:1px solid #ccd3dc;padding:20px;margin:20px 0;border-radius:8px}code,pre{overflow-wrap:anywhere;white-space:pre-wrap}button{padding:10px 20px;cursor:pointer}h1{font-size:32px}</style><h1>fogd deploy approvals</h1><p><a href="/admin/decisions">Decision history</a></p>${routingPageLink(controller)}<p>Review the exact artifact before approving. Activation may take a few minutes and pauses the app. Only trusted application code is supported.</p>${capacityHTML(controller, html)}${apps}${deliveryHTML(controller, html, csrf)}${dispatchHTML(controller, html, csrf)}${rows || '<p>No submissions yet. Run fogd deploy in a Void app.</p>'}<script>for(const b of document.querySelectorAll('button[data-id]'))b.onclick=async()=>{b.disabled=true;try{const r=await fetch('/v1/deployments/'+b.dataset.id+'/'+b.dataset.action,{method:'POST',headers:{'Content-Type':'application/json','X-Fogd-CSRF':${JSON.stringify(csrf)}},body:JSON.stringify({digest:b.dataset.digest,secretRevision:b.dataset.secretRevision||null,...(b.dataset.replaces?{replaces:{deployment:b.dataset.replaces,digest:b.dataset.replacesDigest}}:{})})});const x=await r.json();if(!r.ok)throw Error(x.error);location.reload()}catch(e){alert(e.message);b.disabled=false}}</script></html>`, 'text/html; charset=utf-8');
       }
       send(404, { error: 'Not found' });
     } catch (error) { send(errorStatus(error), { error: error.message }); }
@@ -91,6 +93,7 @@ export function server(controller, credentials, { maxUploads = 2, role = 'public
 
 
 function errorStatus(error) {
+  if (error.code === 'DECISION_REVIEW_STALE') return 409;
   if (['ARTIFACT_PRUNE_PENDING', 'ARTIFACT_PRUNE_REFUSED', 'ARTIFACT_PRUNE_INCOMPLETE'].includes(error.code)) return 503;
   if (['CONTROLLER_STORAGE_UNCERTAIN', 'ROUTE_PUBLICATION_UNCERTAIN', 'ROUTE_STARTUP_UNRECONCILED', 'ROUTE_PREFLIGHT_UNCONFIRMED'].includes(error.code)) return 503;
   if (['QUEUE_OPERATION_UNCONFIRMED', 'CRON_OPERATION_UNCONFIRMED', 'CRON_SNAPSHOT_UNCONFIRMED', 'CRON_RECOVERY_UNCONFIRMED'].includes(error.code)) return 502;

@@ -73,3 +73,9 @@ The local scenario is
 It uses cached images and app dependencies, compares two real Void artifacts,
 checks that a proposed SQL insert has no effect before approval, and retains all
 qualification volumes. Its scope is the frozen local two-fleet runtime.
+
+
+The source controller's [administrator decision history](decision-history.md)
+records authenticated HTTP approval/rejection decisions. Its runtime release
+qualification is separate from the current frozen v5 artifact. Verified browser
+code/SQL comparisons remain tracked in issue 7.

@@ -1,3 +1,4 @@
+import { authenticatedDecision, recoverDecisionHistory } from './decision-history.mjs';
 import { validateCronRecoveryState, recoverCronSnapshots } from './cron-recovery.mjs';
 import { replacementFor, replaceQueueApproval } from './queue-replacement.mjs';
 import { validateRecoveryState, recoverQueueSnapshots } from './queue-recovery.mjs';
@@ -72,6 +73,7 @@ export class Controller {
     this.state = retained === missing ? { apps: {}, deployments: {} } : retained;
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
+    recoverDecisionHistory(this.state);
     validateRetirementState(this.state, this.slots, { durableRoutes: this.routes.durable });
     validateQueueState(this.state);
     validateCronState(this.state, this.backend.crons);
@@ -204,35 +206,39 @@ export class Controller {
   }); }
   revokeCredential(id) { return this.exclusive(() => this.credentials.revoke(id)); }
   replaceSecrets(app, values) { return this.exclusive(() => { assertLiveName(this.state, app); return this.secrets.replace(app, values); }); }
-  mutate(id, digest, action, secretRevision, replaces) {
-    return this.exclusive(async () => {
-      await this.routes.checkReady();
-      const request = this.state.deployments[id];
-      if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
-      assertClaimRequest(this.state, request);
-      assertLiveName(this.state, request.app);
-      if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
-      this.assertAdmission(request, action);
-      if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
-      const backgroundReplaces = action === 'approve' ? this.routes.prepareApproval(request, replaces) : replaces;
-      assertCronDecision(this.state.apps[request.app], request, action, backgroundReplaces, this.backend.crons);
-      const previous = replacementFor(this, request, backgroundReplaces);
-      assertQueueDecision(this.state.apps[request.app], request, action, Boolean(previous));
-      if (action === 'reject') return this.#reject(request);
-      const slot = this.available(request.app);
-      if (!slot) throw new Error('No available app slots');
-      let app = this.state.apps[request.app];
-      if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
-      if (app?.claim && app.claim.deployment !== id) throw new Error('Retry the original approved ownership claim before activating another deployment');
-      if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
-      this.compatible(request, app);
-      const selected = await this.secrets.select(request, secretRevision);
-      if (previous) { await this.routes.beforeEffect(app, slot); await replaceQueueApproval(this, request, previous, app, slot, selected); }
-      return this.prepareActivation(request, app, slot, selected, replaces);
-    });
+  mutate(id, digest, action, secretRevision, replaces, context) {
+    return this.exclusive(() => context ? authenticatedDecision(this, id, digest, action, secretRevision, context,
+      beforeEffects => this.#decide(id, digest, action, secretRevision, replaces, beforeEffects)) : this.#decide(id, digest, action, secretRevision, replaces));
   }
-  async #reject(request) {
+  async #decide(id, digest, action, secretRevision, replaces, beforeEffects = () => {}) {
+    await this.routes.checkReady();
+    const request = this.state.deployments[id];
+    if (!request || request.digest !== digest) throw new Error('Deployment/digest mismatch');
+    assertClaimRequest(this.state, request);
+    assertLiveName(this.state, request.app);
+    if (!['pending', 'failed'].includes(request.status)) throw new Error('Deployment is not pending or retryable');
+    this.assertAdmission(request, action);
+    if (action !== 'approve' && replaces !== undefined) throw new Error('Only approval can replace a held activation');
+    const backgroundReplaces = action === 'approve' ? this.routes.prepareApproval(request, replaces) : replaces;
+    assertCronDecision(this.state.apps[request.app], request, action, backgroundReplaces, this.backend.crons);
+    const previous = replacementFor(this, request, backgroundReplaces);
+    assertQueueDecision(this.state.apps[request.app], request, action, Boolean(previous));
+    if (action === 'reject') return this.#reject(request, beforeEffects);
+    const slot = this.available(request.app);
+    if (!slot) throw new Error('No available app slots');
+    let app = this.state.apps[request.app];
+    if (app?.quarantined) throw new Error(`Slot quarantined: ${app.reason || 'restore matching backups'}`);
+    if (app?.claim && app.claim.deployment !== id) throw new Error('Retry the original approved ownership claim before activating another deployment');
+    if (await artifactDigest(this.artifact(id)) !== digest) throw new Error('Stored artifact digest mismatch');
+    this.compatible(request, app);
+    const selected = await this.secrets.select(request, secretRevision);
+    beforeEffects();
+    if (previous) { await this.routes.beforeEffect(app, slot); await replaceQueueApproval(this, request, previous, app, slot, selected); }
+    return this.prepareActivation(request, app, slot, selected, replaces);
+  }
+  async #reject(request, beforeEffects) {
     this.routes.assertReject(request);
+    beforeEffects();
     await rejectUnclaimed(this, request);
     if (this.state.apps[request.app]?.uncertain === request.id) throw new Error('Reconcile the failed activation before rejecting its artifact');
     request.status = 'rejected'; await this.save(); return request;

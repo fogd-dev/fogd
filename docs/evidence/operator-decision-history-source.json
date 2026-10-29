@@ -1,0 +1,207 @@
+{
+  "schema": 1,
+  "kind": "operator-decision-history-source",
+  "recordedAt": "2026-10-29T20:49:14.049037+00:00",
+  "sourceCommit": "ab202a5",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "scope": "Source controller persistence, authenticated HTTP and a headless browser, with a controlled in-process backend. No new native runtime qualification.",
+  "verification": {
+    "passed": true,
+    "archivedSourcesVerified": 1002,
+    "durableRowsMatchAuthenticatedFeed": 4,
+    "unfinishedDecisionRemainsUnconfirmed": true,
+    "actualDeploymentCanBeActiveDespiteUnconfirmedDecision": true,
+    "actorMatchesAuthenticatedCredential": true,
+    "intentObservedBeforePublish": 3,
+    "htmlEscapesCredentialLabel": true,
+    "rawPrivateDiagnosticsAbsent": true,
+    "headlessBrowserRows": 4,
+    "filteredRows": 1,
+    "browserErrors": 0,
+    "scope": "Source controller persistence, authenticated HTTP and headless browser with controlled in-process backend. No native runtime qualification."
+  },
+  "coreImplementationMatchesExecutedArchive": [
+    "packages/platform/src/admin-view.mjs",
+    "packages/platform/src/admin-decisions.mjs",
+    "packages/platform/src/decision-history.mjs",
+    "packages/platform/src/controller.mjs",
+    "packages/platform/src/http.mjs",
+    "packages/platform/src/retirement.mjs"
+  ],
+  "hostChecks": {
+    "canonicalTestsPassed": 2835,
+    "canonicalFailed": 0,
+    "canonicalSkipped": 0,
+    "canonicalCancelled": 0,
+    "canonicalDurationMs": 456466.91625,
+    "focusedTestsPassed": 89,
+    "newHistoryTests": 14,
+    "syntaxAndQualityPassed": true,
+    "canonicalIncludesFinalCheckpointRetiredAndGuardRegressions": true
+  },
+  "testTiming": "The canonical run began before final review-key hardening; its log includes all final history regressions. The 89-check focused run and exact-source headless run 04 also cover the final production modules.",
+  "reproduce": {
+    "browser": "/admin/decisions",
+    "json": "/v1/admin/decisions?app=APP",
+    "privateRoot": "~/.local/share/fogd-qualifications/decision-history-source-20261029-04"
+  },
+  "privateEvidenceFingerprints": {
+    "executed-source-inventory.json": {
+      "sha256": "f4a769eec05f0d75b758e26dad1820cccb0f9a986da05d29a22648770a0eee86",
+      "bytes": 117721
+    },
+    "fogd-audit-decision-source-04.py": {
+      "sha256": "f0fd13440ec9fa455170a4c02b74ef82c5597685534e0281d85456d160df3877",
+      "bytes": 2397
+    },
+    "fogd-decision-canonical-final.log": {
+      "sha256": "6eb6e8b1496fb4cc2e42272030baedf4edbd511c05ff1ccff096cbbcda6a1723",
+      "bytes": 250169
+    },
+    "fogd-decision-canonical.log": {
+      "sha256": "be9ae0e6f165513e0c0b975767e680dd7806f032723fb20ed01a9b509a3dd5fe",
+      "bytes": 249870
+    },
+    "fogd-decision-current-syntax.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "fogd-decision-existing.log": {
+      "sha256": "28ed5961dbccbca997277da4392e2abe34c8355d1a66a3d62cd90ce220e6772d",
+      "bytes": 8751
+    },
+    "fogd-decision-focused-accepted.log": {
+      "sha256": "b45b9c13aa4a5796df44de1eae4f1e9c8317e9753996fcb39a60bc525b125590",
+      "bytes": 9198
+    },
+    "fogd-decision-focused-complete.log": {
+      "sha256": "5fed9272257be445951236df346a5f467e89f4c9cdbc9222313b5e5a9cfbcc5c",
+      "bytes": 9990
+    },
+    "fogd-decision-focused-current.log": {
+      "sha256": "ae4a3390e643c5041d9d41afe5036c3a0ae5b431546fe83b7c3dcd27de462d1f",
+      "bytes": 9313
+    },
+    "fogd-decision-focused-final.log": {
+      "sha256": "92083c0972526375515cc2415ffa7e60d7979bf957f31cbec63671396cb21316",
+      "bytes": 9008
+    },
+    "fogd-decision-focused-refined.log": {
+      "sha256": "7415f8245ae4916e9deea950de5a4ed5337d0d3478b1d98c930aa54c03260939",
+      "bytes": 8890
+    },
+    "fogd-decision-focused.log": {
+      "sha256": "3b71a6fefc692f90205b2fd70a18a909836cfe0c106dbc5b2c9fc580303e61fa",
+      "bytes": 1934
+    },
+    "fogd-decision-guide-writing.log": {
+      "sha256": "2d9f13c3064c57025e2989cfb7454ecfb5708f88a6162c48b019a6713bd69dd1",
+      "bytes": 2389
+    },
+    "fogd-decision-quality-accepted.log": {
+      "sha256": "274d5812af34ce05d971c54853033374a97fdf612dd4107aa788128f1ade0045",
+      "bytes": 1670
+    },
+    "fogd-decision-quality-complete.log": {
+      "sha256": "121929b07eebdab3e7e031da530bb877281ea0ab8a7afa9a6cf96d3f43d4d66f",
+      "bytes": 1670
+    },
+    "fogd-decision-quality-current.log": {
+      "sha256": "274e38b6942557920fc600f33b09bfd51e7cde614307685c963b289a3bdfb8e8",
+      "bytes": 1670
+    },
+    "fogd-decision-quality-final.log": {
+      "sha256": "1523f49de0db9bd82f5ac9fc93293a23f363de583b961af57a1abb09260e7657",
+      "bytes": 1670
+    },
+    "fogd-decision-quality-refined.log": {
+      "sha256": "1816d44bff091deca7442c5cb8584b711ae5313d6dc572bb63fd98de7e370749",
+      "bytes": 1670
+    },
+    "fogd-decision-quality.log": {
+      "sha256": "05dfaf544a48fee2994c383e81531f90637338030e89eaeda2bf8ea0aae65f6d",
+      "bytes": 1970
+    },
+    "fogd-decision-review-guide-writing.log": {
+      "sha256": "842fda66f8b1f5b73b429393fcd400d2f1cdb375454f19124551405f08ddd0b5",
+      "bytes": 2243
+    },
+    "fogd-decision-review.md": {
+      "sha256": "c9e9c8be15510b9896d2a407db56f273c7e031d768f2a22cd76a9e016c5108c9",
+      "bytes": 5251
+    },
+    "fogd-decision-source-audit-03.log": {
+      "sha256": "64f2a9beb015cf6b31322bd5d7aa79a7c0c556a25e67e0784b98d05931d15a14",
+      "bytes": 568
+    },
+    "fogd-decision-source-audit-04.log": {
+      "sha256": "64f2a9beb015cf6b31322bd5d7aa79a7c0c556a25e67e0784b98d05931d15a14",
+      "bytes": 568
+    },
+    "fogd-decision-source-audit.log": {
+      "sha256": "64f2a9beb015cf6b31322bd5d7aa79a7c0c556a25e67e0784b98d05931d15a14",
+      "bytes": 568
+    },
+    "fogd-decision-source-smoke-02.log": {
+      "sha256": "21c8ac8b7a086ce3f888f23a3d0acc8f7f5ed60bfb4b8bddaaaa2a6408243721",
+      "bytes": 114
+    },
+    "fogd-decision-source-smoke-03.log": {
+      "sha256": "21c8ac8b7a086ce3f888f23a3d0acc8f7f5ed60bfb4b8bddaaaa2a6408243721",
+      "bytes": 114
+    },
+    "fogd-decision-source-smoke-04.log": {
+      "sha256": "21c8ac8b7a086ce3f888f23a3d0acc8f7f5ed60bfb4b8bddaaaa2a6408243721",
+      "bytes": 114
+    },
+    "fogd-decision-source-smoke.log": {
+      "sha256": "21c8ac8b7a086ce3f888f23a3d0acc8f7f5ed60bfb4b8bddaaaa2a6408243721",
+      "bytes": 114
+    },
+    "fogd-decision-syntax-final.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-decision-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-issue-7-decision-writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "history.html": {
+      "sha256": "0551187df9bfb25fdacafce93a3531379669f88a49fcd472b12c19c25a4bfe37",
+      "bytes": 2294
+    },
+    "history.png": {
+      "sha256": "103b1a76777ea6ae58cd8aa91580fa631c5d6efd6a1daa25550d24395dd1d7c5",
+      "bytes": 147655
+    },
+    "independent-audit.json": {
+      "sha256": "0a6ee805d9cb9721b643022b630bfa0f146f405f91753ef2c37eea3257dbfb31",
+      "bytes": 596
+    },
+    "result.json": {
+      "sha256": "0ca50d7e5ef4a092f2b98e3c14d40052592a11f8b585365af67d54c50a4f178c",
+      "bytes": 121182
+    },
+    "runner.mjs": {
+      "sha256": "2950ac25a54f58489538ca48f5bf86443ccd85c66cf8e6608bf3053f2305744e",
+      "bytes": 5021
+    }
+  },
+  "limitations": [
+    "Frozen v5 image IDs, source inventories and admission remain unchanged; this feature requires a new runtime build and qualification.",
+    "Current platform sources intentionally differ from the frozen family. Software export retains its existing source-drift refusal; use the authenticated earlier artifact/matching checkout for v5.",
+    "The backend is controlled and in-process. This evidence does not establish native storage/runtime effects, distributed crash recovery, density or throughput.",
+    "Controller reload is a fresh controller instance reading saved files; this source smoke does not kill a native daemon.",
+    "A decision may be unconfirmed while its deployment record is active. Application status in history is the last durable checkpoint, not live health.",
+    "Shared Basic credentials identify credentials rather than distinct people. Direct trusted in-process calls without HTTP authentication do not fabricate a principal.",
+    "History remains in controller metadata with no automatic truncation. Reads can wait for a running controller operation.",
+    "Verified browser code/SQL comparison and its bound decision controls remain open under issue 7.",
+    "There are no existing user installations. Retained fixture data is QA data; existing Docker stacks were not operated by this source smoke."
+  ]
+}
