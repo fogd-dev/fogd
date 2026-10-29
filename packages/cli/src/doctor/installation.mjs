@@ -5,12 +5,14 @@ import { projectName } from '../recovery/docker.mjs';
 import { spaceInventory } from '../storage/inventory.mjs';
 import { storageSpace } from '../storage/command.mjs';
 import { inspectHost } from './host.mjs';
+import { tlsEndpoint, inspectClientTrust } from './tls-endpoint.mjs';
 import { inspectInstallationTLS } from './installation-tls.mjs';
 import { installationDirectory } from '../runtime/installation-state.mjs';
 import { installationLifecycleFinding } from './installation-lifecycle.mjs';
 import { finding, reportStatus } from './report.mjs';
 
-export async function inspectInstallation(project) {
+export async function inspectInstallation(project, { server, online = false } = {}) {
+  const endpoint = server === undefined ? null : tlsEndpoint(server);
   projectName(project);
   let installation;
   try { installation = await observationInstallation(project); }
@@ -24,7 +26,7 @@ export async function inspectInstallation(project) {
   findings.push(await installationLifecycleFinding(installationDirectory(project)));
   const inventory = await installationInventory(installation, findings);
   const storage = await installationStorage(project, findings);
-  await installationTLS(installation, inventory, storage, findings);
+  await installationTLS(installation, inventory, storage, findings, endpoint, online);
   return { ...installationReport(project, findings), family: installation.entry.id, ...(inventory ? { inventory } : {}), ...(storage ? { storage } : {}) };
 }
 
@@ -60,15 +62,23 @@ async function installationStorage(project, findings) {
   }
 }
 
-async function installationTLS(installation, inventory, storage, findings) {
+async function installationTLS(installation, inventory, storage, findings, endpoint, online) {
+  findings.push(finding('tls-hostname', 'unverified', 'Installed certificate hostname coverage has not been verified.', 'Supply --server https://HOST:PORT to inspect hostname coverage without a network connection.'));
+  findings.push(finding('tls-client-trust', 'unverified', 'The current client has not verified an endpoint TLS handshake.', 'Add --server https://HOST:PORT --online for an explicit TLS-only connection using current Node trust.'));
   if (!inventory || storage?.status !== 'observed') {
     findings.push(finding('tls-keypair', 'unverified', 'TLS bytes were not read because installation inventory or storage ownership remains unverified.', 'Resolve the installation inventory before inspecting its TLS keypair.'));
     return;
   }
   try {
     const backing = await spaceInventory(installation.config);
-    await inspectInstallationTLS(installation, backing);
-    findings.push(finding('tls-keypair', 'supported', 'Installed TLS certificate and private key match and are currently valid.', 'Certificate hostname coverage and client CA trust remain unverified; no trust was installed.'));
+    const observation = await inspectInstallationTLS(installation, backing, undefined, endpoint?.hostname);
+    if (endpoint) {
+      findings[findings.findIndex(item => item.id === 'tls-hostname')] = finding('tls-hostname', observation.hostnameMatches ? 'supported' : 'unsupported',
+        observation.hostnameMatches ? 'The installed certificate covers the requested endpoint hostname.' : 'The installed certificate does not cover the requested endpoint hostname.',
+        'Use a certificate covering this hostname or select the intended endpoint. Chain trust and reachability are separate findings; no certificate was changed.');
+      if (online && observation.hostnameMatches) findings[findings.findIndex(item => item.id === 'tls-client-trust')] = await inspectClientTrust(endpoint, observation.fingerprint);
+    }
+    findings.push(finding('tls-keypair', 'supported', 'Installed TLS certificate and private key match and are currently valid.', 'This validates installed bytes; separate hostname and client-trust findings describe endpoint observations. No trust was installed.'));
   } catch (error) {
     if (error instanceof ObserverCleanupError) throw error;
     findings.push(finding('tls-keypair', 'unverified', 'Installed TLS keypair is missing, unreadable, invalid or no longer current.', 'Use the documented stopped TLS import procedure; this check does not change certificates or print private bytes.'));

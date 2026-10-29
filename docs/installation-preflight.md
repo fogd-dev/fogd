@@ -24,7 +24,9 @@ command; existing artifacts keep their authenticated original CLI features.
 | `lifecycle-fence` | Whether a retained launch/shutdown marker was observed | The outcome of an interrupted operation; doctor never clears it |
 | `network-and-ports` | Owned networks, subnets, attachments and published-port declarations match sealed containers | Non-Docker listeners, external routes, firewalls and client reachability; stopped ports are not reserved |
 | `storage-space` | Owned local backing filesystems were sampled at matching inventory boundaries | Storage health, per-volume usage, per-app allocation or a reservation |
-| `tls-keypair` | Installed certificate/key match and are currently valid | Certificate hostname coverage and client CA trust |
+| `tls-keypair` | Installed certificate/key match and are currently valid | Endpoint reachability or chain trust |
+| `tls-hostname` | Installed certificate covers the explicit `--server` hostname/IP | Chain trust, routing or app health |
+| `tls-client-trust` | With `--online`, current Node trust verifies the endpoint and its leaf matches the installed certificate | Application health, revocation status or future trust |
 
 The report includes configured listeners, observed service counts and filesystem
 byte counters. Running services do not establish application health. Follow
@@ -40,6 +42,42 @@ The command exits `1` for an observed unsupported condition or an unconfirmed
 helper cleanup, and `2` when readiness remains unverified. It does not return a
 complete-readiness verdict or reserve resources.
 
+## Inspect endpoint certificates
+
+Supply an HTTPS origin to check the installed certificate's hostname coverage
+without opening a network connection:
+
+```sh
+node packages/cli/bin/fogd.js doctor --installation my-cloud --server https://fogd.example.test:8443 --json
+```
+
+Add `--online` to request one TLS handshake from the current Node client. For a
+private certificate authority, set `NODE_EXTRA_CA_CERTS` before launching Node:
+
+```sh
+NODE_EXTRA_CA_CERTS=/absolute/path/to/ca.pem node packages/cli/bin/fogd.js doctor --installation my-cloud --server https://fogd.example.test:8443 --online --json
+```
+
+The connection uses normal certificate verification, checks the endpoint leaf
+fingerprint against the installed certificate, then closes without HTTP,
+application requests or credentials. It has a five-second deadline and never
+installs trust or changes certificates. `--server` accepts an HTTPS origin with
+no credentials, path, query or fragment; `--online` requires it in installation
+mode. The default command and `--server` alone remain offline.
+
+A known hostname mismatch or certificate-verification refusal is unsupported.
+Connection failures remain unverified. A different leaf certificate is
+unsupported even when its chain is trusted; inspect certificate rotation or the
+selected endpoint. A TLS-terminating proxy presenting its own certificate is
+reported as a mismatch. A stopped endpoint can still have supported offline keypair
+and hostname findings while client trust remains unverified. These observations
+use [Node's TLS verification](https://nodejs.org/api/tls.html#tlscheckserveridentityhostname-cert)
+and do not establish application health or revocation status.
+
+The [native TLS receipt](evidence/operator-doctor-tls-endpoint.json) records default,
+offline and online cases with unchanged QA fixture metadata and zero application
+bytes sent. A separate stalled loopback handshake verifies the timeout path.
+
 ## Read-only scope
 
 Client prerequisite probes use bounded `tar --version` output and hash known
@@ -52,12 +90,13 @@ Installation inspection uses short-lived restricted helpers from cached verified
 Application services are not started, images are not pulled and installation
 configuration is not rewritten. Filesystem sampling and TLS reads use existing
 read-only backing-path bind mounts, so a missing source cannot create a new named
-volume. The private TLS bytes stay inside the reader; only validity is reported.
+volume. The private TLS bytes stay inside the reader; only validity, hostname coverage
+and a leaf fingerprint used for endpoint comparison leave it.
 Unconfirmed storage/TLS reader cleanup fails the command.
 
 A retained launch/shutdown marker remains an unverified finding. Keep ingress
 stopped and inspect the original operation and container state before another
-lifecycle decision. Keypair validity does not prove that the client trusts its CA:
+lifecycle decision. Without an explicit online check, keypair validity does not prove client trust:
 retain the documented `NODE_EXTRA_CA_CERTS` and `FOGD_SERVER` settings for startup.
 Doctor does not import certificates, install global trust or repair a failed launch.
 

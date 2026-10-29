@@ -9,7 +9,7 @@ export { formatReport as formatHostReport } from './report.mjs';
 
 export async function doctorCommand(args) {
   const values = doctorOptions(args, true);
-  const report = values['against-installation'] ? await diagnoseInstalledApplication(values) : values.installation ? await inspectInstallation(values.installation)
+  const report = values['against-installation'] ? await diagnoseInstalledApplication(values) : values.installation ? await inspectInstallation(values.installation, { server: values.server, online: values.online })
     : values.runtime ? await inspectHost(values.runtime) : await diagnoseApplication(values);
   printReport(report, values.json);
 }

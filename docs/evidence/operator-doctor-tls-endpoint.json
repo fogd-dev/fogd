@@ -1,0 +1,357 @@
+{
+  "schema": 1,
+  "kind": "operator-doctor-tls-endpoint",
+  "recordedAt": "2026-10-29T19:57:05.826489+00:00",
+  "sourceCommit": "d097e92ac648126235cf53bc149e79f2764250cc",
+  "executedTreeDirty": true,
+  "family": "celld-durable-v5-linux-arm64",
+  "passed": true,
+  "scope": "Offline installed certificate hostname coverage and explicit online TLS-only client verification; no application requests, trust installation or runtime/admission changes.",
+  "verification": {
+    "passed": true,
+    "archivedSourcesVerified": 998,
+    "nativeCasesVerified": 6,
+    "dockerCallsInspected": 372,
+    "restrictedTlsHelpersVerified": 6,
+    "fixtureMetadataAndControllerHashesUnchanged": true,
+    "launchMarkerHashUnchanged": true,
+    "applicationBytesSent": 0,
+    "offlineCasesOpenedNoSecureConnections": true,
+    "explicitCaAcceptedAndMissingCaRefused": true,
+    "mismatchedHostnameUnsupported": true,
+    "unreachableEndpointUnverified": true,
+    "privateDiagnosticsAbsent": true,
+    "retainedContainers": 8,
+    "retainedVolumes": 11,
+    "defaultDockerContext": "desktop-linux",
+    "explicitDockerContext": "fogd-release-recipient"
+  },
+  "coreImplementationMatchesExecutedArchive": [
+    "packages/cli/bin/fogd.js",
+    "packages/cli/src/doctor/command.mjs",
+    "packages/cli/src/doctor/installation-tls.mjs",
+    "packages/cli/src/doctor/options.mjs",
+    "packages/cli/src/observe/helper.mjs"
+  ],
+  "postQualificationNextStepLiterals": [
+    {
+      "path": "packages/cli/src/doctor/tls-endpoint.mjs",
+      "executedSha256": "4e3aa929fa7a787838f7e870e9dace1048b49019fd87c85fbec8589e5f49f5cf",
+      "currentSha256": "556eceed50c2260b2321e6a2deb71eadeb22ad4ee50fc10f4d4d10b76f05c36d",
+      "oldNextStep": "This is one TLS handshake without HTTP or credentials. It does not establish application health, revocation status or future trust. No certificate trust was installed.",
+      "newNextStep": "Check the selected endpoint and current Node CA settings; set NODE_EXTRA_CA_CERTS before launching Node when needed. This TLS-only check sends no HTTP or credentials and does not establish application health or revocation status.",
+      "onlyNextStepLiteralChanged": true
+    },
+    {
+      "path": "packages/cli/src/doctor/installation.mjs",
+      "executedSha256": "8cdd2dfa2343ab40428edfe83c87db4aa36d193f53d55e28923799caf7a158d6",
+      "currentSha256": "07041e890de4abf1f7ae76f93490968ff1dd53784e0f2755d3e2bde16ef7e251",
+      "oldNextStep": "Hostname coverage does not establish chain trust, reachability or application health. No certificate was changed.",
+      "newNextStep": "Use a certificate covering this hostname or select the intended endpoint. Chain trust and reachability are separate findings; no certificate was changed.",
+      "onlyNextStepLiteralChanged": true
+    }
+  ],
+  "testTiming": "The canonical and native runs precede two next-step copy improvements. Exact normalization verifies that only those string literals changed; logic is identical.",
+  "hostChecks": {
+    "canonicalTestsPassed": 2821,
+    "canonicalFailed": 0,
+    "canonicalSkipped": 0,
+    "canonicalCancelled": 0,
+    "canonicalDurationMs": 504007.709834,
+    "focusedTestsPassed": 26,
+    "syntaxAndQualityPassed": true,
+    "realLoopbackTrustAndLeafSubstitutionChecked": true,
+    "stalledHandshake": {
+      "passed": true,
+      "status": "unverified",
+      "elapsedMs": 5003.948333,
+      "scope": "A loopback TCP peer accepts but never completes TLS; the absolute five-second deadline ends the probe."
+    }
+  },
+  "nativeCases": [
+    {
+      "mode": "default",
+      "exitCode": 2,
+      "hostnameStatus": "unverified",
+      "trustStatus": "unverified",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    },
+    {
+      "mode": "offline-match",
+      "exitCode": 2,
+      "hostnameStatus": "supported",
+      "trustStatus": "unverified",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    },
+    {
+      "mode": "offline-mismatch",
+      "exitCode": 1,
+      "hostnameStatus": "unsupported",
+      "trustStatus": "unverified",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    },
+    {
+      "mode": "online-trusted",
+      "exitCode": 2,
+      "hostnameStatus": "supported",
+      "trustStatus": "supported",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    },
+    {
+      "mode": "online-untrusted",
+      "exitCode": 1,
+      "hostnameStatus": "supported",
+      "trustStatus": "unsupported",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    },
+    {
+      "mode": "online-unreachable",
+      "exitCode": 2,
+      "hostnameStatus": "supported",
+      "trustStatus": "unverified",
+      "newSecureConnections": 0,
+      "applicationBytes": 0
+    }
+  ],
+  "hostKeypairHashChecksPassed": true,
+  "reproduce": {
+    "offline": "node packages/cli/bin/fogd.js doctor --installation PROJECT --server https://HOST:PORT --json",
+    "online": "NODE_EXTRA_CA_CERTS=/path/to/ca.pem node packages/cli/bin/fogd.js doctor --installation PROJECT --server https://HOST:PORT --online --json",
+    "privateRoot": "~/.local/share/fogd-qualifications/doctor-tls-v5-20261029-01"
+  },
+  "privateEvidenceFingerprints": {
+    "deadline.json": {
+      "sha256": "d81224d410ec9a1d3d2e1a36a65d06d553039af9e1ef7a618b5318a47e6ab092",
+      "bytes": 192
+    },
+    "default.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "default.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "default.calls.jsonl": {
+      "sha256": "a6925ab595586f2d8b72da258d0e9e60f885a80ccbafc1068c32cde69cd58673",
+      "bytes": 22770
+    },
+    "default.json": {
+      "sha256": "c87890742c6bf2df7abefc0ceef2dfbbc65078888ef96b63935cc1feeadbaf08",
+      "bytes": 6290
+    },
+    "default.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "executed-source-inventory.json": {
+      "sha256": "209689f2a4211fe63856affe345802a49b796744073f7361d9414cdbcb1edc1a",
+      "bytes": 117191
+    },
+    "fogd-audit-doctor-tls.py": {
+      "sha256": "c65b4fb3e2157eeecf7afd5d291d91ccc559e52298176c202b55571c998ac7cc",
+      "bytes": 3643
+    },
+    "fogd-doctor-tls-audit-final.log": {
+      "sha256": "afca617632d3eb47e7a4d7a1cf83fc6beb9d0d9d0a90b60d587da633f044f0d5",
+      "bytes": 600
+    },
+    "fogd-doctor-tls-audit.log": {
+      "sha256": "0878b94aa12198fc93781e7c3a2b8d3376dc7e86b2c5c2420b65a5e7930ffddd",
+      "bytes": 335
+    },
+    "fogd-doctor-tls-canonical.log": {
+      "sha256": "18fe626c756beb9f07dd00b5d250f35de254daab7d430af3217a561613334d2c",
+      "bytes": 248695
+    },
+    "fogd-doctor-tls-deadline.log": {
+      "sha256": "3c14a235d15a91b19a8200841613bcb7f363485b8e7f4f5a0506427b2aae5a7c",
+      "bytes": 175
+    },
+    "fogd-doctor-tls-deadline.mjs": {
+      "sha256": "70e6bf6f3a1caa8be4cbe5b19b35996ad63d5f2bb9cfcb7c9aedacfa4b7f4935",
+      "bytes": 1174
+    },
+    "fogd-doctor-tls-focused-final.log": {
+      "sha256": "02a508a29c25bd094ff8f2ee75e1a1fe7b94e1724472afdb4de141c0c21c62e1",
+      "bytes": 2896
+    },
+    "fogd-doctor-tls-focused.log": {
+      "sha256": "941c21fec50eb004496a7dbf3728d9a351df7d9745d71489641b828b01928354",
+      "bytes": 2669
+    },
+    "fogd-doctor-tls-guide-writing-complete.log": {
+      "sha256": "926e0c75278ae085285be30535029e915b5d3ef66d7915988141ff351c156860",
+      "bytes": 5844
+    },
+    "fogd-doctor-tls-guide-writing-final.log": {
+      "sha256": "b240ed0a7c854b3eaf810ea785dd528a307f75f31d958b89d6ce300482f3c8bb",
+      "bytes": 5690
+    },
+    "fogd-doctor-tls-guide-writing.log": {
+      "sha256": "0a96329f759cd28bb4ccd37ed54870a1600770b7932cb1fe5abc64fd84e4f9e1",
+      "bytes": 5509
+    },
+    "fogd-doctor-tls-native.log": {
+      "sha256": "ee3e1a7c863a794a0f7d0ed49fef981a7bb70ac79f682052517858e60a680d41",
+      "bytes": 120
+    },
+    "fogd-doctor-tls-quality-final.log": {
+      "sha256": "90cf9c8ff58c08362770b48fdfd6f0bc1f61b83d4b70bb7d29cc24e91849195c",
+      "bytes": 1670
+    },
+    "fogd-doctor-tls-quality.log": {
+      "sha256": "58551ade752b0e02841f360a8f2ffff0044946501f2a5644aa5341feb59f78e4",
+      "bytes": 1670
+    },
+    "fogd-doctor-tls-review.md": {
+      "sha256": "44246f70e84f56d47351e4c95a6836663bd6488ce46f49521e2fd9c31a1863c6",
+      "bytes": 4674
+    },
+    "fogd-doctor-tls-syntax.log": {
+      "sha256": "f0b88545a17c375ec2e8008450cb90bbc52efa69d70eed92aa521de86ca5f51a",
+      "bytes": 32
+    },
+    "fogd-issue-6-tls-writing-final.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "independent-audit.json": {
+      "sha256": "d8e8deac7a2e7dae54ea065e0899e19b6c81a487a20c6bf847fcfef9efa9d870",
+      "bytes": 636
+    },
+    "offline-match.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "offline-match.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "offline-match.calls.jsonl": {
+      "sha256": "57cb18e635588bf2ab76b0bd2ba860ed90d8c024fbb41ab6373159b0b723d48f",
+      "bytes": 23165
+    },
+    "offline-match.json": {
+      "sha256": "963c64f35c58572830ca81eece10428605498538643681f33b7508d51337e053",
+      "bytes": 6313
+    },
+    "offline-match.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "offline-mismatch.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "offline-mismatch.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "offline-mismatch.calls.jsonl": {
+      "sha256": "7721ed17e1f6cf75f086d07311b41492a7ca76f7c1701921a3cda9424dd99b0f",
+      "bytes": 23165
+    },
+    "offline-mismatch.json": {
+      "sha256": "1aedc751ed6a132eb40c2522f23c254ce1a3a363c487e8a4d52f740f7abfa010",
+      "bytes": 6324
+    },
+    "offline-mismatch.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "online-trusted.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-trusted.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-trusted.calls.jsonl": {
+      "sha256": "d81b4fab862b17fe1230494aed2c287ffe8d5cc05b530ff5816ff2abd145fa36",
+      "bytes": 23165
+    },
+    "online-trusted.json": {
+      "sha256": "96b6941db3a9de464c11a00491aea77ec0cc276c32be16e773c822aa895ccdfc",
+      "bytes": 6453
+    },
+    "online-trusted.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "online-unreachable.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-unreachable.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-unreachable.calls.jsonl": {
+      "sha256": "8d0ae1b8e67394b58af5056ef06b3a1baeab270d6d6067f2cf159555ec047838",
+      "bytes": 23165
+    },
+    "online-unreachable.json": {
+      "sha256": "0cf7172c6df35b10ddfcebaa5eaef5a57f6fdba4784121783bb02fbcc361558f",
+      "bytes": 6366
+    },
+    "online-unreachable.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "online-untrusted.after.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-untrusted.before.json": {
+      "sha256": "66cf58128584ac54a109f9c8543d369a14f715a1eb7f26e4c1000f9c16daa136",
+      "bytes": 102424
+    },
+    "online-untrusted.calls.jsonl": {
+      "sha256": "89d29c3e6dbf8a99b721096fbd51098816ee909df0417cdc67f75432851c5f06",
+      "bytes": 23165
+    },
+    "online-untrusted.json": {
+      "sha256": "0169715beb061f22b385f7c7b607abef0fa3c07b8ded93504e5f1cd47bd097f3",
+      "bytes": 6416
+    },
+    "online-untrusted.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "post-qualification-next-steps.json": {
+      "sha256": "0d6b65dd5309c16f4cd5af61fb2b688b93072d87066a4fd18b58f67a7d332247",
+      "bytes": 1323
+    },
+    "result.json": {
+      "sha256": "5a4b06e128a2e5ee646f3aa506deebad9681e4fc6c86f002c916e327330a03b0",
+      "bytes": 118539
+    },
+    "runner.mjs": {
+      "sha256": "8c02e70669b2305dd150c08c3155a20e6730cf4eced98d0bfada05b14c22106b",
+      "bytes": 7033
+    }
+  },
+  "limitations": [
+    "There are no existing user installations; retained stacks are QA fixtures.",
+    "The online case uses a separate temporary loopback TLS server with the retained QA certificate/key. Application services remain stopped and the original lifecycle marker remains retained.",
+    "TLS observation does not establish application health, revocation status, future trust, capacity or permission to start.",
+    "This direct-certificate comparison expects the endpoint to present the installed leaf. A TLS-terminating proxy with a separate trusted certificate is reported as a mismatch.",
+    "The default and server-only modes make no endpoint connection. Online mode is explicit and uses current Node trust without installing it.",
+    "Unreachable or uncertain endpoints stay unverified; success never establishes complete installation readiness or a global writer fence.",
+    "The 0.25 CPU limit applies only to observation helpers, not application workers.",
+    "The frozen 0.1.0 artifact predates this source CLI increment.",
+    "All qualification engines run on one physical Mac."
+  ],
+  "auditNote": "The first audit stopped on unclassified Compose version and container-inspect metadata calls. Their exact read-only forms were inspected and added to the auditor; the original failure log is retained alongside the passing final audit.",
+  "postQualificationDocumentation": [
+    "Guide clarification for TLS-terminating proxies.",
+    "Permanent evidence receipt link."
+  ]
+}
