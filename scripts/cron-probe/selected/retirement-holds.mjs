@@ -4,12 +4,12 @@ import { controllerState, approvedArtifacts, nativeObservation, vmTime } from '.
 import { recoveredData, applicationData } from './recovery-fixtures.mjs';
 import { recoveryFence, neverStartedIngress, nativeProcesses } from './recovery-fence.mjs';
 import { heldDataInterval } from './recovery-interval.mjs';
-import { acknowledgeApp, assertPendingRecovery } from './recovery-holds.mjs';
+import { acknowledgeApp, assertPendingRecovery, startRecovered } from './recovery-holds.mjs';
 import { httpsClient, waitFor } from './https.mjs';
 import { expectRefusal } from './evidence.mjs';
 import { prefixFingerprints } from '../../queue-probe/prefix-fingerprints.mjs';
 import { controllerFiles } from '../retirement/preservation.mjs';
-import { verifiedObservationKeys } from './failure-authority.mjs';
+import { verifiedObservationKeys, assertProcessKeyTransition } from './failure-authority.mjs';
 import { assertUnassignedNamespace } from './retirement-policy.mjs';
 import { verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
 import { assertArchivedPrefix } from './retirement-bucket.mjs';
@@ -45,11 +45,14 @@ export async function heldRetirement(target, point, installations) {
   evidence.coldAfter = await heldDataInterval(target, { approvals, before, until: evidence.coldStart + 62000, verify: verifyHeld, beforeRead: () => neverStartedIngress(target) });
   evidence.coldEnd = await vmTime(target); evidence.afterIngress = await neverStartedIngress(target);
   assert.deepEqual(await nativeProcesses(target), target.nativeBaseline);
-  await target.command(['up', '--installation', target.project]); const request = await httpsClient(target);
+  evidence.startup = await startRecovered(target, { ...point, approvals, before });
+  const request = await httpsClient(target);
   await waitFor('retirement admin', async () => (await request('/v1/admin')).status === 200);
-  evidence.pending = {}; evidence.acknowledged = {}; evidence.pendingRoutes = {};
+  evidence.recorded = {}; evidence.pending = {}; evidence.acknowledged = {}; evidence.pendingRoutes = {};
   for (const [name, active] of Object.entries(approvals)) {
-    const surface = surfaces[name], pending = await target.json(['admin', surface, name, 'status']);
+    const surface = surfaces[name];
+    evidence.recorded[name] = await target.json(['admin', surface, name, 'status']);
+    const pending = await target.json(['admin', surface, name, 'observe']);
     assertPendingRecovery(pending, active); evidence.pending[name] = pending;
     const path = backgroundRoute(surface);
     evidence.pendingRoutes[name] = (await request(path, { app: name })).status; assert.equal(evidence.pendingRoutes[name], 503);
@@ -74,7 +77,7 @@ export async function heldRetirement(target, point, installations) {
   evidence.warmIdentities = [];
   for (const fleet of target.policy.fleets) evidence.warmIdentities.push(await fleetIdentity(fleet));
   evidence.warmKeys = Object.fromEntries(evidence.warmIdentities.map(observed => [observed.slot, verifiedObservationKeys(target.policy, observed.slot, observed)]));
-  assert.deepEqual(evidence.warmKeys, evidence.coldKeys);
+  assertProcessKeyTransition(evidence.coldKeys, evidence.warmKeys, evidence.startup.restarted);
   evidence.retainedAfter = await retained(true); assert.deepEqual(evidence.retainedAfter, evidence.retainedBefore);
   evidence.unassignedAfter = await prefixFingerprints(target.compose, freshFleet.prefix, true); assertUnassignedNamespace(evidence.unassignedAfter, freshFleet);
   evidence.privateFilesAfter = await controllerFiles(privateReader); assert.deepEqual(evidence.privateFilesAfter, evidence.privateFilesBefore);

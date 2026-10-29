@@ -127,13 +127,16 @@ import graphs. The earlier inventory is not a complete executed-import archive.
 
 ## Run and retain
 
-Use a checkout with the pinned product/storage images and app dependencies
-already cached. Retain the checked native source tree at
-`.fogd/celld-binding-build2/source`, which supplies the timing-default fingerprints. Preserve unrelated installations. The
-output directory must be new and private:
+The historical receipts above identify their executed drivers and source inputs.
+The current driver requires an explicit candidate family; the
+[v5 check](evidence/operator-native-background-retirement-v5.json) records its
+tested durable profile. Cache the selected product/storage images and app
+dependencies. Preserve unrelated installations and choose a new private output:
 
 ```sh
-node scripts/cron-probe/selected/retirement-chain.mjs .fogd/selected-retirement-chain
+node scripts/cron-probe/selected/retirement-chain.mjs \
+  --runtime celld-durable-v5-linux-arm64 --candidate --retain-resources \
+  /private/new-retirement-observation
 ```
 
 `result.json` is written only after the source inventory and source state still

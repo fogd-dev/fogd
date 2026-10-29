@@ -284,8 +284,14 @@ also checks due timers, a pending retry with unattempted queued input, and an
 older snapshot on three fresh targets. Cold and acknowledged holds precede
 explicit resume; future work leaves old occurrences unchanged. The queued input
 completes without resubmission. The older snapshot requires acknowledgment of
-possible lost results or replayed external effects. Broader background failure,
-retirement and complete runtime-family acceptance remain open. A separate
+possible lost results or replayed external effects. The
+[v5 sequential retirement check](evidence/operator-native-background-retirement-v5.json)
+adds four queue/cron retirements, fresh queued and scheduled capacity, retained
+survivor input, five snapshots and three restore audits including zero live apps.
+Each retirement keeps earlier namespaces and private recovery files unchanged.
+The audit verifies fresh process keys after deliberate startup restarts and stable
+keys within unchanged processes. Retirement beside another live cron, retirement
+crashes, broader failure paths and complete family acceptance remain open. A separate
 [received-code installation](evidence/operator-v5-received-installation.json) now
 uses the v5 offline bundle, received operator and standalone client on another
 existing Docker engine on the same physical Mac. Scoped approvals, native HTTP/D1
@@ -306,7 +312,7 @@ the release target remains fresh installations. The
 apps with distinct private configuration, failed and corrected handlers,
 unavailable replicas, private process-log captures, paused request refusal and
 controller-loss serving. Native readiness stays distinct from application health.
-Broader failure, retirement and release gates remain open.
+Broader failure, dual-cron retirement and release gates remain open.
 
 The remaining release requirements are:
 

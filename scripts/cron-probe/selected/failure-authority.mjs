@@ -3,6 +3,19 @@ import { createHash } from 'node:crypto';
 import { verifyIdentityProof, storageOrigin } from '../../../packages/platform/src/runtime-identity-proof.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
+export function assertProcessKeyTransition(cold, warm, restarted) {
+  assert.equal(typeof restarted, 'boolean');
+  assert.deepEqual(Object.keys(cold).sort(), Object.keys(warm).sort());
+  const compare = restarted ? assert.notEqual : assert.equal;
+  for (const [slot, keys] of Object.entries(cold)) {
+    assert.deepEqual(Object.keys(keys).sort(), Object.keys(warm[slot]).sort());
+    for (const [node, key] of Object.entries(keys)) {
+      assert.match(key, /^[a-f0-9]{64}$/); assert.match(warm[slot][node], /^[a-f0-9]{64}$/);
+      compare(warm[slot][node], key);
+    }
+  }
+}
+
 export function verifyFailureProof(policy, slotId, nodeId, proof, challenge) {
   const fleet = policy.fleets.find(value => value.id === slotId), node = fleet?.nodes.find(value => value.id === nodeId);
   assert.ok(node, 'Proof node is outside the independent policy');

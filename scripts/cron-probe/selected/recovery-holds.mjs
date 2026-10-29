@@ -58,7 +58,7 @@ export async function acknowledgeRecovery(target, point, installations, request)
   return { fence, startup, recorded, pending, acknowledged, attempts, before, after, startedAt, endedAt: await vmTime(target) };
 }
 
-async function startRecovered(target, point) {
+export async function startRecovered(target, point) {
   const cold = await nativeProcesses(target);
   assert.deepEqual(cold, target.nativeBaseline);
   const restarted = target.entry.routing === 'durable';

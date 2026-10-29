@@ -144,8 +144,12 @@ resume and unchanged old occurrences. The
 adds due timers, a pending retry with original queued input, and an older snapshot
 on fresh targets. Background work stays held until explicit resume; the original
 queued input completes without resubmission. Older recovery acknowledges possible
-lost results or replayed effects. Broader failure and retirement paths and full
-family acceptance remain open.
+lost results or replayed effects. The
+[v5 sequential retirement check](evidence/operator-native-background-retirement-v5.json)
+adds four retirements, fresh queue/cron capacity, retained survivor input and
+zero-live recovery. All five source snapshots retain their bytes after the three
+restore audits. Dual-cron retirement, broader failure paths and full family
+acceptance remain open.
 
 The [v5 received-code installation](evidence/operator-v5-received-installation.json)
 checks the offline operator/client path on an independent existing Docker engine on

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { selectedTrial } from './selected-trial.mjs';
+import { selectedHostTrial } from './selected-trial.mjs';
+import { selectedHostOptions } from './options.mjs';
 import { firstRetirement } from './retirement-first.mjs';
 import { retireStep, queuedInput, completeQueuedInput, retainedHistory, fleetProofs, preserveSnapshots } from './retirement-steps.mjs';
 import { scheduledReplacement, assertNewSchedule } from './retirement-scheduled.mjs';
@@ -11,8 +12,9 @@ import { auditSnapshot } from './retirement-audit.mjs';
 import { rows } from './recovery-ledger.mjs';
 import { scanPublicSurfaces } from './privacy.mjs';
 
-if (process.argv.length !== 3) throw new Error('Usage: node scripts/cron-probe/selected/retirement-chain.mjs NEW_PRIVATE_OUTPUT');
-await selectedTrial(process.argv[2], 'Selected sequential retirement: active cron survivor, persisted cron retry, queued survivors, fresh scheduled capacity and zero-live recovery. Separate two-cron qualification and the full acceptance audit remain open; public admission stays closed.', async context => {
+const options = selectedHostOptions(process.argv.slice(2));
+assert.equal(options.enrollment, 'candidate', 'Selected retirement qualification requires explicit candidate selection');
+await selectedHostTrial(options.output, 'Selected sequential retirement: active cron survivor, persisted cron retry, queued survivors, fresh scheduled capacity and zero-live recovery. Separate two-cron qualification and the full acceptance audit remain open; public admission stays closed.', async context => {
   const { source, installations, evidence } = context;
   const a = await firstRetirement(context), { fixture } = a;
   const snapshots = [{ host: source, point: a.point }], refresh = fixture.approvals.refresh, replacement = evidence.replacement.active;
@@ -69,4 +71,4 @@ await selectedTrial(process.argv[2], 'Selected sequential retirement: active cro
   evidence.shutdowns = installations.map(host => ({ project: host.project, closed: host.closed }));
   assert.ok(evidence.shutdowns.every(host => host.closed));
   return fixture;
-});
+}, options.enrollment, options.hostOptions);

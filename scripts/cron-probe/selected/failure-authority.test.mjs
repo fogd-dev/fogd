@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash, createPrivateKey, createPublicKey, sign } from 'node:crypto';
-import { verifyFailureProof, assertFailureLeases, verifiedObservationKeys } from './failure-authority.mjs';
+import { verifyFailureProof, assertFailureLeases, verifiedObservationKeys, assertProcessKeyTransition } from './failure-authority.mjs';
 
 const policy = { binarySha256: 'b'.repeat(64), bucket: 'test-bucket', storage: { endpoint: 'http://minio:9000', region: 'us-east-1' },
   fleets: [{ id: 'slot-1', prefix: 'app-one', nodes: [{ id: 'node-a', host: 'host-a' }, { id: 'node-b', host: 'host-b' }] }] };
@@ -17,6 +17,22 @@ function proof(change = {}, signingKey = key) {
   return { schema: 2, ...fields, challenge, publicKey: signer, signature: sign(null, Buffer.from(message), signingKey).toString('hex') };
 }
 const keys = { 'node-a': publicKey, 'node-b': '2'.repeat(64) };
+test('unchanged native processes retain their observed signing authorities', () => {
+  assertProcessKeyTransition({ 'slot-1': keys }, { 'slot-1': { ...keys } }, false);
+});
+test('restarted native processes rotate keys without changing node identities', () => {
+  assertProcessKeyTransition({ 'slot-1': keys }, { 'slot-1': { 'node-a': '3'.repeat(64), 'node-b': '4'.repeat(64) } }, true);
+});
+for (const [name, warm, restarted] of [
+  ['changed live-process authority', { 'slot-1': { ...keys, 'node-a': '3'.repeat(64) } }, false],
+  ['old authority after restart', { 'slot-1': keys }, true],
+  ['partially rotated authority', { 'slot-1': { ...keys, 'node-a': '3'.repeat(64) } }, true],
+  ['changed node identity', { 'slot-1': { 'other-node': '3'.repeat(64), 'node-b': '4'.repeat(64) } }, true],
+  ['changed fleet identity', { 'slot-2': { 'node-a': '3'.repeat(64), 'node-b': '4'.repeat(64) } }, true],
+  ['invalid key', { 'slot-1': { 'node-a': 'invalid', 'node-b': '4'.repeat(64) } }, true],
+]) test(`process transition refuses ${name}`, () => {
+  assert.throws(() => assertProcessKeyTransition({ 'slot-1': keys }, warm, restarted));
+});
 const leases = () => [
   { expectedNode: 'node-a', host: 'host-a', node: 'node-a', addr: 'host-a:8081', publicKey, expires_ms: 1100, missing: false },
   { expectedNode: 'node-b', host: 'host-b', node: 'node-b', addr: 'host-b:8081', publicKey: keys['node-b'], expires_ms: 1100, missing: false },

@@ -8,6 +8,7 @@ import { fleetProofs, retainedHistory } from './retirement-steps.mjs';
 import { controllerFiles } from '../retirement/preservation.mjs';
 import { stopSelectedHost } from './shutdown.mjs';
 import { verifyNativeTimingEnvironment } from '../sealed/defaults.mjs';
+import { assertProcessKeyTransition } from './failure-authority.mjs';
 
 export async function auditSnapshot(context, host, point, label, retained = {}) {
   assert.deepEqual(Object.keys(retained).sort(), Object.keys(point.retiredHistory).sort());
@@ -23,7 +24,8 @@ export async function auditSnapshot(context, host, point, label, retained = {}) 
   const empty = Object.keys(point.approvals).length === 0;
   record.coldProofs = await fleetProofs(audit, empty);
   record.acknowledged = await acknowledgeRecovery(audit, point, installations);
-  record.warmProofs = await fleetProofs(audit, empty); assert.deepEqual(record.coldProofs.keys, record.warmProofs.keys);
+  record.warmProofs = await fleetProofs(audit, empty);
+  assertProcessKeyTransition(record.coldProofs.keys, record.warmProofs.keys, record.acknowledged.startup.restarted);
   const state = await controllerState(audit);
   assert.deepEqual(Object.keys(state.apps).filter(name => state.apps[name].retirement).sort(), Object.keys(point.retiredHistory).sort());
   for (const [name, expected] of Object.entries(point.retiredHistory)) {

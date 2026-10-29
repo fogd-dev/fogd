@@ -1,0 +1,451 @@
+{
+  "schema": 1,
+  "kind": "operator-native-background-retirement-chain",
+  "recordedAt": "2026-10-29T00:45:36.208676+00:00",
+  "family": "celld-durable-v5-linux-arm64",
+  "image": "sha256:b0f263f0d7f511fbaeb6be979f1d8a77589d27b8d525fc435844ac81c5a49a49",
+  "sourceCommit": "8dd4d037658048007d3a37dfee4afe126b7c024c",
+  "passed": true,
+  "qualified": false,
+  "ordinaryAdmission": "closed",
+  "scope": "One fresh sequential queue/cron retirement scenario on the existing local Linux arm64 two-fleet Docker engine. Four retirements, fresh queued and scheduled capacity, survivor input, five stopped snapshots and three restore audits, including zero live apps. Candidate selection remains internal.",
+  "engineId": "2a142e44-1892-474f-b159-e319964a6c59",
+  "verification": {
+    "archivedExecutedSourcesVerified": 961,
+    "recordedIdentitySignaturesIndependentlyVerified": 82,
+    "canonicalActiveAndRetiredArtifactDigestsVerified": true,
+    "finalPrivatePublicAuthorityPairsVerified": 8,
+    "installedRuntimePoliciesVerified": 8,
+    "priorContainersUnchanged": 457,
+    "priorVolumesRetained": 616,
+    "ownedContainersStoppedAndRetained": 64,
+    "freshVolumes": 88,
+    "nativeLogHealthChecked": true
+  },
+  "retirements": [
+    {
+      "retiredApp": "imports",
+      "coldHeldMilliseconds": 67106,
+      "acknowledgedHeldMilliseconds": 67716,
+      "retainedNamespacesUnchanged": 1
+    },
+    {
+      "retiredApp": "refresh",
+      "coldHeldMilliseconds": 65897,
+      "acknowledgedHeldMilliseconds": 67106,
+      "retainedNamespacesUnchanged": 2
+    },
+    {
+      "retiredApp": "scheduled-next",
+      "coldHeldMilliseconds": 66283,
+      "acknowledgedHeldMilliseconds": 67163,
+      "retainedNamespacesUnchanged": 3
+    },
+    {
+      "retiredApp": "replacement",
+      "coldHeldMilliseconds": 71185,
+      "acknowledgedHeldMilliseconds": 70838,
+      "retainedNamespacesUnchanged": 4
+    }
+  ],
+  "snapshots": [
+    {
+      "name": "source-snapshot",
+      "manifestSha256": "d0195d87b5a92fd898a1e96f605d28bb60bbece85458d81e42c216de83d0d7d5",
+      "archivedFilesVerified": 10,
+      "retiredNames": [],
+      "liveNames": [
+        "imports",
+        "refresh"
+      ]
+    },
+    {
+      "name": "retry-snapshot",
+      "manifestSha256": "0d42d3ddb24789d98cbe2bc32eb84af0fe4d7d85119269e2c5f07d6970f86159",
+      "archivedFilesVerified": 10,
+      "retiredNames": [
+        "imports"
+      ],
+      "liveNames": [
+        "refresh",
+        "replacement"
+      ]
+    },
+    {
+      "name": "scheduled-snapshot",
+      "manifestSha256": "d5702f7e02c797aff1834f0ab3991d88e3460fd1b8a6c833c56da4b6c543bcf9",
+      "archivedFilesVerified": 10,
+      "retiredNames": [
+        "imports",
+        "refresh"
+      ],
+      "liveNames": [
+        "replacement",
+        "scheduled-next"
+      ]
+    },
+    {
+      "name": "last-queue-snapshot",
+      "manifestSha256": "853689c4021bbb99759d92ac191f5b5b185be3a342ba02b564a33df1912dfb75",
+      "archivedFilesVerified": 10,
+      "retiredNames": [
+        "imports",
+        "refresh",
+        "scheduled-next"
+      ],
+      "liveNames": [
+        "replacement"
+      ]
+    },
+    {
+      "name": "zero-live-snapshot",
+      "manifestSha256": "5c4c23ba5889eca0eda6b0688859dbf2c37106110bd003fd827392d3bb6d5312",
+      "archivedFilesVerified": 10,
+      "retiredNames": [
+        "imports",
+        "refresh",
+        "replacement",
+        "scheduled-next"
+      ],
+      "liveNames": []
+    }
+  ],
+  "installationChecks": [
+    {
+      "label": "source",
+      "project": "fogd-selected-activation-8258bd6f049fbe36",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "3be4f2f2dd6847104e7d7990ab22e47aa2a2e708e6328b64649af9ede1c79a98",
+      "canonicalArtifactDigestsVerified": 2,
+      "liveNames": [
+        "imports",
+        "refresh"
+      ],
+      "retiredNames": []
+    },
+    {
+      "label": "retired-imports",
+      "project": "fogd-selected-recovery-76b2e7d72a2294ff",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "7fc62ff0808731400f4fc1a8a2d7e3cac90bdc1dba5b74e2101037e057a09c68",
+      "canonicalArtifactDigestsVerified": 3,
+      "liveNames": [
+        "refresh",
+        "replacement"
+      ],
+      "retiredNames": [
+        "imports"
+      ]
+    },
+    {
+      "label": "retry",
+      "project": "fogd-selected-recovery-2043329599e85f6b",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "a0988a50daf22f1d6b4bfe1e335f845cb57331796770572375e3c2f4aa41c021",
+      "canonicalArtifactDigestsVerified": 4,
+      "liveNames": [
+        "replacement",
+        "scheduled-next"
+      ],
+      "retiredNames": [
+        "imports",
+        "refresh"
+      ]
+    },
+    {
+      "label": "scheduled",
+      "project": "fogd-selected-recovery-6c5d48e100041f1e",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "b2194b1dcdecc942b23bf20b7c561b658b09e3597e5f8e04e50833f1afb40e39",
+      "canonicalArtifactDigestsVerified": 4,
+      "liveNames": [
+        "replacement"
+      ],
+      "retiredNames": [
+        "imports",
+        "refresh",
+        "scheduled-next"
+      ]
+    },
+    {
+      "label": "last-queue",
+      "project": "fogd-selected-recovery-846416c7557cf745",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "f4e514f68459e56f8b2d31ec16ea67e3a66e3461d6b69d32c329d21746757f43",
+      "canonicalArtifactDigestsVerified": 4,
+      "liveNames": [],
+      "retiredNames": [
+        "imports",
+        "refresh",
+        "replacement",
+        "scheduled-next"
+      ]
+    },
+    {
+      "label": "zeroAudit",
+      "project": "fogd-selected-recovery-5e009619215b1153",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "f4e514f68459e56f8b2d31ec16ea67e3a66e3461d6b69d32c329d21746757f43",
+      "canonicalArtifactDigestsVerified": 4,
+      "liveNames": [],
+      "retiredNames": [
+        "imports",
+        "refresh",
+        "replacement",
+        "scheduled-next"
+      ]
+    },
+    {
+      "label": "retryAudit",
+      "project": "fogd-selected-recovery-42d77b9349c3c2e4",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "41b99791e0c3e2fe6a95044ef38fcccc500de254276c776cb501330f2666c7f3",
+      "canonicalArtifactDigestsVerified": 3,
+      "liveNames": [
+        "refresh",
+        "replacement"
+      ],
+      "retiredNames": [
+        "imports"
+      ]
+    },
+    {
+      "label": "originalAudit",
+      "project": "fogd-selected-recovery-950862ec1ac2efaa",
+      "installedPolicyMatchesReceipt": true,
+      "privatePublicAuthorityPairMatches": true,
+      "authoritySha256": "ace4fe1778116de9113f98982e294ae121fa8bd7f0e4f0808afafd33f544740f",
+      "canonicalArtifactDigestsVerified": 2,
+      "liveNames": [
+        "imports",
+        "refresh"
+      ],
+      "retiredNames": []
+    }
+  ],
+  "snapshotRestoreAudits": [
+    "zeroAudit",
+    "retryAudit",
+    "originalAudit"
+  ],
+  "observations": {
+    "retirementOrder": [
+      "imports",
+      "refresh",
+      "scheduled-next",
+      "replacement"
+    ],
+    "replacementQueueStartsEmpty": true,
+    "replacementQueueSavedResults": [
+      "MELON",
+      "PLUM"
+    ],
+    "originalPendingSurvivorInputsCompleted": [
+      "pending-b",
+      "pending-c"
+    ],
+    "originalPendingInputHashesAndCreatedTimesRetained": true,
+    "lastQueuedInputRetainedInRetiredNamespace": true,
+    "replacementCronStartsEmpty": true,
+    "replacementCronExpression": "*/3 * * * *",
+    "replacementCronUsesDistinctSecretRevision": true,
+    "retiredTokenScopeAndNameRefusals": true,
+    "retiredApprovalAndCredentialIssuanceRefused": true,
+    "priorRetirementHistoryAndPrivateFilesPreserved": true,
+    "zeroLiveRetirementNames": [
+      "imports",
+      "refresh",
+      "replacement",
+      "scheduled-next"
+    ],
+    "sourceSnapshotVolumesComparedAfterAllTargetsStopped": true,
+    "coldToNormalStartupProcessKeysRotate": true,
+    "unchangedProcessKeysRemainStable": true
+  },
+  "independentAuditCorrection": "The initial independent audit incorrectly required active lease rows for empty, unassigned fleets. The corrected audit requires empty before/after lease and deployment inventories for those bootstrap observations; active fleet observations still require matching live leases. Signed binary, node, namespace and storage claims are verified in both modes.",
+  "priorUnacceptedAttempts": [
+    {
+      "accepted": false,
+      "failedPhase": "cold-and-acknowledged-hold",
+      "reason": "The legacy probe compared process signing keys across a deliberate durable startup restart. All four process keys rotated while the exact node IDs stayed unchanged. The pinned native source generates an ephemeral signer when no explicit seed is supplied. Verify signatures against the unchanged policy and require fresh keys after restart, while retaining strict key continuity within an unchanged process.",
+      "processKeysRotated": 4,
+      "nodeIDsUnchanged": true,
+      "priorContainersUnchanged": 441,
+      "priorVolumesRetained": 594,
+      "ownedContainersStoppedAndRetained": 16,
+      "failureSha256": "99232e55ddbc8562afb7921f7a5aca3f4cbcf68aee35f1467ef7a283e6580795",
+      "ordinaryAdmission": "closed",
+      "auditFingerprint": {
+        "bytes": 776,
+        "sha256": "282c13c12827693504a90091ca4d6b94fa9b14e395b92822e5953aae32443511"
+      }
+    },
+    {
+      "accepted": false,
+      "failedPhase": "qualification-network-selection",
+      "reason": "The original allocator searched only 30 subnet triplets, all occupied by retained fixtures. It refused before creating fixture containers or volumes. The corrected selector searches every complete triplet in the same private /16, still rejecting Docker or caller-supplied overlaps.",
+      "priorContainersUnchanged": 457,
+      "priorVolumesRetained": 616,
+      "newContainers": 0,
+      "newVolumes": 0,
+      "logSha256": "740bc218b029e194d5c2220637cd0c4d25e8c6549e04f735407a40b25957636f",
+      "ordinaryAdmission": "closed",
+      "auditFingerprint": {
+        "bytes": 595,
+        "sha256": "0847db900cde8faf1cd62009c0ffac73a23ca7f8ac88f53dfb6e38b038f4616e"
+      }
+    }
+  ],
+  "qualificationProgramFingerprints": {
+    "package.json": "82614b893d31fd3ef4bfc20ca899e9e0a55906ef27630bda8536dd28ee6d6826",
+    "scripts/cron-probe/selected/failure-authority.mjs": "6867794bc8c5417322e1285700cb453bdc4074a0790426e8786d57e7b08ab3b5",
+    "scripts/cron-probe/selected/failure-authority.test.mjs": "1773ca8dee25f6d40b35a26994ef204a24b2cbad73318ba217ceec6dd9b5e292",
+    "scripts/cron-probe/selected/recovery-holds.mjs": "6fec8e04987cb52a2f2e51671de81f2f5b5a0169e4651e5526e66c357487291e",
+    "scripts/cron-probe/selected/resources.mjs": "69207289789e93b773d2871e71079db0651108aabd5d3eafcd88787379a74051",
+    "scripts/cron-probe/selected/resources.test.mjs": "36234e75c472619d8f0568417c40cee7cd5cdad0a75befb750fb1c579d3e20d9",
+    "scripts/cron-probe/selected/retirement-audit.mjs": "a72ee17a889a53e06ee124ec12f16170aea3f46d26ea65599c30a6be19b69cd3",
+    "scripts/cron-probe/selected/retirement-chain.mjs": "1833c36b913373833da97cecc319827fb916d549adaa0260cc0ce2626df9e633",
+    "scripts/cron-probe/selected/retirement-holds.mjs": "559859d51dfaf9d7c2bc91ea5d719efac7e4b40a66babaa00054bca9481c8870",
+    "scripts/cron-probe/selected/retirement-target.mjs": "4217f4aa61a4e81b7752153a599b01b8e89229934d4eeff40ea6caaf3f2edf30"
+  },
+  "acceptance": {
+    "sequentialQueueAndCronRetirement": true,
+    "freshQueuedAndScheduledCapacity": true,
+    "survivorUnattemptedInputPreserved": true,
+    "zeroLiveStoppedRecovery": true,
+    "priorRetirementAndOriginalSnapshotRecovery": true,
+    "twoLiveCronRetirement": false,
+    "nativeRetirementProcessCrash": false,
+    "retirementIOFaultMatrix": false,
+    "powerLoss": false,
+    "fullFamilyQualification": false,
+    "ordinaryAdmission": false
+  },
+  "privateEvidenceFingerprints": {
+    "source-snapshot/manifest.json": {
+      "bytes": 5236,
+      "sha256": "d0195d87b5a92fd898a1e96f605d28bb60bbece85458d81e42c216de83d0d7d5"
+    },
+    "retry-snapshot/manifest.json": {
+      "bytes": 5242,
+      "sha256": "0d42d3ddb24789d98cbe2bc32eb84af0fe4d7d85119269e2c5f07d6970f86159"
+    },
+    "scheduled-snapshot/manifest.json": {
+      "bytes": 5263,
+      "sha256": "d5702f7e02c797aff1834f0ab3991d88e3460fd1b8a6c833c56da4b6c543bcf9"
+    },
+    "last-queue-snapshot/manifest.json": {
+      "bytes": 4297,
+      "sha256": "853689c4021bbb99759d92ac191f5b5b185be3a342ba02b564a33df1912dfb75"
+    },
+    "zero-live-snapshot/manifest.json": {
+      "bytes": 3283,
+      "sha256": "5c4c23ba5889eca0eda6b0688859dbf2c37106110bd003fd827392d3bb6d5312"
+    },
+    "runtime.log": {
+      "bytes": 198529,
+      "sha256": "1c49e967e00f105620b3dba39815b25285120f76cd552c7a7531c30dc579e8b1"
+    },
+    "retired/runtime.log": {
+      "bytes": 524826,
+      "sha256": "bbe82bfc76e7b441cc14b466d80ec088ffca2f2fa2dd1d9e62c089cc98f6e563"
+    },
+    "retry-retired/runtime.log": {
+      "bytes": 620583,
+      "sha256": "f2c0d31c17b1f03263db0150c5ac2973d6a4b60afd07b27b8ad016b2ca3ceb68"
+    },
+    "scheduled-retired/runtime.log": {
+      "bytes": 219134,
+      "sha256": "5da8fa890b9ce4be2cd9425c46e29a069b17d9725d5a195c510edbac2bd5350b"
+    },
+    "last-queue-retired/runtime.log": {
+      "bytes": 4885,
+      "sha256": "2b56bf13a135943a1d22bf49ecb80a875e2680d7797726d9e2a707fb05e260dc"
+    },
+    "zero-live-audit/runtime.log": {
+      "bytes": 7733,
+      "sha256": "d5b287cdb6cc56cd7665ab46988ae4b204896cf1609064a58b349bbe6de57d79"
+    },
+    "retry-source-audit/runtime.log": {
+      "bytes": 455343,
+      "sha256": "15211122303811fc370a1d937df2a6ff04d29f0486d661fbe123443edc016cdf"
+    },
+    "original-source-audit/runtime.log": {
+      "bytes": 470219,
+      "sha256": "8393e6af1c25a163e9b7c0b209a11cc426b6696863f157cb30c7dc25dd71c9a9"
+    },
+    "result.json": {
+      "bytes": 1308773,
+      "sha256": "e8a024de21cf19b7ed77423eed240ffabe41a0db1e1b1defccbd6044135b4aee"
+    },
+    "inputs.json": {
+      "bytes": 415,
+      "sha256": "ec584eb7abaebce6769bd19e9d96eec1b61cf93aa0e913d489181e6c2cb1fa64"
+    },
+    "runner.mjs": {
+      "bytes": 6555,
+      "sha256": "1833c36b913373833da97cecc319827fb916d549adaa0260cc0ce2626df9e633"
+    },
+    "executed-source-inventory.json": {
+      "bytes": 112867,
+      "sha256": "76878e1d62f1cf84dc0f140bb7dc8ec13d538b5b32a7741deb57f8d58f084861"
+    },
+    "post-write-privacy.json": {
+      "bytes": 31737,
+      "sha256": "64faf6023afed2d6c3c2ca0a8bd89691709f47875b287b7daa20660746f7a91d"
+    },
+    "stores-audit.json": {
+      "sha256": "4225ca3deec65b440300cc9ec001104d2891478b0275694368222d1dbc085ead",
+      "bytes": 3713
+    },
+    "stores-audit-source.mjs": {
+      "sha256": "41c3340754657e5d6978b1f9010e6f5843b71f0930ccbf6fecbdd75aa6aa9d14",
+      "bytes": 4987
+    },
+    "independent-audit-source.py": {
+      "sha256": "e7d321dce00375a870726d621ff9400ddc1d170bd7781b18d23eb7243e93c9c6",
+      "bytes": 15527
+    },
+    "independent-audit-initial-assumption.log": {
+      "bytes": 898,
+      "sha256": "772f2e05b652ce8beb5bcb1ed8af3572305cfd007afec3f16f380a378f717498"
+    },
+    "independent-proof-verifier-self-test.json": {
+      "bytes": 298,
+      "sha256": "8c93f9b72e0fcd0f42082d14dac8a155e6de3fb135e5f8919403c2b42227672b"
+    },
+    "host-tests.log": {
+      "bytes": 240057,
+      "sha256": "d7775178a7996fba2abdf29507daf7eaa71a28958939d0c6ed5e841e22394b58"
+    },
+    "independent-audit.json": {
+      "bytes": 6961,
+      "sha256": "74564b0260d6b1b07f9b33eafb5a1845d49eb86054d87a6ad3efde388193bf0e"
+    }
+  },
+  "limitations": [
+    "All eight installations are qualification fixtures on the same previously used two-vCPU Linux arm64 Docker engine and physical Mac, alongside 21 unrelated QA containers. There are no existing user installations.",
+    "Retirement is a stopped snapshot operation with explicit stop-work consent. Parked data and old credentials remain private recovery material. Retired names cannot be reused; capacity reuse assigns fresh node IDs and a disjoint namespace.",
+    "The native startup sequence deliberately restarts the cold-test processes before normal ingress. Ephemeral process keys rotate across that restart; signed node, binary and storage claims remain bound to the independently selected policy. Key equality remains required while a process is unchanged.",
+    "Recorded signature occurrences are verified with an independent Ed25519 implementation and policy hash checks, including lease/public-key agreement for active fleets. Unassigned bootstrap fleets instead require empty lease and deployment inventories. This is not hardware attestation.",
+    "The earlier key-comparison failure and address-pool setup refusal remain unaccepted. Their existing resources were retained; no network or volume was pruned.",
+    "This scenario does not qualify retirement beside another live cron, native process interruption during retirement, an I/O fault matrix, power loss, capacity limits or exactly-once external effects. The immutable runtime image and programs are unchanged. Raw credentials, logs, archives and application artifacts stay private."
+  ],
+  "hostChecks": {
+    "command": "node --run test",
+    "tests": 2728,
+    "pass": 2728,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "syntax": "passed",
+    "quality": "passed"
+  }
+}

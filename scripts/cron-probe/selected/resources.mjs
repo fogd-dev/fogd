@@ -12,8 +12,15 @@ export async function loopbackPort() {
 export async function privateNetworks(excluded = []) {
   const ids = (await docker(['network', 'ls', '-q'])).trim().split('\n').filter(Boolean);
   const networks = ids.length ? await json(['network', 'inspect', ...ids]) : [];
-  const used = [...networks.flatMap(network => (network.IPAM?.Config || []).map(value => ipv4Range(value.Subnet)).filter(Boolean)), ...excluded.map(ipv4Range)];
-  for (let start = 150; start < 240; start += 3) {
+  return selectPrivateNetworks([...networks.flatMap(network => (network.IPAM?.Config || []).map(value => value.Subnet)), ...excluded]);
+}
+
+export function selectPrivateNetworks(subnets) {
+  const used = subnets.map(ipv4Range).filter(Boolean);
+  // Keep the historical first choice, then search every complete triplet in
+  // the same /16. Retained fixtures can occupy more than the original 30 sets.
+  for (let index = 0; index < 85; index++) {
+    const start = (150 + index * 3) % 255;
     const subnets = [0, 1, 2].map(offset => `10.253.${start + offset}.0/24`);
     if (subnets.every(subnet => !used.some(range => overlaps(ipv4Range(subnet), range)))) {
       return Object.fromEntries(['control', 'fleet-1', 'fleet-2'].map((name, index) => [name, subnets[index]]));

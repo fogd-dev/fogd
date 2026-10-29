@@ -170,7 +170,9 @@
     "dueTimerStoppedRecovery": true,
     "pendingRetryStoppedRecovery": true,
     "olderSnapshotStoppedRecovery": true,
-    "boundedApplicationDiagnostics": true
+    "boundedApplicationDiagnostics": true,
+    "sequentialBackgroundRetirement": true,
+    "zeroLiveStoppedRecovery": true
   },
   "releasePath": "Fresh installation. There are no existing user installations; retained stacks are qualification fixtures. Cross-family migration is not a release prerequisite.",
   "engines": {
@@ -199,6 +201,7 @@
     "operator-native-write-serving-v5.json",
     "operator-v5-family-refusal.json",
     "operator-native-background-full-recovery-v5.json",
-    "operator-native-diagnostics-v5.json"
+    "operator-native-diagnostics-v5.json",
+    "operator-native-background-retirement-v5.json"
   ]
 }
