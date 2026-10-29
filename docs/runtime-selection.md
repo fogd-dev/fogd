@@ -34,6 +34,14 @@ The [received-operator rehearsal](evidence/operator-v7-received-rehearsal.json)
 checks transfer, installation, update, restart and fresh recovery on another
 existing Docker engine. Its single admission change exists only in a private
 exported copy; it does not open the repository catalog or publish a v7 release.
+The [retirement/history check](evidence/operator-native-retirement-history-v7.json)
+preserves earlier decisions and survivor data, verifies fresh namespace reuse and
+retains all five decisions in a stopped snapshot. The
+[private versioned onboarding check](evidence/operator-v7-versioned-onboarding.json)
+uses a proposed `0.2.0` bundle on a newly empty engine, with received-client
+deployment, exact update approval and data after restart. These are private QA
+checks on the same physical Mac. Full family acceptance remains open; there are
+no existing user installations to migrate.
 
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller

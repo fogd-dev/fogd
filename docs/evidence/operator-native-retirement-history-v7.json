@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "kind": "operator-native-retirement-history-v7",
+  "recordedAt": "2026-10-29T23:38:17.545034+00:00",
+  "sourceCommit": "c9aa6bf83d59e655423e056b0d2a0d6bfe57438f",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "actualReleasedCatalog": false,
+  "mainAdmission": "candidate",
+  "family": "celld-approval-v7-linux-arm64",
+  "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+  "scope": "Private received v7 HTTP/D1 retirement preserves original decision history and a survivor, refuses retired approvals/credential issuance, reuses fresh namespace with empty D1 and a new write, retains old-prefix bytes and completes a stopped snapshot containing all five decisions. Target-only QA certificate covers replacement hostname. Same physical Mac; no background retirement, zero-live restore, versioned release or full admission qualification. Initial run stopped after the expected retired-scope credential refusal; this corrected continuation reuses its retained target.",
+  "independentAudit": {
+    "passed": true,
+    "archivedSourcesRehashed": 1012,
+    "originalHistoryRowsRetained": 3,
+    "newRefusedAndSuccessfulDecisionsRetained": 2,
+    "retiredNameApprovalAndCredentialRefusalsVerified": true,
+    "retiredNameOutOfScopeUploadRefused": true,
+    "freshNamespaceAndNativeIdsVerified": true,
+    "retainedPrefixObjectFingerprintsMatched": 23,
+    "unassignedNamespaceHasOnlyBootstrapKeys": true,
+    "replacementD1StartsEmptyAndWritesVerified": true,
+    "survivorDataRetained": true,
+    "snapshotMembersRehashed": 10,
+    "fiveDecisionRowsSurviveRetiredStateSnapshot": true,
+    "artifactDigestsIndependentlyRecomputed": 3,
+    "newTargetContainersStopped": 8,
+    "sourceRemainsStopped": true,
+    "freshDisjointVolumes": true,
+    "scope": "Private received v7 HTTP/D1 retirement preserves original decision history and a survivor, refuses retired approvals/credential issuance, reuses fresh namespace with empty D1 and a new write, retains old-prefix bytes and completes a stopped snapshot containing all five decisions. Target-only QA certificate covers replacement hostname. Same physical Mac; no background retirement, zero-live restore, versioned release or full admission qualification. Initial run stopped after the expected retired-scope credential refusal; this corrected continuation reuses its retained target."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2881,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 536503.238166,
+    "syntaxAndQualityPassed": true
+  },
+  "sourceInputsMatchExecutedArchive": [
+    "scripts/operator/release-onboarding.mjs"
+  ],
+  "mainCatalogUnchanged": true,
+  "privateRoot": "~/.local/share/fogd-qualifications/retirement-history-v7-20261029-03",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "204aee2fb4716ff778d5b0a024f49416f3f68a6573c5d3026fa7e191d28ef09f",
+      "bytes": 161968
+    },
+    "independent-audit.json": {
+      "sha256": "8df877beb3a7dd93ae388951cf180191bbf83c685c0ecd42ff9b1270c632c079",
+      "bytes": 1307
+    },
+    "executed-source-inventory.json": {
+      "sha256": "6cefc223260798d33a349b8c113c7849bd6dc26c59a8ab26417e2ac32467d873",
+      "bytes": 118552
+    },
+    "runner.mjs": {
+      "sha256": "f79276dab40c4380b88c04594140e609ab03f9130dc10638db0764b61e677c91",
+      "bytes": 10233
+    },
+    "audit.py": {
+      "sha256": "83d2813098f3a6f24d24e1e302c5509a037d35d2ea95de2f125e66b8987b8358",
+      "bytes": 5422
+    },
+    "audit.log": {
+      "sha256": "041bb5a9fdc4a626b2cc2ada5677fb15d5734039f2f32502f838ad1957f56ab6",
+      "bytes": 1269
+    },
+    "continuation-runner.mjs": {
+      "sha256": "f79276dab40c4380b88c04594140e609ab03f9130dc10638db0764b61e677c91",
+      "bytes": 10233
+    },
+    "continuation.log": {
+      "sha256": "3b82e0add78b654c53015dec57bb3abf62f438f7718cd51322501b6c6131790a",
+      "bytes": 163
+    },
+    "canonical.log": {
+      "sha256": "0e41dd8f0bec2c1345b4b4500af2429fd51fcfbc6785956be50b3caa0c2afaca",
+      "bytes": 256707
+    },
+    "quality.log": {
+      "sha256": "37b1ade6a2a9c825c5c16edb58f99dbb9888a5cca099dae1133d8d0abb7d7fbd",
+      "bytes": 1670
+    },
+    "syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    }
+  },
+  "limits": [
+    "No existing user installations or user-installation migrations. All installations are private QA fixtures.",
+    "Private proposal catalog only; main v7 and default cron admission remain closed. No public release or registry publication.",
+    "Linux arm64 classic-overlay2 engines on the same physical Mac; no separate physical-machine qualification.",
+    "No new background retirement, zero-live restore, broad density/performance, per-worker CPU quota, power-loss or exactly-once external-effect claim.",
+    "Full family acceptance remains a separate gate. No external review approval is claimed.",
+    "Guide links and evidence records are edited after the executed archive; the listed source input matches its executed bytes.",
+    "The baseline upload refusal is a credential-scope check, not evidence for an independent retired-name upload barrier.",
+    "A target-only QA certificate adds the replacement hostname. Original source certificate and data remain preserved."
+  ],
+  "retainedAttempts": [
+    {
+      "privateRoot": "~/.local/share/fogd-qualifications/retirement-history-v7-20261029-01",
+      "accepted": false,
+      "reason": "Expected stale-digest refusal matched an inner error instead of the public unconfirmed-restore message. The target remained unwritten."
+    },
+    {
+      "privateRoot": "~/.local/share/fogd-qualifications/retirement-history-v7-20261029-02",
+      "accepted": false,
+      "reason": "Native retirement and survivor resume succeeded, then credential issuance correctly refused a retired app scope. The corrected continuation reused this retained stopped target."
+    }
+  ]
+}

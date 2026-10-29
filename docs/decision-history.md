@@ -53,6 +53,12 @@ Separate [background restore evidence](evidence/operator-native-background-recov
 now covers a paused v6 cron/queue snapshot on fresh volumes, retained decision
 history, explicit recovery acknowledgment and separate live resumes. This bounded
 same-family check does not open v7 admission.
+The [v7 retirement check](evidence/operator-native-retirement-history-v7.json)
+preserves three earlier decisions, records a refused retired-release approval and
+a successful replacement approval, and retains all five rows in a stopped
+snapshot. Replacement storage starts empty while retired-prefix bytes and survivor
+data remain preserved. This checks HTTP/D1 retirement on a private QA fixture;
+full family acceptance remains open.
 
 ## Query the authenticated feed
 

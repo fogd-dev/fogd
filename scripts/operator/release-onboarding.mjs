@@ -38,7 +38,7 @@ try {
   assert.equal(evidence.imported.servicesStarted, false);
   for (const args of [['ps', '-aq'], ['volume', 'ls', '-q']]) assert.equal((await run('docker', args)).trim(), '');
   evidence.imagesAfterImport = (await run('docker', ['image', 'ls', '-aq'])).trim().split(/\s+/); assert.equal(new Set(evidence.imagesAfterImport).size, 2);
-  phase = 'fresh-enrollment'; const host = await freshReceivedHost(received, join(output, 'installation'), hosts);
+  phase = 'fresh-enrollment'; const host = await freshReceivedHost(received, join(output, 'installation'), hosts, { runtime: evidence.release.runtime });
   evidence.source = { project: host.project, policy: host.policy, initialServices: host.initialServices, tlsRefusal: host.tlsRefusal };
   const client = { directory: join(directory, 'client'), manifestSha256: evidence.release.clientManifestSha256, bootstrapSha256: values['expected-bootstrap'] };
   const fixture = await receivedApplications(host, evidence, value => { phase = value; }, client);

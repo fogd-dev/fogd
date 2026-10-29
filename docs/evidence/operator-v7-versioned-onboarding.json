@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "kind": "operator-v7-versioned-onboarding",
+  "recordedAt": "2026-10-29T23:38:17.550698+00:00",
+  "sourceCommit": "c9aa6bf83d59e655423e056b0d2a0d6bfe57438f",
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "actualReleasedCatalog": false,
+  "mainAdmission": "candidate",
+  "family": "celld-approval-v7-linux-arm64",
+  "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+  "scope": "Versioned release authenticated and imported onto a newly empty Linux arm64 classic-overlay2 engine. Received operator and included client perform fresh HTTPS approval, compatible update, pending isolation and retained restart. Prepared app dependencies; same physical Mac, no public publication.",
+  "independentAudit": {
+    "passed": true,
+    "privateProposalOnly": true,
+    "version": "0.2.0",
+    "newEmptyEngineVerified": true,
+    "engine": {
+      "ID": "14f84189-5a3f-40cf-aa92-2b1168bc8aa8",
+      "Driver": "overlay2",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "NCPU": 3,
+      "MemTotal": 8308510720
+    },
+    "bootstrapVerifiedWithoutDocker": true,
+    "releaseMembersRehashed": 496,
+    "runtimeTransferMembersRehashed": 457,
+    "standaloneClientMembersRehashed": 36,
+    "receivedProgramFilesRehashed": 455,
+    "runtimeProgramInputsVerified": 117,
+    "archivedSourcesRehashed": 1012,
+    "mainCatalogUnchanged": true,
+    "onlyPrivateCatalogAdmissionChanged": true,
+    "importStartsNoServices": true,
+    "eightServicesUnstartedUntilTLSImported": true,
+    "nativeTwoAppUpdateAndRestart": true,
+    "pendingCodeAndSQLWithheld": true,
+    "exactUpdateMigrationAppliedOnce": true,
+    "artifactDigestsIndependentlyRecomputed": 3,
+    "authenticatedDecisionRowsRetained": 3,
+    "newPinnedContainersStopped": 8,
+    "scope": "Versioned release authenticated and imported onto a newly empty Linux arm64 classic-overlay2 engine. Received operator and included client perform fresh HTTPS approval, compatible update, pending isolation and retained restart. Prepared app dependencies; same physical Mac, no public publication."
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2881,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 536503.238166,
+    "syntaxAndQualityPassed": true
+  },
+  "sourceInputsMatchExecutedArchive": [
+    "scripts/operator/release-onboarding.mjs"
+  ],
+  "mainCatalogUnchanged": true,
+  "privateRoot": "~/.local/share/fogd-qualifications/versioned-onboarding-v7-20261029-01",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "feb242d9c4ef308c69e1d23bb21c54262d9311280d8944ddb28c21e6342e9cfe",
+      "bytes": 147752
+    },
+    "independent-audit.json": {
+      "sha256": "b0340f46e807df685807d7233dc0e4eb97cd5e0b517ffafd2afcc66c6289bd17",
+      "bytes": 1286
+    },
+    "executed-source-inventory.json": {
+      "sha256": "6cefc223260798d33a349b8c113c7849bd6dc26c59a8ab26417e2ac32467d873",
+      "bytes": 118552
+    },
+    "runner.mjs": {
+      "sha256": "c5c5896ec65b9050f67d6d0e8a503e26b8715a30e80954649ec511d3ee25d085",
+      "bytes": 5323
+    },
+    "audit.py": {
+      "sha256": "44c52261e97c1fe05c1edbf27c5a2b33059c728d3ccad720316b8cea35a736de",
+      "bytes": 5581
+    },
+    "audit.log": {
+      "sha256": "13b0efe4ddad89c10414d9758f3fa0820f443ed9ae5e5eea454ef7aa6f3af1d6",
+      "bytes": 1210
+    },
+    "onboarding.log": {
+      "sha256": "6ffb73010d12590bb7a41b819c5d43dcb0a5381e059f0a7e6f738e554d1a1554",
+      "bytes": 231
+    },
+    "canonical.log": {
+      "sha256": "0e41dd8f0bec2c1345b4b4500af2429fd51fcfbc6785956be50b3caa0c2afaca",
+      "bytes": 256707
+    },
+    "quality.log": {
+      "sha256": "37b1ade6a2a9c825c5c16edb58f99dbb9888a5cca099dae1133d8d0abb7d7fbd",
+      "bytes": 1670
+    },
+    "syntax.log": {
+      "sha256": "32175e54fa0461cb44dac6697b72474deef957253c0e46cb7b570fb46a10a01f",
+      "bytes": 67
+    }
+  },
+  "limits": [
+    "No existing user installations or user-installation migrations. All installations are private QA fixtures.",
+    "Private proposal catalog only; main v7 and default cron admission remain closed. No public release or registry publication.",
+    "Linux arm64 classic-overlay2 engines on the same physical Mac; no separate physical-machine qualification.",
+    "No new background retirement, zero-live restore, broad density/performance, per-worker CPU quota, power-loss or exactly-once external-effect claim.",
+    "Full family acceptance remains a separate gate. No external review approval is claimed.",
+    "Guide links and evidence records are edited after the executed archive; the listed source input matches its executed bytes.",
+    "The proposed 0.2.0 bundle is private QA output, not an official release. Prepared application projects and dependencies were supplied; unaided human onboarding is not established.",
+    "The maintained onboarding runner forwards the authenticated release runtime into enrollment; earlier runs defaulted to v5. This run selects v7 through its versioned manifest."
+  ],
+  "privateVersion": "0.2.0",
+  "exported": {
+    "version": "0.2.0",
+    "runtime": "celld-approval-v7-linux-arm64",
+    "manifestSha256": "55b3e9493d268e5c1a697825f088ba4a58304940b2450d6ea439a5915f5d24b3",
+    "bootstrapSha256": "6cf656cef92c669f44609afa59a0d65a9c3d269a85292748ff52fd8cb979be39",
+    "runtimeManifestSha256": "680caa7e2e56521e53ba8f91734cea5226207db93bc0ab435d952c9cab78fe4f",
+    "clientManifestSha256": "6c361de522465291041673c8f8e34475908979b31534ab4eb57f46c65db52e9f",
+    "files": 496,
+    "bytes": 924170012,
+    "servicesStarted": false
+  },
+  "privateBuildRoot": "~/.local/share/fogd-qualifications/private-release-v7-20261029-01",
+  "privateCatalogDelta": {
+    "path": "packages/cli/src/runtime/catalog.json",
+    "runtime": "celld-approval-v7-linux-arm64",
+    "before": "6725ac4a5918068947438c78141cc392159557873feb2e1b03a48ac460983ad8",
+    "after": "8abbf8fecc1a7d5d451b38f3c699aa4944041ba4ebfaded3320713a369a74477",
+    "change": "candidate to qualified in private copied catalog only"
+  },
+  "privateBuildFingerprints": {
+    "result.json": {
+      "sha256": "6de0deab4fb76754e63a9d87de35a35aa1eb81d706b0746203bf5ff1bee6341c",
+      "bytes": 119816
+    },
+    "runner.mjs": {
+      "sha256": "dbd2a69fb0580c761f829ef52412ae99008b7e1c81a6284a7894678e6158bc27",
+      "bytes": 2382
+    },
+    "export.log": {
+      "sha256": "7cd862f9509a4d9f09da69a6f19f5eeb078870174ba244a4dd4b738ac7679986",
+      "bytes": 41
+    }
+  }
+}
