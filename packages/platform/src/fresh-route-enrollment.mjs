@@ -2,7 +2,7 @@ import { constants } from 'node:fs';
 import { open, opendir, realpath } from 'node:fs/promises';
 import { isAbsolute, relative, sep } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { validateRuntimePolicy } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, validateRuntimePolicy } from './runtime-policy.mjs';
 import { issueRouteEnrollment } from './route-enrollment.mjs';
 import { initializeRouteEnrollment } from './route-initialize.mjs';
 
@@ -14,7 +14,7 @@ function freshInput(input) {
   if (typeof input.binding !== 'string' || !/^[a-f0-9]{64}$/.test(input.binding)) throw refused();
   let policy;
   try { policy = validateRuntimePolicy(input.profile); } catch { throw refused(); }
-  if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
+  if (!hasDurableRuntimeMode(policy)) throw refused();
   return { profile: input.profile, binding: input.binding };
 }
 function contains(parent, child) {

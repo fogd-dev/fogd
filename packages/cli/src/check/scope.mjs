@@ -1,3 +1,4 @@
+import { hasDurableRuntimeMode } from '@fogd/platform/runtime-policy';
 import { fleetNetworkRole } from '../observe/installation.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { isIPv4 } from 'node:net';
@@ -17,7 +18,7 @@ export function checkHost(installation, app) {
 
 function gatewayNetworkRole({ config, policy }, fleet) {
   if (policy.schema === 2) return 'control';
-  if (policy.schema === 3 && policy.routing === 'durable') return fleetNetworkRole(config, fleet);
+  if (hasDurableRuntimeMode(policy)) return fleetNetworkRole(config, fleet);
   throw refused();
 }
 

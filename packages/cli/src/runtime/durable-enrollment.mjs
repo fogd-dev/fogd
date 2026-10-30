@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { docker } from '../recovery/docker.mjs';
 import { durableRuntimeConfig } from './durable-config.mjs';
@@ -13,7 +13,7 @@ const uncertain = () => Object.assign(new Error('Durable route enrollment is unc
 function enrollmentPlan(config, profile, binding) {
   if (typeof binding !== 'string' || !/^[a-f0-9]{64}$/.test(binding) || !isDeepStrictEqual(durableRuntimeConfig(config, profile), config)) throw refused();
   const policy = validateRuntimePolicy(profile);
-  if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
+  if (!hasDurableRuntimeMode(policy)) throw refused();
   const routePolicy = { installation: runtimePolicyIdentity(policy), slots: policy.fleets.map(fleet => fleet.id) };
   return { policy, routePolicy };
 }

@@ -231,9 +231,32 @@ readbacks. Independent audit preserves all pre-existing fixture resources.
 
 Completed storage enrollment still leaves HTTP withheld and archive recovery
 pending. The controller continues to reject the archive capability before backend
-access unless the explicit internal profile is supplied. Native launcher/worker
-qualification, secret-rotation handling and operator commands remain required before
-release.
+access unless the explicit internal profile is supplied. Native restored-app execution, secret-rotation handling and operator commands
+remain required before release.
+
+## Fixed archive controller mode
+
+Archive recovery uses a separate fixed controller entrypoint, bound by the installed
+runtime policy and independent host catalog mode. Ordinary durable startup cannot
+load an archive policy; the archive entrypoint refuses an ordinary durable policy.
+Changing an environment variable or substituting the controller command cannot
+select archive recovery. Malformed mode declarations reach strict validation and
+cannot fall back to generic startup.
+
+The [native entrypoint check](evidence/operator-app-archive-entrypoint-v9.json)
+qualifies fresh private enrollment, the fixed controller process, exact-release
+approval, native D1 writes and existing migration-ledger inspection, followed by
+fenced stop/restart and retained data. This verifies ordinary app execution through
+the new composition. It does not qualify archived-app restoration or capacity reuse.
+The candidate remains absent from the shipped catalog; default cron admission stays
+closed.
+
+Before archive admission, integrate archive-aware snapshot and diagnostic validation,
+then verify the full native archive/reuse/restore sequence with interruption and
+background recovery. Existing generic readers refuse archive state they cannot
+validate. Secret rotation and the operator workflow also remain open. There are no
+existing user installations to migrate; acceptance targets fresh installations and
+same-family recovery.
 
 ## Remaining archive protocol
 

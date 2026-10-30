@@ -9,24 +9,25 @@ const fields = ['schema', 'id', 'admission', 'os', 'architecture', 'image', 'sto
 const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const image = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 
-// Entry schema 2 qualifies an image for durable routing; schema 1 keeps legacy semantics.
-const entryFields = { 1: fields, 2: [...fields, 'routing'] };
+// Catalog modes bind policy schemas: legacy, durable, and archive controller.
+const entryFields = { 1: fields, 2: [...fields, 'routing'], 3: [...fields, 'routing'] };
 // Installed policy schema -> catalog entry schema carrying that execution mode.
-const policyEntrySchema = { 2: 1, 3: 2 };
+const policyEntrySchema = { 2: 1, 3: 2, 4: 3 };
 
 export function validateRuntimeFamily(input) {
-  const expected = [1, 2].includes(input?.schema) ? entryFields[input.schema] : null;
+  const expected = [1, 2, 3].includes(input?.schema) ? entryFields[input.schema] : null;
   if (!expected || !isDeepStrictEqual(Object.keys(input).sort(), [...expected].sort()) ||
-    (input.schema === 2 && input.routing !== 'durable') ||
+    ([2, 3].includes(input.schema) && input.routing !== 'durable') ||
     !/^[a-z][a-z0-9-]{1,63}$/.test(input.id || '') || !['candidate', 'qualified'].includes(input.admission) ||
     input.os !== 'linux' || input.architecture !== 'arm64' || !['image', 'storageImage', 'parentImage'].every(key => image(input[key])) ||
     !digest(input.binarySha256) || !digest(input.supervisorSha256)) throw new Error('Invalid shipped runtime family');
-  assertSources(input.sourceFiles);
+  assertSources(input.sourceFiles, input.schema);
   return structuredClone(input);
 }
-function assertSources(files) {
+function assertSources(files, schema) {
   if (!files || typeof files !== 'object' || Array.isArray(files) ||
     !['platform', 'runtime'].every(name => Object.hasOwn(files, `packages/${name}/package.json`))) throw new Error('Missing shipped runtime source inventory');
+  if (schema === 3 && !Object.hasOwn(files, 'packages/platform/src/main-archive.mjs')) throw new Error('Invalid shipped runtime family: archive controller entrypoint source is missing');
   for (const [path, hash] of Object.entries(files)) {
     if (!/^packages\/(?:platform|runtime)\/(?:package\.json|src\/[A-Za-z0-9._/-]+\.(?:mjs|js))$/.test(path) ||
       path.split('/').some(part => !part || part === '.' || part === '..') || !digest(hash)) throw new Error('Invalid shipped runtime source inventory');

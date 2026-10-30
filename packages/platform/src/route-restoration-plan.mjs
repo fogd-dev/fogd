@@ -3,7 +3,7 @@ import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { completedRoute } from './route-publication.mjs';
 import { routeRecordDigest } from './route-record-store.mjs';
 import { validateRouteSnapshot } from './route-snapshot.mjs';
-import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
 import { restorationBackgrounds, restoreBackgrounds } from './background-restoration.mjs';
 export { restorationBackgrounds } from './background-restoration.mjs';
 
@@ -14,7 +14,7 @@ const keys = (value, names) => value !== null && typeof value === 'object' && !A
 
 function durable(profile) {
   const policy = validateRuntimePolicy(profile);
-  if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
+  if (!hasDurableRuntimeMode(policy)) throw refused();
   return policy;
 }
 const withoutNetworks = ({ networks, ...policy }) => policy;

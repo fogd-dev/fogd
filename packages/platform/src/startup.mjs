@@ -3,7 +3,7 @@ import { Controller } from './controller.mjs';
 import { Backend } from './backend.mjs';
 import { backendCronRuntime } from './backend-runtime-identity.mjs';
 import { installedRuntimePolicy } from './runtime-policy-file.mjs';
-import { validateRuntimePolicy, RuntimePolicyError } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, validateRuntimePolicy, RuntimePolicyError } from './runtime-policy.mjs';
 import { serveController } from './controller-service.mjs';
 import { startupRouting } from './startup-routing.mjs';
 
@@ -36,13 +36,14 @@ export function selectedBackend(backend, policy, env) {
 // A dedicated host-written policy selects the guarded transport. Without it,
 // existing installations and private backend composition retain their behavior.
 // Artifact admission remains separately controlled by the controller.
-export async function startController(backend, { readPolicy = installedRuntimePolicy, cronApps = false, routeAuthority = null } = {}) {
+export async function startController(backend, { readPolicy = installedRuntimePolicy, cronApps = false, routeAuthority = null, archiveRecovery = false } = {}) {
   transportPolicy(process.env);
   const tls = await loadTLS(process.env);
   const credentials = { user: required('FOGD_ADMIN_USER'), password: required('FOGD_ADMIN_PASSWORD'), deploy: process.env.FOGD_DEPLOY_TOKEN || null, gateway: required('FOGD_GATEWAY_TOKEN') };
   const options = controllerOptions(backend);
   const policy = await readPolicy(process.env);
-  if (policy?.schema === 3 && routeAuthority === null) throw new RuntimePolicyError();
+  if (hasDurableRuntimeMode(policy) && routeAuthority === null) throw new RuntimePolicyError();
+  options.archiveProfile = startupArchiveProfile(policy, archiveRecovery);
   options.backend = selectedBackend(options.backend, policy, process.env);
   options.cronApps = policy ? true : cronApps;
   let controller;
@@ -53,4 +54,9 @@ export async function startController(backend, { readPolicy = installedRuntimePo
   console.log(result.recoveryOnly ? 'fogd routing recovery controller listening; keep ingress stopped' : 'fogd approval controller ready');
   for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => { void result.close(); setTimeout(() => process.exit(), 30000).unref(); });
   return result;
+}
+
+export function startupArchiveProfile(policy, enabled) {
+  if (typeof enabled !== 'boolean' || enabled !== (policy?.schema === 4)) throw new RuntimePolicyError();
+  return enabled ? validateRuntimePolicy(policy) : null;
 }

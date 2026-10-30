@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { runtimePolicyVolume } from '../recovery/layout.mjs';
 import { volumeHelper } from '../recovery/volumes.mjs';
 import { durableRuntimeConfig, gatewayPolicyVolume } from './durable-config.mjs';
@@ -29,7 +29,7 @@ export async function installDurablePolicies(config, profile, { readVolume = vol
   try {
     if (!isDeepStrictEqual(durableRuntimeConfig(config, profile), config) || !config.volumes[runtimePolicyVolume]) throw refused();
     const policy = validateRuntimePolicy(profile);
-    if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
+    if (!hasDurableRuntimeMode(policy)) throw refused();
     const runtimeVolume = config.volumes[runtimePolicyVolume].name, gatewayVolume = config.volumes[gatewayPolicyVolume].name;
     const runtime = { family: policy.family, admission: policy.admission, identitySha256: runtimePolicyIdentity(policy) };
     // Sequential: a refused runtime install never starts the gateway writer.

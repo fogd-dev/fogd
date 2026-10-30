@@ -11,7 +11,7 @@ import { queueRetirementCapability } from '@fogd/platform/queue-retirement';
 import { assertSnapshotState } from './snapshot-state-validation.mjs';
 import { snapshotEvidence, validateSnapshotEvidence, assertPinnedSnapshotImages } from './snapshot-evidence.mjs';
 import { prepareSnapshotRequest } from '../platform.mjs';
-import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { routeAuthorityCapability } from '@fogd/platform/route-snapshot';
 
 const families = [
@@ -19,11 +19,11 @@ const families = [
   { key: 'cronRecovery', surface: 'dispatch', apps: cronRecoveryApps, protocol: cronSnapshotProtocol },
 ];
 const capabilities = [decisionHistoryCapability, artifactPruneCapability, 'fogd-retirement-v1', 'fogd-claim-intent-v1', 'fogd-queue-activation-v1', queueRecoveryCapability, queueRetirementCapability, cronCapability, cronRecoveryCapability, cronRetirementCapability];
-// Only a validated schema 3 durable profile admits durable route authority state.
+// Only a validated durable profile admits durable route authority state.
 function supportedCapabilities(profile) {
   if (profile === undefined) return capabilities;
   const policy = validateRuntimePolicy(profile);
-  return policy.schema === 3 && policy.routing === 'durable' ? [...capabilities, routeAuthorityCapability] : capabilities;
+  return hasDurableRuntimeMode(policy) ? [...capabilities, routeAuthorityCapability] : capabilities;
 }
 export function backgroundBackupApps(state, profile) {
   assertSnapshotState(state, supportedCapabilities(profile));

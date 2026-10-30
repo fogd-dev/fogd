@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { volumeHelper } from '../recovery/volumes.mjs';
 import { durableRuntimeConfig, gatewayPolicyVolume, routeAuthorityVolume } from './durable-config.mjs';
@@ -26,7 +26,7 @@ export async function readDurableStores(config, profile, { readVolume = volumeHe
   try {
     if (!isDeepStrictEqual(durableRuntimeConfig(config, profile), config)) throw refused();
     const policy = validateRuntimePolicy(profile);
-    if (policy.schema !== 3 || policy.routing !== 'durable') throw refused();
+    if (!hasDurableRuntimeMode(policy)) throw refused();
     const routePolicy = { installation: runtimePolicyIdentity(policy), slots: policy.fleets.map(fleet => fleet.id) };
     const expected = { schema: 1, policy: routePolicy, slots: policy.fleets.map(fleet => ({ id: fleet.id, nodes: fleet.nodes.map(node => node.host) })) };
     const options = { entrypoint: '/usr/local/bin/node', capabilities: [] };

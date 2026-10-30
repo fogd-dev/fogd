@@ -1,6 +1,6 @@
 import { dirname } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { transportPolicy } from '@fogd/runtime/transport';
 import { assertSharedStorageConfiguration } from '../shared-storage.mjs';
 import { docker, composeArgs, requireFresh } from '../recovery/docker.mjs';
@@ -27,7 +27,7 @@ function stoppedInventory(snapshot, config, previous) {
 }
 async function selectedPlan(selected, io) {
   const { config, entry } = selected, policy = validateRuntimePolicy(selected.policy, config.services.controller.environment);
-  if (policy.schema !== 3 || !isDeepStrictEqual(durableRuntimeConfig(config, policy), config)) throw refused();
+  if (!hasDurableRuntimeMode(policy) || !isDeepStrictEqual(durableRuntimeConfig(config, policy), config)) throw refused();
   if (!isDeepStrictEqual(await io.authorize(policy), entry)) throw refused();
   transportPolicy(config.services.controller.environment); assertSharedStorageConfiguration(config);
   await io.ready(config.name); await io.recovery(config.name); await io.verify(entry);

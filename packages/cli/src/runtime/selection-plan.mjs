@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimeControllerArgs, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { storageOrigin } from '@fogd/platform/runtime-identity-proof';
 import { fleetLayout, runtimePolicyVolume, hasRuntimePolicy } from '../recovery/layout.mjs';
 import { validateTopology } from '../recovery/bundle.mjs';
@@ -27,26 +27,27 @@ export function runtimePolicyForConfig(input, entry, networks) {
   const config = durable ? durableLegacyBase(input) : input;
   validateTopology(config);
   const env = config.services.controller.environment;
-  return validateRuntimePolicy({ schema: durable ? 3 : 2, ...(durable ? { routing: 'durable' } : {}), family: entry.id, admission: entry.admission,
+  const schema = entry.schema === 3 ? 4 : durable ? 3 : 2;
+  return validateRuntimePolicy({ schema, ...(durable ? { routing: 'durable' } : {}), family: entry.id, admission: entry.admission,
     image: entry.image, storageImage: entry.storageImage, binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256,
-    controllerArgs: [durable ? 'packages/platform/src/main-durable.mjs' : 'packages/platform/src/main.mjs'], bucket: env.FOGD_BUCKET,
+    controllerArgs: runtimeControllerArgs(schema), bucket: env.FOGD_BUCKET,
     storage: { endpoint: storageOrigin(env.S3_ENDPOINT), region: env.AWS_REGION },
     fleets: fleetLayout(config).map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(host => ({ host, id: config.services[host].environment.CELLD_NODE })) })),
     ...(networks ? { networks } : {}),
   }, env);
 }
 
-// Only a catalog entry schema 2 qualifies durable routing; any other routing
+// Only the two durable catalog modes qualify routing; any other routing
 // marker is refused rather than read as legacy.
 function durableEntry(entry) {
   if (entry?.routing === undefined) return false;
-  if (entry.schema !== 2 || entry.routing !== 'durable') throw new Error('Unsupported runtime family routing');
+  if (![2, 3].includes(entry.schema) || entry.routing !== 'durable') throw new Error('Unsupported runtime family routing');
   return true;
 }
 
 export function selectedRuntimeConfig(input, entry, policy) {
-  if (durableEntry(entry) !== (policy?.schema === 3)) throw new Error('Runtime family routing differs from installation policy');
-  if (policy.schema !== 3) return sealRuntimeConfig(boundRuntimeConfig(input, entry, policy), policy);
+  if (durableEntry(entry) !== hasDurableRuntimeMode(policy)) throw new Error('Runtime family routing differs from installation policy');
+  if (!hasDurableRuntimeMode(policy)) return sealRuntimeConfig(boundRuntimeConfig(input, entry, policy), policy);
   // A sealed durable config re-enters without binding so drift is refused, not repaired.
   if (isDurableConfig(input)) {
     assertFamily(entry, policy);
@@ -56,7 +57,7 @@ export function selectedRuntimeConfig(input, entry, policy) {
 }
 
 function assertFamily(entry, policy) {
-  if (policy.family !== entry.id || ['image', 'storageImage', 'binarySha256', 'supervisorSha256'].some(key => policy[key] !== entry[key])) throw new Error('Runtime family differs from installation policy');
+  if ((entry.schema === 3) !== (policy.schema === 4) || policy.family !== entry.id || ['image', 'storageImage', 'binarySha256', 'supervisorSha256'].some(key => policy[key] !== entry[key])) throw new Error('Runtime family differs from installation policy');
 }
 
 function boundRuntimeConfig(input, entry, policy) {

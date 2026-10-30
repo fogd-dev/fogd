@@ -1,7 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { validateRouteSnapshot } from '@fogd/platform/route-snapshot';
 import { authorizeInstalledPolicy, verifyRuntimeFamily } from '../runtime/catalog.mjs';
 import { durableRuntimeConfig, durablePlanSha256 } from '../runtime/durable-config.mjs';
@@ -26,7 +26,7 @@ const sameInventory = (before, after) => {
 };
 async function authorizeBackup(selected, io) {
   const { config, entry } = selected, policy = validateRuntimePolicy(selected.policy, config.services.controller.environment);
-  if (policy.schema !== 3 || !isDeepStrictEqual(config, durableRuntimeConfig(config, policy))) throw refused();
+  if (!hasDurableRuntimeMode(policy) || !isDeepStrictEqual(config, durableRuntimeConfig(config, policy))) throw refused();
   if (!isDeepStrictEqual(await io.authorize(policy), entry)) throw refused();
   await io.ready(config.name); await io.verify(entry); await io.recovery(config.name);
   if (!await io.enrollment(io.directory ?? installationDirectory(config.name), {

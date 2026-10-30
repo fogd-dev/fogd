@@ -11,7 +11,7 @@ import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEviden
 import { snapshotState } from './snapshot-state.mjs';
 import { volumeHelper } from './volumes.mjs';
 import { assertCronDockerTopology } from './cron-backup.mjs';
-import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { selectedInstallation } from '../runtime/installation.mjs';
 import { stopRuntimeServices } from '../runtime/stop.mjs';
 import { backupDurableInstallation } from './durable-backup.mjs';
@@ -24,7 +24,7 @@ export async function backup(directory, installation) {
   const file = selected?.file || resolve(env.FOGD_COMPOSE_FILE || join(stackRoot, 'compose.yaml'));
   const config = selected?.config || raw;
   if (selected) console.log(`Record independently for recovery: runtime ${selected.entry.id}; installation identity ${runtimePolicyIdentity(selected.policy)}`);
-  if (selected?.policy.schema === 3) {
+  if (hasDurableRuntimeMode(selected?.policy)) {
     const manifest = await backupDurableInstallation(directory, selected, env);
     console.log(`Durable snapshot complete: ${resolve(directory)}. Source remains stopped. Restore requires the durable recovery path.`);
     return manifest;

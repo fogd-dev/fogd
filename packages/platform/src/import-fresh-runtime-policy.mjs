@@ -1,7 +1,7 @@
-import { decodeRuntimePolicy, RUNTIME_POLICY_MAX_BYTES, RuntimePolicyError } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, decodeRuntimePolicy, RUNTIME_POLICY_MAX_BYTES, RuntimePolicyError } from './runtime-policy.mjs';
 import { writeRuntimePolicy } from './runtime-policy-file.mjs';
 
-// Fresh durable installations only: schema 3 into the fixed empty /data mount,
+// Fresh durable installations only: a durable policy into the fixed empty /data mount,
 // never replacing or repairing a retained policy.
 let size = 0; const chunks = [];
 for await (const chunk of process.stdin) {
@@ -10,5 +10,5 @@ for await (const chunk of process.stdin) {
   chunks.push(chunk);
 }
 const policy = decodeRuntimePolicy(new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(Buffer.concat(chunks)));
-if (policy.schema !== 3 || policy.routing !== 'durable') throw new RuntimePolicyError();
+if (!hasDurableRuntimeMode(policy)) throw new RuntimePolicyError();
 console.log(JSON.stringify(await writeRuntimePolicy('/data', policy, { createOnly: true })));

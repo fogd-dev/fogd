@@ -1,13 +1,13 @@
 import { isDeepStrictEqual } from 'node:util';
 import { createHash } from 'node:crypto';
-import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimeControllerArgs, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { sealRuntimeConfig } from './cron-preboot.mjs';
 
 export const routeAuthorityVolume = 'route-authority';
 export const gatewayPolicyVolume = 'gateway-policy';
 export const routeEnrollmentVolume = 'route-enrollment';
 const roles = [routeAuthorityVolume, gatewayPolicyVolume, routeEnrollmentVolume];
-const controllerArgs = { legacy: ['packages/platform/src/main.mjs'], durable: ['packages/platform/src/main-durable.mjs'] };
+const controllerArgs = { legacy: runtimeControllerArgs(2), durable: runtimeControllerArgs(3), archive: runtimeControllerArgs(4) };
 const gatewayArgs = { legacy: ['packages/runtime/src/serve.mjs'], durable: ['packages/runtime/src/serve-durable.mjs'] };
 const gatewayEnvironment = ['FOGD_PROFILE', 'FOGD_TLS', 'FOGD_PUBLIC_BIND_ADDRESS'];
 const gatewayNetworks = ['fleet-1', 'fleet-2'];
@@ -28,12 +28,12 @@ export function durablePlanSha256(config, profile) {
   return createHash('sha256').update(JSON.stringify(canonical({ config: sealed, profile: validateRuntimePolicy(profile) }))).digest('hex');
 }
 
-// The schema 3 profile is the authority; the legacy seal only checks the common
+// The durable profile is the authority; the legacy seal only checks the common
 // backend/storage/native constraints of the reconstructed base.
 export function durableRuntimeConfig(input, profile) {
   try {
     const policy = validateRuntimePolicy(profile, input.services.controller.environment);
-    if (policy.schema !== 3 || policy.routing !== 'durable' || !isDeepStrictEqual(policy.controllerArgs, controllerArgs.durable)) throw new Error('Durable launch requires a durable runtime policy');
+    if (!hasDurableRuntimeMode(policy)) throw new Error('Durable launch requires a durable runtime policy');
     const { routing, ...legacy } = policy;
     const sealed = sealRuntimeConfig(durableLegacyBase(input), { ...legacy, schema: 2, controllerArgs: [...controllerArgs.legacy] });
     const expected = durableFromSealed(sealed, policy);
@@ -55,7 +55,7 @@ export function durableLegacyBase(input) {
     if (Array.isArray(service.volumes)) service.volumes = service.volumes.filter(item => !roles.includes(item?.source));
   }
   const { controller, workerd } = config.services;
-  if (isDeepStrictEqual(controller?.command, controllerArgs.durable)) controller.command = [...controllerArgs.legacy];
+  if ([controllerArgs.durable, controllerArgs.archive].some(args => isDeepStrictEqual(controller?.command, args))) controller.command = [...controllerArgs.legacy];
   restoreLegacyGateway(workerd, controller);
   return config;
 }

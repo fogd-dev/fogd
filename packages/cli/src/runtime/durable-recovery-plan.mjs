@@ -16,7 +16,7 @@ const refused = () => Object.assign(new Error('Durable recovery requires indepen
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 export function recoverySourceProfile(config, manifest, candidate, expectedIdentity) {
   const entry = validateRuntimeFamily(candidate);
-  if (entry.schema !== 2 || entry.routing !== 'durable' || manifest.format !== durableSnapshotFormat || !hash(expectedIdentity)) throw refused();
+  if (![2, 3].includes(entry.schema) || entry.routing !== 'durable' || manifest.format !== durableSnapshotFormat || !hash(expectedIdentity)) throw refused();
   if (manifest.sourceProject !== projectName(config.name)) throw refused();
   assertRecoveryIngress(config);
   const policy = runtimePolicyForConfig(config, entry, declaredRuntimeNetworks(config));

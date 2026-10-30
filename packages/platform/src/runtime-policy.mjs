@@ -6,10 +6,18 @@ import { isIP } from 'node:net';
 const sha256 = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const imageId = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 const rootKeys = ['schema', 'family', 'admission', 'image', 'storageImage', 'binarySha256', 'supervisorSha256', 'controllerArgs', 'bucket', 'storage', 'fleets'];
-// Each schema names exactly one controller execution mode; schema 3 is durable routing.
+// Each schema names exactly one fixed controller execution mode.
 const modes = { 2: { extra: [], controllerArgs: ['packages/platform/src/main.mjs'] },
-  3: { extra: ['routing'], routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] } };
+  3: { extra: ['routing'], routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'] },
+  4: { extra: ['routing'], routing: 'durable', controllerArgs: ['packages/platform/src/main-archive.mjs'] } };
 export const RUNTIME_POLICY_MAX_BYTES = 65536;
+// Recognize the declared mode even when malformed, so it cannot fall back to legacy startup.
+// Callers still validate the complete policy before authorizing or using it.
+export const hasDurableRuntimeMode = policy => [3, 4].includes(policy?.schema);
+export function runtimeControllerArgs(schema) {
+  if (![2, 3, 4].includes(schema)) throw new RuntimePolicyError();
+  return [...modes[schema].controllerArgs];
+}
 
 export class RuntimePolicyError extends Error {
   constructor() {
@@ -53,7 +61,7 @@ function keys(value, expected) {
     !isDeepStrictEqual(Object.keys(value).sort(), [...expected].sort())) throw new Error('Invalid policy fields');
 }
 function assertHeader(input) {
-  const mode = [2, 3].includes(input?.schema) ? modes[input.schema] : null;
+  const mode = [2, 3, 4].includes(input?.schema) ? modes[input.schema] : null;
   if (!mode) throw new Error('Unknown runtime policy schema');
   keys(input, [...rootKeys, ...mode.extra, ...(Object.hasOwn(input, 'networks') ? ['networks'] : [])]);
   if ((mode.routing && input.routing !== mode.routing) || typeof input.family !== 'string' || !/^[a-z][a-z0-9-]{1,63}$/.test(input.family) ||

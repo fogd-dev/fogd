@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { appName } from '@fogd/runtime/artifact';
 import { retirementApp, overlap } from './retirement.mjs';
-import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
 import { archivedBackgrounds, restoreBackgrounds, validateArchivedBackgrounds } from './background-restoration.mjs';
 import { validateDecisionHistory } from './decision-history.mjs';
 
@@ -136,7 +136,7 @@ function validateRecovery(records, name, app) {
 }
 function profiles(source, target, slot, replacement) {
   const original = validateRuntimePolicy(source), next = validateRuntimePolicy(target);
-  if (original.schema !== 3 || next.schema !== 3) throw refused();
+  if (!hasDurableRuntimeMode(original) || !hasDurableRuntimeMode(next)) throw refused();
   const expected = structuredClone(original), fleet = expected.fleets.find(value => value.id === slot);
   if (!fleet) throw refused();
   Object.assign(fleet, replacement);

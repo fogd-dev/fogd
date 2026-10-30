@@ -16,7 +16,7 @@ const identity = containers => containers.map(container => [serviceName(containe
 // The independent catalog and exact sealed host plan restrict its target names.
 function stopPlan(config, families) {
   projectName(config.name);
-  const candidates = families.filter(entry => entry.schema === 2 && entry.routing === 'durable' && entry.image === config.services?.controller?.image);
+  const candidates = families.filter(entry => [2, 3].includes(entry.schema) && entry.routing === 'durable' && entry.image === config.services?.controller?.image);
   if (candidates.length !== 1) throw refused();
   const entry = validateRuntimeFamily(candidates[0]);
   const policy = runtimePolicyForConfig(config, entry, declaredRuntimeNetworks(config));

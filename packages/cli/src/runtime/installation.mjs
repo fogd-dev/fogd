@@ -1,5 +1,5 @@
 import { assertRecoverySourceStopped } from './recovery-source.mjs';
-import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { isDeepStrictEqual } from 'node:util';
 import { assertDockerNetworkAvailability } from './network-availability.mjs';
 import { assertInstalledStorage } from './maintenance.mjs';
@@ -29,7 +29,7 @@ export async function selectedInstallation(config, selection = {}) {
   }
   if (!requested) return null;
   const plan = freshRuntimePlan(config, requested, selection.networks);
-  if (plan.policy.schema === 3) {
+  if (hasDurableRuntimeMode(plan.policy)) {
     const result = await enrollDurableInstallation({ ...plan, entry: requested });
     console.log(`Enrolled ${requested.admission} durable runtime ${requested.id}; identity ${runtimePolicyIdentity(plan.policy)}. All services remain stopped.`);
     return result;

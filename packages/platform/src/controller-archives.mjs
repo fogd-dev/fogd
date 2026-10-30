@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { appArchiveCapability, validateAppArchives } from './app-archive.mjs';
 import { approveAppArchiveRecovery } from './app-archive-approval.mjs';
 import { decisionReviewToken } from './decision-history.mjs';
-import { validateRuntimePolicy } from './runtime-policy.mjs';
+import { hasDurableRuntimeMode, validateRuntimePolicy } from './runtime-policy.mjs';
 import { routePolicy } from './route-restoration-plan.mjs';
 import { recoverQueueSnapshots } from './queue-recovery.mjs';
 import { recoverCronSnapshots } from './cron-recovery.mjs';
@@ -17,7 +17,7 @@ export class ControllerArchives {
     this.#profile = profile === null ? null : validateRuntimePolicy(profile);
     if (!this.enabled) return;
     const slots = this.#profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
-    if (this.#profile.schema !== 3 || !controller.routes.durable || !isDeepStrictEqual(slots, controller.slots) ||
+    if (!hasDurableRuntimeMode(this.#profile) || !controller.routes.durable || !isDeepStrictEqual(slots, controller.slots) ||
       !isDeepStrictEqual(routePolicy(this.#profile), controller.routes.options.policy)) throw unavailable();
   }
   get enabled() { return this.#profile !== null; }

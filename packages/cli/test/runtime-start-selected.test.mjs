@@ -9,6 +9,8 @@ test('legacy selected runtime retains its pinned no-build no-pull startup comman
 });
 for (const [name, selection] of [
   ['durable profile', { policy: { schema: 3 } }],
+  ['archive profile', { policy: { schema: 4 } }],
+  ['archive profile with invalid routing', { policy: { schema: 4, routing: 'legacy' } }],
   ['durable family', { entry: { routing: 'durable' } }],
   ['durable storage', { config: { volumes: { 'route-authority': {} } } }],
 ]) test(`${name} cannot use generic all-services startup`, async () => {

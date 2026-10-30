@@ -50,10 +50,10 @@ export class RuntimeIdentity {
 }
 
 function expectedFleet(profile, slot) {
-  if (!profile || ![2, 3].includes(profile.schema) || !sha256(profile.binarySha256) ||
+  if (!profile || ![2, 3, 4].includes(profile.schema) || !sha256(profile.binarySha256) ||
     typeof profile.bucket !== 'string' || !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(profile.bucket) ||
     !Array.isArray(profile.fleets)) throw new Error('Invalid runtime identity profile');
-  if (profile.schema === 3) validateRuntimePolicy(profile);
+  if ([3, 4].includes(profile.schema)) validateRuntimePolicy(profile);
   assertStorage(profile.storage);
   const matches = profile.fleets.filter(fleet => fleet?.id === slot?.id);
   if (matches.length !== 1) throw new Error('Fleet identity is not declared');

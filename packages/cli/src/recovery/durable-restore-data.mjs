@@ -1,7 +1,7 @@
 import { lstat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { routeAuthorityVolume } from '../runtime/durable-config.mjs';
 import { durableSnapshotLayout } from './durable-bundle.mjs';
 import { volumeHelper } from './volumes.mjs';
@@ -65,7 +65,7 @@ function replicaArchives(targets, policy, sources, empty) {
 }
 function restorationPlan(directory, config, profile, { retiredFleet, archivedFleet, replicaSources }) {
   const policy = validateRuntimePolicy(profile);
-  if (policy.schema !== 3 || policy.routing !== 'durable') throw unconfirmed();
+  if (!hasDurableRuntimeMode(policy)) throw unconfirmed();
   // Execution policy, enrollment and route authority are never data roles.
   const roles = durableSnapshotLayout(config, policy).archiveVolumes.filter(role => role !== routeAuthorityVolume);
   const volumes = roles.map(role => config.volumes[role]?.name);

@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "kind": "operator-private-archive-fixed-entrypoint-native",
+  "recordedAt": "2026-10-30T05:54:57.602830+00:00",
+  "sourceCommit": "90cb417af98adeca6da28dc47e23a07f564ead34",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Fresh private schema-4 enrollment and actual fixed archive entrypoint with native MinIO/celld/workerd, owner deployment, D1 write/query, readonly ledger inspection and fenced stop/restart. No app archival, capacity reuse, secret rotation or native background restoration acceptance.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "catalogEntrySchema": 3,
+  "fixedControllerCommand": [
+    "packages/platform/src/main-archive.mjs"
+  ],
+  "image": "sha256:500ac157b8037407a7633919cf5572693e913d01991776e218c502463c0c745b",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "sourceFiles": 127,
+  "repeatedUncachedBuilds": [
+    "sha256:500ac157b8037407a7633919cf5572693e913d01991776e218c502463c0c745b",
+    "sha256:500ac157b8037407a7633919cf5572693e913d01991776e218c502463c0c745b"
+  ],
+  "authorizationBoundary": "A private exact candidate authorizer replaces only shipped catalog selection. Image verification, environment/TLS/storage checks, enrollment, launch fences, native backend and pre-ingress checks are real. No shipped catalog entry is added.",
+  "independentAudit": {
+    "passed": true,
+    "hostSourceFilesRehashed": 318,
+    "imageSourceFilesRehashed": 127,
+    "nativeImageVerification": true,
+    "archiveMetadataVolumesReadBack": 6,
+    "archiveMetadataPlansRecomputed": true,
+    "repeatedUncachedBuildsIdentical": true,
+    "fixedControllerCommandVerified": true,
+    "policyReadBack": true,
+    "canonicalRouteSnapshotVerified": true,
+    "approvedReleaseAndDecisionReadBack": true,
+    "actualNativeReplicaFilesRehashed": 8,
+    "independentNativeReadonlySQLQuery": true,
+    "rows": [
+      {
+        "id": "after-restart"
+      },
+      {
+        "id": "before-restart"
+      }
+    ],
+    "existingContainersPreserved": 104,
+    "existingVolumeNamesPreserved": 231,
+    "ownedContainersStopped": 8,
+    "shippedCatalogUnchanged": true
+  },
+  "canonicalChecks": {
+    "passed": 3069,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 533969.851042
+  },
+  "finalFocusedChecks": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "freshFixedEntrypointNativeExecutionVerified": true,
+  "nativeReadonlyMigrationInspectionVerified": true,
+  "nativeRetainedD1RestartVerified": true,
+  "operatorArchivalAvailable": false,
+  "defaultCronAdmission": "closed",
+  "nativeArchivedAppExecutionQualified": false,
+  "nativeArchiveCapacityReuseQualified": false,
+  "secretRotationDuringRecoveryImplemented": false,
+  "archiveAwareSnapshotAndDiagnosticIntegrationComplete": false,
+  "standaloneReplicaSQLiteInspection": {
+    "verified": false,
+    "reason": "Native retained replica disks contain peer-log batches, not standalone SQLite databases. Data was independently checked through a native read-only SQL application endpoint after retained startup."
+  },
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-entrypoint-native-20261030-04",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-entrypoint-runtime-20261030-04",
+  "earlierAttempts": {
+    "native01": "Qualification driver used the wrong credential API path; no pass. Retained stopped resources.",
+    "native02": "Approval observation expired after 10 seconds. Persisted state showed activating/waiting-for-replicas and started decision. Normal retained startup marked it interrupted; explicit exact-release retry then succeeded with a real D1 write/read. Not accepted as a completed qualification. Resources retained and stopped.",
+    "image02": "Two identical builds completed; metadata helper refused a pre-existing fixture volume name before allocating it. No helper pass accepted.",
+    "native03": "Full native run and independent audit passed; superseded by final source with comment corrections. Resources retained and stopped."
+  },
+  "evidenceFingerprints": {
+    "host-source-before.json": {
+      "sha256": "bf4e2a4122359ba6ab7c48a673ec0f5cf02392ab4eab95bfeb9abd0670b1ea2e",
+      "bytes": 36338
+    },
+    "before.json": {
+      "sha256": "fe7809e33a4020eb15180745649e216df5291a00fb9beffd5e535448d73e3b39",
+      "bytes": 89876
+    },
+    "selection.json": {
+      "sha256": "0b0aee4a55c1fa5ffc0e5b73162ef86e66e478dad8a80748571a2fc0520f7203",
+      "bytes": 34715
+    },
+    "report.json": {
+      "sha256": "9f7ce521bc41e8691986aacf07cf516ad68ec22578ab3be6a42e28f7d77152da",
+      "bytes": 23007
+    },
+    "after.json": {
+      "sha256": "8bdefba82e47834add224c9b35b7838b5174baf80b0dba1f4666d590d5c9d455",
+      "bytes": 134811
+    },
+    "audit.json": {
+      "sha256": "c10c23b10662a5ff538af2880c84ec579c7b48fae63756e688a6930a035e931b",
+      "bytes": 732
+    },
+    "audit-readback.json": {
+      "sha256": "85f1dd072e9ed4a5872c81052805cbd4742b6ac6327f18d19f6357764bb461f3",
+      "bytes": 8722
+    },
+    "independent-native-readback.json": {
+      "sha256": "cf8b80381cac4816d0c7a5447ce2f60241d39ca63e61c5371e82661c7e2a5267",
+      "bytes": 578
+    },
+    "canonical.log": {
+      "sha256": "ec6f7543f3d4c52d4308f8aa8711568d253cd78d69e9e967eb8da912d9efde4d",
+      "bytes": 274989
+    },
+    "focused.log": {
+      "sha256": "e9e90673274dbbe1129a3e3d97f9ded29811b6a2e6263975ac55718b04e0dccc",
+      "bytes": 1441
+    },
+    "quality.log": {
+      "sha256": "6637b6b2c352c07c7324442d8ef72b62234dec534174526e103646715217f2e4",
+      "bytes": 1670
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "native-driver.mjs": {
+      "sha256": "9a41dc7ab6936321061ef8db3435137a2c213b22978a721241d83075bd99758c",
+      "bytes": 11549
+    },
+    "native-observer.mjs": {
+      "sha256": "c62f1770e444a872da58ff29f16b89c674d139636cf9e8d1a66062c58ea53fca",
+      "bytes": 3049
+    },
+    "audit.mjs": {
+      "sha256": "8b9670b9aee7ca25b09d66e1e801069d046246153bb91bebb8ad58b2c3331142",
+      "bytes": 8638
+    },
+    "image-driver.mjs": {
+      "sha256": "aa64840fdc73316f05ed127ba77ff2493870edd915f931fd66e3a5c58f7df598",
+      "bytes": 9964
+    },
+    "image-build.log": {
+      "sha256": "303735451bfc3f2a02f45cdac34e1a0010f23fab9b3a2e178151d18311bc37dc",
+      "bytes": 294
+    },
+    "native.log": {
+      "sha256": "0769c85cfc903f5ca987e4e4b9aba9d8ed7980105d922cfeebe9553824c2cfe7",
+      "bytes": 198
+    },
+    "native-observer.log": {
+      "sha256": "f5ab2b7adf192ef03d1261576dfd891eb89baf41d79a943da0fb891822d0e472",
+      "bytes": 136
+    },
+    "audit.log": {
+      "sha256": "803ffa679909629081a4c2a548e835ae65fd0c55c07b3bdfede7a43b74ee49c7",
+      "bytes": 621
+    }
+  }
+}

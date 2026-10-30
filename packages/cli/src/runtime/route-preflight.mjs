@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { serverOrigin } from '../local.mjs';
 
@@ -12,7 +12,7 @@ const exactKeys = (value, keys) => value && typeof value === 'object' && !Array.
 function durablePolicy(profile) {
   let policy;
   try { policy = validateRuntimePolicy(profile); } catch { policy = null; }
-  if (policy?.schema !== 3 || policy.routing !== 'durable') {
+  if (!hasDurableRuntimeMode(policy)) {
     throw Object.assign(new Error('Routing preflight requires an independently selected durable runtime profile'), { code: 'ROUTE_PREFLIGHT_PROFILE' });
   }
   return { installation: runtimePolicyIdentity(policy), slots: policy.fleets.map(fleet => fleet.id) };

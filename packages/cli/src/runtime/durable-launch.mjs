@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import { setTimeout as pause } from 'node:timers/promises';
 import { isIP } from 'node:net';
-import { runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { transportPolicy } from '@fogd/runtime/transport';
 import { docker } from '../recovery/docker.mjs';
 import { assertSharedStorageConfiguration } from '../shared-storage.mjs';
@@ -82,7 +82,7 @@ async function readyObservation(env, policy, observe, delay) {
 
 async function launchSelection(selected, io) {
   const config = selected.config, policy = validateRuntimePolicy(selected.policy, config.services.controller.environment);
-  if (policy.schema !== 3 || !isDeepStrictEqual(durableRuntimeConfig(config, policy), config)) throw refused();
+  if (!hasDurableRuntimeMode(policy) || !isDeepStrictEqual(durableRuntimeConfig(config, policy), config)) throw refused();
   if (!isDeepStrictEqual(await io.authorize(policy), selected.entry)) throw refused();
   const env = controlEnvironment(config, io.server), transport = transportPolicy(env);
   assertSharedStorageConfiguration(config);

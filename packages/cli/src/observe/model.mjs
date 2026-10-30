@@ -1,3 +1,4 @@
+import { hasDurableRuntimeMode } from '@fogd/platform/runtime-policy';
 import { supportedDiagnosticController, diagnosticRoutingPending } from './controller-state.mjs';
 import { applicationInspection } from '../inspection.mjs';
 import { supportedApplication, applicationOperationPending, applicationRecoveryPending } from '../controller-schema.mjs';
@@ -23,7 +24,7 @@ export function observationSelection(state, app, policy) {
   const version = completedNativeVersion(state.deployments[recorded.active.id]);
   const fleet = policy.fleets.find(value => value.id === item.slot);
   if (!fleet || !version) return { ...base, reason: reason || 'unverified-approved-version' };
-  if (controlsPending || !['active', 'paused'].includes(item.route) || (policy.schema === 3 && state.routeAuthority.pending !== null)) return { ...base, reason };
+  if (controlsPending || !['active', 'paused'].includes(item.route) || (hasDurableRuntimeMode(policy) && state.routeAuthority.pending !== null)) return { ...base, reason };
   return { ...base, reason, fleet, expected: { ...recorded.active, version, slot: item.slot } };
 }
 function completedNativeVersion(release) {

@@ -1,6 +1,6 @@
 import { assertSharedStorageConfiguration } from '../shared-storage.mjs';
 import { transportPolicy } from '@fogd/runtime/transport';
-import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
+import { hasDurableRuntimeMode, runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { readRuntimeConfiguration } from './installation-state.mjs';
 import { selectedInstallation } from './installation.mjs';
 import { hasRuntimePolicy } from '../recovery/layout.mjs';
@@ -12,7 +12,7 @@ import { configEnv } from '../local.mjs';
 
 // The durable family must use retained-container, ingress-last startup.
 export async function startSelectedRuntime(selected, run = docker, server = process.env.FOGD_SERVER) {
-  if (selected.policy?.schema === 3 || selected.entry?.routing === 'durable' || isDurableConfig(selected.config)) {
+  if (hasDurableRuntimeMode(selected.policy) || selected.entry?.routing === 'durable' || isDurableConfig(selected.config)) {
     return startDurableInstallation(selected, { run, server });
   }
   await run([...selected.command, 'up', '-d', '--no-build', '--pull', 'never']);
@@ -26,7 +26,7 @@ export async function upInstallation(project) {
   const selected = await selectedInstallation(config);
   if (!selected) throw new Error('Installation runtime policy is missing; keep its resources stopped');
   if (policy.tls) await checkInstalledTLS(env, selected.config);
-  const client = selected.policy.schema === 3 ? await configEnv() : {};
+  const client = hasDurableRuntimeMode(selected.policy) ? await configEnv() : {};
   await startSelectedRuntime(selected, docker, client.FOGD_SERVER);
   console.log(`Installation ${project} started with ${selected.entry.id} (${selected.entry.admission}); identity ${runtimePolicyIdentity(selected.policy)}. Use its retained operator environment for admin and deploy commands.`);
 }
