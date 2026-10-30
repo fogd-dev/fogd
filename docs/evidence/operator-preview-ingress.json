@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "78d4ba2ffbfedb27d607f61b780e367024bbc465",
+  "executedTreeDirty": true,
+  "scope": "Internal authenticated HTTPS ingress and shared deadline components. No celld application, preview execution grant, installed preview, new runtime family, or full sandbox acceptance.",
+  "sourceFiles": {
+    "packages/cli/src/preview/deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+    "packages/cli/src/preview/ingress.mjs": "7d4cd475ecfc729c598851d6aecce2db6288e758e68b456109e61bd421e8cc15",
+    "packages/cli/src/preview/ingress-access.mjs": "45cfbe2f63b273438a9653fb9c2cf22ca1575afcaac68a672721de06d7aac846",
+    "packages/cli/src/preview/ingress-http.mjs": "ba4e501dff9509df018b21996eadf90b9f67619db58849d1974dc3b7d18463ab",
+    "packages/cli/src/preview/ingress-proxy.mjs": "38da25741f4f883bbd192aa00b9ca52144e2164abb2862d6f2295df23d4d82df",
+    "packages/cli/src/preview/supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8",
+    "packages/cli/test/preview-ingress.test.mjs": "56e695c0fb0492fa0ee192c96b48170b6d86c8a785d737eceab155866212952f",
+    "packages/cli/test/browser/preview-ingress.test.mjs": "a571e5b0754a49db2707ffa45d193747c4c031a3d3acd03a845dc792e2643186",
+    "packages/cli/test/fixtures/preview-ingress.mjs": "c54137420b8b0d99dacb398142f4f25fa6e9a610652f5c4a20c7d6a28c27b901"
+  },
+  "behavior": [
+    "A preview-scoped private access key establishes a context-bound host-only Secure/HttpOnly/SameSite browser cookie. Sign-in shows exact app, preview, submission, digest and expiry.",
+    "Gateway cookies and reserved forwarding/internal headers stay out of application requests. App cookies and authorization remain intact. Backend cookie Domain attributes and gateway-cookie overwrites are filtered.",
+    "Both public certificate coverage and fixed-backend TLS trust/hostname are checked. Backend selection never comes from a request URL.",
+    "Requests buffer at most 2 MiB, active request concurrency is capped at 16, and upstream requests have a five-second absolute budget. Unknown writes are not replayed.",
+    "Expiry/revocation denies new requests and cancels admitted upstream connections; this is not proof that application writers or a whole installation stopped.",
+    "Browser policy constrains subrequests, frames and workers; external redirects and protocol upgrades are refused. Server-side network isolation remains a separate launch gate."
+  ],
+  "checks": {
+    "connectedNode": {
+      "passed": 83,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "ingressCasesWithinConnected": 27,
+    "catalogAndPackaging": {
+      "passed": 14,
+      "failed": 0
+    },
+    "committedRealBrowserRegression": {
+      "passed": 1,
+      "failed": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; erosion 14.6%, duplication 1.7%",
+    "writing": "passed",
+    "standardsSelfReview": "PASS; no external review",
+    "canonicalPriorCommit": "3168 pass at 35720ab; not a current full-suite run for this change"
+  },
+  "browser": {
+    "passed": true,
+    "scope": "Local HTTPS fixture and headless desktop Chrome at a mobile viewport; not a celld preview or launched installation.",
+    "signInRequiredBeforeAppRequestForwarding": true,
+    "exactIdentityVisible": true,
+    "mobileNoHorizontalOverflow": true,
+    "hostOnlySecureHttpOnlySameSiteCookieAccepted": true,
+    "gatewayCookieNotAvailableToAppScriptOrBackend": true,
+    "applicationCookieAndAuthorizationPreserved": true,
+    "browserExternalFetchBlockedByCsp": true,
+    "revocationBlocksFurtherAppRequests": true,
+    "frontendCertificateAssistance": "Self-signed fixture certificate accepted through an isolated test context. Backend TLS remains independently verified by the ingress.",
+    "physicalMachine": "same Mac",
+    "browserVersion": "150.0.7871.187"
+  },
+  "pinnedImageNode": {
+    "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "nodeVersion": "v26.2.0",
+    "programSha256": "75bfdd0a1cc0c45c7dfd2790ef196c67ace7a902bb05e151d91a8ad72b1bb330",
+    "scope": "Program supplied to an owned helper on the pinned image, with no network/mounts, capabilities dropped, no privileged mode and a read-only root. Synthetic HTTPS request handling uses memory, not durable app storage.",
+    "beforeSignInAppRequests": 0,
+    "syntheticAcknowledgedHttpPosts": 1,
+    "revokedStatus": 410,
+    "sharedDeadlineSupervisor": {
+      "outcome": "expired",
+      "started": true,
+      "childExitConfirmed": true,
+      "exitCode": null,
+      "signal": "SIGTERM"
+    }
+  },
+  "independentReadback": {
+    "passed": true,
+    "sourceFilesRehashed": 6,
+    "originalQaContainersPreserved": 32,
+    "turnBaselineContainersPreserved": 38,
+    "singleHeaderChangeBetweenRedAndFirstGreenVerified": true,
+    "actualContainerProgramAndLogsVerified": true,
+    "runtimeNode": "v26.2.0",
+    "priorContainersPreserved": 42,
+    "currentHelperStoppedAndRetained": 1,
+    "allRecipientContainersStopped": 43,
+    "browserWireAndCookieMetadataVerified": true,
+    "appCredentialBoundaryVerified": true,
+    "browserExternalFetchRefusalVerified": true,
+    "redOriginNullAndGreenSameOriginSignInVerified": true,
+    "failedBrowserEvidenceRetained": true,
+    "scope": "Authenticated ingress and shared deadline components with private Node/TLS fixtures, not a celld preview, execution grant, full sandbox or new runtime admission.",
+    "defaultCronAdmission": "closed"
+  },
+  "knownFailure": {
+    "failedRoots": [
+      "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-20261030-01",
+      "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-20261030-02",
+      "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-20261030-03"
+    ],
+    "observed": "Browser form Origin null caused 403 and no backend calls under no-referrer.",
+    "correction": "One referrer-policy change to same-origin gives 303 in the first green browser probe; exact Origin checking still refuses opaque and foreign origins.",
+    "firstGreenRoot": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-20261030-04",
+    "allSixRedInputsRecoveredAndRehashed": true,
+    "singleHeaderChangeToFirstGreenRehashed": true,
+    "archivedProgramsExecuted": false
+  },
+  "privateEvidenceRoots": {
+    "browser": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-20261030-09",
+    "runtime": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-ingress-runtime-20261030-05"
+  },
+  "privateEvidenceFingerprints": {
+    "browser": {
+      "fogd-preview-ingress-review.md": "d17e2470596e7683b6d1dd4719e64797c25fa811a22aef24e94881a45fbf7bbd",
+      "browser-observations.json": "7a8b902f4d8099d438477f4629f6db81d5c98e804f3ed4646e5feece9da2f931",
+      "fogd-preview-ingress-browser-final-source.mjs": "a482f40fd7ee015b5f2b57acf12bfcd0fb4164008b1484fb6e7b024ea03ee5cf",
+      "report.json": "cc24f66e5fed30a846aed0f1bdcc665b2a727e93713ec7687046ce3366f7bceb",
+      "access-mobile.png": "e0f465113a9533d60ae683676ddcf7bcbd71254b8990881e8d4b37ddb452e271",
+      "fogd-preview-ingress-audit-final-source.log": "b495d953b1873e5c09e9041baf9bbe50fc45cd68e6914e1017d94591a2d1a5a3",
+      "backend-requests.json": "b54435f8f5aaaff5b1fa4c38138006afe0811d8432cd4cf9562f5f37a524640f",
+      "console.json": "6e2043dd57cca9093899bdaabfa99c6f38706132f367e29cf7feec54a55bf406",
+      "fogd-preview-ingress-audit-final-source.mjs": "9b5b07d9a270dd1014e01ddcb7b4e06cff6e372426a4484eff7d4bb2c0bafc81",
+      "fogd-preview-ingress-browser-final-source.log": "6f911d88cc199a2a7f5f45de8439b1de41a66e54b6d3a3f5476a83043a1f896b",
+      "fogd-preview-ingress-browser-regression.log": "238c95a546a7cfa233ac70e7bbffc40807265d8a17a7689d655f3d53c182c1d5",
+      "app-mobile.png": "c86858d6f624917e5cf6085317140050c454ddbb29095e7c78a8cea9c05168d1",
+      "independent-audit.json": "8b1b0a08bfa7aecd7d4f059d78d468bb332613d7c3cabb2a280a633b35f947aa",
+      "source-inputs.json": "451be7378499351bc9a0f0586ff2789ea662221264dc1854e6293966d2521b34",
+      "fogd-preview-ingress-writing-final.log": "a94a6d8c09432d59c1c09a99a7c7a9467195fece7762f99876ef5efd30eeb8a3",
+      "wire.json": "2e5d0978924cab24d523b719b592e4817a310c85ba6f448e36cfe184c5c4ef9c",
+      "fogd-preview-ingress-guide-final.log": "c685077d52d98f96e307da04aab5220e85b92002449f8ccfd5cbcd47e6dafd0d"
+    },
+    "runtime": {
+      "before.json": "09b04464812a22d108c6352170ac54940d9681732ee155a6b194c2b67066a151",
+      "source-fingerprints.json": "0b54d03e445d5626441288f189751f05a9f74fc803a56d905e2acba1d4b2605a",
+      "fogd-preview-ingress-runtime-final-source.mjs": "a2dda4e889a598db58f1de0fb1ee888935dc9d1c1918eca8fa31ae5f2f1232e0",
+      "fogd-preview-ingress-quality-final-tree.log": "526d98801c462ad4bd7487f373d3800b224e7b038d48e9315b9f122335eaeec3",
+      "fogd-preview-ingress-runtime-pins.log": "831a05e36dcb329b8aabf52e230e71fd53dcb4863e70c5ac7cbe8eee40e8d412",
+      "report.json": "60df0e2344190a1e087552c27ee52867c7789aa846c7e88b5c808fb3e3d01514",
+      "fogd-preview-ingress-runtime-final-source.log": "ba6904596d677b00cd4a278148b7e3ba0bcc909b431379593c14e3a6e9f7226e",
+      "program.mjs": "75bfdd0a1cc0c45c7dfd2790ef196c67ace7a902bb05e151d91a8ad72b1bb330",
+      "fogd-preview-ingress-syntax-final.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "after.json": "cbaac60b5e35aebad01bb99e39f1a7ea73f5d502fdf73efca51e2475d61682e1",
+      "fogd-preview-ingress-connected-final-source.log": "1be3c62cbcd09f9b8095169f385a0ec333ca65f1981c2e3d3f445307f5d271f3",
+      "container.json": "bf6b81296c033b8ff5117d44760a245c0e4201ed5fc967ce227aab3d06871458",
+      "independent-audit.json": "8b1b0a08bfa7aecd7d4f059d78d468bb332613d7c3cabb2a280a633b35f947aa",
+      "container.log": "d4334d7bf6f609118a70cf20a545fc8e72e75f8133434264e0a9306a24a30115",
+      "allocated.json": "dc46c82bfbad6ddab28a58bdff10bfa836ff4d4dad57987720932a521322e2cc",
+      "source-inputs.json": "6991fc2f891df8e4ad3ee6ce7dcdb8e1b899c0b60c420e97ba896ac76526a4c4"
+    }
+  },
+  "defaultCronAdmission": "closed",
+  "publicPreviewLaunch": "unavailable",
+  "limits": [
+    "Trusted launch coordinator must independently bind exact execution authority, source artifact and fresh isolated target/storage/native identities.",
+    "Only a tested Chrome build at a mobile viewport is recorded; this is not physical mobile-device, unaided-human or hosted Cloudflare evidence.",
+    "The browser fixture explicitly accepts its self-signed frontend certificate; backend TLS verification stays enabled.",
+    "No hostile-tenant/browser sandbox, complete server egress control, every-service expiry, reusable-capacity confirmation or preview-data promotion is qualified.",
+    "All original 32 QA containers remain unchanged. Final readback finds 43 recipient containers stopped, including retained owned helpers. No existing user installations or cross-family migration."
+  ]
+}

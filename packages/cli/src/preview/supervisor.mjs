@@ -1,14 +1,9 @@
 import { spawn } from 'node:child_process';
 
-const maximumLifetimeMs = 3600 * 1000;
+import { previewDeadline } from './deadline.mjs';
+
 const terminationGraceMs = 1000;
 const observationGraceMs = 1000;
-
-function deadline(value) {
-  const at = typeof value === 'string' ? Date.parse(value) : NaN;
-  if (!Number.isFinite(at) || new Date(at).toISOString() !== value || at - Date.now() > maximumLifetimeMs) throw new Error('Preview process requires an exact expiry within one hour');
-  return at;
-}
 
 const result = (outcome, started, childExitConfirmed, exitCode = null, signal = null) => ({ outcome, started, childExitConfirmed, exitCode, signal });
 
@@ -16,7 +11,7 @@ const result = (outcome, started, childExitConfirmed, exitCode = null, signal = 
 // preview and supply its fixed service command, environment and isolated storage.
 // This function controls only its own child. It grants no execution permission.
 export async function supervisePreviewProcess({ executable, args = [], env = {}, cwd, expiresAt, signal }) {
-  const expires = deadline(expiresAt);
+  const expires = previewDeadline(expiresAt);
   if (typeof executable !== 'string' || !executable || !Array.isArray(args) || args.some(value => typeof value !== 'string')) throw new Error('Preview service requires a fixed executable and string arguments');
   const environment = previewEnvironment(env);
   if (signal !== undefined && !(signal instanceof AbortSignal)) throw new Error('Preview cancellation requires an AbortSignal');

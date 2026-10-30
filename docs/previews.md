@@ -62,7 +62,7 @@ implementation, not evidence that an executing preview is isolated or time-limit
 
 ## Internal deadline component
 
-An [internal supervisor check](evidence/operator-preview-supervisor.json) exercises
+An [internal supervisor check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-supervisor.json) exercises
 expiry, cancellation, forced termination and missing child-exit observations.
 Expired deadlines refuse startup, and retries keep the original absolute deadline.
 The child environment defaults to empty application configuration and copies only
@@ -75,3 +75,48 @@ launcher component, not a preview execution permission or an application sandbox
 The integration must still bind exact authorization, isolate resources and network
 access, protect the URL, and enforce expiry for every service. No preview launch
 command is available yet.
+
+## Internal authenticated ingress
+
+The [HTTPS ingress component](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-ingress.json) requires a
+preview-specific access key before forwarding application requests. Its sign-in
+page identifies the app, preview, submission, release digest and expiry. The
+browser session uses a host-only Secure, HttpOnly, SameSite cookie, which the
+proxy removes before forwarding. Application cookies and authorization remain
+available to the application. Backend responses cannot replace the gateway cookie
+or weaken its browser policy.
+
+The component accepts one fixed HTTPS backend with independently supplied trust
+and checks the certificate against the preview hostname. It buffers at most 2 MiB
+per request, admits at most 16 concurrent requests and bounds upstream requests to
+five seconds. A lost write response remains uncertain and is never replayed.
+Expiry or revocation denies new requests and interrupts admitted connections;
+this does not establish that application writers stopped.
+
+The browser check caught a sign-in failure caused by a referrer policy producing
+`Origin: null`. The corrected `same-origin` policy preserves the strict origin
+check. See the browser's [Origin header behavior](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Origin#description).
+Headless Chrome verifies sign-in, cookie privacy, a blocked cross-origin fetch,
+revocation and the mobile viewport layout. Its self-signed frontend certificate
+uses explicit test-context trust assistance; the backend still requires verified
+TLS.
+
+This HTTP profile refuses WebSocket/CONNECT upgrades, external redirects and
+service workers. Its browser policy constrains subrequests; it is not a complete
+browser or hostile-tenant sandbox. The launch coordinator still needs an exact
+execution grant, a separate browser origin, fresh storage/native identities,
+server-side network isolation and every-service expiry. Public preview launch
+remains unavailable.
+
+From a source checkout, run the browser regression separately from the Node-only
+suite:
+
+```sh
+FOGD_TEST_CHROMIUM=/path/to/chromium \
+  node --test packages/cli/test/browser/preview-ingress.test.mjs
+```
+
+It uses the declared Playwright development dependency and a preinstalled Chromium
+binary. Without the environment override it uses Playwright's installed browser.
+The check creates its own headless browser profile and temporary TLS fixture; it
+never uses an existing browser session or downloads a browser automatically.
