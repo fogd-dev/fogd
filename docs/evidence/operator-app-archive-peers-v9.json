@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "kind": "operator-private-queue-cron-peers-archive-capacity-reuse-native",
+  "recordedAt": "2026-10-30T16:55:32.019302+00:00",
+  "sourceCommit": "3f4ce468f7e91f1d08c1a6964d585320698b8c3e",
+  "executedProductionTreeDirty": false,
+  "passed": true,
+  "scope": "Reviewed archive/restoration composition on a private candidate; stock owner CLI stages and approves queue secret rotation, acknowledges each background recovery and explicitly resumes each. Cron peer reuses the archived queue fleet, keeps independent data and secret configuration, survives stopped two-source restoration alongside the queue app, remains paused across a minute and records only future invocations after resume. Original queued input and future input execute with the new queue configuration. Both apps retain SQL/R2/handler records after restart. No public archive admission or combined queue+cron in one app is qualified.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "hostSourceFiles": 324,
+  "hostAuthorizationBoundary": "Reviewed stopped archive/restoration command composition uses trusted private candidate selection and exact authorization. Owner review, stdin staging, rotation approval, each background acknowledgment/resume use the stock CLI over certificate-verified HTTPS. Background acknowledgment restores HTTP and leaves background execution paused; the original harness redundant routing resume was refused because HTTP was already active. No public candidate-selection flag or catalog entry is added.",
+  "checks": [
+    "Archive a paused queue app with original pending input and D1/R2 data",
+    "Approve a new cron app in the freed fleet while retaining the archived app record unchanged",
+    "Reject restoration into the fleet occupied by that cron app before target allocation",
+    "Restore the queue app into the other fleet while preserving the cron peer release and current credentials",
+    "Rotate only the queue app configuration and keep both background recovery gates pending",
+    "Cross a minute with queue backlog unchanged and no cron handler invocation",
+    "Acknowledge the cron peer independently while queue recovery stays pending and HTTP withheld",
+    "Acknowledge queue recovery, then explicitly resume each background",
+    "Execute retained and future queue input with new configuration while cron uses its unchanged configuration",
+    "Record only future cron times after resume, preserving original events",
+    "Retain both apps SQL/object data and handler records through stopped restart"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 324,
+    "nativeHashesVerified": true,
+    "identicalUncachedBuilds": true,
+    "actualNativeSnapshotsReverified": 2,
+    "actualPhysicalEnrollmentBindingsVerified": 3,
+    "archiveIdentityAndSnapshotReferencesRecomputed": true,
+    "currentCredentialBytesPreserved": true,
+    "canonicalArtifactsUnchanged": true,
+    "peerReleaseUnchanged": true,
+    "reviewedArchiveAndRestorationReceiptsVerified": true,
+    "independentReviewsRecomputed": true,
+    "occupiedFleetRefused": true,
+    "logicalCapacityReuseVerified": true,
+    "postAckContinuationReconciledWithoutReplay": true,
+    "independentOwnerRecoveryAcknowledgmentsVerified": true,
+    "queueRotationDoesNotRotateCronPeer": true,
+    "crossedMinuteWithBothBackgroundsHeld": true,
+    "futureCronWithoutOldReplay": true,
+    "retainedAndFutureQueueHandlersVerified": true,
+    "sqlAndObjectDataPreservedAfterRestart": true,
+    "attributedArchiveApprovalReadBack": true,
+    "twoSourceExclusionsVerified": true,
+    "existingContainersPreserved": 344,
+    "existingVolumeNamesPreserved": 591,
+    "ownedRelatedContainersStopped": 24,
+    "defaultCronAdmission": "closed",
+    "shippedCatalogUnchanged": true
+  },
+  "postAcknowledgmentHarnessFailure": {
+    "reason": "Original harness tried HTTP resume after background acknowledgment had already restored active routing. Both acknowledgments succeeded; route has no pending operation, both backgrounds remain paused and no handler records changed. Continue only previously unexecuted background resume actions. No archive, approval, acknowledgment or routing mutation is replayed.",
+    "priorFailureRetained": true
+  },
+  "priorHarnessFailure": {
+    "root": "~/.local/share/fogd-qualifications/archive-peer-source-native-20261030-01",
+    "accepted": false,
+    "reason": "The fixture omitted Node CA trust during startup preflight. A read-only GET reproduced DEPTH_ZERO_SELF_SIGNED_CERT without trust and returned HTTP 200 with the certificate supplied. Only owned services were stopped; the pending launch marker and all resources remain retained. No startup or application operation was replayed. A fresh source fixture supplies CA trust before process startup."
+  },
+  "canonicalChecks": {
+    "passed": 3149,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 580758.748125,
+    "scope": "Reused accepted 3f4ce46 canonical result: no production or test source changed for this native qualification."
+  },
+  "syntax": "unchanged-production-source; native drivers syntax checked",
+  "quality": "unchanged-production-source; previous accepted quality gate retained",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "generalArchiveReleaseQualified": false,
+  "combinedQueueCronInOneAppQualified": false,
+  "remainingGates": [
+    "Operator-command interruption and concurrent-admission acceptance beyond existing coordinator evidence",
+    "Fresh release rehearsal for the updated host CLI and qualified archive runtime"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-peers-native-20261030-01",
+  "sourceRoot": "~/.local/share/fogd-qualifications/archive-peer-source-native-20261030-02",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "evidenceFingerprints": {
+    "driver.mjs": {
+      "sha256": "dd080c564e906985dbecbc74623480ab2d4cb7d425b437ba85f8a1695dc4b9e4",
+      "bytes": 27146
+    },
+    "continuation.mjs": {
+      "sha256": "6532c2a3c6767c06089e24bfa40c0833c846e0cbda12c2f12e6098316a23617c",
+      "bytes": 19225
+    },
+    "failure.json": {
+      "sha256": "d87b027cd60cbb3e314c4d7fc9e42340638de90532a8320c75be7f1b58e3df6e",
+      "bytes": 95037
+    },
+    "failure-readback-state.json": {
+      "sha256": "b093661a0a50a7766b9d8c824d26a86e08e3d984fea794d956e5d76e6e14fbc4",
+      "bytes": 19891
+    },
+    "failure-readback-views.json": {
+      "sha256": "0f8c3831bef10a2e3b5624aef109a03e36530884177e958f68d29754b18d84e9",
+      "bytes": 3457
+    },
+    "continuation-validated-state.json": {
+      "sha256": "5fa65460566f8dbb7f367f5e29ec53723a696b9f7a3edd05da11eed8b2d0fb6d",
+      "bytes": 19892
+    },
+    "audit.mjs": {
+      "sha256": "1fa03713133cae1c3daa8278a9d61b469a931f0a3b2cf5f7e321d15bb18d8da3",
+      "bytes": 15127
+    },
+    "report.json": {
+      "sha256": "8ab7cb61e6276c53d44cb2f21ca96c54ad471cd830e4386808419749eca49b11",
+      "bytes": 30741
+    },
+    "audit.json": {
+      "sha256": "9d89f66d53aef87e3dbedd448a6645f8af0952930013cdf35754401de5eea569",
+      "bytes": 1201
+    },
+    "audit-readback.json": {
+      "sha256": "75f613579623be20a1342cc86698322262a640292f9fdeb3917e844b977b2b72",
+      "bytes": 61648
+    },
+    "before.json": {
+      "sha256": "d163a9f9f1caf384c856a0d3c0b1144527066fb30c302413552258760eafb80d",
+      "bytes": 406992
+    },
+    "after.json": {
+      "sha256": "f85aca8f5585749ad07d34fbcc634056c46e064e9a39c42f1ab621cc15862337",
+      "bytes": 435123
+    },
+    "selections.json": {
+      "sha256": "b3acaba48fc10641273b438eabd27759222dccce14fa15b7531b9140d3cc0d3e",
+      "bytes": 77457
+    },
+    "host-source-during-run.json": {
+      "sha256": "1d394114da5f5cd8687179cfedcb8fe0bb7a13a70c4eb16a00e44dfd5e56d8e4",
+      "bytes": 37074
+    },
+    "archive-review.json": {
+      "sha256": "aae91f87bbef832aab48bbe53393180ff3a39525b3edd0c25fc5503a89d546bd",
+      "bytes": 2317
+    },
+    "archive-result.json": {
+      "sha256": "3365efee0616fb48625bc5e4cccb0fb0847ccb5136dff1fedeec53668bdd35fa",
+      "bytes": 598
+    },
+    "restore-review.json": {
+      "sha256": "e74ed8b44f173f31bc95a634742243c14e3336cbaea37f33bb3e32fbeb207639",
+      "bytes": 2891
+    },
+    "restore-result.json": {
+      "sha256": "c6ab584c1d6df0eaaadbb9eabda441fb51737e7556c9e1e76d4794170d273d8c",
+      "bytes": 623
+    },
+    "occupied-fleet-refusal.json": {
+      "sha256": "d6a75c8faefb1c185312d4769ebdba6809737439399a6ac4f0faf156e7f873e3",
+      "bytes": 58
+    },
+    "peer-before-backup.json": {
+      "sha256": "b4d78ed0e9d5b6b5b2cce6eeaa175848a2f546cb42b3a559ba44505293772c9f",
+      "bytes": 14805
+    },
+    "held-state.json": {
+      "sha256": "ea6831466f1edc958df3eb29b75e16c95737ce39ebd9a8944e03edd924dcf24c",
+      "bytes": 18468
+    },
+    "rotated-held-state.json": {
+      "sha256": "fd0da8f2537479ebf8c6b60c49f35b26a001e0d01b2dbce53ae0876c527fb8e5",
+      "bytes": 20145
+    },
+    "held-minute.json": {
+      "sha256": "cd48893cb5ace6218f792708810fcc87a16c157fd70b1b21eb44b2a7ded15c3e",
+      "bytes": 6815
+    },
+    "owner-original-review.json": {
+      "sha256": "3b826b3f90cb74d4d91ede839a5fa8001c5915cc4a87de2044d977d84d54afd5",
+      "bytes": 787
+    },
+    "owner-rotation-review.json": {
+      "sha256": "000f2fee71ca6080844131e75ef4b5fe9c2bd592a22d71f6bd7f0b15cad2bc25",
+      "bytes": 787
+    },
+    "owner-approval.json": {
+      "sha256": "2a2ab3615b7bb84d1c00e365867e93d7e4db1dbaf96af8938a48c5b5f1745d12",
+      "bytes": 381
+    },
+    "active-background-results.json": {
+      "sha256": "2dbf93edf1782e5291656cf6f9319cfb17c5b4d5dc89d3b46bfb5871854dcacc",
+      "bytes": 892
+    },
+    "final-state.json": {
+      "sha256": "7c3b402de4b92c58c9dcfb3c4779f054760faa172d6ff4632fef20c854414b9d",
+      "bytes": 19892
+    },
+    "original-driver.log": {
+      "sha256": "8b1e60d7698e38cff2d0c0b66fa1bee834fa7de8487caa2f42581f8c0a1783db",
+      "bytes": 1170
+    },
+    "continuation.log": {
+      "sha256": "91f7cdf5ab0af6146479a507b7b34fb5d915a6f41eeb06bd5bb3e5327a43d4d8",
+      "bytes": 272
+    },
+    "audit-original-failure.log": {
+      "sha256": "145e6446b5d8729b02be89b8e1b404fa0f64c351026a38ffb62678062650943b",
+      "bytes": 638
+    },
+    "audit-final.log": {
+      "sha256": "2159fe025b287506f68aa1c74d45127d099812a5e4e8df93657f338862f38a1b",
+      "bytes": 1085
+    }
+  },
+  "auditHarnessCorrection": "The first audit referenced a prior fixture manifest and failed its snapshot identity comparison. Correcting the path to this run retained-snapshot allowed the full read-only audit to pass. No native operation was repeated."
+}

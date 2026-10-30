@@ -409,9 +409,30 @@ selection, physical enrollment and preserved resources. Target preparation uses 
 trusted private candidate selector; the owner CLI has no injected HTTP provider.
 This check does not qualify background acknowledgment/resume or public admission.
 
-Before archive admission, qualify combined background peers and capacity reuse,
-the operator command's interruption/concurrent-admission paths, and release of the
-updated host CLI. End-to-end operator acceptance remains open. There are no
+The [native peer/capacity check](evidence/operator-app-archive-peers-v9.json)
+archives a paused queue app with retained input, approves a new cron app in its
+freed fleet, then restores the queue app into the other fleet. Restoration into
+the occupied cron fleet refuses before allocation. Queue secret rotation leaves
+the cron peer's release and configuration unchanged. Both backgrounds stay held
+across a minute. Each requires its own recovery acknowledgment and explicit
+background resume; acknowledging the cron peer leaves queue recovery pending.
+Retained and future queue input uses the new queue configuration. Cron records
+only future times after resume. Both apps retain SQL, objects and handler records
+through stopped restart.
+
+The original peer harness incorrectly requested HTTP resume after acknowledgment
+had already restored HTTP. The controller refused the active route. Saved-state
+reconciliation verified successful acknowledgments, active routes without pending
+operations and paused backgrounds before continuing only the unexecuted background
+resumes. Independent audit checks unchanged acknowledgment timestamps, peer release,
+credentials, artifacts, physical stores and retained resources. The failed harness
+result remains retained. This qualifies one queue app with one cron peer on the
+private two-fleet candidate; it does not qualify both handlers in one app or public
+archive admission.
+
+Before archive admission, qualify the operator command's
+interruption/concurrent-admission paths and release of the updated host CLI.
+End-to-end operator acceptance remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
 

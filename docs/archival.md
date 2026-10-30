@@ -114,11 +114,13 @@ only the revision ID and names. Rotation uses the current controller vault; it
 does not recover missing values from the retained source vault. Review and approval
 output omit secret values and private runtime versions.
 
-Approval leaves execution held. HTTP routing resume and background loss
-acknowledgment/resume remain separate owner actions. An interrupted, malformed or
-lost mutation reply reports uncertainty and is not retried automatically. Inspect
-current recovery state and saved owner decisions before another action. Retain
-partial-operation records and markers.
+Approval leaves execution held. For a background app, its exact recovery
+acknowledgment restores HTTP while leaving queue delivery or cron dispatch paused.
+Background execution requires a separate resume. For an HTTP-only app, use the
+routing resume command. An interrupted, malformed or lost mutation reply reports
+uncertainty and is not retried automatically. Inspect current recovery state and
+saved owner decisions before another action. Retain partial-operation records and
+markers.
 
 ## Review fields
 
@@ -143,4 +145,4 @@ those boundaries through the stopped coordinator; a review is not a lock.
 
 The [lifecycle contract](application-lifecycle.md) records acceptance boundaries.
 Default cron admission stays closed, and public archive release remains gated on
-combined-background, operator and release acceptance.
+operator interruption/concurrency and release acceptance.
