@@ -14,7 +14,7 @@ import { durableSnapshotFormat, verifyDurableBundle } from '../recovery/durable-
 
 const refused = () => Object.assign(new Error('Durable recovery requires independently selected runtime and source identity, a verified snapshot and a fresh target plan; nothing was created'), { code: 'DURABLE_RECOVERY_PLAN_REFUSED' });
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
-function sourceProfile(config, manifest, candidate, expectedIdentity) {
+export function recoverySourceProfile(config, manifest, candidate, expectedIdentity) {
   const entry = validateRuntimeFamily(candidate);
   if (entry.schema !== 2 || entry.routing !== 'durable' || manifest.format !== durableSnapshotFormat || !hash(expectedIdentity)) throw refused();
   if (manifest.sourceProject !== projectName(config.name)) throw refused();
@@ -32,7 +32,7 @@ function sourceProfile(config, manifest, candidate, expectedIdentity) {
 export function planDurableRestore(bundle, { entry, expectedIdentity, project, networks, snapshot } = {}) {
   try {
     const { config, manifest, state, authority } = bundle;
-    const source = sourceProfile(config, manifest, entry, expectedIdentity);
+    const source = recoverySourceProfile(config, manifest, entry, expectedIdentity);
     projectName(project);
     if (project === config.name || !hash(snapshot)) throw refused();
     const domain = config.services.controller.environment.FOGD_BASE_DOMAIN || 'localhost';
@@ -59,7 +59,7 @@ export async function readDurableRestorePlan(directory, project, selection, { ch
     for (const name of ['manifest.json', 'compose.json']) if (!(await lstat(join(directory, name))).isFile()) throw refused();
     const before = await fingerprint(manifestPath);
     const config = await readJson(join(directory, 'compose.json')), manifest = await readJson(manifestPath);
-    const source = sourceProfile(config, manifest, entry, selection.expectedIdentity);
+    const source = recoverySourceProfile(config, manifest, entry, selection.expectedIdentity);
     const checked = await verifyDurableBundle(directory, source.policy);
     if (!isDeepStrictEqual(before, await fingerprint(manifestPath))) throw refused();
     return planDurableRestore(checked, { ...selection, entry, project, snapshot: before.sha256 });

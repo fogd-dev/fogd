@@ -1,3 +1,4 @@
+import { restoreAppArchiveStores, restoreAppArchiveRecoveryStores } from '@fogd/platform/app-archive-routes';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -43,7 +44,8 @@ export async function durableEnrollmentFixture(t, selection) {
       const paths = { controller: rolePath('controller'), authority: rolePath('route-authority'), enrollment: rolePath('route-enrollment') };
       const helpers = { 'packages/platform/src/import-route-enrollment.mjs': initializeFreshRouteStores,
         'packages/platform/src/import-restored-routes.mjs': restoreEnrolledRouteStores, 'packages/platform/src/import-retired-routes.mjs': restoreRetiredRouteStores };
-      const helper = helpers[args.at(-1)];
+      const archives = { archive: restoreAppArchiveStores, restore: restoreAppArchiveRecoveryStores };
+      const helper = args.at(-2) === 'packages/platform/src/import-app-archive-routes.mjs' ? archives[args.at(-1)] : helpers[args.at(-1)];
       if (!helper) throw new Error('Unexpected stopped route helper');
       return JSON.stringify(await helper(JSON.parse(options.inputText), paths));
     }

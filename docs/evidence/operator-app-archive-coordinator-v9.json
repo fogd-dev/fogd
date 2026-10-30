@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "kind": "operator-app-archive-stopped-coordinator",
+  "recordedAt": "2026-10-30T03:29:49.693652+00:00",
+  "sourceCommit": "71b40d90d9e8993e3a98f4689152cc110a75146c",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual stopped Docker enrollment from two synthetic app snapshots using a verified cached private image, two real host source fences and atomic source exclusion. No celld application execution, secret-vault qualification, background rebinding or explicit app approval.",
+  "image": "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80",
+  "privateImageInShippedCatalog": false,
+  "sourcesAreSyntheticSnapshotsAndStagedHostRecords": true,
+  "independentAudit": {
+    "passed": true,
+    "hostSourceFilesRehashed": 307,
+    "snapshotMembersRehashed": 20,
+    "completeEnrollmentAndPlanIdentityVerified": true,
+    "twoSourceRecordVerified": true,
+    "sourceFenceReleaseConfirmed": 2,
+    "actualStoppedServices": 8,
+    "sqliteReplicasRead": 4,
+    "withheldRoutes": 2,
+    "privatePendingRecoveryVerified": true,
+    "currentPeerAndHistoryPreserved": true,
+    "existingContainersPreserved": 72,
+    "existingVolumeNamesPreserved": 116,
+    "scope": "Actual stopped coordinator/enrollment with synthetic snapshots; no celld execution or archival admission"
+  },
+  "storageEnrollmentComplete": true,
+  "executionApprovalComplete": false,
+  "archiveRecovery": "pending",
+  "targetServicesStopped": 8,
+  "newOwnedVolumesRetained": 10,
+  "postCompletionEnrollerRunCalls": 0,
+  "postCompletionCounterScope": "Enrollment run callback; coordinator source also shows only host fence release after enrollment returns. Independent audit readback helpers run afterward with read-only mounts.",
+  "checks": {
+    "canonical": {
+      "passed": 2978,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 511630.963792,
+      "scope": "Full suite before final post-policy source-check placement and subsequent focused test additions."
+    },
+    "finalCoordinatorAndCompatibility": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    "multiSourcePublicationAndGraph": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "syntax": "passed",
+    "quality": "passed",
+    "writing": "passed"
+  },
+  "sourcePolicy": {
+    "fences": "Both sources, acquired in project-name order",
+    "exclusion": "Single atomic two-source host record before resource creation",
+    "snapshots": "Reverified before/after copying and after routes/policy readback",
+    "uncertainRelease": "Each release attempted once; overall operation remains unconfirmed"
+  },
+  "operatorArchivalAvailable": false,
+  "defaultCronAdmission": "closed",
+  "fullNativeArchiveAcceptancePassed": false,
+  "unsuccessfulAttempts": [
+    "A regression test showed that a source changed during final policy readback could reach completion; the final source check now follows that readback.",
+    "An incorrect intermediate check placement refused during preparation before Docker resources were created. That target retains pending host records; it is not accepted evidence. The corrected run uses a fresh project/evidence root."
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-coordinator-20261030-03",
+  "evidenceFingerprints": {
+    "report.json": {
+      "sha256": "1ee915d495f37b8ffbdab13e8abc5d60b4d86fa19c000a6fa68b7ece9534a66d",
+      "bytes": 891
+    },
+    "before.json": {
+      "sha256": "26ac0de80a1d8e966ecd6e5e1f59cb828b62ebf24dc201fe48aa0c99a6409b44",
+      "bytes": 60315
+    },
+    "after.json": {
+      "sha256": "bd614d1e8f9803cc8509e9a7a1d702046c9620cbd64afd79e0711969f1c4e5c2",
+      "bytes": 93283
+    },
+    "hostSources.json": {
+      "sha256": "207cbdc8db1fbb688e93d8ee13bbd052cefad06c4da1195c5d7805fb9bc39857",
+      "bytes": 35113
+    },
+    "snapshotsBefore.json": {
+      "sha256": "b64040d72f898babd7d7c8cf6e578409f51f5112a3b6a04c04d3493334257b38",
+      "bytes": 2823
+    },
+    "result.json": {
+      "sha256": "b01f4adb39dadc5f180a2be8d316ba0b4f5061b0fc299e0c4608d47ac5794c1f",
+      "bytes": 14346
+    },
+    "observed.json": {
+      "sha256": "673924ff0c477f48b5630c8821b3fea4f3354f29b86f81d7992bbf7aadb7e8f6",
+      "bytes": 2258
+    },
+    "stores.json": {
+      "sha256": "89106bef023c659cfbc4ca903b6221bc320417c593ddd199f337b16f317bbfd2",
+      "bytes": 979
+    },
+    "relation.json": {
+      "sha256": "6abf302b9a710df62cc431e892fde9139a6c3e2085404618e3065cb61cea566b",
+      "bytes": 1004
+    },
+    "state.json": {
+      "sha256": "eaa5575cfd9195a366374db0c09baaee85a36e428d8d412d0bf9e56df50a24ef",
+      "bytes": 8157
+    },
+    "rows.json": {
+      "sha256": "826987a512aa9875dba5cd23e413f9a7294bfa42d51b059de1fde6eef312c248",
+      "bytes": 191
+    },
+    "runner.mjs": {
+      "sha256": "9bda2bd7c1bdf3470bb7f0485080aa6067aa411bf3e177ed619c243ab6e862ae",
+      "bytes": 8953
+    },
+    "runner.log": {
+      "sha256": "8af20d728042cf624c48d5a9c684f10f95db3a4dfc73c038a5d665834e95bcab",
+      "bytes": 809
+    },
+    "audit.py": {
+      "sha256": "2df9074fd3b832d44528136e88f7c09381e69d38f9497c92f00141077ae81c24",
+      "bytes": 6672
+    },
+    "audit.log": {
+      "sha256": "eaa07cf90e88fb11900c2f9225c29f0cf2cabffe0a6805eb5c63ccc21878f05e",
+      "bytes": 541
+    },
+    "final-policy-regression-red.log": {
+      "sha256": "4002f306be723616abfd6684cca6c951221df053032e5e7b003b6c673e70b56a",
+      "bytes": 948
+    },
+    "preparation-failure.log": {
+      "sha256": "4dfb7b18cdfb82e06e47b9059bdec911e98be0cc8ac561e27adc352e55c3089f",
+      "bytes": 866
+    },
+    "final-focused.log": {
+      "sha256": "277b228ebc4405abdc8d970b91d0117564ed8a62f11207691adc7e5fa0e75695",
+      "bytes": 3455
+    },
+    "relations-focused.log": {
+      "sha256": "f85da9ec75ef7435c4d32ab4cc2573de24824a45aeb86572a3fb525d4685f7f7",
+      "bytes": 432
+    }
+  },
+  "remaining": [
+    "Current vault/revision availability checks",
+    "Background recovery and identity rebinding",
+    "Explicit approval and archive recovery gate completion",
+    "Full celld archive A, reuse capacity for B, restore A; interruption and concurrent-admission acceptance"
+  ]
+}

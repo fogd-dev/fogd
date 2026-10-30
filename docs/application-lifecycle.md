@@ -111,6 +111,36 @@ unsupported extensions and malformed headers without extraction. Its bounds are
 200,000 members and 16 MiB of member names per bucket archive. Physical member bytes
 are separate from logical app data, free capacity and disk allocation.
 
+## Stopped enrollment coordinator
+
+The internal coordinator now composes archival/restoration planning, fresh stopped
+enrollment, data copying and one-use route finalization. Independent runtime and
+source identities select the plans; a snapshot cannot choose its runtime. No new
+operator command or runtime admission is enabled.
+
+Restoration acquires launch/stop fences for both the current and retained source,
+in project-name order. One atomically published two-source exclusion record links
+the target to both sources and their recovery relatives before Docker allocation.
+Existing single-source records remain readable. Duplicate sources and replacing
+an existing record refuse. Older CLIs that cannot read the new record refuse it.
+
+Both sources must remain stopped. Their snapshots are reverified before data copy,
+after it, and after route finalization and policy readback. Output cannot be inside
+either snapshot. Lost source confirmation, changed bytes or uncertain copying keeps
+host enrollment incomplete and retains all partial resources. Source fences are
+released once; a lost release reply reports the overall operation unconfirmed even
+when the stopped storage enrollment itself completed. No automatic replay follows.
+
+A [Docker coordinator check](evidence/operator-app-archive-coordinator-v9.json)
+uses synthetic snapshots and staged source host records, acquires both real source
+fences, creates eight stopped services, and verifies actual policy, route and SQL
+readbacks. Independent audit preserves all pre-existing fixture resources.
+
+Completed storage enrollment still leaves HTTP withheld and archive recovery
+pending. The controller continues to reject the archive capability before backend
+access. Vault/revision checks, background rebinding, explicit approval and full
+native archive/reuse/restore acceptance remain required before operator use.
+
 ## Remaining archive protocol
 
 Archive support needs a separate immutable runtime and native acceptance before
