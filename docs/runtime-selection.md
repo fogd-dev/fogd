@@ -43,6 +43,16 @@ deployment, exact update approval and data after restart. These are private QA
 checks on the same physical Mac. Full family acceptance remains open; there are
 no existing user installations to migrate.
 
+The `celld-approval-v8-linux-arm64` family is a closed successor candidate. It fixes
+completed decision records preventing terminal artifact reclamation while retaining
+unfinished decisions, pins and recovery references. The
+[candidate receipt](evidence/operator-approval-v8-candidate.json) records two matching
+private builds and audited native pruning, retained app data, history, restart and
+a stopped snapshot. It also records completed v7 background and diagnostics checks.
+Fresh v8 restore, received/versioned installation and final admission remain open.
+The v7 image and all earlier pins stay unchanged; ordinary v8 enrollment and export
+remain refused.
+
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller
 saves its migration hashes. The app stays withheld through controller interruption;

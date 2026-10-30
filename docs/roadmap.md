@@ -27,11 +27,15 @@ The bounded [M11c acceptance](m11c-acceptance.md) and public-selector release ch
 are complete. Additional cron qualification work needs an identified acceptance gap
 or a reproducible defect; broader topology and runtime admission remain gated.
 
-The closed v7 candidate has bounded
+The closed [v8 candidate](evidence/operator-approval-v8-candidate.json) fixes
+completed decision history preventing terminal artifact reclamation. Native pruning
+retains history and both apps' data through restart and a stopped snapshot. Fresh
+v8 restore, received/versioned installation and final admission remain open.
+The earlier v7 candidate has bounded
 [retirement/history](evidence/operator-native-retirement-history-v7.json) and
 [versioned fresh-install](evidence/operator-v7-versioned-onboarding.json) checks.
 The latter uses a private proposed `0.2.0` bundle and a newly empty Docker engine.
-Full family acceptance remains open. There are no existing user installations;
+V7 remains closed because its image lacks the retention correction. There are no existing user installations;
 fresh installation is the release target.
 
 Before selecting another binding milestone, implement the proposed

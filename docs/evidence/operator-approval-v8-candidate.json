@@ -1,0 +1,434 @@
+{
+  "schema": 1,
+  "kind": "operator-approval-v8-candidate",
+  "recordedAt": "2026-10-30T00:07:56.510307+00:00",
+  "sourceCommit": "f7d91f0365db37328931c51ea74d97b2dd68765e",
+  "sourceInputsMatchNativeArchive": [
+    "packages/platform/src/artifact-retention.mjs",
+    "packages/platform/test/decision-artifact-retention.test.mjs",
+    "packages/cli/src/runtime/catalog.json",
+    "packages/cli/test/runtime-catalog-durable.test.mjs",
+    "scripts/operator/diagnostics.mjs"
+  ],
+  "executedTreeDirty": true,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "family": "celld-approval-v8-linux-arm64",
+  "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "admission": "candidate",
+  "problem": "V7 decision-history rows were treated as artifact-retention roots, preventing reclamation of every terminal artifact with an authenticated decision. Reproduced against actual captured v7 controller state; the superseded artifact became reclaimable only when history was omitted from a read-only comparison.",
+  "change": "Validate decision history before retention planning, exclude completed records from byte-retention roots, and retain started/unconfirmed targets. Preserve pins, recovery references and audit rows. Register a separate immutable closed candidate; older pins remain unchanged. Correct the diagnostics runner scope to identify its selected family.",
+  "hostChecks": {
+    "canonicalTestsPassed": 2887,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "newRetentionRegressionCases": 5,
+    "catalogChecksPassed": 15,
+    "focusedRetentionChecksPassed": 57,
+    "syntaxAndQualityPassed": true,
+    "durationMs": 708057.91475
+  },
+  "evidence": {
+    "packaging": {
+      "privateRoot": "~/.local/share/fogd-qualifications/approval-runtime-v8-20261029-02",
+      "audit": {
+        "passed": true,
+        "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+        "parent": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+        "identicalUncachedBuilds": 2,
+        "archivedSourcesRehashed": 1013,
+        "programInputsRehashed": 117,
+        "onlyChangedProgramInput": "packages/platform/src/artifact-retention.mjs",
+        "nativeProgramBodiesUnchanged": 114,
+        "parentLayersPreserved": true,
+        "retainedContainersUnchanged": 56,
+        "retainedVolumesUnchanged": 77,
+        "nativeRebuild": false,
+        "dependencyInstall": false,
+        "admission": "candidate",
+        "scope": "Private reproducible COPY-only packaging with verified cached parent and matching current program inputs. No native acceptance or full family qualification."
+      },
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "ddd597305210d6cd5a9e99da3e7380db307748c133b9a745ad40a84eae65a58f",
+          "bytes": 133776
+        },
+        "candidate.json": {
+          "sha256": "bd660bacdfb75f11d300d62775a8f659bf5b292693ddc4a0b9f963e7e1b30a30",
+          "bytes": 14188
+        },
+        "independent-audit.json": {
+          "sha256": "c493ecefded8e0be5a5a1e9981870068924a102c3a45092b970bf94f9f66b000",
+          "bytes": 768
+        },
+        "executed-source-inventory.json": {
+          "sha256": "851ef0773954243efc88af5943bdf424b47c7a6485dac3e60e97d35b70e0757a",
+          "bytes": 118756
+        },
+        "runner.mjs": {
+          "sha256": "a6ce7252b34ce8d507803e68f0e7962b97eca004a4f8cf4775d1af9406eafd89",
+          "bytes": 5353
+        },
+        "before.json": {
+          "sha256": "6a9b427c97e7ca6c89d1a0c6fe0d3900808c861dbf7b39119bac81feb4c707dd",
+          "bytes": 727454
+        },
+        "after.json": {
+          "sha256": "6a9b427c97e7ca6c89d1a0c6fe0d3900808c861dbf7b39119bac81feb4c707dd",
+          "bytes": 727454
+        },
+        "build.log": {
+          "sha256": "baba146989cc6c9b2f5ca51fd3d8de13ebf087d603044b5cba65b4016cec0def",
+          "bytes": 269
+        },
+        "audit.py": {
+          "sha256": "2770297df36bce2d590ee3f8ee5ef6dbf1b451f7d842a3624b7ae2ac3350c56c",
+          "bytes": 2352
+        },
+        "audit.log": {
+          "sha256": "243ce60e2e55ede8e00a6d64f1e7a6ee753014f27a52277d3932355a21571938",
+          "bytes": 736
+        }
+      }
+    },
+    "nativeRetention": {
+      "privateRoot": "~/.local/share/fogd-qualifications/native-retention-v8-20261029-01",
+      "audit": {
+        "passed": true,
+        "family": "celld-approval-v8-linux-arm64",
+        "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+        "archivedSourcesRehashed": 1013,
+        "snapshotMembersRehashed": 10,
+        "activeArtifactDigestsIndependentlyRecomputed": 2,
+        "terminalArtifactsPruned": 2,
+        "logicalArtifactBytesReclaimed": 3835602,
+        "authenticatedHistoryRowsPreserved": 4,
+        "explicitPinProtectsOldArtifact": true,
+        "stalePlanRefusedBeforeDeletion": true,
+        "activeAppRowsSurvivePruneAndRestart": true,
+        "unapprovedRejectedRouteStaysAbsent": true,
+        "physicalTerminalBytesAbsentInStoppedContainerAndSnapshot": true,
+        "pruneReceiptAndHistorySurviveStoppedSnapshot": true,
+        "newPinnedContainersStopped": 8,
+        "preExistingContainerIdentitiesAndStatesPreserved": 56,
+        "preExistingVolumeIdentitiesPreserved": 77,
+        "privacyScanVerified": true,
+        "scope": "Read-only finalization of completed v8 native pruning, two-app HTTP/D1 data, pins/stale refusal, retained restart and stopped snapshot. The original native driver reached all effects and stopped its owned stack, then its generic privacy observer required an application-secret field absent from this fixture. That driver remains failed; this finalizer validates retained outputs, known credential values and absence of any complete fogd builder-token format without replaying native effects. No fresh restore, received installation or full-family admission.",
+        "fullFamilyQualification": false
+      },
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "3f5eea7721df184ce9eeb8e0ad032047b7e209e92ec244559508721f7b3576f7",
+          "bytes": 155575
+        },
+        "independent-audit.json": {
+          "sha256": "b33034255f8fc3c56f6279f8caf805306763d5950c583ee447ea3bee961b1a1e",
+          "bytes": 1470
+        },
+        "executed-source-inventory.json": {
+          "sha256": "f11ec16419dad89f00000665de8a3219c7cde85272cbdde9faf9fa06bbe6c14d",
+          "bytes": 118890
+        },
+        "runner.mjs": {
+          "sha256": "db1b07813e9f81b896ff86d6641c81b124e14f5fcbcc565abe06f39a3c579c73",
+          "bytes": 6304
+        },
+        "post-write-privacy.json": {
+          "sha256": "bcb6b53a5edccb40fbbab6ab0eeefa44cb20b8eb2e4b1d10d710aefa5850fff1",
+          "bytes": 271
+        },
+        "failure.json": {
+          "sha256": "6d582385c59ed0c68eb72e23a5d5afcb162125b65e9a38998e3fa1c1de7498bc",
+          "bytes": 34301
+        },
+        "independent-source-stability.json": {
+          "sha256": "59a03c7979b20c039305a43b1d28c656267fd562403428239a71208ade19e485",
+          "bytes": 105
+        },
+        "native.log": {
+          "sha256": "b147fb4f772ec7055208d60e507d299441d028d5fd05491773a6313510325152",
+          "bytes": 943
+        },
+        "finalizer.py": {
+          "sha256": "5dce73cac8f8dc08bfd815eed614bbc48f58f5322b7310f55af4a267d126f5ba",
+          "bytes": 3137
+        },
+        "finalizer.log": {
+          "sha256": "646cbd53b474071dd275acafa27efa67621002b164ad043adcf9ad6c54bdc835",
+          "bytes": 70
+        },
+        "audit.py": {
+          "sha256": "2599fd4fdd2f9cc862f7ab9b958306ced5c1f5cfcfa19ab0c8c5110da419da21",
+          "bytes": 5438
+        },
+        "audit.log": {
+          "sha256": "28cc6936104b051514997968b551ffba06c51b8e518c4ec6ac30c3bde790f20c",
+          "bytes": 1426
+        }
+      },
+      "originalDriverPassed": false,
+      "readOnlyFinalizerAndIndependentAuditPassed": true
+    },
+    "v7Background": {
+      "privateRoot": "~/.local/share/fogd-qualifications/native-background-v7-20261029-01",
+      "audit": {
+        "passed": true,
+        "originalLifecycleDriverPassed": true,
+        "family": "celld-approval-v7-linux-arm64",
+        "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+        "archivedSourcesRehashed": 1012,
+        "snapshotMembersRehashed": 10,
+        "artifactDigestsIndependentlyRecomputed": 3,
+        "inertUnapprovedMinuteVerified": true,
+        "nativeNoRetryAcrossTwoOccurrencesVerified": true,
+        "originalOccurrenceRetryWithoutDuplicateBusinessRowsVerified": true,
+        "pausedControllerLossIntervalMs": 173625,
+        "httpAndDispatchSeparationVerified": true,
+        "heldCronAndQueueSnapshotVerified": true,
+        "durableDecisionHistoryRetained": 4,
+        "newPinnedContainersStopped": 8,
+        "privacyScanVerified": true,
+        "scope": "Fresh native queue and cron lifecycle on the selected durable candidate: inert scoped upload, exact secret approval, autonomous work, noRetry, compatible SQL/cadence update, original-occurrence retry, persisted pause and serving through controller loss, HTTP/dispatch separation and a verified stopped durable snapshot. No restore, retirement, owner-loss, terminal retry-ceiling, power-loss or complete family-admission qualification.",
+        "fullFamilyQualification": false,
+        "knownSeparateBlocker": "Completed decision history wrongly pins terminal artifact bytes in v7. Source correction and a new immutable runtime are required."
+      },
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "3f2c7b347323e76f980a64083b4af00e37639dbe97e196b61dc067a600f873ea",
+          "bytes": 560679
+        },
+        "independent-audit.json": {
+          "sha256": "f91e7d185dc9cae0a8b754f73abf20fa1417ddc923f836ee6e901aa5273fe628",
+          "bytes": 1356
+        },
+        "executed-source-inventory.json": {
+          "sha256": "763787504245a3305421f0af32beaee80d93d9e4d868591558a492d9f5ae38e8",
+          "bytes": 118545
+        },
+        "runner.mjs": {
+          "sha256": "f9ef18e13298e0cfa5ef137f7cfae663856dfcea273c6bbca594cdbb279aa2ef",
+          "bytes": 4012
+        },
+        "post-write-privacy.json": {
+          "sha256": "95287464060c2f79b05063a94b86615b6a813dccc7ec79b234a55d9acbd0f5b7",
+          "bytes": 1779
+        },
+        "initial-audit-failure.log": {
+          "sha256": "25ceb75947e2171cbeddf73c2036c1d8c9e0e76dab2400578328694bfa543dd2",
+          "bytes": 250
+        },
+        "native.log": {
+          "sha256": "0159e42971c0794adbd675a0aa69bf5b59eaf4928e43bc779f796afec1c860a0",
+          "bytes": 1487
+        },
+        "audit.py": {
+          "sha256": "5286f7f69ca71d8fa0c458bbcfdacb260562f5e8b0003ac091dfa0178685b385",
+          "bytes": 5319
+        },
+        "audit.log": {
+          "sha256": "693ecca51e92d1c4f10bbefb38c7f7e7715daef4eb7d17c4e1e3aac17f53d9b5",
+          "bytes": 1316
+        }
+      }
+    },
+    "v7Diagnostics": {
+      "privateRoot": "~/.local/share/fogd-qualifications/native-diagnostics-v7-20261029-01",
+      "audit": {
+        "passed": true,
+        "family": "celld-approval-v7-linux-arm64",
+        "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+        "archivedSourcesRehashed": 1012,
+        "artifactDigestsIndependentlyRecomputed": 3,
+        "authenticatedDecisionRowsVerified": 3,
+        "failedHandlerReadinessDistinctFromHTTPOutcome": true,
+        "unavailableReplicaReportedUncertain": true,
+        "correctedHandlerAndPinnedSecretRevisionVerified": true,
+        "pausedRoutingMakesNoRequest": true,
+        "controllerLossServesBothAppsWithUncertainReadiness": true,
+        "privateLogCaptureCases": 6,
+        "privateCaptureFilesRehashed": 24,
+        "selectedSecretPresentOnlyInItsPrivateCapture": true,
+        "otherAppSecretAbsent": true,
+        "terminalManifestsAndReceiptWithholdSecrets": true,
+        "logDirectoryAndFileModesVerified": true,
+        "bothAppRecordsRetained": true,
+        "newPinnedContainersStopped": 8,
+        "scope": "Fresh selected durable-family Docker-owner diagnostics: failing/corrected handlers, private process-log capture with distinct private configuration, unavailable replicas, paused routing and controller-loss serving. Raw logs are deliberately unredacted private operator data. No developer log API, application-health inference or full runtime-family qualification."
+      },
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "459c9bb6f0d706ef4877846cc555c8b7100382110458e07e8331ad86338cc1d5",
+          "bytes": 157344
+        },
+        "independent-audit.json": {
+          "sha256": "95ba96afeda289cf078d7c0d4362bd5930ac1148be25fa97e1e7ddc4731e45bf",
+          "bytes": 1241
+        },
+        "executed-source-inventory.json": {
+          "sha256": "763787504245a3305421f0af32beaee80d93d9e4d868591558a492d9f5ae38e8",
+          "bytes": 118545
+        },
+        "runner.mjs": {
+          "sha256": "f9a17ba0d882a6f397e2d0e9125e52192b9e2798a79052315f997fe72f263c75",
+          "bytes": 6733
+        },
+        "native.log": {
+          "sha256": "04183eab7100dd99eeb32baf98adf7fbc9fc4ff103c99e077ee052ae20541486",
+          "bytes": 189
+        },
+        "audit.py": {
+          "sha256": "de7ad83acedd5a30b5ffd112de22d3f797ffe4244c6c927e03fa9716eae67744",
+          "bytes": 4948
+        },
+        "audit.log": {
+          "sha256": "b9bffee69b5d7e8b9e061689262d5cb65a05ba39df91305643209ea0bf06ef09",
+          "bytes": 1199
+        }
+      }
+    },
+    "inheritedEvidence": {
+      "privateRoot": "~/.local/share/fogd-qualifications/inheritance-v7-20261029-01",
+      "audit": {
+        "passed": true,
+        "scope": "Read-only evidence reuse map: unchanged v5 native/gateway/scheduler mechanisms and identical v6 executable bodies, with separate direct v7 checks for changed approval, decision metadata, received installation, recovery and retirement. This is not a fresh failure, performance or native build run; main admission remains closed.",
+        "family": "celld-approval-v7-linux-arm64",
+        "image": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",
+        "unchangedNativeBinarySupervisorStorage": true,
+        "actualImageLayersRetainParents": true,
+        "v6ToV7OnlyPackageMetadataChanged": true,
+        "currentProgramInputsVerified": 117,
+        "inheritedV5": {
+          "receipts": 26,
+          "privateMembersRehashed": 362,
+          "archivedSourcesRehashed": 17359,
+          "auditSha256": "04cf54028b76edd75dc2c1115e3c7390cf072a62fc022f8c4abee631e6b30992"
+        },
+        "noArchivedProgramsOrTracersExecuted": true,
+        "mainAdmission": "candidate"
+      },
+      "privateEvidenceFingerprints": {
+        "result.json": {
+          "sha256": "5ad4c66bd94d81d036036d5d5004465992a291f5f35a8d397590046df8385a57",
+          "bytes": 18389
+        },
+        "audit.py": {
+          "sha256": "a455c0e7867c6fe98648bbfbd61338022718fd3bc1b739848d5bc00a0f0f8429",
+          "bytes": 5350
+        },
+        "image-ancestry.json": {
+          "sha256": "8430b0162999d40498e12578fa18238dbb6da0374d890bd0b7046097518285ef",
+          "bytes": 7116
+        },
+        "inherited-v5-inputs.json": {
+          "sha256": "04cf54028b76edd75dc2c1115e3c7390cf072a62fc022f8c4abee631e6b30992",
+          "bytes": 9007
+        },
+        "initial-audit-failure.log": {
+          "sha256": "5f51deb12d0410bbfab90120acada66be1e1e45aa4ea07fe60fb87c2b23d56c9",
+          "bytes": 327
+        },
+        "audit.log": {
+          "sha256": "cb906ab373d999f97e2b36b43952139e586c6cb0f16869c3fb5c67c2d5d6d33c",
+          "bytes": 189
+        }
+      }
+    }
+  },
+  "fixEvidenceRoot": "~/.local/share/fogd-qualifications/decision-retention-fix-20261029-01",
+  "fixEvidenceFingerprints": {
+    "canonical.log": {
+      "sha256": "8abe395a6570e02cd40f39878592888edef06af909d1046e6951fcbe3e91b839",
+      "bytes": 257553
+    },
+    "catalog.log": {
+      "sha256": "4b002fd70fdd8da3bc9f45d2f0bbf85d76ae523c5665eef58816d38ff357c96c",
+      "bytes": 1283
+    },
+    "focused-green.log": {
+      "sha256": "80dcd7f9ac26d213b9bc586dc1a726ca0bd1025586b10db1818fb860af63f16c",
+      "bytes": 6086
+    },
+    "native-v7-reproduction.json": {
+      "sha256": "9b63e9c5431628b4f65cf8acc1b133524b3758dad71758a62d9198843b7ce192",
+      "bytes": 1995
+    },
+    "packages/cli/src/runtime/catalog.json": {
+      "sha256": "4e3f090ca08fa357c732664176dde6674c306bd44b8cf6f02ebc13b4ad327573",
+      "bytes": 104812
+    },
+    "packages/cli/test/runtime-catalog-durable.test.mjs": {
+      "sha256": "66d31b483d6b3d79df1248c247cd17a59b66c3c66ac14c9f3fb46ef5e2451edb",
+      "bytes": 7924
+    },
+    "packages/platform/src/artifact-retention.mjs": {
+      "sha256": "5f486e38ede3f4118dde2f0a8481cf3bb174e9d32dd0190496f5597228e1cf09",
+      "bytes": 6955
+    },
+    "packages/platform/test/decision-artifact-retention.test.mjs": {
+      "sha256": "13448c6f9e1f0b58f09044f9772299b98622e5e25a5a7c50561fc51621991869",
+      "bytes": 4649
+    },
+    "quality.log": {
+      "sha256": "53c75ff5549f89eafb5ce78c899a40b11600203a5379622d9ff2b5fd7ef90646",
+      "bytes": 1670
+    },
+    "regression-red.log": {
+      "sha256": "bd8ac63f44534d0328b0e97b81eb14a02e38033d95e9cb7fc3060ef6260c4b04",
+      "bytes": 3226
+    },
+    "scripts/operator/diagnostics.mjs": {
+      "sha256": "f9a17ba0d882a6f397e2d0e9125e52192b9e2798a79052315f997fe72f263c75",
+      "bytes": 6733
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "temp-path-failures.log": {
+      "sha256": "96aec2a3b6641535aecfcbb5fd312a44734afd82446185e7eef6de1815c5a3c7",
+      "bytes": 98764
+    },
+    "unaccepted-temp-worktree-suite.log": {
+      "sha256": "240450c1acf2e3b588eda36be8117a3b9cef539cb8be420d0211e72766e98ca4",
+      "bytes": 354193
+    },
+    "review.md": {
+      "sha256": "ec7a2aa13fbf8fecfe6bb8758553ed6f1bdd02fb56e512a543c3c124714267cd",
+      "bytes": 3879
+    },
+    "artifacts-writing.log": {
+      "sha256": "64a36423d82b9d187f12e628182f912eee475413b6d204305ec738c3315a5f70",
+      "bytes": 3308
+    },
+    "history-writing.log": {
+      "sha256": "94daf8e152b8db6b54f34a255f8244b62819cae38970c60fad07de3e5757ca23",
+      "bytes": 3065
+    },
+    "runtime-writing.log": {
+      "sha256": "7814bde74c8362ee7426c9f78ca38a0ea162fe08d0a2952db2bb2096ddf8e2aa",
+      "bytes": 12656
+    },
+    "roadmap-writing.log": {
+      "sha256": "89b4d348ecb312ab43a3647af6bca467eacdd72d764a071287806f571e063cb9",
+      "bytes": 137
+    },
+    "review-writing.log": {
+      "sha256": "8a404d121f63ee40a6d0946d6da32ae06e809215c0c25b4a7de0d35818b43179",
+      "bytes": 158
+    }
+  },
+  "limits": [
+    "The original v8 native driver completed prune/restart/backup/shutdown, then failed because the generic privacy observer expected an unused application-secret field. Read-only finalization checks known credential values and absence of every full builder-token format, and independent audit verifies actual state/snapshot. The failed driver stays unaccepted; native effects are not replayed.",
+    "V7 remains closed because its immutable image lacks the retention correction. V8 is also a closed candidate; full admission and received/versioned installation of this exact successor remain separate gates.",
+    "Native v8 covers pruning, HTTP/D1 data, restart and a stopped snapshot; a fresh v8 restore of the combined pruning/history metadata is not claimed here.",
+    "V7 background and diagnostics audits remain bounded evidence for the recorded v7 image. The inheritance map is read-only reuse evidence, not fresh native failure or performance testing.",
+    "The first isolated full-suite run failed because macOS canonicalizes /tmp to /private/tmp and existing stack-privacy tests reject the word private. It remains unaccepted. The final suite runs from the normal checkout with assertions unchanged.",
+    "The initial v8 packaging attempt stopped before building because source inventory encountered dependency symlinks in the isolated checkout. The successful attempt supplies a process-local Git exclusion for those dependency links. No failed attempt is reported as passing.",
+    "The initial background and inheritance audit readers used incorrect receipt-field names. Their failures are retained; corrected independent audits verify the actual stored fields without repeating native effects.",
+    "Guide/status text is edited after the executed source archives. The listed executable and test inputs match the native v8 archive.",
+    "No existing user installations or user-installation migrations. QA stacks and their data remain retained. Global Docker context stays unchanged.",
+    "Private cached-parent COPY-only packaging; no native rebuild, dependency install, registry publication, download publication or official versioned release.",
+    "No per-worker CPU quota, broad density, separate physical machine, power-loss or exactly-once external-effect claim. No external review approval is inferred."
+  ]
+}

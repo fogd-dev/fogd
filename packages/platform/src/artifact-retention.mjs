@@ -3,6 +3,7 @@ import { appName } from '@fogd/runtime/artifact';
 import { artifactInventory } from './artifact-inventory.mjs';
 import { validateArtifactPins } from './artifact-pins.mjs';
 import { validateArtifactPruning } from './artifact-prune-state.mjs';
+import { validateDecisionHistory } from './decision-history.mjs';
 
 const POLICY = 'fogd-terminal-artifact-retention-v1';
 const REASONS = ['active', 'unfinished', 'retired', 'unknown-status', 'operator-pin', 'controller-reference', 'deployment-reference', 'unreferenced', 'digest-mismatch', 'invalid-deployment', 'pruned'];
@@ -90,12 +91,15 @@ function decide(records, deployments, inventory, controllerReferences) {
 export function artifactRetentionDecision(state, inventory) {
   // Pins are explicit roots, so the pin map itself is not a generic controller reference; validated
   // pruning control metadata is not one either, or a journal would protect its own targets.
-  const { deployments, artifactPins, artifactPruning, ...metadata } = usableState(state);
+  // Validated decision history survives without artifact bytes; unfinished decisions remain roots.
+  const { deployments, artifactPins, artifactPruning, decisions, ...metadata } = usableState(state);
   const pins = validateArtifactPins(state);
   validateArtifactPruning(state);
+  validateDecisionHistory(state);
   const rows = new Map(inventory.map(row => [row.id, row]));
   const records = new Map(Object.keys(deployments).sort().map(id => [id, describeRecord(id, deployments[id], rows.get(id), pins)]));
   const controllerReferences = referencedStrings(metadata);
+  for (const entry of decisions || []) if (['started', 'unconfirmed'].includes(entry.outcome)) controllerReferences.add(entry.deployment);
   protectReferences(records, deployments, controllerReferences);
   const decision = decide(records, deployments, inventory, controllerReferences);
   const retainedArtifactBytes = inventory.reduce((sum, row) => sum + row.bytes, 0);
@@ -108,6 +112,6 @@ export function artifactRetentionDecision(state, inventory) {
 
 // Read-only preview. The plan hash binds this view and every physical file hash; it is not a lease.
 export async function planArtifactRetention(state, artifactDirectory) {
-  usableState(state); validateArtifactPins(state); validateArtifactPruning(state);
+  usableState(state); validateArtifactPins(state); validateArtifactPruning(state); validateDecisionHistory(state);
   return artifactRetentionDecision(state, await artifactInventory(artifactDirectory));
 }

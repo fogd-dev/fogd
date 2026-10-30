@@ -3,9 +3,10 @@
 Controller artifact retention lets owners keep exact releases, review unreferenced
 terminal artifacts, and explicitly reclaim their bytes. These commands are
 implemented in source and require matching CLI/server support for
-`/v1/admin/artifacts`. The
-frozen catalog family does not provide this endpoint; a new runtime still needs
-qualification before ordinary installation.
+`/v1/admin/artifacts`. The qualified v5 family provides baseline artifact retention.
+The source correction for retention alongside decision history is packaged in the
+closed [v8 candidate](evidence/operator-approval-v8-candidate.json); that successor
+still requires qualification before ordinary installation.
 
 The [native candidate drill](evidence/operator-native-artifact-retention.json)
 covers quota refusal, exact operator pins, stale-plan refusal, interrupted pruning,
@@ -47,6 +48,10 @@ MinIO objects, host build copies or backup size. Preview leaves controller state
 quota accounting and artifacts intact. Links and special files cause a fixed
 inventory refusal instead of a partial estimate.
 Reference matching uses exact deployment IDs as string values or object keys.
+Validated completed administrator decisions retain their metadata without pinning
+artifact bytes. `started` and `unconfirmed` decisions still protect their exact
+artifact. Malformed or missing required history refuses planning. Explicit pins,
+live operations and recovery references retain their existing protections.
 
 The planner shares the controller's mutation queue with approval and upload. It
 waits for earlier queued operations to finish. External filesystem writers are

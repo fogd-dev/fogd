@@ -63,7 +63,7 @@ try {
   evidence.privacy = await scanPublicSurfaces(host, f.request, f.submissions, f.tokens.builder, Object.values(f.secrets), evidence);
   phase = 'retained-shutdown'; evidence.shutdown = await stopSelectedHost(host); complete = true;
   assert.deepEqual(await sourceInventory(), sources); assert.deepEqual(await sourceState(), provenance);
-  await save('result.json', { scope: 'Fresh v5 Docker-owner diagnostics: failing/corrected handlers, private process-log capture with distinct private configuration, unavailable replicas, paused routing and controller-loss serving. Raw logs are deliberately unredacted private operator data. No developer log API, application-health inference or full runtime-family qualification.', family: host.entry.id, image: host.entry.image, sourcePolicy: host.policy, provenance, sources, project: host.project, evidence });
+  await save('result.json', { scope: 'Fresh selected durable-family Docker-owner diagnostics: failing/corrected handlers, private process-log capture with distinct private configuration, unavailable replicas, paused routing and controller-loss serving. Raw logs are deliberately unredacted private operator data. No developer log API, application-health inference or full runtime-family qualification.', family: host.entry.id, image: host.entry.image, sourcePolicy: host.policy, provenance, sources, project: host.project, evidence });
   // The captured streams and runtime.log intentionally contain app secrets. Only
   // diagnostic reports, artifacts, ordinary surfaces and this receipt are public-safe.
   console.log('PASS-native-diagnostics');

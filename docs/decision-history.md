@@ -38,6 +38,11 @@ by another approval request. On restart, unfinished intents become unconfirmed.
 Decision metadata carries a required platform capability so older readers refuse
 it instead of silently discarding history. History remains in controller metadata
 when artifact bytes are pruned; it has no automatic truncation policy.
+The source retention planner validates history before excluding completed records
+from artifact protection. Started or unconfirmed decisions still retain their
+artifact bytes. The [v8 candidate check](evidence/operator-approval-v8-candidate.json)
+verifies native pruning with retained history and active app data after restart.
+The earlier v7 image pins completed decisions' artifacts and remains closed.
 
 The current operator CLI validates history before backup and restore, preserves
 the saved rows and requires a runtime that understands their capability. Missing,
