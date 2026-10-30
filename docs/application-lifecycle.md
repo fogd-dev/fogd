@@ -54,6 +54,21 @@ without Docker, and verifies all 117 image source pins. It executes no new nativ
 retirement. The
 [retirement guide](retirement.md) supplies the operator commands.
 
+## Archive protocol implementation in progress
+
+The source-only [archive state protocol](../packages/platform/src/app-archive.mjs)
+projects a verified app into a name-reserving archive, then restores that same app
+into unassigned capacity behind a pending recovery gate. It binds the retained
+snapshot, release, fleet namespace, native identities and storage origin. It keeps
+current credential records, unrelated apps, release history and artifact references.
+Queued and scheduled metadata retain their paused receipts for later reconciliation.
+
+This projection does not stop writers, copy native data or change route authority.
+No CLI, controller startup path or shipped runtime admits the new capability.
+Existing runtimes reject it. The filesystem coordinator, route publication,
+secret-vault checks, background recovery/rebinding, explicit approval and native
+archive/reuse/restore acceptance remain to be implemented before operator use.
+
 ## Remaining archive protocol
 
 Archive support needs a separate immutable runtime and native acceptance before
