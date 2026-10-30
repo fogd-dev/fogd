@@ -836,7 +836,7 @@
   {
     "schema": 2,
     "id": "celld-approval-v8-linux-arm64",
-    "admission": "candidate",
+    "admission": "qualified",
     "os": "linux",
     "architecture": "arm64",
     "parentImage": "sha256:7bf8f57ea86b66129a6de68e7d33add6c39c5032c139ecd361367e7691ff0fce",

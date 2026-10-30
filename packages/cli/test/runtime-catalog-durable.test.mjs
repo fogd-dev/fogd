@@ -102,12 +102,12 @@ test('cross-mode and mismatched authorization refuses', () => {
   assert.throws(() => authorizePolicyEntry(durablePolicy(), { ...durableEntry(), routing: 'legacy' }), /Invalid shipped runtime family/);
 });
 
-test('v8 fixes terminal artifact retention while preserving native pins and closed admission', () => {
+test('v8 fixes terminal artifact retention with explicit admission and unchanged native pins', () => {
   const next = runtimeFamily('celld-approval-v8-linux-arm64', 'enrolled');
   const previous = runtimeFamily('celld-approval-v7-linux-arm64', 'enrolled');
-  assert.equal(next.admission, 'candidate'); assert.equal(next.routing, 'durable');
+  assert.equal(next.admission, 'qualified'); assert.equal(next.routing, 'durable');
   assert.equal(next.parentImage, previous.image); assert.notEqual(next.image, previous.image);
   assert.deepEqual(Object.keys(next.sourceFiles).filter(path => next.sourceFiles[path] !== previous.sourceFiles[path]), ['packages/platform/src/artifact-retention.mjs']);
   for (const key of ['storageImage', 'binarySha256', 'supervisorSha256']) assert.equal(next[key], previous[key]);
-  assert.throws(() => runtimeFamily(next.id), /ordinary enrollment remains closed/);
+  assert.deepEqual(runtimeFamily(next.id), next);
 });

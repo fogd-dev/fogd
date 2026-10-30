@@ -86,6 +86,11 @@ Platform dependencies remain source-linked in [compat.md](compat.md).
 | Resource limits | Partial; containers, heap, cells, body size, retained artifacts, pending requests, concurrent uploads; per-worker `cpu_ms` is not mapped by fogd and top-level `limits` is rejected by pinned celld | Runtime limits | Runtime/embedder controls | Target-platform limits | Yes; plan/runtime limits |
 | Automatic schema rollback | No | No fogd rollback mechanism | No deployment migration runner | Not audited | Not audited |
 
+Qualified [v8 installations](operator-v8-acceptance.md) provide
+[verified browser comparisons](browser-release-review.md) and
+[attributed administrator decision history](decision-history.md). Terminal artifact
+pruning retains completed decision records; unfinished decisions keep their bytes.
+
 CPU configuration is excluded by fogd's [artifact allowlist](../packages/runtime/src/artifact.mjs)
 and the [pinned celld deploy allowlist](https://github.com/denoland/celld/blob/90b43017241f81189453d326d05948f388b34652/crates/celld/deploy.rs#L42).
 Runtime watchdog internals do not establish a supported Void configuration path.

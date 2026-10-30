@@ -1,11 +1,11 @@
 # Inspect administrator decision history
 
-The source controller records authenticated approval and rejection decisions and
-provides a read-only history page at `/admin/decisions`. Administrator Basic
-authentication is required. This implementation is part of
-[issue 7](https://github.com/fogd-dev/fogd/issues/7); the frozen v5 runtime and
-prepared `0.1.0` artifact do not contain it. A new runtime build and qualification
-are required before it becomes a qualified release capability.
+The qualified v8 controller records authenticated approval and rejection decisions
+and provides a read-only history page at `/admin/decisions`. Administrator Basic
+authentication is required. This implements
+[issue 7](https://github.com/fogd-dev/fogd/issues/7) within the
+[v8 acceptance boundary](operator-v8-acceptance.md). The frozen v5 runtime and
+prepared `0.1.0` artifact retain their earlier behavior.
 
 ## Read the records
 
@@ -40,7 +40,7 @@ it instead of silently discarding history. History remains in controller metadat
 when artifact bytes are pruned; it has no automatic truncation policy.
 The source retention planner validates history before excluding completed records
 from artifact protection. Started or unconfirmed decisions still retain their
-artifact bytes. The [v8 candidate check](evidence/operator-approval-v8-candidate.json)
+artifact bytes. The [v8 native check](evidence/operator-approval-v8-candidate.json)
 verifies native pruning with retained history and active app data after restart.
 The earlier v7 image pins completed decisions' artifacts and remains closed.
 
@@ -57,13 +57,14 @@ not qualify background restore or ordinary admission of the candidate family.
 Separate [background restore evidence](evidence/operator-native-background-recovery-v6.json)
 now covers a paused v6 cron/queue snapshot on fresh volumes, retained decision
 history, explicit recovery acknowledgment and separate live resumes. This bounded
-same-family check does not open v7 admission.
+same-family check leaves v7 admission closed. V8 qualification records its
+evidence reuse and limits separately in the acceptance audit.
 The [v7 retirement check](evidence/operator-native-retirement-history-v7.json)
 preserves three earlier decisions, records a refused retired-release approval and
 a successful replacement approval, and retains all five rows in a stopped
 snapshot. Replacement storage starts empty while retired-prefix bytes and survivor
 data remain preserved. This checks HTTP/D1 retirement on a private QA fixture;
-full family acceptance remains open.
+v7 admission remains closed.
 
 ## Query the authenticated feed
 
@@ -89,6 +90,7 @@ credential identity.
 [Source integration evidence](evidence/operator-decision-history-source.json)
 covers durable intent, attributed outcomes, interrupted final persistence,
 restart without replay and a headless browser. It uses a controlled in-process
-backend and does not qualify native runtime behavior. The [verified browser comparison](browser-release-review.md) and contextual
-decision controls are implemented in source; new runtime qualification remains
-open under issue 7.
+backend and does not qualify native runtime behavior. The
+[verified browser comparison](browser-release-review.md) and contextual decision
+controls are included in qualified v8; the acceptance audit connects their native
+evidence to that immutable image.

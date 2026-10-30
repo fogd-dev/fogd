@@ -5,8 +5,9 @@ terminal artifacts, and explicitly reclaim their bytes. These commands are
 implemented in source and require matching CLI/server support for
 `/v1/admin/artifacts`. The qualified v5 family provides baseline artifact retention.
 The source correction for retention alongside decision history is packaged in the
-closed [v8 candidate](evidence/operator-approval-v8-candidate.json); that successor
-still requires qualification before ordinary installation.
+qualified [v8 family](operator-v8-acceptance.md). Its
+[native check](evidence/operator-approval-v8-candidate.json) records the correction
+and retained restart/snapshot results.
 
 The [native candidate drill](evidence/operator-native-artifact-retention.json)
 covers quota refusal, exact operator pins, stale-plan refusal, interrupted pruning,

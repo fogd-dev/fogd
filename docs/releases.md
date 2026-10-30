@@ -8,12 +8,12 @@ be distributed separately to developers without Docker or operator images.
 Release verification requires Node.js 24.21.0 or later and an independently retained
 manifest SHA256. Runtime import additionally requires a Linux arm64 Docker engine with the
 classic `overlay2` image store, Docker Compose, `tar` and `sha256sum`. The selected
-[runtime boundary](https://github.com/fogd-dev/fogd/blob/main/docs/operator-v5-acceptance.md) still applies. Application builders
+[runtime boundary](https://github.com/fogd-dev/fogd/blob/main/docs/operator-v8-acceptance.md) still applies. Application builders
 provide their own Void/Vite dependencies; the release is not an application SDK.
 
-The [empty-engine onboarding check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-versioned-release.json) uses
-three virtual CPUs, 8 GiB RAM and a 24 GiB data disk. This is a tested fixture, not
-a minimum-size or capacity guarantee. The artifact occupies about 923 MB before
+The [empty-engine onboarding check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-v8-versioned-pruned-recovery.json) uses
+three virtual CPUs, 6 GiB RAM and a 16 GiB data disk. This is a tested fixture, not
+a minimum-size or capacity guarantee. The artifact occupies about 924 MB before
 import; Docker images, temporary verified copies and application data need
 additional space. Container CPU budgets are not per-worker CPU quotas.
 
@@ -23,8 +23,8 @@ From the matching source checkout, with the qualified images and declared operat
 dependency available:
 
 ```sh
-node packages/cli/bin/fogd.js release export /releases/fogd-0.1.0-linux-arm64 \
-  --version 0.1.0 --runtime celld-durable-v5-linux-arm64
+node packages/cli/bin/fogd.js release export /releases/fogd-0.2.0-linux-arm64 \
+  --version 0.2.0 --runtime celld-approval-v8-linux-arm64
 ```
 
 Versions have three numeric components. The release version identifies this
@@ -53,7 +53,7 @@ Use digests received independently from the trusted producer, not values read fr
 the received directory:
 
 ```sh
-export RELEASE=/downloads/fogd-0.1.0-linux-arm64
+export RELEASE=/downloads/fogd-0.2.0-linux-arm64
 export RELEASE_VERIFIER_SHA=INDEPENDENTLY_RETAINED_VERIFIER_SHA256
 export RELEASE_MANIFEST_SHA=INDEPENDENTLY_RETAINED_MANIFEST_SHA256
 printf '%s  %s\n' "$RELEASE_VERIFIER_SHA" "$RELEASE/verify-release.mjs" | sha256sum --check -
@@ -74,7 +74,7 @@ verification, use the runtime digest with the existing import command:
 ```sh
 export RUNTIME_MANIFEST_SHA=VERIFIED_RUNTIME_MANIFEST_SHA256
 node "$RELEASE/operator/program/packages/cli/bin/fogd.js" runtime import "$RELEASE/operator" \
-  --runtime celld-durable-v5-linux-arm64 --expected-manifest "$RUNTIME_MANIFEST_SHA" \
+  --runtime celld-approval-v8-linux-arm64 --expected-manifest "$RUNTIME_MANIFEST_SHA" \
   --output /opt/new-fogd
 ```
 

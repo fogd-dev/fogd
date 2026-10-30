@@ -43,15 +43,19 @@ deployment, exact update approval and data after restart. These are private QA
 checks on the same physical Mac. Full family acceptance remains open; there are
 no existing user installations to migrate.
 
-The `celld-approval-v8-linux-arm64` family is a closed successor candidate. It fixes
-completed decision records preventing terminal artifact reclamation while retaining
-unfinished decisions, pins and recovery references. The
-[candidate receipt](evidence/operator-approval-v8-candidate.json) records two matching
-private builds and audited native pruning, retained app data, history, restart and
-a stopped snapshot. It also records completed v7 background and diagnostics checks.
-Fresh v8 restore, received/versioned installation and final admission remain open.
-The v7 image and all earlier pins stay unchanged; ordinary v8 enrollment and export
-remain refused.
+The `celld-approval-v8-linux-arm64` family is qualified for explicit selection on
+fresh local Linux arm64 Docker within its [acceptance boundary](operator-v8-acceptance.md).
+It adds verified browser release comparisons, attributed administrator decisions
+and terminal artifact reclamation that retains history. Unfinished decisions,
+operator pins and recovery references remain protected. The
+[native candidate check](evidence/operator-approval-v8-candidate.json) records two
+matching private builds, pruning and retained restart/snapshot data. The
+[versioned fresh-install check](evidence/operator-v8-versioned-pruned-recovery.json)
+adds empty-engine import, received-client updates and fresh pruned-state recovery.
+The [admission receipt](evidence/operator-v8-admission.json) records the final
+qualified-catalog check. Earlier family pins stay unchanged; v6 and v7 remain
+closed. Default installations keep cron admission closed. No public release
+artifact or registry publication is implied by family qualification.
 
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller

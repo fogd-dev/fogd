@@ -1,0 +1,675 @@
+{
+  "schema": 1,
+  "kind": "operator-v8-bounded-admission",
+  "recordedAt": "2026-10-30T00:38:58.959740+00:00",
+  "sourceCommit": "71ed6ab62c7cd5354124e2057cdb40775b7b0aa8",
+  "executedTreeDirty": true,
+  "family": "celld-approval-v8-linux-arm64",
+  "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "ordinaryAdmission": "qualified-explicit-selection",
+  "defaultCronAdmission": "closed",
+  "qualified": true,
+  "scope": "Fresh local Linux arm64 classic-overlay2 Docker, two application fleets with two native nodes each, MinIO and workerd ingress. Verified browser release comparisons, attributed administrator decisions, history-preserving artifact cleanup and same-family stopped recovery. All qualification stacks are QA fixtures.",
+  "eligibility": {
+    "passed": true,
+    "recordedAt": "2026-10-30T00:21:22.466466+00:00",
+    "sourceCommit": "71ed6ab62c7cd5354124e2057cdb40775b7b0aa8",
+    "decision": "Eligible for explicit v8 ordinary admission within the existing fresh local Linux arm64 two-fleet boundary. Actual qualified-catalog public export/import/install/update/restart/recovery check remains required before released-family installation is declared complete.",
+    "family": "celld-approval-v8-linux-arm64",
+    "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+    "mainAdmissionAtAudit": "candidate",
+    "defaultCronAdmissionUnchanged": true,
+    "expectedQualifiedCatalogSha256": "d54ad9d2c591b2c426998545f49590c78a5a04367c4b252ef34c55f92f8f9a52",
+    "inheritedV5Receipts": 26,
+    "inheritedV5EvidenceMembersRehashed": 362,
+    "inheritedV5ArchivedSourcesRehashed": 17359,
+    "additionalProofs": [
+      {
+        "name": "packaging",
+        "root": "~/.local/share/fogd-qualifications/approval-runtime-v8-20261029-02",
+        "membersRehashed": 10
+      },
+      {
+        "name": "nativeRetention",
+        "root": "~/.local/share/fogd-qualifications/native-retention-v8-20261029-01",
+        "membersRehashed": 12
+      },
+      {
+        "name": "v7Background",
+        "root": "~/.local/share/fogd-qualifications/native-background-v7-20261029-01",
+        "membersRehashed": 9
+      },
+      {
+        "name": "v7Diagnostics",
+        "root": "~/.local/share/fogd-qualifications/native-diagnostics-v7-20261029-01",
+        "membersRehashed": 7
+      },
+      {
+        "name": "inheritedEvidence",
+        "root": "~/.local/share/fogd-qualifications/inheritance-v7-20261029-01",
+        "membersRehashed": 6
+      },
+      {
+        "name": "operator-native-browser-review-v6.evidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/native-browser-review-v6-20261029-02",
+        "membersRehashed": 31
+      },
+      {
+        "name": "operator-decision-history-recovery-v6.recoveryEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/native-review-recovery-v6-20261029-08",
+        "membersRehashed": 24
+      },
+      {
+        "name": "operator-decision-history-recovery-v6.backgroundEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/native-background-snapshot-v6-20261029-01",
+        "membersRehashed": 21
+      },
+      {
+        "name": "operator-approval-v7-candidate.packagingEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/approval-runtime-v7-20261029-01",
+        "membersRehashed": 18
+      },
+      {
+        "name": "operator-approval-v7-candidate.nativeEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/native-approval-v7-20261029-02",
+        "membersRehashed": 17
+      },
+      {
+        "name": "operator-native-background-recovery-v6.evidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/native-background-recovery-v6-20261029-01",
+        "membersRehashed": 16
+      },
+      {
+        "name": "operator-v7-received-rehearsal.privateEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/approval-v7-received-20261029-01",
+        "membersRehashed": 21
+      },
+      {
+        "name": "operator-native-retirement-history-v7.privateEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/retirement-history-v7-20261029-03",
+        "membersRehashed": 11
+      },
+      {
+        "name": "operator-v7-versioned-onboarding.privateEvidenceFingerprints",
+        "root": "~/.local/share/fogd-qualifications/versioned-onboarding-v7-20261029-01",
+        "membersRehashed": 10
+      },
+      {
+        "name": "operator-v7-versioned-onboarding.privateBuildFingerprints",
+        "root": "~/.local/share/fogd-qualifications/private-release-v7-20261029-01",
+        "membersRehashed": 3
+      }
+    ],
+    "additionalArchivedSourcesRehashed": 11118,
+    "unchangedV5ProgramInputs": [
+      "packages/platform/src/activation.mjs",
+      "packages/platform/src/admin-artifact-pruning.mjs",
+      "packages/platform/src/admin-artifacts.mjs",
+      "packages/platform/src/admin-capacity.mjs",
+      "packages/platform/src/admin-control-script.mjs",
+      "packages/platform/src/admin-credentials.mjs",
+      "packages/platform/src/admin-delivery.mjs",
+      "packages/platform/src/admin-dispatch.mjs",
+      "packages/platform/src/admin-html.mjs",
+      "packages/platform/src/admin-ingress.mjs",
+      "packages/platform/src/admin-routing-page.mjs",
+      "packages/platform/src/admin-routing-recovery.mjs",
+      "packages/platform/src/admin-routing.mjs",
+      "packages/platform/src/admin-secrets.mjs",
+      "packages/platform/src/artifact-inventory.mjs",
+      "packages/platform/src/artifact-pins.mjs",
+      "packages/platform/src/artifact-prune-files.mjs",
+      "packages/platform/src/artifact-prune-manifest.mjs",
+      "packages/platform/src/artifact-prune-state.mjs",
+      "packages/platform/src/artifact-prune.mjs",
+      "packages/platform/src/atomic-file.mjs",
+      "packages/platform/src/backend-runtime-identity.mjs",
+      "packages/platform/src/backend.mjs",
+      "packages/platform/src/background-history.mjs",
+      "packages/platform/src/capacity.mjs",
+      "packages/platform/src/claims.mjs",
+      "packages/platform/src/controller-routes.mjs",
+      "packages/platform/src/controller-service.mjs",
+      "packages/platform/src/credentials.mjs",
+      "packages/platform/src/cron-activation.mjs",
+      "packages/platform/src/cron-dispatch.mjs",
+      "packages/platform/src/cron-history.mjs",
+      "packages/platform/src/cron-recovery.mjs",
+      "packages/platform/src/cron-retirement.mjs",
+      "packages/platform/src/cron-runtime.mjs",
+      "packages/platform/src/cron-snapshot.mjs",
+      "packages/platform/src/delivery.mjs",
+      "packages/platform/src/deployment-http.mjs",
+      "packages/platform/src/deployment-status.mjs",
+      "packages/platform/src/dispatch-control.mjs",
+      "packages/platform/src/durable-startup.mjs",
+      "packages/platform/src/fresh-route-enrollment.mjs",
+      "packages/platform/src/import-fresh-runtime-policy.mjs",
+      "packages/platform/src/import-restored-routes.mjs",
+      "packages/platform/src/import-retired-routes.mjs",
+      "packages/platform/src/import-route-enrollment.mjs",
+      "packages/platform/src/import-runtime-policy.mjs",
+      "packages/platform/src/main-durable.mjs",
+      "packages/platform/src/main.mjs",
+      "packages/platform/src/queue-activation.mjs",
+      "packages/platform/src/queue-history.mjs",
+      "packages/platform/src/queue-recovery.mjs",
+      "packages/platform/src/queue-replacement.mjs",
+      "packages/platform/src/queue-retirement.mjs",
+      "packages/platform/src/queue-runtime.mjs",
+      "packages/platform/src/queue-snapshot.mjs",
+      "packages/platform/src/quota.mjs",
+      "packages/platform/src/recovery-review.mjs",
+      "packages/platform/src/resources.mjs",
+      "packages/platform/src/route-enrollment.mjs",
+      "packages/platform/src/route-initialize.mjs",
+      "packages/platform/src/route-preflight.mjs",
+      "packages/platform/src/route-publication.mjs",
+      "packages/platform/src/route-record-store.mjs",
+      "packages/platform/src/route-restoration-plan.mjs",
+      "packages/platform/src/route-restoration.mjs",
+      "packages/platform/src/route-retirement-restoration.mjs",
+      "packages/platform/src/route-retirement.mjs",
+      "packages/platform/src/route-runtime.mjs",
+      "packages/platform/src/route-snapshot.mjs",
+      "packages/platform/src/runtime-identity-proof.mjs",
+      "packages/platform/src/runtime-identity.mjs",
+      "packages/platform/src/runtime-policy-file.mjs",
+      "packages/platform/src/runtime-policy.mjs",
+      "packages/platform/src/secrets.mjs",
+      "packages/platform/src/security.mjs",
+      "packages/platform/src/startup-routing.mjs",
+      "packages/platform/src/startup.mjs",
+      "packages/platform/src/store.mjs",
+      "packages/runtime/package.json",
+      "packages/runtime/src/artifact.mjs",
+      "packages/runtime/src/assets.mjs",
+      "packages/runtime/src/bucket.mjs",
+      "packages/runtime/src/crons.mjs",
+      "packages/runtime/src/deployment.mjs",
+      "packages/runtime/src/files.mjs",
+      "packages/runtime/src/gateway-authority.mjs",
+      "packages/runtime/src/gateway-durable-config.mjs",
+      "packages/runtime/src/gateway-durable-program.mjs",
+      "packages/runtime/src/gateway-durable.js",
+      "packages/runtime/src/gateway-executable.mjs",
+      "packages/runtime/src/gateway-forward.mjs",
+      "packages/runtime/src/gateway-launch-policy.mjs",
+      "packages/runtime/src/gateway-process.mjs",
+      "packages/runtime/src/gateway.js",
+      "packages/runtime/src/import-tls.mjs",
+      "packages/runtime/src/init-bucket.mjs",
+      "packages/runtime/src/manifest.mjs",
+      "packages/runtime/src/queues.mjs",
+      "packages/runtime/src/route-record.mjs",
+      "packages/runtime/src/serve-durable.mjs",
+      "packages/runtime/src/serve.mjs",
+      "packages/runtime/src/transport.mjs"
+    ],
+    "changedV5ProgramInputs": [
+      "packages/platform/package.json",
+      "packages/platform/src/admin-view.mjs",
+      "packages/platform/src/artifact-retention.mjs",
+      "packages/platform/src/controller.mjs",
+      "packages/platform/src/http.mjs",
+      "packages/platform/src/retirement.mjs"
+    ],
+    "addedV5ProgramInputs": [
+      "packages/platform/src/admin-approval-controls.mjs",
+      "packages/platform/src/admin-decisions.mjs",
+      "packages/platform/src/admin-review-page.mjs",
+      "packages/platform/src/admin-review.mjs",
+      "packages/platform/src/artifact-comparison.mjs",
+      "packages/platform/src/artifact-review.mjs",
+      "packages/platform/src/decision-history.mjs",
+      "packages/platform/src/review-artifact.mjs"
+    ],
+    "currentImageProgramInputsRehashed": 117,
+    "actualNativeBinaryAndSupervisorRehashed": true,
+    "rootDependencyInputsUnchanged": true,
+    "privateVersionedPrunedRestoreAudit": {
+      "passed": true,
+      "privateProposalOnly": true,
+      "version": "0.2.0",
+      "newEmptyEngineVerified": true,
+      "engine": {
+        "ID": "b18c85bf-344e-487c-982c-cbce1274a38f",
+        "Driver": "overlay2",
+        "OSType": "linux",
+        "Architecture": "aarch64",
+        "NCPU": 3,
+        "MemTotal": 6198779904
+      },
+      "bootstrapVerifiedWithoutDocker": true,
+      "releaseMembersRehashed": 496,
+      "runtimeTransferMembersRehashed": 457,
+      "standaloneClientMembersRehashed": 36,
+      "receivedProgramFilesRehashed": 455,
+      "runtimeProgramInputsVerified": 117,
+      "archivedSourcesRehashed": 1013,
+      "mainCatalogUnchanged": true,
+      "onlyPrivateCatalogAdmissionChanged": true,
+      "importStartsNoServices": true,
+      "eightServicesUnstartedUntilTLSImported": true,
+      "nativeTwoAppUpdateAndRestart": true,
+      "pendingCodeAndSQLWithheld": true,
+      "exactUpdateMigrationAppliedOnce": true,
+      "artifactDigestsIndependentlyRecomputed": 3,
+      "authenticatedDecisionRowsRetained": 3,
+      "newPinnedContainersStopped": 16,
+      "freshDisjointVolumes": true,
+      "snapshotMembersRehashed": 10,
+      "terminalPrunedArtifactsStayAbsentAfterRestore": true,
+      "historyAndPruneMarkersSurviveFreshRestore": true,
+      "httpResumesRequireVerifiedNativeFacts": true,
+      "sourceFenceRefusalVerified": true,
+      "nativeRowsAndSQLSurviveFreshRestore": true,
+      "postRecoveryWriteVerified": true,
+      "scope": "Private proposed 0.2.0 v8 versioned release on a newly empty Linux arm64 classic-overlay2 engine: received operator/client HTTPS deploy, update, pending isolation, terminal pruning with retained decision history, stopped snapshot and fresh-volume same-family public restore. Native-verified explicit HTTP resumes, restored prune markers, no resurrected artifact, retained rows and a new durable write. Prepared dependencies; same physical Mac, main admission unchanged, no publication or full-family qualification."
+    },
+    "gates": [
+      {
+        "gate": "release.build",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-durable-v5-source-build.json",
+          "operator-v5-clean-recipe-evidence-map.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "v8 candidate: two matching COPY-only builds; verified native binary, supervisor and 117 current program inputs; inherited clean source recipe, not a new clean native rebuild."
+      },
+      {
+        "gate": "release.install",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-v5-release-rehearsal.json",
+          "operator-v5-received-installation.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Newly empty engine, versioned private v8 operator/client, TLS, two apps, update, restart, prune, stopped backup, fresh public same-family restore, native-verified explicit resumes and new write. Actual qualified repository catalog check still required."
+      },
+      {
+        "gate": "release.serving",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-write-serving-v5.json",
+          "operator-v5-publication-evidence-map.json",
+          "operator-v5-retirement-evidence-map.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "v7 diagnostics verify two-app serving during controller loss; v5 write/publication/crash evidence is inherited for unchanged gateway/activation mechanisms."
+      },
+      {
+        "gate": "release.diagnostics",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-diagnostics-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 failure/correction, unavailable replica, withheld HTTP, controller loss and six scoped private log captures."
+      },
+      {
+        "gate": "m11c.1",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-cron-activation-v5.json",
+          "operator-native-cron-activation-matrix-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct full v7 lifecycle: inert upload, exact secret revision, compatible SQL/cadence update, stopped snapshot. Activation crash/migration holds inherit unchanged v5 paths."
+      },
+      {
+        "gate": "m11c.2",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-cron-activation-matrix-v5.json",
+          "operator-native-migration-retry-v5.json",
+          "operator-native-migration-rollback-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Native v6 browser stale/tamper/failure and recovery exact retry; source intent/outcome write-failure tests; v8 source regression suite."
+      },
+      {
+        "gate": "m11c.3",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-unreachable-pause-v5.json",
+          "operator-native-compatible-replacement-v5.json",
+          "operator-native-background-recovery-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 paused controller-loss interval and independent HTTP/dispatch control; unchanged v5 unreachable-member/held-callback evidence."
+      },
+      {
+        "gate": "m11c.4",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-compatible-replacement-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 original-occurrence retry has one business row per job; unchanged v5 in-flight compatible overlap/lost acknowledgment evidence."
+      },
+      {
+        "gate": "m11c.5",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-background-v5.json",
+          "operator-native-background-failures-v5.json",
+          "operator-native-cron-terminal-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 autonomous success/noRetry/retry; native binary and scheduler unchanged for v5 owner loss, downtime and terminal retry ceiling."
+      },
+      {
+        "gate": "m11c.6",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-diagnostics-v5.json",
+          "operator-native-compatible-replacement-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 diagnostics and v6/v7 browser history; public privacy checks and v8 validated terminal-prune metadata."
+      },
+      {
+        "gate": "m11c.7",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-background-full-recovery-v5.json",
+          "operator-v5-release-rehearsal.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "v6 paused cron/queue restore uses executable bodies unchanged except v8 retention classification; v5 due/retry/older snapshot matrix; direct fresh v8 pruned/history HTTP restore."
+      },
+      {
+        "gate": "m11c.8",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-background-retirement-v5.json",
+          "operator-native-background-retirement-dual-v5.json",
+          "operator-v5-retirement-evidence-map.json",
+          "operator-v5-family-refusal.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Direct v7 retirement/history/reuse and stopped snapshot; inherited v5 background sequential/dual-cron retirement, zero-live restore and unsupported-family refusal."
+      },
+      {
+        "gate": "m11c.9",
+        "status": "accepted within inherited v5 local two-fleet boundary",
+        "receipts": [
+          "operator-native-offline-builds-v5.json",
+          "operator-native-compatible-replacement-v5.json"
+        ],
+        "basis": "Unchanged native/gateway/activation/recovery mechanisms revalidated by image ancestry and program hashes; changed decision/controller integration has direct v6/v7/v8 evidence.",
+        "currentEvidence": "Native binary, supervisor, scheduler, root locks and SDK inputs unchanged; inherited ordinary offline Void/fogd fixture builds and native two-node checks."
+      }
+    ],
+    "knownFailuresRemainUnaccepted": true,
+    "noArchivedProgramsOrTracersExecuted": true,
+    "noPublicPublication": true,
+    "limits": [
+      "Same physical Mac, local Linux arm64 classic-overlay2 Docker, two application fleets with two native nodes each. No other physical machine or remote shared-operation qualification.",
+      "Inherited mechanisms are evidence reuse, not new failure, density/performance, CPU quota, power-loss or native rebuild experiments.",
+      "No exactly-once external effects, missed-tick backlog, combined cron/queue apps, Workflows, general Durable Object alarms, expanded scheduled fleets, Kubernetes scheduled recovery or hosted Cloudflare execution.",
+      "No existing user installations or cross-family migration. Retained stacks are QA fixtures.",
+      "Prepared fixture dependencies; unaided human onboarding and public artifact publication remain outside this acceptance."
+    ]
+  },
+  "approvalRequirements": {
+    "passed": true,
+    "basis": "Manual requirements review using native v6/v7 audits, current canonical tests and exact executable-body hashes; v8 changes retention classification only among executable bodies.",
+    "unchangedV6ExecutableBodies": 114,
+    "requirements": [
+      {
+        "id": "comparison",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Verified proposed/active file, resource and migration comparisons with exact app/submission identity."
+      },
+      {
+        "id": "binding",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Exact digest/revision/context decisions; stale and tampered decisions refuse before effects."
+      },
+      {
+        "id": "attribution",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Authenticated Basic principal, durable action/outcome and shared-credential notice."
+      },
+      {
+        "id": "privacy",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Escaped content, authentication, CSRF and withheld secret/private diagnostic values."
+      },
+      {
+        "id": "outcomes",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Recorded state remains distinct from native readiness, application outcomes and uncertain activation."
+      },
+      {
+        "id": "scenarios",
+        "status": "accepted within v8 local two-fleet boundary",
+        "requirement": "Native browser/API stale, tampered, failed/corrected activation and two-app scenarios; current canonical tests."
+      }
+    ],
+    "receipts": {
+      "operator-native-browser-review-v6.json": "278b53406cfa8e7586390555da03c25e81bc18b81a40be746192850e91b4b7d9",
+      "operator-approval-v7-candidate.json": "f5a285aa16f6a83d067e2d1d67bd369b8b1bf9d6d840d85108c917391c129cc1",
+      "operator-decision-history-recovery-v6.json": "78bdb940196c37b89fe94955c7afa7a7e2d6dea476982fc7d84a72f0b61dfef2",
+      "operator-approval-v8-candidate.json": "688c131aac3690a52adc6e90e461355654a5c1e8511002ebe788e6b017d6c00f",
+      "operator-v8-versioned-pruned-recovery.json": "c8df64c645d2c50928e56e7054fa471d5174e2e6252238323a189a0316c90fcf"
+    }
+  },
+  "actualReleasedCatalogAudit": {
+    "passed": true,
+    "privateProposalOnly": false,
+    "actualReleasedCatalog": true,
+    "catalogCopiedUnchanged": true,
+    "archivedSourcesRehashed": 1013,
+    "transferMembersRehashed": 457,
+    "receivedProgramFilesRehashed": 455,
+    "standaloneClientMembersRehashed": 36,
+    "operatorDecisionGuidesIncluded": 2,
+    "qualificationAndReviewDocsExcluded": true,
+    "snapshotMembersRehashed": 10,
+    "artifactDigestsIndependentlyRecomputed": 3,
+    "authenticatedDecisionRowsRetained": 3,
+    "pendingCodeAndSQLRemainWithheld": true,
+    "exactUpdateMigrationAppliedOnce": true,
+    "nativeRowsSurviveRestartAndRestore": true,
+    "postRecoveryWriteVerified": true,
+    "httpResumesRequireVerifiedNativeFacts": true,
+    "sourceFenceRefusalVerified": true,
+    "sourceAndTargetVolumesDisjoint": true,
+    "newPinnedContainersStopped": 16,
+    "preExistingComposeContainerStatesPreserved": 24,
+    "preExistingVolumeIdentitiesPreserved": 33,
+    "scope": "Actual qualified repository catalog copied without changes. Public transfer, enrollment, received client update/restart and fresh stopped recovery on a distinct existing Docker engine on the same physical host. Prepared fixture dependencies supplied; no registry publication or separate-machine claim."
+  },
+  "privateVersionedPrunedRecoveryReceipt": {
+    "path": "docs/evidence/operator-v8-versioned-pruned-recovery.json",
+    "sha256": "c8df64c645d2c50928e56e7054fa471d5174e2e6252238323a189a0316c90fcf"
+  },
+  "hostChecks": {
+    "canonicalTestsPassed": 2887,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 572410.147084,
+    "focusedCatalogReleaseRecoveryChecksPassed": 44,
+    "syntaxAndQualityPassed": true
+  },
+  "catalogChange": "Only v8 admission changes from candidate to qualified. All image/program pins and earlier entries remain unchanged; v6/v7 remain closed. Default runtime and cron admission are unchanged.",
+  "publicSelectors": {
+    "exportedCatalogUnmodified": true,
+    "freshEnrollmentViaReceivedOperator": true,
+    "standaloneClientScopedDeployUpdateRestart": true,
+    "pendingCodeAndSQLWithheld": true,
+    "stoppedBackupAndFreshPublicRestore": true,
+    "nativeVerifiedExplicitHTTPResume": true,
+    "postRecoveryDurableWrite": true,
+    "nativeContainersStoppedAndDataRetained": 16,
+    "preExistingContainerIdentitiesAndStatesPreserved": 24,
+    "preExistingVolumeIdentitiesPreserved": 33
+  },
+  "privateRoot": "~/.local/share/fogd-qualifications/admission-v8-20261030-01",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "bab832b46c6cfbfdd4a0dbe62539920ae994c383abe6ab0a7e69b5fb453fe97f",
+      "bytes": 154100
+    },
+    "independent-audit.json": {
+      "sha256": "efd547ee2d2ce2218d51c7fe2814f1d819c545a32d3c7bfcf1702c9ca00f9269",
+      "bytes": 1224
+    },
+    "executed-source-inventory.json": {
+      "sha256": "f69c3381fd4d60c1233510fd765da2a54c23af861cd6ed3b976ae79059c97b9a",
+      "bytes": 119039
+    },
+    "proposal-inventory.json": {
+      "sha256": "626414e9af6ae600320beb9f9a15a537c7fa6de40c893e7ac1784b43fc435f90",
+      "bytes": 77845
+    },
+    "post-write-privacy.json": {
+      "sha256": "a4b636cb1620bdf6813545f63061dd75662f3211a88cccdaf558de6e7f6685ce",
+      "bytes": 651
+    },
+    "audited-restored-state.json": {
+      "sha256": "7790a1724d8dfe376851e7428f384132441fa29efc8b10441fdc23a4db24b6b8",
+      "bytes": 8666
+    },
+    "fogd-v8-admission-recipient-before.json": {
+      "sha256": "50b928fd76f1fa9e7558711018fd6a11b74d2762df06838eb0a64d695552864a",
+      "bytes": 29718
+    },
+    "fogd-v8-admission-recipient-after.json": {
+      "sha256": "9b4012ce0c516b0642f9743a549510ef6317c99d7c6e63795b4c31b5aa7d469e",
+      "bytes": 49263
+    },
+    "audit.py": {
+      "sha256": "eaf47ebbeab11af3387af5d79261e92de0b1a20c553edef8fb1622761af13d43",
+      "bytes": 7134
+    },
+    "audit.log": {
+      "sha256": "c38b0afff7d079494955fe4ab34b0f9054680f70b8a47876a9909ab059faef5e",
+      "bytes": 1174
+    },
+    "native.log": {
+      "sha256": "1e593a09e55978f2d791f80a9271a8d1dfbb9b22507697a8708811b4fde8a166",
+      "bytes": 484
+    },
+    "canonical.log": {
+      "sha256": "43bfffa5a8aa1077784cc181fc51cbaf5899c163c0a321ea96e38f725c17c2ad",
+      "bytes": 257336
+    },
+    "focused.log": {
+      "sha256": "a30071921454f587c857e3df09a38f16b24a3b2105366bb72d2d0c41e814d342",
+      "bytes": 3907
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "quality.log": {
+      "sha256": "28052c4ba8ad2a5bc0ed000629e04ed1427c1daab269bd9a6691dae5c2065139",
+      "bytes": 1670
+    },
+    "review.md": {
+      "sha256": "8f85ed36c9a6720828845ba2bdd5eea13ff95611a38ad65d65165b03e60616ac",
+      "bytes": 4257
+    },
+    "review-writing.log": {
+      "sha256": "8a404d121f63ee40a6d0946d6da32ae06e809215c0c25b4a7de0d35818b43179",
+      "bytes": 158
+    },
+    "acceptance-writing.log": {
+      "sha256": "103d01b5caae39866030241d8c3ef2e3c2e3c3bd7914db305d72cbf08fc4e5b6",
+      "bytes": 127
+    },
+    "roadmap-writing.log": {
+      "sha256": "0ef17866420bc12b59a88b677a90a437ae79ee42b8953f6381ca3fcc638003c4",
+      "bytes": 128
+    },
+    "readme-writing.log": {
+      "sha256": "50e64ae8ae4c872d36887769e03d326faaaf3410525243eb8a0c09b42b5ac260",
+      "bytes": 9278
+    },
+    "releases-writing.log": {
+      "sha256": "a646cc8f237903cbfee3dcabf99e8213a396b640529ff88ed33355cf747bee30",
+      "bytes": 2891
+    },
+    "runtime-writing.log": {
+      "sha256": "e42f2f4bfb828944eed82b2b0e8cc044d676983dba013b913e2bc939293e0c36",
+      "bytes": 12780
+    },
+    "history-writing.log": {
+      "sha256": "24f5c66da5e1040570ed66ca7f97badb097ecd7ba4b17d25f06b5712b5e7b6cb",
+      "bytes": 2662
+    },
+    "browser-writing.log": {
+      "sha256": "ca0b952360592ee5ce224979e48ac6fd7a3d537bcbc18f32806ed3a18a644b49",
+      "bytes": 2716
+    },
+    "artifacts-writing.log": {
+      "sha256": "820f9e75dbeb3e954200612aecc90c98f6a9080e261ec5ee8303c58630bece3f",
+      "bytes": 3143
+    },
+    "features-writing.log": {
+      "sha256": "d883c37b8e2aabe3a22f8d7776e8dc2291972e15c7b4194e2d47e9a97fd1c271",
+      "bytes": 7576
+    },
+    "runner.mjs": {
+      "sha256": "9acacb2294bd769cfd6334bbf17ddf53c5126a2091d1cda8712c2b15b03dac15",
+      "bytes": 6945
+    }
+  },
+  "eligibilityEvidenceRoot": "~/.local/share/fogd-qualifications/eligibility-v8-20261030-01",
+  "eligibilityEvidenceFingerprints": {
+    "actual-image-inputs.json": {
+      "sha256": "1a210b5dc46c9f0cda1221b939078166109d94bb113de20c522ce4b0e5016856",
+      "bytes": 13747
+    },
+    "approval-requirements.json": {
+      "sha256": "3d36c246cf8820afbac54a3290b1767f47490f2eb79d00401799bdd50b1ab361",
+      "bytes": 2187
+    },
+    "audit.log": {
+      "sha256": "0b00f6e6f7f964fca25c223d118faaf36c3fc0ac649150bcb7b10ba6ca979092",
+      "bytes": 395
+    },
+    "audit.py": {
+      "sha256": "581b5a1f38fb1850cca9c15a029ab4295592129eec711af4c5fa403a12a9b737",
+      "bytes": 11385
+    },
+    "eligibility.json": {
+      "sha256": "72868b7fbb02ee622149247e2fa09c4be5c5c22ad9c7c1810701fe2517ca4d52",
+      "bytes": 21044
+    },
+    "eligible-catalog.json": {
+      "sha256": "d54ad9d2c591b2c426998545f49590c78a5a04367c4b252ef34c55f92f8f9a52",
+      "bytes": 104812
+    },
+    "image-ancestry.json": {
+      "sha256": "c88148507fa21b64cb798d198785d8d377013981c7c3d3cb332eb1bb9db35971",
+      "bytes": 9653
+    },
+    "inherited-input-audit.log": {
+      "sha256": "c87f67f48a9e0d0b903b8d2fffb22e75c4da20c8467d3cd032c28068f24a64c8",
+      "bytes": 118
+    },
+    "inherited-v5-inputs.json": {
+      "sha256": "04cf54028b76edd75dc2c1115e3c7390cf072a62fc022f8c4abee631e6b30992",
+      "bytes": 9007
+    }
+  },
+  "limits": [
+    "Same physical Mac, local Linux arm64 classic-overlay2 Docker, two application fleets with two native nodes each. No other physical machine or remote shared-operation qualification.",
+    "Inherited mechanisms are evidence reuse, not new failure, density/performance, CPU quota, power-loss or native rebuild experiments.",
+    "No exactly-once external effects, missed-tick backlog, combined cron/queue apps, Workflows, general Durable Object alarms, expanded scheduled fleets, Kubernetes scheduled recovery or hosted Cloudflare execution.",
+    "No existing user installations or cross-family migration. Retained stacks are QA fixtures.",
+    "Prepared fixture dependencies; unaided human onboarding and public artifact publication remain outside this acceptance.",
+    "The private proposed 0.2.0 versioned bundle and actual qualified-catalog runtime transfer are separate checks. Family qualification does not publish a versioned release, registry image, npm package or public download.",
+    "Known original driver/audit failures remain retained and unaccepted. Their read-only finalization or corrected audit is identified in the linked receipts; no native effect was repeated solely to repair an observer.",
+    "The v5 publication map retains five unavailable original temporary harness files. It does not claim they were reverified. No archived tracing program is executed.",
+    "No external peer-review approval is claimed. Broad operator readiness, app archival/capacity reuse and isolated previews remain separate open work."
+  ],
+  "reproduce": "DOCKER_CONTEXT=RECIPIENT node scripts/operator/release-rehearsal.mjs NEW_PRIVATE_OUTPUT --source-context SOURCE --runtime celld-approval-v8-linux-arm64 --released"
+}

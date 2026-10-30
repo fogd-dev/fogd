@@ -26,9 +26,15 @@ Release preparation is available locally; a public download service or registry
 release has not been published. Maintainers prepare a new artifact with:
 
 ```sh
-node packages/cli/bin/fogd.js release export /releases/fogd-0.1.0-linux-arm64 \
-  --version 0.1.0 --runtime celld-durable-v5-linux-arm64
+node packages/cli/bin/fogd.js release export /releases/fogd-0.2.0-linux-arm64 \
+  --version 0.2.0 --runtime celld-approval-v8-linux-arm64
 ```
+
+On qualified [v8 installations](docs/operator-v8-acceptance.md), owners can
+[compare proposed code, SQL and resources in the browser](docs/browser-release-review.md),
+make an exact approval or rejection, and inspect the
+[attributed decision history](docs/decision-history.md). Terminal artifact cleanup
+preserves those records and protects unfinished operations.
 
 Developers receive the standalone client and an app-scoped credential from their
 operator. Application build dependencies remain separate prerequisites. See the
@@ -42,10 +48,10 @@ Owners can [inspect an application's recorded release and control state](docs/ap
 with `fogd admin inspect APP`; submitters can [diagnose their releases](docs/submission-status.md)
 with `fogd status ID`. Local Docker owners can [observe native replicas](docs/application-observation.md)
 with `fogd observe APP --installation PROJECT`. An explicit [gateway request check](docs/application-check.md) reports HTTP status
-and header timing without response contents; native acceptance of that command,
-application-health assertions and shared logs remain open. Owners can also
-[capture private replica logs](docs/application-logs.md); native acceptance of that
-command remains open.
+and header timing without response contents. Owners can also
+[capture private replica logs](docs/application-logs.md). The v8 acceptance audit
+records native diagnostic checks; application-health assertions and shared logs
+remain open.
 [Local build retention](docs/build-retention.md) provides explicit keep, plan, prune,
 and offline resume commands; controller artifacts and application data stay intact.
 
@@ -442,7 +448,9 @@ installations keep cron admission closed. The [acceptance audit](docs/m11c-accep
 records the nine gates and their limits. The source-built
 `celld-durable-v5-linux-arm64` family also qualifies explicit fresh installations
 with durable HTTP routing and independent background controls; its
-[acceptance audit](docs/operator-v5-acceptance.md) records the release boundary.
+[acceptance audit](docs/operator-v5-acceptance.md) records that release boundary.
+The qualified [v8 successor](docs/operator-v8-acceptance.md) adds verified release
+review and durable decision history within the same bounded topology.
 
 The [refresh app](examples/refresh/README.md) runs while its page is closed and
 shows saved results, failures, and unfinished work. App-scoped deployment and exact

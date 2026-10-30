@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "kind": "operator-v8-versioned-pruned-recovery",
+  "recordedAt": "2026-10-30T00:23:48.196061+00:00",
+  "sourceCommit": "71ed6ab62c7cd5354124e2057cdb40775b7b0aa8",
+  "executedTreeDirty": false,
+  "passed": true,
+  "qualifiedRuntime": false,
+  "actualReleasedCatalog": false,
+  "mainAdmissionAtExecution": "candidate",
+  "family": "celld-approval-v8-linux-arm64",
+  "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "version": "0.2.0",
+  "scope": "Private proposed 0.2.0 v8 versioned release on a newly empty Linux arm64 classic-overlay2 engine: received operator/client HTTPS deploy, update, pending isolation, terminal pruning with retained decision history, stopped snapshot and fresh-volume same-family public restore. Native-verified explicit HTTP resumes, restored prune markers, no resurrected artifact, retained rows and a new durable write. Prepared dependencies; same physical Mac, main admission unchanged, no publication or full-family qualification.",
+  "independentAudit": {
+    "passed": true,
+    "privateProposalOnly": true,
+    "version": "0.2.0",
+    "newEmptyEngineVerified": true,
+    "engine": {
+      "ID": "b18c85bf-344e-487c-982c-cbce1274a38f",
+      "Driver": "overlay2",
+      "OSType": "linux",
+      "Architecture": "aarch64",
+      "NCPU": 3,
+      "MemTotal": 6198779904
+    },
+    "bootstrapVerifiedWithoutDocker": true,
+    "releaseMembersRehashed": 496,
+    "runtimeTransferMembersRehashed": 457,
+    "standaloneClientMembersRehashed": 36,
+    "receivedProgramFilesRehashed": 455,
+    "runtimeProgramInputsVerified": 117,
+    "archivedSourcesRehashed": 1013,
+    "mainCatalogUnchanged": true,
+    "onlyPrivateCatalogAdmissionChanged": true,
+    "importStartsNoServices": true,
+    "eightServicesUnstartedUntilTLSImported": true,
+    "nativeTwoAppUpdateAndRestart": true,
+    "pendingCodeAndSQLWithheld": true,
+    "exactUpdateMigrationAppliedOnce": true,
+    "artifactDigestsIndependentlyRecomputed": 3,
+    "authenticatedDecisionRowsRetained": 3,
+    "newPinnedContainersStopped": 16,
+    "freshDisjointVolumes": true,
+    "snapshotMembersRehashed": 10,
+    "terminalPrunedArtifactsStayAbsentAfterRestore": true,
+    "historyAndPruneMarkersSurviveFreshRestore": true,
+    "httpResumesRequireVerifiedNativeFacts": true,
+    "sourceFenceRefusalVerified": true,
+    "nativeRowsAndSQLSurviveFreshRestore": true,
+    "postRecoveryWriteVerified": true,
+    "scope": "Private proposed 0.2.0 v8 versioned release on a newly empty Linux arm64 classic-overlay2 engine: received operator/client HTTPS deploy, update, pending isolation, terminal pruning with retained decision history, stopped snapshot and fresh-volume same-family public restore. Native-verified explicit HTTP resumes, restored prune markers, no resurrected artifact, retained rows and a new durable write. Prepared dependencies; same physical Mac, main admission unchanged, no publication or full-family qualification."
+  },
+  "exported": {
+    "version": "0.2.0",
+    "runtime": "celld-approval-v8-linux-arm64",
+    "manifestSha256": "f874e4d1e0f82f6e02d0a9912ac736def10e97719f520668a32f7d5607d01719",
+    "bootstrapSha256": "6cf656cef92c669f44609afa59a0d65a9c3d269a85292748ff52fd8cb979be39",
+    "runtimeManifestSha256": "0a3c2acab85366fe6db72a46f3bbf32f5104ebfdaee9fcbe476fe3816703792d",
+    "clientManifestSha256": "6c361de522465291041673c8f8e34475908979b31534ab4eb57f46c65db52e9f",
+    "files": 496,
+    "bytes": 924696244,
+    "servicesStarted": false
+  },
+  "privateCatalogDelta": {
+    "path": "packages/cli/src/runtime/catalog.json",
+    "runtime": "celld-approval-v8-linux-arm64",
+    "before": "4e3f090ca08fa357c732664176dde6674c306bd44b8cf6f02ebc13b4ad327573",
+    "after": "d54ad9d2c591b2c426998545f49590c78a5a04367c4b252ef34c55f92f8f9a52",
+    "change": "candidate to qualified in private copied catalog only"
+  },
+  "privateRoot": "~/.local/share/fogd-qualifications/versioned-pruned-recovery-v8-20261030-01",
+  "privateEvidenceFingerprints": {
+    "result.json": {
+      "sha256": "84ef7a2506b6efa7bafa2f4e1b325e0c7b223027ca55908ab98583865e672611",
+      "bytes": 180215
+    },
+    "independent-audit.json": {
+      "sha256": "51ef144b76a1a5a5d7bf1fd4ec5bf6c720c26590c75583b77eac20fc82cd4a35",
+      "bytes": 1851
+    },
+    "executed-source-inventory.json": {
+      "sha256": "b2384c73ffee11f195c0bb1b99063bf4b5f77dcc4baeddcd6def6d9aa5e817ab",
+      "bytes": 118643
+    },
+    "runner.mjs": {
+      "sha256": "cb8751e79ca55c4b40703c83e11bc5fbe773b725e56be5210aa28c009f68fd1c",
+      "bytes": 9955
+    },
+    "post-write-privacy.json": {
+      "sha256": "9b90fa262502b67e33d87e2b6b17b07bfe4ee384563ced4c49d9308f0514b303",
+      "bytes": 651
+    },
+    "initial-audit-failure.log": {
+      "sha256": "fe89ae443ac0a8fbb61b6e5d0a0075643c2a0ad7a4c88be53e1036c1ec61ebc5",
+      "bytes": 665
+    },
+    "audited-controller-state.json": {
+      "sha256": "7a7ed0d8fdd8a1af2e2378941bc27c22f2b50790052528f9488b2afa61a40944",
+      "bytes": 9342
+    },
+    "audit.py": {
+      "sha256": "8708dca016e6c2a83ccf69d7b72d3fa4e50888166aecb3fe528e1d7eb5314851",
+      "bytes": 8991
+    },
+    "audit.log": {
+      "sha256": "282843ea02700fba5b2b2b29a67ed02407c7ba0aea43adfe9183eb564ff7ca00",
+      "bytes": 1759
+    },
+    "native.log": {
+      "sha256": "80b2abf5532b5e0feebb0e072dc9f8baa1c210eb83b0d125418070b16f0a531f",
+      "bytes": 376
+    },
+    "empty-engine.json": {
+      "sha256": "ef04081e7769dec11dfd3805d99e9baf884a56383b4b892f032d39f9005bf0d8",
+      "bytes": 217
+    },
+    "engine-start.log": {
+      "sha256": "9e9e01e97f2e37b8c167f7a7c68e1bb9db3c67cd444f89ad362b618f76b58290",
+      "bytes": 4542
+    }
+  },
+  "limits": [
+    "A private proposed versioned bundle with only selected v8 admission changed in its copied catalog. It is not an official 0.2.0 publication or actual qualified-repository-catalog run.",
+    "Fresh empty classic-overlay2 Linux arm64 engine on the same physical Mac. Prepared application dependencies are supplied. No separate physical-machine or unaided human-onboarding claim.",
+    "Native restore preserves terminal prune markers and three authenticated decisions, pending code/SQL isolation and app data; explicit resume follows verified native facts. No new background or retirement run is claimed.",
+    "The initial audit expected every declared volume to be mounted by a service. The route-enrollment authority volume is helper-only. The corrected audit verifies all 22 declared volumes exist and are disjoint, with the expected ten service-mounted volumes per installation. Native operations were not repeated.",
+    "All 16 new containers remain stopped and their data retained. There are no existing user installations or cross-family migration.",
+    "Default cron admission stays closed. No per-worker CPU quota, broad density, power-loss, exactly-once external effects or external review approval is claimed."
+  ]
+}

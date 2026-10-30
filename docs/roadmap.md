@@ -27,16 +27,15 @@ The bounded [M11c acceptance](m11c-acceptance.md) and public-selector release ch
 are complete. Additional cron qualification work needs an identified acceptance gap
 or a reproducible defect; broader topology and runtime admission remain gated.
 
-The closed [v8 candidate](evidence/operator-approval-v8-candidate.json) fixes
-completed decision history preventing terminal artifact reclamation. Native pruning
-retains history and both apps' data through restart and a stopped snapshot. Fresh
-v8 restore, received/versioned installation and final admission remain open.
-The earlier v7 candidate has bounded
-[retirement/history](evidence/operator-native-retirement-history-v7.json) and
-[versioned fresh-install](evidence/operator-v7-versioned-onboarding.json) checks.
-The latter uses a private proposed `0.2.0` bundle and a newly empty Docker engine.
-V7 remains closed because its image lacks the retention correction. There are no existing user installations;
-fresh installation is the release target.
+The [v8 acceptance audit](operator-v8-acceptance.md) qualifies explicit fresh local
+two-fleet installations with verified release comparisons, attributed decisions
+and artifact pruning that retains history. Its
+[empty-engine versioned rehearsal](evidence/operator-v8-versioned-pruned-recovery.json)
+covers received-client update, stopped backup and fresh pruned-state recovery.
+The [admission receipt](evidence/operator-v8-admission.json) records the actual
+qualified-catalog installation check. Default cron admission remains closed.
+V7 remains closed because its image lacks the retention correction. There are no
+existing user installations; fresh installation is the release target.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses
