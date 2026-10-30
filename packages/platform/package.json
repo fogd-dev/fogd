@@ -24,6 +24,7 @@
     "./artifact-comparison": "./src/artifact-comparison.mjs",
     "./decision-history": "./src/decision-history.mjs",
     "./app-archive": "./src/app-archive.mjs",
-    "./app-archive-routes": "./src/app-archive-routes.mjs"
+    "./app-archive-routes": "./src/app-archive-routes.mjs",
+    "./app-archive-rotation-state": "./src/app-archive-rotation-state.mjs"
   }
 }

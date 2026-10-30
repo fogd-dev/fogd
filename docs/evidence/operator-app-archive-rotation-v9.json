@@ -1,0 +1,179 @@
+{
+  "schema": 1,
+  "kind": "operator-private-archive-recovery-secret-rotation-native-d1-r2",
+  "recordedAt": "2026-10-30T14:47:46.458776+00:00",
+  "sourceCommit": "454a5a8",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Fresh private schema-4 native secret-bearing app; stopped backup/archive/two-source restore; old target vault pin retained under quarantine name; old-pin approval refuses; explicit new-current-vault rotation publishes unchanged canonical code with no SQL application; execution held until separate HTTP resume; new config SHA256 and original SQL/R2 values survive retained restart. Native queue/cron rotation, interruption and concurrent admission remain unqualified.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "sourceFiles": 130,
+  "repeatedUncachedBuilds": [
+    "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc"
+  ],
+  "hostAuthorizationBoundary": "Only the exact private candidate selector/authorizer is injected. Native runtime identity, storage, TLS, stopped-source fences, two-source coordination, physical enrollment, owner HTTP APIs and application execution are real.",
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 316,
+    "nativeHashesVerified": true,
+    "identicalUncachedBuilds": true,
+    "actualNativeSnapshotsReverified": 2,
+    "actualPhysicalEnrollmentBindingsVerified": 3,
+    "archiveIdentityAndSnapshotReferencesRecomputed": true,
+    "currentCredentialBytesPreserved": true,
+    "canonicalArtifactsUnchanged": true,
+    "oldTargetVaultPinQuarantinedWithBytesPreserved": true,
+    "newConfigHashObservedAfterRotationAndRestart": true,
+    "sqlAndObjectDataPreserved": true,
+    "attributedArchiveRotationApprovalReadBack": true,
+    "twoSourceExclusionsVerified": true,
+    "existingContainersPreserved": 184,
+    "existingVolumeNamesPreserved": 371,
+    "ownedRelatedContainersStopped": 24,
+    "defaultCronAdmission": "closed",
+    "shippedCatalogUnchanged": true
+  },
+  "canonicalChecks": {
+    "passed": 3107,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 579346.5515,
+    "scope": "Canonical run before the final historical-rotation validation correction. Final connected checks cover that correction and shared callers."
+  },
+  "finalFocusedChecks": {
+    "passed": 179,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 35883.408292,
+    "scope": "Archive projections/approval/rotation, owner APIs, controller composition, route verification and decision history after the historical-rotation correction."
+  },
+  "finalRotationChecks": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 7565.032291,
+    "scope": "Final rotation suite, including settled-snapshot guard assertions."
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "writing": "passed",
+  "nativeOldPinUnavailableOriginalApprovalStatus": 409,
+  "nativeRotationApprovalStatus": 200,
+  "nativeRotationApprovalLeavesExecutionHeld": true,
+  "nativeSeparateHttpResumeRequired": true,
+  "nativeNewConfigurationAndOriginalSqlR2AfterRestart": true,
+  "nativeCompletedRotationBackupReverified": true,
+  "migrationApplicationBoundary": "Rotation calls read-only complete-ledger inspection before and after publication; its call graph never applies SQL. Component tests fail if migrate is called; native ledger and application records survive. No syscall tracing is used.",
+  "faultEvidenceScope": "Component tests only: lost publication reply, known publication after controller restart, changed same-revision values, stale review, journal/completion writes with and without committed data, malformed journals and unsafe cleanup input. These do not qualify native Docker interruption or concurrent admission.",
+  "backgroundEvidenceScope": "Component queue/cron fixtures preserve pending receipts, original timestamps/expiry/history and holds while rebinding the private generation. No native queue/cron rotation qualification.",
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Native queue/cron archive restoration and secret rotation with recovery controls",
+    "Native interruption and concurrent admission qualification",
+    "Bounded operator commands and stable lifecycle/capacity/retained-byte results"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-secret-native-20261030-01",
+  "sourceEvidenceRoot": "~/.local/share/fogd-qualifications/archive-secret-source-native-20261030-02",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "supersededFixtures": "Source 01 stopped at a rejected test-driver secret upload (wrong request shape). Earlier private images/volumes remain retained. No native rotation acceptance is inferred from those attempts. The first audit assertion expected 16 containers; corrected to the three actual eight-service projects (24), with all exact labels/images/states still verified.",
+  "evidenceFingerprints": {
+    "native/report.json": {
+      "sha256": "935e041265cc80bb2e2ce582587ffdb4c913c8936c810616a756699a5d9dc384",
+      "bytes": 29686
+    },
+    "native/audit.json": {
+      "sha256": "fd5df70638e299ad4368ce54038f192cd39ce280b0d3f508e70ba09f83aec674",
+      "bytes": 815
+    },
+    "native/audit-readback.json": {
+      "sha256": "922043b58b8a8537cc59260729c3c713020a1f33ebca929994614d47c3db933a",
+      "bytes": 37347
+    },
+    "native/before.json": {
+      "sha256": "12d5ad4ba09b662e475a2414e6f11433ec8bb33703f2dd1c3cf0dc3fa3b3ed40",
+      "bytes": 220700
+    },
+    "native/after.json": {
+      "sha256": "9cead24bfc5f8cbd8b61b608825e8de6cfe5b2ebe625afcfc7a51f29e70bc7de",
+      "bytes": 239460
+    },
+    "native/selections.json": {
+      "sha256": "4cdee11f40d07b6480a4cef51a03ab13b62fed79f4b3c3df9a17914e1f0fcd78",
+      "bytes": 40403
+    },
+    "native/archive.json": {
+      "sha256": "51b3f428f9c412946016abc2687208d817410ac3513235befc19ebbf13dfafb8",
+      "bytes": 191
+    },
+    "native/held-state.json": {
+      "sha256": "c105d43b99814f2d65abdb0929d7dc34224694e7f372daaf331b0f2f8ba0cf18",
+      "bytes": 8656
+    },
+    "native/rotated-held-state.json": {
+      "sha256": "fd7a7eec7101441cd6cfa419c757ac56a84aa2bb17ca0a94a09193799070736c",
+      "bytes": 10071
+    },
+    "native/final-state.json": {
+      "sha256": "691f13d98b520665708e9495c16df2bfdbd3e53887d6a89a084f7b2c21054e42",
+      "bytes": 9896
+    },
+    "native/rotation-readiness.json": {
+      "sha256": "f461a8f7deff6291538dcc010d61330a61ee1399eca270451e4fbc1452f601a1",
+      "bytes": 4770
+    },
+    "native/rotation-review.json": {
+      "sha256": "1ed2b72155053096c646789387aedeaa0eaeeb1f28f1c14cdb3553f7a4298394",
+      "bytes": 778
+    },
+    "native/rotation-approval.json": {
+      "sha256": "2b2928620e2c9f2c26aab687eb3f48027dab4bab8693bdb12348bdf835c19136",
+      "bytes": 365
+    },
+    "native/missing-original-approval.json": {
+      "sha256": "2fa9b6f8a4c3801d16a1b3e4f706058e731de353e1284ba287896d29fdb57923",
+      "bytes": 153
+    },
+    "native/new-secret-selection.json": {
+      "sha256": "3249419cec6a668b0aa053c02aae42eb7bf6632452c7161434dff5b0c8f28928",
+      "bytes": 156
+    },
+    "native/rotated-snapshot-check.json": {
+      "sha256": "8ffdb576c72d1d80c9acdd9fcaba9cabe2522bccb14c5b03a2b347387111e62c",
+      "bytes": 3744
+    },
+    "native/host-source-during-run.json": {
+      "sha256": "7840d1c0ed3947c9b456f0375bc2fb79f8d9e4c6734160eae73eed7e4bcffc7d",
+      "bytes": 36171
+    },
+    "source/selection.json": {
+      "sha256": "d3c5ede9b677814fa339a89bd9dc95edef47a92ddd8413ddbe96e3293a165886",
+      "bytes": 35157
+    },
+    "source/report.json": {
+      "sha256": "466374196185e4cacf2adeadbbf59cd180edb92a76d2411a092f5eeabab30df5",
+      "bytes": 23659
+    },
+    "source/original-secret-selection.json": {
+      "sha256": "2f29541c92033dc1c6747c94136a8cc30e89a83dd01b7a0df3fc2a706b23067e",
+      "bytes": 113
+    },
+    "image/candidate.json": {
+      "sha256": "6ef9e1ed6a81e1084906ccb332af3562f89401039e8d9c05cce8c82558541feb",
+      "bytes": 15771
+    },
+    "image/result.json": {
+      "sha256": "40a1f26decc22f49337f2138059ce5e10385db39b5d040bae258de57de048eb1",
+      "bytes": 17162
+    }
+  }
+}

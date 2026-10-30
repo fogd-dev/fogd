@@ -86,15 +86,20 @@ function validateContext(id, expectedDigest, action, secretRevision, context) {
 
 // The controller holds its exclusive mutation lock for this entire operation.
 // Durable intent precedes effects; a failed write latches the existing storage fence.
-export async function authenticatedDecision(controller, id, digest, action, secretRevision, context, perform) {
+async function verifyDecisionReview(controller, id, entry) {
+  if (entry.review && (entry.review !== decisionReviewToken(controller, id) || entry.secretRevision !== selectedSecretRevision(controller, controller.state.deployments[id]))) {
+    const error = new Error('Review context changed; reload the exact submission before deciding'); error.code = 'DECISION_REVIEW_STALE'; throw error;
+  }
+  if (entry.review) await verifyReviewedDecision(controller, id);
+}
+
+// A different review verifier is trusted controller composition, never request data.
+export async function authenticatedDecision(controller, id, digest, action, secretRevision, context, perform, verifyReview = verifyDecisionReview) {
   const entry = begin(controller, id, digest, action, secretRevision, context);
   await controller.save();
   let effectsStarted = false;
   try {
-    if (entry.review && (entry.review !== decisionReviewToken(controller, id) || entry.secretRevision !== selectedSecretRevision(controller, controller.state.deployments[id]))) {
-      const error = new Error('Review context changed; reload the exact submission before deciding'); error.code = 'DECISION_REVIEW_STALE'; throw error;
-    }
-    if (entry.review) await verifyReviewedDecision(controller, id);
+    await verifyReview(controller, id, entry);
     const result = await perform(() => { effectsStarted = true; }, entry);
     entry.outcome = result.status === 'failed' ? 'activation-failed' : 'succeeded';
     entry.applicationStatus = result.status; entry.completedAt = new Date().toISOString();

@@ -5,8 +5,9 @@ import { server } from '../src/http.mjs';
 import { decisionFixture } from './fixtures/decision-controller.mjs';
 import { archiveApprovalFixture, archive } from './fixtures/archive-approval.mjs';
 
-async function fixture(t) {
+async function fixture(t, rotation = false) {
   const f = await archiveApprovalFixture(t);
+  if (rotation) Object.assign(f.profile, { schema: 4, controllerArgs: ['packages/platform/src/main-archive.mjs'] });
   const c = new Controller({ ...f.settings, archiveProfile: f.profile }); await c.init();
   const credentials = { user: 'archive-owner', password: 'private-owner-password', gateway: 'unused-gateway' };
   const http = server(c, credentials); await new Promise(resolve => http.listen(0, '127.0.0.1', resolve));
@@ -16,7 +17,9 @@ async function fixture(t) {
   const csrf = (await (await get('/v1/admin')).json()).csrf;
   const post = (name, input, headers = {}) => fetch(`${origin}/v1/apps/${name}/archive-recovery/approve`, { method: 'POST',
     headers: { authorization, 'content-type': 'application/json', 'x-fogd-csrf': csrf, ...headers }, body: JSON.stringify(input) });
-  return { ...f, c, get, post, csrf };
+  const putRotation = (name, input, headers = {}) => fetch(`${origin}/v1/apps/${name}/archive-recovery/rotation/secrets`, { method: 'PUT', headers: { authorization, 'content-type': 'application/json', 'x-fogd-csrf': csrf, ...headers }, body: JSON.stringify(input) });
+  const approveRotation = (name, input, headers = {}) => fetch(`${origin}/v1/apps/${name}/archive-recovery/rotation/approve`, { method: 'POST', headers: { authorization, 'content-type': 'application/json', 'x-fogd-csrf': csrf, ...headers }, body: JSON.stringify(input) });
+  return { ...f, c, get, post, csrf, putRotation, approveRotation };
 }
 
 test('owner API provides an exact recovery review and records approval while HTTP remains withheld', async t => {
@@ -90,4 +93,27 @@ test('an owner API native-check failure records unconfirmed and preserves all ex
   assert.equal(state.apps.demo.archiveRecovery.status, 'pending');
   assert.equal(state.apps.demo.route, 'paused');
   assert.equal((await f.public()).routes[0].state, 'withheld');
+});
+
+test('owner rotation staging exposes revision/review only and leaves code and execution gates unchanged', async t => {
+  const f = await fixture(t, true), { secretRevision: _old, ...selection } = f.input;
+  const before = await f.disk(), result = await f.putRotation('demo', { ...selection, values: { API_KEY: 'private-owner-rotation' } });
+  assert.equal(result.status, 200); const staged = await result.json();
+  const review = await (await f.get('/v1/apps/demo/archive-recovery/rotation')).json();
+  assert.equal(review.selection.secretRevision, staged.revision); assert.equal(review.execution, 'held');
+  assert.ok(!JSON.stringify(review).includes('private-owner-rotation'));
+  assert.deepEqual(await f.disk(), before);
+  const forged = await f.approveRotation('demo', { ...review.selection, review: review.review, actor: { kind: 'basic', name: 'forged' } });
+  assert.equal(forged.status, 409); assert.deepEqual(await f.disk(), before);
+  assert.equal((await f.approveRotation('demo', { ...review.selection, review: review.review }, { 'x-fogd-csrf': '' })).status, 403);
+  assert.equal((await f.get('/v1/apps/demo/archive-recovery/rotation', 'Bearer team-token')).status, 401);
+});
+
+test('rotation staging rejects foreign app, stale selection and CSRF before replacing vault metadata', async t => {
+  const f = await fixture(t, true), { secretRevision: _old, ...selection } = f.input, before = f.c.secrets.describe();
+  for (const [name, body, headers] of [
+    ['other', { ...selection, values: { API_KEY: 'private-wrong-app' } }, {}],
+    ['demo', { ...selection, identity: 'f'.repeat(64), values: { API_KEY: 'private-wrong-id' } }, {}],
+    ['demo', { ...selection, values: { API_KEY: 'private-no-csrf' } }, { 'x-fogd-csrf': '' }],
+  ]) { assert.notEqual((await f.putRotation(name, body, headers)).status, 200); assert.deepEqual(f.c.secrets.describe(), before); }
 });

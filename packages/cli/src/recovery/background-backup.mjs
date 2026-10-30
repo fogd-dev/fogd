@@ -1,3 +1,4 @@
+import { appArchiveRotationCapability, assertArchiveRotationsSettled } from '@fogd/platform/app-archive-rotation-state';
 import { appArchiveCapability, validateAppArchives } from '@fogd/platform/app-archive';
 import { decisionHistoryCapability } from '@fogd/platform/decision-history';
 import { artifactPruneCapability } from '@fogd/platform/artifact-prune-state';
@@ -27,9 +28,10 @@ function supportedCapabilities(profile) {
 }
 function backgroundApps(state, profile, archives) {
   const capabilities = supportedCapabilities(profile);
-  assertSnapshotState(state, archives ? [...capabilities, appArchiveCapability] : capabilities);
+  assertSnapshotState(state, archives ? [...capabilities, appArchiveCapability, appArchiveRotationCapability] : capabilities);
   if (!archives && (Object.hasOwn(state, 'appArchives') || Object.values(state.apps).some(app => app.archive || app.archiveRecovery || app.route === 'archived'))) throw new Error('App archive state requires the archive runtime mode');
   const records = archives ? validateAppArchives(state, profile) : {};
+  if (archives) assertArchiveRotationsSettled(state);
   const archived = Object.values(records).filter(record => record.status === 'archived').map(record => record.name);
   return Object.fromEntries(families.map(family => [family.key, family.apps(state, archived)]));
 }

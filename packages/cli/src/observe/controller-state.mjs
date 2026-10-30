@@ -1,3 +1,4 @@
+import { appArchiveRotationCapability } from '@fogd/platform/app-archive-rotation-state';
 import { appArchiveCapability, validateAppArchives } from '@fogd/platform/app-archive';
 import { routeAuthorityCapability } from '@fogd/platform/route-snapshot';
 import { hasDurableRuntimeMode, runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
@@ -19,7 +20,7 @@ export function supportedDiagnosticController(state, policy) {
   try {
     if (policy.routing !== 'durable' || !Array.isArray(state?.requirements) || !state.requirements.includes(routeAuthorityCapability) || !journalEnvelope(state.routeAuthority, policy)) return false;
     const excluded = [routeAuthorityCapability];
-    if (policy.schema === 4) { validateAppArchives(state, policy); excluded.push(appArchiveCapability); }
+    if (policy.schema === 4) { validateAppArchives(state, policy); excluded.push(appArchiveCapability, appArchiveRotationCapability); }
     else if (archiveMetadata(state)) return false;
     return supportedController({ ...state, requirements: state.requirements.filter(value => !excluded.includes(value)) });
   } catch { return false; }

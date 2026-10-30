@@ -1,3 +1,4 @@
+import { appArchiveRotationCapability, assertArchiveRotationsSettled } from './app-archive-rotation-state.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { appArchiveCapability, projectAppArchive, projectAppArchiveRestore, validateAppArchives } from './app-archive.mjs';
 import { validateRouteSnapshot } from './route-snapshot.mjs';
@@ -13,7 +14,7 @@ const exact = (value, fields) => value !== null && typeof value === 'object' && 
 // application view. This view is never persisted or handed to a controller.
 function routingView(state, excluded) {
   const apps = Object.fromEntries(Object.entries(state.apps).filter(([name, app]) => !app.archive && name !== excluded));
-  return { ...state, apps, requirements: state.requirements.filter(capability => capability !== appArchiveCapability) };
+  return { ...state, apps, requirements: state.requirements.filter(capability => ![appArchiveCapability, appArchiveRotationCapability].includes(capability)) };
 }
 export function validateAppArchiveSnapshot(state, observed, profile, domain = 'localhost') {
   try {
@@ -42,6 +43,7 @@ function sourceInput(input, operation) {
   if (!exact(input, ['profile', 'sourceProfile', 'source', 'snapshot', 'binding', 'domain', operation]) || !exact(input.source, ['state', 'authority'])) throw refused();
   validateAppArchiveSnapshot(input.source.state, input.source.authority, input.sourceProfile, input.domain);
   // Check live background receipts before changing any app or routing identity.
+  assertArchiveRotationsSettled(input.source.state);
   restorationBackgrounds(input.source.state);
 }
 function coldPeers(input, state, excluded) {
@@ -68,6 +70,7 @@ export function prepareArchiveSnapshotRoutes(input) {
     if (!exact(input, ['profile', 'sourceProfile', 'source', 'snapshot', 'binding', 'domain']) || !exact(input.source, ['state', 'authority']) || input.profile?.schema !== 4 || input.sourceProfile?.schema !== 4) throw refused();
     const source = input.source.state;
     validateAppArchiveSnapshot(source, input.source.authority, input.sourceProfile, input.domain);
+    assertArchiveRotationsSettled(source);
     const view = routingView(source);
     const projected = attachArchiveApps(prepareRouteRestoration({ ...input, source: { state: view, authority: input.source.authority } }), source);
     validateAppArchiveSnapshot(projected.state, { record: projected.record, digest: projected.state.routeAuthority.settled.digest }, input.profile, input.domain);

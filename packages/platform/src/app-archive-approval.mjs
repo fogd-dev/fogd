@@ -1,53 +1,14 @@
+import { selectArchiveRecovery, verifyArchiveAuthority as authority, inspectArchiveMigrations as migrations, inspectArchiveBackgrounds as heldBackgrounds } from './app-archive-verification.mjs';
 import { isDeepStrictEqual } from 'node:util';
-import { dirname } from 'node:path';
 import { authenticatedDecision, decisionReviewToken } from './decision-history.mjs';
 import { validateAppArchives } from './app-archive.mjs';
-import { validateAppArchiveSnapshot } from './app-archive-routes.mjs';
-import { routePolicy } from './route-restoration-plan.mjs';
-import { readRouteRecord } from './route-record-store.mjs';
 import { verifiedReviewArtifact } from './review-artifact.mjs';
-import { validateCronObservation } from './cron-snapshot.mjs';
-import { assertRouteEnrollmentTargets } from './route-enrollment.mjs';
 
 const refused = () => Object.assign(new Error('Archive recovery approval is unconfirmed; keep routes and background work held and retain all stores'), { code: 'APP_ARCHIVE_APPROVAL_REFUSED' });
-const exact = (value, fields) => value && typeof value === 'object' && !Array.isArray(value) && isDeepStrictEqual(Object.keys(value).sort(), [...fields].sort());
-
 function selection(controller, profile, input) {
-  if (!exact(input, ['archive', 'identity', 'snapshot', 'deployment', 'digest', 'secretRevision'])) throw refused();
-  const record = validateAppArchives(controller.state, profile)[input.archive];
-  if (record?.status !== 'restored' || record.identity !== input.identity || record.restoration.snapshot !== input.snapshot ||
-    record.app.active !== input.deployment || record.digest !== input.digest) throw refused();
-  const release = controller.state.deployments[input.deployment], app = controller.state.apps[record.name];
-  if (!isDeepStrictEqual(release, record.deployments[input.deployment]) || input.secretRevision !== release.secretRevision ||
-    !isDeepStrictEqual(app.resources, record.app.resources) || !isDeepStrictEqual(app.migrations, record.app.migrations)) throw refused();
-  return { record, release, app, slot: controller.slots.find(slot => slot.id === app.slot) };
-}
-async function authority(controller, profile) {
-  const expected = routePolicy(profile), routes = controller.routes;
-  const slots = profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
-  if (!routes.durable || !isDeepStrictEqual(routes.options.policy, expected) || !isDeepStrictEqual(controller.slots, slots)) throw refused();
-  await assertRouteEnrollmentTargets(controller.state.routeEnrollment, controller.dir, dirname(routes.options.path));
-  const observed = await readRouteRecord(routes.options.path, expected);
-  validateAppArchiveSnapshot(controller.state, observed, profile, controller.baseDomain);
-  return observed;
-}
-const migrationKeys = rows => rows.map(({ database, name }) => JSON.stringify([database, name])).sort();
-async function migrations(controller, selected) {
-  const expected = migrationKeys(selected.app.migrations || []);
-  if (!isDeepStrictEqual(expected, migrationKeys(selected.release.migrations || [])) || new Set(expected).size !== expected.length) throw refused();
-  const observed = await controller.backend.inspectMigrations(selected.slot, controller.artifact(selected.release.id), selected.release.resources);
-  if (!isDeepStrictEqual(expected, migrationKeys(observed))) throw refused();
-}
-async function heldBackgrounds(controller, { record, app, release, slot }) {
-  if (app.delivery) {
-    const observed = await controller.backend.queues.snapshot(slot, app.delivery.queue, release.version);
-    if (observed?.paused !== true) throw refused();
-  }
-  if (app.dispatch) {
-    const observed = await controller.backend.crons.snapshot(slot, app.dispatch.script, release.version);
-    validateCronObservation(observed, release.resources.crons);
-    if (observed.revision !== record.app.cronSnapshot.observation.revision) throw refused();
-  }
+  const selected = selectArchiveRecovery(controller, profile, input);
+  if (selected.app.archiveRecovery?.rotation || input.secretRevision !== selected.release.secretRevision) throw refused();
+  return selected;
 }
 async function runtime(controller, selected) {
   if ((await controller.backend.owner(selected.slot))?.app !== selected.record.name) throw refused();

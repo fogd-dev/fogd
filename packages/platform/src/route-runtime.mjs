@@ -1,3 +1,5 @@
+import { validateAppArchives } from './app-archive.mjs';
+import { appArchiveRotationCapability } from './app-archive-rotation-state.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { completedRoute } from './route-publication.mjs';
 import { backendRuntimeIdentity } from './backend-runtime-identity.mjs';
@@ -70,7 +72,18 @@ export function routeRuntimeVerifier(controller, identity, { request = fetch } =
     } catch { throw refused(); }
   };
 }
+// Only an in-progress, capability-validated archive rotation may observe its new
+// private version before the canonical release metadata is atomically replaced.
+function rotationRuntimeView(controller, profile, selected, execution) {
+  if (profile.schema !== 4 || !controller.state.requirements?.includes(appArchiveRotationCapability)) throw refused();
+  validateAppArchives(controller.state, profile);
+  const release = controller.state.deployments[selected?.id], app = controller.state.apps[release?.app], journal = app?.archiveRecovery?.rotation;
+  if (!journal || journal.version !== execution?.version || journal.secretRevision !== execution?.secretRevision ||
+    Object.keys(execution).sort().join() !== 'secretRevision,version') throw refused();
+  return { backend: controller.backend, slots: controller.slots, baseDomain: controller.baseDomain,
+    state: { ...controller.state, deployments: { ...controller.state.deployments, [release.id]: { ...release, ...execution } } } };
+}
 export function backendRouteVerifier(controller, profile) {
-  const expected = validateRuntimePolicy(profile, controller.backend.env);
-  return routeRuntimeVerifier(controller, backendRuntimeIdentity(controller.backend, expected));
+  const expected = validateRuntimePolicy(profile, controller.backend.env), identity = backendRuntimeIdentity(controller.backend, expected);
+  return (name, selected, execution) => routeRuntimeVerifier(execution === undefined ? controller : rotationRuntimeView(controller, expected, selected, execution), identity)(name, selected);
 }

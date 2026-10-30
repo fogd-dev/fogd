@@ -286,9 +286,32 @@ credential bytes, fresh physical enrollment and source exclusions. This remains 
 private two-fleet D1/R2 check; native queue/cron archival, interruption and concurrent
 admission remain unqualified.
 
+Private archive recovery supports explicit secret rotation against the current
+vault. The owner stages values for an exact archive/release selection, obtains a
+new rotation review, and approves that selection. The saved original pin may be
+unavailable: rotation uses the newly selected current revision, never a retained
+source vault. It publishes unchanged canonical code and reads the complete SQL
+ledger without applying migrations. HTTP stays withheld; queue/cron recovery
+remains pending and retains its original timestamps, expiry and acknowledgment
+requirements. Validation: missing old values, changed selections and uncertain
+publication cannot silently approve execution; explicit retry retains the selected
+revision and values commitment, and a recorded publication completes without
+republishing. In-progress rotation prevents snapshot copying. Repeated archive
+lifecycles retain historical decisions while binding the current execution to the
+latest completed rotation.
+
+The [native rotation check](evidence/operator-app-archive-rotation-v9.json) restores
+a fresh secret-bearing D1/R2 app, makes its old target vault pin unavailable while
+retaining the bytes, and refuses original-pin approval. Explicit rotation uses new
+current-vault values; separate HTTP resume returns the new configuration hash and
+original SQL/object data, including after retained restart. Independent audit
+rechecks image/host sources, canonical artifacts, credentials, physical stores and
+source exclusions. Queue/cron receipt behavior and uncertain publication have
+component evidence; native background rotation remains unqualified.
+
 Before archive admission, qualify the native archive/reuse/restore sequence across
-storage and background families, interruption and concurrent admission. Secret
-rotation and the operator workflow also remain open. There are no
+storage and background families, interruption and concurrent admission. The
+operator workflow also remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
 

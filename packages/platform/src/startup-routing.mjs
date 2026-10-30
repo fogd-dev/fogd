@@ -13,5 +13,5 @@ export function startupRouting(input, profile, controller) {
   const expected = validateRuntimePolicy(profile);
   return { path: input.path,
     policy: { installation: runtimePolicyIdentity(expected), slots: expected.fleets.map(fleet => fleet.id) },
-    verifyRuntime: (name, selected) => backendRouteVerifier(controller(), expected)(name, selected) };
+    verifyRuntime: (name, selected, execution) => backendRouteVerifier(controller(), expected)(name, selected, execution) };
 }

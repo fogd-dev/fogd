@@ -1,3 +1,5 @@
+import { archiveRotationReview, stageArchiveRotationSecrets, rotateAppArchiveRecovery } from './app-archive-rotation.mjs';
+import { appArchiveRotationCapability } from './app-archive-rotation-state.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { appArchiveCapability, validateAppArchives } from './app-archive.mjs';
 import { approveAppArchiveRecovery } from './app-archive-approval.mjs';
@@ -30,7 +32,7 @@ export class ControllerArchives {
     }
     validateAppArchives(state, this.#profile);
     const archived = new Set(Object.entries(state.apps).filter(([, app]) => app.archive).map(([name]) => name));
-    return { ...state, requirements: state.requirements.filter(value => value !== appArchiveCapability),
+    return { ...state, requirements: state.requirements.filter(value => ![appArchiveCapability, appArchiveRotationCapability].includes(value)),
       apps: Object.fromEntries(Object.entries(state.apps).filter(([name]) => !archived.has(name))) };
   }
   #record(name) {
@@ -43,12 +45,33 @@ export class ControllerArchives {
   review(name) {
     return this.controller.exclusive(async () => {
       await this.controller.routes.checkReady();
-      const record = this.#record(name), release = this.controller.state.deployments[record.app.active];
+      const record = this.#record(name);
+      if (this.controller.state.apps[name].archiveRecovery.rotation) throw unavailable();
+      const release = this.controller.state.deployments[record.app.active];
       return { app: name, state: 'pending', execution: 'held',
         selection: { archive: record.id, identity: record.identity, snapshot: record.restoration.snapshot,
           deployment: release.id, digest: release.digest, secretRevision: release.secretRevision },
         review: decisionReviewToken(this.controller, release.id),
         notice: 'Approve the exact retained release before resuming HTTP or acknowledging background recovery. Approval leaves execution held.' };
+    });
+  }
+  reviewRotation(name) {
+    return this.controller.exclusive(async () => {
+      await this.controller.routes.checkReady(); this.#record(name);
+      return archiveRotationReview(this.controller, this.#profile, name);
+    });
+  }
+  stageRotation(name, input) { return stageArchiveRotationSecrets(this.controller, this.#profile, name, input); }
+  async rotate(name, input, context) {
+    const record = this.#record(name);
+    if (input?.archive !== record.id) throw unavailable();
+    const result = await rotateAppArchiveRecovery(this.controller, this.#profile, input, context);
+    return this.#diagnose(result);
+  }
+  #diagnose(result) {
+    return this.controller.exclusive(async () => {
+      await recoverQueueSnapshots(this.controller); await recoverCronSnapshots(this.controller);
+      return result;
     });
   }
   async approve(name, input, context) {
@@ -57,10 +80,6 @@ export class ControllerArchives {
     const result = await approveAppArchiveRecovery(this.controller, this.#profile, input, context);
     // Diagnosis follows the saved owner approval. It may pause/inspect native
     // controls, but cannot acknowledge recovery or resume execution.
-    return this.controller.exclusive(async () => {
-      await recoverQueueSnapshots(this.controller);
-      await recoverCronSnapshots(this.controller);
-      return result;
-    });
+    return this.#diagnose(result);
   }
 }

@@ -18,11 +18,11 @@ import { routeRecordDigest } from '../../src/route-record-store.mjs';
 import { decisionReviewToken } from '../../src/decision-history.mjs';
 
 export const archive = '33333333-3333-4333-8333-333333333333';
-export async function archiveApprovalFixture(t, { persist = saveJson, background, runtime } = {}) {
+export async function archiveApprovalFixture(t, { persist = saveJson, background, runtime, privateBackground = false } = {}) {
   const sourceProfile = { ...policy(), schema: 3, routing: 'durable', controllerArgs: ['packages/platform/src/main-durable.mjs'],
     ...(runtime ? { family: runtime.id, image: runtime.image, storageImage: runtime.storageImage, binarySha256: runtime.binarySha256, supervisorSha256: runtime.supervisorSha256 } : {}) };
   const slots = profile => profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
-  const source = await approvalSource(t, slots(sourceProfile), background), c = source.controller;
+  const source = await approvalSource(t, slots(sourceProfile), background, privateBackground), c = source.controller;
   const release = source.release, secret = source.secret, name = release.app;
   let rows = structuredClone(c.state.apps[name].migrations);
   const record = { schema: 1, installation: routePolicy(sourceProfile).installation, revision: '1',
@@ -66,7 +66,7 @@ export async function archiveApprovalFixture(t, { persist = saveJson, background
     public: async () => JSON.parse(await readFile(join(paths.authority, 'routes.json'))) };
 }
 
-async function approvalSource(t, slots, background) {
+async function approvalSource(t, slots, background, privateBackground) {
   if (background) {
     const family = background === 'queue' ? { fixture: queued, operate: operateDelivery } : { fixture: scheduled, operate: operateDispatch };
     const source = await family.fixture(t, { slots }), c = source.c, release = await source.request();
@@ -74,6 +74,13 @@ async function approvalSource(t, slots, background) {
     // exercises ordinary canonical admission, so canonicalize before approval.
     const path = join(c.artifact(release.id), 'wrangler.json');
     const config = translateConfig(JSON.parse(await readFile(path)), release.app, { cronApps: true });
+    let secret = { revision: null };
+    if (privateBackground) {
+      release.requiredSecrets = ['API_KEY'];
+      c.backend.applicationReady = async () => {};
+      await writeFile(join(c.artifact(release.id), 'fogd-deployment.json'), JSON.stringify({ requiredSecrets: release.requiredSecrets }));
+      secret = await c.replaceSecrets(release.app, { API_KEY: 'private-background-original' });
+    }
     await writeFile(path, JSON.stringify(config));
     release.resources = resourceIdentity(config); release.digest = await artifactDigest(c.artifact(release.id));
     if (background === 'queue') {
@@ -83,13 +90,13 @@ async function approvalSource(t, slots, background) {
         return resume(slot, 'jobs', version);
       };
     }
-    await c.mutate(release.id, release.digest, 'approve', null, undefined,
+    await c.mutate(release.id, release.digest, 'approve', secret.revision, undefined,
       { actor: { kind: 'basic', name: 'original-owner' }, review: decisionReviewToken(c, release.id) });
     if (background === 'queue') c.backend.queues.snapshot = async () => ({ paused: true, stored: 0, backlogCount: 0, backlogBytes: 0, oldestMessageTimestamp: null });
     await family.operate(c, release.app, 'snapshot', { deployment: release.id, digest: release.digest });
     const root = await mkdtemp(join(tmpdir(), 'fogd-archive-approval-background-'));
     t.after(() => rm(root, { recursive: true, force: true }));
-    return { controller: c, root, release, secret: { revision: null }, effects: source.events || [] };
+    return { controller: c, root, release, secret, effects: source.events || [] };
   }
   const source = await decisionFixture(t, { slots }), c = source.controller;
   const release = await source.submit('demo', { config: { secrets: { required: ['API_KEY'] }, d1_databases: [{ binding: 'DB', database_name: 'demo-db' }] },

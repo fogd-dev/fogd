@@ -1,3 +1,4 @@
+import { appArchiveRotationCapability, validateArchiveRotations } from './app-archive-rotation-state.mjs';
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { appName } from '@fogd/runtime/artifact';
@@ -23,7 +24,7 @@ const placeholder = record => ({ slot: null, route: 'archived', active: record.a
 function header(state) {
   if (!map(state) || !map(state.apps) || !map(state.deployments) || !Array.isArray(state.requirements) || new Set(state.requirements).size !== state.requirements.length) throw refused();
   if (!Object.hasOwn(state, 'appArchives')) {
-    if (state.requirements.includes(appArchiveCapability) || Object.values(state.apps).some(app => app.archive || app.archiveRecovery)) throw refused();
+    if (state.requirements.includes(appArchiveCapability) || state.requirements.includes(appArchiveRotationCapability) || Object.values(state.apps).some(app => app.archive || app.archiveRecovery)) throw refused();
     return {};
   }
   if (!state.requirements.includes(appArchiveCapability) || !exact(state.appArchives, ['schema', 'records']) || state.appArchives.schema !== 1 || !map(state.appArchives.records)) throw refused();
@@ -37,7 +38,7 @@ function checkedRecord(record, id) {
   if (record.status !== 'archived') checkedRestoration(record);
 }
 function checkedRestoration(record) {
-  const fields = ['snapshot', 'targetIdentity', 'slot', 'afterDecision', ...(record.status === 'recovered' ? ['decision'] : [])];
+  const fields = ['snapshot', 'targetIdentity', 'slot', 'afterDecision', ...(record.status === 'recovered' ? ['decision', ...(Object.hasOwn(record.restoration, 'rotation') ? ['rotation'] : [])] : [])];
   if (!exact(record.restoration, fields) || !hex(record.restoration.snapshot) || !hex(record.restoration.targetIdentity) ||
     !['slot-1', 'slot-2'].includes(record.restoration.slot) || !(record.restoration.afterDecision === null || uuid(record.restoration.afterDecision))) throw refused();
 }
@@ -93,6 +94,7 @@ export function validateAppArchives(state, profile) {
       checkedPlaceholder(state, record);
     }
     checkedAppReferences(state, records);
+    validateArchiveRotations(state, records, policy);
     return records;
   } catch { throw refused(); }
 }
@@ -101,7 +103,7 @@ function checkedRecoveryDecision(state, record) {
   validateDecisionHistory(state);
   const index = state.decisions?.findIndex(value => value.id === record.restoration.decision), decision = state.decisions?.[index];
   const expected = { action: 'approve', outcome: 'succeeded', applicationStatus: 'active', app: record.name,
-    deployment: record.app.active, digest: record.digest, secretRevision: record.deployments[record.app.active].secretRevision };
+    deployment: record.app.active, digest: record.digest, secretRevision: record.restoration.rotation?.secretRevision || record.deployments[record.app.active].secretRevision };
   if (!uuid(record.restoration.decision) || !decision || index <= decisionBoundary(state, record) || !hex(decision.review) ||
     !Object.entries(expected).every(([key, value]) => decision[key] === value)) throw refused();
 }
@@ -131,7 +133,7 @@ function checkedSourceProfile(record, profile) {
 
 function validateRecovery(records, name, app) {
   const recovery = app?.archiveRecovery, record = recovery && records[recovery.archive];
-  if (!exact(recovery, ['archive', 'identity', 'status']) || recovery.status !== 'pending' || !record || record.name !== name || record.status !== 'restored' ||
+  if (!exact(recovery, ['archive', 'identity', 'status', ...(Object.hasOwn(recovery || {}, 'rotation') ? ['rotation'] : [])]) || recovery.status !== 'pending' || !record || record.name !== name || record.status !== 'restored' ||
     record.identity !== recovery.identity || app.slot !== record.restoration.slot || app.active !== record.app.active || app.route !== 'paused') throw refused();
 }
 function profiles(source, target, slot, replacement) {

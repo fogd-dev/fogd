@@ -20,6 +20,10 @@ export function adminState(controller) {
 
 function adminApp(app) {
   const visible = { ...app };
+  if (app.archiveRecovery) {
+    const { archive, identity, status, rotation } = app.archiveRecovery;
+    visible.archiveRecovery = { archive, identity, status, ...(rotation ? { rotation: { secretRevision: rotation.secretRevision, state: 'pending' } } : {}) };
+  }
   if (app.retirement) visible.retirement = retirementIdentity(app.retirement);
   delete visible.queueSnapshot; delete visible.cronSnapshot;
   if (app.cronRecovery) visible.cronRecovery = cronRecoveryView(app.cronRecovery);
