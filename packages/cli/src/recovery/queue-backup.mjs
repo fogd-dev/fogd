@@ -13,7 +13,7 @@ export function queueBackupApps(state) {
 }
 
 // Family inventory; callers must validate the installation's other capabilities.
-export function queueRecoveryApps(state) {
+export function queueRecoveryApps(state, archived = []) {
   if (!state.requirements?.includes('fogd-queue-activation-v1')) {
     if (state.requirements?.some(value => [queueRecoveryCapability, queueRetirementCapability].includes(value)) || Object.values(state.apps).some(hasQueueLifecycle) || Object.values(state.deployments).some(value => Object.hasOwn(value.resources || {}, 'queues'))) throw new Error('Queue history requires its capability marker');
     return [];
@@ -21,7 +21,7 @@ export function queueRecoveryApps(state) {
   const retired = Object.keys(state.apps).filter(name => validateRetiredQueue(state, name, state.apps[name]));
   const names = Object.keys(state.apps).filter(name => !state.apps[name].retirement && hasQueueLifecycle(state.apps[name]));
   const artifacts = Object.values(state.deployments).filter(request => artifactOnlyQueueRequest(state, request));
-  const accounted = [...names, ...retired];
+  const accounted = [...names, ...retired, ...archived];
   if ((!accounted.length && !artifacts.length) || Object.values(state.deployments).some(value => value.resources?.queues && !artifacts.includes(value) && (!accounted.includes(value.app) || (retired.includes(value.app) && !['retired', 'superseded', 'rejected'].includes(value.status))))) throw new Error('Queued installation recovery requires an activated app for every queue declaration');
   for (const name of names) {
     const { app } = snapshotTarget(state, name);

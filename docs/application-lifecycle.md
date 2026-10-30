@@ -80,6 +80,37 @@ Existing runtimes reject it. The filesystem coordinator, secret-vault checks,
 background recovery/rebinding, explicit approval and native archive/reuse/restore
 acceptance remain to be implemented before operator use.
 
+## Retained snapshot and data-copy implementation
+
+The internal [archive data stage](../packages/cli/src/recovery/app-archive-data.mjs)
+binds the reviewed archive identity to both snapshots, the original app/release
+records and its storage identity. It verifies that the retained MinIO namespace,
+including its ownership object, still matches the original snapshot. Changed or
+missing data refuses before target access.
+
+Restoration keeps the current bucket, controller files and peer disks. Only the
+archived app's two replica disks come from the original snapshot, mapped into
+unassigned capacity. The fresh controller state remains intact for the one-use
+route finalizer. Current authority files take precedence over older copies; this
+data step does not select or materialize application secrets. A
+[Docker copy check](evidence/operator-app-archive-data-v9.json) restores synthetic
+SQLite snapshots on fresh volumes, independently verifies all four replica rows,
+and compares the namespace reader against a retained native MinIO sample. This
+is data-stage evidence, not full celld archival acceptance. Both snapshots are
+rechecked after copying. A changed source or failed copy leaves partial targets
+unconfirmed, retained and stopped.
+
+Archived queue and scheduled receipts remain inactive audit data, including expired
+queue receipts. Live peers still need valid current recovery evidence. Restoring
+background execution requires fresh diagnosis and acknowledgment later.
+
+The namespace reader accepts ordinary GNU/USTAR backup files, directories and GNU
+long names described in the [GNU tar format reference](https://www.gnu.org/software/tar/manual/html_node/Standard.html).
+It preserves UTF-8 filename identity and refuses links, duplicate/unsafe paths,
+unsupported extensions and malformed headers without extraction. Its bounds are
+200,000 members and 16 MiB of member names per bucket archive. Physical member bytes
+are separate from logical app data, free capacity and disk allocation.
+
 ## Remaining archive protocol
 
 Archive support needs a separate immutable runtime and native acceptance before

@@ -8,7 +8,7 @@ export function assertCronDockerTopology(state, config) {
 }
 
 // Family inventory; callers validate the complete installation's capabilities.
-export function cronRecoveryApps(state) {
+export function cronRecoveryApps(state, archived = []) {
   const declared = Object.values(state.deployments).filter(value => Object.hasOwn(value.resources || {}, 'crons'));
   const retired = Object.keys(state.apps).filter(name => validateRetiredCron(state, name, state.apps[name]));
   const names = Object.keys(state.apps).filter(name => !state.apps[name].retirement && hasCronLifecycle(state.apps[name])).sort();
@@ -17,7 +17,7 @@ export function cronRecoveryApps(state) {
     return [];
   }
   const artifacts = declared.filter(request => artifactOnlyCronRequest(state, request));
-  const accounted = [...names, ...retired];
+  const accounted = [...names, ...retired, ...archived];
   if ((!accounted.length && !artifacts.length) || declared.some(request => !artifacts.includes(request) && !accounted.includes(request.app))) throw new Error('Scheduled installation recovery requires an active app for every approved cron declaration');
   for (const name of names) {
     const { app } = cronSnapshotTarget(state, name);

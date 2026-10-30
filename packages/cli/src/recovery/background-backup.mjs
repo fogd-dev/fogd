@@ -1,3 +1,4 @@
+import { appArchiveCapability, validateAppArchives } from '@fogd/platform/app-archive';
 import { decisionHistoryCapability } from '@fogd/platform/decision-history';
 import { artifactPruneCapability } from '@fogd/platform/artifact-prune-state';
 import { queueRecoveryApps, queueSnapshotProtocol } from './queue-backup.mjs';
@@ -53,5 +54,19 @@ export function backgroundSnapshotEvidence(state, expected, now = Date.now(), pr
 export function validateBackgroundEvidence(state, manifest, now = Date.now(), profile) {
   const inventory = backgroundBackupApps(state, profile);
   for (const family of families) validateSnapshotEvidence(state, manifest[family.key], inventory[family.key], family.protocol, now);
+  return inventory;
+}
+
+// Only the separate archive verifier uses this inventory. Complete private archive
+// validation precedes treating archived declarations as inactive family history.
+export function validateAppArchiveBackgroundEvidence(state, manifest, now, profile) {
+  const records = validateAppArchives(state, profile);
+  assertSnapshotState(state, [...supportedCapabilities(profile), appArchiveCapability]);
+  const archived = Object.values(records).filter(record => record.status === 'archived').map(record => record.name);
+  const inventory = {};
+  for (const family of families) {
+    const names = family.apps(state, archived); inventory[family.key] = names;
+    validateSnapshotEvidence(state, manifest[family.key], names, family.protocol, now);
+  }
   return inventory;
 }

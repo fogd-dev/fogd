@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "kind": "operator-app-archive-data-stage",
+  "recordedAt": "2026-10-30T02:47:52.152434+00:00",
+  "sourceCommit": "0fd87050a150d7174a4f81e43a3d7a41c3f9d150",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual fixed data-copy helpers in a verified cached private image on fresh owned Docker volumes, using synthetic SQLite app snapshots. No celld app execution, complete enrollment, routing finalization or operator archival admission.",
+  "image": "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80",
+  "newRuntimeImageBuilt": false,
+  "privateImageInShippedCatalog": false,
+  "copiedRoles": [
+    "bucket",
+    "controller",
+    "slot-1-a",
+    "slot-1-b",
+    "slot-2-a",
+    "slot-2-b"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "hostSourceFilesRehashed": 326,
+    "snapshotMembersRehashed": 20,
+    "sqliteVolumesReadIndependently": 4,
+    "archiveIdentityRecomputed": true,
+    "realNativeNamespaceMembersCompared": 82,
+    "currentControllerAndBucketPreserved": true,
+    "existingContainersPreserved": 64,
+    "existingVolumeNamesPreserved": 100,
+    "scope": "Packaged data-copy helpers with synthetic SQLite snapshots; real native bucket parser sample only, no celld archive/reuse/restore acceptance"
+  },
+  "checks": {
+    "canonical": {
+      "passed": 2963,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 491042.038084,
+      "scope": "Full suite before the final UTF-8 filename identity correction."
+    },
+    "finalFocused": {
+      "passed": 53,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "Final source: archive data, namespace parsing, background history, ordinary data/retirement/bundle checks; includes subsequent test-only additions."
+    },
+    "syntax": "passed",
+    "quality": "passed",
+    "writing": "passed",
+    "filenameIdentityRegression": {
+      "redConfirmed": true,
+      "fixedAndPassed": true
+    }
+  },
+  "dataSourcePolicy": {
+    "bucket": "current-snapshot",
+    "controllerFiles": "current-snapshot",
+    "peerReplicas": "current-snapshot",
+    "archivedReplicas": "bound-original-snapshot",
+    "freshControllerState": "preserved",
+    "retainedNamespace": "exact-members-and-physical-file-bytes-match"
+  },
+  "existingContainersPreserved": 64,
+  "existingVolumeNamesPreserved": 100,
+  "newOwnedDataVolumesRetained": 6,
+  "operatorArchivalAvailable": false,
+  "defaultCronAdmission": "closed",
+  "fullNativeArchiveAcceptancePassed": false,
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-data-copy-20261030-02",
+  "evidenceFingerprints": {
+    "result.json": {
+      "sha256": "5816f7203a1e1b6fe28894a8415a9430f1b9b209be25b258771acb5a220f96c4",
+      "bytes": 1170
+    },
+    "before.json": {
+      "sha256": "b11357b9b0123a9668eef8ed1480a7273f3ffb63164a5568228f067302945f26",
+      "bytes": 54151
+    },
+    "after.json": {
+      "sha256": "43c9ac77e9112c68df9fc14d1b58d9e1340f3662f003342919dfb57426e2ef37",
+      "bytes": 76485
+    },
+    "hostSources.json": {
+      "sha256": "6a2630ca5c8e8ba04129f05d5970cc91c0ce0ed38c6020f8ff05476f2291f532",
+      "bytes": 37395
+    },
+    "snapshotsBefore.json": {
+      "sha256": "5963232f21ce7bab961d9f50315f393bd8292cb2d26965006ec7861be9dffbce",
+      "bytes": 2693
+    },
+    "nativeNamespace.json": {
+      "sha256": "d94ad33ffe40af330afbfe9f2b3b8bdbb9b53068ef1c6a4d1e9b11646d797e2a",
+      "bytes": 17480
+    },
+    "receipt.json": {
+      "sha256": "e4ae7d6355626d7ac8099239dcbacec33d487256ebae930bc7b303e08de73acb",
+      "bytes": 567
+    },
+    "sql.json": {
+      "sha256": "826987a512aa9875dba5cd23e413f9a7294bfa42d51b059de1fde6eef312c248",
+      "bytes": 191
+    },
+    "controller.json": {
+      "sha256": "e40abc476c7d62ed5980983d15930fe272665379a3e2ba47c80c53488ac00298",
+      "bytes": 73
+    },
+    "config.json": {
+      "sha256": "630853b09ed0b908f34e21bcc37d8ce073850e16c51873d500c004b37f353543",
+      "bytes": 11350
+    },
+    "selection.json": {
+      "sha256": "38d8fe5a6c72c7a455bd30b6162061455391685b514d5cd2ab5b056ba3e0884c",
+      "bytes": 4505
+    },
+    "calls.json": {
+      "sha256": "11c2d6661597267e0797c00184d1a55819ebc894958d62952b590a20efcac4c6",
+      "bytes": 1489
+    },
+    "runner.mjs": {
+      "sha256": "d62d3e6e694b6b48ec16ce7927a0dc2cbe4938b403d0d90d3c9726dba2a1a623",
+      "bytes": 7571
+    },
+    "runner.log": {
+      "sha256": "81b598d488cff38cb1f76cb01ba865880420fbfe98851bf2118b738761b209aa",
+      "bytes": 1043
+    },
+    "audit.py": {
+      "sha256": "9d26c3e618937733b01911fea4ff2de530956afbd4d59792cbd471e31226e086",
+      "bytes": 5061
+    },
+    "audit.log": {
+      "sha256": "368596ba0002fe61adffaf2de7889e81fd024c8f08fbbac53a55d677b80145da",
+      "bytes": 464
+    },
+    "filename-regression-red.log": {
+      "sha256": "5574f43f3adc00891e0fc46f9833defd98e39984d966915380d5b06357454182",
+      "bytes": 944
+    },
+    "final-focused.log": {
+      "sha256": "427ac769e4b8a66b764127f8d762a6088cfe66cd3d9702be269d1fcc06433a2c",
+      "bytes": 5233
+    }
+  },
+  "remaining": [
+    "Stopped enrollment coordinator with source exclusion and writer fences",
+    "Current vault/revision checks and background recovery/rebinding",
+    "Explicit approval and archive recovery gate completion",
+    "Full celld archive A, reuse for B, restore A, interruption and concurrent-admission acceptance"
+  ]
+}

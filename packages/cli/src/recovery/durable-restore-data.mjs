@@ -1,5 +1,5 @@
 import { lstat } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { validateRuntimePolicy } from '@fogd/platform/runtime-policy';
 import { routeAuthorityVolume } from '../runtime/durable-config.mjs';
@@ -45,22 +45,34 @@ async function helper(readVolume, image, volume, mode, input, options) {
   if (bounded(await readVolume(image, volume, helperArgs(mode), { ...options, input, maxOutputBytes: 4096 })) !== 'ok') throw unconfirmed();
 }
 
-function restorationPlan(directory, config, profile, retiredFleet) {
+function emptiedRoles(policy, roles, retiredFleet, archivedFleet) {
+  if (retiredFleet !== undefined && archivedFleet !== undefined) throw unconfirmed();
+  if (retiredFleet === undefined && archivedFleet === undefined) return [];
+  const fleet = policy.fleets.find(value => value.id === (retiredFleet ?? archivedFleet));
+  const pattern = retiredFleet !== undefined ? /^retirement-generations\/([a-f0-9-]{36})$/ : /^archive-generations\/([a-f0-9-]{36})$/;
+  const generation = fleet?.prefix.match(pattern)?.[1];
+  if (!generation || fleet.nodes.some(node => node.id !== `${node.host}-${generation}`)) throw unconfirmed();
+  const empty = fleet.nodes.map(node => node.host);
+  if (empty.length !== 2 || empty.some(role => !roles.includes(role))) throw unconfirmed();
+  return empty;
+}
+function replicaArchives(targets, policy, sources, empty) {
+  if (sources === undefined) return targets;
+  if (empty.length || !sources || Object.keys(sources).sort().join() !== 'directory,roles' || typeof sources.directory !== 'string' || !sources.roles) throw unconfirmed();
+  const selected = Object.keys(sources.roles).sort(), fleet = policy.fleets.find(fleet => isDeepStrictEqual(fleet.nodes.map(node => node.host).sort(), selected));
+  if (!fleet || !/^slot-[12]-a$/.test(sources.roles[selected[0]]) || sources.roles[selected[1]] !== sources.roles[selected[0]].replace(/-a$/, '-b')) throw unconfirmed();
+  return targets.map(target => Object.hasOwn(sources.roles, target.role) ? { ...target, archive: join(resolve(sources.directory), `${sources.roles[target.role]}.tar`) } : target);
+}
+function restorationPlan(directory, config, profile, { retiredFleet, archivedFleet, replicaSources }) {
   const policy = validateRuntimePolicy(profile);
   if (policy.schema !== 3 || policy.routing !== 'durable') throw unconfirmed();
   // Execution policy, enrollment and route authority are never data roles.
   const roles = durableSnapshotLayout(config, policy).archiveVolumes.filter(role => role !== routeAuthorityVolume);
   const volumes = roles.map(role => config.volumes[role]?.name);
   if (!roles.includes('controller') || volumes.some(name => typeof name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(name)) || new Set(volumes).size !== volumes.length) throw unconfirmed();
-  let emptyRoles = [];
-  if (retiredFleet !== undefined) {
-    const fleet = policy.fleets.find(value => value.id === retiredFleet);
-    const generation = fleet?.prefix.match(/^retirement-generations\/([a-f0-9-]{36})$/)?.[1];
-    if (!generation || fleet.nodes.some(node => node.id !== `${node.host}-${generation}`)) throw unconfirmed();
-    emptyRoles = fleet.nodes.map(node => node.host);
-    if (emptyRoles.length !== 2 || emptyRoles.some(role => !roles.includes(role))) throw unconfirmed();
-  }
-  return { image: policy.image, targets: roles.map((role, index) => ({ role, volume: volumes[index], archive: join(directory, `${role}.tar`), empty: emptyRoles.includes(role) })) };
+  const empty = emptiedRoles(policy, roles, retiredFleet, archivedFleet);
+  const targets = roles.map((role, index) => ({ role, volume: volumes[index], archive: join(directory, `${role}.tar`), empty: empty.includes(role) }));
+  return { image: policy.image, targets: replicaArchives(targets, policy, replicaSources, empty) };
 }
 
 async function restoreRole(readVolume, image, { role, volume, archive }, original) {
@@ -77,9 +89,9 @@ async function restoreRole(readVolume, image, { role, volume, archive }, origina
 // stopped resources, execution policy install and fresh route enrollment.
 // Copies only data roles beside the fresh controller state; a failure after
 // any copy starts is retained as-is, never cleaned or retried here.
-export async function restoreDurableData(directory, config, profile, { readVolume = volumeHelper, retiredFleet } = {}) {
+export async function restoreDurableData(directory, config, profile, { readVolume = volumeHelper, retiredFleet, archivedFleet, replicaSources } = {}) {
   try {
-    const { image, targets } = restorationPlan(directory, config, profile, retiredFleet);
+    const { image, targets } = restorationPlan(directory, config, profile, { retiredFleet, archivedFleet, replicaSources });
     for (const target of targets) if (!(await lstat(target.archive)).isFile()) throw unconfirmed();
     let original;
     for (const { role, volume } of targets) {

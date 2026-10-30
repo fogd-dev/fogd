@@ -1,3 +1,4 @@
+import { validateAppArchiveSnapshot } from '@fogd/platform/app-archive-routes';
 import { createHash } from 'node:crypto';
 import { lstat } from 'node:fs/promises';
 import { join, posix } from 'node:path';
@@ -11,7 +12,7 @@ import { projectName } from './docker.mjs';
 import { execute } from './execute.mjs';
 import { recoveryLayout } from './layout.mjs';
 import { snapshotState } from './snapshot-state.mjs';
-import { validateBackgroundEvidence } from './background-backup.mjs';
+import { validateBackgroundEvidence, validateAppArchiveBackgroundEvidence } from './background-backup.mjs';
 
 export const durableSnapshotFormat = 'fogd-stopped-durable-v1';
 const refused = () => Object.assign(new Error('Durable stopped snapshot is invalid or does not match the independently provided profile; no snapshot values are displayed'), { code: 'DURABLE_BUNDLE_REFUSED' });
@@ -54,6 +55,16 @@ async function archivedRouteRecord(directory, policy) {
 }
 
 export async function verifyDurableBundle(directory, profile) {
+  return verifyBundle(directory, profile, validateBackgroundEvidence, validateRouteSnapshot, Date.now());
+}
+
+// Source-only archival protocol. Ordinary restore/backup keeps its original
+// capability boundary. Retained snapshots are checked at the bound archival time;
+// restoring their background work still requires fresh diagnosis/acknowledgment.
+export async function verifyAppArchiveBundle(directory, profile, at = Date.now()) {
+  return verifyBundle(directory, profile, validateAppArchiveBackgroundEvidence, validateAppArchiveSnapshot, at);
+}
+async function verifyBundle(directory, profile, backgrounds, routes, at) {
   try {
     const manifestPath = join(directory, 'manifest.json');
     if (!(await lstat(manifestPath)).isFile()) throw refused();
@@ -67,10 +78,10 @@ export async function verifyDurableBundle(directory, profile) {
     const images = Object.fromEntries(services.map(name => [name, name === 'minio' ? profile.storageImage : profile.image]));
     if (!isDeepStrictEqual(manifest.images, images)) throw refused();
     const state = await snapshotState(directory);
-    validateBackgroundEvidence(state, manifest, Date.now(), profile);
+    backgrounds(state, manifest, at, profile);
     const authority = await archivedRouteRecord(directory, { installation: runtimePolicyIdentity(profile), slots: profile.fleets.map(fleet => fleet.id) });
     const domain = config.services.controller.environment.FOGD_BASE_DOMAIN || 'localhost';
-    if (!isDeepStrictEqual(manifest.routeAuthority, validateRouteSnapshot(state, authority, profile, domain))) throw refused();
+    if (!isDeepStrictEqual(manifest.routeAuthority, routes(state, authority, profile, domain))) throw refused();
     // Bind interpreted metadata to its checksums again after parsing and tar reads.
     await checkFingerprints(directory, manifest.files, ['compose.json', 'controller.tar', `${routeAuthorityVolume}.tar`]);
     return { manifest, config, state, authority };
