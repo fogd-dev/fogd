@@ -61,7 +61,9 @@ projects a verified app into a name-reserving archive, then restores that same a
 into unassigned capacity behind a pending recovery gate. It binds the retained
 snapshot, release, fleet namespace, native identities and storage origin. It keeps
 current credential records, unrelated apps, release history and artifact references.
-Queued and scheduled metadata retain their paused receipts for later reconciliation.
+Queued and scheduled metadata retain their original paused receipts in the archive record.
+Restoration derives fresh pending recovery gates for the target slot; it preserves
+observation times, queue expiry, cron hold revision and prior recovery history.
 
 The [archive route protocol](../packages/platform/src/app-archive-routes.mjs)
 connects this state to durable routing: archival removes that app's public route,
@@ -76,9 +78,10 @@ or copy native app data.
 
 These helpers do not stop application writers or copy native application data.
 No CLI, controller startup path or shipped runtime admits the new capability.
-Existing runtimes reject it. The filesystem coordinator, secret-vault checks,
-background recovery/rebinding, explicit approval and native archive/reuse/restore
-acceptance remain to be implemented before operator use.
+Existing runtimes reject it. The stopped filesystem coordinator and background
+receipt projection are internal components. Secret-vault checks, controller
+recovery integration, explicit approval and native archive/reuse/restore
+acceptance remain required before operator use.
 
 ## Retained snapshot and data-copy implementation
 
@@ -103,6 +106,22 @@ unconfirmed, retained and stopped.
 Archived queue and scheduled receipts remain inactive audit data, including expired
 queue receipts. Live peers still need valid current recovery evidence. Restoring
 background execution requires fresh diagnosis and acknowledgment later.
+
+Restoration changes only the saved receipt's slot label after binding the retained
+fleet namespace and native node identities. The immutable archive keeps the original
+receipt. The new pending gate binds the current restoration snapshot and retains
+prior recovery history without reusing its acknowledgment. A queue's original expiry
+is not extended: existing recovery diagnosis records possible loss when it has
+expired. Scheduled recovery still requires the original paused native revision.
+Archive state validation refuses altered receipts, snapshot bindings, prior history,
+acknowledged gates and resumed controls while archive recovery remains pending.
+
+Component checks exercise the existing recovery diagnosis with backend stand-ins and
+persist both background families through the stopped route-store helper into a
+different slot. A [private packaged check](evidence/operator-app-archive-background-v9.json)
+independently verifies the saved receipts, storage and route identities, and that
+controller startup still refuses archive state before backend access. These checks
+do not prove native holds or controller startup admission.
 
 The namespace reader accepts ordinary GNU/USTAR backup files, directories and GNU
 long names described in the [GNU tar format reference](https://www.gnu.org/software/tar/manual/html_node/Standard.html).
@@ -138,8 +157,9 @@ readbacks. Independent audit preserves all pre-existing fixture resources.
 
 Completed storage enrollment still leaves HTTP withheld and archive recovery
 pending. The controller continues to reject the archive capability before backend
-access. Vault/revision checks, background rebinding, explicit approval and full
-native archive/reuse/restore acceptance remain required before operator use.
+access. Vault/revision checks, controller integration of background recovery,
+explicit approval and full native archive/reuse/restore acceptance remain required
+before operator use.
 
 ## Remaining archive protocol
 

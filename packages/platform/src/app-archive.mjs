@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { appName } from '@fogd/runtime/artifact';
 import { retirementApp, overlap } from './retirement.mjs';
 import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
+import { archivedBackgrounds, restoreBackgrounds, validateArchivedBackgrounds } from './background-restoration.mjs';
 
 export const appArchiveCapability = 'fogd-app-archive-v1';
 const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
@@ -50,6 +51,7 @@ function checkedSavedApp(record) {
   for (const [key, deployment] of Object.entries(record.deployments)) {
     if (!uuid(key) || deployment.id !== key || deployment.app !== record.name || deployment.status === 'activating') throw refused();
   }
+  archivedBackgrounds(record);
 }
 function checkedPlaceholder(state, record) {
   if (!isDeepStrictEqual(state.apps[record.name], placeholder(record))) throw refused();
@@ -76,6 +78,7 @@ export function validateAppArchives(state, profile) {
       if (record.status !== 'archived') {
         validateRecovery(records, record.name, state.apps[record.name]);
         checkedRestoredFleet(record, policy);
+        validateArchivedBackgrounds(state, record);
         continue;
       }
       if (names.has(record.name)) throw refused();
@@ -178,6 +181,7 @@ export function projectAppArchiveRestore(input) {
     state.apps[record.name] = { ...structuredClone(record.app), slot: input.slot, route: 'paused',
       archiveRecovery: { archive: record.id, identity: record.identity, status: 'pending' } };
     for (const [id, release] of Object.entries(record.deployments)) state.deployments[id] = structuredClone(release);
+    restoreBackgrounds(state, archivedBackgrounds(record), input.snapshot);
     validateAppArchives(state, next);
     return state;
   } catch { throw refused(); }

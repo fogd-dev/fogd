@@ -151,7 +151,10 @@ test('queued archive routing retains paused backlog metadata without publishing 
   assert.deepEqual(result.record.routes, [{ host: 'imports.localhost', state: 'withheld', slot: 'slot-1' }]);
   assert.equal(result.state.apps.imports.archiveRecovery.status, 'pending');
   assert.equal(result.state.apps.imports.delivery.observed, 'paused');
-  assert.deepEqual(result.state.apps.imports.queueSnapshot, f.c.state.apps.imports.queueSnapshot);
+  assert.equal(result.state.apps.imports.queueSnapshot, undefined);
+  assert.deepEqual(result.state.apps.imports.queueRecovery.prepared, f.c.state.apps.imports.queueSnapshot);
+  assert.equal(result.state.apps.imports.queueRecovery.status, 'pending');
+  assert.deepEqual(result.state.appArchives.records[retirementId].app.queueSnapshot, f.c.state.apps.imports.queueSnapshot);
 });
 
 test('serialized path overrides refuse before spending an otherwise valid fresh archive target', async t => {
@@ -159,4 +162,40 @@ test('serialized path overrides refuse before spending an otherwise valid fresh 
   await assert.rejects(restoreAppArchiveStores({ ...input, controller: paths.controller }, paths), { code: 'ROUTE_RESTORATION_REFUSED' });
   assert.deepEqual(await readState(paths), before);
   assert.deepEqual((await readdir(paths.enrollment)).sort(), ['route-enrollment.json', 'route-enrollment.spent.json']);
+});
+
+for (const family of [
+  { app: 'imports', fixture: 'queue-controller', operation: 'admin-delivery', operate: 'operateDelivery', snapshot: 'queueSnapshot', recovery: 'queueRecovery' },
+  { app: 'refresh', fixture: 'cron-controller', operation: 'admin-dispatch', operate: 'operateDispatch', snapshot: 'cronSnapshot', recovery: 'cronRecovery' },
+]) test(`stopped ${family.app} store restoration persists rebound background recovery with withheld authority`, async t => {
+  const { fixture } = await import(`./fixtures/${family.fixture}.mjs`), operation = await import(`../src/${family.operation}.mjs`);
+  const input = request(), root = await mkdtemp(join(tmpdir(), 'fogd-archive-background-stores-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const path = join(root, 'authority/routes.json'); await mkdir(join(root, 'authority'));
+  const slots = input.sourceProfile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
+  const policy = { installation: runtimePolicyIdentity(input.sourceProfile), slots: ['slot-1', 'slot-2'] };
+  const f = await fixture(t, { slots, routeAuthority: { path, policy, verifyRuntime: async () => {} } }), release = await f.request();
+  await f.c.mutate(release.id, release.digest, 'approve');
+  // Empty queues still carry an observation deadline. Scheduled fixtures provide
+  // their own held observation and never call this queue boundary.
+  f.backend.queues ||= {};
+  f.backend.queues.snapshot = async () => ({ paused: true, stored: 0, backlogCount: 0, backlogBytes: 0, oldestMessageTimestamp: null });
+  await operation[family.operate](f.c, family.app, 'snapshot', { deployment: release.id, digest: release.digest });
+  input.source = { state: f.c.state, authority: await readRouteRecord(path, policy) };
+  input.archive.app = family.app; input.archive.digest = release.digest;
+  const archived = prepareAppArchiveRoutes(input), restore = restoration(input, archived);
+  restore.profile = structuredClone(input.profile);
+  restore.profile.fleets[1].prefix = input.sourceProfile.fleets[0].prefix;
+  restore.profile.fleets[1].nodes = restore.profile.fleets[1].nodes.map((node, i) => ({ ...node, id: input.sourceProfile.fleets[0].nodes[i].id }));
+  restore.restore.slot = 'slot-2';
+  const paths = await target(t, restore); await restoreAppArchiveRecoveryStores(restore, paths);
+  const state = await readState(paths), authority = await readAuthority(paths, restore), app = state.apps[family.app];
+  assert.equal(app.archiveRecovery.status, 'pending');
+  assert.equal(app[family.recovery].status, 'pending');
+  assert.equal(app[family.snapshot], undefined);
+  assert.deepEqual(app[family.recovery].prepared, { ...f.c.state.apps[family.app][family.snapshot], slot: 'slot-2' });
+  assert.deepEqual(state.appArchives.records[retirementId].app[family.snapshot], f.c.state.apps[family.app][family.snapshot]);
+  assert.deepEqual(authority.record.routes, [{ host: `${family.app}.localhost`, state: 'withheld', slot: 'slot-2' }]);
+  validateAppArchiveSnapshot(state, authority, restore.profile);
+  await assert.rejects(restoreAppArchiveRecoveryStores(restore, paths), { code: 'ROUTE_RESTORATION_REFUSED' });
 });

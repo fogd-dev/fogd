@@ -1,0 +1,217 @@
+{
+  "schema": 1,
+  "kind": "operator-app-archive-background-projection",
+  "recordedAt": "2026-10-30T03:51:37.848819+00:00",
+  "sourceCommit": "90ae7f6dde15d276018966eda42c67620dfc039f",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual network-disabled packaged Node route-store helpers with synthetic background state and backend stand-ins, not native celld execution or startup admission.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "image": "sha256:c1f7be3ba9feed65b3bd031a3ec80026484ee9520fd9006bd43435375bd7cae4",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "repeatedUncachedBuilds": [
+    "sha256:c1f7be3ba9feed65b3bd031a3ec80026484ee9520fd9006bd43435375bd7cae4",
+    "sha256:c1f7be3ba9feed65b3bd031a3ec80026484ee9520fd9006bd43435375bd7cae4"
+  ],
+  "parentLayersPreserved": true,
+  "sourceFiles": 122,
+  "packagedStoreFamilies": [
+    "queue",
+    "cron"
+  ],
+  "createdRouteStoreVolumes": 18,
+  "independentAudits": [
+    {
+      "passed": true,
+      "image": "sha256:c1f7be3ba9feed65b3bd031a3ec80026484ee9520fd9006bd43435375bd7cae4",
+      "imageAndContextSourceFilesRehashed": 122,
+      "ownedRouteVolumesReadBack": 6,
+      "routeReceiptDigestsRecomputed": 2,
+      "archiveIdentityIndependentlyRecomputed": true,
+      "packagedControllerRefusesArchiveBeforeBackend": true,
+      "existingContainersPreserved": 80,
+      "existingVolumeNamesPreserved": 126,
+      "scope": "Packaged stopped Node route-store helpers only; native app-data archive/recovery remains unimplemented"
+    },
+    {
+      "passed": true,
+      "packagedBackgroundVolumesReadBack": 12,
+      "archiveIdentitiesRecomputed": 4,
+      "restorationStorageIdentitiesRecomputed": 2,
+      "routeDigestsRecomputed": 2,
+      "originalReceiptsPreserved": 2,
+      "freshPendingReboundGatesVerified": 2,
+      "existingContainersPreserved": 80,
+      "existingVolumeNamesPreserved": 126,
+      "scope": "Packaged stopped metadata helpers with synthetic background fixtures, not native celld or controller admission"
+    }
+  ],
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "nativeAppDataArchiveRecoveryVerified": false,
+  "controllerArchiveStartupAdmitted": false,
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-background-runtime-20261030-01",
+  "evidenceFingerprints": {
+    "after.json": {
+      "sha256": "edaf522bb766967dfe1092d743b084d86b21bf7954cc89f61d3959bfcd39b665",
+      "bytes": 93653
+    },
+    "archiveReceipt.json": {
+      "sha256": "a5ebc9ad9108cc3647fa524b83c44207860bc059cd977a52df2d8e2b0b0eeb1f",
+      "bytes": 399
+    },
+    "archived.json": {
+      "sha256": "e2cc41a1fe3111240652aeeca691f11dae2e0414430e45c538c306b04d1a6109",
+      "bytes": 4621
+    },
+    "audit.log": {
+      "sha256": "d869525b054ec2e703e7946385b7ab594570f57012ddf5befbcd92480cf592cf",
+      "bytes": 934
+    },
+    "audit.py": {
+      "sha256": "83381e53a33c4f5bc2f3df1a31fe387d44a7d36b92163cbcad6166a9aaeda1b3",
+      "bytes": 9826
+    },
+    "background-report.json": {
+      "sha256": "1c24e473c0ea0b82bf802d10f42e216078fdf82643ee15ae159e8d4affad63dc",
+      "bytes": 3098
+    },
+    "background-runner.log": {
+      "sha256": "fa70daf1d5df5ceb73837d2f4d8228a1195aa982f45cbaa74b3b35232657e7ac",
+      "bytes": 126
+    },
+    "background-runner.mjs": {
+      "sha256": "6415c6aa3e51753afd8fef8b7dd768cd9cf1f836d51d701f646164e1d5f712b4",
+      "bytes": 8624
+    },
+    "before.json": {
+      "sha256": "8154bc4424d61d2c59df75e25307f86bfae804e6e7e7f968e37f1483e3001f84",
+      "bytes": 66203
+    },
+    "candidate.json": {
+      "sha256": "6e008f33b386497cd891455b846cbe03a93cef7afb29c4909309228e11c85b3d",
+      "bytes": 14796
+    },
+    "imports-archived.json": {
+      "sha256": "b7d9c845e684409ca42b4b002ee5f24e3c2255742ad74013255c3a02b21e3565",
+      "bytes": 7679
+    },
+    "imports-input.json": {
+      "sha256": "2f59e406669a0655e2a7cebb91ee87a128bd82c48d75367c52be66fe80a70ad3",
+      "bytes": 8149
+    },
+    "imports-receipt.json": {
+      "sha256": "a2558529e031733b6c7323d1fc0c04195f43c0ade6f709eec189083d54dae594",
+      "bytes": 399
+    },
+    "imports-restore.json": {
+      "sha256": "70713bd2b32c278fa0cf9b3f5f0cbf7801cd6e14859e52a1608bac5e87c9584f",
+      "bytes": 11454
+    },
+    "imports-restored.json": {
+      "sha256": "d16356f58701c4d0b9d9683dd44ad7303cba404674d3b74cd2e35dd6c2b8c38a",
+      "bytes": 10744
+    },
+    "imports-saved.json": {
+      "sha256": "8f43fa4ba9c85bb6a89ca4bfe7a285678466985f9ca813f3ec0eda926889b156",
+      "bytes": 760
+    },
+    "input.json": {
+      "sha256": "893471d8a4b3c0926f3c8358842a1612902090e319d6d1bd3d365c098f455020",
+      "bytes": 5408
+    },
+    "refresh-archived.json": {
+      "sha256": "7f3f227f0d2133ee8ef3d6b0f681395d0cfb267d4c29e6a97ea3a0544ca2a830",
+      "bytes": 7756
+    },
+    "refresh-input.json": {
+      "sha256": "eb928dcfe8278725844906fe0de97309b52964bda0deea08301d4719f80b53b8",
+      "bytes": 8176
+    },
+    "refresh-receipt.json": {
+      "sha256": "d6aaad138b6e9575196318151d6c915e00dbc776e35939bc428028e40cfefa76",
+      "bytes": 399
+    },
+    "refresh-restore.json": {
+      "sha256": "ed93168d57ab1edd1efe5ed1dd52d0a604e0e1706889f7650c57eeafbbac63dd",
+      "bytes": 11535
+    },
+    "refresh-restored.json": {
+      "sha256": "e5675ee6ace8626546def38b305f5385eb284517d0e2cc48853159604ffc94e5",
+      "bytes": 10807
+    },
+    "refresh-saved.json": {
+      "sha256": "a5f83cec55775c4a576e639882c4e5c670c01460554cc0b8ce4d9a82130a0300",
+      "bytes": 649
+    },
+    "restore.json": {
+      "sha256": "c82cca2405d324452141453aebe875e762c361246270a7be367db5763388c01c",
+      "bytes": 7733
+    },
+    "restoreReceipt.json": {
+      "sha256": "a50e9f2715450e572cc84a94e25ec513f523919ad6c78f8680a6f51df1e98a49",
+      "bytes": 399
+    },
+    "restored.json": {
+      "sha256": "6380422a3c725db000ea438ab4f8910622c9df4bc0d971977b13981e1d61e093",
+      "bytes": 5347
+    },
+    "result.json": {
+      "sha256": "e50fb3da94bd61cb43bb37cfe8ae53c9e136a03edfb58aac496f5f45e4d3da1a",
+      "bytes": 16182
+    },
+    "runner.log": {
+      "sha256": "d7a224d863b8f7a27a778e1c5acc4c0bd3d106b4f3ec959e353f516bc9669c49",
+      "bytes": 294
+    },
+    "runner.mjs": {
+      "sha256": "4711cbb85c1a3f4ab52dec8a430eb05d7371726080605241134ef4a9e056341e",
+      "bytes": 9888
+    },
+    "canonical.log": {
+      "sha256": "df7f75ca7844f554dacc76d62f6919b46be1785e647e8b92957f55ddbdc791af",
+      "bytes": 269496
+    },
+    "component-diagnosis.log": {
+      "sha256": "bbd49cbb61b13e32f3ae33ad57dd142cb34e968546b5cf11c507c93e06d0a697",
+      "bytes": 2077
+    },
+    "component-stores.log": {
+      "sha256": "33a872e2b853c9aea3ee0e7b879c2d586e4b6cd73ca7b99597f17056806beb40",
+      "bytes": 1803
+    },
+    "quality.log": {
+      "sha256": "65dd924b8135f14db20a19e1c84116574380b385a803618d8ca6a80035588292",
+      "bytes": 1670
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "writing.log": {
+      "sha256": "833ad722a46ac56220361d6411040576f74c867bff5ed4de115120fcb36152e7",
+      "bytes": 142
+    }
+  },
+  "componentChecks": {
+    "recoveryProjectionAndDiagnosis": {
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "routeStores": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "canonicalChecks": {
+    "passed": 3014,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 512164.401208
+  }
+}

@@ -1,24 +1,16 @@
-import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { completedRoute } from './route-publication.mjs';
 import { routeRecordDigest } from './route-record-store.mjs';
 import { validateRouteSnapshot } from './route-snapshot.mjs';
 import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
-import { hasQueueLifecycle } from './queue-history.mjs';
-import { hasCronLifecycle } from './cron-history.mjs';
-import { assertSnapshotAge, matchingSnapshot, queueRecoveryCapability } from './queue-snapshot.mjs';
-import { cronRecoveryCapability, matchingCronSnapshot } from './cron-snapshot.mjs';
+import { restorationBackgrounds, restoreBackgrounds } from './background-restoration.mjs';
+export { restorationBackgrounds } from './background-restoration.mjs';
 
 const refused = () => Object.assign(new Error('Route restoration requires a verified source and matching durable profiles; keep ingress stopped and retain all stores'), { code: 'ROUTE_RESTORATION_REFUSED' });
 const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const keys = (value, names) => value !== null && typeof value === 'object' && !Array.isArray(value) &&
   Object.keys(value).length === names.length && names.every(name => Object.hasOwn(value, name));
-// Same protocol fields as the CLI background restore.
-const families = [
-  { recovery: 'queueRecovery', field: 'queueSnapshot', capability: queueRecoveryCapability, lifecycle: hasQueueLifecycle, match: matchingSnapshot, check: assertSnapshotAge },
-  { recovery: 'cronRecovery', field: 'cronSnapshot', capability: cronRecoveryCapability, lifecycle: hasCronLifecycle, match: matchingCronSnapshot },
-];
 
 function durable(profile) {
   const policy = validateRuntimePolicy(profile);
@@ -28,22 +20,6 @@ function durable(profile) {
 const withoutNetworks = ({ networks, ...policy }) => policy;
 export function routePolicy(profile) {
   return { installation: runtimePolicyIdentity(profile), slots: profile.fleets.map(fleet => fleet.id) };
-}
-
-export function restorationBackgrounds(source, now = Date.now()) {
-  const recovered = [];
-  for (const [name, app] of Object.entries(source.apps)) {
-    if (app.retirement) continue;
-    for (const family of families) {
-      if (!family.lifecycle(app)) continue;
-      if (app[family.recovery] && app[family.recovery].status !== 'acknowledged') throw refused();
-      const receipt = app[family.field];
-      if (!receipt) throw refused();
-      family.match(source, name, receipt); family.check?.(receipt, now);
-      recovered.push([name, family]);
-    }
-  }
-  return recovered;
 }
 
 // Pure projection of a verified source pair onto a fresh target. It proves only
@@ -71,12 +47,7 @@ function project(input) {
     holds[name] = { id: selected.submission, digest: selected.digest };
   }
   const state = structuredClone(source);
-  for (const [name, family] of recovered) {
-    const app = state.apps[name];
-    state.requirements = [...new Set([...state.requirements, family.capability])];
-    app[family.recovery] = { id: randomUUID(), status: 'pending', snapshot, prepared: app[family.field], previous: app[family.recovery] || null };
-    delete app[family.field];
-  }
+  restoreBackgrounds(state, recovered, snapshot);
   for (const app of Object.values(state.apps)) if (!app.retirement) app.route = 'paused';
   delete state.routeEnrollment;
   const record = { schema: 1, installation: policy.installation, revision: '1', routes: observed.record.routes.map(({ host, slot }) => ({ host, state: 'withheld', slot })) };
