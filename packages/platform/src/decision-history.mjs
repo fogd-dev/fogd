@@ -95,7 +95,7 @@ export async function authenticatedDecision(controller, id, digest, action, secr
       const error = new Error('Review context changed; reload the exact submission before deciding'); error.code = 'DECISION_REVIEW_STALE'; throw error;
     }
     if (entry.review) await verifyReviewedDecision(controller, id);
-    const result = await perform(() => { effectsStarted = true; });
+    const result = await perform(() => { effectsStarted = true; }, entry);
     entry.outcome = result.status === 'failed' ? 'activation-failed' : 'succeeded';
     entry.applicationStatus = result.status; entry.completedAt = new Date().toISOString();
     await controller.save();

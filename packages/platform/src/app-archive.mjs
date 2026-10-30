@@ -4,6 +4,7 @@ import { appName } from '@fogd/runtime/artifact';
 import { retirementApp, overlap } from './retirement.mjs';
 import { runtimePolicyIdentity, validateRuntimePolicy } from './runtime-policy.mjs';
 import { archivedBackgrounds, restoreBackgrounds, validateArchivedBackgrounds } from './background-restoration.mjs';
+import { validateDecisionHistory } from './decision-history.mjs';
 
 export const appArchiveCapability = 'fogd-app-archive-v1';
 const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
@@ -29,13 +30,16 @@ function header(state) {
   return state.appArchives.records;
 }
 function checkedRecord(record, id) {
-  const extra = record?.status === 'restored' ? ['restoration'] : [];
+  const extra = ['restored', 'recovered'].includes(record?.status) ? ['restoration'] : [];
   if (!exact(record, [...immutableFields, 'identity', 'status', ...extra]) || record.schema !== 1 || record.id !== id || !uuid(id) ||
-    !['archived', 'restored'].includes(record.status) || !hex(record.identity) || identity(record) !== record.identity) throw refused();
+    !['archived', 'restored', 'recovered'].includes(record.status) || !hex(record.identity) || identity(record) !== record.identity) throw refused();
   checkedOrigin(record); checkedSavedApp(record);
-  if (record.status === 'restored') {
-    if (!exact(record.restoration, ['snapshot', 'targetIdentity', 'slot']) || !hex(record.restoration.snapshot) || !hex(record.restoration.targetIdentity)) throw refused();
-  }
+  if (record.status !== 'archived') checkedRestoration(record);
+}
+function checkedRestoration(record) {
+  const fields = ['snapshot', 'targetIdentity', 'slot', 'afterDecision', ...(record.status === 'recovered' ? ['decision'] : [])];
+  if (!exact(record.restoration, fields) || !hex(record.restoration.snapshot) || !hex(record.restoration.targetIdentity) ||
+    !['slot-1', 'slot-2'].includes(record.restoration.slot) || !(record.restoration.afterDecision === null || uuid(record.restoration.afterDecision))) throw refused();
 }
 function checkedOrigin(record) {
   appName(record.name);
@@ -75,9 +79,11 @@ export function validateAppArchives(state, profile) {
     const records = header(state), policy = validateRuntimePolicy(profile), names = new Set(), prefixes = [];
     for (const [id, record] of Object.entries(records)) {
       checkedRecord(record, id);
+      if (record.status === 'recovered') { checkedRecoveryDecision(state, record); continue; }
       if (record.status !== 'archived') {
         validateRecovery(records, record.name, state.apps[record.name]);
         checkedRestoredFleet(record, policy);
+        decisionBoundary(state, record);
         validateArchivedBackgrounds(state, record);
         continue;
       }
@@ -89,6 +95,21 @@ export function validateAppArchives(state, profile) {
     checkedAppReferences(state, records);
     return records;
   } catch { throw refused(); }
+}
+
+function checkedRecoveryDecision(state, record) {
+  validateDecisionHistory(state);
+  const index = state.decisions?.findIndex(value => value.id === record.restoration.decision), decision = state.decisions?.[index];
+  const expected = { action: 'approve', outcome: 'succeeded', applicationStatus: 'active', app: record.name,
+    deployment: record.app.active, digest: record.digest, secretRevision: record.deployments[record.app.active].secretRevision };
+  if (!uuid(record.restoration.decision) || !decision || index <= decisionBoundary(state, record) || !hex(decision.review) ||
+    !Object.entries(expected).every(([key, value]) => decision[key] === value)) throw refused();
+}
+function decisionBoundary(state, record) {
+  if (record.restoration.afterDecision === null) return -1;
+  const index = state.decisions?.findIndex(value => value.id === record.restoration.afterDecision);
+  if (index === undefined || index < 0) throw refused();
+  return index;
 }
 function detachedArchive(record, policy, prefixes) {
   if (prefixes.some(prefix => overlap(prefix, record.fleet.prefix)) || policy.fleets.some(fleet => overlap(fleet.prefix, record.fleet.prefix))) throw refused();
@@ -177,7 +198,8 @@ export function projectAppArchiveRestore(input) {
   try {
     const { record, next } = restorationInput(input), state = structuredClone(input.state);
     state.appArchives.records[record.id].status = 'restored';
-    state.appArchives.records[record.id].restoration = { snapshot: input.snapshot, targetIdentity: runtimePolicyIdentity(next), slot: input.slot };
+    state.appArchives.records[record.id].restoration = { snapshot: input.snapshot, targetIdentity: runtimePolicyIdentity(next), slot: input.slot,
+      afterDecision: state.decisions?.at(-1)?.id || null };
     state.apps[record.name] = { ...structuredClone(record.app), slot: input.slot, route: 'paused',
       archiveRecovery: { archive: record.id, identity: record.identity, status: 'pending' } };
     for (const [id, release] of Object.entries(record.deployments)) state.deployments[id] = structuredClone(release);

@@ -79,8 +79,8 @@ or copy native app data.
 These helpers do not stop application writers or copy native application data.
 No CLI, controller startup path or shipped runtime admits the new capability.
 Existing runtimes reject it. The stopped filesystem coordinator and background
-receipt projection are internal components. Secret-vault checks, controller
-recovery integration, explicit approval and native archive/reuse/restore
+receipt projection are internal components. Vault checks and an internal attributed approval operation are implemented.
+Controller recovery integration, operator access and native archive/reuse/restore
 acceptance remain required before operator use.
 
 ## Retained snapshot and data-copy implementation
@@ -130,6 +130,46 @@ unsupported extensions and malformed headers without extraction. Its bounds are
 200,000 members and 16 MiB of member names per bucket archive. Physical member bytes
 are separate from logical app data, free capacity and disk allocation.
 
+## Restored execution approval
+
+The internal recovery approval operation verifies the exact saved artifact against
+canonical admission, the enrolled private/public stores, retained runtime identity,
+current bucket owner and complete migration ledger. Migration inspection selects
+existing ledger rows; a missing ledger refuses rather than creating an empty one.
+It confirms native background holds, including the saved cron revision, before
+consuming the archive recovery gate. These are observations under serialized
+controller access; the launcher still must exclude other writers.
+
+Approval reads the pinned revision from the current vault. It never falls back to
+the retained source vault or silently selects a newer revision. Missing values,
+changed bytes during verification, unavailable runtimes and changed artifacts or
+migrations keep recovery pending. The operation does not publish code, apply
+migrations or materialize secrets. Rotation to a different secret revision during
+archive recovery is not implemented.
+
+An authenticated owner must select the exact archive identity, restoration snapshot,
+deployment, artifact digest, pinned revision and current review context. A fresh
+attributed decision intent precedes the checks. Its success and the consumed gate
+are saved together; the archive ledger links that decision and requires it to occur
+after the history boundary recorded at restoration. The original deployment's
+approval cannot substitute for this recovery decision.
+
+Successful approval leaves HTTP withheld and preserves pending queue/cron recovery.
+The consumed archive remains recorded and cannot be restored or approved again.
+Later app updates do not rewrite its original retained record. A failed intent or
+completion save trips the existing storage fence. A lost reply after the final save
+can leave a completed decision with the gate consumed; callers must inspect the
+stored outcome and never infer permission from a successful-looking response.
+
+A [private packaged check](evidence/operator-app-archive-approval-v9.json) verifies
+actual canonical artifacts, vault availability and enrolled store readbacks. Its
+native owner/runtime/migration observations are stand-ins. Component checks cover
+queue and cron holds, changed evidence, stale review and lost save replies.
+
+This operation has no public command or endpoint. Ordinary startup still rejects
+archive state, including approved records, until controller integration and native
+acceptance qualify the execution path.
+
 ## Stopped enrollment coordinator
 
 The internal coordinator now composes archival/restoration planning, fresh stopped
@@ -157,9 +197,8 @@ readbacks. Independent audit preserves all pre-existing fixture resources.
 
 Completed storage enrollment still leaves HTTP withheld and archive recovery
 pending. The controller continues to reject the archive capability before backend
-access. Vault/revision checks, controller integration of background recovery,
-explicit approval and full native archive/reuse/restore acceptance remain required
-before operator use.
+access. Controller integration, secret-rotation handling, operator access and full
+native archive/reuse/restore acceptance remain required before operator use.
 
 ## Remaining archive protocol
 

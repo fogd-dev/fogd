@@ -1,0 +1,207 @@
+{
+  "schema": 1,
+  "kind": "operator-app-archive-recovery-approval",
+  "recordedAt": "2026-10-30T04:27:25.325319+00:00",
+  "sourceCommit": "b7da477d97d580b9ca649422064c80988e90b8f0",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual packaged Node approval on enrolled route-store volumes with canonical artifacts and current-vault files; native owner/runtime/migration observations are stand-ins. No celld execution or ordinary controller admission.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "image": "sha256:13b2a0a227510d164a51e3eb2e8722df4daedec71e9fb804e0d4b618d6158184",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "sourceFiles": 123,
+  "repeatedUncachedBuilds": [
+    "sha256:13b2a0a227510d164a51e3eb2e8722df4daedec71e9fb804e0d4b618d6158184",
+    "sha256:13b2a0a227510d164a51e3eb2e8722df4daedec71e9fb804e0d4b618d6158184"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "image": "sha256:13b2a0a227510d164a51e3eb2e8722df4daedec71e9fb804e0d4b618d6158184",
+    "imageAndContextSourceFilesRehashed": 123,
+    "nativeBinaryAndSupervisorHashesVerified": true,
+    "repeatedUncachedBuildsIdentical": true,
+    "actualRouteStoreVolumesReadBack": 12,
+    "artifactDigestsRecomputed": 2,
+    "archiveAndStorageAndRouteIdentitiesRecomputed": 2,
+    "currentVaultMissingRefusalVerified": true,
+    "attributedCompletionAndConsumedGateReadBack": true,
+    "physicalEnrollmentBindingsVerified": true,
+    "packagedControllerRefusesApprovedArchiveBeforeBackend": true,
+    "existingContainersPreserved": 80,
+    "existingVolumeNamesPreserved": 156,
+    "scope": "Packaged Node metadata approval with actual artifacts/vault/enrolled stores. Native owner/runtime/migration observations are stand-ins; native archive execution and ordinary admission remain unqualified."
+  },
+  "canonicalChecks": {
+    "passed": 3037,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 522528.348708
+  },
+  "finalFocusedChecks": {
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 25191.472
+  },
+  "isolatedMutationCheck": {
+    "passed": true,
+    "removedGuard": "post-restoration decision boundary",
+    "mutantAcceptsOldApproval": true,
+    "currentValidatorRefusesOldApproval": true
+  },
+  "operatorArchivalAvailable": false,
+  "defaultCronAdmission": "closed",
+  "nativeMigrationObservationVerified": false,
+  "nativeArchiveExecutionQualified": false,
+  "controllerArchiveStartupAdmitted": false,
+  "secretRotationDuringRecoveryImplemented": false,
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-approval-runtime-20261030-01",
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-approval-runtime-20261030-03",
+  "unacceptedApprovalAttempts": [
+    {
+      "root": "~/.local/share/fogd-qualifications/archive-approval-runtime-20261030-01",
+      "reason": "Docker 125 during host-to-VM fixture transfer before approval; partial target retained. Image packaging and its six route-store helpers remain separately verified."
+    },
+    {
+      "root": "~/.local/share/fogd-qualifications/archive-approval-runtime-20261030-02",
+      "reason": "Readonly helper omitted artifact-review scratch tmpfs; approval was refused and the pending target retained. Readonly diagnosis and EROFS probe identified the missing mount. Fresh accepted attempt uses bounded tmpfs matching controller isolation."
+    }
+  ],
+  "evidenceFingerprints": {
+    "approval-before.json": {
+      "sha256": "1070e7f6e62b4c46092f3e276016d2140ccc76271498a0f1ee6b38ec8f1164cb",
+      "bytes": 67981
+    },
+    "approval-report.json": {
+      "sha256": "e0f56a454ba9d4222dad8929d59e86cfd1b48d192b9043bc4a83275a7894fc3f",
+      "bytes": 2320
+    },
+    "approved-final.json": {
+      "sha256": "330138d61bf533c111624bbf96825c69abb91b210e8278da9bc76da489a4aafb",
+      "bytes": 9004
+    },
+    "approved-initial.json": {
+      "sha256": "f2f41aabd6c89858303df712fafdcee2f5e0e4003a7ac5eb354f0150342caa4c",
+      "bytes": 8473
+    },
+    "approved-profile.json": {
+      "sha256": "6785d15580df9b150b09f9d8094c8cfec2334a9ce11f1fd5a06b21967eb26a36",
+      "bytes": 1274
+    },
+    "approved-restore.json": {
+      "sha256": "3b29505922a6aa0fdde3a183721f989e418045b8d6af7b6cd6d3ac7af86526ed",
+      "bytes": 10474
+    },
+    "approved-result.json": {
+      "sha256": "8e74b88f3d5e31251886fed04765a686e3beffc9bb027cc6c9e6c7538976632e",
+      "bytes": 405
+    },
+    "approved-selection.json": {
+      "sha256": "3fc94633d31be5a6b89c76ad76c9f03d9f0467be7768a7dab5af359e4341e889",
+      "bytes": 416
+    },
+    "audit.log": {
+      "sha256": "a34c122f762969380bb89a4b9f0e1fe778ae88506fd16f7bd1e011fd8800ede9",
+      "bytes": 849
+    },
+    "audit.py": {
+      "sha256": "6c1a240ccdf6f6ede5f044497e8095b9a5f592bdfe79b35a857b39caad7626da",
+      "bytes": 9803
+    },
+    "candidate.json": {
+      "sha256": "a62966c1553716a0a7aabda01648082e381d383fbab3283b84368e9505128189",
+      "bytes": 14918
+    },
+    "canonical.log": {
+      "sha256": "7b52f96a461cf9d1f791a806c64cce1561849d839ca6041242719ead0800e14f",
+      "bytes": 271825
+    },
+    "focused.log": {
+      "sha256": "9e172d71cbb5c2d0183f3c3f9a398c93c4e8ac2b7ec1f91a4ed6a5c114996181",
+      "bytes": 2426
+    },
+    "missing-vault-final.json": {
+      "sha256": "09e58f9a5f59bf2f7546119bfb23ee2f39e0002a0419e8d8e7e5b856db75ba94",
+      "bytes": 9158
+    },
+    "missing-vault-initial.json": {
+      "sha256": "9bf6d8add732967f35e07b32f1cd5b51af7652c52feac2bc715f566baaefbf00",
+      "bytes": 8473
+    },
+    "missing-vault-profile.json": {
+      "sha256": "6785d15580df9b150b09f9d8094c8cfec2334a9ce11f1fd5a06b21967eb26a36",
+      "bytes": 1274
+    },
+    "missing-vault-restore.json": {
+      "sha256": "3b29505922a6aa0fdde3a183721f989e418045b8d6af7b6cd6d3ac7af86526ed",
+      "bytes": 10474
+    },
+    "missing-vault-result.json": {
+      "sha256": "9a76073b6a4b56906450d475854fa8f0c77c38249e70b8f337df3cd1918425d2",
+      "bytes": 102
+    },
+    "missing-vault-selection.json": {
+      "sha256": "3fc94633d31be5a6b89c76ad76c9f03d9f0467be7768a7dab5af359e4341e889",
+      "bytes": 416
+    },
+    "mutation.log": {
+      "sha256": "61f71b77580ebdb20f63f2c9845e640fc6969d9bbbb5e27b21ee123b791e4fd0",
+      "bytes": 213
+    },
+    "mutation.mjs": {
+      "sha256": "48fc4c46ddfcd0549942b315c62e31c7b5df3b313c6902f6b22fb8a300599ffc",
+      "bytes": 1837
+    },
+    "quality.log": {
+      "sha256": "2c4a0798700025d218248a38aff48eb833485d6e7aa1484fbe1997b8a1173119",
+      "bytes": 1670
+    },
+    "runner.log": {
+      "sha256": "d1b90abb768bfd726fa066856cf8c2b543e58045a030e6db7feffb90281c6f19",
+      "bytes": 99
+    },
+    "runner.mjs": {
+      "sha256": "e78f343f279cb6979303d074e9e3c3e54249e4a86cd17078f1e2728b0d539804",
+      "bytes": 8484
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "writing.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    },
+    "image-stage/candidate.json": {
+      "sha256": "a62966c1553716a0a7aabda01648082e381d383fbab3283b84368e9505128189",
+      "bytes": 14918
+    },
+    "image-stage/result.json": {
+      "sha256": "8b4af6a545f273dc20c6e935c78ee9a1077de977ba0b47e75604899ce3ed1c9f",
+      "bytes": 16294
+    },
+    "image-stage/before.json": {
+      "sha256": "0389de3c139c77ef32b9b917b4716870bd758273d703ca9944ea6651b5fc4149",
+      "bytes": 67319
+    },
+    "image-stage/after.json": {
+      "sha256": "6c13c1d0a58d9ba6c7860bb1cacc4e84a7234e5ec859f5edde1fbbb62d1f0a08",
+      "bytes": 94847
+    },
+    "image-stage/runner.mjs": {
+      "sha256": "cfaa2914d272e16a014132da0e82019365f7ad1f3d1391bb50a59d7232814526",
+      "bytes": 9880
+    },
+    "image-stage/runner.log": {
+      "sha256": "067fea66e0f9dbfacecca8bb3e9c15fa8036572f9952be7bed4e4ecad3fc76e3",
+      "bytes": 294
+    },
+    "writing-final.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    }
+  }
+}
