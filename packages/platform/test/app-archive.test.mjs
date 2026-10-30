@@ -4,6 +4,7 @@ import { projectAppArchive, projectAppArchiveRestore, validateAppArchives, appAr
 import { validateRetirementState } from '../src/retirement.mjs';
 import { artifactRetentionDecision } from '../src/artifact-retention.mjs';
 import { policy } from './fixtures/runtime-policy.mjs';
+import { runtimePolicyIdentity } from '../src/runtime-policy.mjs';
 
 const release = '11111111-1111-4111-8111-111111111111', pending = '22222222-2222-4222-8222-222222222222';
 const archive = '33333333-3333-4333-8333-333333333333', beta = '44444444-4444-4444-8444-444444444444';
@@ -143,4 +144,33 @@ test('archive validation refuses reusing a retained native node identity on a co
 test('archival refuses a generated namespace that overlaps permanently retired data', () => {
   const input = fixture(); input.state.apps.old = { slot: null, route: 'retired', retirement: { previous: { prefix: `archive-generations/${archive}` } } };
   assert.throws(() => projectAppArchive(input), refused);
+});
+
+for (const [name, mutate] of [
+  ['retained namespace', profile => { profile.fleets[1].prefix = 'empty/replacement'; }],
+  ['retained node identity', profile => { profile.fleets[1].nodes[0].id = 'replacement-node'; }],
+  ['storage bucket', profile => { profile.bucket = 'other-bucket'; }],
+  ['runtime image', profile => { profile.image = 'sha256:' + 'f'.repeat(64); }],
+  ['storage image', profile => { profile.storageImage = 'sha256:' + 'f'.repeat(64); }],
+  ['runtime family', profile => { profile.family = 'different-family'; }],
+]) test(`restored archive state validation refuses a changed ${name}`, () => {
+  const input = restoration(), state = projectAppArchiveRestore(input);
+  mutate(input.profile);
+  assert.throws(() => validateAppArchives(state, input.profile), refused);
+});
+
+for (const [name, mutate] of [
+  ['namespace', profile => { profile.fleets[1].prefix = 'empty/replacement'; }],
+  ['node identity', profile => { profile.fleets[1].nodes[0].id = 'replacement-node'; }],
+]) test(`rewriting the target binding cannot authorize a different retained ${name}`, () => {
+  const input = restoration(), state = projectAppArchiveRestore(input);
+  mutate(input.profile);
+  state.appArchives.records[archive].restoration.targetIdentity = runtimePolicyIdentity(input.profile);
+  assert.throws(() => validateAppArchives(state, input.profile), refused);
+});
+
+test('restored archive state validation refuses a changed target policy binding', () => {
+  const input = restoration(), state = projectAppArchiveRestore(input);
+  state.appArchives.records[archive].restoration.targetIdentity = '0'.repeat(64);
+  assert.throws(() => validateAppArchives(state, input.profile), refused);
 });

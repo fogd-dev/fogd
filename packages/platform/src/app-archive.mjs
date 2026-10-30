@@ -73,7 +73,11 @@ export function validateAppArchives(state, profile) {
     const records = header(state), policy = validateRuntimePolicy(profile), names = new Set(), prefixes = [];
     for (const [id, record] of Object.entries(records)) {
       checkedRecord(record, id);
-      if (record.status !== 'archived') { validateRecovery(records, record.name, state.apps[record.name]); continue; }
+      if (record.status !== 'archived') {
+        validateRecovery(records, record.name, state.apps[record.name]);
+        checkedRestoredFleet(record, policy);
+        continue;
+      }
       if (names.has(record.name)) throw refused();
       detachedArchive(record, policy, [...prefixes, ...retiredPrefixes(state)]);
       names.add(record.name); prefixes.push(record.fleet.prefix);
@@ -87,6 +91,18 @@ function detachedArchive(record, policy, prefixes) {
   if (prefixes.some(prefix => overlap(prefix, record.fleet.prefix)) || policy.fleets.some(fleet => overlap(fleet.prefix, record.fleet.prefix))) throw refused();
   const liveNodes = new Set(policy.fleets.flatMap(fleet => fleet.nodes.map(node => node.id)));
   if (record.fleet.nodes.some(node => liveNodes.has(node.id))) throw refused();
+}
+
+function checkedRestoredFleet(record, policy) {
+  checkedSourceProfile(record, policy);
+  const fleet = policy.fleets.find(value => value.id === record.restoration.slot);
+  if (record.restoration.targetIdentity !== runtimePolicyIdentity(policy) || fleet?.prefix !== record.fleet.prefix ||
+    !isDeepStrictEqual(fleet.nodes.map(node => node.id), record.fleet.nodes.map(node => node.id))) throw refused();
+}
+
+function checkedSourceProfile(record, profile) {
+  if (record.source.family !== profile.family || record.source.image !== profile.image || record.source.storageImage !== profile.storageImage ||
+    record.source.bucket !== profile.bucket || !isDeepStrictEqual(record.source.storage, profile.storage)) throw refused();
 }
 
 function validateRecovery(records, name, app) {
@@ -145,8 +161,7 @@ function restorationInput(input) {
   if (!record || record.status !== 'archived' || record.identity !== input.expectedIdentity) throw refused();
   const source = validateRuntimePolicy(input.sourceProfile), target = source.fleets.find(fleet => fleet.id === input.slot);
   if (!target || Object.values(input.state.apps).some(app => app.slot === target.id)) throw refused();
-  if (record.source.family !== source.family || record.source.image !== source.image || record.source.storageImage !== source.storageImage ||
-    record.source.bucket !== source.bucket || !isDeepStrictEqual(record.source.storage, source.storage)) throw refused();
+  checkedSourceProfile(record, source);
   const replacement = { prefix: record.fleet.prefix, nodes: target.nodes.map((node, index) => ({ ...node, id: record.fleet.nodes[index].id })) };
   const { next } = profiles(source, input.profile, target.id, replacement);
   return { record, next };
