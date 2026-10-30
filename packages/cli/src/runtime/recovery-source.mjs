@@ -7,6 +7,7 @@ import { hasRuntimeEnrollment, installationDirectory, readInstallationVolumeName
 import { writeJson } from '../recovery/bundle.mjs';
 import { projectName, stopped } from '../recovery/docker.mjs';
 import { installationVolumeNames } from './installation-volumes.mjs';
+import { assertNoLaunchFence } from './launch-fence.mjs';
 
 const filename = project => join(installationDirectory(project), 'recovery-source.json');
 
@@ -46,6 +47,15 @@ export async function assertRecoverySourceStopped(project) {
     }
     catch (cause) { throw new Error(`Related installation ${peer} is not confirmed stopped: ${cause.message}`, { cause }); }
   }
+}
+
+// Each operation publishes its own fences before observing its recovery peers.
+// Only fences actually acquired by this caller may be excluded from the check.
+export async function assertRecoveryOperationsAvailable(project, ownedProjects = []) {
+  projectName(project);
+  const owned = new Set(ownedProjects);
+  const peers = relatedProjects(project, await recoverySources(project));
+  for (const peer of peers) if (!owned.has(peer)) await assertNoLaunchFence(installationDirectory(peer));
 }
 
 function relatedProjects(project, records) {

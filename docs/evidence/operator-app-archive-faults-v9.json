@@ -1,0 +1,252 @@
+{
+  "schema": 1,
+  "kind": "operator-private-native-archive-coordinator-faults-and-related-operation-exclusion",
+  "recordedAt": "2026-10-30T15:48:33.072852+00:00",
+  "sourceCommit": "13c5344",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Native data and policy/store helpers from authentic scheduled-app snapshots on five fresh stopped targets. Lost copy/route/fence-release replies, source/sibling/target startup and competing restoration, and SIGTERM of only the owned Node coordinator after an actual replica copy. No target application executes; this qualifies host/coordinator exclusion and partial-state retention, not native worker crash behavior, hostile privileged writers, multi-host fencing or combined-background capacity reuse.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "implementation": "The host CLI publishes its owned fences before checking all connected recovery peers. Pending peer markers refuse; only markers belonging to actually acquired fences are exempt. Both source fences remain held through restoration checks. No controller/runtime image change, source-pin relaxation or catalog admission change.",
+  "redNativeProbe": {
+    "passed": false,
+    "interceptedCommands": [
+      "start",
+      "stop"
+    ],
+    "actualDockerStartsOrStopsExecuted": 0,
+    "finding": "Before the fix, a separately enrolled sibling passed startup checks while both related source operation fences were held. Its Docker start and cleanup stop were intercepted before execution. The sibling launch marker remains retained in its owned QA installation."
+  },
+  "greenNativeProbe": {
+    "ownCheckingFenceReleased": true,
+    "passed": true,
+    "outcome": "ROUTE_STARTUP_UNCONFIRMED",
+    "attempts": [],
+    "scope": "Actual private candidate and enrolled sibling startup checks while both related source fences are held. All start/stop Docker commands are intercepted before execution. This proves host exclusion at the writer boundary, not native writer execution.",
+    "sourceProjects": [
+      "fogd-archive-cron-source-20261030-02",
+      "fogd-archive-cron-current-20261030-01"
+    ],
+    "sibling": "fogd-archive-cron-restored-20261030-01"
+  },
+  "inverseOrdering": {
+    "passed": true,
+    "scope": "Real host recovery graph and private runtime verification with an existing enrolled sibling holding its actual checking launch fence. Restoration refuses before source fence acquisition, output reservation or native target enrollment; unrelated native resources remain exact. No source or target is started.",
+    "sourceAttempts": 0,
+    "enrollAttempts": 0,
+    "ownedSibling": "fogd-archive-secret-restored-20261030-01",
+    "sourceProjects": [
+      "fogd-archive-secret-source-20261030-02",
+      "fogd-archive-secret-current-20261030-01"
+    ],
+    "existingContainersPreserved": 304,
+    "existingVolumeNamesPreserved": 536
+  },
+  "faultCases": [
+    {
+      "case": "concurrent",
+      "reported": "completed",
+      "hostComplete": true,
+      "execution": "held"
+    },
+    {
+      "case": "copy",
+      "reported": "unconfirmed",
+      "hostComplete": false,
+      "oneReplicaCopied": true,
+      "launchRefused": true
+    },
+    {
+      "case": "route",
+      "reported": "unconfirmed",
+      "hostComplete": false,
+      "heldRouteStateSaved": true,
+      "launchAndReplayRefused": true
+    },
+    {
+      "case": "release",
+      "reported": "unconfirmed",
+      "hostComplete": true,
+      "bothSourceReleasesAttemptedOnce": true,
+      "execution": "held"
+    },
+    {
+      "case": "crash",
+      "reported": "terminated",
+      "exit": {
+        "code": null,
+        "signal": "SIGTERM"
+      },
+      "hostComplete": false,
+      "partialCopyRetained": true,
+      "bothSourceFencesRetained": true,
+      "sourceSiblingAndTargetLaunchesRefused": true
+    }
+  ],
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 316,
+    "authenticSnapshotsReverified": 2,
+    "physicalStorePairsReverified": 5,
+    "physicalEnrollmentBindingsReverified": 5,
+    "completedHostEnrollmentsReverified": 2,
+    "incompleteHostEnrollmentsRefuse": 3,
+    "sourceExclusionsReverified": 5,
+    "nativeReplicaArchivesCompared": 8,
+    "allTargetsWithheldOrFreshAndUnlaunchable": true,
+    "ownedCoordinatorExitSignal": "SIGTERM",
+    "bothCrashedSourceFencesRetainedExactly": true,
+    "siblingStartupGuardFailedBeforeFixAndPassesAfter": true,
+    "inverseOrderingRefusesBeforeAllocation": true,
+    "existingContainersPreserved": 264,
+    "existingVolumeNamesPreserved": 481,
+    "newTargetContainersStopped": 40,
+    "defaultCronAdmission": "closed",
+    "shippedArchiveAdmission": false
+  },
+  "hostAuthorizationBoundary": "Only the exact private candidate selector/authorizer is injected. Runtime verification, native source data, policies, source graph, host fences, fresh enrollment, copy/route helpers and readbacks are real. Fault wrappers lose replies only after actual helper completion. The interrupted process is solely the Node child spawned by this qualification.",
+  "canonicalChecks": {
+    "passed": 3118,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 608659.3675
+  },
+  "focusedChecks": {
+    "passed": 60,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 26903.793833,
+    "scope": "Retained launch, archive coordinator, source-graph marker checks, launch/stop fences and durable recovery/retirement. Both new behavior regressions failed before the fix."
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "writing": "passed",
+  "sourceFencesIntentionallyRetained": true,
+  "resourcePolicy": "All original resources remain preserved. Forty newly allocated services and all partial target volumes remain stopped and retained. The interrupted coordinator source fences and the red-probe sibling marker remain in place for inspection; no automatic reset, pruning or replay is used.",
+  "nativeTargetsExecuteApplicationCode": false,
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Combined background peers and capacity reuse",
+    "Operator commands and their interruption/concurrent-admission acceptance",
+    "Release rehearsal for the updated host CLI",
+    "Native worker interruption and multi-host/privileged writer exclusion are not qualified by this matrix"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-native-faults-20261030-01",
+  "sourceSnapshotRoot": "~/.local/share/fogd-qualifications/archive-cron-native-20261030-01",
+  "evidenceFingerprints": {
+    "matrix/report.json": {
+      "sha256": "fd1117850bba96231e85073112da81f433ef621982ba90680166175846619b02",
+      "bytes": 17778
+    },
+    "matrix/audit.json": {
+      "sha256": "0fe9f38161379263efbd4974091b8c7509f079bb33d695612ee612c3a3c4b4aa",
+      "bytes": 804
+    },
+    "matrix/audit-readback.json": {
+      "sha256": "bc3d8238ffe4ca9b95a0e99504421a95ec6772ad60660c667841a28ae61063d9",
+      "bytes": 75188
+    },
+    "matrix/before.json": {
+      "sha256": "3cd00d5fa5bb3da6c7a201545e540efd5550b13e2a96b82f092df45151f5b331",
+      "bytes": 313962
+    },
+    "matrix/after.json": {
+      "sha256": "b2c87849bee27884a565c7fbc702893c285800d118a9b73d9970e9cb0fc256ac",
+      "bytes": 359995
+    },
+    "matrix/jobs.json": {
+      "sha256": "910b8697d1d3f87e0e743ba4d1aee57eb5bd46e452a5756093e1d62081b5ce59",
+      "bytes": 990412
+    },
+    "matrix/concurrency-probes.json": {
+      "sha256": "59a4856b23c7ad33d8c7e9c2638d3acdde6253ef3e5b8cf8b4f303beaf06a991",
+      "bytes": 570
+    },
+    "matrix/concurrent-stores.json": {
+      "sha256": "9995e6bf6a4d1dbb520b8b8c9f4fb38d055c3ef294f1e0cfa6b370f5c8a889c0",
+      "bytes": 13122
+    },
+    "matrix/copy-stores.json": {
+      "sha256": "6816e2237ee7c39f0a65a5e0b73ac6657e3344f735cb401c83ec1c87794f6de2",
+      "bytes": 990
+    },
+    "matrix/route-stores.json": {
+      "sha256": "e7702022da5405fcb157970a4b14b268b49ae5e8debcac564ee1e22f6c6c208e",
+      "bytes": 13122
+    },
+    "matrix/route-helper-receipt.json": {
+      "sha256": "5a71230ed7a9dbb67e3db1d1c9b06f13f021f9272f2d431d9fddc959648f5a23",
+      "bytes": 399
+    },
+    "matrix/release-stores.json": {
+      "sha256": "fc709e29ae9a0382c7f8f049fa88d1b12befe431373359a23d9a93c72349c9a0",
+      "bytes": 13122
+    },
+    "matrix/crash-stores.json": {
+      "sha256": "be91d2e87b5827f1768c84189d4a93f027ff3192ea5e6fa0e9e9e182cff3d76f",
+      "bytes": 990
+    },
+    "matrix/crash-observations.json": {
+      "sha256": "3d6ce4e15fdef3e5b7ec5f5a005134015102eb04b0db625471f02d2d4afe5392",
+      "bytes": 1720
+    },
+    "matrix/crash-copy-point.json": {
+      "sha256": "f7ac4a0b48d3a4c00f1fcb8b3c93765dc19d1d297f0d76cf8b14f3d5e8155d97",
+      "bytes": 52
+    },
+    "matrix/host-source-during-run.json": {
+      "sha256": "aaf43d93fea306194c531282e220c19088618d7b96e80371b65813481dc0668e",
+      "bytes": 36171
+    },
+    "matrix/driver.mjs": {
+      "sha256": "365175ba70da1f7293112df2a78be7fae291a4db816dfea5e478d497faceab90",
+      "bytes": 14391
+    },
+    "matrix/audit.mjs": {
+      "sha256": "ea5f02988e6623e4daaac84536ab4f1ead277791c09211962597a5708f85dbd1",
+      "bytes": 9411
+    },
+    "red/report.json": {
+      "sha256": "6f22995ce0adda34e8ea13de808c833fe39f47400649eb75c77f682f06f3bf48",
+      "bytes": 818
+    },
+    "red/driver.mjs": {
+      "sha256": "b428a0ee413f6cc0a01d899f5c521f7f52c80812fa93cf6f1367dfa7d8fe5aae",
+      "bytes": 3461
+    },
+    "green/report.json": {
+      "sha256": "3c7755aada6ad983a32b0cc58adde4e879eb73d84187a28975c0f41f7cc73198",
+      "bytes": 549
+    },
+    "green/driver.mjs": {
+      "sha256": "f1573d7302971041663035cb32e8b6f30989e2ca28062f34e696a2f7b843d9e4",
+      "bytes": 3615
+    },
+    "inverse/report.json": {
+      "sha256": "c686c3925f67fc282dea6c542553059a6a88a676ac47107fd3b34d91e07ada46",
+      "bytes": 647
+    },
+    "inverse/before.json": {
+      "sha256": "b2c87849bee27884a565c7fbc702893c285800d118a9b73d9970e9cb0fc256ac",
+      "bytes": 359995
+    },
+    "inverse/after.json": {
+      "sha256": "b2c87849bee27884a565c7fbc702893c285800d118a9b73d9970e9cb0fc256ac",
+      "bytes": 359995
+    },
+    "inverse/driver.mjs": {
+      "sha256": "1eec9370cee5a748565ed5d975e1cbffda5accd2f6e5fd656f6ec7004590155a",
+      "bytes": 8870
+    }
+  }
+}

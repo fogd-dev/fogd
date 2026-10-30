@@ -31,6 +31,14 @@ const owned = (info, identity) => info.isFile() && info.dev === identity.dev && 
 export const acquireLaunchFence = (directory, identity) => acquire(directory, identity, LAUNCH);
 export const acquireStopFence = (directory, identity) => acquire(directory, identity, STOP);
 
+// Presence alone refuses, including torn files, directories and symlinks. This
+// observation is exclusion only when the caller already owns its own fences.
+export async function assertNoLaunchFence(directory) {
+  try { await lstat(join(directory, MARKER)); }
+  catch (error) { if (error.code === 'ENOENT') return; throw uncertain(); }
+  fail('FENCE_EXISTS', 'A related installation has a pending operation; keep related installations stopped and inspect its marker');
+}
+
 async function acquire(directory, { project, installation } = {}, { noun, phases, fields }) {
   if (!NAME.test(project ?? '') || !NAME.test(installation ?? '')) fail('FENCE_IDENTITY', 'Launch fence requires valid project and installation names');
   const bound = await bindDirectory(directory), path = join(bound.canonical, MARKER);

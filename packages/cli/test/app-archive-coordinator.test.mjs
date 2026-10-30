@@ -39,7 +39,7 @@ async function fixture(t, operation = 'restore') {
   const options = {
     plan: planReader, verify: async () => {}, enrolled: async () => true, directory: name => hosts[name],
     acquire: async (directory, identity) => { events.push(['fence', identity.project]); return acquireStopFence(directory, identity); },
-    related: async () => {}, stopped: async name => { events.push(['stopped', name]); if (name === live) throw Error('owned source writer'); },
+    related: async () => {}, operationPeers: async () => {}, stopped: async name => { events.push(['stopped', name]); if (name === live) throw Error('owned source writer'); },
     relation: async (project, sourceProject, config) => { events.push(['relation', sourceProject]); await writeFile(join(target.directory, 'recovery-source.json'), JSON.stringify({ schema: 1, project, sourceProject, volumes: Object.values(config.volumes).map(v => v.name) })); },
     relations: async (project, sources) => { events.push(['relations', ...sources.map(source => source.project)]); await writeFile(join(target.directory, 'recovery-source.json'), JSON.stringify({ schema: 2, project, sources: sources.map(source => ({ sourceProject: source.project, volumes: Object.values(source.config.volumes).map(v => v.name) })) })); },
     enroll: (selected, tasks) => enrollDurableRestoration(selected, tasks, target.options),
@@ -96,6 +96,17 @@ test('failure acquiring the second source fence releases the first without alloc
   assert.deepEqual(f.target.events, []); await assert.rejects(lstat(join(f.hosts[names[0]], 'launch.pending.json')), { code: 'ENOENT' });
   assert.equal((await lstat(join(f.hosts[names[1]], 'launch.pending.json'))).isFile(), true);
   await blocking.release();
+});
+test('a pending sibling operation discovered after source fencing refuses before target allocation', async t => {
+  const f = await fixture(t), owned = Object.keys(f.hosts).sort();
+  f.options.operationPeers = async (_project, held) => {
+    if (held.length) { assert.deepEqual(held, owned); throw Error('Owned sibling operation in progress'); }
+  };
+  await assert.rejects(f.run(), uncertain);
+  assert.deepEqual(f.target.events, []);
+  await assert.rejects(lstat(f.output), { code: 'ENOENT' });
+  await assert.rejects(lstat(join(f.hosts[owned[0]], 'launch.pending.json')), { code: 'ENOENT' });
+  await assert.rejects(lstat(join(f.hosts[owned[1]], 'launch.pending.json')), { code: 'ENOENT' });
 });
 test('a failed two-source relation leaves pending enrollment and never creates target resources', async t => {
   const f = await fixture(t); f.options.relations = async () => { throw Error('owned relation persistence failure'); };

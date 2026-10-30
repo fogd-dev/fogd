@@ -224,6 +224,17 @@ the target to both sources and their recovery relatives before Docker allocation
 Existing single-source records remain readable. Duplicate sources and replacing
 an existing record refuse. Older CLIs that cannot read the new record refuse it.
 
+Local operation exclusion also covers the connected source, target and sibling
+graph. Retained startup acquires its own launch fence before checking peers.
+Restoration acquires both source fences and rechecks peers before allocating or
+copying a target. Only fences actually acquired by that operation are excluded
+from its peer checks. A pending peer operation refuses even when every container
+is stopped; partial files, directories and symlinks at its marker also refuse.
+Validation: either ordering of sibling startup and restoration blocks the later
+operation before a writer starts or a target is allocated. Markers are never
+cleared to make the check pass. This is local CLI exclusion, not fencing against
+privileged or independently managed remote writers.
+
 Both sources must remain stopped. Their snapshots are reverified before data copy,
 after it, and after route finalization and policy readback. Output cannot be inside
 either snapshot. Lost source confirmation, changed bytes or uncertain copying keeps
@@ -334,11 +345,28 @@ uses a fresh target. The cron driver's final inventory assertion mistakenly trea
 its deliberately restarted source fixture as untouched. Read-only reconciliation
 and the independent audit permit only that owned source's start/finish timestamps
 to differ and check every unrelated resource exactly. No restore or approval is
-replayed to repair the report. These are per-family checks; combined background
-peers and capacity reuse, interruption and concurrent admission remain open.
+replayed to repair the report. These per-family checks do not qualify combined
+background peers/capacity reuse or coordinator interruption/concurrency.
+
+The [native coordinator fault check](evidence/operator-app-archive-faults-v9.json)
+uses authentic scheduled-app snapshots and five fresh stopped targets. It verifies
+lost copy and route-helper replies, a lost source-fence release reply, competing
+startup/restoration and interruption of the owned Node coordinator after an actual
+replica copy. A related sibling startup initially reached an intercepted Docker
+start despite held source fences; the peer-operation guard now refuses before
+that boundary. The inverse ordering refuses restoration before allocation.
+
+Copy/route reply loss keeps enrollment incomplete and startup refused. Lost fence
+release confirmation remains unconfirmed even when host enrollment completed; its
+app recovery gate and HTTP/background holds persist. Coordinator interruption
+retains the partial copy and both source fences. Independent audit rechecks host
+completion states, physical store bindings, replica bytes, exclusions and preserved
+resources. None of these targets runs application code. Native worker interruption,
+multi-host exclusion and combined background peers remain outside this check.
 
 Before archive admission, qualify combined background peers and capacity reuse,
-interruption and concurrent admission. The
+the operator command's interruption/concurrent-admission paths, and release of the
+updated host CLI. The
 operator workflow also remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.

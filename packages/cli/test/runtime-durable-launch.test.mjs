@@ -27,7 +27,7 @@ async function fixture(t) {
     { id: hash(name), running: false, restarting: false, paused: false, status: name === 'bucket-init' ? 'exited' : 'created', exitCode: 0, startedAt: '' }]));
   const authority = { record: { schema: 1, installation: hash('installation'), revision: '0', routes: [] }, sha256: hash('authority') };
   const calls = [], marker = () => readFile(join(directory, 'launch.pending.json'), 'utf8').then(JSON.parse);
-  const options = { directory, server: undefined, ready: async () => {}, recovery: async () => {}, authorize: async () => entry,
+  const options = { directory, server: undefined, ready: async () => {}, recovery: async () => {}, operationPeers: async () => {}, authorize: async () => entry,
     verify: async () => {}, readPolicy: async () => plan.policy, delay: async () => {},
     inspect: async () => ({ identity: hash('inventory'), services: structuredClone(states) }),
     readStores: async () => ({ authority: structuredClone(authority), gatewayPolicy: {} }),
@@ -59,6 +59,15 @@ test('an uncompleted bucket initializer is attached and must finish before backe
 test('read-only verification failure releases checking fence without Docker mutation or private diagnostics', async t => {
   const f = await fixture(t); f.options.verify = async () => { throw new Error('PRIVATE verification failure'); };
   await assert.rejects(startDurableInstallation(f.selected, f.options), error => error.code === 'ROUTE_STARTUP_UNCONFIRMED' && !error.message.includes('PRIVATE') && !('cause' in error));
+  assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
+});
+test('a pending operation on a recovery peer refuses before any Docker start and releases only its own checking fence', async t => {
+  const f = await fixture(t);
+  f.options.operationPeers = async (project, owned) => {
+    assert.equal(project, 'original'); assert.deepEqual(owned, ['original']);
+    throw new Error('Another recovery installation has a pending operation');
+  };
+  await assert.rejects(startDurableInstallation(f.selected, f.options), { code: 'ROUTE_STARTUP_UNCONFIRMED' });
   assert.deepEqual(f.calls, []); assert.deepEqual((await readdir(f.directory)).sort(), enrolled);
 });
 test('a foreign installed policy refuses before starting any container', async t => {
