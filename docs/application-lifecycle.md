@@ -393,10 +393,25 @@ verifies receipts, physical stores, credentials, artifacts and source exclusions
 Real CLI planning/stale-execution tests use a synthetic qualified catalog and no
 Docker. Neither check qualifies a shipped archive release or combined backgrounds.
 
+`fogd admin archive APP` provides endpoint-bound owner recovery reviews, explicit
+approval and secret staging from standard input. Original and rotation approval
+use saved exact reviews; a changed endpoint refuses before HTTP. Rotation requires
+staging, a fresh rotation review and explicit rotation approval. Replies omit
+secret values and private runtime versions. Uncertain mutation replies are not
+automatically replayed. Approval leaves HTTP and background controls held.
+
+The [native owner CLI check](evidence/operator-app-archive-owner-cli-v9.json) uses
+the stock CLI over certificate-verified HTTPS on two fresh private targets. Original
+approval and current-vault rotation both require a separate HTTP resume; SQL,
+objects and selected configuration survive retained restart. Independent readback
+checks owner decisions, endpoint-bound reviews, canonical artifacts, vault revision
+selection, physical enrollment and preserved resources. Target preparation uses a
+trusted private candidate selector; the owner CLI has no injected HTTP provider.
+This check does not qualify background acknowledgment/resume or public admission.
+
 Before archive admission, qualify combined background peers and capacity reuse,
 the operator command's interruption/concurrent-admission paths, and release of the
-updated host CLI. The
-operator workflow also remains open. There are no
+updated host CLI. End-to-end operator acceptance remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
 

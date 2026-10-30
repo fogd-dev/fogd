@@ -83,6 +83,43 @@ Explicit installation startup, exact owner recovery approval and separate HTTP o
 background recovery controls are still required. These commands approve no code,
 acknowledge no background loss and resume no execution.
 
+## Owner recovery commands
+
+`fogd admin archive` reads and approves pending recovery on the selected running
+controller. It requires owner credentials and normal TLS trust. Save a review to
+a new private file before approval:
+
+```sh
+fogd admin archive APP review --output original-review.json
+fogd admin archive APP approve --review original-review.json
+```
+
+The review file binds the controller endpoint, app, archive and exact release
+selection. Approval submits that saved review without refreshing it automatically.
+Review files use mode `0600`; an existing output file refuses replacement. Changed
+selections or controller review context require another explicit review. Changing
+the selected endpoint refuses before HTTP.
+
+If the original secret pin is unavailable or needs replacement, stage values from
+standard input using the original review, then obtain and approve a rotation review:
+
+```sh
+fogd admin archive APP secrets --review original-review.json < values.json
+fogd admin archive APP review --rotation --output rotation-review.json
+fogd admin archive APP approve --rotation --review rotation-review.json
+```
+
+The input is a JSON object mapping secret names to nonempty strings. Staging prints
+only the revision ID and names. Rotation uses the current controller vault; it
+does not recover missing values from the retained source vault. Review and approval
+output omit secret values and private runtime versions.
+
+Approval leaves execution held. HTTP routing resume and background loss
+acknowledgment/resume remain separate owner actions. An interrupted, malformed or
+lost mutation reply reports uncertainty and is not retried automatically. Inspect
+current recovery state and saved owner decisions before another action. Retain
+partial-operation records and markers.
+
 ## Review fields
 
 Each versioned review binds the operation, independently selected runtime, source

@@ -17,6 +17,7 @@ import { expansionCommand } from '../src/recovery/expand.mjs';
 import { dockerCommand } from '../src/compose/render.mjs';
 import { retirementCommand } from '../src/recovery/retire.mjs';
 import { archiveCommand } from '../src/recovery/archive-command.mjs';
+import { archiveRecoveryCommand } from '../src/archive-recovery/command.mjs';
 import { kubernetesCommand } from '../src/kubernetes/commands.mjs';
 import { importTLS } from '../src/tls.mjs';
 import { backup } from '../src/recovery/backup.mjs';
@@ -85,7 +86,9 @@ try {
     if (args.length !== 1) throw new Error('Usage: fogd status <deployment-id>');
     await status(args[0]);
   } else if (command === 'admin') {
-    if (args[0] === 'routing') {
+    if (args[0] === 'archive') {
+      await archiveRecoveryCommand(args.slice(1));
+    } else if (args[0] === 'routing') {
       await routingCommand(args.slice(1));
     } else if (args[0] === 'artifacts') {
       await artifactsCommand(args.slice(1));
@@ -116,6 +119,7 @@ try {
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd admin review ID --output DIR  Export verified artifacts and compare a release');
+    console.log('fogd admin archive APP review [--rotation] [--output NEW_FILE]\nfogd admin archive APP approve --review FILE [--rotation]\nfogd admin archive APP secrets --review ORIGINAL_REVIEW_FILE < values.json');
     console.log('fogd admin artifacts plan  Inspect controller artifact retention without deleting');
     console.log('fogd admin artifacts keep|unkeep ID SHA  Change explicit release retention');
     console.log('fogd admin artifacts prune PLAN_SHA | status | resume OPERATION_ID  Reclaim reviewed artifacts');

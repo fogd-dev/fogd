@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "kind": "operator-private-stock-owner-archive-recovery-cli-native-d1-r2",
+  "recordedAt": "2026-10-30T16:39:23.599840+00:00",
+  "sourceCommit": "15b374b75007b9cb9efe7febc43cbd46e2254f19",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual stock owner CLI over certificate-verified HTTPS to two fresh private archive recovery targets: original-pin approval and current-vault staging/rotation with old target pin quarantined. Owner review files bind endpoint and exact selection; approval leaves execution held, existing routing command resumes separately, SQL/R2/config survive retained restart. Only target preparation uses the existing trusted candidate selector/authorizer; owner CLI has no injected HTTP/identity provider. Background acknowledgment/resume and public archive admission are not qualified here.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "hostSourceFiles": 320,
+  "stockOwnerCliOverVerifiedHttps": true,
+  "targetPreparationBoundary": "Only stopped target preparation uses trusted private candidate selection and exact authorization. Actual owner review, stdin staging, original/rotation approval and separate HTTP resume invoke the stock CLI with no HTTP or identity-provider injection. The catalog still admits no archive family.",
+  "ownerReviewRequirements": [
+    "Fresh mode-0600 file binds exact app/archive/snapshot/release selection, controller endpoint and server review",
+    "Approval submits saved review without automatic refresh; mismatched kind or endpoint refuses before HTTP",
+    "Secret staging reads bounded JSON from stdin and prints revision/names only",
+    "Rotation uses staged current-vault revision; original target pin bytes retained outside canonical name",
+    "Approval leaves HTTP and backgrounds held; separate routing resume is explicit",
+    "Uncertain mutation replies remain uncertain with no automatic replay"
+  ],
+  "nativeResults": [
+    {
+      "kind": "original",
+      "passed": true,
+      "ownerCli": true,
+      "reviewFile": "original-original-review.json",
+      "httpHeldAfterApproval": true,
+      "separateResumeRequired": true,
+      "dataPreservedAfterRestart": true
+    },
+    {
+      "kind": "rotation",
+      "passed": true,
+      "ownerCli": true,
+      "reviewFile": "rotation-review.json",
+      "httpHeldAfterApproval": true,
+      "separateResumeRequired": true,
+      "dataPreservedAfterRestart": true
+    }
+  ],
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 320,
+    "nativeHashesVerified": true,
+    "identicalUncachedBuilds": true,
+    "actualNativeSnapshotsReverified": 2,
+    "actualPhysicalEnrollmentBindingsVerified": 4,
+    "archiveIdentityAndSnapshotReferencesRecomputed": true,
+    "currentCredentialBytesPreserved": true,
+    "canonicalArtifactsUnchanged": true,
+    "savedEndpointBoundOwnerReviewsVerified": true,
+    "attributedOriginalAndRotationApprovalsReadBack": true,
+    "oldTargetPinRetainedOutsideCanonicalName": true,
+    "rotationUsesNewCurrentVaultRevision": true,
+    "clientOutputWithholdsPrivateValuesAndRuntimeVersion": true,
+    "sqlAndObjectDataPreservedAfterRestart": true,
+    "twoSourceExclusionsVerified": true,
+    "existingContainersPreserved": 320,
+    "existingVolumeNamesPreserved": 558,
+    "ownedRelatedContainersStopped": 32,
+    "newTargetContainersStopped": 16,
+    "defaultCronAdmission": "closed",
+    "shippedCatalogUnchanged": true
+  },
+  "canonicalChecks": {
+    "passed": 3149,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 580758.748125
+  },
+  "focusedChecks": {
+    "passed": 54,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 6934.682458
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "publicArchiveWorkflowAvailable": false,
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Combined background peers and capacity reuse through the operator workflow",
+    "Operator-command interruption and concurrent-admission acceptance",
+    "Fresh release rehearsal for the updated host CLI and qualified archive runtime"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-owner-native-20261030-01",
+  "currentSnapshotRoot": "~/.local/share/fogd-qualifications/archive-command-native-20261030-01/current-snapshot",
+  "retainedSnapshotRoot": "~/.local/share/fogd-qualifications/archive-secret-native-20261030-01/retained-snapshot",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "evidenceFingerprints": {
+    "driver.mjs": {
+      "sha256": "d469208e9b28babf5a7273ecfd553cf5ebf1bb406f6f230a463be5828bf04257",
+      "bytes": 14697
+    },
+    "audit.mjs": {
+      "sha256": "8191915d325efc026da3c48981f32a9c0f0d818741b978171fd62c312ed9f602",
+      "bytes": 12055
+    },
+    "report.json": {
+      "sha256": "d8d41be589c19e96263e860ea4e46fc4fac6a90b52076a23f2bdbd602eed262b",
+      "bytes": 17716
+    },
+    "audit.json": {
+      "sha256": "b13843f3b9ecab098f7b99743cb532d0f9a2242c114c923436034a963a46330f",
+      "bytes": 966
+    },
+    "audit-readback.json": {
+      "sha256": "a23d2780ce0603be19ffbc13acfbb095e8c723c9f144d705088092611761ebb1",
+      "bytes": 47104
+    },
+    "before.json": {
+      "sha256": "901456be11413677eed5e79495288859528c7aa62bbb58bbf62d57157c69dbd2",
+      "bytes": 378841
+    },
+    "after.json": {
+      "sha256": "e421385f4d3a6246af2e7462174e11e750485bce999444772548aa2ab2f6af36",
+      "bytes": 397705
+    },
+    "selections.json": {
+      "sha256": "21b57772e1afa25753129738b29c82413b4011a4d6f3b370c2b90f98ffda7ad6",
+      "bytes": 40773
+    },
+    "host-source-during-run.json": {
+      "sha256": "ea2f80542dfd436d130e15563ca2a8b598c64261224bebf49dce3236314c4b31",
+      "bytes": 36647
+    },
+    "original-original-review.json": {
+      "sha256": "b800cba36238037c397b245b4b1d659e019b2c388c1bdb6328a0bffa6c39c435",
+      "bytes": 787
+    },
+    "original-approved-state.json": {
+      "sha256": "ca72f8d2ddef54daa323b62a4b8a60d0cb55b99cba8f4cf5b74052b19119f79a",
+      "bytes": 9150
+    },
+    "original-final-state.json": {
+      "sha256": "ae9accf4a18787375932d36a0feb9bfbb9aeccc966a807da5f35546f1fc0a44f",
+      "bytes": 8975
+    },
+    "original-client-results.json": {
+      "sha256": "f6ce4300e00c5ab6a0b402dc272bde08dc68ee93c7653b3f45e85e1779df6726",
+      "bytes": 1904
+    },
+    "rotation-original-review.json": {
+      "sha256": "52f962d8ca93e7fbebd2552535df268d82bb570335889549d135da0fc2ee6084",
+      "bytes": 787
+    },
+    "rotation-review.json": {
+      "sha256": "65061e4feb2d7541479adfe866f0921b9c1d3511a57cbb9fb21948c2ec1c741a",
+      "bytes": 787
+    },
+    "rotation-approved-state.json": {
+      "sha256": "12777f4cbc0b8a1f389330129907ed6f721c2ea237b61810e9aebec77f4dbd9b",
+      "bytes": 10071
+    },
+    "rotation-final-state.json": {
+      "sha256": "fb02a40222ec403d7dd2c7182cba6979c1eb222167acdee784970a44fd8b38e8",
+      "bytes": 9896
+    },
+    "rotation-client-results.json": {
+      "sha256": "ef985829926b0010eeb8a71a75498936b20672c2476973126fd81239681e6704",
+      "bytes": 2977
+    },
+    "canonical.log": {
+      "sha256": "41f343165f052f0312fdadc8d29cfea51c8e2d991126e3a1fc7ce2ed501cb032",
+      "bytes": 283299
+    },
+    "focused.log": {
+      "sha256": "b44db1d40e3379811b29c9722fe3e50224275bf53bbbcd04ac2ee2d4605e562a",
+      "bytes": 5424
+    },
+    "quality.log": {
+      "sha256": "39154d3856cc748e2e93618f8b3a21a1aac1dc23cd0a725b42053f77eec15a53",
+      "bytes": 1588
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    }
+  }
+}
