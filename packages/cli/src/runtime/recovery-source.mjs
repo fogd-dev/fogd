@@ -11,8 +11,17 @@ import { installationVolumeNames } from './installation-volumes.mjs';
 const filename = project => join(installationDirectory(project), 'recovery-source.json');
 
 export async function writeRecoverySource(project, sourceProject, config) {
-  const source = { schema: 1, project, sourceProject, volumes: installationVolumeNames(config) };
-  validateSource(source, project);
+  return publishSource(project, { schema: 1, project, sourceProject, volumes: installationVolumeNames(config) });
+}
+
+// One atomic host record binds both current and retained sources before target
+// allocation. Publishing separate records could leave a partially excluded graph.
+export async function writeRecoverySources(project, sources) {
+  const record = { schema: 2, project, sources: sources.map(source => ({ sourceProject: source.project, volumes: installationVolumeNames(source.config) })) };
+  return publishSource(project, record);
+}
+async function publishSource(project, source) {
+  sourceRecords(source, project);
   const file = filename(project), temporary = join(installationDirectory(project), `recovery-source-${randomUUID()}.pending.json`);
   try {
     await writeJson(temporary, source);
@@ -61,7 +70,7 @@ async function recoverySources(project) {
   for (const entry of entries) {
     if (!entry.isDirectory() || !/^[a-z0-9][a-z0-9_-]{0,62}$/.test(entry.name)) continue;
     const record = await readSource(entry.name);
-    if (record) records.push(record);
+    if (record) records.push(...record);
   }
   return records;
 }
@@ -73,7 +82,7 @@ async function readSource(project) {
   try {
     const stat = await file.stat();
     if (!stat.isFile() || stat.size > 65536 || (stat.mode & 0o022)) throw new Error();
-    const source = JSON.parse(await file.readFile()); validateSource(source, project); return source;
+    return sourceRecords(JSON.parse(await file.readFile()), project);
   } catch { throw new Error(`Cannot verify recovery source record for ${project}; keep related installations stopped`); }
   finally { await file.close(); }
 }
@@ -84,4 +93,14 @@ function validateSource(source, project) {
     source.schema !== 1 || source.project !== project || source.sourceProject === project || !Array.isArray(source.volumes) ||
     !source.volumes.length || source.volumes.length > 16 || new Set(source.volumes).size !== source.volumes.length ||
     source.volumes.some(name => typeof name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(name))) throw new Error('Invalid recovery source exclusion record');
+}
+
+function sourceRecords(source, project) {
+  if (source?.schema === 1) { validateSource(source, project); return [source]; }
+  if (!source || !isDeepStrictEqual(Object.keys(source).sort(), ['project', 'schema', 'sources']) || source.schema !== 2 || source.project !== project ||
+    !Array.isArray(source.sources) || source.sources.length !== 2 || new Set(source.sources.map(value => value.sourceProject)).size !== 2) throw new Error('Invalid recovery source exclusion record');
+  return source.sources.map(value => {
+    if (!value || !isDeepStrictEqual(Object.keys(value).sort(), ['sourceProject', 'volumes'])) throw new Error('Invalid recovery source exclusion record');
+    const record = { schema: 1, project, ...value }; validateSource(record, project); return record;
+  });
 }

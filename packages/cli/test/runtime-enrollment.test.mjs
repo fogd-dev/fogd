@@ -385,3 +385,29 @@ for (const [label, metadata] of [
   await assert.rejects(access(join(f.root, '.fogd/installations/original')), { code: 'ENOENT' });
   await assert.rejects(access(f.env.FOGD_ENV_FILE), { code: 'ENOENT' });
 });
+
+test('two-source publication is atomic and refuses replacement while excluding each source from startup', async t => {
+  const f = await fixture(t), state = new URL('../src/runtime/installation-state.mjs', import.meta.url).href, source = new URL('../src/runtime/recovery-source.mjs', import.meta.url).href;
+  const code = `import{writeRuntimeConfiguration}from ${JSON.stringify(state)};import{writeRecoverySources}from ${JSON.stringify(source)};await writeRuntimeConfiguration({...${JSON.stringify(f.source)},name:'original'},{reserve:true});await writeRecoverySources('original',[{project:'current',config:${JSON.stringify(f.source)}},{project:'retained',config:${JSON.stringify(f.source)}}]);`;
+  await exec(process.execPath, ['--input-type=module', '-e', code], { env: f.env });
+  const directory = join(f.root, '.fogd/installations/original'), before = await readFile(join(directory, 'recovery-source.json'));
+  assert.deepEqual(JSON.parse(before).sources.map(source => source.sourceProject), ['current', 'retained']);
+  for (const name of ['current', 'retained']) await assert.rejects(f.invoke({}, { FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: name }), /Project still has running containers/);
+  const replace = `import{writeRecoverySources}from ${JSON.stringify(source)};await writeRecoverySources('original',[{project:'other',config:${JSON.stringify(f.source)}},{project:'retained',config:${JSON.stringify(f.source)}}]);`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', replace], { env: f.env }), /EEXIST/);
+  assert.deepEqual(await readFile(join(directory, 'recovery-source.json')), before);
+  const list = (await import('node:fs/promises')).readdir;
+  assert.deepEqual((await list(directory)).filter(name => name.startsWith('recovery-source-')), []);
+});
+test('two-source recovery graph excludes a running sibling reached through its other source', async t => {
+  const f = await fixture(t), state = new URL('../src/runtime/installation-state.mjs', import.meta.url).href, source = new URL('../src/runtime/recovery-source.mjs', import.meta.url).href;
+  const code = `import{writeRuntimeConfiguration}from ${JSON.stringify(state)};import{writeRecoverySources,writeRecoverySource,assertRecoverySourceStopped}from ${JSON.stringify(source)};const c=${JSON.stringify(f.source)};await writeRuntimeConfiguration({...c,name:'target'},{reserve:true});await writeRuntimeConfiguration({...c,name:'sibling'},{reserve:true});await writeRecoverySources('target',[{project:'current',config:c},{project:'retained',config:c}]);await writeRecoverySource('sibling','current',c);await assertRecoverySourceStopped('retained');`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: { ...f.env, FOGD_TEST_SOURCE_RUNNING: '1', FOGD_TEST_RUNNING_PROJECT: 'sibling' } }), /Related installation sibling is not confirmed stopped/);
+  assert.equal((await calls(f)).some(args => ['run', 'compose', 'image'].includes(args[0])), false);
+});
+test('duplicate source projects refuse before publishing any multi-source record', async t => {
+  const f = await fixture(t), state = new URL('../src/runtime/installation-state.mjs', import.meta.url).href, source = new URL('../src/runtime/recovery-source.mjs', import.meta.url).href;
+  const code = `import{writeRuntimeConfiguration}from ${JSON.stringify(state)};import{writeRecoverySources}from ${JSON.stringify(source)};await writeRuntimeConfiguration({...${JSON.stringify(f.source)},name:'target'},{reserve:true});await writeRecoverySources('target',[{project:'same',config:${JSON.stringify(f.source)}},{project:'same',config:${JSON.stringify(f.source)}}]);`;
+  await assert.rejects(exec(process.execPath, ['--input-type=module', '-e', code], { env: f.env }), /Invalid recovery source exclusion record/);
+  await assert.rejects(access(join(f.root, '.fogd/installations/target/recovery-source.json')), { code: 'ENOENT' });
+});
