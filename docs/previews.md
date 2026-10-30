@@ -244,3 +244,29 @@ artifact/TLS assets or initialize a reservation registry. Fresh enrollment must
 recheck under a host lock, admit the runtime, reserve resources, install checked
 inputs and verify the actual stopped graph before starting it. Other processes
 may still occupy a port after a snapshot.
+
+## Internal host reservations
+
+The internal reservation ledger serializes cooperating local managers through the
+existing durable host fence. One configured private root contains a deterministic
+directory per engine ID. Explicit fresh initialization refuses existing state and
+unregistered preview resources; missing or damaged records are never rebuilt from
+an apparently empty engine.
+
+Reservation reads all holds and a complete Docker snapshot under that fence,
+checks eligibility, then appends and syncs an immutable hold before returning.
+It reserves the declared budget in the ledger, without allocating RAM in Docker,
+verifying runtime/assets or granting execution permission. Stopped containers,
+expiry and process exit do not release holds. No release operation is available;
+verified teardown and reclamation remain required work.
+
+Malformed records or interrupted writes retain the pending marker and files.
+Ordinary capacity refusal releases the checking fence and preserves prior holds.
+Managers must share the configured root; the fence is local exclusion, not a
+distributed engine lock or protection against privileged record deletion.
+
+The [reservation check](evidence/operator-preview-reservations.json) covers
+filesystem persistence, competing processes, damaged records and retained holds.
+The actual QA engine refuses fresh initialization because earlier preview networks
+have no registry entries; those resources and the refusing marker remain retained.
+This is refusal evidence, not a successful real-engine enrollment or launch.

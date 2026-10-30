@@ -58,9 +58,12 @@ deployments are QA fixtures; cross-family migration is outside this release path
 
 The internal preview host plan now seals role/network/volume placement and binds
 realized commands to the signed target. Read-only eligibility includes retained
-names/ports, active memory limits and held allocations. This is not a reservation
-registry or fresh-enrollment implementation; those remain the next host-lifecycle
-work before public preview launch.
+names/ports, active memory limits and held allocations. An internal engine-bound
+host fence and append-only reservation ledger retain budgets across stop, expiry
+and interruption. Fresh resource enrollment, shipped runtime admission and
+complete stopped-graph verification remain the next host-lifecycle work before
+public preview launch. The ledger is local coordination, not a distributed engine
+lock or a Docker memory allocation.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

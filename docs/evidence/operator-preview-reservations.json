@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "5feed35e9a19be5d52f3cbca71db593794548520",
+  "executedTreeDirty": true,
+  "scope": "Internal local-owner durable capacity ledger, filesystem/concurrency tests and actual-engine orphan refusal. No Docker allocation, image/runtime or asset verification, actual-engine reservation success, fresh resource enrollment or launch.",
+  "sourceFiles": {
+    "packages/cli/src/preview/host-records.mjs": "3977f93ff5e077617a613903b5b0ae7fcc404cce7ec64004da923bde5112c155",
+    "packages/cli/src/preview/host-reservations.mjs": "1dc1a5425028e9332f2dbf4312f5138ab7a5832e15bea453b1192e2a2ef83498",
+    "packages/cli/src/runtime/launch-fence.mjs": "e75c675002c1b48ab249775fe42ffc18f08aa8002f90acff325f9888931794a8",
+    "packages/cli/test/preview-host-reservations.test.mjs": "581b6258321612a9ac91a8c88aa0e2a6dc0de91c1af19429f0c33343eb475580",
+    "packages/cli/test/preview-plan.test.mjs": "967729501cb15d87ffc73e38ea9a45d46d77d9f854175e69c7387870e93adf66",
+    "packages/cli/test/fixtures/preview-plan.mjs": "f996c18cea86ada976ebe25ed33b1a225dbf285b390b6c44ef3daf6e2bd3132c"
+  },
+  "contract": {
+    "binding": "One configured canonical private root per local owner/engine; deterministic engine-ID directory",
+    "exclusion": "Existing durable host fence; complete inventory and every hold checked before exclusive append and file/directory sync",
+    "holds": "Immutable plan/UUID/hash records stay budgeted after stop, expiry and process exit",
+    "failure": "Malformed or partial records and unexpected failures retain the fence; ordinary no-effect admission refusal releases checking",
+    "permissions": "0700 owned real directories and bounded canonical 0600 single-link records; no following file symlinks",
+    "authority": "Capacity reservation only; executionAuthorized stays false",
+    "release": "No release or expiry shortcut; verified teardown/reclamation remains required"
+  },
+  "checks": {
+    "connectedNode": {
+      "passed": 216,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "coverage": [
+      "Same-process and cross-process contention",
+      "Fresh-process inspection of durable holds",
+      "Complete and partial interrupted hold writes retain marker and bytes",
+      "Malformed/symlinked/foreign/mixed-engine/duplicate records refuse",
+      "Stopped and expired holds remain budgeted",
+      "Matching active credit and unbounded active refusal",
+      "Engine mismatch and existing unregistered resource refusal",
+      "Existing launch/stop/recovery exclusion regressions"
+    ],
+    "syntax": "passed on final tree",
+    "quality": "passed; erosion 14.9%, duplication 1.7%",
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+    "fullSuite": "Not run; connected scope only"
+  },
+  "actualEngine": {
+    "passed": true,
+    "scope": "Actual-engine refusal readback only; initial success probe failed due retained unregistered QA networks. No real-engine reservation or initialized ledger is claimed.",
+    "initialSuccessProbePassed": false,
+    "observedRefusal": "unregistered-resources",
+    "registryInitialized": false,
+    "durableHolds": 0,
+    "pendingMarkerRetained": true,
+    "automaticRetryRefused": true,
+    "priorQaContainersPreserved": 75,
+    "allRecipientContainersNonRunning": 75,
+    "createdDockerResources": 0,
+    "existingNetworksAndVolumesPreserved": true,
+    "allReadbackDockerCallsReadOnly": true,
+    "defaultCronAdmission": "closed",
+    "publicPreviewLaunch": "unavailable"
+  },
+  "independentAudit": {
+    "passed": true,
+    "scope": "Independent actual-engine refusal readback, not reservation success",
+    "priorQaContainersPreserved": 75,
+    "allRecipientContainersNonRunning": 75,
+    "networksAndVolumesPreserved": true,
+    "onlyPendingHostMarkerPresent": true,
+    "createdDockerResources": 0,
+    "executedSourceFilesRehashed": 7,
+    "sourceNote": "Exact executed host-records source reconstructed and hash checked after duplicate-ID validation was added; archived source is preserved separately from final source."
+  },
+  "knownFailures": [
+    {
+      "acceptedAsSuccess": false,
+      "observed": "Initial engine initialization success probe refused unregistered retained QA preview networks",
+      "handling": "Retained incomplete private fixture registry and all Docker resources; independent readback validates refusal, not initialization or reservation success"
+    },
+    {
+      "acceptedAsPass": false,
+      "observed": "Initial expiry test created a signing fixture after mocking the clock past the valid Date range",
+      "correction": "Constructed both plans before advancing the clock; final 216 checks pass"
+    }
+  ],
+  "privateEvidenceRoot": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-reservations-20261030-01",
+  "evidenceSha256": {
+    "before.json": "51d18b147e443dec05580aefc013a942009d1cf6d21e32506659851b0f560abc",
+    "after-refusal.json": "b67ab5de0bbb882ac4dd73fe877fa5a7bf9f215398eb6dc5de97c41b4bff3002",
+    "source-files.json": "92ef94d6aa668e66ef2e55acc58ceacabbed337194b1fe2faa08a51f2346c2dd",
+    "refusal-readback.json": "76cf4c9c1bbb1338ae91a58028360f637b5ca8cd4d08e7c6b3967a36020f279d",
+    "independent-audit.json": "692ddc643e9361b158821497166a3a8a5b4e6dfa1a666e7a44f9fb33ff57bd27",
+    "readback-calls.json": "093858e55afb44df18ab4c6b4a0f8baaba1126e0f81d3f17ad7b216e11303a81",
+    "fogd-preview-reservations-host.mjs": "2549657da84c00b1e96e2066b9f9cffe02ee8a21818976e0a84e9944598d5ff7",
+    "fogd-preview-reservations-host.log": "5c341103426d49a9beba281a5c8e2865ae436271c723110b74993c3b3d60a60e",
+    "fogd-preview-reservations-readback.mjs": "d617449f2d38d704d2d02bb57e09a1004ce5eff1ed31fae0f4fb22fac5e3de80",
+    "fogd-preview-reservations-readback.log": "cfdb4ed889a39978beff78fde4fc053077e37be124da13cb198127e87d7ff8ab",
+    "fogd-preview-reservations-audit.py": "3d2c1de9e05d07ebadf71da610daaf3aa05e43b83dc65868fdb0c4700155edc1",
+    "fogd-preview-reservations-audit.log": "a7b7991f6a7abddd7c349f510ffa55d6dc93ab758fab7a9829eae1f6cf0b5281",
+    "fogd-preview-reservations-tests.log": "842182d4216973d63dd04ff5fd34e888ceb4d0056b22ceb47c556bde72ff3fba",
+    "fogd-preview-reservations-connected-final.log": "20a1a3575e906da761d2a16faddff986a5158408c8e6cd9fed04c8ca5cec56af",
+    "fogd-preview-reservations-syntax-final.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-preview-reservations-quality-accepted.log": "d4064160337ebb543efc76f50fda83d00fea70acb4f4d456b4e128b10ec11b48",
+    "fogd-preview-reservations-guide-writing.log": "46ff0f8bc5c2480cffc322393a7f87ea792d6f5a844f849c9d8f8fe18e273e97",
+    "fogd-preview-reservations-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+    "fogd-preview-reservations-review.md": "3321d966be5d5d034b118417e978a080aa6f6c552549a11b6f492c4f6095cf34",
+    "fogd-preview-reservations-commit.txt": "c04187ec6161aacb48ee916e660f973a1c48d2093389fa9a4bbfcce3a447cbcb",
+    "fogd-preview-reservations-commit-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed"
+  },
+  "defaultCronAdmission": "closed",
+  "publicPreviewLaunch": "unavailable",
+  "limits": [
+    "Managers must share one configured root; local fence is not a distributed engine lock or protection against privileged ledger deletion.",
+    "Successful reservation evidence uses real filesystem records and controlled complete host metadata. The retained actual QA engine only qualifies refusal.",
+    "Ledger budget reservation does not preallocate Docker RAM or prevent unrelated actors from changing host resources or ports.",
+    "Runtime admission, checked artifact/TLS material, fresh allocation, stopped-graph verification, ordered teardown and full fresh-app/update/browser trials remain open."
+  ]
+}

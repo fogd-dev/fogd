@@ -10,6 +10,7 @@ import { bindHostDirectory, hostDirectoryMessage, checkHostDirectory, syncHostDi
 const MARKER = 'launch.pending.json', SIZE = 512;
 const LAUNCH = { noun: 'launch', phases: ['checking', 'starting', 'preflight', 'ingress', 'complete'] };
 const STOP = { noun: 'stop', phases: ['checking', 'stopping', 'complete'], fields: { operation: 'stop' } };
+const HOST = { noun: 'host operation', phases: ['checking', 'writing', 'complete'], fields: { operation: 'host' } };
 const NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/;
 
 export class LaunchFenceError extends Error {
@@ -30,6 +31,7 @@ const owned = (info, identity) => info.isFile() && info.dev === identity.dev && 
 
 export const acquireLaunchFence = (directory, identity) => acquire(directory, identity, LAUNCH);
 export const acquireStopFence = (directory, identity) => acquire(directory, identity, STOP);
+export const acquireHostOperationFence = (directory, identity) => acquire(directory, identity, HOST);
 
 // Presence alone refuses, including torn files, directories and symlinks. This
 // observation is exclusion only when the caller already owns its own fences.
