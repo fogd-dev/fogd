@@ -41,8 +41,8 @@ export function records(path) {
   const db = new DatabaseSync(path, { readOnly: true });
   try { return db.prepare('SELECT value FROM records').all().map(row => row.value); } finally { db.close(); }
 }
-export async function archiveDataFixture(t, entry) {
-  const f = await sourceBundle(t);
+export async function archiveDataFixture(t, entry, source = sourceBundle) {
+  const f = await source(t);
   if (entry) {
     if (entry.schema === 3) Object.assign(f.policy, { schema: 4, controllerArgs: ['packages/platform/src/main-archive.mjs'] });
     Object.assign(f.policy, { family: entry.id, image: entry.image, storageImage: entry.storageImage, binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256 });
@@ -71,7 +71,7 @@ export async function archiveDataFixture(t, entry) {
   const routePolicy = policy => ({ installation: runtimePolicyIdentity(policy), slots: ['slot-1', 'slot-2'] });
   const authority = { record: JSON.parse(await readFile(join(f.roots.authority, 'routes.json'))), digest: f.manifest.routeAuthority.sha256 };
   const projected = prepareAppArchiveRoutes({ profile: currentPolicy, sourceProfile: retainedPolicy, source: { state: f.c.state, authority },
-    snapshot, binding: 'b'.repeat(64), domain: 'localhost', archive: { app: 'alpha', digest: f.request.digest, id: generation, at: '2026-10-30T02:00:00.000Z' } });
+    snapshot, binding: 'b'.repeat(64), domain: 'localhost', archive: { app: f.request.app, digest: f.request.digest, id: generation, at: new Date().toISOString() } });
   const currentState = projected.state;
   currentState.apps.beta = { slot: 'slot-1', active: beta, route: 'active', migrations: [] };
   currentState.deployments[beta] = { id: beta, app: 'beta', digest: 'b'.repeat(64), status: 'active', step: 'complete', secretRevision: null };
@@ -93,6 +93,7 @@ export async function archiveDataFixture(t, entry) {
   }
   await writeFile(join(currentDir, 'compose.json'), JSON.stringify(currentConfig));
   const manifest = structuredClone(f.manifest); manifest.sourceProject = currentConfig.name;
+  delete manifest.queueRecovery; delete manifest.cronRecovery;
   manifest.routeAuthority = { schema: 1, installation: currentRecord.installation, revision: '3', sha256: currentState.routeAuthority.settled.digest };
   await saveManifest(currentDir, manifest);
   const profile = structuredClone(currentPolicy); profile.fleets[1].prefix = retainedPolicy.fleets[0].prefix;

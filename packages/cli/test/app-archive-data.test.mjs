@@ -8,8 +8,23 @@ import { durableDataTransport } from './fixtures/durable-data-transport.mjs';
 import { verifyDurableBundle } from '../src/recovery/durable-bundle.mjs';
 import { fingerprint } from '../src/recovery/bundle.mjs';
 import { archiveDataFixture, packRole, saveManifest, records, archiveConfig } from './fixtures/app-archive-data.mjs';
+import { backgroundArchiveSource } from './fixtures/background-archive-data.mjs';
 
 const refused = { code: 'APP_ARCHIVE_DATA_UNCONFIRMED' };
+
+for (const family of ['queue', 'cron']) test(`${family} data restoration tolerates fresh recovery IDs without changing retained evidence`, async t => {
+  const f = await archiveDataFixture(t, undefined, t => backgroundArchiveSource(t, family));
+  const before = await readAppArchiveDataPlan(f.currentDir, f.retainedDir, f.config, f.selection);
+  const after = await readAppArchiveDataPlan(f.currentDir, f.retainedDir, f.config, f.selection);
+  const name = f.request.app, key = family + 'Recovery';
+  assert.notEqual(before.projected.apps[name][key].id, after.projected.apps[name][key].id);
+  assert.deepEqual(before.projected.apps[name][key].prepared, after.projected.apps[name][key].prepared);
+  const result = await restoreAppArchiveData(f.currentDir, f.retainedDir, f.config, f.selection, { readVolume: f.readVolume });
+  assert.equal(result.archiveIdentity, f.selection.expectedIdentity);
+  assert.deepEqual(records(join(f.volumes['slot-2-a'], 'records.sqlite')), ['alpha-before-archive']);
+  assert.deepEqual(records(join(f.volumes['slot-2-b'], 'records.sqlite')), ['alpha-before-archive']);
+  assert.equal(await readFile(join(f.volumes.controller, 'state.json'), 'utf8'), '{"fresh":true}');
+});
 
 test('archived alpha disks restore into another fleet while current beta SQL, bucket and controller authority survive', async t => {
   const f = await archiveDataFixture(t), retained = await fingerprint(join(f.retainedDir, 'manifest.json')), current = await fingerprint(join(f.currentDir, 'manifest.json'));

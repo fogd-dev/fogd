@@ -1,10 +1,10 @@
 # Application lifecycle and capacity reclamation
 
 Fogd needs reversible app archival as well as permanent retirement. This contract
-tracks [issue 8](https://github.com/fogd-dev/fogd/issues/8); reversible archival and
-preview expiry remain unimplemented. The delivered first increment is a verified
-retirement review and optional execution binding on the existing stopped recovery
-workflow. It does not turn retirement into archival.
+tracks [issue 8](https://github.com/fogd-dev/fogd/issues/8). Reversible archival has
+a private implementation and bounded native evidence; public archival and preview
+expiry remain unavailable. Stopped retirement has a delivered review and optional
+execution binding. It does not grant archival restoration rights.
 
 ## State meanings
 
@@ -14,7 +14,7 @@ The [glossary](../GLOSSARY.md) keeps execution, retention and capacity distinct.
 | --- | --- | --- | --- | --- |
 | HTTP paused | New HTTP requests withheld; background controls remain independent | Still occupied | Exact reconciliation/resume under existing controls | Implemented |
 | Installation stopped | All installation writers confirmed stopped | Assignments retained | Start the same installation or use stopped recovery | Implemented |
-| App archived | App ingress and background writers fenced; data retained under an archive identity | Reusable only after verified completion in a fresh target | Explicit restoration of the same app from its retained archive | Future protocol |
+| App archived | App ingress and background writers fenced; data retained under an archive identity | Reusable only after verified completion in a fresh target | Explicit restoration of the same app from its retained archive | Private protocol; release gates open |
 | Preview expired | Preview authorization ended; writer confirmation remains a separate fact | Occupied until writers are fenced and reclamation completes | Determined by an explicit preview retention policy | Future issue #2 integration |
 | App retired | Old app cannot execute or reclaim its name in the new installation | Released fleet has fresh storage authority | Independent app restore unsupported; an older whole snapshot can resurrect prior state | Implemented stopped retirement |
 
@@ -80,8 +80,8 @@ These helpers do not stop application writers or copy native application data.
 No CLI, default controller entrypoint or shipped runtime admits the new capability.
 The stopped coordinator, background receipt projection, vault checks and attributed
 approval are internal components. An explicit internal controller profile now
-supports held startup and an owner recovery API. Native launcher/worker acceptance,
-secret rotation and operator commands remain required before release.
+supports held startup and an owner recovery API. Native background, interruption
+and concurrency acceptance and operator commands remain required before release.
 
 ## Retained snapshot and data-copy implementation
 
@@ -102,6 +102,13 @@ and compares the namespace reader against a retained native MinIO sample. This
 is data-stage evidence, not full celld archival acceptance. Both snapshots are
 rechecked after copying. A changed source or failed copy leaves partial targets
 unconfirmed, retained and stopped.
+
+Copy-plan previews do not reserve new background recovery IDs. Rechecking the plan
+compares all receipt contents, prior history and target bindings while excluding
+only those generated IDs. The final route-store writer creates and persists the
+actual pending gates. Validation: independent queue/cron previews have different
+IDs, yet the same retained data copies successfully; changed snapshot or receipt
+bindings still refuse completion.
 
 Archived queue and scheduled receipts remain inactive audit data, including expired
 queue receipts. Live peers still need valid current recovery evidence. Restoring
@@ -144,8 +151,8 @@ Approval reads the pinned revision from the current vault. It never falls back t
 the retained source vault or silently selects a newer revision. Missing values,
 changed bytes during verification, unavailable runtimes and changed artifacts or
 migrations keep recovery pending. The operation does not publish code, apply
-migrations or materialize secrets. Rotation to a different secret revision during
-archive recovery is not implemented.
+migrations or materialize secrets. Rotation uses a separate explicit current-vault
+review and approval operation, described below.
 
 An authenticated owner must select the exact archive identity, restoration snapshot,
 deployment, artifact digest, pinned revision and current review context. A fresh
@@ -231,8 +238,9 @@ readbacks. Independent audit preserves all pre-existing fixture resources.
 
 Completed storage enrollment still leaves HTTP withheld and archive recovery
 pending. The controller continues to reject the archive capability before backend
-access unless the explicit internal profile is supplied. Native restored-app execution, secret-rotation handling and operator commands
-remain required before release.
+access unless the explicit internal profile is supplied. Remaining native
+background/interruption acceptance and operator commands are required before
+release.
 
 ## Fixed archive controller mode
 
@@ -283,8 +291,8 @@ and object writes by B afterward. A can subsequently restore from its original
 retained snapshot through exact owner approval and separate HTTP resume. Independent
 restart returns A's original and B's latest SQL/object data. Audit verifies current
 credential bytes, fresh physical enrollment and source exclusions. This remains a
-private two-fleet D1/R2 check; native queue/cron archival, interruption and concurrent
-admission remain unqualified.
+private two-fleet D1/R2 check. It does not qualify native queue/cron archival,
+interruption or concurrent admission.
 
 Private archive recovery supports explicit secret rotation against the current
 vault. The owner stages values for an exact archive/release selection, obtains a
@@ -306,11 +314,31 @@ retaining the bytes, and refuses original-pin approval. Explicit rotation uses n
 current-vault values; separate HTTP resume returns the new configuration hash and
 original SQL/object data, including after retained restart. Independent audit
 rechecks image/host sources, canonical artifacts, credentials, physical stores and
-source exclusions. Queue/cron receipt behavior and uncertain publication have
-component evidence; native background rotation remains unqualified.
+source exclusions. Uncertain publication and completion saves have component
+evidence; native background behavior is checked separately below.
 
-Before archive admission, qualify the native archive/reuse/restore sequence across
-storage and background families, interruption and concurrent admission. The
+The [native background check](evidence/operator-app-archive-background-native-v9.json)
+qualifies separate queued-message and scheduled apps through stopped archival,
+two-source restoration into the other fleet and current-vault rotation. A queued
+message stays unprocessed until explicit recovery acknowledgment and queue resume;
+its handler and a later message use the new configuration. Original receipt times
+and queue expiry remain unchanged. Scheduled recovery retains the original native
+hold revision and crosses a minute without a new invocation. Acknowledgment leaves
+dispatch paused; separate resume produces only future invocations with the new
+configuration. Both apps retain SQL, objects and handler records after restart.
+
+Independent audits recheck sources, snapshots, physical stores, canonical artifacts,
+current credentials and source exclusions. The first queue restoration exposed the
+copy-plan ID comparison defect above and remains stopped/incomplete; acceptance
+uses a fresh target. The cron driver's final inventory assertion mistakenly treated
+its deliberately restarted source fixture as untouched. Read-only reconciliation
+and the independent audit permit only that owned source's start/finish timestamps
+to differ and check every unrelated resource exactly. No restore or approval is
+replayed to repair the report. These are per-family checks; combined background
+peers and capacity reuse, interruption and concurrent admission remain open.
+
+Before archive admission, qualify combined background peers and capacity reuse,
+interruption and concurrent admission. The
 operator workflow also remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.

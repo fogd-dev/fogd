@@ -42,6 +42,13 @@ async function namespaceBinding(currentDir, retainedDir, current, retained, reco
   if (!isDeepStrictEqual(latest, old) || !old.members.some(member => member.path === 'fogd-owner.json/xl.meta' && member.type === 'file')) throw refused();
   return { members: old.members.length, bytes: old.members.reduce((sum, member) => sum + member.bytes, 0) };
 }
+function restorationBindings(state, archive) {
+  const copy = structuredClone(state), app = copy.apps[copy.appArchives.records[archive].name];
+  // Previewing restoration does not reserve the new gate IDs. Compare every
+  // retained receipt, history and target binding; only these fresh IDs may differ.
+  for (const field of ['queueRecovery', 'cronRecovery']) if (app[field]) delete app[field].id;
+  return copy;
+}
 
 // Host planning only. Profiles and the reviewed archive identity are supplied
 // independently; snapshots cannot select them. No Docker or target access here.
@@ -76,7 +83,8 @@ export async function restoreAppArchiveData(currentDirectory, retainedDirectory,
     const copied = await restoreDurableData(plan.currentDir, config, selection.profile, { readVolume: options.readVolume, replicaSources: plan.replicaSources });
     const after = await readAppArchiveDataPlan(currentDirectory, retainedDirectory, config, selection);
     if (after.currentSnapshot !== plan.currentSnapshot || after.retainedSnapshot !== plan.retainedSnapshot || after.archiveIdentity !== plan.archiveIdentity ||
-      !isDeepStrictEqual(after.namespace, plan.namespace) || !isDeepStrictEqual(after.projected, plan.projected)) throw refused();
+      !isDeepStrictEqual(after.namespace, plan.namespace) ||
+      !isDeepStrictEqual(restorationBindings(after.projected, selection.archive), restorationBindings(plan.projected, selection.archive))) throw refused();
     return { archiveIdentity: plan.archiveIdentity, currentSnapshot: plan.currentSnapshot, retainedSnapshot: plan.retainedSnapshot,
       retainedNamespace: plan.namespace, replicaRoles: Object.keys(plan.replicaSources.roles), copiedRoles: copied.roles, bucket: 'current-snapshot', services: 'stopped' };
   } catch { throw refused(); }

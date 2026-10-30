@@ -1,0 +1,277 @@
+{
+  "schema": 1,
+  "kind": "operator-private-native-background-archive-and-secret-rotation",
+  "recordedAt": "2026-10-30T15:19:07.392299+00:00",
+  "sourceCommit": "08c8365",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Bounded fresh private two-fleet installations, separately for a queued-message app and a scheduled app. Actual stopped backup, archival, two-source restore into the other fleet, owner current-vault rotation with the old target pin unavailable, explicit background recovery acknowledgment and resume, and retained restart. Native interruption/concurrency, shared background peers, operator command admission and general archive release remain open.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "sourceFiles": 130,
+  "repeatedUncachedBuilds": [
+    "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc"
+  ],
+  "hostAuthorizationBoundary": "Only the exact private candidate selector/authorizer is injected. Signed runtime identity, native storage, TLS, source fences, physical enrollment, copy helpers, owner APIs and handler execution are real.",
+  "copyPlanCorrection": {
+    "problem": "Background restoration previews generate fresh recovery IDs. A byte-for-byte comparison of independently regenerated previews falsely refused successful queue/cron data copies before route finalization.",
+    "change": "Compare the full validated projected state while excluding only fresh IDs of the restored app background gates. Original receipts, expiry, observations, previous history, snapshots and target identity remain exact. Data previews reserve no gate IDs and are never persisted as final controller authority.",
+    "regressions": "Both queue and cron integration regressions failed before the correction and pass afterward. They verify copied replica records and the unchanged fresh controller state. Existing changed-snapshot and failed-copy cases still refuse."
+  },
+  "nativeQueue": {
+    "passed": true,
+    "originalHeldMessages": 1,
+    "effectsBeforeAcknowledgmentAndResume": 0,
+    "originalReceiptTimesAndExpiryPreserved": true,
+    "oldPinUnavailableOriginalApprovalStatus": 409,
+    "rotationLeavesHttpAndBackgroundHeld": true,
+    "recoveryAcknowledgmentLeavesQueuePaused": true,
+    "retainedMessageAndFutureMessageUseNewConfig": true,
+    "sqlR2AndHandlerRecordsSurviveRestart": true,
+    "audit": {
+      "passed": true,
+      "imageSourceFilesRehashed": 130,
+      "hostSourceFilesRehashed": 316,
+      "nativeHashesVerified": true,
+      "identicalUncachedBuilds": true,
+      "actualNativeSnapshotsReverified": 2,
+      "actualPhysicalEnrollmentBindingsVerified": 3,
+      "archiveIdentityAndSnapshotReferencesRecomputed": true,
+      "currentCredentialBytesPreserved": true,
+      "canonicalArtifactsUnchanged": true,
+      "oldTargetVaultPinQuarantinedWithBytesPreserved": true,
+      "newConfigHashObservedAfterRotationAndRestart": true,
+      "sqlAndObjectDataPreserved": true,
+      "attributedArchiveRotationApprovalReadBack": true,
+      "twoSourceExclusionsVerified": true,
+      "nativeHeldMessagePreservedUntilExplicitAcknowledgmentAndResume": true,
+      "originalQueueReceiptTimesAndExpiryPreserved": true,
+      "retainedAndFutureHandlersUseNewConfig": true,
+      "previousUnconfirmedTargetPreservedStopped": true,
+      "existingContainersPreserved": 224,
+      "existingVolumeNamesPreserved": 426,
+      "ownedRelatedContainersStopped": 24,
+      "defaultCronAdmission": "closed",
+      "shippedCatalogUnchanged": true
+    },
+    "evidenceRoot": "~/.local/share/fogd-qualifications/archive-queue-native-20261030-02",
+    "snapshotRoot": "~/.local/share/fogd-qualifications/archive-queue-native-20261030-01",
+    "sourceEvidenceRoot": "~/.local/share/fogd-qualifications/archive-queue-source-native-20261030-01",
+    "limitation": "Handler inserts are idempotent; saved results do not establish exactly-once invocation or external effects."
+  },
+  "nativeCron": {
+    "passed": true,
+    "originalAutonomousEventPreserved": true,
+    "receiptTimesAndNativeHoldRevisionPreserved": true,
+    "crossedMinuteRemainsPausedWithNoNewInvocations": true,
+    "oldPinUnavailableOriginalApprovalStatus": 409,
+    "rotationLeavesHttpAndBackgroundHeld": true,
+    "recoveryAcknowledgmentLeavesDispatchPaused": true,
+    "separateResumeProducesOnlyFutureNewConfigInvocations": true,
+    "sqlR2AndInvocationRecordsSurviveRestart": true,
+    "audit": {
+      "passed": true,
+      "imageSourceFilesRehashed": 130,
+      "hostSourceFilesRehashed": 316,
+      "nativeHashesVerified": true,
+      "identicalUncachedBuilds": true,
+      "actualNativeSnapshotsReverified": 2,
+      "actualPhysicalEnrollmentBindingsVerified": 3,
+      "archiveIdentityAndSnapshotReferencesRecomputed": true,
+      "currentCredentialBytesPreserved": true,
+      "canonicalArtifactsUnchanged": true,
+      "oldTargetVaultPinQuarantinedWithBytesPreserved": true,
+      "newConfigHashObservedAfterRotationAndRestart": true,
+      "sqlAndObjectDataPreserved": true,
+      "attributedArchiveRotationApprovalReadBack": true,
+      "twoSourceExclusionsVerified": true,
+      "originalCronReceiptTimesAndHoldRevisionPreserved": true,
+      "heldMinuteHasNoNewInvocations": true,
+      "separateAcknowledgmentAndDispatchResumeRequired": true,
+      "futureInvocationsUseNewConfigWithoutReplayingPriorTimes": true,
+      "existingContainersPreserved": 240,
+      "ownedSourceServicesIntentionallyRestarted": 8,
+      "existingVolumeNamesPreserved": 459,
+      "ownedRelatedContainersStopped": 24,
+      "defaultCronAdmission": "closed",
+      "shippedCatalogUnchanged": true
+    },
+    "evidenceRoot": "~/.local/share/fogd-qualifications/archive-cron-native-20261030-01",
+    "sourceEvidenceRoot": "~/.local/share/fogd-qualifications/archive-cron-source-native-20261030-02",
+    "limitation": "The invocation ledger records each call without deduplicating scheduled times. Its bounded observation does not establish a general exactly-once guarantee."
+  },
+  "canonicalChecks": {
+    "passed": 3110,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 643339.900917
+  },
+  "focusedChecks": {
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 34019.900417,
+    "scope": "Archive data and bundle checks plus existing durable-copy guards; includes both new failing-before-fix background regressions."
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "writing": "passed",
+  "failedAttemptsRetained": "The first native queued-app restoration copied data but correctly left host enrollment incomplete when the preview-ID comparison failed; its eight stopped services and all volumes remain retained, and success used a fresh target. The first scheduled source failed at bootstrap publication with no active app or migrations; its stopped resources and failure record remain retained. The accepted fresh scheduled source explicitly observes signed bootstrap identity before approval. The accepted cron functional driver exited 1 at its final inventory assertion because it wrongly classified the deliberately restarted source as untouched. A separate read-only reconciliation allows only that source start/finish timestamps to differ and checks all unrelated resources exactly; the independent audit repeats those checks and verifies functional evidence/stores. Its original failure record remains retained. No pass is inferred from an uncorrected failed attempt and no operation or partial target is replayed.",
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Native interruption and concurrent admission qualification",
+    "Combined background peers and capacity reuse beyond these per-family runs",
+    "Bounded operator commands and stable lifecycle/capacity/retained-byte results",
+    "Public archive runtime/release admission"
+  ],
+  "evidenceFingerprints": {
+    "queue/report.json": {
+      "sha256": "ca79c2a708a2919148193e030037f3df3cc72b2ce409feb5a8256ce0b18edf49",
+      "bytes": 33815
+    },
+    "queue/audit.json": {
+      "sha256": "0f7240ed0ab79e777c3c286bfee429791514a2c2ee10b12a7cab010970152066",
+      "bytes": 1046
+    },
+    "queue/audit-readback.json": {
+      "sha256": "4d8d758671ac70319245ee9ed3d9dcd47b55cacfbf64cc1cb6b0ade510077fe4",
+      "bytes": 50056
+    },
+    "queue/before.json": {
+      "sha256": "1888e6e86460c89b7fc4d1933c7f3fd33b825ad51677b2808b01943def413685",
+      "bytes": 267332
+    },
+    "queue/after.json": {
+      "sha256": "ee536c866b15873bda5bd353c2ab2a6d8d9493208003b78e09ea3b9b00dbf39b",
+      "bytes": 276764
+    },
+    "queue/selections.json": {
+      "sha256": "c048b28dd6a0577f769d21ae4dcad2400d64e07bd089364c0d90c42a49d319a0",
+      "bytes": 40371
+    },
+    "queue/source-snapshots.json": {
+      "sha256": "6b68db4cd947527e90966754b7b56b01ee80b13c43e0f92e0187321a73467e1a",
+      "bytes": 344
+    },
+    "queue/held-state.json": {
+      "sha256": "4e0992039c9b45acc2135d67852b79bb7b42d3a715074773f000e9d8a755458b",
+      "bytes": 13623
+    },
+    "queue/rotated-held-state.json": {
+      "sha256": "cacb776302bdf62830c7d15babf629309f1748ef5141d8bafc35ec65468c9911",
+      "bytes": 15599
+    },
+    "queue/final-state.json": {
+      "sha256": "796d44b1640c125815bbeac0602276d907d07cb98c55f3e362882468690de239",
+      "bytes": 15470
+    },
+    "queue/rotation-approval.json": {
+      "sha256": "ce2a76d621b4fc9ca46d4b58ddb6a259f1173eb8c9fc43be992a94965725d8a8",
+      "bytes": 365
+    },
+    "queue/queue-recovery-acknowledgment.json": {
+      "sha256": "55377b01702e2f146fe2954934046aca278705a16da16e789a9f3d9f0dbf3de3",
+      "bytes": 1272
+    },
+    "queue/host-source-during-run.json": {
+      "sha256": "cc58fccafdbde57764c2880f08ead34841653c8dd4dee149ce77d379743a7046",
+      "bytes": 36171
+    },
+    "cron/report.json": {
+      "sha256": "b6b09c160cef9484c3330b2271da04144971d998571d60fd5c8184648cffc6a8",
+      "bytes": 41075
+    },
+    "cron/audit.json": {
+      "sha256": "ded9612bc731dcdbe440beaa507c8bd5bbde479fca58b996fb49faf3a479e8fc",
+      "bytes": 1092
+    },
+    "cron/audit-readback.json": {
+      "sha256": "542124dfc1f1863ea609757a1ef428c8e9f6474be6235c20dd03940155da66b6",
+      "bytes": 45534
+    },
+    "cron/before.json": {
+      "sha256": "ab43821500920ee47531833b3aca479eef076218cd047adebbfe86ba70a792b3",
+      "bytes": 295375
+    },
+    "cron/after.json": {
+      "sha256": "3cd00d5fa5bb3da6c7a201545e540efd5550b13e2a96b82f092df45151f5b331",
+      "bytes": 313962
+    },
+    "cron/selections.json": {
+      "sha256": "000170fd0da1dd5c8cc3708c3a426ab964395a0a2c942fd823234605278a2cd1",
+      "bytes": 40339
+    },
+    "cron/held-state.json": {
+      "sha256": "d663a1febb913ecdda928332ac5bffd986ffa1a104e3fad10b49e2ee58285dbc",
+      "bytes": 11910
+    },
+    "cron/rotated-held-state.json": {
+      "sha256": "b1e5f2a5e652c680691f1e1aa848b3c7ad4d05c457d3d5aad13e243d2fc28778",
+      "bytes": 13819
+    },
+    "cron/final-state.json": {
+      "sha256": "91eb8cc9237d0fee6579f9e4119587a3aeb0190e4bc0aae868559c4c72a0b874",
+      "bytes": 13690
+    },
+    "cron/rotation-approval.json": {
+      "sha256": "40423beea1fc1925460982dd06b29c9c4586be43fecc0fed60156fa737fa6e37",
+      "bytes": 365
+    },
+    "cron/cron-recovery-acknowledgment.json": {
+      "sha256": "82b79e1f2918f4f0f72b2dda36edd584db5a975f2e6f1f042655aac1dc232d3a",
+      "bytes": 1944
+    },
+    "cron/host-source-during-run.json": {
+      "sha256": "cc58fccafdbde57764c2880f08ead34841653c8dd4dee149ce77d379743a7046",
+      "bytes": 36171
+    },
+    "cron/failure.json": {
+      "sha256": "2ec8fe6d6bb4ffd376d6bf6444084a0def1856f69ff520bf161e3e364f02e4a9",
+      "bytes": 69302
+    },
+    "cron/inventory-reconciliation.json": {
+      "sha256": "978268c083a364e2125d393f70d1665c8c796645baf491eca5e9df1ad8d85bc6",
+      "bytes": 1206
+    },
+    "failed-queue/failure.json": {
+      "sha256": "10bcd4efcdf83cbece1c530599c44afdacb290d3a6665933a7206d6d6463a794",
+      "bytes": 30585
+    },
+    "failed-queue/partial-inspection.json": {
+      "sha256": "c2465144686177abd3b368df53a411bcbe43eaaa9b7ca00121de328947f57808",
+      "bytes": 668
+    },
+    "failed-cron-source/failure.json": {
+      "sha256": "f695108bb151c4532a69011591a3c383153f97c0c993d9460b099d59e8637ecc",
+      "bytes": 545
+    },
+    "failed-cron-source/failure-inspection.json": {
+      "sha256": "769e79166e54e6daa72a3298945f70595a2f37d167841c0b9a7c5fc09fa74117",
+      "bytes": 872
+    },
+    "cron-source/report.json": {
+      "sha256": "c7dd09ac9baedab09d9e7e1594e32a11fe54d4f7590de216fecf8468df94f31c",
+      "bytes": 24193
+    },
+    "cron-source/bootstrap-readiness.json": {
+      "sha256": "c52514ef519c619daecded1944cef8a07eaf9e092bdb9318c231ba85688b271d",
+      "bytes": 2360
+    },
+    "image/candidate.json": {
+      "sha256": "6ef9e1ed6a81e1084906ccb332af3562f89401039e8d9c05cce8c82558541feb",
+      "bytes": 15771
+    },
+    "image/result.json": {
+      "sha256": "40a1f26decc22f49337f2138059ce5e10385db39b5d040bae258de57de048eb1",
+      "bytes": 17162
+    }
+  }
+}
