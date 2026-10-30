@@ -4,18 +4,9 @@ import { join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { receiveArtifact } from '@fogd/runtime/manifest';
 import { artifactComparison } from '@fogd/platform/artifact-comparison';
-import { hash, jsonBytes } from '../build-cache/paths.mjs';
 import { validatePreviewPreparation } from './execution.mjs';
 import { executionKeys, executionTimestamp, refuseExecution } from './execution-shape.mjs';
-import { previewInputFile, previewInputDirectory, previewArtifactInput } from './input-files.mjs';
-
-async function metadata(path, expectedSha256, limit) {
-  const bytes = await previewInputFile(path, limit);
-  if (hash(bytes) !== expectedSha256) refuseExecution();
-  const value = JSON.parse(bytes);
-  if (!bytes.equals(Buffer.from(jsonBytes(value)))) refuseExecution();
-  return value;
-}
+import { previewInputJSON, previewInputDirectory, previewArtifactInput } from './input-files.mjs';
 
 async function verifiedArtifact(root, name, app, expected) {
   const input = await previewArtifactInput(join(root, name), app, expected.digest);
@@ -41,9 +32,9 @@ function checkedReview(review, preparation) {
 export async function readPreviewInputs(directory, expectedPreparationSha256) {
   try {
     const root = resolve(directory); await previewInputDirectory(root, true);
-    const preparation = await metadata(join(root, 'preview.json'), expectedPreparationSha256, 16384);
+    const preparation = await previewInputJSON(join(root, 'preview.json'), 16384, expectedPreparationSha256);
     validatePreviewPreparation(preparation, expectedPreparationSha256);
-    const review = await metadata(join(root, 'review.json'), preparation.source.reviewSha256, 4 * 1024 ** 2);
+    const review = await previewInputJSON(join(root, 'review.json'), 4 * 1024 ** 2, preparation.source.reviewSha256);
     checkedReview(review, preparation);
     const names = ['preview.json', 'review.json', 'proposed', ...(review.active ? ['active'] : [])].sort();
     if (!isDeepStrictEqual((await readdir(root)).sort(), names)) refuseExecution();

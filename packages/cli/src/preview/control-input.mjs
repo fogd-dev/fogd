@@ -2,19 +2,11 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { receiveArtifact, MAX_UPLOAD } from '@fogd/runtime/manifest';
-import { hash, digest, jsonBytes } from '../build-cache/paths.mjs';
+import { hash, digest } from '../build-cache/paths.mjs';
 import { authorizePreviewExecution, validatePreviewRelease } from './execution.mjs';
 import { executionKeys, refuseExecution } from './execution-shape.mjs';
-import { previewInputFile, previewInputDirectory } from './input-files.mjs';
+import { previewInputJSON as inputJSON, previewInputDirectory } from './input-files.mjs';
 import { previewBackendCommand } from './backend.mjs';
-
-async function inputJSON(path, limit, expected) {
-  const bytes = await previewInputFile(path, limit);
-  if (expected !== undefined && hash(bytes) !== expected) refuseExecution();
-  const value = JSON.parse(bytes);
-  if (!bytes.equals(Buffer.from(jsonBytes(value)))) refuseExecution();
-  return value;
-}
 
 function checkedTrust(trust) {
   executionKeys(trust, ['schema', 'role', 'publicKey', 'expectedGrantSha256', 'preparationSha256', 'target', 'artifactSha256', 'secretsSha256', 'storagePasswordSha256', 'gatewayTokenSha256']);

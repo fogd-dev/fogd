@@ -2,8 +2,16 @@ import { constants } from 'node:fs';
 import { open, lstat, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { MAX_UPLOAD } from '@fogd/runtime/manifest';
-import { hash } from '../build-cache/paths.mjs';
+import { hash, jsonBytes } from '../build-cache/paths.mjs';
 import { refuseExecution } from './execution-shape.mjs';
+
+export async function previewInputJSON(path, limit, expected) {
+  const bytes = await previewInputFile(path, limit);
+  if (expected !== undefined && hash(bytes) !== expected) refuseExecution();
+  const value = JSON.parse(bytes);
+  if (!bytes.equals(Buffer.from(jsonBytes(value)))) refuseExecution();
+  return value;
+}
 
 export async function previewInputFile(path, limit) {
   const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);

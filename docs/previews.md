@@ -164,8 +164,8 @@ exercises a candidate image containing the cached runtime and storage binaries,
 the deadline supervisor and fixed backend roles. The launcher derives separate
 preview bucket, namespace and node identities, supplies only explicit preview
 credentials, and runs native replicas directly without automatic restart.
-The controller has separate signed-input checks described below. Gateway,
-authenticated ingress and fresh target enrollment still need integration.
+The controller, gateway and authenticated ingress have signed-role checks
+described below. Fresh target enrollment and public launch still need integration.
 
 Two uncached local builds reproduce the candidate image. A fresh private fixture
 serves an HTTP application with D1 and R2, reads one acknowledged mutation through
@@ -198,6 +198,26 @@ A native fixture verifies that path with D1/R2 writes and both replicas, then
 checks expiry and stopped containers. The controller image uses a normalized
 filesystem archive; two uncached local builds reproduce its image. The receipt
 retains rejected packaging attempts and their timestamp differences. This is a
-candidate component check. Shipped runtime admission, public launch, gateway and
-authenticated ingress integration, fresh enrollment and ordered teardown remain
-open.
+candidate component check. Shipped runtime admission, public launch, fresh
+enrollment and ordered teardown remain open.
+
+## Internal protected native URL
+
+The [protected URL check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-web.json)
+connects the exact-artifact controller, native workerd gateway and authenticated
+HTTPS ingress. Each frontend role verifies its signed target and original expiry,
+then loads its own TLS/credential bundle from read-only inputs. Neither role
+inherits storage credentials. The gateway uses the direct native executable;
+ingress verifies the gateway certificate and hostname against separate trust.
+
+A verified HTTPS client signs in, writes through the protected URL to D1/R2 and
+reads that mutation through the URL and both native replicas. Unauthenticated
+requests and incorrect access keys refuse, and the application never receives the
+gateway cookie. Both frontend roles and the native gateway child stop at expiry.
+This is an owned private-network fixture using explicit certificate trust, not a
+browser trial, public preview command or shipped runtime admission.
+
+Fresh enrollment, capacity checks, full role network placement, ordered teardown
+and complete fresh-app/update trials remain required before public launch. The
+fixture retains its stopped resources and uncertain native lease cleanup; it
+does not establish recovery or reusable capacity.

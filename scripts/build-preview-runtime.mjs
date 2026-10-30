@@ -10,7 +10,8 @@ import { programInventory } from '../packages/cli/src/runtime/program-inventory.
 import { docker } from '../packages/cli/src/recovery/docker.mjs';
 import { writePreviewArchive } from './preview-runtime-archive.mjs';
 
-const sources = ['backend', 'supervisor', 'deadline', 'control', 'control-input', 'control-main', 'execution', 'execution-authority', 'execution-shape', 'input-files']
+const sources = ['backend', 'supervisor', 'deadline', 'control', 'control-input', 'control-main', 'execution', 'execution-authority', 'execution-shape', 'input-files',
+  'service-input', 'service-main', 'gateway', 'ingress', 'ingress-access', 'ingress-http', 'ingress-proxy']
   .map(name => `packages/cli/src/preview/${name}.mjs`).concat(['packages/cli/src/build-cache/paths.mjs', 'packages/cli/package.json']);
 const template = 'docker/runtime-preview.Dockerfile';
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');

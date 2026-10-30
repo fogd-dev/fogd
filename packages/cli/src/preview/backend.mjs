@@ -8,6 +8,11 @@ const refused = () => { throw new Error('Preview backend requires a fixed role a
 // These commands do not authorize execution. The host coordinator must first
 // verify its signed decision, fresh resources, image, network and capacity.
 export function previewBackendCommand(role, input) {
+  if (['gateway', 'ingress'].includes(role)) {
+    if (typeof input?.FOGD_PREVIEW_EXPIRES_AT !== 'string') refused();
+    return { executable: '/usr/local/bin/node', args: ['packages/cli/src/preview/service-main.mjs', role], cwd: '/app',
+      env: { PATH: '/usr/local/bin:/usr/bin:/bin', FOGD_PREVIEW_EXPIRES_AT: input.FOGD_PREVIEW_EXPIRES_AT } };
+  }
   if (!roles.includes(role) || !input || !['FOGD_PREVIEW_ID', 'FOGD_PREVIEW_STORAGE_PASSWORD'].every(key => Object.hasOwn(input, key) && typeof input[key] === 'string') ||
     !/^[a-f0-9]{32}$/.test(input.FOGD_PREVIEW_ID) || !/^[a-f0-9]{64}$/.test(input.FOGD_PREVIEW_STORAGE_PASSWORD)) refused();
   const id = input.FOGD_PREVIEW_ID, user = `preview-${id.slice(0, 12)}`, password = input.FOGD_PREVIEW_STORAGE_PASSWORD;

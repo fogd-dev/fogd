@@ -13,7 +13,7 @@ function httpsOrigin(value) {
   return url;
 }
 
-function previewTLS(input, hostname) {
+export function previewTLS(input, hostname) {
   const pair = validateKeypair(input), cert = new X509Certificate(pair.cert);
   const match = isIP(hostname) ? cert.checkIP(hostname) : cert.checkHost(hostname);
   if (!match) throw new Error('Preview certificate must cover its public origin');
