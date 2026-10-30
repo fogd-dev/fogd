@@ -1,0 +1,244 @@
+{
+  "schema": 1,
+  "kind": "operator-private-whole-archive-snapshot-native-d1-r2",
+  "recordedAt": "2026-10-30T13:48:15.871909+00:00",
+  "sourceCommit": "6585251",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Fresh native D1/R2 source, archival of A and reuse for B, stopped whole-installation restoration retaining detached A, B SQL/object preservation and new writes, then two-source A restoration after whole recovery with exact owner approval and separate HTTP resume. No native queue/cron archive, secret rotation, interruption or concurrent admission qualification.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:8c77cfb5c690a1f8c223ec41b42cd1b14a8c1211d49c148670def3c5f9d0b3dd",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "sourceFiles": 127,
+  "repeatedUncachedBuilds": [
+    "sha256:8c77cfb5c690a1f8c223ec41b42cd1b14a8c1211d49c148670def3c5f9d0b3dd",
+    "sha256:8c77cfb5c690a1f8c223ec41b42cd1b14a8c1211d49c148670def3c5f9d0b3dd"
+  ],
+  "hostAuthorizationBoundary": "Only the exact private candidate selector/authorizer is injected. Runtime verification, stopped source checks and fences, recovery exclusions, native storage, helpers, enrollment, owner APIs and application execution are real.",
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 127,
+    "hostSourceFilesRehashed": 313,
+    "nativeHashesVerified": true,
+    "identicalUncachedBuilds": true,
+    "actualNativeSnapshotsReverified": 3,
+    "actualPhysicalEnrollmentBindingsVerified": 4,
+    "archiveIdentityAndSnapshotReferencesRecomputed": true,
+    "wholeColdStatePreservesArchivesAndWithholdsLiveApp": true,
+    "currentCredentialBytesPreservedAcrossWholeAndAppRestore": true,
+    "bReleaseUnchanged": true,
+    "attributedArchiveApprovalReadBack": true,
+    "singleAndTwoSourceExclusionsVerified": true,
+    "independentNativeSQLAndObjectReadbackAfterRestart": true,
+    "certificateVerificationForBothAppHostnames": true,
+    "existingContainersPreserved": 144,
+    "existingVolumeNamesPreserved": 298,
+    "ownedRelatedContainersStopped": 32,
+    "defaultCronAdmission": "closed",
+    "shippedCatalogUnchanged": true
+  },
+  "canonicalChecks": {
+    "passed": 3091,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 526406.145458,
+    "scope": "Canonical run; final focused checks below cover final request-shape and pre-allocation checks after source freeze."
+  },
+  "finalFocusedChecks": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 5078.346833,
+    "scope": "Final whole-snapshot projection, negative shape/mode/identity cases, one-use physical store binding and host recovery planning."
+  },
+  "quality": "passed",
+  "syntax": "passed",
+  "wholeSnapshotRetainsDetachedArchives": true,
+  "pendingApprovalGatePreservation": "Projection and physical-store tests; native lifecycle cold start checks restored routes remain held. Native whole recovery of a pending app gate is not separately qualified.",
+  "nativeBSQLAndR2SurviveWholeRestore": true,
+  "nativeARestorableAfterWholeRestore": true,
+  "nativeALatestBSQLAndR2AfterAppRestore": true,
+  "nativeIndependentRestartReadback": true,
+  "credentialAuthorityPreservedFromCurrentSnapshot": true,
+  "originalRetainedSnapshotStillRequired": true,
+  "tls": "Certificate validation covers localhost and both application hostnames. No hostname or trust bypass.",
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Native queue/cron archive restoration and recovery controls",
+    "Interruption and concurrent admission qualification",
+    "Explicit secret rotation during app recovery",
+    "Bounded operator commands and stable lifecycle/capacity/retained-byte results"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-whole-native-20261030-01",
+  "sourceEvidenceRoot": "~/.local/share/fogd-qualifications/archive-whole-source-native-20261030-02",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-whole-runtime-20261030-02",
+  "supersededPrivateSource": "archive-whole-source-native-20261030-01 used the first package before the final strict source-request shape correction. Its stopped resources remain retained; no whole-restoration acceptance is inferred from it.",
+  "evidenceFingerprints": {
+    "before.json": {
+      "sha256": "31a0db5f17375f02ef3d2b7d3e585efaeaa43556aa22dba12e543aff776bc5be",
+      "bytes": 172367
+    },
+    "source.json": {
+      "sha256": "cc0dd0fba641bda19b3eb6d3c6a443d2431fbf18198ef9b4955f121555585b87",
+      "bytes": 34755
+    },
+    "selections.json": {
+      "sha256": "397f7d684f1705193f4fa6327bc9a8153394b2ac975b0c5385a0654a3a63729f",
+      "bytes": 60635
+    },
+    "archive.json": {
+      "sha256": "1a4d538a3123ef07964d7ca475e197798d758cc8c5e64429b3a5183de459fd15",
+      "bytes": 191
+    },
+    "archive-plan.json": {
+      "sha256": "0ada2969b3e11514a8d18dea9105aed2d256cc68531afcc2929ffdc8ad09e101",
+      "bytes": 94969
+    },
+    "whole-plan.json": {
+      "sha256": "a7a283d03c74653300419d52f592d513b8ce122585ce59459c8a8c55df1a8108",
+      "bytes": 71450
+    },
+    "app-plan.json": {
+      "sha256": "a61a3bc7148c41cfc3070257829872da0c96a252c9df7128194052bd44341471",
+      "bytes": 174083
+    },
+    "before-whole-state.json": {
+      "sha256": "2f62d0189437866149148ada6fbae937fd3db18f0d7c74f85ce884b5d925bcaa",
+      "bytes": 9844
+    },
+    "whole-cold-state.json": {
+      "sha256": "278df07165414211a1f837feb844f8ab3752efc540afd0d2c2bae3a34893b2c0",
+      "bytes": 10017
+    },
+    "held-state.json": {
+      "sha256": "8ef4c0fdc7e34688263acc0272fb0a686dec0df20482d091e6d0cbedc1e3db46",
+      "bytes": 11402
+    },
+    "final-state.json": {
+      "sha256": "8f9095cff9cc3c3cb39375e8b2dfee570459f28322b88eda3e1bf295dabc25fa",
+      "bytes": 11518
+    },
+    "b-submission.json": {
+      "sha256": "add5ca645e92dbf41952ae0b184491f1fe534f4338a3c167de53c29c75d3ed77",
+      "bytes": 131
+    },
+    "b-approval.json": {
+      "sha256": "736a0b0e520560d72e5a32a942087da0cea8ab9e1cf768579acedb961df0a246",
+      "bytes": 1223
+    },
+    "archive-review.json": {
+      "sha256": "8e1cb652e6dca91ccba88ac0cc3c65b644b5e43e239fd4c8543292c68c6663ea",
+      "bytes": 705
+    },
+    "archive-approval.json": {
+      "sha256": "057770c76c1c2e9d06d9a9147486a1ef12677ac85d869a0362bbe5ac401c3682",
+      "bytes": 365
+    },
+    "whole-readiness.json": {
+      "sha256": "7d42919c03dfb3b7414a359f09167fd23496470f99a036f345dd69aa06a094f8",
+      "bytes": 4744
+    },
+    "app-readiness.json": {
+      "sha256": "f987acf39cde9ca63babcd0434305b9622d7c30603dfba1c2e18f40d24d580bf",
+      "bytes": 8252
+    },
+    "independent-native-readback.json": {
+      "sha256": "5f1cc4385ff36e68ac25f1bd622b702f8648b645b397bbcfb01c40381f6b9bdf",
+      "bytes": 787
+    },
+    "report.json": {
+      "sha256": "77130db9dfc2be6987b530c4b9a52bdec84549bfe65bb9bfa2dd5375bf267f7a",
+      "bytes": 31274
+    },
+    "audit.json": {
+      "sha256": "c445fceef260eb1ee607a4656ee8824dd4432261cf04de25684d3660686b1244",
+      "bytes": 856
+    },
+    "audit-readback.json": {
+      "sha256": "c286e383a81d6851fd0d950a4053f288e39462faaa8e7740dbfe7d7e262a3d03",
+      "bytes": 57616
+    },
+    "after.json": {
+      "sha256": "547976a6bf1c6c9918fb62af08c85e7dfb4f2e319949b798ece5efafb863e7f7",
+      "bytes": 200842
+    },
+    "native-driver.mjs": {
+      "sha256": "51caeecbad60045cabf3132d1cc2800cb92aea2d8f6d204c6eb69a1001017dd2",
+      "bytes": 17632
+    },
+    "native-driver.log": {
+      "sha256": "cd0db0defdc1e4f10a83947ec26f1e3a459cf7735720bb59beef6aff13a53e59",
+      "bytes": 750
+    },
+    "independent-native.mjs": {
+      "sha256": "174925f5f610d33b727f68a22b44f39bdaea0da1466567180ededced087b9c96",
+      "bytes": 8458
+    },
+    "independent-native.log": {
+      "sha256": "5a42d645e6a5e7537bda5b609559cdefc07da94f666894ab2c2d2d33a9f4d300",
+      "bytes": 108
+    },
+    "audit.mjs": {
+      "sha256": "157172c318701599af380f81797797fc5a426bb2627c38557d20c70a73538e54",
+      "bytes": 10357
+    },
+    "audit.log": {
+      "sha256": "6921f7fb7e880495bfaf89620f8346bc0937a6b56f0667effc555d24d6018405",
+      "bytes": 776
+    },
+    "canonical.log": {
+      "sha256": "3f5f27bf2b1007f0558f832b822711d5eebea5425d8419e0270322dc52d53e71",
+      "bytes": 277214
+    },
+    "final-focused.log": {
+      "sha256": "0cf9be804788e586402c681477a083d93769e0476897dcc0581ac5674d8d3e32",
+      "bytes": 1727
+    },
+    "quality.log": {
+      "sha256": "2e45e8484968c0dc92f10d54b9879e02fe390974cdab1dd1b82c8bc32dcd4ee4",
+      "bytes": 1588
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "image-driver.mjs": {
+      "sha256": "5e9209d479d3eeb2bdfbdbce519783e95f730bcfbe3308e06f9664355c525218",
+      "bytes": 9949
+    },
+    "image-build.log": {
+      "sha256": "39d9535e73d8d46364a3e666b6248c4acc0def0713cf5be2d721bbd77dff871c",
+      "bytes": 294
+    },
+    "source-driver.mjs": {
+      "sha256": "f9f74984e0a3c0da5ef9a19e9a49dec9e9eb70d6ee19e6122f22a15277d6ff30",
+      "bytes": 12390
+    },
+    "source-driver.log": {
+      "sha256": "42eac14d7c11bc26a3bf584e9cda340dc2fd2965cd75b0d4a5430474b23b3302",
+      "bytes": 285
+    },
+    "retained-snapshot/manifest.json": {
+      "sha256": "b29c53a9cc8651bed5d1a587cb10c5906faf0e6ba218e16194854e682c8013d6",
+      "bytes": 3278
+    },
+    "current-snapshot/manifest.json": {
+      "sha256": "12f457c83440347da2d81f126f9fb645138c4151d0c4cf361a287b44f51bbaf0",
+      "bytes": 3279
+    },
+    "whole-snapshot/manifest.json": {
+      "sha256": "2bcef346cb21202eb238be3b3fae5e8e374a37554be5fd7e20e8dd02204fe36f",
+      "bytes": 3281
+    },
+    "source/host-source-before.json": {
+      "sha256": "d6c97c8e5c0222c196c997e82d4dc75b18c395445f5c752c37284e620f43114e",
+      "bytes": 35824
+    }
+  }
+}

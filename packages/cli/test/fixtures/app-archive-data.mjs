@@ -44,6 +44,7 @@ export function records(path) {
 export async function archiveDataFixture(t, entry) {
   const f = await sourceBundle(t);
   if (entry) {
+    if (entry.schema === 3) Object.assign(f.policy, { schema: 4, controllerArgs: ['packages/platform/src/main-archive.mjs'] });
     Object.assign(f.policy, { family: entry.id, image: entry.image, storageImage: entry.storageImage, binarySha256: entry.binarySha256, supervisorSha256: entry.supervisorSha256 });
     f.config = archiveConfig(f.config, f.policy, f.config.name);
     f.manifest.images = Object.fromEntries(Object.keys(f.config.services).map(role => [role, role === 'minio' ? f.policy.storageImage : f.policy.image]));

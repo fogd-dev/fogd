@@ -8,6 +8,8 @@ import { runtimeFamilies } from '../src/runtime/catalog.mjs';
 import { durableRuntimeConfig } from '../src/runtime/durable-config.mjs';
 import { verifyDurableBundle } from '../src/recovery/durable-bundle.mjs';
 import { fingerprint } from '../src/recovery/bundle.mjs';
+import { archiveDataFixture } from './fixtures/app-archive-data.mjs';
+import { prepareSnapshotRouteRestoration } from '@fogd/platform/route-restoration';
 import { durableBundleFixture } from './fixtures/durable-bundle.mjs';
 
 async function fixture(t) {
@@ -67,4 +69,22 @@ test('ordinary selection remains closed without an eligible durable catalog entr
   await refused(readDurableRestorePlan(f.dir, 'recovered', { expectedIdentity: f.selection.expectedIdentity }));
   await refused(readDurableRestorePlan(f.dir, 'recovered', { runtime: 'unknown', expectedIdentity: f.selection.expectedIdentity }));
   await refused(readDurableRestorePlan(f.dir, 'recovered', {}, f.choice));
+});
+
+test('whole archive-mode recovery plans preserve detached history and the surviving app from verified bytes', async t => {
+  const entry = { ...runtimeFamilies()[0], schema: 3, routing: 'durable', id: 'archive-whole-candidate', admission: 'candidate' };
+  entry.sourceFiles = { ...entry.sourceFiles, 'packages/platform/src/main-archive.mjs': 'a'.repeat(64) };
+  const f = await archiveDataFixture(t, entry), source = f.selection.currentProfile;
+  const plan = await readDurableRestorePlan(f.currentDir, 'fogd-archive-whole-recovered', { expectedIdentity: runtimePolicyIdentity(source) }, { choose: () => entry });
+  assert.equal(plan.target.policy.schema, 4);
+  assert.equal(runtimePolicyIdentity(plan.target.policy), runtimePolicyIdentity(source));
+  assert.deepEqual(plan.source.state.appArchives, f.currentState.appArchives);
+  assert.equal(plan.source.state.apps.beta.route, 'active');
+  const projected = prepareSnapshotRouteRestoration({ profile: plan.target.policy, sourceProfile: plan.source.policy,
+    source: { state: plan.source.state, authority: plan.source.authority }, snapshot: plan.snapshot, binding: 'b'.repeat(64), domain: plan.domain });
+  assert.equal(projected.state.apps.alpha.route, 'archived');
+  assert.equal(projected.state.apps.beta.route, 'paused');
+  assert.deepEqual(projected.state.appArchives, plan.source.state.appArchives);
+  await assert.rejects(readDurableRestorePlan(f.currentDir, 'fogd-archive-whole-recovered', { expectedIdentity: runtimePolicyIdentity(source) },
+    { choose: () => ({ ...entry, schema: 2 }) }), { code: 'DURABLE_RECOVERY_PLAN_REFUSED' });
 });

@@ -2,7 +2,7 @@ import { prepareAppArchiveRoutes, prepareAppArchiveRestoreRoutes } from '@fogd/p
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
-import { prepareRouteRestoration, prepareRetiredRouteRestoration } from '@fogd/platform/route-restoration';
+import { prepareSnapshotRouteRestoration, prepareRetiredRouteRestoration } from '@fogd/platform/route-restoration';
 import { encodeRouteRecord } from '@fogd/runtime/route-record';
 import { docker } from '../recovery/docker.mjs';
 import { durableRuntimeConfig } from './durable-config.mjs';
@@ -10,7 +10,7 @@ import { durableRouteHelperArgs } from './durable-route-helper.mjs';
 
 const refused = () => Object.assign(new Error('Stopped route restoration requires a checked source pair and sealed destination profile; nothing was started'), { code: 'DURABLE_RESTORATION_REFUSED' });
 const uncertain = () => Object.assign(new Error('Stopped route restoration is unconfirmed; keep source and destination stopped and retain all enrollment records and stores'), { code: 'DURABLE_RESTORATION_UNCERTAIN' });
-const operations = { restore: prepareRouteRestoration, retire: prepareRetiredRouteRestoration, archive: prepareAppArchiveRoutes, 'restore-archive': prepareAppArchiveRestoreRoutes };
+const operations = { restore: prepareSnapshotRouteRestoration, retire: prepareRetiredRouteRestoration, archive: prepareAppArchiveRoutes, 'restore-archive': prepareAppArchiveRestoreRoutes };
 function restorationPlan(config, input, operation) {
   if (!isDeepStrictEqual(config, durableRuntimeConfig(config, input.profile))) throw refused();
   if (input.domain !== (config.services.controller.environment.FOGD_BASE_DOMAIN || 'localhost')) throw refused();

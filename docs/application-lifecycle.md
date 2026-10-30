@@ -255,9 +255,14 @@ Archive-mode backups validate the complete registry and paired route stores. The
 retain detached background history without contacting archived apps or extending
 old receipt expiry. Live queue/cron apps still need current snapshot evidence;
 unacknowledged background recovery refuses before preparation. Ordinary durable
-mode refuses archive metadata, including unmarked archive fields. These snapshots
-feed the internal app-restoration coordinator; general whole-installation restore
-with detached archive records remains unsupported.
+mode refuses archive metadata, including unmarked archive fields. Archive-mode whole-installation restoration also preserves detached archive records
+and pending app-approval gates. It uses fresh enrolled stores, withholds every live
+route, retains native/storage identities and permits independently selected target
+networks. The host checks this projection before allocation; the fixed offline
+helper spends fresh enrollment once and binds the new physical stores. Ordinary
+durable mode still refuses archive metadata, even when its marker is removed.
+Keep each archive's original retained snapshot: whole recovery preserves its
+reference and restoration rights; it does not replace that retained source.
 
 Archive-aware diagnostics return a safe archive summary and distinguish archived
 apps from pending archive recovery. Neither selects a native fleet or sends an
@@ -271,6 +276,15 @@ withheld at restored cold start. A failed early resume and an unconfirmed native
 approval preserve the gate; a fresh exact review/approval and separate HTTP resume
 restore access. Independent retained restart returns both apps' saved SQL rows.
 This is a private D1/HTTP check, not general archival qualification.
+
+The [whole-snapshot and R2 check](evidence/operator-app-archive-whole-v9.json)
+adds native object data, whole-installation recovery with detached A, and new SQL
+and object writes by B afterward. A can subsequently restore from its original
+retained snapshot through exact owner approval and separate HTTP resume. Independent
+restart returns A's original and B's latest SQL/object data. Audit verifies current
+credential bytes, fresh physical enrollment and source exclusions. This remains a
+private two-fleet D1/R2 check; native queue/cron archival, interruption and concurrent
+admission remain unqualified.
 
 Before archive admission, qualify the native archive/reuse/restore sequence across
 storage and background families, interruption and concurrent admission. Secret

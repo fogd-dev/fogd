@@ -52,10 +52,27 @@ function coldPeers(input, state, excluded) {
   const authority = settled(view, record, input.profile, holds);
   const projected = prepareRouteRestoration({ profile: input.profile, sourceProfile: input.profile, source: { state: view, authority },
     snapshot: input.snapshot, binding: input.binding, domain: input.domain });
-  const detached = Object.fromEntries(Object.entries(state.apps).filter(([name]) => !Object.hasOwn(view.apps, name)));
-  projected.state.apps = { ...projected.state.apps, ...detached };
-  projected.state.requirements = [...new Set([...projected.state.requirements, ...state.requirements])];
+  return attachArchiveApps(projected, state);
+}
+function attachArchiveApps(projected, source) {
+  const detached = Object.fromEntries(Object.entries(source.apps).filter(([name]) => !Object.hasOwn(projected.state.apps, name)));
+  projected.state.apps = { ...projected.state.apps, ...structuredClone(detached) };
+  projected.state.requirements = [...new Set([...projected.state.requirements, ...source.requirements])];
   return projected;
+}
+
+// Whole-installation recovery preserves detached archives and existing approval
+// gates. It grants no new app restoration rights and pauses every live route.
+export function prepareArchiveSnapshotRoutes(input) {
+  try {
+    if (!exact(input, ['profile', 'sourceProfile', 'source', 'snapshot', 'binding', 'domain']) || !exact(input.source, ['state', 'authority']) || input.profile?.schema !== 4 || input.sourceProfile?.schema !== 4) throw refused();
+    const source = input.source.state;
+    validateAppArchiveSnapshot(source, input.source.authority, input.sourceProfile, input.domain);
+    const view = routingView(source);
+    const projected = attachArchiveApps(prepareRouteRestoration({ ...input, source: { state: view, authority: input.source.authority } }), source);
+    validateAppArchiveSnapshot(projected.state, { record: projected.record, digest: projected.state.routeAuthority.settled.digest }, input.profile, input.domain);
+    return projected;
+  } catch { throw refused(); }
 }
 
 export function prepareAppArchiveRoutes(input) {

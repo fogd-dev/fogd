@@ -1,3 +1,5 @@
+import { prepareSnapshotRouteRestoration } from '@fogd/platform/route-restoration';
+import { validateAppArchiveSnapshot } from '@fogd/platform/app-archive-routes';
 import { isDeepStrictEqual } from 'node:util';
 import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -36,7 +38,8 @@ export function planDurableRestore(bundle, { entry, expectedIdentity, project, n
     projectName(project);
     if (project === config.name || !hash(snapshot)) throw refused();
     const domain = config.services.controller.environment.FOGD_BASE_DOMAIN || 'localhost';
-    if (!isDeepStrictEqual(manifest.routeAuthority, validateRouteSnapshot(state, authority, source.policy, domain))) throw refused();
+    const routes = source.policy.schema === 4 ? validateAppArchiveSnapshot : validateRouteSnapshot;
+    if (!isDeepStrictEqual(manifest.routeAuthority, routes(state, authority, source.policy, domain))) throw refused();
     const policy = runtimePolicyForConfig(config, source.entry, networks);
     const base = durableLegacyBase(restoredConfig(config, project, manifest.images));
     for (const [name, network] of Object.entries(base.networks)) {
@@ -45,6 +48,7 @@ export function planDurableRestore(bundle, { entry, expectedIdentity, project, n
     }
     const target = durableRuntimeConfig(base, policy); assertRecoveryIngress(target);
     if (runtimePolicyIdentity(policy) !== expectedIdentity) throw refused();
+    if (policy.schema === 4) prepareSnapshotRouteRestoration({ profile: policy, sourceProfile: source.policy, source: { state, authority }, snapshot, binding: '0'.repeat(64), domain });
     return structuredClone({ entry: source.entry, source: { ...bundle, policy: source.policy }, target: { config: target, policy }, snapshot, domain });
   } catch { throw refused(); }
 }
