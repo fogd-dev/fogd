@@ -11,6 +11,7 @@ import { projectName } from '../recovery/docker.mjs';
 import { requestedRecoveryRuntime } from './recovery-selection.mjs';
 import { recoverySourceProfile } from './durable-recovery-plan.mjs';
 import { durableLegacyBase, durableRuntimeConfig } from './durable-config.mjs';
+import { assertAppArchiveReview } from '../recovery/app-archive-review.mjs';
 
 const refused = () => Object.assign(new Error('App archival requires independently selected matching runtime and identities, verified snapshots and an exact fresh target; nothing was created'), { code: 'APP_ARCHIVE_PLAN_REFUSED' });
 async function source(directory, entry, expectedIdentity, at) {
@@ -70,8 +71,10 @@ export async function readAppArchivePlan(directory, project, selection, archive,
     const namespace = await tarNamespace(join(current.directory, 'bucket.tar'), `${current.policy.bucket}/${original.prefix}`, current.manifest.files['bucket.tar']);
     if (!namespace.members.some(member => member.path === 'fogd-owner.json/xl.meta' && member.type === 'file')) throw refused();
     const record = projected.state.appArchives.records[request.id];
-    return { ...plan, operation: 'archive', routeRequest: { archive: request }, archivedFleet: assigned.slot,
+    const result = { ...plan, operation: 'archive', routeRequest: { archive: request }, archivedFleet: assigned.slot,
       archiveRecord: { id: request.id, identity: record.identity } };
+    assertAppArchiveReview(result, archive.expectedPlan);
+    return result;
   } catch { throw refused(); }
 }
 export async function readAppArchiveRestorationPlan(directory, retainedDirectory, project, selection, restore, options) {
@@ -89,7 +92,9 @@ export async function readAppArchiveRestorationPlan(directory, retainedDirectory
     prepareAppArchiveRestoreRoutes(routeInput(plan, { restore: request }));
     const dataSelection = { currentProfile: current.policy, retainedProfile: retained.policy, profile: policy, ...request };
     await readAppArchiveDataPlan(current.directory, retained.directory, plan.target.config, dataSelection);
-    return { ...plan, sources: [current, retained], retained, operation: 'restore-archive', routeRequest: { restore: request }, dataSelection,
+    const result = { ...plan, sources: [current, retained], retained, operation: 'restore-archive', routeRequest: { restore: request }, dataSelection,
       archiveRecord: { id: record.id, identity: record.identity } };
+    assertAppArchiveReview(result, restore.expectedPlan);
+    return result;
   } catch { throw refused(); }
 }

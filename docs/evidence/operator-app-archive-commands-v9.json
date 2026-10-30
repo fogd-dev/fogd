@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "kind": "operator-private-reviewed-archive-and-restoration-command-native-d1-r2",
+  "recordedAt": "2026-10-30T16:14:22.932830+00:00",
+  "sourceCommit": "1e1159b",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Native reviewed archive/restoration command composition using a private exact candidate selector and authorizer, real command parser/review binding, actual snapshots, source fences, fresh enrollment, copied D1/R2 data and owner approval. Matching reviews are required; restored code remains withheld until owner approval and separate HTTP resume. Data survives retained restart. This does not admit a shipped archive runtime or qualify combined background peers.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "archiveCommandsImplemented": true,
+  "publicArchiveWorkflowAvailable": false,
+  "publicAdmissionCheck": {
+    "passed": true,
+    "exitCode": 1,
+    "message": "fogd: Unknown shipped runtime family",
+    "scope": "Actual stock CLI refuses the absent archive family before any snapshot selection or target execution."
+  },
+  "hostAuthorizationBoundary": "The native composition overrides only trusted selection/plan catalog choice and exact runtime authorization. Command parsing, review comparison, native runtime verification, source exclusion/fences, fresh enrollment, data/route helpers, TLS, owner approval and application requests are real. No CLI flag admits the private family. Real CLI planning and stale execution separately run with an explicit synthetic qualified catalog and a Docker-refusing sentinel.",
+  "reviewPolicy": "fogd-stopped-app-archive-review-v1",
+  "reviewRequirements": [
+    "Explicit runtime and independently recorded source identity",
+    "Exact artifact and app selection for archival",
+    "Both source snapshots/identities plus archive identity and unassigned target fleet for restoration",
+    "Target project and network selection binding",
+    "Mandatory expected-plan SHA for command execution",
+    "Whole-installation downtime, withheld peers and conditional capacity",
+    "Retained snapshot-member bytes distinct from unknown app data and zero disk reclamation",
+    "No credentials, vault pins/values, native IDs, bucket namespaces or raw configuration in reviews"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 318,
+    "nativeHashesVerified": true,
+    "identicalUncachedBuilds": true,
+    "actualNativeSnapshotsReverified": 2,
+    "actualPhysicalEnrollmentBindingsVerified": 3,
+    "archiveIdentityAndSnapshotReferencesRecomputed": true,
+    "currentCredentialBytesPreserved": true,
+    "canonicalArtifactsUnchanged": true,
+    "reviewedArchiveAndRestorationReceiptsVerified": true,
+    "independentReviewsRecomputed": true,
+    "sqlAndObjectDataPreserved": true,
+    "attributedArchiveApprovalReadBack": true,
+    "twoSourceExclusionsVerified": true,
+    "existingContainersPreserved": 304,
+    "existingVolumeNamesPreserved": 536,
+    "ownedRelatedContainersStopped": 24,
+    "defaultCronAdmission": "closed",
+    "shippedCatalogUnchanged": true
+  },
+  "nativeReviewsRecomputed": true,
+  "nativeArchiveIdentityReceiptsMatchStores": true,
+  "nativeRestorationGateHeldAfterCommand": true,
+  "nativeOwnerApprovalAndSeparateHttpResumeRequired": true,
+  "nativeSqlAndR2AfterRetainedRestart": true,
+  "canonicalChecks": {
+    "passed": 3129,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 602181.518792
+  },
+  "focusedChecks": {
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 23901.298208,
+    "scope": "Initial connected archive review/CLI, coordinator and route adapter checks. The final canonical suite includes final argument validation."
+  },
+  "syntax": "passed",
+  "quality": "passed",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Combined background peers and capacity reuse through the operator workflow",
+    "Operator-command interruption and concurrent-admission acceptance",
+    "Fresh release rehearsal for the updated host CLI and qualified archive runtime",
+    "Owner recovery command conveniences remain separate from stopped enrollment"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-command-native-20261030-01",
+  "retainedSourceRoot": "~/.local/share/fogd-qualifications/archive-secret-native-20261030-01/retained-snapshot",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "evidenceFingerprints": {
+    "report.json": {
+      "sha256": "9ceae27bca0b9d322043dab33148339352aae3d41b84ec01137ddccd352a6652",
+      "bytes": 25870
+    },
+    "audit.json": {
+      "sha256": "33e48e33419d462f0ead341375600222e876d3aa72be44ded5588b26463b34db",
+      "bytes": 790
+    },
+    "audit-readback.json": {
+      "sha256": "ca89c0967edbbb4370ef009183e54bb081bd0466e1fecd48b249625c4635d028",
+      "bytes": 36145
+    },
+    "before.json": {
+      "sha256": "b2c87849bee27884a565c7fbc702893c285800d118a9b73d9970e9cb0fc256ac",
+      "bytes": 359995
+    },
+    "after.json": {
+      "sha256": "901456be11413677eed5e79495288859528c7aa62bbb58bbf62d57157c69dbd2",
+      "bytes": 378841
+    },
+    "selections.json": {
+      "sha256": "55cfb70d53ad58cc40905123da51e91867bde9356268c9be2f98b54545f48ccf",
+      "bytes": 40801
+    },
+    "archive-review.json": {
+      "sha256": "9179cc214216f57bfc0e76e7385d999881c1f57955bc8c9edff4d7e4895dfd3f",
+      "bytes": 2321
+    },
+    "restore-review.json": {
+      "sha256": "9010a28b7bd4fb3f6151b11116b8e2e8f68638bdd533af9d60e6e897426ef479",
+      "bytes": 2897
+    },
+    "archive-result.json": {
+      "sha256": "4e7f76328d52db176ef889fb02ca3673111f10ec14a4a9fa407496d8aae1a264",
+      "bytes": 602
+    },
+    "restore-result.json": {
+      "sha256": "cc624f3a58e08580ef1f63842e73ad0af1fe2aa0ce2645731869070944c29ef4",
+      "bytes": 627
+    },
+    "held-state.json": {
+      "sha256": "4fd3b164974ef87230ec2f9879d5853571b175e3807ecafd44810bae222ed751",
+      "bytes": 8656
+    },
+    "final-state.json": {
+      "sha256": "652f17d0dd78755759aafcccff2fd0466e2abedc5135f49e0600f0d998320ff7",
+      "bytes": 8975
+    },
+    "owner-approval.json": {
+      "sha256": "c6feebb38348ed3d54f0d6ba9bc38868e46b37ac81c46deb4dd0b53fa7a51dfc",
+      "bytes": 365
+    },
+    "host-source-during-run.json": {
+      "sha256": "29f802ff095c04fdb9db3343966be1fdc9d790ddf1fa695257f3fbcc9e237975",
+      "bytes": 36412
+    },
+    "public-admission-check.json": {
+      "sha256": "af8322a7e1df00e8265863d219a7d25ae74928b1da3e804ce995579b92b1c07c",
+      "bytes": 207
+    },
+    "driver.mjs": {
+      "sha256": "00c97e56ed80c932d1a497998268b4f7e1183824363ca082567f030cfca9f9b1",
+      "bytes": 14861
+    },
+    "audit.mjs": {
+      "sha256": "e24ac6a207ac5a40ca64efc1a8d711406d76aa5c5ca8af5aed4c37745252ea70",
+      "bytes": 11138
+    }
+  }
+}

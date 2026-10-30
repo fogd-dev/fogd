@@ -77,7 +77,8 @@ startup still rejects the capability before backend access. It does not run cell
 or copy native app data.
 
 These helpers do not stop application writers or copy native application data.
-No CLI, default controller entrypoint or shipped runtime admits the new capability.
+The host archive commands use the stopped coordinator described below. Default
+controller startup and shipped runtime selection still refuse the capability.
 The stopped coordinator, background receipt projection, vault checks and attributed
 approval are internal components. An explicit internal controller profile now
 supports held startup and an owner recovery API. Native background, interruption
@@ -215,8 +216,8 @@ are stand-ins; it does not qualify native worker execution or release admission.
 
 The internal coordinator now composes archival/restoration planning, fresh stopped
 enrollment, data copying and one-use route finalization. Independent runtime and
-source identities select the plans; a snapshot cannot choose its runtime. No new
-operator command or runtime admission is enabled.
+source identities select the plans; a snapshot cannot choose its runtime. The
+archive commands provide no override for runtime qualification.
 
 Restoration acquires launch/stop fences for both the current and retained source,
 in project-name order. One atomically published two-source exclusion record links
@@ -363,6 +364,34 @@ retains the partial copy and both source fences. Independent audit rechecks host
 completion states, physical store bindings, replica bytes, exclusions and preserved
 resources. None of these targets runs application code. Native worker interruption,
 multi-host exclusion and combined background peers remain outside this check.
+
+## Reviewed operator commands
+
+The [archive command reference](archival.md) defines `fogd archive [restore] plan`
+and matching execution. Both operations require independently selected runtime
+and snapshot identities. Execution requires the exact review SHA; the plan reader
+checks it before runtime verification, source fencing or target allocation.
+There is no candidate-selection override and no admitted shipped archive family.
+
+Each versioned review describes whole-installation downtime, stopped target services,
+withheld peers, name reservation and restoration rights. It reports verified
+snapshot-member bytes separately from unknown logical app bytes, zero disk
+reclamation and conditional fleet capacity. Generated archive and recovery IDs
+are not reservations. Restoration binds both snapshots, the retained archive
+identity and the selected unassigned fleet. Reviews omit private vault/native
+configuration; live sources, cached images and target availability remain unobserved.
+Validation: changed intent or snapshot bytes refuses before Docker or allocation,
+and independently generated archive IDs produce the same review.
+
+The [native command check](evidence/operator-app-archive-commands-v9.json) exercises
+the actual parser and reviewed command composition with a trusted private candidate
+selector/authorizer. It archives a D1/R2 app, backs up the stopped target and restores
+the app through a second exact review. Receipts identify the actual archive and
+held lifecycle state. Owner approval and separate HTTP resume remain necessary;
+original data survives retained restart. Independent audit recomputes reviews and
+verifies receipts, physical stores, credentials, artifacts and source exclusions.
+Real CLI planning/stale-execution tests use a synthetic qualified catalog and no
+Docker. Neither check qualifies a shipped archive release or combined backgrounds.
 
 Before archive admission, qualify combined background peers and capacity reuse,
 the operator command's interruption/concurrent-admission paths, and release of the

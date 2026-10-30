@@ -134,7 +134,8 @@ async function recoverInstallation(directory, project, output, selection, option
     const result = await io.enroll(selected, tasks);
     // No Docker/runtime writes follow host completion, including failed release.
     releasing = true; await releaseFences(fences);
-    return { config: result.config, policy: result.policy, directory: destination };
+    return { config: result.config, policy: result.policy, directory: destination,
+      ...(plan.operation ? { operation: plan.operation, archive: { ...plan.archiveRecord } } : {}) };
   } catch {
     if (!releasing) await releaseFences(fences).catch(() => {});
     throw refused();
