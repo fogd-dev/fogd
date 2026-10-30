@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "35720ab54a94e4909215e8f2159ffabfbd4fc3d1",
+  "executedTreeDirty": true,
+  "scope": "Internal preview process deadline component. No public preview launch or execution permission, celld application, new runtime-family qualification or sandbox acceptance.",
+  "sourceFiles": {
+    "packages/cli/src/preview/supervisor.mjs": "b03e0e8998293740f920a54341511016d15b0e629aa899bf326f0a2dfd26718d",
+    "packages/cli/test/preview-supervisor.test.mjs": "8ce6ddceee1caa66c03c09413321a4c238ad68f36bbd30bd45a3c52c47c0ee89"
+  },
+  "helperImage": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "sourceModuleSha256": "b03e0e8998293740f920a54341511016d15b0e629aa899bf326f0a2dfd26718d",
+  "behavior": [
+    "Expired absolute deadline refuses startup; restart does not create a new lifetime.",
+    "Expiry or explicit cancellation sends termination only to the owned child; ignored graceful termination escalates after one second.",
+    "A missing exit observation remains unconfirmed after the bounded observation window. Normal exit and spawn failure are terminal, without automatic restart.",
+    "Application environment defaults empty and copies only explicit own string properties. Node can supply OS process metadata. Invalid environment/cancellation controls refuse before child allocation."
+  ],
+  "checks": {
+    "connected": {
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "supervisorCasesWithinConnected": 14,
+    "runtimeCatalogAndPackaging": {
+      "passed": 14,
+      "failed": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; erosion 14.7%, duplication 1.7%",
+    "writing": "passed",
+    "standardsSelfReview": "PASS; no external reviewer",
+    "canonicalPriorCommit": "3168 pass at 35720ab; not a new full-suite run for this change"
+  },
+  "currentContainerCases": [
+    {
+      "kind": "expired",
+      "result": {
+        "outcome": "expired",
+        "started": false,
+        "childExitConfirmed": true,
+        "exitCode": null,
+        "signal": null
+      },
+      "containerStopped": true
+    },
+    {
+      "kind": "descendant",
+      "result": {
+        "outcome": "expired",
+        "started": true,
+        "childExitConfirmed": true,
+        "exitCode": null,
+        "signal": "SIGKILL"
+      },
+      "containerStopped": true
+    }
+  ],
+  "independentReadback": {
+    "passed": true,
+    "allRecipientContainersStopped": 38,
+    "sourceSha256": "b03e0e8998293740f920a54341511016d15b0e629aa899bf326f0a2dfd26718d",
+    "originalContainersPreserved": 32,
+    "finalRunPriorContainersPreserved": 36,
+    "currentSourceContainersVerified": 2,
+    "earlierContainersStoppedAndRetained": 4,
+    "helperSourceExtractedFromActualContainerCommands": true,
+    "logsReconciledWithDocker": true,
+    "directChildExitAndContainerStopVerifiedSeparately": true,
+    "noAppCodeSecretsOrVolumesUsed": true,
+    "initialHarnessFailureRetainedAndReconciled": true,
+    "defaultCronAdmission": "closed",
+    "scope": "Supervisor component only; no public preview launch, no celld app, no new runtime qualification."
+  },
+  "preservation": {
+    "originalQaContainersUnchanged": 32,
+    "earlierHelperContainersStoppedAndRetained": 4,
+    "currentHelperContainersStoppedAndRetained": 2,
+    "allRecipientContainersStopped": 38,
+    "newVolumeMounts": 0
+  },
+  "knownHarnessFailures": [
+    "Initial container inventory comparison treated unordered Docker mounts as ordered. The failed result is retained; read-only reconciliation sorts only mount Destination and requires all state, mount, image and restart values unchanged. Source changes use fresh helpers.",
+    "Initial environment test expected an exact environment on Darwin; Node supplies OS metadata. Corrected tests distinguish that metadata from forbidden inherited application/operator environment."
+  ],
+  "privateEvidenceRoot": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-supervisor-20261030-03",
+  "privateEvidenceFingerprints": {
+    "before.json": "bc256ebefab968e25388d70f8415e7597e3436e7ac9d3fb71f2a4b943c1bb218",
+    "preview-supervisor.test.mjs": "8ce6ddceee1caa66c03c09413321a4c238ad68f36bbd30bd45a3c52c47c0ee89",
+    "report.json": "6e7d41f1631ce4c398a3e81782d50d0b0556a656e0f7bfb31d425c0d3c40f0f1",
+    "expired-inspect.json": "34a295cf1830a93e9e29f24919acbe7acbac0d10487283ea5c636ea6d7ec9167",
+    "fogd-preview-supervisor-audit-current.mjs": "c1dff7f7dc18da9b840024cc3b8dcec5520af996d7fe019bfea41f5b79524515",
+    "fogd-preview-supervisor-review.md": "272d4b84fc517a307dc8a74a6c918cebc59e3378ed5cc66e6a12df43ce92d406",
+    "expired.log": "dea05b36f19fffe749dec0fb63253df156058b4dc32428d390d2b0f5f24cf4fd",
+    "fogd-preview-supervisor-audit-current.log": "ba0603beadbcfe38e24fff06f041ffb778c7d0a7768fe79037b0999a86b4be89",
+    "fogd-preview-supervisor-syntax.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-preview-supervisor-runtime-pins.log": "b609a91a88d1d762443f3c29bfa33d71da9257125e754cdd7fedefbb198ca3d5",
+    "after.json": "869d4eea7fdd18f063aa4829887cdc25927b686af3c0174ed59fcdb7b4f3319e",
+    "fogd-preview-supervisor-writing-final.log": "9ef3c9dd22dc57fe0ac1c6104ac0b33e96ea999584cb8a73155098bbf279518d",
+    "fogd-preview-supervisor-container-current.log": "ebff1433d24a09296628412990609c19709d64087b4260f726ad182c38349fae",
+    "fogd-preview-supervisor-writing.log": "efa514850b4a4a321bc5ed5f1ecc8f7b13e3688facd5ae779ce160f39813adb9",
+    "descendant-inspect.json": "0f1dc4001c478d1fede9cf74bce48e1d2a33ee95b17d44740af1da9a5e5e0aa5",
+    "fogd-preview-supervisor-connected-final.log": "d935d3ca2b48976d0b46e8a7635af15cb9a0636c9eab327ceb1d1c0ea9f94513",
+    "fogd-preview-supervisor-container-current.mjs": "1912a01dc04f9de0c40361593133da012abc28a35c37953355747aa836b4044f",
+    "independent-audit.json": "c5fcf34307d8c8fcf9081810d6458066181d6ffd9ba1d027f9967b86b2790d07",
+    "fogd-preview-supervisor-quality-final.log": "8f36231c171ec649b720405484f61cb77f30fa1a6fb2427bb5b700aa814d2c80",
+    "allocated.json": "6095bf95a47f2ef82cd0dd586e3fcef3f0ef5597af5c856377a919206ec5bf3a",
+    "descendant.log": "df3d2892bcd182da5df4271ead7ec81e34e74b1c6183a130ffdcacf5bf80e06a",
+    "supervisor.mjs": "b03e0e8998293740f920a54341511016d15b0e629aa899bf326f0a2dfd26718d"
+  },
+  "earlierEvidenceRoots": [
+    "/Users/sgtpooki/.local/share/fogd-qualifications/preview-supervisor-20261030-01",
+    "/Users/sgtpooki/.local/share/fogd-qualifications/preview-supervisor-20261030-02"
+  ],
+  "defaultCronAdmission": "closed",
+  "limits": [
+    "Trusted host clock and OS scheduling; no hard real-time stop-latency guarantee.",
+    "Only direct child exit is confirmed by the component; descendants, container stop and free capacity require independent confirmation.",
+    "Container checks use Node test programs supplied as PID1 on a pinned image with networking disabled, no mounts, all capabilities dropped, no privileged mode and a read-only root filesystem. They do not execute a celld app.",
+    "Exact authorization, isolated resource identities/storage, authenticated ingress, network policy, resource/capacity limits and every-service expiry remain required before preview launch.",
+    "No per-worker CPU quota, hostile-tenant sandbox, production activation or preview-data promotion claim."
+  ]
+}

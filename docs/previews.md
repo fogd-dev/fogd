@@ -59,3 +59,19 @@ uncertainty. Production activation remains its own exact-artifact decision.
 The current `prepared` result explicitly reports `executionAuthorized: false` and
 `capacityReserved: false`. These policy fields are requirements for the remaining
 implementation, not evidence that an executing preview is isolated or time-limited.
+
+## Internal deadline component
+
+An [internal supervisor check](evidence/operator-preview-supervisor.json) exercises
+expiry, cancellation, forced termination and missing child-exit observations.
+Expired deadlines refuse startup, and retries keep the original absolute deadline.
+The child environment defaults to empty application configuration and copies only
+explicit own properties; Node can add platform process metadata.
+
+Two current-source, network-disabled, read-only container cases distinguish direct
+child exit from verified container stop, including a descendant process. The host
+clock and operating-system scheduling remain trusted prerequisites. This is a
+launcher component, not a preview execution permission or an application sandbox.
+The integration must still bind exact authorization, isolate resources and network
+access, protect the URL, and enforce expiry for every service. No preview launch
+command is available yet.
