@@ -54,10 +54,13 @@ async function runtime(controller, selected) {
   await controller.routes.options.verifyRuntime(selected.record.name, { id: selected.release.id, digest: selected.release.digest });
   await heldBackgrounds(controller, selected);
 }
-async function prepare(controller, profile, input) {
+async function prepare(controller, profile, input, beforeEffects) {
   const selected = selection(controller, profile, input), before = await authority(controller, profile);
   await verifiedReviewArtifact(controller, selected.release.id);
   const secrets = await controller.secrets.select(selected.release, input.secretRevision);
+  // Native inspection may materialize a retained cell. A later failure cannot
+  // promise that no effect occurred, even though execution remains withheld.
+  beforeEffects();
   await runtime(controller, selected);
   await migrations(controller, selected);
   await runtime(controller, selected);
@@ -79,9 +82,8 @@ export function approveAppArchiveRecovery(controller, profile, input, context) {
       selection(controller, profile, input);
       if (!/^[a-f0-9]{64}$/.test(context?.review)) throw refused();
       const result = await authenticatedDecision(controller, input.deployment, input.digest, 'approve', input.secretRevision, context, async (beforeEffects, decision) => {
-        const selected = await prepare(controller, profile, input);
+        const selected = await prepare(controller, profile, input, beforeEffects);
         if (context.review !== decisionReviewToken(controller, input.deployment)) throw refused();
-        beforeEffects();
         selected.record.status = 'recovered';
         selected.record.restoration.decision = decision.id;
         delete selected.app.archiveRecovery;

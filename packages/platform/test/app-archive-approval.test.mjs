@@ -135,7 +135,7 @@ test('changing pinned vault bytes during native checks refuses completion', asyn
   await assert.rejects(approveAppArchiveRecovery(f.c, f.profile, f.input, f.context()), refused);
   const state = await f.disk();
   assert.equal(state.apps.demo.archiveRecovery.status, 'pending');
-  assert.equal(state.decisions.at(-1).outcome, 'refused');
+  assert.equal(state.decisions.at(-1).outcome, 'unconfirmed');
   assert.ok(!JSON.stringify(state.decisions).includes('private-'));
 });
 
@@ -145,4 +145,14 @@ test('a changed cron hold revision refuses even when the native schedule reports
   f.c.backend.crons.snapshot = async (...args) => { const observed = await snapshot(...args); return { ...observed, revision: observed.revision + 1 }; };
   await assert.rejects(approveAppArchiveRecovery(f.c, f.profile, f.input, f.context()), refused);
   assert.equal((await f.disk()).apps.refresh.archiveRecovery.status, 'pending');
+});
+
+test('failed native verification records an unconfirmed decision rather than promising absence of effects', async t => {
+  const f = await archiveApprovalFixture(t); f.failNative();
+  await assert.rejects(approveAppArchiveRecovery(f.c, f.profile, f.input, f.context()), refused);
+  const state = await f.disk();
+  assert.equal(state.decisions.at(-1).outcome, 'unconfirmed');
+  assert.equal(state.apps.demo.archiveRecovery.status, 'pending');
+  assert.equal(state.apps.demo.route, 'paused');
+  assert.equal((await f.public()).routes[0].state, 'withheld');
 });
