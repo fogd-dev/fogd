@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "kind": "operator-internal-archive-controller-api",
+  "recordedAt": "2026-10-30T05:09:02.594012+00:00",
+  "sourceCommit": "1507e00c5f99c51a4eb214321de8f860031128d7",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Actual packaged internal Controller cold start, owner-authenticated loopback HTTP recovery API, physical artifact/vault/enrolled-store checks, separate HTTP resume and restart. Native owner/runtime/migration observations are stand-ins; no celld or worker execution.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "image": "sha256:4d598ad56d63280a0d68579893c37b2ff933f0f092a33211ff889d6bde2d842e",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "sourceFiles": 126,
+  "repeatedUncachedBuilds": [
+    "sha256:4d598ad56d63280a0d68579893c37b2ff933f0f092a33211ff889d6bde2d842e",
+    "sha256:4d598ad56d63280a0d68579893c37b2ff933f0f092a33211ff889d6bde2d842e"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "image": "sha256:4d598ad56d63280a0d68579893c37b2ff933f0f092a33211ff889d6bde2d842e",
+    "sourceFilesRehashed": 126,
+    "nativeHashesVerified": true,
+    "repeatedUncachedBuildsIdentical": true,
+    "actualRouteStoreVolumesReadBack": 9,
+    "physicalEnrollmentBindingsVerified": true,
+    "artifactAndArchiveAndStorageAndRouteIdentitiesRecomputed": true,
+    "ownerHTTPAuthenticationAndCSRFAndOriginAndReviewChecksVerified": true,
+    "bodyActorCannotOverrideOwner": true,
+    "nativeInspectionFailureRecordedUnconfirmed": true,
+    "privateArchiveSummaryVerified": true,
+    "attributedApprovalReadBack": true,
+    "separateHTTPResumeAndRestartReadBack": true,
+    "currentVaultBytesUnchanged": true,
+    "ordinaryStartupRefusesBeforeBackend": true,
+    "candidateAbsentFromShippedCatalog": true,
+    "existingContainersPreserved": 80,
+    "existingVolumeNamesPreserved": 177,
+    "scope": "Packaged internal opt-in controller/HTTP/stores with native observations as stand-ins; native worker execution and ordinary archive admission remain unqualified."
+  },
+  "canonicalChecks": {
+    "passed": 3056,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 510206.202,
+    "scope": "Before the final native-inspection outcome correction and two added regressions."
+  },
+  "finalFocusedChecks": {
+    "passed": 77,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 23281.635709,
+    "scope": "Final code: archive approval, controller, owner API, background recovery and decision-history regressions."
+  },
+  "internalProfileColdStartVerified": true,
+  "internalOwnerRecoveryAPIVerified": true,
+  "defaultControllerArchiveStartupAdmitted": false,
+  "operatorArchivalAvailable": false,
+  "defaultCronAdmission": "closed",
+  "nativeArchiveExecutionQualified": false,
+  "secretRotationDuringRecoveryImplemented": false,
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-controller-runtime-20261030-03",
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-controller-runtime-20261030-04",
+  "supersededEvidenceRoots": [
+    "~/.local/share/fogd-qualifications/archive-controller-runtime-20261030-01",
+    "~/.local/share/fogd-qualifications/archive-controller-runtime-20261030-02"
+  ],
+  "evidenceFingerprints": {
+    "approved.json": {
+      "sha256": "896a587ed024351d6ee6c3cde006706ab0b618b50dfce81103d92e5e4eec91fe",
+      "bytes": 10375
+    },
+    "audit.log": {
+      "sha256": "51a98a983834d48da4cdd8042ccd6007dcc5935cb72a0566dd035e55ec32d797",
+      "bytes": 1001
+    },
+    "audit.py": {
+      "sha256": "4cfeb3403878b2e095ab4a85b60dca2600bf72ee18f55429da781fe2f28c365c",
+      "bytes": 11774
+    },
+    "before.json": {
+      "sha256": "1adf9fee55de21b21414a533c5c3662e3f11ad8a5b405171c735ff437ec2b3af",
+      "bytes": 69156
+    },
+    "candidate.json": {
+      "sha256": "e557a21c99105e1519be981323c3681b53ea3c8d702f349d2fbc43adc71df447",
+      "bytes": 15281
+    },
+    "canonical-before-outcome-fix.log": {
+      "sha256": "4ea17e574828f6aba6f2d256ef821a13e4603b3b0fdc7d0d59b5650a520fb7d3",
+      "bytes": 273752
+    },
+    "final-focused.log": {
+      "sha256": "386036083401afc33c220aae0ca78f0f2ca1697a01c3dae17980ce5f50baf419",
+      "bytes": 7789
+    },
+    "final.json": {
+      "sha256": "73ed14acdbfeb040edfcb066b90b003498cda5c619f18857883f19f498dfc1a7",
+      "bytes": 10343
+    },
+    "initial.json": {
+      "sha256": "52820afa74c96a010c587e9469a4323e502f846bbf879136d01c75dbc048b6ad",
+      "bytes": 8473
+    },
+    "input.json": {
+      "sha256": "80e660ed6c4bfbfd5385aba27d9c3ce4657d3277dfc8861ef6a011d4d5ec9768",
+      "bytes": 1928
+    },
+    "quality.log": {
+      "sha256": "c087628448fe387adebcfbe4dc2e8251aa7222fbf56778be93926d7866f98504",
+      "bytes": 1670
+    },
+    "report.json": {
+      "sha256": "30316c9e6e1cfbb7ebe0236d611ed10778c27e49dcc20c941e70a3d42bd0fec6",
+      "bytes": 1010
+    },
+    "result.json": {
+      "sha256": "6adab26db8d78039a482f252de9d818506289701ea6fd8ff8cb179a388b03c12",
+      "bytes": 2785
+    },
+    "resumed.json": {
+      "sha256": "6ad6515b16b818f5e01bf3db8bb7ec8850c325dbf2d82d4234c1288a061de0fb",
+      "bytes": 119
+    },
+    "runner.log": {
+      "sha256": "23be77cdb81a8ec35209808f26786b0a32a7c0c96227454426d29f7ddef06a85",
+      "bytes": 76
+    },
+    "runner.mjs": {
+      "sha256": "867627375869d40c28147e51adbdcb108cafad83c4340c4d4d8cf7e453c16e5a",
+      "bytes": 12958
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    },
+    "writing.log": {
+      "sha256": "5caddfaa5a5d3958b47a98d02e4a266e6e6b891cabb8fdabac67e7f72ae182d3",
+      "bytes": 142
+    },
+    "image-stage/candidate.json": {
+      "sha256": "e557a21c99105e1519be981323c3681b53ea3c8d702f349d2fbc43adc71df447",
+      "bytes": 15281
+    },
+    "image-stage/result.json": {
+      "sha256": "fabe3635113d702f06b72ef9d0388689b2cded90090ebd37550f7794e8436ddf",
+      "bytes": 16675
+    },
+    "image-stage/before.json": {
+      "sha256": "050616f84f8b3381020d44999a6a0deed38529e6e0379d7496c8576149f3532f",
+      "bytes": 68816
+    },
+    "image-stage/after.json": {
+      "sha256": "c9c2047dd9909b7153a09a7667189d1878625d7c789b5892a2cf922487a64a99",
+      "bytes": 96491
+    },
+    "image-stage/runner.mjs": {
+      "sha256": "08bf76d97a1fa265fb81ecca7b26256088a3afdaa50c65ca9b7447f3df5f1245",
+      "bytes": 9888
+    },
+    "image-stage/runner.log": {
+      "sha256": "b492954b9202b37932aaade536d6b5d287852da4b52d6a9aa733c5657999893e",
+      "bytes": 294
+    },
+    "writing-final.log": {
+      "sha256": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "bytes": 29
+    }
+  }
+}

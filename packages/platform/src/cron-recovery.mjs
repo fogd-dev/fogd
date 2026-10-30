@@ -1,3 +1,4 @@
+import { assertArchiveRecoveryComplete } from './app-archive-gate.mjs';
 import { isDeepStrictEqual } from 'node:util';
 import { randomUUID } from 'node:crypto';
 import { artifactDigest } from '@fogd/runtime/artifact';
@@ -85,13 +86,14 @@ async function checkRecovery(controller, name, app) {
 }
 export async function recoverCronSnapshots(controller) {
   for (const [name, app] of Object.entries(controller.state.apps)) {
-    if (!cronRecoveryPending(app)) continue;
+    if (app.archiveRecovery || !cronRecoveryPending(app)) continue;
     app.route = 'paused';
     try { await checkRecovery(controller, name, app); } catch { controller.assertStorage(); }
     await controller.save();
   }
 }
 export async function acknowledgeCronRecovery(controller, name, input) {
+  assertArchiveRecoveryComplete(controller.state.apps[name]);
   await controller.routes.checkReady();
   const { app, active } = cronSnapshotTarget(controller.state, name); activeInput(active, input);
   const receipt = app.cronRecovery;

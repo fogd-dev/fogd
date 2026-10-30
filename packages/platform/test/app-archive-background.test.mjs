@@ -6,6 +6,8 @@ import { policy } from './fixtures/runtime-policy.mjs';
 import { operateDelivery } from '../src/admin-delivery.mjs';
 import { operateDispatch } from '../src/admin-dispatch.mjs';
 import { recoverQueueSnapshots } from '../src/queue-recovery.mjs';
+import { Controller } from '../src/controller.mjs';
+import { archiveApprovalFixture } from './fixtures/archive-approval.mjs';
 import { recoverCronSnapshots } from '../src/cron-recovery.mjs';
 import { projectAppArchive, projectAppArchiveRestore, validateAppArchives } from '../src/app-archive.mjs';
 
@@ -103,7 +105,7 @@ for (const family of families) for (const [name, mutate] of [
   assert.throws(() => validateAppArchives(result.restored, result.profile), { code: 'APP_ARCHIVE_REFUSED' });
 });
 
-for (const family of families) test(`existing ${family.app} recovery diagnosis accepts its rebound receipt and keeps execution held`, async t => {
+for (const family of families) test(`automatic ${family.app} diagnosis waits for explicit archive approval and keeps execution held`, async t => {
   const result = await restoredBackground(t, family), { f } = result;
   // Exercise recovery with the existing backend stand-in. Ordinary controller
   // startup still rejects archive state; this does not claim startup admission.
@@ -111,8 +113,8 @@ for (const family of families) test(`existing ${family.app} recovery diagnosis a
   f.c.slots = result.profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
   await family.recover(f.c);
   const app = f.c.state.apps[family.app], recovery = app[family.recovery];
-  assert.equal(recovery.checkError, null);
-  assert.equal(recovery.checkedAt, 1000000);
+  assert.equal(recovery.checkError, undefined);
+  assert.equal(recovery.checkedAt, undefined);
   assert.equal(recovery.status, 'pending');
   assert.equal(app.route, 'paused');
   assert.equal(app[family.control].desired, 'paused');
@@ -121,14 +123,14 @@ for (const family of families) test(`existing ${family.app} recovery diagnosis a
   validateAppArchives(f.c.state, result.profile);
 });
 
-test('expired archived queue evidence retains its original deadline and produces loss diagnosis', async t => {
-  const result = await restoredBackground(t, families[0]), { f } = result;
-  const original = f.c.state.apps.imports.queueSnapshot;
-  f.c.state = result.restored;
-  f.c.slots = result.profile.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
-  f.c.clock = () => original.expiresAt + 1;
-  await recoverQueueSnapshots(f.c);
-  const app = f.c.state.apps.imports;
+test('expired archived queue evidence retains its original deadline and produces loss diagnosis after owner approval', async t => {
+  const f = await archiveApprovalFixture(t, { background: 'queue' });
+  const c = new Controller({ ...f.settings, archiveProfile: f.profile }); await c.init();
+  const original = c.state.appArchives.records[id].app.queueSnapshot;
+  c.clock = () => original.expiresAt + 1;
+  const review = await c.archives.review('imports');
+  await c.archives.approve('imports', review.selection, { actor: { kind: 'basic', name: 'owner' }, review: review.review });
+  const app = c.state.apps.imports;
   assert.equal(app.queueRecovery.prepared.expiresAt, original.expiresAt);
   assert.equal(app.queueRecovery.prepared.at, original.at);
   assert.equal(app.queueRecovery.checkError, null);

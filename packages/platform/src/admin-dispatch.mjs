@@ -1,3 +1,4 @@
+import { archiveHeld, assertArchiveRecoveryComplete } from './app-archive-gate.mjs';
 import { controlScript } from './admin-control-script.mjs';
 import { cronRecoveryPending } from './cron-snapshot.mjs';
 import { prepareCronSnapshot, acknowledgeCronRecovery, cronRecoveryView } from './cron-recovery.mjs';
@@ -16,7 +17,7 @@ export function dispatchView(controller, name) {
   const { version: _version, ...journal } = app.dispatch;
   const active = controller.state.deployments[app.active];
   const approval = controller.state.deployments[journal.hold || app.active];
-  const operationAllowed = Boolean(controller.backend.crons && !app.retirement && !app.quarantined && app.cronBootstrap.phase !== 'pending');
+  const operationAllowed = Boolean(controller.backend.crons && !archiveHeld(app) && !app.retirement && !app.quarantined && app.cronBootstrap.phase !== 'pending');
   return { app: name, ...journal, effective: journal.hold ? 'paused' : journal.desired,
     recovery: cronRecoveryView(app.cronRecovery),
     bootstrap: app.cronBootstrap.phase, recoveryError: app.dispatchRecoveryError || null,
@@ -38,6 +39,7 @@ function dispatchTarget(controller, name) {
 }
 
 export async function operateDispatch(controller, name, action, input = {}) {
+  assertArchiveRecoveryComplete(controller.state.apps[name]);
   if (!['observe', 'pause', 'resume', 'snapshot', 'acknowledge-recovery'].includes(action)) throw new Error('Invalid dispatch action');
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Dispatch input must be a JSON object');
   await controller.routes.checkReady();
@@ -77,7 +79,7 @@ export async function dispatchRequest(request, url, controller, csrf, body, send
 export function dispatchHTML(controller, html, csrf) {
   const cards = Object.keys(controller.state.apps).filter(name => controller.state.apps[name].dispatch).map(name => {
     const state = dispatchView(controller, name);
-    const actions = state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : []), ...(state.recovery?.status === 'pending' ? ['acknowledge-recovery'] : [])] : [];
+    const actions = state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : []), ...(state.recovery?.status === 'pending' && !controller.state.apps[name].archiveRecovery ? ['acknowledge-recovery'] : [])] : [];
     const buttons = actions.map(action => `<button data-dispatch="${action}" data-app="${html(name)}" data-recovery="${html(state.recovery?.id || '')}" data-review="${html(state.recovery?.review || '')}" data-deployment="${html(state.active?.deployment || '')}" data-digest="${html(state.active?.digest || '')}">${action === 'observe' ? 'Refresh runtime status' : action === 'acknowledge-recovery' ? 'Acknowledge recovery' : action}</button>`).join(' ');
     return `<article><h2>${html(name)} scheduled dispatch</h2><p>Desired: ${html(state.desired)}. Effective intent: ${html(state.effective)}. Recorded observation: ${html(state.observed)} at ${html(state.observedAt || 'unknown')}.</p><p>Active deployment: ${html(state.active?.deployment || 'none')}. Digest: <code>${html(state.active?.digest || 'none')}</code>.</p><p>Activation hold: ${html(state.hold || 'none')}. Unconfirmed operation: ${html(state.operation || 'none')}.</p><p>Approval: ${html(state.approval?.status || 'none')} at ${html(state.approval?.step || 'unknown')}. ${html(state.recoveryError || '')}</p><p>Recovery: ${html(state.recovery?.status || 'none')}. ${html(state.recovery?.notice || '')} ${html(state.recovery?.diagnoses.join('; ') || '')} ${html(state.recovery?.checkError || '')}</p>${buttons}</article>`;
   }).join('');

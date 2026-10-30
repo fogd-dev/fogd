@@ -12,7 +12,7 @@ export function reserveClaim(state, request, slot, privateConfiguration) {
 export async function inspectOwnership(controller) {
   for (const slot of controller.slots) await observeOwner(controller, slot);
   for (const [name, app] of Object.entries(controller.state.apps)) {
-    if (!app.retirement) await verifyOwner(controller, name, app);
+    if (!app.retirement && !app.archive) await verifyOwner(controller, name, app);
   }
 }
 async function observeOwner(c, slot) {
@@ -20,6 +20,7 @@ async function observeOwner(c, slot) {
   if (!owner) return;
   c.occupied.add(slot.id); c.bucketOwners.set(slot.id, owner.app);
   const app = c.state.apps[owner.app];
+  if (app?.archive) throw new Error('Archived app owns a configured fleet; restore matching storage identities');
   if (app?.retirement) throw new Error('Retired app owns a configured fleet; restore matching configuration and metadata');
   if (!app) {
     c.state.apps[owner.app] = { slot: slot.id, route: 'paused' };

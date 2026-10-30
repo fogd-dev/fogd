@@ -1,3 +1,4 @@
+import { archiveHeld, assertArchiveRecoveryComplete } from './app-archive-gate.mjs';
 import { controlScript } from './admin-control-script.mjs';
 import { deliveryFor } from './queue-activation.mjs';
 import { checkMutation } from './admin-secrets.mjs';
@@ -17,7 +18,7 @@ export function deliveryView(controller, name) {
     bootstrap: app.queueBootstrap.phase, recoveryError: app.deliveryRecoveryError || null,
     recovery: app.queueRecovery ? { id: app.queueRecovery.id, review: recoveryReview(app.queueRecovery), status: app.queueRecovery.status, diagnosis: app.queueRecovery.diagnosis || null, checkError: app.queueRecovery.checkError || null, checkedAt: app.queueRecovery.checkedAt || null, observation: app.queueRecovery.observation || null, firstObservation: app.queueRecovery.firstObservation || null } : null,
     active: active ? { deployment: active.id, digest: active.digest } : null,
-    operationAllowed: !app.retirement && !app.quarantined && app.queueBootstrap.phase !== 'pending',
+    operationAllowed: !archiveHeld(app) && !app.retirement && !app.quarantined && app.queueBootstrap.phase !== 'pending',
     resumeAllowed: resumable(controller, name, app) };
 }
 
@@ -32,6 +33,7 @@ function deliveryTarget(controller, name) {
 }
 
 export async function operateDelivery(controller, name, action, input = {}) {
+  assertArchiveRecoveryComplete(controller.state.apps[name]);
   await controller.routes.checkReady();
   const { app, slot } = deliveryTarget(controller, name);
   if (!['observe', 'pause', 'resume', 'snapshot', 'acknowledge-recovery'].includes(action)) throw new Error('Invalid delivery action');
@@ -74,7 +76,7 @@ export async function deliveryRequest(request, url, controller, csrf, body, send
 export function deliveryHTML(controller, html, csrf) {
   const cards = Object.keys(controller.state.apps).filter(name => controller.state.apps[name].delivery).map(name => {
     const state = deliveryView(controller, name);
-    const buttons = (state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : []), ...(state.recovery?.status === 'pending' ? ['acknowledge-recovery'] : [])] : []).map(action => `<button data-delivery="${action}" data-app="${html(name)}" data-recovery="${html(state.recovery?.id || '')}" data-review="${html(state.recovery?.review || '')}" data-deployment="${html(state.active?.deployment || '')}" data-digest="${html(state.active?.digest || '')}">${action === 'observe' ? 'Refresh status' : action === 'acknowledge-recovery' ? 'Acknowledge recovery' : action}</button>`).join(' ');
+    const buttons = (state.operationAllowed ? ['observe', 'pause', ...(state.resumeAllowed ? ['resume'] : []), ...(state.recovery?.status === 'pending' && !controller.state.apps[name].archiveRecovery ? ['acknowledge-recovery'] : [])] : []).map(action => `<button data-delivery="${action}" data-app="${html(name)}" data-recovery="${html(state.recovery?.id || '')}" data-review="${html(state.recovery?.review || '')}" data-deployment="${html(state.active?.deployment || '')}" data-digest="${html(state.active?.digest || '')}">${action === 'observe' ? 'Refresh status' : action === 'acknowledge-recovery' ? 'Acknowledge recovery' : action}</button>`).join(' ');
     return `<article><h2>${html(name)} queue</h2><p>Desired: ${html(state.desired)}. Effective intent: ${html(state.effective)}. Recorded observation: ${html(state.observed)} at ${html(state.observedAt || 'unknown')}.</p><p>Active deployment: ${html(state.active?.deployment || 'none')}. Digest: <code>${html(state.active?.digest || 'none')}</code>.</p><p>Activation hold: ${html(state.hold || 'none')}. Unconfirmed operation: ${html(state.operation || 'none')}.</p><p>${html(state.recoveryError || '')}</p><p>Recovery: ${html(state.recovery?.status || 'none')}. ${html(state.recovery?.diagnosis || '')} ${html(state.recovery?.checkError || '')}</p>${buttons}</article>`;
   }).join('');
   if (!cards) return '';

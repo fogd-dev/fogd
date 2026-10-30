@@ -1,3 +1,4 @@
+import { archiveHeld } from './app-archive-gate.mjs';
 import { encodeRouteRecord, isRouteRevision } from '@fogd/runtime/route-record';
 import { readRouteRecord, routeRecordDigest, writeRouteRecord, createRouteRecord } from './route-record-store.mjs';
 
@@ -30,7 +31,7 @@ function approval(state, app, id, digest, statuses) {
 export function applicationWithheld(app) {
   const holds = [app.quarantined, app.uncertain, app.claim, app.delivery?.hold, app.dispatch?.hold];
   const recovering = [app.queueRecovery, app.cronRecovery].some(record => record && record.status !== 'acknowledged');
-  return app.route !== 'active' || holds.some(Boolean) || recovering;
+  return app.route !== 'active' || archiveHeld(app) || holds.some(Boolean) || recovering;
 }
 export function completedRoute(state, name, domain) {
   const app = state.apps[name], request = state.deployments[app?.active];

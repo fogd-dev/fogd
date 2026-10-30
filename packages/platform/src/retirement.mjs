@@ -1,3 +1,4 @@
+import { assertArchiveRecoveryComplete } from './app-archive-gate.mjs';
 import { decisionHistoryCapability } from './decision-history.mjs';
 import { cronRetirementCapability, assertCronRetirement, retainRetiredCron, validateRetiredCron } from './cron-retirement.mjs';
 import { queueCapability } from './queue-activation.mjs';
@@ -14,6 +15,7 @@ import { artifactPruneCapability, validateArtifactPruning } from './artifact-pru
 export const retirementCapability = 'fogd-retirement-v1';
 export function assertLiveName(state, name) {
   if (state.apps[name]?.retirement) throw new Error('App name is permanently retired; choose a different name');
+  assertArchiveRecoveryComplete(state.apps[name]);
 }
 export function validateRetirementState(state, slots, { durableRoutes = false } = {}) {
   validateArtifactPins(state);

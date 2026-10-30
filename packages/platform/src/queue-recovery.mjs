@@ -1,3 +1,4 @@
+import { assertArchiveRecoveryComplete } from './app-archive-gate.mjs';
 import { randomUUID } from 'node:crypto';
 import { recoveryReview } from './recovery-review.mjs';
 import { deliveryFor } from './queue-activation.mjs';
@@ -62,7 +63,7 @@ function recordDiagnosis(receipt, diagnosis) {
 }
 export async function recoverQueueSnapshots(controller) {
   for (const [name, app] of Object.entries(controller.state.apps)) {
-    if (!recoveryPending(app)) continue;
+    if (app.archiveRecovery || !recoveryPending(app)) continue;
     app.route = 'paused';
     try { await checkRecovery(controller, name, app); } catch { controller.assertStorage(); }
     await controller.save();
@@ -79,6 +80,7 @@ async function checkRecovery(controller, name, app) {
   }
 }
 export async function acknowledgeQueueRecovery(controller, name, input) {
+  assertArchiveRecoveryComplete(controller.state.apps[name]);
   await controller.routes.checkReady();
   const { app, active } = snapshotTarget(controller.state, name);
   activeInput(active, input);

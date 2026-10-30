@@ -77,11 +77,11 @@ startup still rejects the capability before backend access. It does not run cell
 or copy native app data.
 
 These helpers do not stop application writers or copy native application data.
-No CLI, controller startup path or shipped runtime admits the new capability.
-Existing runtimes reject it. The stopped filesystem coordinator and background
-receipt projection are internal components. Vault checks and an internal attributed approval operation are implemented.
-Controller recovery integration, operator access and native archive/reuse/restore
-acceptance remain required before operator use.
+No CLI, default controller entrypoint or shipped runtime admits the new capability.
+The stopped coordinator, background receipt projection, vault checks and attributed
+approval are internal components. An explicit internal controller profile now
+supports held startup and an owner recovery API. Native launcher/worker acceptance,
+secret rotation and operator commands remain required before release.
 
 ## Retained snapshot and data-copy implementation
 
@@ -152,7 +152,9 @@ deployment, artifact digest, pinned revision and current review context. A fresh
 attributed decision intent precedes the checks. Its success and the consumed gate
 are saved together; the archive ledger links that decision and requires it to occur
 after the history boundary recorded at restoration. The original deployment's
-approval cannot substitute for this recovery decision.
+approval cannot substitute for this recovery decision. Native inspection can
+materialize a retained cell, so failures after native contact are recorded as
+unconfirmed. Failures caught in local artifact/vault checks remain refused.
 
 Successful approval leaves HTTP withheld and preserves pending queue/cron recovery.
 The consumed archive remains recorded and cannot be restored or approved again.
@@ -166,9 +168,41 @@ actual canonical artifacts, vault availability and enrolled store readbacks. Its
 native owner/runtime/migration observations are stand-ins. Component checks cover
 queue and cron holds, changed evidence, stale review and lost save replies.
 
-This operation has no public command or endpoint. Ordinary startup still rejects
-archive state, including approved records, until controller integration and native
-acceptance qualify the execution path.
+This operation has no shipped command or default entrypoint. Ordinary startup still
+rejects archive state, including approved records. The internal composition below
+exposes it only when an independently supplied profile explicitly selects archives.
+
+## Internal controller composition
+
+The internal controller can start archived, restored and consumed records only with
+an explicit profile bound to its configured fleets and durable route authority.
+This is a constructor composition, not an environment setting or installation
+option. Legacy validation receives live apps while retained deployments and pins
+remain accounted for. A configured native fleet claiming an archived name refuses
+startup instead of adopting its storage or overwriting the archived record.
+
+Before owner approval, the app name remains reserved and HTTP stays withheld.
+Deployment, scoped credential issuance, secret replacement and ordinary background
+controls refuse. Startup defers queue/cron recovery diagnosis for that app. After
+the attributed approval is saved, recovery diagnosis runs; loss/replay acknowledgment
+and explicit background resume remain separate. HTTP-only apps require a separate
+routing resume. Restart preserves completed approval and the resulting controls.
+
+The internal owner API provides recorded selection and review context at
+`GET /v1/apps/APP/archive-recovery` and accepts the exact selection plus review at
+`POST /v1/apps/APP/archive-recovery/approve`. Existing artifact review supplies the
+code comparison; canonical artifact, vault and runtime checks run during approval.
+Basic owner authentication, CSRF and origin checks protect mutation. The request
+cannot override the authenticated actor or select another app through its body.
+Default HTTP composition exposes neither endpoint.
+
+Admin inspection returns archive summaries and preserves the existing filtering of
+private materialized versions. Saved app/deployment configuration, native storage
+identities and vault values are not copied from archive records into responses.
+A [packaged controller check](evidence/operator-app-archive-controller-v9.json)
+starts the actual internal controller, exercises the owner API over loopback, reads
+back held approval, separately resumes HTTP and restarts. Its native observations
+are stand-ins; it does not qualify native worker execution or release admission.
 
 ## Stopped enrollment coordinator
 
@@ -197,8 +231,9 @@ readbacks. Independent audit preserves all pre-existing fixture resources.
 
 Completed storage enrollment still leaves HTTP withheld and archive recovery
 pending. The controller continues to reject the archive capability before backend
-access. Controller integration, secret-rotation handling, operator access and full
-native archive/reuse/restore acceptance remain required before operator use.
+access unless the explicit internal profile is supplied. Native launcher/worker
+qualification, secret-rotation handling and operator commands remain required before
+release.
 
 ## Remaining archive protocol
 

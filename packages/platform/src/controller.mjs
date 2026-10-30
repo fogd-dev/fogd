@@ -19,6 +19,7 @@ import { artifactDigest } from '@fogd/runtime/artifact';
 import { receiveArtifact } from '@fogd/runtime/manifest';
 import { readJson, saveJson, storageFailureDiagnostic } from './store.mjs';
 import { Secrets } from './secrets.mjs';
+import { ControllerArchives } from './controller-archives.mjs';
 import { controllerRoutes, routingStartupError } from './controller-routes.mjs';
 import { resourceChanges } from './resources.mjs';
 import { setArtifactPin } from './artifact-pins.mjs';
@@ -33,7 +34,7 @@ export class Controller {
   #recoveryPending = true;
   #ownershipChecked = false;
   #routingServiceRestricted = false;
-  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false, cronApps = false, routeAuthority = null }) {
+  constructor({ dir, slots, backend, baseDomain = 'localhost', maxPending = 20, maxPendingPerCredential = 5, maxArtifactBytes = 256 * 1024 * 1024, persist = saveJson, reportStorageFailure = diagnostic => console.error('fogd controller storage failure', diagnostic), clock = Date.now, queueApps = false, cronApps = false, routeAuthority = null, archiveProfile = null }) {
     Object.assign(this, { dir, slots, backend, baseDomain, maxPending });
     this.clock = clock;
     if (typeof queueApps !== 'boolean') throw new Error('Queue admission setting must be boolean');
@@ -52,6 +53,7 @@ export class Controller {
     this.occupied = new Set();
     this.bucketOwners = new Map();
     this.routes = controllerRoutes(this, routeAuthority);
+    this.archives = new ControllerArchives(this, archiveProfile);
   }
   // A pending prune blocks ordinary work here rather than in assertStorage, so saves and owner
   // CSRF reads still work; only the prune operations opt in.
@@ -74,11 +76,12 @@ export class Controller {
     this.state.apps = Object.assign(Object.create(null), this.state.apps);
     this.state.deployments = Object.assign(Object.create(null), this.state.deployments);
     recoverDecisionHistory(this.state);
-    validateRetirementState(this.state, this.slots, { durableRoutes: this.routes.durable });
-    validateQueueState(this.state);
-    validateCronState(this.state, this.backend.crons);
-    validateRecoveryState(this.state);
-    validateCronRecoveryState(this.state);
+    const live = this.archives.liveState(this.state);
+    validateRetirementState(live, this.slots, { durableRoutes: this.routes.durable });
+    validateQueueState(live);
+    validateCronState(live, this.backend.crons);
+    validateRecoveryState(live);
+    validateCronRecoveryState(live);
     await this.routes.open();
     await this.secrets.init();
     await this.credentials.init();

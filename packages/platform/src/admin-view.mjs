@@ -12,9 +12,10 @@ export function adminDeployment(request) {
   return visible;
 }
 export function adminState(controller) {
-  const { artifactPruning, decisions, ...state } = controller.state;
+  const { artifactPruning, decisions, appArchives, ...state } = controller.state;
   const pruning = artifactPruning ? { artifactPruning: artifactPruneStatus(controller.state) } : {};
-  return { ...state, ...pruning, decisionHistory: { count: decisions?.length || 0, unconfirmed: (decisions || []).filter(entry => ['started', 'unconfirmed'].includes(entry.outcome)).length }, apps: Object.fromEntries(Object.entries(controller.state.apps).map(([name, app]) => [name, adminApp(app)])), capacity: capacity(controller), deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
+  const archives = appArchives ? { appArchives: archiveSummary(appArchives) } : {};
+  return { ...state, ...pruning, ...archives, decisionHistory: { count: decisions?.length || 0, unconfirmed: (decisions || []).filter(entry => ['started', 'unconfirmed'].includes(entry.outcome)).length }, apps: Object.fromEntries(Object.entries(controller.state.apps).map(([name, app]) => [name, adminApp(app)])), capacity: capacity(controller), deployments: Object.fromEntries(Object.entries(controller.state.deployments).map(([id, request]) => [id, adminDeployment(request)])), secrets: controller.secrets.describe(), credentials: controller.credentials.describe(), quota: controller.quota.describe() };
 }
 
 function adminApp(app) {
@@ -47,4 +48,9 @@ function adminApp(app) {
 function retirementIdentity(retirement) {
   const { id, at, app, digest, snapshot, previous, replacement, deployment } = retirement;
   return { id, at, app, digest, snapshot, previous, replacement, deployment };
+}
+
+function archiveSummary(registry) {
+  return { schema: registry.schema, records: Object.fromEntries(Object.entries(registry.records).map(([id, record]) =>
+    [id, { id: record.id, name: record.name, at: record.at, digest: record.digest, status: record.status }])) };
 }
