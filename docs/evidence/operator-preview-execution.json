@@ -121,5 +121,75 @@
     "Network checks do not establish complete role memberships, port/mount policy or hostile-tenant isolation.",
     "Fresh target coordinator, preview runtime/image, every-service expiry, capacity enforcement and native fresh-app/update demos remain open.",
     "No Cloudflare deployment, external egress contact, second physical machine or full-family preview acceptance."
-  ]
+  ],
+  "verifiedInputCoordinator": {
+    "sourceCommit": "18ede5f22052a25c7126d4088fe861e516edd119",
+    "executedTreeDirty": true,
+    "scope": "Internal prepared-file verification and signed decision using real exported artifact fixtures and local HTTP source snapshots. No Docker allocation or running preview.",
+    "sourceFiles": {
+      "packages/cli/src/preview/execution.mjs": "19055094326bf49b6938bca6aa5361d2c13408a08de1da7921ae2587e3ad77d9",
+      "packages/cli/src/preview/inputs.mjs": "f6631b8551aeaac4b5b29a296855fe851482d37861c1e5c926cfcbc00834a9c6",
+      "packages/cli/src/preview/input-files.mjs": "c18b861335337fec1e7a2fe6bbda1da7c966952da73ff7bc212c2a725349739b",
+      "packages/cli/src/preview/decision.mjs": "d632360525cb32ce50f3454c24da1347c66c97e92098f693a24d4cfe137c9d1b",
+      "packages/cli/test/preview-execution.test.mjs": "1241730eb20b43fc4fcc85236204d6ca59336a52a018394a147bef3a7f5b925c",
+      "packages/cli/test/preview-inputs.test.mjs": "d80aaa67ea6ed2fb6ce0f351644fa3482ca204e3f9d8bf386b72ad51c3048f19"
+    },
+    "behavior": [
+      "Independently retained preparation fingerprint verifies canonical raw metadata; review fingerprint is checked before use.",
+      "Bounded regular files, no-follow opens, single-link files, private owned root and bounded tree inventory refuse unsupported inputs.",
+      "Normal artifact validator verifies actual worker/config/SQL bytes and digests without execution; full comparison is recomputed from proposed and active inputs.",
+      "Verified proposed artifact bytes are retained in memory; later directory edits cannot substitute them.",
+      "Prepared controller URL must match independently configured endpoint before authenticated GETs. Two selected-source snapshots and their private guards must agree before signing.",
+      "Source snapshots are not a lease; runtime admission, target freshness and final prelaunch recheck remain integration requirements."
+    ],
+    "checks": {
+      "connected": {
+        "passed": 143,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "inputCases": 18,
+      "executionCases": 20,
+      "syntax": "passed",
+      "quality": "passed; erosion 14.6%, duplication 1.7%",
+      "writing": "passed; terminology/style advisories retained",
+      "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+      "fullSuite": "Not run for this change; connected tests only"
+    },
+    "knownFailure": {
+      "initialTests": {
+        "passed": 36,
+        "failed": 1
+      },
+      "observed": "Real-artifact decision failed because prior checkedRelease expected resource keys without the canonical script field; synthetic fixture omitted it.",
+      "correction": "Require canonical script field equal to source app and use actual exported artifacts; wrong-script regression added.",
+      "correctedFocusedTests": {
+        "passed": 38,
+        "failed": 0
+      }
+    },
+    "privateEvidenceRoot": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-inputs-20261030-01",
+    "privateEvidenceFingerprints": {
+      "decision.mjs": "d632360525cb32ce50f3454c24da1347c66c97e92098f693a24d4cfe137c9d1b",
+      "execution.mjs": "19055094326bf49b6938bca6aa5361d2c13408a08de1da7921ae2587e3ad77d9",
+      "fogd-preview-inputs-commit-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-inputs-connected.log": "1c602268bd9c23d465baa2a62213d43d49a657ba9b1a89956513235f20a0c782",
+      "fogd-preview-inputs-guide-writing.log": "baaf30fe125a31a1542ca9962139bdebdb7212dba973743d4058c0791157fc87",
+      "fogd-preview-inputs-issue-writing.log": "7ff526797925e4692fb92161565a6378c649c99ec43123792242eff4b6ebc9bd",
+      "fogd-preview-inputs-quality-final.log": "ca80c6bb0912567706367b1adc02feed122a0df1c6cfc0c55a72a9a9fbf1ce52",
+      "fogd-preview-inputs-quality.log": "3c8702eacba70fcef96c6b50602a5f5970f442dbb48193f1c3251e4416a1594c",
+      "fogd-preview-inputs-review.md": "ed8886eef99dc112f7ae7d061d274698fa8fb29e6fe0d7a4e4556a3c5694d478",
+      "fogd-preview-inputs-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-inputs-syntax.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "fogd-preview-inputs-test-corrected.log": "26f5c51a126e154d73984c5f9d21ec179390d53adf21d5c0b4d42d12cdfe68ee",
+      "fogd-preview-inputs-test.log": "b2e079a9c84413acff2f4d50cff6eb7d6eed8d284dda2f39af341f7b8c63b886",
+      "input-files.mjs": "c18b861335337fec1e7a2fe6bbda1da7c966952da73ff7bc212c2a725349739b",
+      "inputs.mjs": "f6631b8551aeaac4b5b29a296855fe851482d37861c1e5c926cfcbc00834a9c6",
+      "preview-execution.test.mjs": "1241730eb20b43fc4fcc85236204d6ca59336a52a018394a147bef3a7f5b925c",
+      "preview-inputs.test.mjs": "d80aaa67ea6ed2fb6ce0f351644fa3482ca204e3f9d8bf386b72ad51c3048f19"
+    },
+    "publicLaunch": "unavailable",
+    "defaultCronAdmission": "closed"
+  }
 }

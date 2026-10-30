@@ -4,19 +4,18 @@ import { hash, jsonBytes, digest, uuid } from '../build-cache/paths.mjs';
 import { executionKeys, executionSource, executionRuntime, executionPolicy, executionTarget, executionTimestamp, refuseExecution } from './execution-shape.mjs';
 import { signPreviewExecution, verifyPreviewExecution, previewExecutionSha256 } from './execution-authority.mjs';
 
-function checkedPreparation(input, expectedSha256) {
+export function validatePreviewPreparation(input, expectedSha256) {
   executionKeys(input, ['schema', 'kind', 'id', 'status', 'preparedAt', 'source', 'runtime', 'policy', 'executionAuthorized', 'capacityReserved', 'scope']);
   if (input.schema !== 1 || input.kind !== 'fogd-preview-preparation' || input.status !== 'prepared' || input.executionAuthorized !== false || input.capacityReserved !== false ||
     !uuid(input.id) || !digest(expectedSha256) || hash(jsonBytes(input)) !== expectedSha256 || typeof input.scope !== 'string' || input.scope.length > 512) refuseExecution();
   executionSource(input.source); executionRuntime(input.runtime); executionPolicy(input.policy);
   if (executionTimestamp(input.preparedAt) > Date.now()) refuseExecution();
-
 }
-
 
 function checkedRelease(preparation, release) {
   if (release?.app !== preparation.source.app || release.digest !== preparation.source.digest || !isDeepStrictEqual(release.requiredSecrets, preparation.policy.requiredSecrets)) refuseExecution();
-  executionKeys(release.resources, ['durable', 'd1', 'r2']);
+  executionKeys(release.resources, ['script', 'durable', 'd1', 'r2']);
+  if (release.resources.script !== preparation.source.app) refuseExecution();
   executionKeys(release.resources.durable, ['bindings']);
   if (![release.resources.d1, release.resources.r2, release.resources.durable.bindings].every(Array.isArray) || release.resources.durable.bindings.length) refuseExecution();
 }
@@ -26,7 +25,7 @@ function checkedRelease(preparation, release) {
 // not allocate a target, start a process or approve anything on the source.
 export function issuePreviewExecution(preparation, { expectedPreparationSha256, release, target, privateKey }) {
   try {
-    checkedPreparation(preparation, expectedPreparationSha256); checkedRelease(preparation, release); executionTarget(target);
+    validatePreviewPreparation(preparation, expectedPreparationSha256); checkedRelease(preparation, release); executionTarget(target);
     if (!isDeepStrictEqual(target.runtime, preparation.runtime) || typeof process.getuid !== 'function') refuseExecution();
     const now = Date.now();
     const grant = { schema: 1, purpose: 'preview-execution', id: randomUUID(), preview: preparation.id, preparationSha256: expectedPreparationSha256,

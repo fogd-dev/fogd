@@ -12,7 +12,7 @@ function fixture() {
     policy: { lifetimeSeconds: 60, storage: 'fresh-empty-only', secrets: 'preview-only', requiredSecrets: [], background: 'disabled', network: 'no-external-egress', access: 'owner-authenticated', expiry: 'deny-requests-and-stop-writers', dataPromotion: 'none' }, executionAuthorized: false, capacityReserved: false, scope: 'Verified fixture preparation only' };
   const target = { project: 'preview-fresh', installation: '4'.repeat(64), configSha256: '5'.repeat(64), runtime,
     origin: 'https://demo.preview.test', networks: { control: '10.241.1.0/24', 'fleet-1': '10.241.2.0/24', 'fleet-2': '10.241.3.0/24', frontend: '10.241.4.0/24' } };
-  const release = { app: 'demo', digest: preparation.source.digest, requiredSecrets: [], resources: { durable: { bindings: [] }, d1: [], r2: [] } }, authority = createPreviewExecutionAuthority();
+  const release = { app: 'demo', digest: preparation.source.digest, requiredSecrets: [], resources: { script: 'demo', durable: { bindings: [] }, d1: [], r2: [] } }, authority = createPreviewExecutionAuthority();
   const expectedPreparationSha256 = hash(jsonBytes(preparation));
   const envelope = issuePreviewExecution(preparation, { expectedPreparationSha256, release, target, privateKey: authority.privateKey });
   const expected = { publicKey: authority.publicKey, expectedGrantSha256: previewExecutionSha256(envelope), preparationSha256: expectedPreparationSha256, target };
@@ -97,4 +97,9 @@ test('a viewer access key cannot sign or verify an execution decision', () => {
   const f = fixture(), viewerKey = 'a'.repeat(64);
   assert.throws(() => signPreviewExecution(f.envelope.grant, viewerKey), refused);
   assert.throws(() => verifyPreviewExecution(f.envelope, viewerKey), refused);
+});
+
+test('execution refuses a resource script identity that differs from the prepared application', () => {
+  const f = fixture(), release = { ...f.release, resources: { ...f.release.resources, script: 'another-app' } };
+  assert.throws(() => issuePreviewExecution(f.preparation, { expectedPreparationSha256: f.expectedPreparationSha256, release, target: f.target, privateKey: f.authority.privateKey }), refused);
 });

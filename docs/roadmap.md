@@ -46,7 +46,8 @@ cron admission stays closed. [Verified preview preparation](previews.md) binds a
 exact proposal without executing it. Internal deadline and authenticated HTTPS
 ingress components have process, container and browser checks. Internal signed
 execution decisions and isolated bridge/DNS controls also have bounded component
-checks. Preview runtime integration, launch and every-service expiry remain open
+checks. The internal decision coordinator verifies prepared artifact bytes and
+current source snapshots before signing. Preview runtime integration, launch and every-service expiry remain open
 under issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 

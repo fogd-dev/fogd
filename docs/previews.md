@@ -130,8 +130,18 @@ verifier receives its trusted public key independently. Viewer access cannot sig
 an execution decision, and an execution decision cannot activate production.
 
 Issuing a decision requires independently verified artifact contents and source
-state. Runtime admission and fresh target allocation also remain coordinator
-responsibilities. The initial execution profile refuses queue, cron and Durable
+state. The internal coordinator verifies bounded regular files against the
+independently retained preparation fingerprint, validates both artifacts and
+recomputes their review. It keeps verified proposed bytes in memory; later edits
+to the preparation cannot change those bytes. Symlinks, hardlinks, unexpected
+members and oversized inputs refuse verification.
+
+Before authenticated source reads, the prepared controller must match the
+independently configured endpoint. Two source snapshots must match the recorded
+review and remain stable before signing. These reads grant no source lease;
+launch must recheck current state before allocating or starting its target.
+Runtime admission and fresh target allocation remain coordinator responsibilities.
+The initial execution profile refuses queue, cron and Durable
 Object declarations; Durable Objects can schedule alarms. Preparation alone can
 still record such bindings without executing them.
 
@@ -142,7 +152,7 @@ DNS refusal against owned endpoints. It does not qualify complete service
 membership, ingress routing or a running application sandbox.
 
 Public execution and launch commands remain unavailable. The remaining integration
-must verify prepared files and current source state, admit a preview-capable
-runtime, allocate fresh resources, enforce capacity and every-service expiry,
+must connect the verified artifact and decision to an admitted preview runtime,
+allocate fresh resources, enforce capacity and every-service expiry,
 then demonstrate a fresh app and an update. All retained deployments are QA
 fixtures; fresh installation and same-family recovery are the release targets.
