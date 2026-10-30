@@ -56,6 +56,12 @@ public launch and complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 
+The internal preview host plan now seals role/network/volume placement and binds
+realized commands to the signed target. Read-only eligibility includes retained
+names/ports, active memory limits and held allocations. This is not a reservation
+registry or fresh-enrollment implementation; those remain the next host-lifecycle
+work before public preview launch.
+
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses
 these current gaps:

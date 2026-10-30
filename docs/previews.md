@@ -221,3 +221,26 @@ Fresh enrollment, capacity checks, full role network placement, ordered teardown
 and complete fresh-app/update trials remain required before public launch. The
 fixture retains its stopped resources and uncertain native lease cleanup; it
 does not establish recovery or reusable capacity.
+
+## Internal host plan and eligibility
+
+The [host-plan check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-plan.json)
+binds a sealed service template to one engine, preparation, runtime image, unique
+browser origin and input fingerprints. Replicas attach only to their fleet networks;
+only authenticated ingress attaches to the frontend network and publishes a
+loopback listener. Frontend roles have no storage credential environment or
+writable authority/input mounts. The target configuration fingerprint covers the
+template; concrete command deadlines come only from the bound signed decision.
+
+Eligibility checks include stopped resource names, declared ports, existing and
+held network ranges, active memory limits and held allocations. Unknown active
+memory limits refuse. Matching active role names, images and plan labels count
+once against a held envelope; unrelated containers cannot consume that credit.
+A supplied held plan remains fully budgeted after its containers stop.
+
+The engine check reads metadata only and reserves nothing. Its fixture supplies
+planning fingerprints and an explicit held-plan list; it does not verify actual
+artifact/TLS assets or initialize a reservation registry. Fresh enrollment must
+recheck under a host lock, admit the runtime, reserve resources, install checked
+inputs and verify the actual stopped graph before starting it. Other processes
+may still occupy a port after a snapshot.
