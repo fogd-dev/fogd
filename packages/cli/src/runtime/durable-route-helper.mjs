@@ -1,6 +1,12 @@
 import { routeAuthorityVolume, routeEnrollmentVolume } from './durable-config.mjs';
 
-const scripts = { initialize: 'packages/platform/src/import-route-enrollment.mjs', restore: 'packages/platform/src/import-restored-routes.mjs', retire: 'packages/platform/src/import-retired-routes.mjs' };
+const scripts = {
+  initialize: ['packages/platform/src/import-route-enrollment.mjs'],
+  restore: ['packages/platform/src/import-restored-routes.mjs'],
+  retire: ['packages/platform/src/import-retired-routes.mjs'],
+  archive: ['packages/platform/src/import-app-archive-routes.mjs', 'archive'],
+  'restore-archive': ['packages/platform/src/import-app-archive-routes.mjs', 'restore'],
+};
 const mounts = [['controller', '/var/lib/fogd'], [routeAuthorityVolume, '/var/lib/fogd-routes'], [routeEnrollmentVolume, '/var/lib/fogd-enrollment']];
 
 // Fixed stopped helpers share only these three volumes. Callers authorize the
@@ -11,5 +17,5 @@ export function durableRouteHelperArgs(config, image, operation) {
   if (mounts.some(([role]) => !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$/.test(config.volumes[role]?.name))) throw new Error('Invalid stopped route volume');
   return ['run', '--pull', 'never', '--rm', '-i', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     ...mounts.flatMap(([role, target]) => ['--mount', `type=volume,src=${config.volumes[role].name},dst=${target},volume-nocopy`]),
-    '--entrypoint', '/usr/local/bin/node', image, scripts[operation]];
+    '--entrypoint', '/usr/local/bin/node', image, ...scripts[operation]];
 }

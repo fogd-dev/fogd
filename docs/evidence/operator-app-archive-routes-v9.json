@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "kind": "operator-app-archive-stopped-route-helpers",
+  "recordedAt": "2026-10-30T01:58:47.143050+00:00",
+  "sourceCommit": "09e6278b592cad655bf33ec4975e88d25795829c",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Private COPY-only image packaging and actual network-disabled Node route-store helpers on six fresh owned Docker volumes. Synthetic application metadata, no native celld/app execution or application-data copying.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "image": "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "repeatedUncachedBuilds": [
+    "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80",
+    "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80"
+  ],
+  "parentLayersPreserved": true,
+  "sourceFiles": 121,
+  "independentAudit": {
+    "passed": true,
+    "image": "sha256:e281ad758b40c3828156081c0ce6836a4b47d702410acd11029fdaa485481d80",
+    "imageAndContextSourceFilesRehashed": 121,
+    "ownedRouteVolumesReadBack": 6,
+    "routeReceiptDigestsRecomputed": 2,
+    "archiveIdentityIndependentlyRecomputed": true,
+    "packagedControllerRefusesArchiveBeforeBackend": true,
+    "existingContainersPreserved": 64,
+    "existingVolumeNamesPreserved": 88,
+    "scope": "Packaged stopped Node route-store helpers only; native app-data archive/recovery remains unimplemented"
+  },
+  "defaultCronAdmission": "closed",
+  "operatorArchivalAvailable": false,
+  "nativeAppDataArchiveRecoveryVerified": false,
+  "canonicalChecks": {
+    "passed": 2937,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 489223.243625
+  },
+  "frozenV8ExportCheckout": {
+    "commit": "3638a46fa69ee47b1864aea6c45f40a52fb1d4d2",
+    "sourcePinsVerified": 117
+  },
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-routing-runtime-20261030-02",
+  "evidenceFingerprints": {
+    "candidate.json": {
+      "sha256": "8cac8e295db4cf097e1c9fd3ca46e77d4f765c41c3cc78d9f57e1b98185f0d9b",
+      "bytes": 14672
+    },
+    "before.json": {
+      "sha256": "fba2ea5d5e01fdf383f3bfd356eefcc7a710d00681f413593899efc24d135fe3",
+      "bytes": 53553
+    },
+    "after.json": {
+      "sha256": "11494083629322ade456b917e9e02c17c2c29908058d90f16d2b21af52fb375f",
+      "bytes": 75873
+    },
+    "input.json": {
+      "sha256": "d6f53e424fbabb0e9770c9ba365e54c6db95c168569a2986e2e6c7e7dbb6defc",
+      "bytes": 5408
+    },
+    "archived.json": {
+      "sha256": "cdee21f9d7aa6e568c7b1ec565138c794dfdee02ef3ef300bfbf2d1bfea671a2",
+      "bytes": 4621
+    },
+    "restore.json": {
+      "sha256": "80ed47ad19a1e77191ae02b000db366a33c412f05efa58865ac65a5786ddb17b",
+      "bytes": 7733
+    },
+    "restored.json": {
+      "sha256": "d84a1626452d4a33bd9dc9cdb0fc5b010cf3c25a0a09bfcd2b90bb729ca0c31f",
+      "bytes": 5347
+    },
+    "archiveReceipt.json": {
+      "sha256": "b6cf4bb5d052cad051fec09c007b121c5340869706e1ecd1db5cef7d8001bd1b",
+      "bytes": 399
+    },
+    "restoreReceipt.json": {
+      "sha256": "3a63dac78ac489efbacbf7e20639042d89ee6741cf956d7a0c909104270a8361",
+      "bytes": 399
+    },
+    "runner.mjs": {
+      "sha256": "9ecc61147cfb9256db8203f7c973be1d736b3ab63852f067873892dc27abdf16",
+      "bytes": 9876
+    },
+    "runner.log": {
+      "sha256": "a7014438a2ce4e4ea403e9700da2d4c6989c6d3e56c36abcb1bd5653595032ea",
+      "bytes": 294
+    },
+    "audit.py": {
+      "sha256": "516393d91849d8042c370ef9b8b41c85a7c9e6a6cb198f421013e4766dc92681",
+      "bytes": 6013
+    },
+    "audit.log": {
+      "sha256": "fe372554eee7d5ced51f7c51b2f3fd8982854724e4046bd0c1b1cdbd1122b12a",
+      "bytes": 501
+    }
+  },
+  "unsuccessfulAttempts": [
+    "The first packaging probe stopped on unordered Docker mount comparison before helper execution; the accepted probe sorts mount destinations and uses a new evidence root.",
+    "The first independent image audit used incompatible automatic Node eval module selection; explicit module mode was used for the accepted read-only audit."
+  ],
+  "remaining": [
+    "Stopped native-data coordinator and writer-fencing checks",
+    "Secret-vault availability and current credential checks",
+    "Background recovery and storage-identity rebinding",
+    "Explicit approval and recovery-gate completion",
+    "Native archive A, reuse capacity for B, restore A with interruption and concurrent admission acceptance"
+  ],
+  "finalFocusedChecks": {
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "Final changed routes/store/host adapters, including two test-only regressions added after the canonical runner loaded this test file."
+  }
+}

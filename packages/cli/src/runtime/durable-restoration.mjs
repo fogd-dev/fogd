@@ -1,3 +1,4 @@
+import { prepareAppArchiveRoutes, prepareAppArchiveRestoreRoutes } from '@fogd/platform/app-archive-routes';
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
@@ -9,7 +10,7 @@ import { durableRouteHelperArgs } from './durable-route-helper.mjs';
 
 const refused = () => Object.assign(new Error('Stopped route restoration requires a checked source pair and sealed destination profile; nothing was started'), { code: 'DURABLE_RESTORATION_REFUSED' });
 const uncertain = () => Object.assign(new Error('Stopped route restoration is unconfirmed; keep source and destination stopped and retain all enrollment records and stores'), { code: 'DURABLE_RESTORATION_UNCERTAIN' });
-const operations = { restore: prepareRouteRestoration, retire: prepareRetiredRouteRestoration };
+const operations = { restore: prepareRouteRestoration, retire: prepareRetiredRouteRestoration, archive: prepareAppArchiveRoutes, 'restore-archive': prepareAppArchiveRestoreRoutes };
 function restorationPlan(config, input, operation) {
   if (!isDeepStrictEqual(config, durableRuntimeConfig(config, input.profile))) throw refused();
   if (input.domain !== (config.services.controller.environment.FOGD_BASE_DOMAIN || 'localhost')) throw refused();
@@ -35,6 +36,13 @@ export async function restoreDurableRoutes(config, input, options) {
 export async function retireDurableRoutes(config, input, options) {
   return restoreRoutes(config, input, 'retire', options);
 }
+export async function archiveDurableRoutes(config, input, options) {
+  return restoreRoutes(config, input, 'archive', options);
+}
+export async function restoreArchivedDurableRoutes(config, input, options) {
+  return restoreRoutes(config, input, 'restore-archive', options);
+}
+
 async function restoreRoutes(config, input, operation, { run = docker } = {}) {
   let plan;
   try { plan = restorationPlan(config, input, operation); } catch { throw refused(); }

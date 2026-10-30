@@ -22,6 +22,8 @@
     "./route-snapshot": "./src/route-snapshot.mjs",
     "./route-restoration": "./src/route-restoration.mjs",
     "./artifact-comparison": "./src/artifact-comparison.mjs",
-    "./decision-history": "./src/decision-history.mjs"
+    "./decision-history": "./src/decision-history.mjs",
+    "./app-archive": "./src/app-archive.mjs",
+    "./app-archive-routes": "./src/app-archive-routes.mjs"
   }
 }

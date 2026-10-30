@@ -63,11 +63,22 @@ snapshot, release, fleet namespace, native identities and storage origin. It kee
 current credential records, unrelated apps, release history and artifact references.
 Queued and scheduled metadata retain their paused receipts for later reconciliation.
 
-This projection does not stop writers, copy native data or change route authority.
+The [archive route protocol](../packages/platform/src/app-archive-routes.mjs)
+connects this state to durable routing: archival removes that app's public route,
+survivors become withheld behind exact approval holds, and restoration adds only
+withheld authority for the archived release. It uses the shared stopped store writer,
+which spends fresh enrollment once and verifies both private and public readbacks.
+Interrupted or lost write replies remain uncertain and refuse replay. A
+[private image check](evidence/operator-app-archive-routes-v9.json) exercises both
+packaged Node helpers on fresh route-store volumes and verifies that controller
+startup still rejects the capability before backend access. It does not run celld
+or copy native app data.
+
+These helpers do not stop application writers or copy native application data.
 No CLI, controller startup path or shipped runtime admits the new capability.
-Existing runtimes reject it. The filesystem coordinator, route publication,
-secret-vault checks, background recovery/rebinding, explicit approval and native
-archive/reuse/restore acceptance remain to be implemented before operator use.
+Existing runtimes reject it. The filesystem coordinator, secret-vault checks,
+background recovery/rebinding, explicit approval and native archive/reuse/restore
+acceptance remain to be implemented before operator use.
 
 ## Remaining archive protocol
 

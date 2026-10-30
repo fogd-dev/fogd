@@ -19,7 +19,13 @@ additional space. Container CPU budgets are not per-worker CPU quotas.
 
 ## Prepare the release
 
-From the matching source checkout, with the qualified images and declared operator
+V8's matching source checkout is commit
+`3638a46fa69ee47b1864aea6c45f40a52fb1d4d2`. Current `main` includes unreleased
+archival runtime code and refuses v8 export because its source inventory differs.
+Received v8 bundles retain their original sources and remain usable. The archival
+family needs separate implementation and qualification before release preparation.
+
+From the matching v8 checkout, with its qualified images and declared operator
 dependency available:
 
 ```sh

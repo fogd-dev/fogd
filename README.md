@@ -23,7 +23,9 @@ credentials, TLS, the app URL and first exact approval. No source checkout or
 package installation is needed for the received operator.
 
 Release preparation is available locally; a public download service or registry
-release has not been published. Maintainers prepare a new artifact with:
+release has not been published. Current `main` contains unreleased archival runtime
+work. Maintainers prepare v8 artifacts from its
+[matching source checkout](docs/releases.md#prepare-the-release) with:
 
 ```sh
 node packages/cli/bin/fogd.js release export /releases/fogd-0.2.0-linux-arm64 \
