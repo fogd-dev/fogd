@@ -9,15 +9,9 @@ import { acquirePreviewHost, guardPreviewHost } from './host-registry.mjs';
 import { hostRefusal, appendHostRecord, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
 import { assessPreviewAdmission, PreviewAdmissionError } from './admission.mjs';
-import { previewContainerCommands } from './container-plan.mjs';
+import { previewServiceCommands } from './container-plan.mjs';
 import { assertPreviewAllocationImage, assertStoppedPreviewGraph } from './stopped-graph.mjs';
 
-function roleCommands(plan, envelope, options, allocationId) {
-  return Object.fromEntries(Object.entries(plan.services).map(([role, service]) => [role, previewContainerCommands(plan, envelope, {
-    publicKey: options.publicKey, expectedGrantSha256: options.expectedGrantSha256, allocationId, role,
-    secretValues: Object.fromEntries(Object.values(service.secretEnvironment).map(key => [key, options.secretValues?.[key]])),
-  })]));
-}
 const resourceLabels = (plan, allocationId) => ({ 'fogd.preview.project': plan.project, 'fogd.preview.config': previewPlanSha256(plan), 'fogd.preview.allocation': allocationId });
 const labelArgs = labels => Object.entries(labels).flatMap(([key,value]) => ['--label', `${key}=${value}`]);
 function createdId(value) {
@@ -51,7 +45,7 @@ export async function allocateStoppedPreview({ root, plan: input, reservation, e
   const plan = validatePreviewPlan(input), allocationId = randomUUID();
   if (!uuid(reservation)) hostRefusal('reservation');
   if (expectedImage !== plan.request.image) hostRefusal('allocation-image');
-  const commands = roleCommands(plan, envelope, options, allocationId), valid = () => roleCommands(plan, envelope, options, allocationId);
+  const commands = previewServiceCommands(plan, envelope, options, allocationId), valid = () => previewServiceCommands(plan, envelope, options, allocationId);
   return guardPreviewHost(async () => {
     const host = await acquirePreviewHost(root, plan.request.engineId);
     const held = host.records.find(record => record.id === reservation);

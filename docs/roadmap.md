@@ -62,8 +62,10 @@ names/ports, active memory limits and held allocations. An internal engine-bound
 host fence and append-only reservation ledger retain budgets across stop, expiry
 and interruption. Internal stopped allocation creates the full role layout and
 verifies actual resource identities, limits, mounts and network placement without
-starting services. Checked input installation, shipped runtime admission, final
-launch checks and ordered teardown remain the next host-lifecycle work before
+starting services. The plan includes a budgeted networkless input installer;
+checked artifact/secret/TLS installation has actual mount readback with every
+application service still never-started. Shipped runtime admission, source
+recheck, final launch checks and ordered teardown remain the next host-lifecycle work before
 public preview launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
 

@@ -273,12 +273,13 @@ This is refusal evidence, not a successful real-engine enrollment or launch.
 
 ## Internal stopped allocation
 
-The [stopped-allocation check](evidence/operator-preview-stopped-allocation.json)
-creates nine containers, four bridges and twelve named volumes under an existing
-capacity hold and host fence. It checks the signed target and original deadline,
+The earlier [stopped-allocation check](evidence/operator-preview-stopped-allocation.json)
+covers nine runtime containers, four bridges and twelve named volumes under an
+existing capacity hold and host fence. The current plan also includes the
+networkless input installer described below. Allocation checks the signed target and original deadline,
 the independently supplied immutable image ID, and actual Docker configuration.
-No service starts. Trust/input volumes remain empty, and runtime execution
-admission remains unavailable for this candidate image.
+No service starts during allocation. Trust/input volumes remain empty until the
+separate installation step; runtime execution admission remains unavailable.
 
 A durable pending journal precedes the first Docker creation. Each resource has a
 fresh allocation identity; the final readback verifies limits, restart policy,
@@ -297,5 +298,27 @@ starts application code or establishes launch readiness.
 After the successful fixture's original grant expires, its unchanged hold still
 refuses a second full envelope while all 409 containers remain stopped.
 
-Checked artifact/TLS input installation, shipped runtime admission, final launch
-checks, ordered teardown and full fresh-app/update browser trials remain open.
+Shipped runtime admission, final launch checks, ordered teardown and full
+fresh-app/update browser trials remain open.
+
+## Internal checked input installation
+
+The [input-installation check](evidence/operator-preview-input-installation.json)
+installs exact artifact, preview-secret and role-specific TLS bytes without starting
+the application. The sealed plan includes ten containers: nine runtime roles and
+one fixed input installer. Its declared memory envelope is 4,992 MiB plus 1 GiB
+headroom. The installer has no network attachments or storage credential
+environment. Its writable mounts cover only the six authority/input volumes;
+application-facing roles retain read-only mounts.
+
+The host snapshots and validates artifact digests/declarations, required secrets,
+the signed target, TLS hostname/expiry, upstream trust and every sealed input
+fingerprint before starting the installer. Artifact validation executes no worker
+code or SQL. A pending journal precedes the start, and the one-shot installer
+refuses existing files. It writes and syncs fixed filenames, then exits.
+
+Completion requires a confirmed clean installer exit, exact readback through the
+stopped services' read-only mounts and a fresh graph check. Every application
+service must remain never-started. Ambiguous results retain the pending operation,
+capacity hold and files without replay. Installed inputs grant no execution
+permission: runtime admission, source recheck, launch and teardown gates remain.

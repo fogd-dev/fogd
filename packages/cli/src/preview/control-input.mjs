@@ -22,9 +22,15 @@ function checkedEnvironment(grant, trust, env) {
   return previewBackendCommand('bucket-init', env).env;
 }
 
-function checkedSecrets(grant, values) {
+export function validatePreviewSecrets(grant, values) {
   executionKeys(values, grant.policy.requiredSecrets);
   if (Object.values(values).some(value => typeof value !== 'string' || !value.length || Buffer.byteLength(value) > 8192) || Buffer.byteLength(JSON.stringify(values)) > 32768) refuseExecution();
+}
+
+export async function validatePreviewArtifact(grant, artifact) {
+  const temporary = await mkdtemp(join(tmpdir(), 'fogd-preview-control-'));
+  try { const release = await receiveArtifact(artifact, temporary, { cronApps: false }); validatePreviewRelease(grant, release); }
+  finally { await rm(temporary, { recursive: true, force: true }); }
 }
 
 // The host installs trust independently in a read-only authority volume. Artifact
@@ -36,12 +42,8 @@ export async function readPreviewControl({ trustDirectory, inputDirectory, env }
     const envelope = await inputJSON(join(inputDirectory, 'execution.json'), 16384);
     const grant = authorizePreviewExecution(envelope, trust), storage = checkedEnvironment(grant, trust, env);
     const artifact = await inputJSON(join(inputDirectory, 'artifact.json'), 2 * MAX_UPLOAD, trust.artifactSha256);
-    const secrets = await inputJSON(join(inputDirectory, 'secrets.json'), 65536, trust.secretsSha256); checkedSecrets(grant, secrets);
-    const temporary = await mkdtemp(join(tmpdir(), 'fogd-preview-control-'));
-    try {
-      const release = await receiveArtifact(artifact, temporary, { cronApps: false });
-      validatePreviewRelease(grant, release);
-      return { grant, artifact, secrets, storage, gatewayToken: env.FOGD_PREVIEW_GATEWAY_TOKEN };
-    } finally { await rm(temporary, { recursive: true, force: true }); }
+    const secrets = await inputJSON(join(inputDirectory, 'secrets.json'), 65536, trust.secretsSha256); validatePreviewSecrets(grant, secrets);
+    await validatePreviewArtifact(grant, artifact);
+    return { grant, artifact, secrets, storage, gatewayToken: env.FOGD_PREVIEW_GATEWAY_TOKEN };
   } catch { refuseExecution(); }
 }

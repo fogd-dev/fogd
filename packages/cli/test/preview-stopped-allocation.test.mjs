@@ -13,7 +13,7 @@ const verify = f => assertStoppedPreviewGraph(f.plan,f.observed,f.image,f.comman
 const refused = { code:'PREVIEW_HOST_REFUSED',reason:'stopped-graph' };
 test('complete never-started graph binds physical identities and signed configuration', () => {
   const f=stoppedPreviewFixture(), first=verify(f); assert.match(first.inventorySha256,/^[a-f0-9]{64}$/);
-  assert.equal(Object.keys(first.identities.containers).length,9); assert.equal(Object.keys(first.identities.volumes).length,12);
+  assert.equal(Object.keys(first.identities.containers).length,10); assert.equal(Object.keys(first.identities.volumes).length,12);
   f.observed.containers.reverse(); assert.deepEqual(verify(f),first);
   f.observed.containers[0].State.StartedAt=new Date().toISOString();assert.throws(()=>verify(f),refused);
 });
@@ -32,7 +32,7 @@ for(const [name,change] of Object.entries({
   extendedDeadline:f=>{f.observed.containers[0].Config.Cmd[2]='2099-01-01T00:00:00.000Z'},
   wrongMemory:f=>{f.observed.containers[0].HostConfig.Memory=0},
   wrongCpu:f=>{f.observed.containers[0].HostConfig.NanoCpus=0},
-  publicPort:f=>{f.observed.containers.at(-1).HostConfig.PortBindings['8080/tcp'][0].HostIp='0.0.0.0'},
+  publicPort:f=>{f.observed.containers.find(c=>c.Config.Labels['fogd.preview.role']==='ingress').HostConfig.PortBindings['8080/tcp'][0].HostIp='0.0.0.0'},
   extraNetwork:f=>{f.observed.containers[2].NetworkSettings.Networks.foreign={NetworkID:'f'.repeat(64)}},
   wrongNetwork:f=>{f.observed.networks[0].Id='f'.repeat(64)},
   externalEgress:f=>{f.observed.networks[0].Internal=false},
@@ -59,6 +59,21 @@ test('image identity check rejects image-seeded storage and independently differ
 test('empty Docker mount driver descriptor is harmless; nonempty driver settings refuse',()=>{
  const f=stoppedPreviewFixture();f.observed.containers[0].HostConfig.Mounts[0].VolumeOptions.DriverConfig={};verify(f);
  f.observed.containers[0].HostConfig.Mounts[0].VolumeOptions.DriverConfig={Name:'foreign'};assert.throws(()=>verify(f),refused);
+});
+test('installed phase permits only a clean installer exit and retains never-started application services',()=>{
+ const f=stoppedPreviewFixture(),installer=f.observed.containers.find(c=>c.Config.Labels['fogd.preview.role']==='input-installer');
+ f.observed.networks.push({Name:'none',Id:'f'.repeat(64),Driver:'null',Scope:'local'});
+ installer.NetworkSettings.Networks={none:{NetworkID:'f'.repeat(64)}};
+ Object.assign(installer.State,{Status:'exited',StartedAt:new Date().toISOString(),ExitCode:0,Pid:0});
+ assertStoppedPreviewGraph(f.plan,f.observed,f.image,f.commands,f.allocationId,f.created,'inputs-installed');
+ assert.throws(()=>verify(f),refused);installer.State.ExitCode=1;
+ assert.throws(()=>assertStoppedPreviewGraph(f.plan,f.observed,f.image,f.commands,f.allocationId,f.created,'inputs-installed'),refused);
+});
+test('deferred none endpoint is allowed only before the installer first starts',()=>{
+ const f=stoppedPreviewFixture(),installer=f.observed.containers.find(c=>c.Config.Labels['fogd.preview.role']==='input-installer');
+ f.observed.networks.push({Name:'none',Id:'f'.repeat(64),Driver:'null',Scope:'local'});
+ installer.NetworkSettings.Networks={none:{NetworkID:'',EndpointID:''}};verify(f);
+ installer.NetworkSettings.Networks.none.NetworkID='e'.repeat(64);assert.throws(()=>verify(f),refused);
 });
 async function hostFixture(t) {
  const f=stoppedPreviewFixture(),root=await mkdtemp(join(tmpdir(),'fogd-allocate-'));await chmod(root,0o700);t.after(()=>rm(root,{recursive:true,force:true}));

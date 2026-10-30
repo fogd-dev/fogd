@@ -49,6 +49,12 @@ function neverStarted(container) {
   if (state?.Status !== 'created' || state.Running !== false || state.Paused !== false || state.Restarting !== false || state.Dead !== false ||
     state.OOMKilled !== false || !/^0001-01-01T00:00:00(?:\.0+)?Z$/.test(state.StartedAt) || container.RestartCount !== 0) hostRefusal('started-container');
 }
+function serviceState(role, container, phase) {
+  if (phase === 'allocated' || role !== 'input-installer') return neverStarted(container);
+  const state = container.State;
+  if (state?.Status !== 'exited' || state.Running !== false || state.Paused !== false || state.Restarting !== false || state.Dead !== false ||
+    state.OOMKilled !== false || state.ExitCode !== 0 || state.Pid !== 0 || !Number.isFinite(Date.parse(state.StartedAt)) || Date.parse(state.StartedAt) < Date.parse('2020-01-01') || container.RestartCount !== 0) hostRefusal('installer-exit');
+}
 function limitsAndPorts(service, host) {
   same([host.Memory, host.NanoCpus, host.PidsLimit, host.ReadonlyRootfs], [service.memoryBytes, service.cpuLimit * 1e9, service.pidsLimit, true]);
   same(host.RestartPolicy, { Name: 'no', MaximumRetryCount: 0 });
@@ -62,12 +68,28 @@ function normalizedMount(value) {
   if (empty(result.VolumeOptions.DriverConfig)) delete result.VolumeOptions.DriverConfig;
   return result;
 }
-function mountsAndNetworks(plan, role, container, checkedNetworks, checkedVolumes) {
-  const service = plan.services[role], host = container.HostConfig;
+function declaredMounts(plan, service, container, checkedVolumes) {
+  const host = container.HostConfig;
   const expected = service.mounts.map(value => ({ Type: 'volume', Source: plan.volumes[value.volume].name, Target: value.target, ReadOnly: value.readOnly, VolumeOptions: { NoCopy: true } }));
   same((host.Mounts || []).map(normalizedMount).sort((a,b) => a.Target.localeCompare(b.Target)), expected.sort((a,b) => a.Target.localeCompare(b.Target)));
   for (const mount of container.Mounts.filter(value => value.Type !== 'tmpfs')) {
     if (mount.Driver !== 'local' || mount.Source !== Object.values(checkedVolumes).find(value => value.Name === mount.Name)?.Mountpoint) hostRefusal('stopped-graph');
+  }
+}
+function networkless(container, observedNetworks) {
+  same(container.HostConfig.NetworkMode, 'none');
+  const entries = Object.entries(container.NetworkSettings.Networks);
+  if (!entries.length && container.State.Status === 'created') return;
+  const network = one(observedNetworks, 'Name', 'none');
+  if (network.Driver !== 'null' || network.Scope !== 'local' || entries.length !== 1 || entries[0][0] !== 'none') hostRefusal('stopped-graph');
+  const endpoint = entries[0][1];
+  const deferred = container.State.Status === 'created' && endpoint.NetworkID === '' && endpoint.EndpointID === '';
+  if (endpoint.NetworkID !== network.Id && !deferred || !empty(endpoint.IPAMConfig) || !empty(endpoint.Links) || !empty(endpoint.Aliases)) hostRefusal('stopped-graph');
+}
+function declaredNetworks(plan, role, container, checkedNetworks, observedNetworks) {
+  const service = plan.services[role], host = container.HostConfig;
+  if (!service.networks.length) {
+    return networkless(container, observedNetworks);
   }
   same(host.NetworkMode, checkedNetworks[service.networks[0]].name);
   same(Object.keys(container.NetworkSettings.Networks).sort(), service.networks.map(key => checkedNetworks[key].name).sort());
@@ -89,20 +111,22 @@ function assertCompleteNamespace(plan, observed) {
   }
 }
 
-export function assertStoppedPreviewGraph(input, observed, image, commands, allocationId, created) {
+export function assertStoppedPreviewGraph(input, observed, image, commands, allocationId, created, phase = 'allocated') {
   try {
+    if (!['allocated', 'inputs-installed'].includes(phase)) hostRefusal('stopped-graph');
     const plan = validatePreviewPlan(input);
     same(observed.host.ID, plan.request.engineId);
     assertCompleteNamespace(plan, observed);
     const checkedVolumes = volumes(plan, observed, allocationId), checkedNetworks = networks(plan, observed, allocationId), containers = {};
     for (const [role, service] of Object.entries(plan.services)) {
       const container = one(observed.containers, 'Name', '/' + service.name), expected = commands[role];
-      same(container.Id, created.containers[role]); neverStarted(container);
+      same(container.Id, created.containers[role]); serviceState(role, container, phase);
       checkContainer(expected.configuration, container, image); checkMounts(expected.configuration, container, plan.volumes);
       same(container.Config.Image, plan.request.image); same(container.Config.Labels, { ...(image.Config.Labels || {}), ...expected.labels });
       same([container.Config.User || '', container.Config.WorkingDir || ''], [image.Config.User || '', image.Config.WorkingDir || '']);
-      assertContainerPrivileges(container.HostConfig, Object.values(checkedNetworks).map(value => value.name));
-      limitsAndPorts(service, container.HostConfig); mountsAndNetworks(plan, role, container, checkedNetworks, checkedVolumes);
+      same(container.Config.OpenStdin || false, role === 'input-installer');
+      assertContainerPrivileges(container.HostConfig, service.networks.length ? Object.values(checkedNetworks).map(value => value.name) : ['none']);
+      limitsAndPorts(service, container.HostConfig); declaredMounts(plan, service, container, checkedVolumes); declaredNetworks(plan, role, container, checkedNetworks, observed.networks);
       containers[role] = container;
     }
     for (const [role, value] of Object.entries(checkedNetworks)) same(value.id, created.networks[role]);

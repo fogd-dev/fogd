@@ -5,8 +5,8 @@ import { previewExecutionSha256 } from '../../src/preview/execution-authority.mj
 import { previewPlanSha256 } from '../../src/preview/plan.mjs';
 
 const id = n => n.toString(16).padStart(64, '0');
-export function stoppedPreviewFixture() {
-  const f = previewPlanFixture(), allocationId = randomUUID(), { plan } = f;
+export function stoppedPreviewFixture(input) {
+  const f = input || previewPlanFixture(), allocationId = randomUUID(), { plan } = f;
   const labels = { 'fogd.preview.project': plan.project, 'fogd.preview.config': previewPlanSha256(plan), 'fogd.preview.allocation': allocationId };
   const image = { Id: plan.request.image, Os: 'linux', Architecture: 'arm64', Config: { Env: ['PATH=/usr/bin'], Labels: { 'io.fogd.runtime.mode': 'preview-backend-candidate' } } };
   const networks = Object.entries(plan.networks).map(([role, value], index) => ({ Id: id(index+100), Name: value.name, Driver: 'bridge', Scope: 'local', Internal: value.internal,
@@ -17,10 +17,10 @@ export function stoppedPreviewFixture() {
   const containers = Object.entries(plan.services).map(([role, service], index) => {
     const expected = commands[role];
     return { Id: id(index+1), Name: '/'+service.name, Image: image.Id, RestartCount: 0, Config: { Image: image.Id, Labels: { ...image.Config.Labels, ...expected.labels },
-      Env: ['PATH=/usr/bin', ...Object.entries(expected.configuration.environment).map(([key,value]) => `${key}=${value}`)], Cmd: ['/app/packages/cli/src/preview/backend.mjs',role,f.envelope.grant.expiresAt], Entrypoint: ['/usr/local/bin/node'] },
+      Env: ['PATH=/usr/bin', ...Object.entries(expected.configuration.environment).map(([key,value]) => `${key}=${value}`)], Cmd: [...expected.configuration.command], OpenStdin: role==='input-installer', Entrypoint: ['/usr/local/bin/node'] },
       State: { Status: 'created', Running: false, Paused: false, Restarting: false, Dead: false, OOMKilled: false, StartedAt: '0001-01-01T00:00:00Z' },
       HostConfig: { Memory: service.memoryBytes, NanoCpus: service.cpuLimit*1e9, PidsLimit: 128, ReadonlyRootfs: true, RestartPolicy: { Name: 'no', MaximumRetryCount: 0 },
-        Dns: ['127.0.0.1'], DnsOptions: ['timeout:1','attempts:1'], IpcMode: 'private', CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'], Tmpfs: { '/tmp':'rw,noexec,nosuid,nodev' }, NetworkMode: plan.networks[service.networks[0]].name,
+        Dns: ['127.0.0.1'], DnsOptions: ['timeout:1','attempts:1'], IpcMode: 'private', CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'], Tmpfs: { '/tmp':'rw,noexec,nosuid,nodev' }, NetworkMode: service.networks.length ? plan.networks[service.networks[0]].name : 'none',
         PortBindings: service.publish ? { '8080/tcp': [{ HostIp: '127.0.0.1', HostPort: String(service.publish.port) }] } : {},
         Mounts: service.mounts.map(mount => ({ Type: 'volume', Source: plan.volumes[mount.volume].name, Target: mount.target, ReadOnly: mount.readOnly, VolumeOptions: { NoCopy: true } })) },
       Mounts: service.mounts.map(mount => ({ Type: 'volume', Name: plan.volumes[mount.volume].name, Source: volumes.find(value => value.Name===plan.volumes[mount.volume].name).Mountpoint, Driver: 'local', Destination: mount.target, RW: !mount.readOnly })),

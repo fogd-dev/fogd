@@ -55,6 +55,9 @@ function serviceRoles(request, project) {
   roles.controller.secretEnvironment.FOGD_PREVIEW_GATEWAY_TOKEN = 'gatewayToken';
   roles.gateway.aliases = { control: [new URL(request.origin).hostname] };
   roles.ingress.publish = { host: '127.0.0.1', port: Number(new URL(request.origin).port || 443), target: 8080 };
+  add('input-installer', [], 512, authorityRoles.flatMap(role => [
+    mount(`${role}-trust`, `/run/fogd-preview-stage/${role}-trust`), mount(`${role}-input`, `/run/fogd-preview-stage/${role}-input`),
+  ]), { environment: {}, secretEnvironment: {} });
   return roles;
 }
 
