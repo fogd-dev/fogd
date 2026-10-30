@@ -48,8 +48,9 @@ ingress components have process, container and browser checks. Internal signed
 execution decisions and isolated bridge/DNS controls also have bounded component
 checks. The internal decision coordinator verifies prepared artifact bytes and
 current source snapshots before signing. A candidate backend image has bounded
-native HTTP/D1/R2 and storage/replica expiry evidence. Controller/gateway/ingress
-integration, ordered shutdown, launch and every-service expiry remain open under
+native HTTP/D1/R2 and storage/replica expiry evidence. Its exact-artifact controller
+has signed-input and native activation checks with no upload/approval HTTP API.
+Gateway/ingress integration, fresh enrollment, ordered shutdown, launch and every-service expiry remain open under
 issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 

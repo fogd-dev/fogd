@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "5baff035ca0575acfcda58ebadd69b2af1a2a845",
+  "executedTreeDirty": true,
+  "scope": "Internal exact-artifact controller and normalized candidate image. Caller-owned qualification profile, not shipped preview-runtime admission, fresh-enrollment CLI, gateway/ingress integration, full preview workflow or recovery acceptance.",
+  "sourceFiles": {
+    "packages/cli/src/preview/backend.mjs": "0f7689adb60223b30eccc262e5ae713b2cdaadcb70f3101a9ab7e3b2da668c4b",
+    "packages/cli/src/preview/execution.mjs": "e38022eb4dd401aa93bb1ff8efec8e69c78c8ae6663d3e711c96153653c8e670",
+    "packages/cli/src/preview/control.mjs": "3992d7e95e65391b5d96eacbcaef3e4b25edc2a467dd65026d166ee91fec1fd5",
+    "packages/cli/src/preview/control-input.mjs": "2bd2c0a15caa3d4052d0272d4694a13ec95b380ee12e0c1e1e7168f47e772248",
+    "packages/cli/src/preview/control-main.mjs": "1de1af5bdca71210a3ef73da6336d108c9930b013d9d3e10886543237f89f609",
+    "packages/cli/test/preview-backend.test.mjs": "685669765073f5ae304b2bc5476b8d8030fb6f49ae38eaa101f4f4e25a1e85e7",
+    "packages/cli/test/preview-control.test.mjs": "477bb283be518eda718a7f1b42c55979e95a54e1e46047c5e19a8cf6a4cd513f",
+    "docker/runtime-preview.Dockerfile": "fb9afa8cbe2cbc9c0f3c0109abc293e98b003b15bb3cbf514b0b1fba05404096",
+    "scripts/build-preview-runtime.mjs": "a2834cda0b69afbe474735d9de0e7700ab558c28e7eea3068c852763de11eda0",
+    "scripts/preview-runtime-archive.mjs": "dfba99a47a06fbafaa9e656a711c5021dccdcd0f7daba842132f57ef3f4c0dca"
+  },
+  "image": {
+    "schema": 1,
+    "image": "sha256:77fb0605230ae2a1e7822f8a39b2caba2f1b72f31a1aa06b6388859f7beee9f7",
+    "builds": [
+      "sha256:77fb0605230ae2a1e7822f8a39b2caba2f1b72f31a1aa06b6388859f7beee9f7",
+      "sha256:77fb0605230ae2a1e7822f8a39b2caba2f1b72f31a1aa06b6388859f7beee9f7"
+    ],
+    "baseFamily": "celld-archive-v9-linux-arm64",
+    "baseImage": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "storageSourceImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "baseCatalogEntrySha256": "5da356465ec3659d082bfe46ab19806473e92a96b946c0c4d203a748c4725f0e",
+    "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+    "sourceFiles": {
+      "packages/cli/src/preview/backend.mjs": "0f7689adb60223b30eccc262e5ae713b2cdaadcb70f3101a9ab7e3b2da668c4b",
+      "packages/cli/src/preview/supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8",
+      "packages/cli/src/preview/deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+      "packages/cli/src/preview/control.mjs": "3992d7e95e65391b5d96eacbcaef3e4b25edc2a467dd65026d166ee91fec1fd5",
+      "packages/cli/src/preview/control-input.mjs": "2bd2c0a15caa3d4052d0272d4694a13ec95b380ee12e0c1e1e7168f47e772248",
+      "packages/cli/src/preview/control-main.mjs": "1de1af5bdca71210a3ef73da6336d108c9930b013d9d3e10886543237f89f609",
+      "packages/cli/src/preview/execution.mjs": "e38022eb4dd401aa93bb1ff8efec8e69c78c8ae6663d3e711c96153653c8e670",
+      "packages/cli/src/preview/execution-authority.mjs": "34ad4ba2472f5fa9e10f6c91ca43b43050b019f18ee421f5fed8f4c5e7cd5b59",
+      "packages/cli/src/preview/execution-shape.mjs": "07b42f50d54c1ac2ad5eb80697ce531abccd49ab8836a1e21d2a9b53bef301cd",
+      "packages/cli/src/preview/input-files.mjs": "c18b861335337fec1e7a2fe6bbda1da7c966952da73ff7bc212c2a725349739b",
+      "packages/cli/src/build-cache/paths.mjs": "0e095f264cb1393f73dd3a9dc104bd2a43b19bad41d192bf0ad17f36272317bc",
+      "packages/cli/package.json": "e0cb7c121525a143aa8d211f6e58fcdeb36965720681250f82b7560fbf44c753",
+      "docker/runtime-preview.Dockerfile": "fb9afa8cbe2cbc9c0f3c0109abc293e98b003b15bb3cbf514b0b1fba05404096"
+    },
+    "sourceInspector": "d69bc732326c6c2949052616d3dc9ec9018270c9268b846c4841b8abea19067a",
+    "storageBinarySha256": "6c64942402753c15536d3ba8446330e07c2f6928eca176a6d6e1e93c0c0782bc",
+    "archiveSha256": "07aa4d4873cd6737d6733b47c891363c4bc1da392129375980fcd98060d2a920",
+    "scope": "Local reproducible preview controller/backend image; no installation or qualified catalog admission.",
+    "qualified": false,
+    "admission": "none"
+  },
+  "nodeVersion": "v26.2.0",
+  "behavior": [
+    "Independent read-only authority supplies expected key, target and fingerprints; artifact input cannot provide a replacement verifier key.",
+    "Signed exact source/app/digest/target/expiry and sealed artifact/secrets/credential bytes are verified before target initialization. Actual background-capable resource declarations refuse even with a valid owner signature.",
+    "Only one exact release is activated through the existing controller core on fresh private storage. Required preview secrets are materialized privately; source administrator credentials are not needed or inherited.",
+    "Only authenticated GET route/status endpoints exist; general upload/approval/admin HTTP APIs are absent. Source and target submission identities remain separate.",
+    "Retained or interrupted controller state refuses automatic replay. Expired metadata remains signature-inspectable but execution refuses.",
+    "Original expiry bounds controller and backend processes; child exit and actual container stop are checked separately."
+  ],
+  "checks": {
+    "connectedNode": {
+      "passed": 143,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "controllerCases": 13,
+    "backendCases": 11,
+    "syntax": "passed; final additional test files also execute in connected run",
+    "quality": "passed; erosion 14.7%, duplication 1.7%",
+    "writing": "passed; terminology/style advisories retained",
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+    "fullSuite": "Not run for this change; connected checks only"
+  },
+  "nativeFixture": {
+    "profile": "One fresh secret-free HTTP app with D1/R2 on two native replicas, one owned private bridge, a controller and isolated MinIO. No public listener or hosted Cloudflare.",
+    "grantProfile": "Caller-controlled candidate qualification profile, not a shipped runtime catalog entry. Owned source metadata is a fixture; no production source controller is contacted.",
+    "artifactDigest": "81b0a50ac74b0dc58662da473fa66d5478ebd8881ccacb151ca860ceb409a80f",
+    "sourceSubmission": "1dbb982f-dc7d-46d8-86c2-a90aee9bdfe8",
+    "targetSubmission": "c959b4c7-f23a-4b09-b3b2-9468828ea813",
+    "acknowledgedHttpMutations": 1,
+    "sqlAndR2ReadThroughBothReplicas": true,
+    "unauthenticatedStatusHttp": 401,
+    "mutationApiHttp": 404,
+    "requiredSecretQualification": "Positive sealed-secret materialization is checked with the real controller core and a test backend; native fixture has no required secrets.",
+    "cpuScope": "One CPU per fixture container; no per-worker CPU quota or reservation claim.",
+    "dataReadback": "Before expiry only; no post-expiry recovery qualification."
+  },
+  "independentReadback": {
+    "passed": true,
+    "scope": "Signed exact-artifact controller with native HTTP/D1/R2; not full preview launch, gateway/ingress, catalog admission or ordered teardown.",
+    "priorQaContainersPreserved": 60,
+    "allRecipientContainersNonRunning": 66,
+    "ownedContainersStoppedAndRetained": 6,
+    "ownedVolumesRetained": 6,
+    "ownedNetworkRetained": 1,
+    "mountedAuthorityAndInputBytesVerified": true,
+    "independentAuthorityVolumeReadOnly": true,
+    "onlyExactReleaseActiveInRetainedControllerState": true,
+    "sourceIdentityAndTargetSubmissionMappingVerified": true,
+    "acknowledgedHttpMutations": 1,
+    "sqlAndR2ReadThroughBothReplicas": true,
+    "actualImageProgramFilesRehashed": 12,
+    "nativeAndStorageBinaryHashesVerified": true,
+    "pinnedSourceStorageBinaryRehashed": true,
+    "normalizedArchiveHeadersAndAliasesVerified": true,
+    "baseImageLayerPrefixVerified": true,
+    "expiryContainerStopLagSeconds": {
+      "minio": 0.017339,
+      "slot-1-a": 1.010813,
+      "slot-1-b": 1.010227,
+      "controller": 0.013996
+    },
+    "terminationSignals": {
+      "minio": null,
+      "bucket-init": null,
+      "slot-1-a": "SIGKILL",
+      "slot-1-b": "SIGKILL",
+      "controller": null
+    },
+    "shutdownState": "Lease cleanup not qualified; retain resources and uncertainty, no reusable-capacity claim",
+    "defaultCronAdmission": "closed",
+    "publicPreviewLaunch": "unavailable"
+  },
+  "expiredAuthorityInspection": {
+    "signatureValidForInspection": true,
+    "currentExecutionRefused": true,
+    "productionActivation": false
+  },
+  "packaging": {
+    "archive": "Generated ustar with fixed ownership/mode/time and directory metadata after members; no package download or native compilation.",
+    "reproducedImage": "sha256:77fb0605230ae2a1e7822f8a39b2caba2f1b72f31a1aa06b6388859f7beee9f7",
+    "pinnedStorageSourceInspector": "Never started, no volumes, retained; copied binary matches actual image.",
+    "rejectedAttempts": [
+      {
+        "root": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-image-20261030-01",
+        "acceptedAsPass": false,
+        "observed": "Two image IDs differ. Readback of never-started inspectors identifies one package-link directory with different timestamps.",
+        "inspectorsRetained": 2
+      },
+      {
+        "root": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-image-20261030-02",
+        "acceptedAsPass": false,
+        "observed": "Copy/link image approach still produces different layer hashes, including the MinIO copy layer. Raw image metadata and context retained."
+      }
+    ],
+    "minimumDelayBetweenBuildsMilliseconds": 2000
+  },
+  "knownTestFailure": {
+    "initial": {
+      "passed": 18,
+      "failed": 1
+    },
+    "observed": "Test compared null-prototype controller maps with a structured clone that changes their prototypes.",
+    "correction": "Compare serialized state for the no-mutation assertion; production state behavior is unchanged. Original failed output retained."
+  },
+  "privateEvidenceRoots": {
+    "native": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-native-20261030-01",
+    "build": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-image-20261030-03",
+    "rejectedBuilds": [
+      "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-image-20261030-01",
+      "/Users/sgtpooki/.local/share/fogd-qualifications/preview-control-image-20261030-02"
+    ]
+  },
+  "privateEvidenceFingerprints": {
+    "native": {
+      "actual-bucket-init-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual-bucket-init-stdout.log": "4af0f1ff4e302ff9c328297105560b1058660880362c9657b93da1031d2a9df9",
+      "actual-controller-state.json": "2f4701179d8ec6a4325d66ce376804c4aaec53b5353003406bd376b95f134edf",
+      "actual-controller-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual-controller-stdout.log": "8193e09cefb3e1b1eec08322db27fca0fa18e8231e6055269cd35ec7dd648e45",
+      "actual-minio-stderr.log": "e45161b950c7dca48f11cdfd6db1d6022d654f7255282e61c609f11d3130dd55",
+      "actual-minio-stdout.log": "6d0960324273eb493be62631d5f49217bcd61b1a71164a1e1762328f012711eb",
+      "actual-program-sha256.json": "98bec7d8df61e19b916a3a20ad9b1cc9b07a098aee50c26225f9245e6822003f",
+      "actual-slot-1-a-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual-slot-1-a-stdout.log": "3a106cd91e3655e645b6fbecae8f98d12f101fb67c7e6f39dfbba6a7176f606e",
+      "actual-slot-1-b-stderr.log": "162f435051764f51b2041a49840bd840714d835e6997f92a639b02cae0903064",
+      "actual-slot-1-b-stdout.log": "9ee86b3e287af85d1af18cd4b22b535002b186c7825c359bb4f3bd05e8700c6d",
+      "actual-stage-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual-stage-stdout.log": "b36892fff76c4b4a355dbc942bbde984a83bb851e3e8470a0a69662b4b2ca44b",
+      "after-containers.json": "6ff973db0996fd380fa0baba99697acf5e4c5b4b063835ed7c265e9ccbb629d9",
+      "after-networks.json": "d424c3de2d0f4eb91708f5000431aa1c05ca573d1559e5628460cb810a3e0a1f",
+      "after-volumes.json": "6fda15cb91c2350b676bb92549b5c4f6a1282bcafd1e143e280590a785d41680",
+      "allocated-containers.json": "8d3646ce92b37bb8fdd34eda1ad219ed28499f0c53dbf77d91bee612991ccbbe",
+      "allocated-volumes.json": "c9aaa7b0d716c6de484fc3c09f53fe2de68d26ddde69f6b53b1a61354df4f05f",
+      "application-check.mjs": "8bc41915a6f9a49de52ec1d6cdff0a6dfac5fe0a4576757bc1e855cfd94eea88",
+      "application.json": "27cc3003b887e41cb86cecdbde7c0e23e5dc299c1faeb70872429e76b58b25af",
+      "artifact.json": "5d14e49923c8fb0ad0e0338cee72926f3586b3c5fb40d6ca84654e59cf88a613",
+      "audited-containers.json": "b68267df942d8d80bfac4fd1720c713c7b37352b94ccc6d31314b8d1d553f96f",
+      "backend.mjs": "0f7689adb60223b30eccc262e5ae713b2cdaadcb70f3101a9ab7e3b2da668c4b",
+      "before-containers.json": "31b7b86f02f1e5695f4f0abcfbc7209996ece158023b404c57a5af110786d5be",
+      "before-networks.json": "039d27dc815521449aa0b4b80cb56d16f33206a54acfa11bf89a562cb7f14076",
+      "before-volumes.json": "e9186a63d18bb54e7cf10e0806224a1a288b006d7d243d939c0cfac256cfbd83",
+      "bucket-init.log": "673007b42439bdc644aabdc92d9a554709a9da1d714ddb88da62b1b90cd933c0",
+      "build-preview-runtime.mjs": "a2834cda0b69afbe474735d9de0e7700ab558c28e7eea3068c852763de11eda0",
+      "control-check.mjs": "ffcbe5a2475bd97e391b4a5b1db815d332173b1d569d7e7cf7e056908b2e978b",
+      "control-input.mjs": "2bd2c0a15caa3d4052d0272d4694a13ec95b380ee12e0c1e1e7168f47e772248",
+      "control-main.mjs": "1de1af5bdca71210a3ef73da6336d108c9930b013d9d3e10886543237f89f609",
+      "control.mjs": "3992d7e95e65391b5d96eacbcaef3e4b25edc2a467dd65026d166ee91fec1fd5",
+      "controller.json": "fac85d30bed08b6eb65239c22d835ae27fd4a7d3c2b4db1f826fbcc0d55b0b10",
+      "controller.log": "b5a0313df651512eac25e9821d244afbdd9a7ebd503c5d452172197c361fa408",
+      "decision.json": "b54dc97a5ffbcec6d9cbaabad74c60c1718f155b1c32cb83d334ddfe0a940b80",
+      "execution.json": "8a719f6d1272c7319f1d871aec1d98242a420ff71c7f1675e8b08e88ceb85019",
+      "execution.mjs": "e38022eb4dd401aa93bb1ff8efec8e69c78c8ae6663d3e711c96153653c8e670",
+      "expired-authority-inspection.json": "b2eb5eebeff1a07d68634f2d254a212fc305773d3e3be81118ef470411d79e10",
+      "fogd-preview-control-audit.log": "028e37c0345edd476760a293e3128ba1f00cff0051b1f65951b6ef50823f6f5a",
+      "fogd-preview-control-audit.py": "c39fed1b4de024ff6b6095112bba29a08c8d7528f276381c44fa91434935cd15",
+      "fogd-preview-control-commit-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-control-connected-current.log": "0eb6d727ae01305c7735b7f27ef595a9c043e1b989c77515919bef3e41a097a0",
+      "fogd-preview-control-guide-writing.log": "9e9b45fbf0442634ca98d6b25282d684f5be3703341d57415524228688662f9b",
+      "fogd-preview-control-issue-writing.log": "7ff526797925e4692fb92161565a6378c649c99ec43123792242eff4b6ebc9bd",
+      "fogd-preview-control-native.log": "f10a87ecc5260b7617822fac07c2026a9bbf421efb818df0b061b8d5b9dffddb",
+      "fogd-preview-control-native.mjs": "f15153a35dabf90e9f995c115762bc9348d73fe7a13bf984b01257e8572e2eb1",
+      "fogd-preview-control-quality-current.log": "cf0d024b48999ad8d5cfdf3924948a677a4497bc1410e37e1706fee27f96e072",
+      "fogd-preview-control-review.md": "c60d8b507d5dfaac9fcec6d8496e06d1dcb796345df1b8d6e09a36a390f0a651",
+      "fogd-preview-control-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-control-syntax.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "fogd-preview-control-test-corrected.log": "7000de76fe39065cc4437d65d56032e962ba192346e6ade68c602e9f7b121bb1",
+      "fogd-preview-control-test.log": "852294a34478724d5b6759bca597ee3cba24544ba9cff3e6dac5699f90651d59",
+      "independent-audit.json": "a6bd70ff3ea3897df70dcb523552fe01520ff45e0fa2ecbfd43172d7ac4a088a",
+      "minio.log": "a8db4d471c4a68ab82f568ee928e7818cc73d133ad7a7b9560a2f9141c96240e",
+      "network.json": "d436754cea4399e34de47e5b090070e2bbd6f1e320af619352c05c49c8e302d3",
+      "preview-backend.test.mjs": "685669765073f5ae304b2bc5476b8d8030fb6f49ae38eaa101f4f4e25a1e85e7",
+      "preview-control.test.mjs": "477bb283be518eda718a7f1b42c55979e95a54e1e46047c5e19a8cf6a4cd513f",
+      "preview-runtime-archive.mjs": "dfba99a47a06fbafaa9e656a711c5021dccdcd0f7daba842132f57ef3f4c0dca",
+      "report.json": "da7c9cce42d5bb12e83b66793f6c318c6202fc63c184833fc80df3c415393f1c",
+      "runtime-preview.Dockerfile": "fb9afa8cbe2cbc9c0f3c0109abc293e98b003b15bb3cbf514b0b1fba05404096",
+      "slot-1-a.log": "b4000fce22d06333990f631c49ad4ec0e899c41e87a8472772d1e3bc120a1424",
+      "slot-1-b.log": "bc326b68ce8e04ab924dda31e49cc05905f328b9981690618cb53a45ec8c69ba",
+      "stage.log": "a2dad74016953ccbd826005a664a7624f187b9d2c2ca5edf761af4e2245f5bcd",
+      "trust.json": "9202ad307dbf046373dec20474b089b92cd9cc700bf002a42e5803b49dd3f982"
+    },
+    "build": {
+      "builds.json": "6a91c5bbccee7703126e575a3e5ee43ad9a55995eeeb9b4debfb381dfd1bfcb4",
+      "fogd-preview-control-build-archive.log": "fab562e3a82f8389bbda7c299af69361e039a78b3ae2da7f73676b634191e468",
+      "minio": "6c64942402753c15536d3ba8446330e07c2f6928eca176a6d6e1e93c0c0782bc",
+      "receipt.json": "fab562e3a82f8389bbda7c299af69361e039a78b3ae2da7f73676b634191e468",
+      "source-inspector.json": "9c50d73cac65d3ddbe995d0c33d1fcd5aa4029d2d95cd3561658a357660aa81b"
+    },
+    "rejectedBuild1": {
+      "builds.json": "c8bb5d00637ccd10d530c534b7fdc805913ba22c3494ba16b741c8488c1ea91e",
+      "copied-headers-0.json": "80fadca8e74a390e7c4eeb5e7fe0568b40e967c6e253364c98e4a82bc20eaac5",
+      "copied-headers-1.json": "9f64a3302b9e6d15ada7eeb5ba872ce0c2e034ddb494070c0f15ded9bf89af56",
+      "fogd-preview-control-build.log": "5de42aeda049575f2b1b7397220ccdd5d7606d3a4f3e43ee5e9ad653212850bc",
+      "fogd-preview-control-layer-audit.log": "5a0e9ee3a72a4bb92a876f0914b950e40e68326fabb673fc194a19de99d87801",
+      "fogd-preview-control-layer-audit.py": "c59aff44c9f4edb02ad67ee5a598905a3f43d7c75011f301cc50d0dccfe92d87",
+      "layer-inspectors.json": "9abdceb4040c7421434f102feb64347a76ad7e56cb727b0c3c80893f574def77"
+    },
+    "rejectedBuild2": {
+      "builds.json": "8bbada821eea6ff8d0bdc14863cbcf83becd1ee4a33daaa5f2feb3e88710a7a6",
+      "failed-images.json": "8983586a9a9eb42883a8b3871de92706d491059f80ef49677edbd02afe9b02fd",
+      "fogd-preview-control-build-corrected.log": "00e454d672104bf903a0a1f37fab29903e22dcbf3fe69213511120ebfada956a"
+    }
+  },
+  "defaultCronAdmission": "closed",
+  "publicPreviewLaunch": "unavailable",
+  "limits": [
+    "Host must independently admit the image and bind actual fresh target resources; valid signatures alone do not establish physical isolation or catalog admission.",
+    "Gateway/authenticated ingress roles, fresh enrollment, capacity admission, ordered teardown and full fresh-app/update preview flows remain open.",
+    "Native shutdown lease cleanup remains uncertain and replicas require forced termination. All owned resources stay retained; no recovery, data promotion or reusable-capacity claim.",
+    "All 60 prior QA containers/resources remain unchanged. All 66 recipient containers are nonrunning; six fixture containers, six volumes and one network remain retained.",
+    "Same physical Mac and local Linux arm64 Docker engine only."
+  ]
+}

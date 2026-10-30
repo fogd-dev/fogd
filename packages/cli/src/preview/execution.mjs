@@ -12,7 +12,7 @@ export function validatePreviewPreparation(input, expectedSha256) {
   if (executionTimestamp(input.preparedAt) > Date.now()) refuseExecution();
 }
 
-function checkedRelease(preparation, release) {
+export function validatePreviewRelease(preparation, release) {
   if (release?.app !== preparation.source.app || release.digest !== preparation.source.digest || !isDeepStrictEqual(release.requiredSecrets, preparation.policy.requiredSecrets)) refuseExecution();
   executionKeys(release.resources, ['script', 'durable', 'd1', 'r2']);
   if (release.resources.script !== preparation.source.app) refuseExecution();
@@ -25,7 +25,7 @@ function checkedRelease(preparation, release) {
 // not allocate a target, start a process or approve anything on the source.
 export function issuePreviewExecution(preparation, { expectedPreparationSha256, release, target, privateKey }) {
   try {
-    validatePreviewPreparation(preparation, expectedPreparationSha256); checkedRelease(preparation, release); executionTarget(target);
+    validatePreviewPreparation(preparation, expectedPreparationSha256); validatePreviewRelease(preparation, release); executionTarget(target);
     if (!isDeepStrictEqual(target.runtime, preparation.runtime) || typeof process.getuid !== 'function') refuseExecution();
     const now = Date.now();
     const grant = { schema: 1, purpose: 'preview-execution', id: randomUUID(), preview: preparation.id, preparationSha256: expectedPreparationSha256,

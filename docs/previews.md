@@ -164,7 +164,8 @@ exercises a candidate image containing the cached runtime and storage binaries,
 the deadline supervisor and fixed backend roles. The launcher derives separate
 preview bucket, namespace and node identities, supplies only explicit preview
 credentials, and runs native replicas directly without automatic restart.
-Controller, gateway and authenticated ingress roles still need integration.
+The controller has separate signed-input checks described below. Gateway,
+authenticated ingress and fresh target enrollment still need integration.
 
 Two uncached local builds reproduce the candidate image. A fresh private fixture
 serves an HTTP application with D1 and R2, reads one acknowledged mutation through
@@ -176,3 +177,27 @@ The replicas require forced termination after storage exits; native lease writes
 remain uncertain. Their stopped containers, storage and network remain retained.
 Ordered shutdown, recovery and completed reclamation need separate confirmation
 before any reusable-capacity claim. Ordinary runtime admission remains unchanged.
+
+## Internal exact-artifact controller
+
+The [controller check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-control.json)
+verifies a signed execution decision against an independently installed read-only
+authority volume. Artifact and secret bytes have separate expected fingerprints.
+The controller revalidates the actual artifact and refuses background-capable
+declarations before initializing application state. Only explicit preview storage
+credentials and secret values enter its target; source administrator credentials
+are unnecessary.
+
+The controller activates one exact artifact on fresh storage and exposes only
+authenticated route and preview-status reads. It has no upload or approval HTTP
+API. Status retains the source submission/digest and records the separate target
+submission. Existing controller state refuses startup, including interrupted
+activation; no automatic replay or approval retry occurs.
+
+A native fixture verifies that path with D1/R2 writes and both replicas, then
+checks expiry and stopped containers. The controller image uses a normalized
+filesystem archive; two uncached local builds reproduce its image. The receipt
+retains rejected packaging attempts and their timestamp differences. This is a
+candidate component check. Shipped runtime admission, public launch, gateway and
+authenticated ingress integration, fresh enrollment and ordered teardown remain
+open.

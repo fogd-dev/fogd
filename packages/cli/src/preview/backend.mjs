@@ -2,17 +2,23 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { supervisePreviewProcess } from './supervisor.mjs';
 
-const roles = ['minio', 'bucket-init', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'];
+const roles = ['minio', 'bucket-init', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'controller'];
 const refused = () => { throw new Error('Preview backend requires a fixed role and explicit private preview configuration'); };
 
 // These commands do not authorize execution. The host coordinator must first
 // verify its signed decision, fresh resources, image, network and capacity.
 export function previewBackendCommand(role, input) {
-  if (!roles.includes(role) || !input || !/^[a-f0-9]{32}$/.test(input.FOGD_PREVIEW_ID || '') ||
-    !/^[a-f0-9]{64}$/.test(input.FOGD_PREVIEW_STORAGE_PASSWORD || '')) refused();
+  if (!roles.includes(role) || !input || !['FOGD_PREVIEW_ID', 'FOGD_PREVIEW_STORAGE_PASSWORD'].every(key => Object.hasOwn(input, key) && typeof input[key] === 'string') ||
+    !/^[a-f0-9]{32}$/.test(input.FOGD_PREVIEW_ID) || !/^[a-f0-9]{64}$/.test(input.FOGD_PREVIEW_STORAGE_PASSWORD)) refused();
   const id = input.FOGD_PREVIEW_ID, user = `preview-${id.slice(0, 12)}`, password = input.FOGD_PREVIEW_STORAGE_PASSWORD;
   const bucket = `fogd-preview-${id}`;
   const env = { PATH: '/usr/local/bin:/usr/bin:/bin' };
+  if (role === 'controller') {
+    if (typeof input.FOGD_PREVIEW_GATEWAY_TOKEN !== 'string' || !/^[a-f0-9]{64}$/.test(input.FOGD_PREVIEW_GATEWAY_TOKEN) || typeof input.FOGD_PREVIEW_EXPIRES_AT !== 'string') refused();
+    return { executable: '/usr/local/bin/node', args: ['packages/cli/src/preview/control-main.mjs'], cwd: '/app',
+      env: { ...env, FOGD_PREVIEW_ID: id, FOGD_PREVIEW_STORAGE_PASSWORD: password,
+        FOGD_PREVIEW_GATEWAY_TOKEN: input.FOGD_PREVIEW_GATEWAY_TOKEN, FOGD_PREVIEW_EXPIRES_AT: input.FOGD_PREVIEW_EXPIRES_AT } };
+  }
   if (role === 'minio') return { executable: '/usr/local/bin/minio', args: ['server', '/data', '--console-address', ':9001'],
     env: { ...env, MINIO_ROOT_USER: user, MINIO_ROOT_PASSWORD: password, MINIO_BROWSER: 'off', MINIO_UPDATE: 'off' }, cwd: '/app' };
   Object.assign(env, { S3_ENDPOINT: 'http://minio:9000', AWS_REGION: 'us-east-1', AWS_ACCESS_KEY_ID: user, AWS_SECRET_ACCESS_KEY: password,
@@ -28,7 +34,7 @@ export function previewBackendCommand(role, input) {
 }
 
 export async function runPreviewBackend(role, expiresAt, input, signal) {
-  return supervisePreviewProcess({ ...previewBackendCommand(role, input), expiresAt, signal });
+  return supervisePreviewProcess({ ...previewBackendCommand(role, { ...input, FOGD_PREVIEW_EXPIRES_AT: expiresAt }), expiresAt, signal });
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

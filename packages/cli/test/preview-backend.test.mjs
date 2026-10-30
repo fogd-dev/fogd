@@ -44,3 +44,17 @@ test('an expired backend role starts no native or storage child', async () => {
   const observed = await runPreviewBackend('minio', new Date(Date.now() - 1).toISOString(), input);
   assert.equal(observed.started, false); assert.equal(observed.outcome, 'expired'); assert.equal(observed.childExitConfirmed, true);
 });
+
+test('controller role has a fixed entrypoint and receives only explicit preview configuration', () => {
+  const config = { ...input, FOGD_PREVIEW_GATEWAY_TOKEN: '3'.repeat(64), FOGD_PREVIEW_EXPIRES_AT: '2026-10-30T22:00:00.000Z' };
+  const command = previewBackendCommand('controller', config);
+  assert.deepEqual(command.args, ['packages/cli/src/preview/control-main.mjs']);
+  assert.equal(command.executable, '/usr/local/bin/node');
+  assert.equal(command.env.FOGD_PREVIEW_GATEWAY_TOKEN, config.FOGD_PREVIEW_GATEWAY_TOKEN);
+  assert.equal(JSON.stringify(command).includes('production'), false);
+});
+
+test('backend role requires own string preview identity and password fields', () => {
+  assert.throws(() => previewBackendCommand('minio', Object.create(input)), /explicit private preview/);
+  assert.throws(() => previewBackendCommand('minio', { ...input, FOGD_PREVIEW_ID: ['1'.repeat(32)] }), /explicit private preview/);
+});
