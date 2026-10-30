@@ -156,3 +156,23 @@ must connect the verified artifact and decision to an admitted preview runtime,
 allocate fresh resources, enforce capacity and every-service expiry,
 then demonstrate a fresh app and an update. All retained deployments are QA
 fixtures; fresh installation and same-family recovery are the release targets.
+
+## Internal native backend image
+
+The [native backend check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-backend.json)
+exercises a candidate image containing the cached runtime and storage binaries,
+the deadline supervisor and fixed backend roles. The launcher derives separate
+preview bucket, namespace and node identities, supplies only explicit preview
+credentials, and runs native replicas directly without automatic restart.
+Controller, gateway and authenticated ingress roles still need integration.
+
+Two uncached local builds reproduce the candidate image. A fresh private fixture
+serves an HTTP application with D1 and R2, reads one acknowledged mutation through
+both native replicas, then verifies storage and replica container stops after the
+shared deadline. A retry with that expired deadline starts no child. This is a
+backend check, not a launched preview, authenticated URL or catalog admission.
+
+The replicas require forced termination after storage exits; native lease writes
+remain uncertain. Their stopped containers, storage and network remain retained.
+Ordered shutdown, recovery and completed reclamation need separate confirmation
+before any reusable-capacity claim. Ordinary runtime admission remains unchanged.

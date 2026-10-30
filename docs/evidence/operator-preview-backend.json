@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "e7f26c0f3bdefb4b8f7f57a9d2c4879369cde4e3",
+  "executedTreeDirty": true,
+  "scope": "Internal candidate backend image and fresh native HTTP/D1/R2 fixture. No signed-decision enrollment, preview controller/gateway/ingress integration, complete application preview, catalog admission or recovery acceptance.",
+  "sourceFiles": {
+    "packages/cli/src/preview/backend.mjs": "3d45c06fb3213f8731b3dc2c3957fb74ad11e72b6e21a37bfb29514aa35b7174",
+    "packages/cli/src/preview/supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8",
+    "packages/cli/src/preview/deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+    "docker/runtime-preview.Dockerfile": "e3892dd3577171eb9b05c332d716be5c799468540aaf5d6e4ace811006957989",
+    "scripts/build-preview-runtime.mjs": "59b3468e1e9a5c023f9b6b4c28da434cacf19fb7339540838a428a16f2aa09a3",
+    "packages/cli/test/preview-backend.test.mjs": "0ab8b626b541996b3ac86a88e460f009e05170b9af806fb69b2b6bc7f5f72f89"
+  },
+  "image": {
+    "schema": 1,
+    "image": "sha256:2e61b93229bb3feeb4746662e340d081936fbf5a283682901815fd39d6d52b96",
+    "builds": [
+      "sha256:2e61b93229bb3feeb4746662e340d081936fbf5a283682901815fd39d6d52b96",
+      "sha256:2e61b93229bb3feeb4746662e340d081936fbf5a283682901815fd39d6d52b96"
+    ],
+    "baseFamily": "celld-archive-v9-linux-arm64",
+    "baseImage": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "storageSourceImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+    "baseCatalogEntrySha256": "5da356465ec3659d082bfe46ab19806473e92a96b946c0c4d203a748c4725f0e",
+    "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+    "sourceFiles": {
+      "packages/cli/src/preview/backend.mjs": "3d45c06fb3213f8731b3dc2c3957fb74ad11e72b6e21a37bfb29514aa35b7174",
+      "packages/cli/src/preview/supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8",
+      "packages/cli/src/preview/deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+      "docker/runtime-preview.Dockerfile": "e3892dd3577171eb9b05c332d716be5c799468540aaf5d6e4ace811006957989"
+    },
+    "scope": "Local reproducible preview backend image; no installation, launch authority or qualified catalog admission.",
+    "qualified": false,
+    "admission": "none"
+  },
+  "nodeVersion": "v26.2.0",
+  "checks": {
+    "connectedNode": {
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "backendRoleCases": 9,
+    "syntax": "passed",
+    "quality": "passed; erosion 14.6%, duplication 1.7%",
+    "writing": "passed; terminology/style advisories retained",
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+    "fullSuite": "Not run for this change; connected checks only"
+  },
+  "backendBehavior": [
+    "Fixed MinIO, bucket-initialization and four native role commands; controller/workerd/arbitrary roles refused.",
+    "Only explicit preview ID and storage password supply application infrastructure credentials; ambient AWS/admin/process-loading configuration is not inherited.",
+    "Preview ID derives separate bucket, fleet prefixes and native node identities; physical freshness remains an independent host requirement.",
+    "Native roles invoke celld directly and never inherit the ordinary supervisor restart loop.",
+    "All long-running fixture backends use the original absolute expiry; an expired retry starts no child."
+  ],
+  "nativeApplication": {
+    "profile": "One fresh app with one D1 database and one R2 bucket on two native replicas in one owned private bridge. No controller/gateway/ingress, public listener or source production installation.",
+    "artifactDigest": "186b1d5440482fe32f7fbd9d72223456b36bb1291b09ae42bd523d217d54e1fb",
+    "nativeVersion": "049fb233cdfaefe5",
+    "acknowledgedHttpMutations": 1,
+    "sqlAndR2ReadThroughBothReplicas": true,
+    "dataReadbackTiming": "Before expiry; no post-expiry recovery or retention acceptance.",
+    "publishedPorts": false,
+    "hostBindMounts": false,
+    "containerCpuBudget": "One CPU per fixture container; not a per-worker CPU quota or reservation.",
+    "containerMemoryBytes": {
+      "minio": 805306368,
+      "nativeEach": 536870912,
+      "bucketInit": 134217728
+    },
+    "pidLimit": 128
+  },
+  "independentReadback": {
+    "passed": true,
+    "scope": "Independent audit of native HTTP/D1/R2 backend behavior, immutable image bytes and shared expiry; no complete preview launch or catalog admission.",
+    "priorQaContainersPreserved": 51,
+    "allRecipientContainersNonRunning": 57,
+    "ownedBackendContainersStoppedAndRetained": 5,
+    "sourceInspectorNeverStartedAndRetained": 1,
+    "uniqueOwnedVolumesRetained": 3,
+    "ownedNetworkRetained": 1,
+    "acknowledgedHttpMutations": 1,
+    "sqlAndR2ReadbackThroughBothReplicas": true,
+    "minioAndBothNativeChildrenExpiredAtOriginalDeadline": true,
+    "expiredRetryStartedNoChild": true,
+    "sourceMinioBinaryMatchesCandidate": true,
+    "actualCandidateFilesRehashed": {
+      "/app/preview/backend.mjs": "3d45c06fb3213f8731b3dc2c3957fb74ad11e72b6e21a37bfb29514aa35b7174",
+      "/app/preview/supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8",
+      "/app/preview/deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+      "/usr/local/bin/celld": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+      "/usr/local/bin/minio": "6c64942402753c15536d3ba8446330e07c2f6928eca176a6d6e1e93c0c0782bc"
+    },
+    "expiryContainerStopLagSeconds": {
+      "minio": 0.019421,
+      "slot-1-a": 1.010344,
+      "slot-1-b": 1.011283
+    },
+    "nativeTerminationSignals": [
+      "SIGKILL",
+      "SIGKILL"
+    ],
+    "shutdownLeaseOutcome": "uncertain after storage expiry; resources retained, no recovery or reusable-capacity claim",
+    "baseImageLayerPrefixVerified": true,
+    "driverFailureAcceptedAsPass": false,
+    "driverAccountingCorrections": [
+      "Compare mount entries by destination; Docker changed array order but no mount binding changed.",
+      "Retry reused one already owned volume and started no child; allocated-volumes contains four references to three unique volumes. Count actual unique retained volumes."
+    ],
+    "firstPackagingFailureRetained": true,
+    "correctedImageReproduced": true,
+    "publicPreviewLaunch": "unavailable",
+    "defaultCronAdmission": "closed"
+  },
+  "knownFailures": {
+    "packaging": {
+      "root": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-backend-image-20261030-01",
+      "acceptedAsPass": false,
+      "observed": "Two first-attempt image IDs differ only at the final preview COPY layer; image configuration and earlier layers match.",
+      "correction": "Copy normalized directory entries through the existing /app root. Two fresh uncached corrected builds reproduce the same candidate image.",
+      "failedImages": [
+        "sha256:9c8479d73b3bc6002c1f03c4b274a38d287afaa250567eaaff323380522b8053",
+        "sha256:e4de2c7b84cc1eb7e80d29c2417c5d6088929eb07b15829805c3f4e05e9cbf8c"
+      ]
+    },
+    "collector": {
+      "root": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-backend-native-20261030-01",
+      "acceptedAsPass": false,
+      "observed": "Driver fails when comparing differently ordered mount arrays; original failure remains retained and no driver pass report exists.",
+      "independentCorrection": "Audit compares bindings by destination, verifies states/images/logs/bytes/deadline times and counts three actual volumes from four allocation references.",
+      "expiredRetry": "Already expired retry reattaches its owned retained MinIO volume but starts no child; no fresh-allocation or data-reuse qualification follows."
+    }
+  },
+  "privateEvidenceRoots": {
+    "native": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-backend-native-20261030-01",
+    "build": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-backend-image-20261030-02",
+    "failedBuild": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-backend-image-20261030-01"
+  },
+  "privateEvidenceFingerprints": {
+    "native": {
+      "after-containers.json": "7677b9af967b3fd25f557cc6a37354759e60cacb778ab84a8a93363ffbf98dd0",
+      "after-networks.json": "039d27dc815521449aa0b4b80cb56d16f33206a54acfa11bf89a562cb7f14076",
+      "after-volumes.json": "e9186a63d18bb54e7cf10e0806224a1a288b006d7d243d939c0cfac256cfbd83",
+      "allocated-containers.json": "af9029058331d9cb8e6af4d6a38cec25cebc912a15718b5ee984c51640de4965",
+      "allocated-volumes.json": "7ba986a11afc1c16791220c4eff01e2d0572c9185f36219680e772fb8564afe9",
+      "application.json": "c33dcaecf4da3d0c0b985d2b32b988a404a82f1ac77c19dbce48720613d725fb",
+      "audit-initial.log": "a365312064cabb3ebdaf182879835cdbe93be2d8b17f80fa721c7b53885e865a",
+      "audit-initial.py": "fe03541bae403fdd58250730375bc4bcf1545db4266a67a0829720a9c46ac27f",
+      "audited-containers.json": "3efb6acfe8aab6b14c014a9f7ff2242d958348f03fadef539b452dc7d8668466",
+      "backend.mjs": "3d45c06fb3213f8731b3dc2c3957fb74ad11e72b6e21a37bfb29514aa35b7174",
+      "before-containers.json": "e001c6f6017c917db5e56bb05fd65fefdfbedde30b031d7a0215c2a11d2a5551",
+      "before-networks.json": "8961c494d654f196a570d3f280e29f54dc4f3f8766d22f3e67230c1011c12ea5",
+      "before-volumes.json": "f50ffd3c82a69d88df0ec7a8b1f566b362af6c2eafc667c888eeb36f79eac642",
+      "bucket-init-253d20a11683.log": "673007b42439bdc644aabdc92d9a554709a9da1d714ddb88da62b1b90cd933c0",
+      "build-preview-runtime.mjs": "59b3468e1e9a5c023f9b6b4c28da434cacf19fb7339540838a428a16f2aa09a3",
+      "deadline.mjs": "bc94b5ef3994d3698213b9f6485361cbd1bc78622d888480a6abae49144a2ffb",
+      "decision.json": "1d89c269260bb3ac18e3670e3514abcc971b2c7e4eec8e0bd5e8e16f29156ab6",
+      "expired-retry.log": "5c2e6dc85c30850d163ef357dfef82dd105dbfe077ed5df7a3f49747e5304f85",
+      "failure.json": "e8edf8d7470b59fdf04938e195a887a8ac6d0063a673c33be6a928dbf342a01d",
+      "fogd-preview-backend-audit-final.log": "674ad64afea5237e674aa62bba20e18fbfe2740e2f64a59f784d0c309075f78f",
+      "fogd-preview-backend-audit.py": "19d27a9288ef6436166212dbc983d5ae344d1d538f10ca44c577f653463d3e76",
+      "fogd-preview-backend-commit-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-backend-connected.log": "f57a90f081efedafda495cd56b14a18acd20fe7b161c85a97a50eccb41a1b19c",
+      "fogd-preview-backend-guide-writing.log": "77752dbf5b23215659b171d72b8a53468960025120706a0e1b83ec9cdea6e433",
+      "fogd-preview-backend-issue-writing.log": "7ff526797925e4692fb92161565a6378c649c99ec43123792242eff4b6ebc9bd",
+      "fogd-preview-backend-native.log": "9bb1b3e2fa3de73091ab0235d10f403fcf185cf4427f7a1a7a6700e76163ce8f",
+      "fogd-preview-backend-native.mjs": "e7f7f16f27c6a5047933c29498fd629ff395e85da0fb83afada6e5b097d9b55d",
+      "fogd-preview-backend-quality-final.log": "206595a69b807db710061d7da6400c5ee8abd5dd783ebca8071863775fce2445",
+      "fogd-preview-backend-review.md": "d23c2b5d59d4439aac8a4879f66b62bd6d7df60f851564d410ac72579f03469a",
+      "fogd-preview-backend-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+      "fogd-preview-backend-syntax.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "fogd-preview-backend-tests.log": "90296cfb07f6a5997b3c3f94d1166a4d74ee79b484bef6f209d6c9b32cf4f597",
+      "independent-audit-initial.json": "822e788ded3af2f902465e6b5c29eda59a3dd499db804b64adb7267c991caffe",
+      "independent-audit.json": "f37e87b453276405450d849928f579f5b0de2b2610f18fc51b771ab19c5bcceb",
+      "minio-504cffb739e6.log": "a8db4d471c4a68ab82f568ee928e7818cc73d133ad7a7b9560a2f9141c96240e",
+      "minio-f5d713b665ec.log": "5c2e6dc85c30850d163ef357dfef82dd105dbfe077ed5df7a3f49747e5304f85",
+      "network.json": "4948370c7dfc8562944a0a93922f107d2e93a5b0c895e9e0854af90d56eecc06",
+      "preview-backend.test.mjs": "0ab8b626b541996b3ac86a88e460f009e05170b9af806fb69b2b6bc7f5f72f89",
+      "program.mjs": "1fa5c008ab2b8f4fbd01c9a3e2fc61319df964e7101bb3a3163f79586231572c",
+      "runtime-preview.Dockerfile": "e3892dd3577171eb9b05c332d716be5c799468540aaf5d6e4ace811006957989",
+      "slot-1-a-18426e178f45.log": "b3f2f89a929bb371b46eea5c9eea55d384621a6268d913b4019c4199210aca84",
+      "slot-1-b-4fc637b71196.log": "02b3b8dafa36b40c7998f13d7d05298760a68737fba898da161d05c98e5688ba",
+      "storage-source-inspector.json": "40bcc361b95d3f058f33ff7f12d6d81d0b7e03d87d59506031dfed5905e65d48",
+      "supervisor.mjs": "0cfdd4f359bb8143baf5890d57d7ed6cfdf375ab99fbcc2e3d154395919a69a8"
+    },
+    "build": {
+      "builds.json": "7a7e5168f07191bbce6294ace329eec4bd2265b27301b83bf2a76d6ab1f5aaaf",
+      "fogd-preview-backend-build-corrected.log": "ef17f451155fd67c84ed2711b5be618b0b8667053903abfc08ca829b8a3a2367",
+      "receipt.json": "ef17f451155fd67c84ed2711b5be618b0b8667053903abfc08ca829b8a3a2367"
+    },
+    "failedBuild": {
+      "fogd-preview-backend-build-failed-images.json": "aebc16cbd84e46d8914cfb4680fd25f695e7484edd8ada50b06943b26eff6932",
+      "fogd-preview-backend-build.log": "0b427ad8eaa76f03c9478dc688d11c3a7dbbb250dc742ebaa6a9c1c0d8c6864a"
+    }
+  },
+  "defaultCronAdmission": "closed",
+  "publicPreviewLaunch": "unavailable",
+  "limits": [
+    "Image is not in the shipped runtime catalog; successful assembly is not execution or installation authority.",
+    "Full fresh-app/update preview demonstrations, controller/gateway/ingress roles, exact signed-decision enrollment and capacity enforcement remain open.",
+    "Simultaneous expiry leaves native lease outcomes uncertain and both native children require SIGKILL. Ordered teardown, recovery and completed reclamation remain open; no reusable-capacity claim.",
+    "All prior QA resources remain unchanged. Five stopped backend containers, one never-started source inspector, three unique owned volumes and one network remain retained.",
+    "Same physical Mac and local Linux arm64 Docker engine only; no hosted Cloudflare or second-machine evidence."
+  ]
+}
