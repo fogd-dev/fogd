@@ -1,10 +1,10 @@
 # Application lifecycle and capacity reclamation
 
-Fogd needs reversible app archival as well as permanent retirement. This contract
-tracks [issue 8](https://github.com/fogd-dev/fogd/issues/8). Reversible archival has
-a private implementation and bounded native evidence; public archival and preview
-expiry remain unavailable. Stopped retirement has a delivered review and optional
-execution binding. It does not grant archival restoration rights.
+Fogd supports reversible app archival as well as permanent retirement within the
+[explicit v9 boundary](operator-v9-acceptance.md). This contract records
+[issue 8](https://github.com/fogd-dev/fogd/issues/8). Preview execution and expiry
+remain open under [issue 2](https://github.com/fogd-dev/fogd/issues/2). Stopped
+retirement has a delivered review and optional execution binding. It does not grant archival restoration rights.
 
 ## State meanings
 
@@ -14,7 +14,7 @@ The [glossary](../GLOSSARY.md) keeps execution, retention and capacity distinct.
 | --- | --- | --- | --- | --- |
 | HTTP paused | New HTTP requests withheld; background controls remain independent | Still occupied | Exact reconciliation/resume under existing controls | Implemented |
 | Installation stopped | All installation writers confirmed stopped | Assignments retained | Start the same installation or use stopped recovery | Implemented |
-| App archived | App ingress and background writers fenced; data retained under an archive identity | Reusable only after verified completion in a fresh target | Explicit restoration of the same app from its retained archive | Private protocol; release gates open |
+| App archived | App ingress and background writers fenced; data retained under an archive identity | Reusable only after verified completion in a fresh target | Explicit restoration of the same app from its retained archive | Qualified explicit v9 selection |
 | Preview expired | Preview authorization ended; writer confirmation remains a separate fact | Occupied until writers are fenced and reclamation completes | Determined by an explicit preview retention policy | Future issue #2 integration |
 | App retired | Old app cannot execute or reclaim its name in the new installation | Released fleet has fresh storage authority | Independent app restore unsupported; an older whole snapshot can resurrect prior state | Implemented stopped retirement |
 
@@ -54,9 +54,9 @@ without Docker, and verifies all 117 image source pins. It executes no new nativ
 retirement. The
 [retirement guide](retirement.md) supplies the operator commands.
 
-## Archive protocol implementation in progress
+## Archive protocol implementation
 
-The source-only [archive state protocol](../packages/platform/src/app-archive.mjs)
+The [archive state protocol](../packages/platform/src/app-archive.mjs)
 projects a verified app into a name-reserving archive, then restores that same app
 into unassigned capacity behind a pending recovery gate. It binds the retained
 snapshot, release, fleet namespace, native identities and storage origin. It keeps
@@ -78,11 +78,10 @@ or copy native app data.
 
 These helpers do not stop application writers or copy native application data.
 The host archive commands use the stopped coordinator described below. Default
-controller startup and shipped runtime selection still refuse the capability.
-The stopped coordinator, background receipt projection, vault checks and attributed
-approval are internal components. An explicit internal controller profile now
-supports held startup and an owner recovery API. Native background, interruption
-and concurrency acceptance and operator commands remain required before release.
+controller startup refuses the capability; explicit v9 selection supplies its fixed
+archive controller profile and owner recovery API. The historical stages below
+record the separate component checks leading to the final native, command and
+release acceptance.
 
 ## Retained snapshot and data-copy implementation
 

@@ -42,8 +42,9 @@ The [v9 acceptance boundary](operator-v9-acceptance.md) adds explicit fresh loca
 two-fleet archival and restoration with retained data, reviewed capacity changes
 and owner recovery approval. The native and received-operator checks cover peer
 preservation, background holds, secret rotation and interrupted commands. Default
-cron admission stays closed. Preview execution/expiry remains open under issue #2;
-it must reuse these fencing and restoration rules.
+cron admission stays closed. [Verified preview preparation](previews.md) binds an
+exact proposal without executing it. Preview execution/expiry remains open under
+issue #2 and must reuse these fencing and restoration rules.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

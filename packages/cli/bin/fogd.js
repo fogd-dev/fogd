@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { previewCommand } from '../src/preview/command.mjs';
 import { storageCommand } from '../src/storage/command.mjs';
 import { artifactsCommand } from '../src/artifacts/command.mjs';
 import { routingCommand } from '../src/routing/command.mjs';
@@ -28,7 +29,9 @@ import { up, deploy, admin, adminDelivery, adminDispatch, adminRepair, adminAckn
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  if (command === 'doctor') {
+  if (command === 'preview') {
+    await previewCommand(args);
+  } else if (command === 'doctor') {
     await doctorCommand(args);
   } else if (command === 'storage') {
     await storageCommand(args);
@@ -118,6 +121,7 @@ try {
     console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
+    console.log('fogd preview prepare ID --runtime FAMILY --lifetime-seconds SECONDS --output DIR  Prepare an exact proposal without executing it');
     console.log('fogd admin review ID --output DIR  Export verified artifacts and compare a release');
     console.log('fogd admin archive APP review [--rotation] [--output NEW_FILE]\nfogd admin archive APP approve --review FILE [--rotation]\nfogd admin archive APP secrets --review ORIGINAL_REVIEW_FILE < values.json');
     console.log('fogd admin artifacts plan  Inspect controller artifact retention without deleting');

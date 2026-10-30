@@ -1,21 +1,24 @@
 # Operator readiness: run the cloud you own
 
-Status: shared storage credential admission and offline transfer commands are
-implemented. Transfer has same-engine evidence; second-machine and other image-store
-acceptance remain open. Owner inspection implements part of application diagnosis;
-local native observation has failure/recovery evidence; scoped logs and broader
-live application/controller diagnosis remain open. A bounded two-fleet serving probe
-covers uploads, peer activation and controller interruption. Host build-cache
-retention has local interruption and restore evidence; controller artifact retention
-and broader serving/capacity acceptance remain open. This advances G2 and G3 in the
-[vision](vision.md): **Cloudflare you can control and touch.** It does not add
-another application binding. The [roadmap](roadmap.md) places this work before
-further binding milestones.
+Status: the [v9 acceptance boundary](operator-v9-acceptance.md) qualifies explicit
+fresh local two-fleet Linux arm64 classic-overlay2 installations, received operator
+and developer-client operation, private owner diagnostics, retained artifact
+history, stopped archive/restoration and bounded controller-loss serving. Earlier
+[v8 acceptance](operator-v8-acceptance.md) supplies verified browser comparisons
+and attributed decisions. The acceptance documents distinguish current checks from
+inherited evidence; the earlier candidate notes below retain their historical scope.
+
+Physical second-machine installation, broader architectures and app density,
+structured shared logs, unaided human onboarding and public artifact publication
+remain open. [Preview preparation](previews.md) does not yet execute previews.
+Default cron admission stays closed. This work advances G2 and G3 in the
+[vision](vision.md): **Cloudflare you can control and touch.** The
+[roadmap](roadmap.md) places operating readiness before further binding milestones.
 
 An operator should be able to put fogd on another supported machine, deploy a
-useful application, find out why it failed, and keep or recover its data. Today,
-local qualification depends on cached images and private setup state. More binding
-names do not remove that operating burden.
+useful application, find out why it failed, and keep or recover its data. Local
+versioned bundles now carry the qualified images and matching operator/client;
+public distribution and physical-host independence remain separate evidence gaps.
 
 ## Scope and sequence
 
