@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "kind": "operator-private-proposed-v9-received-archive-restoration-owner-recovery",
+  "recordedAt": "2026-10-30T17:42:38.435957+00:00",
+  "sourceCommit": "735b455f728748a510aec4d05fe55a0abe5abb7e",
+  "executedProductionTreeDirty": false,
+  "passed": true,
+  "scope": "Actual received operator CLI from the authenticated private proposed v9 release: stopped backup, reviewed archive with a surviving peer and pending update, verified peer write in freed-capacity installation, stopped current snapshot, two-source reviewed restoration, null-secret original owner review/approval, separate HTTP resumes, original baseline and latest peer SQL, unchanged migration ledger, pending code isolation and retained restart. No runtime/plan/HTTP provider injection. Same fresh recipient engine and physical Mac; proposed catalog differs only in selected admission. This is not final public family admission or background release qualification.",
+  "family": "celld-archive-v9-linux-arm64",
+  "sourceAdmission": "candidate",
+  "privateProposalAdmission": "qualified",
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "receivedOperatorProviderOverrides": false,
+  "checks": [
+    "Actual received CLI verifies stopped source snapshot and binds archival execution to its exact review",
+    "Archival frees one logical fleet, protects original artifacts and withholds archived baseline while a peer writes new data",
+    "Current snapshot preserves archived registry, surviving peer and pending code",
+    "Actual received CLI binds two-source restoration and target to its exact review",
+    "Archive-pending diagnostics intentionally return no native replica probes",
+    "Owner review/approval with null secret pin independently verifies retained runtime and existing SQL ledger",
+    "Owner approval leaves HTTP held; each app resumes explicitly",
+    "Original baseline data and latest peer write survive while pending peer code stays inert",
+    "Migration ledger is unchanged through recovery and retained restart",
+    "Current credentials, immutable archive history, canonical artifacts and physical store/enrollment bindings are preserved"
+  ],
+  "independentAudit": {
+    "passed": true,
+    "receivedOperatorFilesRehashed": 490,
+    "runtimeSourceAndNativePinsReverified": 130,
+    "snapshotsReverified": 2,
+    "physicalStoreAndEnrollmentPairsReverified": 3,
+    "reviewedPlansIndependentlyRecomputed": 2,
+    "credentialsPreserved": true,
+    "canonicalArtifactsPreserved": true,
+    "archiveHistoryAndPeerReleasePreserved": true,
+    "archivedArtifactsProtected": true,
+    "oneFleetAvailableAfterArchive": true,
+    "nullSecretOwnerApprovalAttributed": true,
+    "inertArchiveObserverVerified": true,
+    "readOnlyFailureReconciledBeforeContinuation": true,
+    "driverDataAndMigrationReadbacksConsistent": true,
+    "pendingPeerStillInactive": true,
+    "twoSourceExclusionVerified": true,
+    "sourceContainersPreserved": 8,
+    "sourceVolumeNamesPreserved": 11,
+    "ownedRelatedContainersStopped": 24,
+    "defaultCronAdmission": "closed",
+    "publicArchiveReleaseQualified": false
+  },
+  "readOnlyHarnessFailure": {
+    "reason": "The ordinary replica readiness helper awaited a native probe from an archive-pending diagnostic, which intentionally returns an inert report. Read-only state shows pending approval and no native mutation uncertainty. Continue normal owner review/approval and the unexecuted data/status/restart checks, using the fixture scoped token for submitter status. No archive, restoration, approval or resume was replayed.",
+    "inertArchiveObserverVerified": true,
+    "priorReadOnlyHarnessFailureRetained": true
+  },
+  "canonicalChecks": {
+    "passed": 3150,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 568275.228208,
+    "scope": "Reused accepted 735b455 canonical result; production and test source are unchanged for this received workflow."
+  },
+  "syntax": "unchanged-production-source; drivers syntax checked",
+  "quality": "unchanged-production-source; prior accepted quality gate retained",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Final admission audit covering inherited operating/scheduled-work requirements",
+    "Actual qualified-catalog export/import and explicit fresh installation check"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-v9-received-archive-20261030-01",
+  "onboardingRoot": "~/.local/share/fogd-qualifications/archive-v9-onboarding-20261030-01",
+  "proposalRoot": "~/.local/share/fogd-qualifications/archive-release-v9-20261030-01",
+  "recipientContext": "colima-fogd-v9-onboarding-20261030",
+  "evidenceFingerprints": {
+    "driver.mjs": {
+      "sha256": "1578d9c241ae17f428baf868a6e2524a88e971badfd0622af3b1df24b93e0074",
+      "bytes": 13016
+    },
+    "continuation.mjs": {
+      "sha256": "114d0aaf6caadbe1877a5171c14fe1cac374c2c2419d9f7027153e96ebe0509b",
+      "bytes": 10053
+    },
+    "audit.mjs": {
+      "sha256": "56290181c262dd7d4902a0dc9cc38d26055143f18932e442685266023089d757",
+      "bytes": 12393
+    },
+    "observer-readback.mjs": {
+      "sha256": "404a3f9d432e7e31287dd0164e6126072c5e73a48ad8d4a70e0dc277875188e7",
+      "bytes": 1281
+    },
+    "driver.log": {
+      "sha256": "c57013ce7bb17c1530441c9747880f66034e601a273d005f9d51f2bbd23bdd31",
+      "bytes": 940
+    },
+    "continuation.log": {
+      "sha256": "3e6027cf14d9e0548e23678af8e3d08669f67f1624cb5f0ee9158733e79d8c8f",
+      "bytes": 263
+    },
+    "report.json": {
+      "sha256": "27dea3bae6db02172591e8a800e87fe7b7d2b0a82d5dfe469db024fcba0c23e0",
+      "bytes": 3490
+    },
+    "audit.json": {
+      "sha256": "70548022e48b828ca41bf1d37ef53054fdfbdfe9bd5a44b912d012e57fce1b17",
+      "bytes": 883
+    },
+    "audit-readback.json": {
+      "sha256": "3c3157e326bcddff115a3bffe0549e86a48ec5fb0232ab119cfc74ddd3e4a7d4",
+      "bytes": 62718
+    },
+    "failure.json": {
+      "sha256": "eaffe67881125b2215d376d5081213a165ff4190301fcd458993c1be14d9b16e",
+      "bytes": 131689
+    },
+    "observer-failure-readback.json": {
+      "sha256": "b1bbd1ab56d38f0488bf11aa673f2944a7ebac7ed5dec530c46e14579400bd6a",
+      "bytes": 17607
+    },
+    "continuation-initial-state.json": {
+      "sha256": "d319cdee025489a0313bc170bb639988a9ca100e29ff0ce169aa72e514af904a",
+      "bytes": 15240
+    },
+    "before.json": {
+      "sha256": "4579ab7b05a4310a45a15f2dd447bfa5d60ca2c855a4a5fa22e690d6ddba47fc",
+      "bytes": 9050
+    },
+    "after.json": {
+      "sha256": "eeca0ce9cf5d96bd29c9f339b139720b4420be12ea9a86c71ab01a51c79bdcdb",
+      "bytes": 27359
+    },
+    "hosts.json": {
+      "sha256": "2a4531fc3b3b649ddcfa39a8313b0994222acf58dbf7cc6a835c8bf815a7643f",
+      "bytes": 126624
+    },
+    "retained-manifest.json": {
+      "sha256": "af734970c910e814975acac395fb7da81918f1f471d722af38257f3cfe652535",
+      "bytes": 3273
+    },
+    "current-manifest.json": {
+      "sha256": "468bbb54653cdd0c55a38dd8ec1b898f8013f4427df26648737c8faeca02858d",
+      "bytes": 3276
+    },
+    "archive-review.json": {
+      "sha256": "8535f4438c753e2ab2d3e2fcf502b55b6d1681bdaab008134f3903ec1d916fb5",
+      "bytes": 2301
+    },
+    "archive-result.json": {
+      "sha256": "25f2dc1a4bc1ab32a6e96ffdd321382a658a1b348f6bf1789035d122208d52de",
+      "bytes": 599
+    },
+    "archived-state.json": {
+      "sha256": "7302328e592903ec42cf22de15b6e75d0751d3bace9b3797bbe48a9fd29c1b47",
+      "bytes": 13759
+    },
+    "archived-artifact-plan.json": {
+      "sha256": "547dd3de2f2fa1805b430e279df6fb51f27f787e470869cfcb65a47be2c79f43",
+      "bytes": 1471
+    },
+    "current-capacity.json": {
+      "sha256": "10d7efc11dcc5778554704a976f4c35f2f78fa396c8044e5d67c127cc1df5af1",
+      "bytes": 1125
+    },
+    "peer-after-archive.json": {
+      "sha256": "f81fb7713accd61eb2aaabd9872d3aad317f9cb1e92f45b1172dbce3d25fd69d",
+      "bytes": 10970
+    },
+    "restore-review.json": {
+      "sha256": "3f114aa426b780f9b15d3078e71616f8ddf6ef9cf3652ff99169dbec06a64627",
+      "bytes": 2869
+    },
+    "restore-result.json": {
+      "sha256": "a60e1e469bac7dec6db49e1e55286e31dff586b3e7c6f7b643379cc5760d719e",
+      "bytes": 625
+    },
+    "restored-held-state.json": {
+      "sha256": "d319cdee025489a0313bc170bb639988a9ca100e29ff0ce169aa72e514af904a",
+      "bytes": 15240
+    },
+    "restored-native-readiness.json": {
+      "sha256": "47b385f9e507911724569fa7fe776cd9ec2f8c6b9c62734094672fded85ab19c",
+      "bytes": 1786
+    },
+    "owner-review.json": {
+      "sha256": "c914ad4f8c110a40e93091b7dcff510de61b48ca3ff56f189df2b15593135d90",
+      "bytes": 750
+    },
+    "owner-approval.json": {
+      "sha256": "80d3f947e1f0cd2abb93b5d1310e8e30434ded9904174ba3bf533df3558eb1d7",
+      "bytes": 378
+    },
+    "after-recovery-writes.json": {
+      "sha256": "e3447ac40d76d9971df0277338744b563144a7abbc9ff5c9f673219ca77c3401",
+      "bytes": 389
+    },
+    "final-state.json": {
+      "sha256": "7f361f2a504400cd259124fcdb02252681196fee2f2e6358e727909af718ecbe",
+      "bytes": 15361
+    }
+  }
+}

@@ -461,8 +461,28 @@ The received operator enrolls fresh TLS storage, and the included client deploys
 two ordinary Void apps from prepared dependencies. Exact approvals, compatible SQL
 update, pending code/SQL isolation and retained restart pass. Independent audit
 rehashes the received program and verifies physical enrollment, canonical artifacts
-and attributed approvals. Received archival/owner recovery and final admission
-remain open; this is one physical Mac and no public publication.
+and attributed approvals. This preparation checks installation; received archival
+and owner recovery have separate evidence below. The engines run on one physical
+Mac, and no public publication occurs.
+
+The [received v9 recovery check](evidence/operator-archive-v9-received-recovery.json)
+uses that authenticated operator without runtime, plan or HTTP-provider overrides.
+Its actual CLI backs up the stopped installation, reviews/archives the baseline
+app, then reports one available fleet and protects the archived artifacts. The
+surviving peer accepts a new write while its pending update stays inert. A current
+snapshot and the original retained snapshot restore the baseline into fresh stores
+through a second exact command review.
+
+Archive-pending diagnostics remain inert and return no replica probes. The first
+harness incorrectly awaited ordinary readiness from that diagnostic; saved-state
+reconciliation confirms pending approval before continuing only unexecuted owner
+actions. A null-secret owner review and approval pass the controller's own checks
+and leave HTTP held. Separate resumes expose original baseline data and the peer's
+latest write. The pending peer update remains inactive, and the SQL migration
+ledger stays unchanged through retained restart. Independent audit rechecks received
+files, both command reviews, snapshots, physical stores, current credentials and
+archive/decision history. All 24 related services are stopped and retained. Final
+admission audit and actual qualified-catalog release checks remain open.
 
 ## Remaining archive protocol
 
