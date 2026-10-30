@@ -8,14 +8,25 @@ import { artifactPruneStatus } from '@fogd/platform/artifact-prune-state';
 function recordedObservation(state, app, policy) {
   if (!supportedDiagnosticController(state, policy)) throw new Error('Local controller state is unsupported; native readiness is unknown');
   const publicState = state.artifactPruning ? { ...state, artifactPruning: artifactPruneStatus(state) } : state;
-  const recorded = applicationInspection(publicState, app);
+  const item = state.apps[app], archive = item?.archive || item?.archiveRecovery?.archive;
+  const record = archive && state.appArchives.records[archive];
+  const recorded = item?.archive ? { routing: 'archived', active: null } : applicationInspection(publicState, app);
+  if (record) recorded.archive = { id: record.id, status: record.status, at: record.at, digest: record.digest };
   if (recorded.active && (typeof recorded.active.id !== 'string' || typeof recorded.active.digest !== 'string')) throw new Error('Local controller release identity is unsupported; native readiness is unknown');
   return recorded;
 }
 
+// Keep diagnostic output limited to release/routing identity and the safe archive summary.
+function diagnosticRecordedView(recorded) {
+  return { source: 'local-controller-disk', routing: recorded.routing, active: recorded.active,
+    ...(recorded.archive ? { archive: recorded.archive } : {}) };
+}
+
 export function observationSelection(state, app, policy) {
   const recorded = recordedObservation(state, app, policy), item = state.apps[app];
-  const base = { app, recorded: { source: 'local-controller-disk', routing: recorded.routing, active: recorded.active }, key: observationKey(state, app), reason: 'no-active-approved-release' };
+  const base = { app, recorded: diagnosticRecordedView(recorded), key: observationKey(state, app), reason: 'no-active-approved-release' };
+  if (item?.archive) return { ...base, reason: 'app-archived' };
+  if (item?.archiveRecovery) return { ...base, reason: 'archive-recovery-pending' };
   if (state.artifactPruning?.operation) return { ...base, reason: 'controller-artifact-prune-pending' };
   if (!item || !recorded.active) return base;
   if (!supportedApplication(item, ['queueSnapshot', 'cronSnapshot'])) return { ...base, reason: 'unsupported-controller-state' };

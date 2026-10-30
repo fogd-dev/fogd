@@ -251,10 +251,30 @@ the new composition. It does not qualify archived-app restoration or capacity re
 The candidate remains absent from the shipped catalog; default cron admission stays
 closed.
 
-Before archive admission, integrate archive-aware snapshot and diagnostic validation,
-then verify the full native archive/reuse/restore sequence with interruption and
-background recovery. Existing generic readers refuse archive state they cannot
-validate. Secret rotation and the operator workflow also remain open. There are no
+Archive-mode backups validate the complete registry and paired route stores. They
+retain detached background history without contacting archived apps or extending
+old receipt expiry. Live queue/cron apps still need current snapshot evidence;
+unacknowledged background recovery refuses before preparation. Ordinary durable
+mode refuses archive metadata, including unmarked archive fields. These snapshots
+feed the internal app-restoration coordinator; general whole-installation restore
+with detached archive records remains unsupported.
+
+Archive-aware diagnostics return a safe archive summary and distinguish archived
+apps from pending archive recovery. Neither selects a native fleet or sends an
+application request. Registry and decision changes invalidate observation boundaries
+for surviving apps too. Diagnostics do not grant execution or restoration rights.
+
+The [native D1 lifecycle check](evidence/operator-app-archive-readers-v9.json)
+backs up A, archives it into a fresh target, deploys B into the released fleet, and
+restores A into the other fleet from two verified snapshots. Both apps remain
+withheld at restored cold start. A failed early resume and an unconfirmed native
+approval preserve the gate; a fresh exact review/approval and separate HTTP resume
+restore access. Independent retained restart returns both apps' saved SQL rows.
+This is a private D1/HTTP check, not general archival qualification.
+
+Before archive admission, qualify the native archive/reuse/restore sequence across
+storage and background families, interruption and concurrent admission. Secret
+rotation and the operator workflow also remain open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
 

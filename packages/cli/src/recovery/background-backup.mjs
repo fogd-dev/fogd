@@ -25,9 +25,16 @@ function supportedCapabilities(profile) {
   const policy = validateRuntimePolicy(profile);
   return hasDurableRuntimeMode(policy) ? [...capabilities, routeAuthorityCapability] : capabilities;
 }
+function backgroundApps(state, profile, archives) {
+  const capabilities = supportedCapabilities(profile);
+  assertSnapshotState(state, archives ? [...capabilities, appArchiveCapability] : capabilities);
+  if (!archives && (Object.hasOwn(state, 'appArchives') || Object.values(state.apps).some(app => app.archive || app.archiveRecovery || app.route === 'archived'))) throw new Error('App archive state requires the archive runtime mode');
+  const records = archives ? validateAppArchives(state, profile) : {};
+  const archived = Object.values(records).filter(record => record.status === 'archived').map(record => record.name);
+  return Object.fromEntries(families.map(family => [family.key, family.apps(state, archived)]));
+}
 export function backgroundBackupApps(state, profile) {
-  assertSnapshotState(state, supportedCapabilities(profile));
-  return Object.fromEntries(families.map(family => [family.key, family.apps(state)]));
+  return backgroundApps(state, profile, profile?.schema === 4);
 }
 export async function prepareBackgroundBackup(env, state, images, replicas, profile) {
   const inventory = backgroundBackupApps(state, profile), expected = {};
@@ -57,16 +64,10 @@ export function validateBackgroundEvidence(state, manifest, now = Date.now(), pr
   return inventory;
 }
 
-// Only the separate archive verifier uses this inventory. Complete private archive
-// validation precedes treating archived declarations as inactive family history.
+// The source-only archive verifier also checks earlier internal archive profiles.
+// Public durable backup admits this protocol only in the fixed archive mode.
 export function validateAppArchiveBackgroundEvidence(state, manifest, now, profile) {
-  const records = validateAppArchives(state, profile);
-  assertSnapshotState(state, [...supportedCapabilities(profile), appArchiveCapability]);
-  const archived = Object.values(records).filter(record => record.status === 'archived').map(record => record.name);
-  const inventory = {};
-  for (const family of families) {
-    const names = family.apps(state, archived); inventory[family.key] = names;
-    validateSnapshotEvidence(state, manifest[family.key], names, family.protocol, now);
-  }
+  const inventory = backgroundApps(state, profile, true);
+  for (const family of families) validateSnapshotEvidence(state, manifest[family.key], inventory[family.key], family.protocol, now);
   return inventory;
 }

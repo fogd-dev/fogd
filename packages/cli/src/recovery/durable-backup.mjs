@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { hasDurableRuntimeMode, runtimePolicyIdentity, validateRuntimePolicy } from '@fogd/platform/runtime-policy';
+import { validateAppArchiveSnapshot } from '@fogd/platform/app-archive-routes';
 import { validateRouteSnapshot } from '@fogd/platform/route-snapshot';
 import { authorizeInstalledPolicy, verifyRuntimeFamily } from '../runtime/catalog.mjs';
 import { durableRuntimeConfig, durablePlanSha256 } from '../runtime/durable-config.mjs';
@@ -44,7 +45,8 @@ async function captureStopped(context, before, prepared, directory, io, stopped)
   if (stopped.report.missingVolumes.length || !isDeepStrictEqual(stopped.policy, policy)) throw refused();
   sameInventory(before, await io.inspect(config, policy, { run: io.run }));
   const stores = await io.stores(config, policy), state = await io.state(config, policy);
-  const routeAuthority = validateRouteSnapshot(state, { record: stores.authority.record, digest: stores.authority.sha256 }, policy, domain);
+  const routes = policy.schema === 4 ? validateAppArchiveSnapshot : validateRouteSnapshot;
+  const routeAuthority = routes(state, { record: stores.authority.record, digest: stores.authority.sha256 }, policy, domain);
   await writeJson(join(directory, 'compose.json'), config);
   for (const name of ['controller', ...layout.archiveVolumes.filter(name => name !== 'controller')]) await archiveVolume(config, policy, name, directory, io.run);
   const images = Object.fromEntries(Object.entries(config.services).map(([name, service]) => [name, service.image]));

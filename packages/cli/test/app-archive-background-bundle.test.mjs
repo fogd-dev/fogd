@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, cp } from 'node:fs/promises';
 import { join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { fixture as queued } from '../../platform/test/fixtures/queue-controller.mjs';
 import { fixture as scheduled } from '../../platform/test/fixtures/cron-controller.mjs';
 import { operateDelivery } from '../../platform/src/admin-delivery.mjs';
@@ -9,12 +10,14 @@ import { operateDispatch } from '../../platform/src/admin-dispatch.mjs';
 import { prepareAppArchiveRoutes } from '@fogd/platform/app-archive-routes';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { readRouteRecord } from '../../platform/src/route-record-store.mjs';
-import { verifyAppArchiveBundle } from '../src/recovery/durable-bundle.mjs';
+import { backgroundBackupApps, prepareBackgroundBackup, backgroundSnapshotEvidence, validateBackgroundEvidence } from '../src/recovery/background-backup.mjs';
+import { verifyAppArchiveBundle, verifyDurableBundle } from '../src/recovery/durable-bundle.mjs';
 import { durableBundleFixture } from './fixtures/durable-bundle.mjs';
 import { archiveConfig, packRole, saveManifest, generation } from './fixtures/app-archive-data.mjs';
 
-async function archivedBackground(t, family) {
+async function archivedBackground(t, family, archiveMode = false) {
   const bundle = await durableBundleFixture(t, { stage: 'empty' }), path = join(bundle.root, 'background-authority'); await mkdir(path, { mode: 0o755 });
+  if (archiveMode) { Object.assign(bundle.policy, { schema: 4, controllerArgs: ['packages/platform/src/main-archive.mjs'] }); bundle.config = archiveConfig(bundle.config, bundle.policy, bundle.config.name); }
   const policy = { installation: runtimePolicyIdentity(bundle.policy), slots: ['slot-1', 'slot-2'] };
   const slots = bundle.policy.fleets.map(({ id, prefix, nodes }) => ({ id, prefix, nodes: nodes.map(node => node.host) }));
   const f = await family.fixture(t, { slots, routeAuthority: { path: join(path, 'routes.json'), policy, verifyRuntime: async () => {} } });
@@ -56,4 +59,38 @@ test('archive snapshot refuses live queue recovery evidence for an inactive arch
   const f = await archivedBackground(t, queue);
   f.manifest.queueRecovery = { schema: 1, apps: { imports: f.original.apps.imports.queueSnapshot } }; await saveManifest(f.dir, f.manifest);
   await assert.rejects(verifyAppArchiveBundle(f.dir, f.target), { code: 'DURABLE_BUNDLE_REFUSED' });
+});
+
+for (const family of [queue, cron]) test(`fixed archive mode backs up detached ${family.app} history without native snapshot requests`, async t => {
+  const f = await archivedBackground(t, family, true), state = f.projected.state, before = structuredClone(state);
+  const now = family === queue ? f.original.apps.imports.queueSnapshot.expiresAt + 1 : Date.now();
+  const inventory = { queueRecovery: [], cronRecovery: [] };
+  assert.deepEqual(backgroundBackupApps(state, f.target), inventory);
+  const prepared = await prepareBackgroundBackup({}, state, f.manifest.images, f.layout.replicas, f.target);
+  assert.deepEqual(prepared, { queueRecovery: {}, cronRecovery: {} });
+  assert.deepEqual(backgroundSnapshotEvidence(state, prepared, now, f.target), {});
+  assert.deepEqual(validateBackgroundEvidence(state, {}, now, f.target), inventory);
+  const checked = await verifyDurableBundle(f.dir, f.target);
+  assert.deepEqual(checked.state, state);
+  assert.deepEqual(state, before);
+  const ordinary = { ...f.target, schema: 3, controllerArgs: ['packages/platform/src/main-durable.mjs'] };
+  assert.throws(() => backgroundBackupApps(state, ordinary));
+  const unmarked = structuredClone(state); unmarked.requirements = unmarked.requirements.filter(value => value !== 'fogd-app-archive-v1');
+  assert.throws(() => backgroundBackupApps(unmarked, ordinary));
+  assert.throws(() => backgroundBackupApps(unmarked, f.target));
+});
+
+test('archive-aware backup still requires current evidence for a surviving queue and refuses its pending recovery', async t => {
+  const f = await archivedBackground(t, queue, true), state = structuredClone(f.projected.state);
+  const original = f.original.apps.imports, id = randomUUID(), active = structuredClone(f.original.deployments[original.active]);
+  Object.assign(active, { id, app: 'worker' }); state.deployments[id] = active;
+  const app = structuredClone(original); app.active = id; app.slot = 'slot-1';
+  Object.assign(app.queueSnapshot, { id: randomUUID(), deployment: id }); state.apps.worker = app;
+  const expected = { queueRecovery: { worker: app.queueSnapshot.id }, cronRecovery: {} };
+  assert.deepEqual(backgroundBackupApps(state, f.target), { queueRecovery: ['worker'], cronRecovery: [] });
+  const evidence = backgroundSnapshotEvidence(state, expected, app.queueSnapshot.at, f.target);
+  assert.deepEqual(Object.keys(evidence.queueRecovery.apps), ['worker']);
+  assert.throws(() => backgroundSnapshotEvidence(state, expected, app.queueSnapshot.expiresAt, f.target), /expired/);
+  app.queueRecovery = { status: 'pending' };
+  await assert.rejects(prepareBackgroundBackup({}, state, f.manifest.images, f.layout.replicas, f.target), /Acknowledge existing queue recovery/);
 });

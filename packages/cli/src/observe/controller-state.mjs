@@ -1,3 +1,4 @@
+import { appArchiveCapability, validateAppArchives } from '@fogd/platform/app-archive';
 import { routeAuthorityCapability } from '@fogd/platform/route-snapshot';
 import { hasDurableRuntimeMode, runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { supportedController, object } from '../controller-schema.mjs';
@@ -10,11 +11,17 @@ function journalEnvelope(value, policy) {
 }
 // This diagnostic projection never authorizes publication or artifact deletion.
 // Other controller-state consumers keep their existing capability restrictions.
+function archiveMetadata(state) {
+  return Object.hasOwn(state || {}, 'appArchives') || Object.values(state?.apps || {}).some(app => app?.archive || app?.archiveRecovery || app?.route === 'archived');
+}
 export function supportedDiagnosticController(state, policy) {
-  if (!hasDurableRuntimeMode(policy)) return supportedController(state);
+  if (!hasDurableRuntimeMode(policy)) return !archiveMetadata(state) && supportedController(state);
   try {
     if (policy.routing !== 'durable' || !Array.isArray(state?.requirements) || !state.requirements.includes(routeAuthorityCapability) || !journalEnvelope(state.routeAuthority, policy)) return false;
-    return supportedController({ ...state, requirements: state.requirements.filter(value => value !== routeAuthorityCapability) });
+    const excluded = [routeAuthorityCapability];
+    if (policy.schema === 4) { validateAppArchives(state, policy); excluded.push(appArchiveCapability); }
+    else if (archiveMetadata(state)) return false;
+    return supportedController({ ...state, requirements: state.requirements.filter(value => !excluded.includes(value)) });
   } catch { return false; }
 }
 export function diagnosticRoutingPending(state, app, policy) {

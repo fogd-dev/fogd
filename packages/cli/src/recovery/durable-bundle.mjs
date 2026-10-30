@@ -55,11 +55,12 @@ async function archivedRouteRecord(directory, policy) {
 }
 
 export async function verifyDurableBundle(directory, profile) {
+  if (profile?.schema === 4) return verifyAppArchiveBundle(directory, profile);
   return verifyBundle(directory, profile, validateBackgroundEvidence, validateRouteSnapshot, Date.now());
 }
 
-// Source-only archival protocol. Ordinary restore/backup keeps its original
-// capability boundary. Retained snapshots are checked at the bound archival time;
+// Explicit archival protocol; ordinary durable mode keeps its original
+// capability boundary. The fixed archive mode uses this verifier for backup. Retained snapshots are checked at the bound archival time;
 // restoring their background work still requires fresh diagnosis/acknowledgment.
 export async function verifyAppArchiveBundle(directory, profile, at = Date.now()) {
   return verifyBundle(directory, profile, validateAppArchiveBackgroundEvidence, validateAppArchiveSnapshot, at);
