@@ -60,8 +60,10 @@ The internal preview host plan now seals role/network/volume placement and binds
 realized commands to the signed target. Read-only eligibility includes retained
 names/ports, active memory limits and held allocations. An internal engine-bound
 host fence and append-only reservation ledger retain budgets across stop, expiry
-and interruption. Fresh resource enrollment, shipped runtime admission and
-complete stopped-graph verification remain the next host-lifecycle work before
+and interruption. Internal stopped allocation creates the full role layout and
+verifies actual resource identities, limits, mounts and network placement without
+starting services. Checked input installation, shipped runtime admission, final
+launch checks and ordered teardown remain the next host-lifecycle work before
 public preview launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
 

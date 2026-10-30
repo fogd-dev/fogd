@@ -59,8 +59,8 @@ function serviceRoles(request, project) {
 }
 
 // This constructs a fixed configuration template. It authorizes neither an image
-// nor allocation. The host must independently admit the runtime and reserve the
-// fresh resources before realizing it with the signed absolute deadline.
+// nor allocation. Reserve fresh resources before realizing it with the signed
+// absolute deadline; runtime execution admission is required before any start.
 export function createPreviewPlan(input) {
   try {
     const request = checkedRequest(input), preview = request.preparation.id, project = `fogd-preview-${preview.replaceAll('-', '')}`;

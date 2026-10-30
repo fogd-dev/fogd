@@ -39,7 +39,7 @@ const plan = (octet = 250, port = 49443) => previewPlanFixture(octet, port).plan
 test('fresh host registry is private and engine-bound; initialization never replaces it', async t => {
   const f = await fixture(t);
   assert.deepEqual(await f.initialize(), { initialized: true, engineId, capacityReserved: false, executionAuthorized: false });
-  assert.deepEqual(await readdir(f.directory), ['holds', 'host.json']);
+  assert.deepEqual(await readdir(f.directory), ['allocations', 'holds', 'host.json']);
   assert.equal((await stat(join(f.directory, 'host.json'))).mode & 0o7777, 0o600);
   assert.equal((await stat(f.holds)).mode & 0o7777, 0o700);
   const original = await readFile(join(f.directory, 'host.json'));
@@ -59,7 +59,7 @@ test('durable hold reserves the entire envelope, grants no execution and survive
   const fresh = await exec(process.execPath, ['--input-type=module', '-e', script, f.root, engineId]);
   assert.deepEqual(JSON.parse(fresh.stdout), held);
   await assert.rejects(f.reserve(plan(249, 49444)), { code: 'PREVIEW_ADMISSION_REFUSED', reason: 'capacity' });
-  assert.deepEqual(await readdir(f.directory), ['holds', 'host.json']);
+  assert.deepEqual(await readdir(f.directory), ['allocations', 'holds', 'host.json']);
   assert.deepEqual(await f.inspect(), held);
 });
 

@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { posix } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
+import { assertContainerPrivileges, assertInstallationExclusion, InstallationIsolationError } from '../recovery/installation-isolation.mjs';
 import { docker } from '../recovery/docker.mjs';
 import { checkContainer, assertOwnedLocalVolume } from '../recovery/inventory.mjs';
 import { checkMounts } from '../recovery/container-isolation.mjs';
@@ -10,6 +11,7 @@ const options = { timeoutMs: 15000 };
 const id64 = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const empty = value => value == null || value === '' || (typeof value === 'object' && !Object.keys(value).length);
 const sorted = items => [...items].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+const clean = path => posix.normalize(path).replace(/(.)\/$/, '$1');
 class Refusal extends Error {}
 function refuse(reason) { throw new Refusal(reason); }
 
@@ -22,14 +24,14 @@ export async function inspectDurableInstallation(config, profile, { run = docker
     const project = containers.filter(c => c.Config?.Labels?.['com.docker.compose.project'] === sealed.name);
     const volumes = await namedVolumes(sealed, run), networks = await namedNetworks(sealed, run);
     const services = await projectServices(sealed, project, volumes, networks, run);
-    for (const container of containers) if (!project.includes(container)) assertForeign(sealed, container, project, volumes, networks);
+    for (const container of containers) if (!project.includes(container)) assertInstallationExclusion(sealed, container, project, volumes, networks);
     const identity = createHash('sha256').update(canonical({ v: 'fogd-durable-inventory-v1', profile, config: sealed,
       services: Object.fromEntries(Object.entries(services).map(([name, s]) => [name, s.identity])),
       volumes: Object.fromEntries(Object.entries(volumes).map(([key, v]) => [key, v.identity])),
       networks: Object.fromEntries(Object.entries(networks).map(([key, n]) => [key, n.identity])) })).digest('hex');
     return { identity, services: Object.fromEntries(Object.entries(services).map(([name, s]) => [name, s.state])) };
   } catch (error) {
-    const refused = new Error(`Durable installation inventory refused: ${error instanceof Refusal ? error.message : 'Docker inventory could not be verified'}`);
+    const refused = new Error(`Durable installation inventory refused: ${error instanceof Refusal || error instanceof InstallationIsolationError ? error.message : 'Docker inventory could not be verified'}`);
     refused.code = 'DURABLE_INVENTORY_REFUSED'; throw refused;
   }
 }
@@ -136,7 +138,7 @@ function checkService(config, name, service, container, image, volumes, networks
   checkLaunch(config, service, container, image);
   checkImageSeeding(config, service, host);
   checkVolumeMounts(config, container, volumes);
-  assertPrivileges(host, Object.values(networks).map(n => n.name));
+  assertContainerPrivileges(host, Object.values(networks).map(n => n.name));
   checkRestartAndPorts(service, host);
   const attached = checkServiceNetworks(service, container, host, networks);
   return {
@@ -191,12 +193,6 @@ function serviceState(container) {
   return { id: container.Id, running: state.Running, restarting: state.Restarting, paused: state.Paused, status: state.Status, exitCode: state.ExitCode, startedAt: state.StartedAt };
 }
 
-const unprivilegedEmpty = ['CapAdd', 'Devices', 'DeviceRequests', 'DeviceCgroupRules', 'Sysctls', 'Binds', 'VolumesFrom', 'Links', 'PidMode', 'UTSMode', 'UsernsMode'];
-const allowedModes = { IpcMode: ['', 'private', 'shareable'], CgroupnsMode: ['', 'private'] };
-function assertPrivileges(host, networkNames) {
-  if (host.Privileged || unprivilegedEmpty.some(field => !empty(host[field])) || Object.entries(allowedModes).some(([field, allowed]) => !allowed.includes(host[field] ?? '')) ||
-    !networkNames.includes(host.NetworkMode)) refuse('container privileges or namespaces exceed the sealed configuration');
-}
 function restartPolicy(value = 'no') {
   const [name, count] = String(value).split(':');
   return [name, count === undefined ? 0 : Number(count)];
@@ -213,23 +209,6 @@ function publishedPorts(bindings) {
   return Object.entries(bindings || {}).flatMap(([port, list]) => (list || []).map(item => [port, item?.HostIp ?? '', item?.HostPort ?? '']));
 }
 
-// A stopped foreign container can restart later, so its state does not matter.
-function assertForeign(config, container, project, volumes, networks) {
-  const host = container.HostConfig || {}, names = new Set(Object.values(config.volumes).map(v => v.name));
-  const mountpoints = Object.values(volumes).map(v => v.mountpoint);
-  const sources = [...(container.Mounts || []).map(m => [m.Type === 'volume' ? m.Name : null, m.Source]),
-    ...(host.Mounts || []).map(m => m?.Type === 'volume' ? [m.Source, null] : [null, m?.Source]),
-    ...(host.Binds || []).map(bind => { const source = String(bind).split(':')[0]; return source.startsWith('/') ? [null, source] : [source, null]; })];
-  if (sources.some(([name, path]) => names.has(name) || (typeof path === 'string' && path && mountpoints.some(mp => overlaps(clean(path), mp))))) refuse('another container mounts installation storage');
-  const joined = mode => typeof mode === 'string' && mode.startsWith('container:') && project.some(c => sameContainer(c, mode.slice(10)));
-  if ([host.NetworkMode, host.PidMode, host.IpcMode].some(joined) || (host.VolumesFrom || []).some(ref => project.some(c => sameContainer(c, String(ref).split(':')[0])))) refuse('another container joins installation namespaces');
-  const ids = new Set(Object.values(networks).map(n => n.id)), networkNames = new Set(Object.values(networks).map(n => n.name));
-  if (networkNames.has(host.NetworkMode) || Object.entries(container.NetworkSettings?.Networks || {}).some(([name, endpoint]) => networkNames.has(name) || ids.has(endpoint?.NetworkID))) refuse('another container is attached to installation networks');
-  if (container.Config?.Labels?.['fogd.observer.project'] === config.name) refuse('an installation helper container exists');
-}
-const clean = path => posix.normalize(path).replace(/(.)\/$/, '$1');
-const overlaps = (a, b) => a === b || b.startsWith(a === '/' ? '/' : `${a}/`) || a.startsWith(`${b}/`);
-const sameContainer = (container, ref) => ref && (container.Id === ref || (ref.length >= 12 && container.Id.startsWith(ref)) || container.Name === `/${ref}`);
 
 function canonical(value) {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;

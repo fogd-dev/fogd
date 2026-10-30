@@ -270,3 +270,32 @@ filesystem persistence, competing processes, damaged records and retained holds.
 The actual QA engine refuses fresh initialization because earlier preview networks
 have no registry entries; those resources and the refusing marker remain retained.
 This is refusal evidence, not a successful real-engine enrollment or launch.
+
+## Internal stopped allocation
+
+The [stopped-allocation check](evidence/operator-preview-stopped-allocation.json)
+creates nine containers, four bridges and twelve named volumes under an existing
+capacity hold and host fence. It checks the signed target and original deadline,
+the independently supplied immutable image ID, and actual Docker configuration.
+No service starts. Trust/input volumes remain empty, and runtime execution
+admission remains unavailable for this candidate image.
+
+A durable pending journal precedes the first Docker creation. Each resource has a
+fresh allocation identity; the final readback verifies limits, restart policy,
+private network placement, loopback publishing, no-copy mounts and read-only
+authority/input permissions. It rejects unexpected resources and foreign mounts
+or namespace attachments. Completion records the actual resource identities and
+configuration fingerprint; capacity remains held.
+
+An uncertain Docker result or failed verification retains resources, journal and
+host fence. The first fixture remains fenced after rejecting Docker's empty mount
+driver descriptor. The corrected check accepts that empty representation and
+still rejects nonempty driver settings. A separate fresh-engine fixture completes
+allocation while preserving its 400 prior stopped QA containers. Neither fixture
+starts application code or establishes launch readiness.
+
+After the successful fixture's original grant expires, its unchanged hold still
+refuses a second full envelope while all 409 containers remain stopped.
+
+Checked artifact/TLS input installation, shipped runtime admission, final launch
+checks, ordered teardown and full fresh-app/update browser trials remain open.
