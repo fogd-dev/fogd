@@ -1,4 +1,5 @@
 import { isDeepStrictEqual } from 'node:util';
+import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { runtimePolicyIdentity } from '@fogd/platform/runtime-policy';
 import { validateRouteSnapshot } from '@fogd/platform/route-snapshot';
@@ -54,7 +55,9 @@ export async function readDurableRestorePlan(directory, project, selection, { ch
   try {
     const entry = choose(selection);
     if (!entry || !hash(selection?.expectedIdentity)) throw refused();
-    const manifestPath = join(directory, 'manifest.json'), before = await fingerprint(manifestPath);
+    const manifestPath = join(directory, 'manifest.json');
+    for (const name of ['manifest.json', 'compose.json']) if (!(await lstat(join(directory, name))).isFile()) throw refused();
+    const before = await fingerprint(manifestPath);
     const config = await readJson(join(directory, 'compose.json')), manifest = await readJson(manifestPath);
     const source = sourceProfile(config, manifest, entry, selection.expectedIdentity);
     const checked = await verifyDurableBundle(directory, source.policy);

@@ -37,6 +37,12 @@ qualified-catalog installation check. Default cron admission remains closed.
 V7 remains closed because its image lacks the retention correction. There are no
 existing user installations; fresh installation is the release target.
 
+Safe turnover continues under the [application lifecycle contract](application-lifecycle.md).
+The CLI can review a stopped retirement's identity, downtime, retained data and
+planned capacity, then bind execution to that review. Reversible app archival and
+preview expiry remain open under issues #8 and #2; retirement does not supply those
+restoration rights.
+
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses
 these current gaps:

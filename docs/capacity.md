@@ -20,7 +20,11 @@ A scoped credential also has a pending limit. The legacy local team token only h
 the global pending limit. Zero pending submissions can coexist with a full artifact
 quota. The [stopped retirement workflow](retirement.md) releases a fleet in a fresh
 installation while retaining old data and history. It does not prune artifacts.
-Do not manually remove ownership records to manufacture capacity.
+Do not manually remove ownership records to manufacture capacity. The
+[retirement review](retirement.md#review-a-durable-retirement) reports planned slot
+release separately from retained snapshot bytes and live capacity that it cannot
+observe. Reversible app archival remains open under the
+[lifecycle contract](application-lifecycle.md).
 
 Slot rows show cached bucket ownership separately from controller assignments.
 Disagreement keeps capacity occupied and can indicate recovery inconsistency.

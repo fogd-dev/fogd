@@ -7,6 +7,7 @@ import { artifactDigest } from '@fogd/runtime/artifact';
 import { retireDurableInstallation } from '../src/recovery/durable-restore.mjs';
 import { restoreDurableData } from '../src/recovery/durable-restore-data.mjs';
 import { readDurableRetirementPlan } from '../src/runtime/durable-retirement-plan.mjs';
+import { retirementReview } from '../src/recovery/retirement-review.mjs';
 import { retireDurableRoutes } from '../src/runtime/durable-restoration.mjs';
 import { enrollDurableRestoration } from '../src/runtime/durable-installation.mjs';
 import { assertDurableEnrollmentReady, beginDurableEnrollment } from '../src/runtime/enrollment-record.mjs';
@@ -49,6 +50,24 @@ async function fixture(t) {
     sourceRunning: () => { live = true; }, run: () => retireDurableInstallation(source.dir, 'retired', output, selection, retirement, options) };
 }
 const uncertain = work => assert.rejects(work, error => error.code === 'DURABLE_RESTORE_UNCONFIRMED' && error.cause === undefined);
+
+test('a matching reviewed retirement completes the existing fenced coordinator', { skip }, async t => {
+  const f = await fixture(t);
+  f.retirement.expectedPlan = retirementReview(f.plan).plan;
+  await f.run();
+  await assertDurableEnrollmentReady(f.target.directory);
+  const state = JSON.parse(await readFile(join(f.target.rolePath('controller'), 'state.json')));
+  assert.equal(state.apps.alpha.route, 'retired'); assert.equal(state.apps.alpha.slot, null);
+  assert.equal(state.apps.beta.active, f.source.requests.beta.id);
+});
+
+test('a mismatched retirement review refuses before any target transport or output', { skip }, async t => {
+  const f = await fixture(t); f.retirement.expectedPlan = '0'.repeat(64);
+  await uncertain(f.run());
+  assert.deepEqual(f.target.events, []); assert.deepEqual(f.calls, []);
+  await assert.rejects(lstat(f.output), { code: 'ENOENT' });
+  assert.equal((await readdir(f.sourceHost)).includes('launch.pending.json'), false);
+});
 
 test('durable retirement preserves original recovery bytes, survivor files and pinned artifacts while emptying only the retired fleet', { skip }, async t => {
   const f = await fixture(t), before = await readFile(join(f.source.dir, 'manifest.json'));

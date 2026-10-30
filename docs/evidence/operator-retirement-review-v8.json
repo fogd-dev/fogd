@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "kind": "operator-retirement-review-v8",
+  "recordedAt": "2026-10-30T01:20:08.811Z",
+  "passed": true,
+  "scope": "Read-only planning against a retained native v8 QA snapshot; stale execution refused before Docker or allocation. No native retirement executed.",
+  "family": "celld-approval-v8-linux-arm64",
+  "image": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "plan": "1505b6d25d977d61a1b4047f49384ef0d003495c1bc35fb85f2189a5c0cf5c1c",
+  "snapshotSha256": "598c5ac474e032099d348509a07c8cdd041037579426ab4daa67952dc551f1ba",
+  "snapshotMembersRehashed": 11,
+  "archiveMemberBytes": 936273331,
+  "sourceFilesRehashed": 117,
+  "stableRepeatedReview": true,
+  "changedTargetInvalidatesReview": true,
+  "staleReviewRefused": true,
+  "dockerInvocations": 0,
+  "sourceUnchanged": true,
+  "targetAllocated": false,
+  "privateValuesChecked": 16,
+  "defaultCronAdmission": "closed",
+  "reversibleArchivalImplemented": false,
+  "sourceCommit": "6fc7dd7bef7d86633ad0a43b58856a533f6e70f4",
+  "executedTreeDirty": true,
+  "independentAudit": {
+    "passed": true,
+    "snapshotMembersIndependentlyRehashed": 11,
+    "reviewHashesIndependentlyRecomputed": 2,
+    "staleRefusalExitCode": 1,
+    "scope": "Read-only retained native QA snapshot; no new native retirement or archive operation"
+  },
+  "evidenceRoot": "~/.local/share/fogd-qualifications/retirement-review-v8-20261030-01",
+  "limits": [
+    "No new native retirement, reversible archival or live capacity reclamation was executed.",
+    "Positive reviewed execution is covered by the filesystem-backed coordinator integration test.",
+    "No existing user installations; the snapshot is a retained QA fixture."
+  ],
+  "executedSources": {
+    "packages/cli/bin/fogd.js": {
+      "sha256": "cfdf5396788113023917be639273de8b98d58699f2efc4d235fa4836fae7afc6",
+      "bytes": 11681
+    },
+    "packages/cli/src/recovery/retire.mjs": {
+      "sha256": "d4c6db05698caaaa9a301ed86fbcf0ee97565c9ab16de58a38e50df4671cb8c6",
+      "bytes": 4943
+    },
+    "packages/cli/src/recovery/retirement-review.mjs": {
+      "sha256": "a0e27616dd4317f011986ff8e10d001e87e7a4da91afdcd0b198d333f29127ab",
+      "bytes": 2917
+    },
+    "packages/cli/src/runtime/durable-recovery-plan.mjs": {
+      "sha256": "b484645c67a3598fb0b7d38a5d5289aeff6330942c07afdfa3e516611ac8490b",
+      "bytes": 4640
+    },
+    "packages/cli/src/runtime/durable-retirement-plan.mjs": {
+      "sha256": "29218a8e9774f62ffc0e7498bfc65de7da3c5920622bd70947a2889a69b3347f",
+      "bytes": 2765
+    }
+  },
+  "automatedChecks": {
+    "canonical": {
+      "command": "pnpm test",
+      "passed": 2899,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 499736.522833
+    },
+    "focused": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    "syntax": "passed",
+    "antiSlop": "passed",
+    "writing": "passed"
+  }
+}

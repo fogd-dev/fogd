@@ -6,6 +6,7 @@ import { readDurableRestorePlan } from './durable-recovery-plan.mjs';
 import { durableLegacyBase, durableRuntimeConfig } from './durable-config.mjs';
 import { retiredRuntimePolicy } from './recovery-selection.mjs';
 import { planRetirementFleet } from '../recovery/retirement-fleet.mjs';
+import { assertRetirementReview } from '../recovery/retirement-review.mjs';
 
 const refused = () => Object.assign(new Error('Durable retirement requires a verified source, exact active artifact and a selected runtime with the stopped retirement protocol; nothing was created'), { code: 'DURABLE_RETIREMENT_PLAN_REFUSED' });
 function retirementPlan(plan, { app, digest, id = randomUUID(), at = new Date().toISOString(), stopQueuedWork = false, stopScheduledWork = false } = {}) {
@@ -25,5 +26,9 @@ function retirementPlan(plan, { app, digest, id = randomUUID(), at = new Date().
 }
 
 export async function readDurableRetirementPlan(directory, project, selection, retirement, options) {
-  try { return retirementPlan(await readDurableRestorePlan(directory, project, selection, options), retirement); } catch { throw refused(); }
+  try {
+    const plan = retirementPlan(await readDurableRestorePlan(directory, project, selection, options), retirement);
+    assertRetirementReview(plan, retirement?.expectedPlan);
+    return plan;
+  } catch { throw refused(); }
 }

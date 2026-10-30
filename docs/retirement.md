@@ -9,14 +9,52 @@ Scheduled history requires the qualified selected runtime and its independent
 The [M11c acceptance](m11c-acceptance.md) records current scheduled retirement and
 restore evidence. Earlier experimental profiles below retain their pinned scope.
 
-The commands below cover legacy `fogd-stopped-v1` snapshots. The source implements
-a separate coordinator for `fogd-stopped-durable-v1`. The
-[packaged v3 candidate](evidence/operator-durable-retirement-package.json) includes
-its stopped retirement helper. A [native HTTP retirement and recovery drill](evidence/operator-native-durable-retirement.json)
-passes on that candidate; ordinary enrollment stays closed. The v2 candidate lacks
-the helper. The earlier
-[native refusal check](evidence/operator-native-activation-crashes.json) records
-the missing path before this coordinator existed.
+The qualified [v8 family](operator-v8-acceptance.md) supports the durable stopped
+retirement coordinator. The [lifecycle contract](application-lifecycle.md) separates
+permanent retirement from future reversible archival. Older v3 candidate receipts
+below retain their original test scope.
+
+## Review a durable retirement
+
+Take a full stopped snapshot using the enrolled installation's backup command.
+Retain the active artifact digest and source storage identity independently of that
+snapshot. Choose a fresh target project and an independently prepared network plan.
+
+```sh
+fogd retire plan /backups/before-retirement \
+  --app notebook --digest ACTIVE_ARTIFACT_SHA256 --project fogd-after-retirement \
+  --runtime celld-approval-v8-linux-arm64 --expected-identity SOURCE_IDENTITY_SHA256 \
+  --network-plan /operator/target-networks.json
+```
+
+Inspect its JSON `plan` hash and effects before executing. The report states
+whole-installation downtime, survivor holds, a permanently retired name and retained
+data. It reports snapshot archive bytes separately from future free fleet capacity;
+retirement reclaims no disk bytes. Source liveness, cached images and target
+availability remain unverified until execution. Planning contacts no Docker engine
+and creates no target files, resources or reservation.
+
+```sh
+fogd retire /backups/before-retirement \
+  --app notebook --digest ACTIVE_ARTIFACT_SHA256 --project fogd-after-retirement \
+  --output /operator/new-retirement --expected-plan REVIEWED_PLAN_SHA256 \
+  --runtime celld-approval-v8-linux-arm64 --expected-identity SOURCE_IDENTITY_SHA256 \
+  --network-plan /operator/target-networks.json
+```
+
+Use the same inputs and any required `--stop-queued-work` or
+`--stop-scheduled-work` consent in both commands. A changed review refuses before
+Docker or allocation. Existing direct retirement commands remain available without
+the optional review binding. The coordinator still rechecks source writers and
+snapshot bytes, verifies images and retains failed partial targets for inspection.
+A refused or uncertain operation is not permission to start a partial target.
+
+Only after successful completion, start the enrolled target with
+`fogd up --installation fogd-after-retirement`. Inspect each surviving app and
+perform its required reconciliation, acknowledgment and explicit HTTP/background
+resumes. Keep the original source stopped. A replacement app needs a different name
+and a scoped credential. An older whole snapshot can resurrect earlier state and
+lose changes made after that snapshot; independent app restoration is unsupported.
 
 The [durable retirement tests](../packages/cli/test/durable-retirement.test.mjs)
 exercise verified archive copying, empty replacement disks, retained artifacts,
@@ -49,7 +87,7 @@ sources. It does not qualify upgrading an existing v2 installation or restoring 
 snapshots under v3. The native drill uses a fresh v3 installation and snapshots
 from that same family on one isolated Docker engine on the same physical host.
 
-## Prepare and retire
+## Legacy snapshot workflow
 
 Upgrade to a runtime with retirement support before taking the snapshot. The command
 refuses older images. Record the retiring app's active deployment digest from
