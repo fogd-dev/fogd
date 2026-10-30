@@ -8,7 +8,7 @@ be distributed separately to developers without Docker or operator images.
 Release verification requires Node.js 24.21.0 or later and an independently retained
 manifest SHA256. Runtime import additionally requires a Linux arm64 Docker engine with the
 classic `overlay2` image store, Docker Compose, `tar` and `sha256sum`. The selected
-[runtime boundary](https://github.com/fogd-dev/fogd/blob/main/docs/operator-v8-acceptance.md) still applies. Application builders
+[runtime boundary](https://github.com/fogd-dev/fogd/blob/main/docs/operator-v9-acceptance.md) still applies. Application builders
 provide their own Void/Vite dependencies; the release is not an application SDK.
 
 The [empty-engine onboarding check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-v8-versioned-pruned-recovery.json) uses
@@ -19,20 +19,19 @@ additional space. Container CPU budgets are not per-worker CPU quotas.
 
 ## Prepare the release
 
-V8's matching source checkout is commit
-`3638a46fa69ee47b1864aea6c45f40a52fb1d4d2`. Current `main` includes unreleased
-archival runtime code and refuses v8 export because its source inventory differs.
-Received v8 bundles retain their original sources and remain usable. The catalog
-lists `celld-archive-v9-linux-arm64` as a closed candidate. Ordinary release export
-refuses it pending fresh runtime/CLI release acceptance. Proposed operator bundles
-include the [archive command reference](https://github.com/fogd-dev/fogd/blob/main/docs/archival.md).
+Current `main` prepares `celld-archive-v9-linux-arm64`, including the
+[archive command reference](https://github.com/fogd-dev/fogd/blob/main/docs/archival.md).
+Earlier families require their matching frozen checkout. V8's is commit
+`3638a46fa69ee47b1864aea6c45f40a52fb1d4d2`; current source refuses v8 export
+because its runtime inventory differs. Received v8 bundles retain their original
+sources and remain usable. There are no existing user installations to migrate.
 
-From the matching v8 checkout, with its qualified images and declared operator
+From the matching checkout, with its qualified images and declared operator
 dependency available:
 
 ```sh
-node packages/cli/bin/fogd.js release export /releases/fogd-0.2.0-linux-arm64 \
-  --version 0.2.0 --runtime celld-approval-v8-linux-arm64
+node packages/cli/bin/fogd.js release export /releases/fogd-0.3.0-linux-arm64 \
+  --version 0.3.0 --runtime celld-archive-v9-linux-arm64
 ```
 
 Versions have three numeric components. The release version identifies this
@@ -61,7 +60,7 @@ Use digests received independently from the trusted producer, not values read fr
 the received directory:
 
 ```sh
-export RELEASE=/downloads/fogd-0.2.0-linux-arm64
+export RELEASE=/downloads/fogd-0.3.0-linux-arm64
 export RELEASE_VERIFIER_SHA=INDEPENDENTLY_RETAINED_VERIFIER_SHA256
 export RELEASE_MANIFEST_SHA=INDEPENDENTLY_RETAINED_MANIFEST_SHA256
 printf '%s  %s\n' "$RELEASE_VERIFIER_SHA" "$RELEASE/verify-release.mjs" | sha256sum --check -
@@ -82,7 +81,7 @@ verification, use the runtime digest with the existing import command:
 ```sh
 export RUNTIME_MANIFEST_SHA=VERIFIED_RUNTIME_MANIFEST_SHA256
 node "$RELEASE/operator/program/packages/cli/bin/fogd.js" runtime import "$RELEASE/operator" \
-  --runtime celld-approval-v8-linux-arm64 --expected-manifest "$RUNTIME_MANIFEST_SHA" \
+  --runtime celld-archive-v9-linux-arm64 --expected-manifest "$RUNTIME_MANIFEST_SHA" \
   --output /opt/new-fogd
 ```
 

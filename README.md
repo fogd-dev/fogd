@@ -23,20 +23,21 @@ credentials, TLS, the app URL and first exact approval. No source checkout or
 package installation is needed for the received operator.
 
 Release preparation is available locally; a public download service or registry
-release has not been published. Current `main` contains unreleased archival runtime
-work. Maintainers prepare v8 artifacts from its
+release has not been published. Maintainers prepare explicit v9 artifacts from the
 [matching source checkout](docs/releases.md#prepare-the-release) with:
 
 ```sh
-node packages/cli/bin/fogd.js release export /releases/fogd-0.2.0-linux-arm64 \
-  --version 0.2.0 --runtime celld-approval-v8-linux-arm64
+node packages/cli/bin/fogd.js release export /releases/fogd-0.3.0-linux-arm64 \
+  --version 0.3.0 --runtime celld-archive-v9-linux-arm64
 ```
 
-On qualified [v8 installations](docs/operator-v8-acceptance.md), owners can
+On qualified [v9 installations](docs/operator-v9-acceptance.md), owners can
 [compare proposed code, SQL and resources in the browser](docs/browser-release-review.md),
 make an exact approval or rejection, and inspect the
 [attributed decision history](docs/decision-history.md). Terminal artifact cleanup
 preserves those records and protects unfinished operations.
+Owners can also [archive an app and restore its retained data](docs/archival.md)
+through stopped, reviewed operations with separate recovery approval and resume.
 
 Developers receive the standalone client and an app-scoped credential from their
 operator. Application build dependencies remain separate prerequisites. See the

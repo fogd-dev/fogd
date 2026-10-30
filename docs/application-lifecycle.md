@@ -268,8 +268,9 @@ qualifies fresh private enrollment, the fixed controller process, exact-release
 approval, native D1 writes and existing migration-ledger inspection, followed by
 fenced stop/restart and retained data. This verifies ordinary app execution through
 the new composition. It does not qualify archived-app restoration or capacity reuse.
-The catalog lists `celld-archive-v9-linux-arm64` as a closed candidate for release
-rehearsal. Ordinary enrollment/export and default cron admission stay closed.
+The catalog qualifies `celld-archive-v9-linux-arm64` for explicit selection within
+the [v9 acceptance boundary](operator-v9-acceptance.md). Default cron admission
+stays closed.
 
 Archive-mode backups validate the complete registry and paired route stores. They
 retain detached background history without contacting archived apps or extending
@@ -447,10 +448,9 @@ unstarted. The first harness failed while reading an omitted optional network
 plan; its incomplete target remains retained and acceptance uses fresh targets.
 These are bounded local command checks, not power-loss or remote-writer fencing.
 
-Before archive admission, qualify release of the updated host CLI and archive
-runtime. End-to-end release acceptance remains open. There are no
-existing user installations to migrate; acceptance targets fresh installations and
-same-family recovery.
+The [v9 acceptance boundary](operator-v9-acceptance.md) qualifies the archive runtime
+and matching host commands for explicit fresh local two-fleet selection. There are
+no existing user installations to migrate; same-family recovery uses fresh storage.
 
 The [private v9 release preparation](evidence/operator-archive-v9-release-preparation.json)
 packages the closed candidate's pinned images, archive guide, owner commands and
@@ -481,8 +481,9 @@ and leave HTTP held. Separate resumes expose original baseline data and the peer
 latest write. The pending peer update remains inactive, and the SQL migration
 ledger stays unchanged through retained restart. Independent audit rechecks received
 files, both command reviews, snapshots, physical stores, current credentials and
-archive/decision history. All 24 related services are stopped and retained. Final
-admission audit and actual qualified-catalog release checks remain open.
+archive/decision history. All 24 related services are stopped and retained. The
+[admission receipt](evidence/operator-v9-admission.json) records the final source
+audit and actual qualified-catalog release check separately from that proposal.
 
 ## Remaining archive protocol
 
@@ -511,5 +512,5 @@ admission. Implement it as an app lifecycle capability with these conditions:
 Preview execution/expiry stays in [issue 2](https://github.com/fogd-dev/fogd/issues/2).
 It must reuse the same writer-fencing and reclamation rules rather than invent a
 second cleanup mechanism. Live slot reuse, automatic data erasure and unlimited app
-density remain unsupported. Issue 8 stays open until the archive protocol, mutation
-results, native interruption/recovery gates and release admission are verified.
+density remain unsupported. Issue 8 records the bounded stopped archive protocol,
+mutation results, native interruption/recovery gates and explicit release admission.

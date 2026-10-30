@@ -968,7 +968,7 @@
   {
     "schema": 3,
     "id": "celld-archive-v9-linux-arm64",
-    "admission": "candidate",
+    "admission": "qualified",
     "os": "linux",
     "architecture": "arm64",
     "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",

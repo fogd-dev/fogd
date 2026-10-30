@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateRuntimeFamily, authorizePolicyEntry, runtimeFamilies, runtimeFamily } from '../src/runtime/catalog.mjs';
+import { validateRuntimeFamily, authorizePolicyEntry, runtimeFamilies, runtimeFamily, requestedRuntime } from '../src/runtime/catalog.mjs';
 import { freshRuntimePlan, selectedRuntimeConfig } from '../src/runtime/selection-plan.mjs';
 import { durableRuntimeConfig } from '../src/runtime/durable-config.mjs';
 import { prebootFixture } from './fixtures/cron-preboot.mjs';
@@ -46,13 +46,14 @@ test('archive capability requires the fixed entrypoint source and rejects unknow
   assert.throws(() => runtimeFamily('archive-candidate'), /Unknown shipped runtime family/);
 });
 
-test('the archive catalog candidate pins current runtime sources while ordinary enrollment stays closed', async () => {
-  const candidates = runtimeFamilies().filter(value => value.schema === 3);
-  assert.equal(candidates.length, 1);
-  const [entry] = candidates;
+test('the qualified archive family pins current sources and requires explicit selection', async () => {
+  const archiveFamilies = runtimeFamilies().filter(value => value.schema === 3);
+  assert.equal(archiveFamilies.length, 1);
+  const [entry] = archiveFamilies;
   assert.equal(entry.id, 'celld-archive-v9-linux-arm64');
-  assert.equal(entry.admission, 'candidate');
-  assert.throws(() => runtimeFamily(entry.id), /ordinary enrollment remains closed/);
-  assert.deepEqual(runtimeFamily(entry.id, 'candidate'), entry);
+  assert.equal(entry.admission, 'qualified');
+  assert.equal(requestedRuntime({}), null);
+  assert.deepEqual(runtimeFamily(entry.id), entry);
+  assert.deepEqual(requestedRuntime({ runtime: entry.id }), entry);
   assert.deepEqual(entry.sourceFiles, await programInventory(new URL('../../../', import.meta.url).pathname));
 });

@@ -1,10 +1,10 @@
 # Stopped app archival commands
 
-Qualified runtime selection gates the archive command interface. The catalog
-lists `celld-archive-v9-linux-arm64` as a closed candidate; ordinary archive
-admission remains unavailable. These commands refuse ordinary families that lack
-the protocol and provide no candidate override. The private native checks exercise
-command composition with an independently supplied candidate.
+Select `celld-archive-v9-linux-arm64` explicitly for stopped app archival on fresh
+local Linux arm64 classic-overlay2 Docker: two fleets with two native nodes each.
+The [v9 acceptance boundary](https://github.com/fogd-dev/fogd/blob/main/docs/operator-v9-acceptance.md)
+records the qualified scope. These commands refuse families that lack the protocol
+and provide no candidate override.
 
 ## Command reference
 
@@ -145,6 +145,6 @@ target availability are explicitly unobserved during planning. Execution verifie
 those boundaries through the stopped coordinator; a review is not a lock.
 
 The [lifecycle contract](https://github.com/fogd-dev/fogd/blob/main/docs/application-lifecycle.md) records acceptance boundaries.
-Default cron admission stays closed, and public archive release remains gated on
-fresh release acceptance for the archive runtime and matching host CLI. The
-lifecycle contract links the bounded native command interruption/concurrency checks.
+Default cron admission stays closed. Explicit v9 selection supplies the matching
+archive runtime and host commands; it does not publish an image or release download.
+The lifecycle contract links the bounded native interruption/concurrency checks.

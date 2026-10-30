@@ -57,6 +57,15 @@ qualified-catalog check. Earlier family pins stay unchanged; v6 and v7 remain
 closed. Default installations keep cron admission closed. No public release
 artifact or registry publication is implied by family qualification.
 
+Select `celld-archive-v9-linux-arm64` explicitly for fresh local Linux arm64
+classic-overlay2 Docker within its [acceptance boundary](operator-v9-acceptance.md).
+It adds [stopped app archival and restoration](archival.md), retained data and
+reserved names, reviewed capacity changes, and explicit owner recovery approval.
+Two fleets with two native nodes each are qualified. Earlier image/source pins
+stay unchanged; no cross-family migration is provided. Default cron admission
+stays closed. The [admission receipt](evidence/operator-v9-admission.json) separates
+current native checks from inherited evidence and the actual catalog rehearsal.
+
 The [native migration-retry check](evidence/operator-native-migration-retry-v5.json)
 covers application SQL and its native name ledger committed before the controller
 saves its migration hashes. The app stays withheld through controller interruption;
