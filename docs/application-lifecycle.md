@@ -268,8 +268,8 @@ qualifies fresh private enrollment, the fixed controller process, exact-release
 approval, native D1 writes and existing migration-ledger inspection, followed by
 fenced stop/restart and retained data. This verifies ordinary app execution through
 the new composition. It does not qualify archived-app restoration or capacity reuse.
-The candidate remains absent from the shipped catalog; default cron admission stays
-closed.
+The catalog lists `celld-archive-v9-linux-arm64` as a closed candidate for release
+rehearsal. Ordinary enrollment/export and default cron admission stay closed.
 
 Archive-mode backups validate the complete registry and paired route stores. They
 retain detached background history without contacting archived apps or extending
@@ -451,6 +451,18 @@ Before archive admission, qualify release of the updated host CLI and archive
 runtime. End-to-end release acceptance remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
+
+The [private v9 release preparation](evidence/operator-archive-v9-release-preparation.json)
+packages the closed candidate's pinned images, archive guide, owner commands and
+standalone developer client. Only the selected admission field changes in a private
+proposal; ordinary source selection/export stays closed. Standalone verification
+authenticates the proposed versioned bundle before import on a newly empty engine.
+The received operator enrolls fresh TLS storage, and the included client deploys
+two ordinary Void apps from prepared dependencies. Exact approvals, compatible SQL
+update, pending code/SQL isolation and retained restart pass. Independent audit
+rehashes the received program and verifies physical enrollment, canonical artifacts
+and attributed approvals. Received archival/owner recovery and final admission
+remain open; this is one physical Mac and no public publication.
 
 ## Remaining archive protocol
 

@@ -1,9 +1,10 @@
 # Stopped app archival commands
 
-Qualified runtime selection gates the archive command interface. The shipped
-catalog admits no archive family. These commands refuse ordinary families that
-lack the protocol; they do not provide a candidate override. The private native
-check exercises the command composition with an independently supplied candidate.
+Qualified runtime selection gates the archive command interface. The catalog
+lists `celld-archive-v9-linux-arm64` as a closed candidate; ordinary archive
+admission remains unavailable. These commands refuse ordinary families that lack
+the protocol and provide no candidate override. The private native checks exercise
+command composition with an independently supplied candidate.
 
 ## Command reference
 
@@ -143,7 +144,7 @@ bucket namespaces and raw configuration. Live source status, cached images and
 target availability are explicitly unobserved during planning. Execution verifies
 those boundaries through the stopped coordinator; a review is not a lock.
 
-The [lifecycle contract](application-lifecycle.md) records acceptance boundaries.
+The [lifecycle contract](https://github.com/fogd-dev/fogd/blob/main/docs/application-lifecycle.md) records acceptance boundaries.
 Default cron admission stays closed, and public archive release remains gated on
 fresh release acceptance for the archive runtime and matching host CLI. The
 lifecycle contract links the bounded native command interruption/concurrency checks.

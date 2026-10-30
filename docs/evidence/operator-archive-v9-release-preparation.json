@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "kind": "operator-closed-archive-v9-candidate-private-versioned-release-and-empty-engine-onboarding",
+  "recordedAt": "2026-10-30T17:23:53.662520+00:00",
+  "sourceCommit": "2cd4afab5599f736fd3506aa106156163f9e8cd0",
+  "executedTreeDirty": true,
+  "passed": true,
+  "scope": "Add the previously verified v9 archive image as a closed source catalog candidate and package the archive guide. A private copy changes only selected admission for a proposed 0.3.0 bundle. Authenticate/import on a newly empty Linux arm64 classic-overlay2 engine; received operator and included developer client exercise fresh TLS enrollment, two Void apps, exact approvals, compatible SQL update, pending code/SQL isolation and retained restart. Prepared application dependencies, same physical Mac, no registry/download publication. Received archive/restore and owner recovery acceptance remain open.",
+  "family": "celld-archive-v9-linux-arm64",
+  "sourceAdmission": "candidate",
+  "privateProposalAdmission": "qualified",
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "storageImage": "sha256:6461aac3f6bcaa8e62d63ed712828a2a3dc5f766daf9cf66e52ef65d1187a79a",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "nativeBuildBoundary": "The existing immutable COPY-only v9 image and inherited native inputs are reverified; this is not a new native rebuild.",
+  "publicOrdinarySelectionClosed": true,
+  "publicExportRefusesBeforeDockerOrOutput": true,
+  "archiveGuidePackaged": true,
+  "privateBundle": {
+    "version": "0.3.0",
+    "runtime": "celld-archive-v9-linux-arm64",
+    "manifestSha256": "cfb7abdc5438b9a77ce623726c4bc401fb7fc5e78c9cab381437e003acb73971",
+    "bootstrapSha256": "6cf656cef92c669f44609afa59a0d65a9c3d269a85292748ff52fd8cb979be39",
+    "runtimeManifestSha256": "26f54d97bb5b1bbce4e87f88d096966d6a4fb4722ea74bc932be38fbd8516d0a",
+    "clientManifestSha256": "ced545ba6170c08ae2e8cd0b2251a47b2d6505f7b35b03f438c5171e6693cb2a",
+    "files": 531,
+    "bytes": 925475194,
+    "servicesStarted": false
+  },
+  "producerAudit": {
+    "passed": true,
+    "privateProposalChangesOnlySelectedAdmission": true,
+    "mainCandidateRefusesBeforeDockerOrOutput": true,
+    "allReleaseAndNestedFilesReverified": true,
+    "runtimeSourceAndAliasPinsReverified": 130,
+    "archiveGuideMatchesSource": true,
+    "developerClientExcludesOperatorRecoveryCode": true,
+    "sourceProgramUnchanged": true,
+    "existingContainersPreserved": 400,
+    "existingVolumeNamesPreserved": 668,
+    "noInstallationCreated": true,
+    "defaultCronAdmission": "closed"
+  },
+  "recipientAudit": {
+    "passed": true,
+    "receivedOperatorFilesRehashed": 490,
+    "runtimeSourceAndNativePinsReverified": 130,
+    "qualifiedPolicySchema": 4,
+    "fixedArchiveControllerCommandVerified": true,
+    "physicalEnrollmentAndStoreBindingVerified": true,
+    "canonicalDeploymentArtifactsVerified": 4,
+    "attributedOwnerApprovalsVerified": 3,
+    "pendingPeerStillNotActive": true,
+    "heldCodeAndSqlIsolationAndRestartReadbacksChecked": true,
+    "privateExecutionDirectoryEmpty": true,
+    "ownedContainersStopped": 8,
+    "allVolumesOwnedByFreshInstallation": true,
+    "recipientEngineIdentityUnchanged": true,
+    "defaultCronAdmission": "closed",
+    "publicArchiveReleaseQualified": false
+  },
+  "recipientFixture": {
+    "virtualCpus": 3,
+    "memoryBytes": 6198857728,
+    "dataDiskGiB": 24,
+    "emptyImagesBeforeImport": 0,
+    "emptyContainersBeforeImport": 0,
+    "emptyVolumesBeforeImportAsserted": true,
+    "interpretation": "Test fixture, not minimum requirements or per-worker CPU quotas."
+  },
+  "canonicalChecks": {
+    "passed": 3150,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 568275.228208
+  },
+  "focusedChecks": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 136.144958
+  },
+  "quality": "passed",
+  "syntax": "passed",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "generalArchiveReleaseQualified": false,
+  "remainingGates": [
+    "Received stopped archive/restoration and owner recovery workflow on the fresh engine",
+    "Final admission audit and actual qualified-catalog release rehearsal"
+  ],
+  "producerRoot": "~/.local/share/fogd-qualifications/archive-release-v9-20261030-01",
+  "recipientRoot": "~/.local/share/fogd-qualifications/archive-v9-onboarding-20261030-01",
+  "recipientContext": "colima-fogd-v9-onboarding-20261030",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "producerFingerprints": {
+    "driver.mjs": {
+      "sha256": "6439b8c84d9d466d8c7f161fd9c81c2326a16b243ccc09b2972b7f93b6dbc3a2",
+      "bytes": 5339
+    },
+    "audit.mjs": {
+      "sha256": "ecd48d39fabc7ecc45271f9720a71d08da0da7c07bc6b1a5310c6750cb3c84c0",
+      "bytes": 4671
+    },
+    "driver.log": {
+      "sha256": "e381218d09aa2d6fcb0dc2438d3564a8f4e2ddcaa456e5a5220a014176802623",
+      "bytes": 137
+    },
+    "report.json": {
+      "sha256": "d7fd3660c24e88ce9f6c37c6ffff8e402c9ade0c5f0e67caa4ed2c95438e3e79",
+      "bytes": 17709
+    },
+    "audit.json": {
+      "sha256": "fd54ab3298c2da6cc9076204d1266327e4248ab5bda5baa42777e9e54bf5ab54",
+      "bytes": 491
+    },
+    "export.json": {
+      "sha256": "2795e7d8438b1bb859023471f8986c38af2916334ad7e52fb198568a30a91b32",
+      "bytes": 608
+    },
+    "verified.json": {
+      "sha256": "677acc8b9ca71ac468c42b97cb209dedf3609962938a9f7c48bb17b4a78d1a9a",
+      "bytes": 311
+    },
+    "proposal-delta.json": {
+      "sha256": "a2e574c9f049d16b794be65e3e9689326f3f8b64ef3f6433b6e4620bc925fffa",
+      "bytes": 16418
+    },
+    "source-program-inventory.json": {
+      "sha256": "3d5b36db2b8de62632b3676e62ce79ce01f65723a3016dd158b451b9f03e9d04",
+      "bytes": 79766
+    },
+    "before.json": {
+      "sha256": "5bd0c571601b29d46c6d0477db873716d3dcb839e7a7a7db6f9cf609fd00c662",
+      "bytes": 473119
+    },
+    "after.json": {
+      "sha256": "5bd0c571601b29d46c6d0477db873716d3dcb839e7a7a7db6f9cf609fd00c662",
+      "bytes": 473119
+    },
+    "main-refusal-audit.json": {
+      "sha256": "bf26910112c3fe3922ee528d382247ff8b37983e6344fc52ce757ab4b3a0f2e7",
+      "bytes": 159
+    },
+    "release/manifest.json": {
+      "sha256": "cfb7abdc5438b9a77ce623726c4bc401fb7fc5e78c9cab381437e003acb73971",
+      "bytes": 95287
+    },
+    "release/operator/manifest.json": {
+      "sha256": "26f54d97bb5b1bbce4e87f88d096966d6a4fb4722ea74bc932be38fbd8516d0a",
+      "bytes": 100092
+    },
+    "release/client/manifest.json": {
+      "sha256": "ced545ba6170c08ae2e8cd0b2251a47b2d6505f7b35b03f438c5171e6693cb2a",
+      "bytes": 5973
+    },
+    "canonical.log": {
+      "sha256": "e6afeadb9ad4f1f797d1a4c4be743da60328a032e35b8401ba3fba09456ec151",
+      "bytes": 283301
+    },
+    "focused.log": {
+      "sha256": "9d8a9812910ec0bdaac9d60fa1d0425637d95dcd009e323d983354dcca6dd848",
+      "bytes": 1281
+    },
+    "quality.log": {
+      "sha256": "ae958a1a81aa1d30efc859ba5a355da9d4bb790191d982ee2e4bcd19eeb99fb5",
+      "bytes": 1588
+    },
+    "syntax.log": {
+      "sha256": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+      "bytes": 118
+    }
+  },
+  "recipientFingerprints": {
+    "driver.mjs": {
+      "sha256": "80e2f21b2fed4086d7318cc9967e7a0537f0429988fec3cf678b9e237c36873c",
+      "bytes": 5838
+    },
+    "audit.mjs": {
+      "sha256": "3e316917d43fa7e932d39d9ae5616c1428e5e9e554e7b1c70709bc1e089bba3c",
+      "bytes": 6322
+    },
+    "driver.log": {
+      "sha256": "32086352d9d9918f7070903d11daf558626f44b03f7b1d9f6924087bd38165b2",
+      "bytes": 402
+    },
+    "report.json": {
+      "sha256": "7383e2fd5031fb51b02e55d70fa6a9f25ba3937f7e8a1d813451c194aed111f6",
+      "bytes": 9812
+    },
+    "audit.json": {
+      "sha256": "53eb9c2d7d5caf489be617262035537e92836fa9645ca850579b751ae3710152",
+      "bytes": 664
+    },
+    "audit-readback.json": {
+      "sha256": "6db821b5628a12b125e505fd8035cc4172c2597fd78c4467169f495c2094bf49",
+      "bytes": 14706
+    },
+    "host-selection.json": {
+      "sha256": "095b98577800491b3fa052a3bb5aee2bf84f4aacc0e2a94e8d6e0c0575fa0309",
+      "bytes": 40275
+    },
+    "fixture-selection.json": {
+      "sha256": "1ae933173a0103770db4413474cf7f51d77158e3786c29c121af944d81f128bf",
+      "bytes": 1493
+    },
+    "empty-engine.json": {
+      "sha256": "fbebdaf818ddbae9b082a1225cbf9b71ade0e7bb0dc1f149b67cff6ef4413cd7",
+      "bytes": 164
+    },
+    "empty-engine-before-import.json": {
+      "sha256": "c915c70e6164b99c5e586e1102b65ea85b081cdee429d100cacbee87b616eec9",
+      "bytes": 12850
+    },
+    "recipient-profile.yaml": {
+      "sha256": "1774af8518385905c276cadbe43603295fdbd8a7d34735b48cbd31677065e565",
+      "bytes": 8520
+    }
+  }
+}

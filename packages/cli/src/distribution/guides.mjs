@@ -9,6 +9,7 @@ export const operatorGuides = [
   'docs/shared-installation.md',
   'docs/developer-client.md',
   'docs/artifact-review.md',
+  'docs/archival.md',
   'docs/browser-release-review.md',
   'docs/decision-history.md',
   'docs/application-inspection.md',

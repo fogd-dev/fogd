@@ -26,6 +26,6 @@ test('actual qualified catalog keeps exact bytes and wrong admission/unknown sel
 
 test('operator transfer includes browser decision instructions without collecting evidence or reviews', async () => {
   const inputs = await programInputs(new URL('../../', import.meta.url).pathname);
-  for (const path of ['docs/browser-release-review.md', 'docs/decision-history.md']) assert.ok(inputs.has(path));
+  for (const path of ['docs/browser-release-review.md', 'docs/decision-history.md', 'docs/archival.md']) assert.ok(inputs.has(path));
   assert.ok(![...inputs.keys()].some(path => path.startsWith('docs/evidence/') || path.startsWith('docs/reviews/')));
 });

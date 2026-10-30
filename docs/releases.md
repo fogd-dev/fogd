@@ -22,8 +22,10 @@ additional space. Container CPU budgets are not per-worker CPU quotas.
 V8's matching source checkout is commit
 `3638a46fa69ee47b1864aea6c45f40a52fb1d4d2`. Current `main` includes unreleased
 archival runtime code and refuses v8 export because its source inventory differs.
-Received v8 bundles retain their original sources and remain usable. The archival
-family needs separate implementation and qualification before release preparation.
+Received v8 bundles retain their original sources and remain usable. The catalog
+lists `celld-archive-v9-linux-arm64` as a closed candidate. Ordinary release export
+refuses it pending fresh runtime/CLI release acceptance. Proposed operator bundles
+include the [archive command reference](https://github.com/fogd-dev/fogd/blob/main/docs/archival.md).
 
 From the matching v8 checkout, with its qualified images and declared operator
 dependency available:
