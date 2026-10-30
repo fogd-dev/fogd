@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "passed": true,
+  "sourceCommit": "70a42d5ac1bb585db50185d533206c6945d005ef",
+  "executedTreeDirty": true,
+  "scope": "Internal signed owner execution decisions and isolated Docker bridge/DNS components. No running celld preview, public launch command, complete sandbox or new runtime admission.",
+  "sourceFiles": {
+    "packages/cli/src/preview/execution.mjs": "e28681326efa55c43afa8282aca46150853fe8c5f119f827f66244558ef55e6f",
+    "packages/cli/src/preview/execution-shape.mjs": "07b42f50d54c1ac2ad5eb80697ce531abccd49ab8836a1e21d2a9b53bef301cd",
+    "packages/cli/src/preview/execution-authority.mjs": "34ad4ba2472f5fa9e10f6c91ca43b43050b019f18ee421f5fed8f4c5e7cd5b59",
+    "packages/cli/src/preview/networks.mjs": "33f0073f009e6a4a7be0373b5b260002086990944fe639acaaaf1e5a331dd2df",
+    "packages/cli/test/preview-execution.test.mjs": "e8366bb0c9a3fa2b8b9f99f6afbf25e096ea5fe6c293f9debb2f84adf86e2f20"
+  },
+  "executionDecision": {
+    "signature": "Ed25519; independent verifier public key; no key supplied by envelope",
+    "binding": "Exact preparation fingerprint, source submission/digest/review, target installation/configuration/runtime/origin/networks and absolute expiry",
+    "productionActivation": false,
+    "viewerKeyCanAuthorizeExecution": false,
+    "initialProfile": "HTTP with D1/R2; queues, cron and Durable Object declarations refused",
+    "callerPrerequisites": [
+      "Verify actual prepared artifact bytes and current source state",
+      "Independently admit a preview-capable runtime and bind fresh physical target resources",
+      "Keep execution private key outside workload configuration"
+    ],
+    "signatureAloneAdmitsRuntime": false
+  },
+  "checks": {
+    "connectedNode": {
+      "passed": 78,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "executionCasesWithinConnected": 19,
+    "syntax": "passed",
+    "quality": "passed; erosion 14.7%, duplication 1.7%",
+    "writing": "passed; developer terminology and existing document style advisories retained",
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external review",
+    "canonicalPriorCommit": "3168 pass at 35720ab; no current full-suite claim"
+  },
+  "networkFixture": {
+    "dockerVersion": "29.5.2",
+    "platform": "linux/arm64",
+    "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+    "scope": "Owned HTTP/DNS endpoints on one local Docker engine. No unrelated endpoints contacted.",
+    "privateBridges": "internal=true, gateway_mode_ipv4=isolated; no IPAM gateway",
+    "frontend": "Separate NAT bridge for the controlled outside fixture",
+    "dns": "Private service alias works; external forwarding disabled on private client",
+    "positiveControl": "Outside client resolves and reaches owned outside fixture",
+    "negativeControls": [
+      "Private client cannot reach owned outside address",
+      "Private external DNS lookup refuses; trap has no corresponding query or HTTP marker"
+    ],
+    "containerLimits": "128 MiB, one container CPU, 64 PIDs, read-only root, no mounts, no privileges; only DNS trap adds NET_BIND_SERVICE",
+    "cpuLimitScope": "Container budget, not a per-worker CPU quota"
+  },
+  "independentReadback": {
+    "passed": true,
+    "scope": "Owned isolated bridge/DNS fixture with positive and negative controls; not a preview installation, native application or complete network sandbox qualification.",
+    "sourceInputsRehashed": 2,
+    "initialRecipientContainersPreserved": 43,
+    "finalRunPriorContainersPreserved": 47,
+    "allRecipientContainersStopped": 51,
+    "ownedNewContainersStoppedAndRetained": 8,
+    "ownedNewNetworksRetained": 8,
+    "actualNetworkModesAndDnsBindingsVerified": true,
+    "internalServiceLookupAndHttpVerified": true,
+    "externalFixtureReachabilityPositiveControlVerified": true,
+    "isolatedDirectAndDnsRefusalsVerified": true,
+    "trapLogsReconciledWithDocker": true,
+    "initialInventoryFailureRetained": true,
+    "inventoryFailure": "First driver queried running containers only and failed preservation accounting after fixtures stopped. No pass was accepted. Corrected all-container inventory uses fresh owned resources.",
+    "defaultCronAdmission": "closed"
+  },
+  "knownFailure": {
+    "root": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-networks-20261030-01",
+    "observed": "First driver listed running containers only and failed preservation accounting after fixture shutdown; no pass accepted.",
+    "correction": "Fresh owned resources with all-container inventory; original and failed-run resources retained and independently checked."
+  },
+  "privateEvidenceRoot": "/Users/sgtpooki/.local/share/fogd-qualifications/preview-networks-20261030-02",
+  "privateEvidenceFingerprints": {
+    "after-containers.json": "9d3ee316448aed6b614f1f644e44cad0de142c5daf430979f7a9290f3307c596",
+    "after-networks.json": "8961c494d654f196a570d3f280e29f54dc4f3f8766d22f3e67230c1011c12ea5",
+    "allocated-containers.json": "89e26c1b269a57e1c5e9b2978125e886bee1acc57ef275dfcc88042cbc86c393",
+    "allocated-networks.json": "fc9346c87c34ad9e0eaeaa073e671e88879f994f55f8340bd3b1b67860f2603f",
+    "before-containers.json": "cfb9873ebcdb59f6bf3b8b27332e37c4e7cb8c9fe068953e9549dd5b8367c1e1",
+    "before-networks.json": "d6218912e94532c1d01d9e43e85d1ccf27a431ef91bde85005131cd0bf10530a",
+    "control-network.json": "fb30886fcd74e641e21e98b818a34cd734b08910d76c97d2b88080afa0ff72d0",
+    "declarations.json": "bd3601e105d31b4701be7de9d7e5d153d82ca0f31206e64f0e06b88e68a59a71",
+    "execution-authority.mjs": "34ad4ba2472f5fa9e10f6c91ca43b43050b019f18ee421f5fed8f4c5e7cd5b59",
+    "execution-shape.mjs": "07b42f50d54c1ac2ad5eb80697ce531abccd49ab8836a1e21d2a9b53bef301cd",
+    "execution.mjs": "e28681326efa55c43afa8282aca46150853fe8c5f119f827f66244558ef55e6f",
+    "fleet-1-network.json": "49af50bf8d49a26d50c074f45561d0ff4f7b4cd7fcbda6d89ffa524cf8808a07",
+    "fleet-2-network.json": "a4afc47ace837106969d4a31d930b38a92ac2c6d06552e71154e6c02868ed780",
+    "fogd-preview-execution-commit-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+    "fogd-preview-execution-connected-final.log": "a42b1d73de640433ff7b3cdfb83bc64c8b9698af7deb8314a4077e60b618b637",
+    "fogd-preview-execution-issue-writing.log": "7ff526797925e4692fb92161565a6378c649c99ec43123792242eff4b6ebc9bd",
+    "fogd-preview-execution-quality-final.log": "502315e08656cd87609f9968fbc29a0d944fe58adbf9f0d793b374eac2904a5e",
+    "fogd-preview-execution-review.md": "6305afa4f71b6368166d0ebd26104af109018e242128fa9d6e53167a31dcf81f",
+    "fogd-preview-execution-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+    "fogd-preview-execution-syntax.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-preview-execution-writing.log": "50f5c147c6473375cdc2ee42942c3a077bfe4dd5780fcedc8520e570a122def4",
+    "fogd-preview-networks-audit.log": "991d08dd77f983c0d143c06c9ff0b5343de03575ba583cd8b1b7b7399cb05547",
+    "fogd-preview-networks-audit.mjs": "4805968f4080c446c1a8e7cd3f0201902b307975b3ef23c26368ff1af711cb2a",
+    "fogd-preview-networks-native-final.log": "2b33172e96358c3034454c1a671ad511e15edcf7c4abb116e4466ad6ea43e159",
+    "fogd-preview-networks-native-final.mjs": "331d51fb1332d5ffbd5cf660333b0bfa25aa3c90350d8c20bab227ae466d524d",
+    "frontend-network.json": "0d17261f11133379d9d319f4f88b22d2f204b2b0c9985e86c62858d467919864",
+    "independent-audit.json": "927d8cf501c01a98ad73ca2727af452b0b87b0b1159d0d42dd37c0dc6b168c1d",
+    "isolated.log": "a2b8f85515be01dcd66b688f94162fc9d9753471508f2d211375d2b86a79ac4f",
+    "networks.mjs": "33f0073f009e6a4a7be0373b5b260002086990944fe639acaaaf1e5a331dd2df",
+    "outside.log": "c063f337a05c9bf1d045ad05e6f6f6b39305db0fe49d2a7ed1e5bdf7343f1105",
+    "positive.log": "314cdb615c102e6f1d11c1d5fe3fecb826d69e9e5160831d62b2a438465b336b",
+    "preview-execution.test.mjs": "e8366bb0c9a3fa2b8b9f99f6afbf25e096ea5fe6c293f9debb2f84adf86e2f20",
+    "report.json": "b22b7d2d1884fb364fabe16503108e26849a7eb442386b8ce14f5935fde1d488",
+    "source-inputs.json": "5787f736d09b7b58be34cb1fdf9a104b9042e147e5caeb3ff447925e2b23349d"
+  },
+  "defaultCronAdmission": "closed",
+  "publicPreviewLaunch": "unavailable",
+  "limits": [
+    "No existing user installations; original 43 QA containers preserved and all 51 recipient containers stopped. Eight owned fixture containers and networks retained.",
+    "Network checks do not establish complete role memberships, port/mount policy or hostile-tenant isolation.",
+    "Fresh target coordinator, preview runtime/image, every-service expiry, capacity enforcement and native fresh-app/update demos remain open.",
+    "No Cloudflare deployment, external egress contact, second physical machine or full-family preview acceptance."
+  ]
+}

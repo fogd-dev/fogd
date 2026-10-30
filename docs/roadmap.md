@@ -44,8 +44,11 @@ and owner recovery approval. The native and received-operator checks cover peer
 preservation, background holds, secret rotation and interrupted commands. Default
 cron admission stays closed. [Verified preview preparation](previews.md) binds an
 exact proposal without executing it. Internal deadline and authenticated HTTPS
-ingress components have process, container and browser checks. Preview launch and
-every-service expiry remain open under issue #2 and must reuse these fencing and restoration rules.
+ingress components have process, container and browser checks. Internal signed
+execution decisions and isolated bridge/DNS controls also have bounded component
+checks. Preview runtime integration, launch and every-service expiry remain open
+under issue #2 and must reuse these fencing and restoration rules. Existing
+deployments are QA fixtures; cross-family migration is outside this release path.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

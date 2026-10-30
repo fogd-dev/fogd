@@ -120,3 +120,29 @@ It uses the declared Playwright development dependency and a preinstalled Chromi
 binary. Without the environment override it uses Playwright's installed browser.
 The check creates its own headless browser profile and temporary TLS fixture; it
 never uses an existing browser session or downloads a browser automatically.
+
+## Internal execution decisions and networks
+
+The [execution and network component check](https://github.com/fogd-dev/fogd/blob/main/docs/evidence/operator-preview-execution.json)
+binds a signed owner decision to one preparation, source release, target
+installation, configuration, runtime, browser origin and absolute expiry. The
+verifier receives its trusted public key independently. Viewer access cannot sign
+an execution decision, and an execution decision cannot activate production.
+
+Issuing a decision requires independently verified artifact contents and source
+state. Runtime admission and fresh target allocation also remain coordinator
+responsibilities. The initial execution profile refuses queue, cron and Durable
+Object declarations; Durable Objects can schedule alarms. Preparation alone can
+still record such bindings without executing them.
+
+The network component declares private isolated bridges without host gateway
+addresses and disables external DNS forwarding. A controlled Docker fixture
+verifies private service lookup and HTTP, an outbound HTTP refusal and an external
+DNS refusal against owned endpoints. It does not qualify complete service
+membership, ingress routing or a running application sandbox.
+
+Public execution and launch commands remain unavailable. The remaining integration
+must verify prepared files and current source state, admit a preview-capable
+runtime, allocate fresh resources, enforce capacity and every-service expiry,
+then demonstrate a fresh app and an update. All retained deployments are QA
+fixtures; fresh installation and same-family recovery are the release targets.
