@@ -107,15 +107,22 @@ export class Backend {
     for (const db of resources.d1) await this.run(slot, ['d1', 'migrations', 'apply', db.database_name, dir]);
   }
   async applied(slot, dir, resources) {
-    const result = [];
-    for (const db of resources.d1) {
-      const sql = 'CREATE TABLE IF NOT EXISTS d1_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP); SELECT name FROM d1_migrations;';
-      const output = await this.run(slot, ['d1', 'execute', db.database_name, '--command', sql, dir, '--json']);
-      for (const line of output.trim().split('\n').filter(Boolean)) {
-        const row = JSON.parse(line);
-        if (row.name) result.push({ database: db.database_id, name: row.name });
-      }
-    }
-    return result;
+    const sql = 'CREATE TABLE IF NOT EXISTS d1_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP); SELECT name FROM d1_migrations;';
+    return migrationRows(this, slot, dir, resources, sql);
   }
+  async inspectMigrations(slot, dir, resources) {
+    return migrationRows(this, slot, dir, resources, 'SELECT name FROM d1_migrations;');
+  }
+}
+
+async function migrationRows(backend, slot, dir, resources, sql) {
+  const result = [];
+  for (const db of resources.d1) {
+    const output = await backend.run(slot, ['d1', 'execute', db.database_name, '--command', sql, dir, '--json']);
+    for (const line of output.trim().split('\n').filter(Boolean)) {
+      const row = JSON.parse(line);
+      if (row.name) result.push({ database: db.database_id, name: row.name });
+    }
+  }
+  return result;
 }
