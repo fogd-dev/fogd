@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "kind": "operator-private-reviewed-archive-command-concurrency-and-process-interruption-native",
+  "recordedAt": "2026-10-30T17:05:57.723065+00:00",
+  "sourceCommit": "a8b7845fdad4dd0a321db975ba3aa41820c17c30",
+  "executedProductionTreeDirty": false,
+  "passed": true,
+  "scope": "Reviewed archive command parser/composition on authentic queue/cron peer snapshots, with trusted private candidate selection/authorization. Native fresh enrollment, copying and route finalization are real. Concurrent archival/restoration commands refuse before allocation while another reviewed command holds both source fences. SIGTERM stops only owned Node command children after storage completion before result emission and after an actual archived replica copy. No native target application runs. This qualifies bounded local operator command exclusion and partial/result retention, not power loss, privileged writers, remote fencing or public runtime admission.",
+  "family": "celld-archive-v9-linux-arm64",
+  "familyInShippedCatalog": false,
+  "runtimePolicySchema": 4,
+  "image": "sha256:97c3788dd29de6d73bc1f21f080c63bdc32b049ed1203f4081f973930aed0cdc",
+  "parentImage": "sha256:85f5e9b6335b130e6fd22a4e0a427a95c6a4dbdcf3146515eb1343a5006016f0",
+  "binarySha256": "f9f0d4a994b417fd89383760f90158aed88a59038a60255616f07c4196a6cc7e",
+  "supervisorSha256": "2d60e95f752daedd969e94316de7267fc0e30d49f42a2657eb3f98ccd4b14452",
+  "runtimeSourceFiles": 130,
+  "hostSourceFiles": 324,
+  "commandBoundary": "Actual archiveCommand parsing, saved review binding and command receipt composition use a trusted private runtime selector/authorizer. Fault hooks hold only after real native copying or after core completion before command result emission. Public CLI cannot admit this candidate. Owned Node children receive SIGTERM; no target service runs.",
+  "results": [
+    {
+      "case": "concurrent",
+      "hostComplete": true,
+      "completedCommandReceipts": 1,
+      "allExecutionHeld": true
+    },
+    {
+      "case": "complete-cut",
+      "checkpoint": "storage-complete-before-command-result",
+      "exit": {
+        "code": null,
+        "signal": "SIGTERM"
+      },
+      "completedCommandReceiptEmitted": false,
+      "hostComplete": true,
+      "allExecutionHeld": true,
+      "existingTargetReplayRefused": true
+    },
+    {
+      "case": "copy-cut",
+      "checkpoint": "archive-replica-copied",
+      "exit": {
+        "code": null,
+        "signal": "SIGTERM"
+      },
+      "completedCommandReceiptEmitted": false,
+      "hostComplete": false,
+      "bothSourceFencesRetained": true,
+      "sourceSiblingAndTargetLaunchesRefused": true
+    }
+  ],
+  "independentAudit": {
+    "passed": true,
+    "imageSourceFilesRehashed": 130,
+    "hostSourceFilesRehashed": 324,
+    "authenticSnapshotsReverified": 2,
+    "physicalStorePairsReverified": 3,
+    "physicalEnrollmentBindingsReverified": 3,
+    "completedHostEnrollmentsReverified": 2,
+    "incompleteHostEnrollmentsRefuse": 1,
+    "sourceExclusionsReverified": 3,
+    "nativeReplicaArchivesCompared": 11,
+    "allTargetsWithheldOrFreshAndUnlaunchable": true,
+    "targetServicesNeverStarted": true,
+    "reviewedCommandPlansIndependentlyRecomputed": 3,
+    "commandCompletionReceiptOnlyForConfirmedReturn": true,
+    "concurrentArchiveAndRestoreRivalsRefusedBeforeAllocation": true,
+    "sourceSiblingAndTargetWriterStarts": 0,
+    "ownedCommandExitSignal": "SIGTERM",
+    "bothCrashedSourceFencesRetainedExactly": true,
+    "existingContainersPreserved": 376,
+    "existingVolumeNamesPreserved": 635,
+    "newTargetContainersStopped": 24,
+    "defaultCronAdmission": "closed",
+    "shippedArchiveAdmission": false
+  },
+  "priorHarnessFailure": {
+    "root": "~/.local/share/fogd-qualifications/archive-operator-faults-20261030-01",
+    "accepted": false,
+    "reason": "The injected selector tried to read an omitted optional network plan during rival archive planning. Read-only diagnosis verified an incomplete fresh target, route revision zero and both source fences released. The corrected harness uses new target names; the original target and failure remain retained."
+  },
+  "canonicalChecks": {
+    "passed": 3149,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 580758.748125,
+    "scope": "Reused accepted 3f4ce46 canonical result: no production or test source changed for this native qualification."
+  },
+  "syntax": "unchanged-production-source; native drivers syntax checked",
+  "quality": "unchanged-production-source; prior accepted gate retained",
+  "writing": "passed",
+  "defaultCronAdmission": "closed",
+  "generalArchiveReleaseQualified": false,
+  "sourceFencesIntentionallyRetained": true,
+  "remainingGates": [
+    "Fresh release rehearsal for the updated host CLI and qualified archive runtime"
+  ],
+  "evidenceRoot": "~/.local/share/fogd-qualifications/archive-operator-faults-20261030-02",
+  "sourceRoot": "~/.local/share/fogd-qualifications/archive-peer-source-native-20261030-02",
+  "snapshotRoot": "~/.local/share/fogd-qualifications/archive-peers-native-20261030-01",
+  "imageEvidenceRoot": "~/.local/share/fogd-qualifications/archive-rotation-runtime-20261030-03",
+  "evidenceFingerprints": {
+    "driver.mjs": {
+      "sha256": "ea0d72513b84452fe7c33c16987086871e51f6b27e4c124f3d59bb357b182d9b",
+      "bytes": 16632
+    },
+    "audit.mjs": {
+      "sha256": "59753813d63741aea6d0ab96de22bd5a623cd4e3bf7d50188eea0fcffa19dff7",
+      "bytes": 11562
+    },
+    "driver.log": {
+      "sha256": "5676fd41678fb24bb224a7812a817919fd1e0f8298f5a63a6045aa57e7bdc02d",
+      "bytes": 381
+    },
+    "audit.log": {
+      "sha256": "eafd87cc27f880ca71c8d0171599724710d878c4a1a1cef606ebb6d1132318bc",
+      "bytes": 858
+    },
+    "report.json": {
+      "sha256": "76e3463cf6cc06df3c7cf495dd1b46f41d5b82c66ac7cc3a7ff4f1e94a0aa008",
+      "bytes": 17810
+    },
+    "audit.json": {
+      "sha256": "eda9743544be17823d7a07c4f924a9160b773008fdb0db0d6cf0f263db20a151",
+      "bytes": 950
+    },
+    "audit-readback.json": {
+      "sha256": "2124e4fcd9f45c57627c8154998c5b94f3356998b85b88e9b5b7934377866194",
+      "bytes": 64720
+    },
+    "jobs.json": {
+      "sha256": "79d0ba1faec20d0b7cd28afead7dea022229b15eedf63f62e691891045842edf",
+      "bytes": 13773
+    },
+    "before.json": {
+      "sha256": "dfdb3c4b0b0ed2c5f71b4c03db4c407608474e92f808df453321beafed7e745f",
+      "bytes": 444622
+    },
+    "after.json": {
+      "sha256": "5bd0c571601b29d46c6d0477db873716d3dcb839e7a7a7db6f9cf609fd00c662",
+      "bytes": 473119
+    },
+    "host-source-during-run.json": {
+      "sha256": "1d394114da5f5cd8687179cfedcb8fe0bb7a13a70c4eb16a00e44dfd5e56d8e4",
+      "bytes": 37074
+    },
+    "concurrency-probes.json": {
+      "sha256": "30fdfa5003bbd22abca3419454b00aa8a04fb25f33aa9190ec5a4d52ad296328",
+      "bytes": 653
+    },
+    "concurrent-command-receipts.json": {
+      "sha256": "b95f613c2ab79c82051dcfab410f0d1be7296d230545a20d0bb10312a0d3723f",
+      "bytes": 670
+    },
+    "concurrent-stores.json": {
+      "sha256": "4a413381fcb254c273bbb3ddf336c9d59227f941163b5609a070b195554528b6",
+      "bytes": 19921
+    },
+    "complete-cut-stores.json": {
+      "sha256": "b83d2b0a3a33ff1ab81176707206abc49fd9cba46859f230d0ecbc5df4a9374a",
+      "bytes": 19921
+    },
+    "complete-cut-stdout.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "complete-cut-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "copy-cut-copy-point.json": {
+      "sha256": "f7ac4a0b48d3a4c00f1fcb8b3c93765dc19d1d297f0d76cf8b14f3d5e8155d97",
+      "bytes": 52
+    },
+    "copy-cut-stores.json": {
+      "sha256": "bc455350fbefabe9e056f69002c9a7ceffe41908b6c7a11146a75184ffb2cc6a",
+      "bytes": 874
+    },
+    "copy-cut-observations.json": {
+      "sha256": "df721c1faa30aae5068f3cad07f05768cb4bfc0db3b6cee71e4e487f4553f428",
+      "bytes": 2042
+    },
+    "copy-cut-stdout.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "copy-cut-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "concurrent-job.json": {
+      "sha256": "bdfb296ec0b70b34dcf8f61d6bffd89f4adcb42a3122ec10015bba4670e06f43",
+      "bytes": 4377
+    },
+    "concurrent-networks.json": {
+      "sha256": "272304f9f969b80df459e20b2f1c41edc16183656b1ed77a1cae5b37974e790d",
+      "bytes": 96
+    },
+    "complete-cut-job.json": {
+      "sha256": "51997b56bdd04db6b64f3b1e8462097bbd0c9763e5df5ea46c0105cb82f20331",
+      "bytes": 4391
+    },
+    "complete-cut-networks.json": {
+      "sha256": "3d015bbf5962b94a7145ecdfdcee773cd7de6c421c35cd93ec460d5062ce3dc0",
+      "bytes": 96
+    },
+    "copy-cut-job.json": {
+      "sha256": "69646cbf1c6776cd8ee2e9047373446abb75778e812acfe60eb6ac61c5c498b6",
+      "bytes": 4363
+    },
+    "copy-cut-networks.json": {
+      "sha256": "f23141cff0f0b272e7460b4208dff4676d1ea71fffbcccaac944b4ae20b2b078",
+      "bytes": 96
+    },
+    "rival-job.json": {
+      "sha256": "ec80b4ddf5d9ed39c00c8882866cd983f8838e31b1335f8bc2c1d9b1af7cf1d5",
+      "bytes": 4342
+    },
+    "rival-networks.json": {
+      "sha256": "3d015bbf5962b94a7145ecdfdcee773cd7de6c421c35cd93ec460d5062ce3dc0",
+      "bytes": 96
+    }
+  },
+  "productionAndDependencySourcesUnchangedSince": "3f4ce46"
+}

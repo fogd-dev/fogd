@@ -430,9 +430,25 @@ result remains retained. This qualifies one queue app with one cron peer on the
 private two-fleet candidate; it does not qualify both handlers in one app or public
 archive admission.
 
-Before archive admission, qualify the operator command's
-interruption/concurrent-admission paths and release of the updated host CLI.
-End-to-end operator acceptance remains open. There are no
+The [native command fault check](evidence/operator-app-archive-command-faults-v9.json)
+exercises reviewed command composition against the queue/cron peer snapshots.
+Concurrent archive and restoration commands refuse before allocation while another
+command holds both source fences. Only the confirmed returning command emits a
+completion receipt. Terminating an owned Node command after storage completion
+but before result emission leaves host enrollment complete and all execution held;
+an explicit existing-target replay refuses without changing its stores.
+
+Termination after an actual archived replica copy leaves target enrollment
+incomplete, retains both source fences and blocks source, sibling and target
+startup before writer actions. Independent audit recomputes reviews, compares
+eleven native replica archives, verifies physical enrollment/store bindings and
+checks both command children emitted no receipt. All target services remain
+unstarted. The first harness failed while reading an omitted optional network
+plan; its incomplete target remains retained and acceptance uses fresh targets.
+These are bounded local command checks, not power-loss or remote-writer fencing.
+
+Before archive admission, qualify release of the updated host CLI and archive
+runtime. End-to-end release acceptance remains open. There are no
 existing user installations to migrate; acceptance targets fresh installations and
 same-family recovery.
 
@@ -464,4 +480,4 @@ Preview execution/expiry stays in [issue 2](https://github.com/fogd-dev/fogd/iss
 It must reuse the same writer-fencing and reclamation rules rather than invent a
 second cleanup mechanism. Live slot reuse, automatic data erasure and unlimited app
 density remain unsupported. Issue 8 stays open until the archive protocol, mutation
-results and native interruption/recovery gates are implemented and verified.
+results, native interruption/recovery gates and release admission are verified.

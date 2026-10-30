@@ -145,4 +145,5 @@ those boundaries through the stopped coordinator; a review is not a lock.
 
 The [lifecycle contract](application-lifecycle.md) records acceptance boundaries.
 Default cron admission stays closed, and public archive release remains gated on
-operator interruption/concurrency and release acceptance.
+fresh release acceptance for the archive runtime and matching host CLI. The
+lifecycle contract links the bounded native command interruption/concurrency checks.
