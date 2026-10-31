@@ -121,6 +121,8 @@ try {
     console.log('fogd check APP --installation PROJECT --path /health [--ca PEM_FILE]  Request gateway response headers');
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
+    console.log('fogd preview profile init --docker-context CONTEXT --storage-host SSH_ALIAS --storage-root LINUX_DIRECTORY --max-projects N --output DIR  Initialize a fresh preview host profile');
+    console.log('fogd preview profile status DIRECTORY --expected-profile SHA256 --storage-host SSH_ALIAS  Inspect bound preview host budgets');
     console.log('fogd preview prepare ID --runtime FAMILY --lifetime-seconds SECONDS --output DIR  Prepare an exact proposal without executing it');
     console.log('fogd preview launch --request PRIVATE_DIRECTORY --expected-request SHA256 --storage-host SSH_ALIAS  Run an admitted preview in the foreground');
     console.log('fogd preview status ALLOCATION_UUID --control OWNER_DIRECTORY  Inspect an existing preview allocation');

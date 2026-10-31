@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { mkdir, lstat, readdir } from 'node:fs/promises';
+import { mkdir, readdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { hash, jsonBytes, digest, privateJSON } from '../build-cache/paths.mjs';
@@ -15,7 +15,7 @@ import { previewRuntimeFamily, bindPreviewRuntime } from './runtime-catalog.mjs'
 import { assertCurrentPreviewStorage } from './storage-binding.mjs';
 import { previewServiceCommands } from './container-plan.mjs';
 import { preparePreviewInputPackage, previewInputPackageLimit } from './input-package.mjs';
-import { previewInputJSON } from './input-files.mjs';
+import { readPrivatePreviewRecord } from './private-record.mjs';
 import { checkPreviewOwnerControlLocation } from './owner-control.mjs';
 
 export const previewLaunchRequestLimit = previewInputPackageLimit + 1024 ** 2;
@@ -108,16 +108,6 @@ async function checkedConfiguration(data, candidateEnrollment) {
   await preparePreviewInputPackage(authority, configuration.bundle);
   return configuration;
 }
-async function privateInput(bound, name, limit, expected) {
-  await checkHostDirectory(bound);
-  const path = join(bound.canonical, name), before = await lstat(path);
-  if (!before.isFile() || before.nlink !== 1 || before.uid !== process.geteuid() || (before.mode & 0o7777) !== 0o600 || before.size > limit) refuse();
-  const value = await previewInputJSON(path, limit, expected), after = await lstat(path);
-  if (before.dev !== after.dev || before.ino !== after.ino || before.ctimeMs !== after.ctimeMs || before.size !== after.size) refuse();
-  await checkHostDirectory(bound);
-  return value;
-}
-
 // Read for a new launch only: expiry and runtime admission are checked again.
 // The independently retained fingerprint cannot come from these same files.
 export async function readPreviewLaunchRequest(directory, expectedRequestSha256, { candidateEnrollment = false } = {}) {
@@ -126,12 +116,12 @@ export async function readPreviewLaunchRequest(directory, expectedRequestSha256,
     const bound = await bindHostDirectory(resolve(directory)), members = (await readdir(bound.canonical)).sort();
     if (!isDeepStrictEqual(members.filter(name => name !== 'control'), names)) refuse();
     if (members.includes('control')) await bindHostDirectory(join(bound.canonical, 'control'));
-    const data = await privateInput(bound, 'launch.json', previewLaunchRequestLimit, expectedRequestSha256);
+    const data = await readPrivatePreviewRecord(bound, 'launch.json', previewLaunchRequestLimit, expectedRequestSha256);
     const configuration = await checkedConfiguration(data, candidateEnrollment);
     if (configuration.ownerControl.directory !== join(bound.canonical, 'control')) refuse();
-    const access = await privateInput(bound, 'access.json', 65536);
+    const access = await readPrivatePreviewRecord(bound, 'access.json', 65536);
     if (!isDeepStrictEqual(access, accessRecord(configuration))) refuse();
-    const recorded = await privateInput(bound, 'request.complete.json', 16384);
+    const recorded = await readPrivatePreviewRecord(bound, 'request.complete.json', 16384);
     if (!isDeepStrictEqual(recorded, completion(configuration, expectedRequestSha256, hash(jsonBytes(access))))) refuse();
     return { configuration, requestSha256: expectedRequestSha256 };
   } catch { refuse(); }

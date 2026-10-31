@@ -1,3 +1,4 @@
+import { emptyPreviewDocker as dockerFixture } from './fixtures/preview-host.mjs';
 import { previewStorageFixture } from './fixtures/preview-storage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,18 +14,6 @@ import { previewPlanFixture } from './fixtures/preview-plan.mjs';
 
 const exec = promisify(execFile), moduleUrl = new URL('../src/preview/host-reservations.mjs', import.meta.url).href;
 const engineId = 'engine-fixture', mib = 1024 ** 2;
-function dockerFixture(memory = 6 * 1024 ** 3) {
-  const host = { ID: engineId, OSType: 'linux', Architecture: 'aarch64', Driver: 'overlay2', MemTotal: memory, NCPU: 8 };
-  const records = { container: [], network: [], volume: [] }, calls = [];
-  const run = async args => {
-    calls.push(args);
-    if (args[0] === 'info') return JSON.stringify(host);
-    const values = records[args[0]]; assert.ok(values);
-    if (args[1] === 'ls') return values.map(value => args[0] === 'volume' ? value.Name : value.Id).join('\n');
-    assert.equal(args[1], 'inspect'); return JSON.stringify(values);
-  };
-  return { host, records, calls, run };
-}
 async function fixture(t, memory) {
   const root = await realpath(await mkdtemp(join(tmpdir(), 'fogd-preview-host-'))); await chmod(root, 0o700);
   t.after(() => rm(root, { recursive: true, force: true }));

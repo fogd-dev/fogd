@@ -1,3 +1,4 @@
+import { previewStorageAdmissionFixture } from './fixtures/preview-storage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage, repairPreviewStorageHold, inspectPreviewStorageAdmissionInitialization, recoverPreviewStorageAdmissionInitialization } from '../src/preview/storage-admission.mjs';
@@ -7,7 +8,7 @@ import { previewPlanFixture } from './fixtures/preview-plan.mjs';
 import { hash, jsonBytes } from '../src/build-cache/paths.mjs';
 
 const input={root:'/var/lib/docker/fogd-preview-storage',engineId:'engine-test'};
-function report(){const policy={schema:1,kind:'fogd-preview-storage-admission',id:'00000000-0000-4000-8000-000000000001',...input,rootIdentity:{device:1,inode:2},maxProjects:2,chargeBytes:previewStorageChargeBytes,headroomBytes:previewStorageBytes,headroomInodes:8192};return{schema:2,kind:'fogd-preview-storage-admission-status',quarantines:[],quarantinedProjects:0,quarantinedChargeBytes:0,policy,heldProjects:0,heldChargeBytes:0,remainingProjects:2,pending:false,space:{availableBytes:4*previewStorageBytes,availableInodes:10000,device:1},admissionOpen:true,reservations:[],resourcesRetained:true,executionAuthorized:false}}
+const report=()=>previewStorageAdmissionFixture(input);
 const refused={code:'PREVIEW_STORAGE_REFUSED'};
 test('explicit initialization and status use closed transport requests without execution permission',async()=>{
  const calls=[],runHost=async(args,options)=>{calls.push(JSON.parse(options.inputText));return JSON.stringify({ok:true,admission:report()})};const result=await initializePreviewStorageAdmission({...input,runHost},{maxProjects:2});assert.equal(result.executionAuthorized,false);assert.deepEqual(await inspectPreviewStorageAdmission({...input,runHost}),result);assert.deepEqual(calls,[{action:'initialize',...input,maxProjects:2},{action:'admission',...input}]);

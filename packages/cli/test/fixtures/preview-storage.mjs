@@ -8,3 +8,5 @@ export function previewStorageFixture(project, engineId='engine-fixture', root='
  return{storage,sha256:hash(jsonBytes(storage)),workerSha256:previewStorageWorkerSha256,resourcesRetained:true,executionAuthorized:false,ordinaryEnrollment:false};
 }
 export const previewStorageHostFixture = receipt => async()=>JSON.stringify({ok:true,storage:receipt.storage});
+
+export function previewStorageAdmissionFixture(input, maximum = 2){const policy={schema:1,kind:'fogd-preview-storage-admission',id:'00000000-0000-4000-8000-000000000001',...input,rootIdentity:{device:1,inode:2},maxProjects:maximum,chargeBytes:previewStorageChargeBytes,headroomBytes:previewStorageBytes,headroomInodes:8192};return{schema:2,kind:'fogd-preview-storage-admission-status',quarantines:[],quarantinedProjects:0,quarantinedChargeBytes:0,policy,heldProjects:0,heldChargeBytes:0,remainingProjects:maximum,pending:false,space:{availableBytes:4*previewStorageBytes,availableInodes:10000,device:1},admissionOpen:true,reservations:[],resourcesRetained:true,executionAuthorized:false}}

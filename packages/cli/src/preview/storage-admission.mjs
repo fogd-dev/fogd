@@ -22,6 +22,11 @@ function checkPolicy(value, target) {
     !Number.isInteger(value.maxProjects) || value.maxProjects < 1 || value.maxProjects > 16 || value.chargeBytes !== previewStorageChargeBytes ||
     value.headroomBytes !== previewStorageBytes || value.headroomInodes !== 8192) fail();
 }
+// Shared policy validation for private owner profiles; it grants no capacity.
+export function validatePreviewStoragePolicy(value, target) {
+  try { checkPolicy(value, target); return structuredClone(value); }
+  catch { fail(); }
+}
 function checkRows(rows, policy) {
   if (!Array.isArray(rows) || rows.length > policy.maxProjects) fail();
   for (const row of rows) {

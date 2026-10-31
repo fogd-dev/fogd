@@ -3,6 +3,10 @@ import { uuid } from '../build-cache/paths.mjs';
 import { preparePreview } from './prepare.mjs';
 
 export async function previewCommand(args) {
+  if (args[0] === 'profile') {
+    const { previewProfileCommand } = await import('./profile-command.mjs');
+    return previewProfileCommand(args[1], args.slice(2));
+  }
   if (args[0] === 'launch') {
     const { previewLaunchCommand } = await import('./launch-command.mjs');
     return previewLaunchCommand(args.slice(1));

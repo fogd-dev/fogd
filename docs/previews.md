@@ -161,7 +161,7 @@ membership, ingress routing or a running application sandbox.
 The internal coordinator connects verified artifacts and signed decisions to fresh
 resources, capacity checks and managed expiry. The foreground launch command
 retains ordinary runtime admission; the current candidate is refused. Public
-profile/request setup and complete fresh-app/update acceptance remain open. All
+request setup and complete fresh-app/update acceptance remain open. All
 retained deployments are QA fixtures; fresh installation and same-family recovery are the release targets.
 
 ## Internal native backend image
@@ -412,6 +412,73 @@ Full fresh-app/update browser trials, manager-loss recovery, native lease cleanu
 and data recovery remain open. Ordinary previews also need recovery qualification
 and browser withdrawal controls. Default cron admission remains closed.
 
+## Preview host profiles
+
+`fogd preview profile init` initializes one fresh local ledger and one engine-wide
+retained storage policy. It grants no runtime or execution permission. Source
+administrator credentials, TLS keys and viewer credentials are not needed.
+
+On the selected Linux Docker host, create a fresh root-owned `0700` directory on
+the ext4 filesystem that hosts Docker data. For a host using the default Docker
+root, an example is:
+
+```sh
+sudo mkdir --mode=0700 /var/lib/docker/fogd-previews
+```
+
+Existing directories and registries need inspection and recovery through their
+original records. Profile initialization requires an empty storage root and an
+absent canonical storage registry; it cannot adopt or reset an existing budget.
+The [storage host requirements](#internal-bounded-persistent-storage) still apply.
+
+From a private local parent directory, select the Docker context and SSH alias
+explicitly and set the retained project limit:
+
+```sh
+fogd preview profile init \
+  --docker-context owned-linux \
+  --storage-host owned-linux \
+  --storage-root /var/lib/docker/fogd-previews \
+  --max-projects 2 \
+  --output /private/preview-profile
+```
+
+Both transports must reach the same engine. The SSH alias has the same
+noninteractive authentication, known-host and root Python requirements as the
+foreground launch transport. The command does not start containers or initialize
+application filesystems. The limit charges retained preview storage after stop;
+it is separate from memory admission and does not reserve the whole limit upfront.
+
+Keep the returned profile fingerprint independently from the private profile
+directory. The profile binds its original path, local ledger, Docker context,
+engine and exact storage policy. It contains a durable initialization intent and
+a completion record. Relocation, altered metadata, public file permissions and
+partial output refuse. After a failed initialization, preserve local files and
+host metadata; repeating the same output cannot replay host initialization.
+Partial profile completion recovery remains open.
+
+```sh
+fogd preview profile status /private/preview-profile \
+  --expected-profile ORIGINAL_PROFILE_SHA256 \
+  --storage-host owned-linux
+```
+
+Status verifies the current engine, registered preview resources, local memory
+holds and exact storage policy. Its bounded output distinguishes historical and
+active memory reservations from held storage charges and remaining storage slots.
+A pending operation, changed engine or policy refuses. Status releases only its
+own checking fence; it never clears another operation or grants execution.
+
+The [profile qualification](evidence/operator-preview-profile.json) includes real
+CLI initialization/status checks with controlled Docker/SSH processes and native
+refusal against an existing used QA storage root. Independent raw reads verify
+that the native refusal retains registry hashes, read-only SQLite/binary data and
+the stopped fixture. A separate cached-base Linux ARM64 engine verifies actual
+profile initialization and status, private ledger/completion fingerprints and
+canonical policy ownership. A second output cannot reset that policy. The fresh
+trial leaves zero application images, containers, volumes or storage holds; it
+qualifies metadata setup only. Ordinary preview and cron admission stay closed.
+
 ## Internal owner launch requests
 
 The [launch-request API](../packages/cli/src/preview/launch-request.mjs) creates
@@ -446,15 +513,15 @@ storage reservations remain charged, exhausting this QA registry's two-project
 limit. The source is an owned HTTP fixture; full browser and real-production
 preservation acceptance remain open.
 
-This API retains the explicit internal candidate gate. Public profile and request
-setup commands still require implementation and acceptance.
+This API retains the explicit internal candidate gate. Public request setup still
+requires implementation; profile setup grants no execution permission.
 
 ## Foreground launch command
 
 `fogd preview launch` accepts only qualified preview runtimes. The current candidate
 is refused before source or host effects, so live public use remains closed.
-Request creation still uses the internal API above until public profile/request
-setup is available.
+Request creation still uses the internal API above until public request setup is
+available. Profile initialization alone grants no execution permission.
 
 ```sh
 fogd preview launch \
@@ -547,8 +614,8 @@ retained. Separate raw reads verify signed bindings, resource limits, volume
 sources and 68 retained file digests. The source is an owned HTTP fixture. Post-stop
 D1 restoration and full browser/production-preservation acceptance remain open.
 
-Public profile/request setup and ordinary preview-runtime admission still need
-their acceptance checks; the foreground entrypoint keeps that admission gate.
+Public request setup and ordinary runtime admission still need their acceptance
+checks; the foreground entrypoint keeps that admission gate.
 Manager-loss recovery, unfinished reservation cleanup and broader artifact-size/density measurements also remain
 open. Default cron admission stays closed.
 
@@ -584,7 +651,7 @@ decline/revocation controls remain open.
 The owner CLI controls an existing candidate allocation through its private owner
 control directory. The internal managed coordinator can create that directory
 before startup. The gated foreground launch entrypoint uses the same coordinator;
-public profile/request setup remains open.
+public request setup remains open.
 The [owner-control check](evidence/operator-preview-owner-controls.json) records
 its bounded qualification.
 

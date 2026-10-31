@@ -58,8 +58,13 @@ memory retirement while retaining charged storage. Internal owner request setup 
 creates private launch/access files, fresh credentials and an exact signed target;
 its strict reader requires an independently retained fingerprint. A second native
 trial verifies these generated inputs beside the retained first preview, including
-unchanged peer data and both charged storage reservations. Public profile setup,
-request setup, shipped preview-runtime admission, manager-loss recovery and
+unchanged peer data and both charged storage reservations. Public profile init/status
+now bind a fresh local ledger and exact storage policy without granting execution.
+Real CLI process checks pass; a native used-root refusal preserves its prior registry
+and read-only data. A separate cached-base engine verifies actual fresh profile
+initialization/status, private ledger fingerprints and refusal of a second output
+that would reset the canonical budget, with zero application resources. Public
+request setup, partial-profile recovery, shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. The foreground launch
 entrypoint reads the exact private request, uses independently selected SSH storage
