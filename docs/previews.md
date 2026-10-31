@@ -569,7 +569,10 @@ location. Viewer credentials stay in the private access file. Keep the process
 running while using the preview: it owns source monitoring and ordered shutdown.
 SIGINT or SIGTERM requests cancellation; after readiness, the command waits for
 managed stop. Interrupted provisioning retains its component evidence and any
-allocated resources. Lost readiness output also requests stop. An ambiguous
+allocated resources. Readiness and stop events wait for stdout write completion.
+An observed stdout error or closure requests managed cancellation, including after
+readiness; the command waits for stop before reporting the output failure. A broken
+pipe cannot imply that readiness reached its caller. An ambiguous
 provisioning result retains its fence and resources without cleanup or replay. Failure to prove storage ordering
 reports a nonzero exit even when all roles are stopped.
 
@@ -582,6 +585,10 @@ combines process-model launch tests, real CLI candidate refusal and actual OpenS
 read-only inspection on the retained Linux ARM64 QA engine. The native transport
 check verifies existing storage receipts and data without launching another app;
 it does not qualify a native foreground launch or ordinary runtime admission.
+The [output-failure regression](evidence/operator-preview-foreground-output.json)
+adds a real closed stdout pipe around a process-model launch. It verifies ordered
+stop and retained memory charges before the foreground adapter rejects. This
+covers local process/output ownership, not a native Docker launch.
 
 ## Internal coordinated provisioning and launch
 

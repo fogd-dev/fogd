@@ -4,21 +4,26 @@ import { readPreviewLaunchRequest } from './launch-request.mjs';
 import { previewOwnerDocker } from './owner-control.mjs';
 import { previewStorageSSH } from './storage-transport.mjs';
 import { provisionAndRunPreview } from './launch.mjs';
+import { previewForegroundOutput } from './foreground-output.mjs';
 
 // Foreground ownership is deliberate: return only after the managed watcher
 // finishes. Signal handlers remain installed throughout provisioning and stop.
-export async function runPreviewForeground(input, publish = value => console.log(JSON.stringify(value))) {
+export async function runPreviewForeground(input, publish) {
   const cancellation = new AbortController(), cancel = () => cancellation.abort();
+  const output = publish ? null : previewForegroundOutput(cancel);
+  publish ??= value => output.write(value);
   process.on('SIGINT', cancel); process.on('SIGTERM', cancel);
   try {
     const active = await provisionAndRunPreview({ ...input, signal: cancellation.signal });
-    try { publish({ event: 'ready', ...active.ready }); }
+    try { await publish({ event: 'ready', ...active.ready }); }
     catch (error) { cancellation.abort(); await active.completion; throw error; }
     const stopped = await active.completion;
-    publish({ event: 'stopped', ...stopped });
+    if (output?.failure) throw output.failure;
+    await publish({ event: 'stopped', ...stopped });
     if (!stopped.ordered) process.exitCode = 1;
     return stopped;
   } finally {
+    output?.close();
     process.off('SIGINT', cancel); process.off('SIGTERM', cancel);
   }
 }

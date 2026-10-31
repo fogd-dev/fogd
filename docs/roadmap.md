@@ -76,7 +76,10 @@ remain recovery gaps. Partial-profile recovery, shipped preview-runtime admissio
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. The foreground launch
 entrypoint reads the exact private request, uses independently selected SSH storage
-checks and waits for managed stop; the shipped candidate remains refused. Actual
+checks and waits for managed stop; the shipped candidate remains refused. Its
+[closed-pipe regression](evidence/operator-preview-foreground-output.json) now checks
+actual process stdout failure with modeled Docker resources and ordered shutdown;
+native foreground launch remains unqualified. Actual
 OpenSSH read-only checks preserve both charged QA previews. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 

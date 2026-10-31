@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-foreground-output-qualification",
+  "testedBaseCommit": "8b73e8e19ce3c82299fdb1a7016a1c05bbb61767",
+  "existingUserInstallations": 0,
+  "scope": "Real local subprocess with an actual closed stdout pipe around the foreground adapter and modeled Docker boundary. Source HTTP, artifact checks, private journals and managed stop use the implementation. No native Docker foreground launch or ordinary runtime admission claim.",
+  "sourceFiles": {
+    "packages/cli/src/preview/foreground-output.mjs": "209c5c064b0153ed38d57506c96d0ea8d08f064d7f01e86138e2b7492cd48197",
+    "packages/cli/src/preview/launch-command.mjs": "c45cc68d2566f16a5f9f57105b4e36fda15fb5e06678e55bad0f03fcddd5de27",
+    "packages/cli/test/preview-foreground-output.test.mjs": "711dad8725500c12793b0a306f7641eb33ac5045d42acfb9a89d464cf610d7fb",
+    "packages/cli/test/preview-launch-command.test.mjs": "7737724bf410bede9fd9a5adf52f14c962af834a8236484bc77063169ca55a5c",
+    "packages/cli/test/fixtures/preview-launch.mjs": "c21907906e0dc5093ebabb44c3f0ff04dd92474d18c79c52bde980729965345f"
+  },
+  "checks": {
+    "connectedPreview": {
+      "tests": 119,
+      "pass": 119,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "foregroundCommandAndOutput": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "pass",
+    "quality": "pass",
+    "fullSuite": {
+      "tests": 3634,
+      "pass": 3634,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "writing": "pass",
+    "standardsReview": "pass"
+  },
+  "originalFailureReproduction": {
+    "confirmed": true,
+    "caught": false,
+    "reported": "EPIPE",
+    "stillRunning": true
+  },
+  "behavior": {
+    "readinessAndStopWritesAwaitCompletion": true,
+    "stdoutErrorsAndClosuresObservedThroughoutOwnership": true,
+    "closedPipeRequestsManagedStop": true,
+    "asyncPublisherRejectionWaitsForManagedStop": true,
+    "stopProofOrderedBeforeOutputFailureReported": true,
+    "allTenModeledRolesStopped": true,
+    "memoryChargeAndOwnerEvidenceRetained": true,
+    "errorDoesNotExposePrivateCause": true,
+    "streamAndSignalListenersReleased": true,
+    "unknownProvisioningEffectsNotReplayedOrCleanedUp": true
+  },
+  "limitations": [
+    "Modeled Docker resources; this does not replace native foreground qualification",
+    "Only observed output errors/closures trigger cancellation; a reader departure need not be observable until a later write",
+    "Manager loss, forced process termination and arbitrary Docker stalls remain recovery gaps",
+    "A requested stop cannot guarantee storage ordering; unconfirmed evidence remains retained",
+    "Native foreground trial deferred with 3.9 GiB free host disk; existing QA data/resources were preserved"
+  ],
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-foreground-output-20261031-01",
+  "independentProcessAudit": {
+    "passed": true,
+    "scope": "Real closed pipe and foreground child process; Docker operations are modeled. Independent reads audit saved role states, owner record metadata and stop journals before fixture cleanup.",
+    "errorReportedAfterOrderedStop": true,
+    "activeModeledRoles": 0,
+    "stoppedModeledRoles": 10,
+    "memoryHoldsRetained": 1,
+    "ownerRecordRetained": true,
+    "orderedPhaseJournalsVerified": 4,
+    "stopCallOrderMatchesProof": true,
+    "privateCauseAbsent": true,
+    "childStderrEmpty": true,
+    "processStateSha256": "f42c1511c07a678e9ba7df71aa8fe5646f2cc57a5cae6b339c636fb482b1b09f",
+    "captureBoundary": "State and journal snapshots captured before cleanup of the owned temporary model fixture; read-only audit runs afterward."
+  },
+  "auditCorrection": {
+    "originalAuditResult": "failed-overbroad-stop-call-expectation",
+    "cause": "The first auditor expected a stop invocation for all ten roles. Bucket initialization and input installation had already exited successfully; only the other eight roles need stop calls.",
+    "acceptedThrough": "Read-only recheck of the original saved process state and journals; no foreground launch replay.",
+    "originalFailurePreserved": true
+  },
+  "rawArtifacts": {
+    "console-reproduction.json": "2ee8ea1ab696544570f95c0ed13213f074aa16402f71305fe5217f27deeccb7f",
+    "process-state.json": "f42c1511c07a678e9ba7df71aa8fe5646f2cc57a5cae6b339c636fb482b1b09f",
+    "process-audit.json": "d1d95d9d59dce79f8ea80f3936981ab9d1486a44564fc335985353f16eccaa35",
+    "original-audit-error.log": "ff8d7e2c53af471ff0fa48d19ffcd6114e0544acdd53eb6c8e1b58a18d3ad177",
+    "fogd-foreground-output-full.log": "f5aa45b4d6f3121198ec67db499c324fbab867ecc78475630859e164778dd0f7",
+    "fogd-foreground-output-connected.log": "4c0c1a5fc3ce394cc5440c857ac5e6ee5acff8c6e87eabd7e0cc9c82fce05b84",
+    "fogd-foreground-output-targeted-final.log": "f0efbae2c248b76ccf410f7d1cf03d5f805352d0657039978e665e33d2a48c1f"
+  }
+}

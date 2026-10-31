@@ -88,3 +88,11 @@ test('a stopped graph without continuous storage ordering reports failure and ke
   assert.equal(stopped.ordered, false); assert.equal(stopped.memoryBudgetHeld, true); assert.equal(process.exitCode, 1);
   assert.equal(events.at(-1).ordered, false); assert.equal((await readdir(join(f.host, 'holds'))).length, 1);
 });
+
+test('an asynchronously rejected readiness publisher completes managed stop before rejecting', async t => {
+  const f = await previewLaunchFixture(t), before = listeners();
+  await assert.rejects(runPreviewForeground(f.args, async () => { throw Error('async output unavailable'); }), /async output unavailable/);
+  assert.ok(f.observed.containers.every(value => !value.State.Running));
+  assert.equal(JSON.parse(await readFile(join(f.host, 'allocations', f.args.plan.project, 'teardown.complete.json'))).ordered, true);
+  assert.deepEqual(listeners(), before);
+});
