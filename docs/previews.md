@@ -465,7 +465,8 @@ engine and exact storage policy. It contains a durable initialization intent and
 a completion record. Relocation, altered metadata, public file permissions and
 partial output refuse. After a failed initialization, preserve local files and
 host metadata; repeating the same output cannot replay host initialization.
-Partial profile completion recovery remains open.
+The final local completion record has the explicit recovery path below. Earlier
+interruption, corrupt metadata and pending-operation recovery remain open.
 
 ```sh
 fogd preview profile status /private/preview-profile \
@@ -488,6 +489,40 @@ profile initialization and status, private ledger/completion fingerprints and
 canonical policy ownership. A second output cannot reset that policy. The fresh
 trial leaves zero application images, containers, volumes or storage holds; it
 qualifies metadata setup only. Ordinary preview and cron admission stay closed.
+
+### Complete a missing final profile record
+
+`profile complete` writes a missing `profile.complete.json` when the original
+`profile.json`, initialization intent, local ledger and host storage policy are
+already valid. It requires an unused preview target: no historical memory holds,
+storage reservations, unregistered preview resources or pending host operations.
+Status and request setup continue to refuse the incomplete profile until completion.
+
+Review the surviving private profile and initialization intent against the original
+Docker context, engine, storage root and project limit. Keep the SHA-256 of the
+reviewed `profile.json` independently. This fingerprint selects exact local bytes;
+it does not authenticate how the host was initialized. Completion independently
+checks the actual engine, ledger and canonical storage policy.
+
+```sh
+fogd preview profile complete /private/preview-profile \
+  --expected-profile REVIEWED_PROFILE_SHA256 \
+  --storage-host owned-linux
+```
+
+The command holds its own local checking fence, rechecks original record identities
+before writing, and creates only the missing private completion file. A repeat on
+the same unused target verifies the existing completion without replacing it.
+Original profile, intent, policy and ledger files keep their bytes and identities.
+Host storage actions are inspection only. No storage initialization, budget reset,
+container start or execution permission occurs.
+
+Missing profile/ledger files, corrupt or extra records, replaced local files and
+changed engine/policy identities refuse. An uncertain write retains its output;
+do not delete records or repeat initialization. Existing pending markers remain
+untouched. The [completion qualification](evidence/operator-preview-profile-completion.json)
+uses modeled Docker/SSH and real CLI processes; native interruption and power-loss
+recovery remain unqualified.
 
 ## Profile-backed storage and request setup
 

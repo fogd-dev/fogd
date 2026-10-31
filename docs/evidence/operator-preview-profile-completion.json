@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-profile-completion-qualification",
+  "testedBaseCommit": "68953ced34ee21dbc4135990ea6e013629eb929c",
+  "existingUserInstallations": 0,
+  "scope": "Explicit completion of one missing final local profile record. Actual private filesystem and CLI process behavior use modeled Docker/SSH. Native completion and a native used-budget guard remain unqualified.",
+  "sourceFiles": {
+    "packages/cli/bin/fogd.js": "dc4b467a87aeb171ead745c2e47751544afbefac8e09b00a49d9781fbe22ef06",
+    "packages/cli/src/preview/profile.mjs": "685d942b6f6e7d456c402faed24a8aa0cbf111a6972805832e36bd76ffa6c3d3",
+    "packages/cli/src/preview/profile-records.mjs": "c0ec857dfd0d399fffc4bf5df68d31964cec49dccb0c29c04007bc5353389b4e",
+    "packages/cli/src/preview/profile-command.mjs": "29a0b45409b27d572e1278b702129811083218f7fd7cf53cf67e8101070a5f74",
+    "packages/cli/src/preview/profile-completion.mjs": "f2bcba2ed3c705052e5e62d7423972a0874019488deb171bd3091bb91c491e46",
+    "packages/cli/test/preview-profile.test.mjs": "7cb97a64d1f9c10fd59df82ae7bef7cdee0e6edee64f35e43fffe625dbc943c2"
+  },
+  "checks": {
+    "allPreviewAndReleaseClientManifestTests": {
+      "tests": 603,
+      "pass": 603,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "profileTestsIncludedInConnectedSuite": {
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "pass",
+    "quality": "pass",
+    "writing": "pass",
+    "standardsReview": "pass",
+    "fullWorkspaceSuite": "not repeated",
+    "independentEvidenceAudit": "pass"
+  },
+  "behavior": {
+    "completionRequiresExactProfileFingerprint": true,
+    "normalStatusStillRefusesIncompleteProfile": true,
+    "onlyMissingFinalRecordWritten": true,
+    "originalProfileIntentAndLedgerFilesKeepBytesAndInodes": true,
+    "repeatedCompletionPreservesCompletionInode": true,
+    "profileReplacementWithIdenticalBytesRefuses": true,
+    "historicalMemoryAndStorageBudgetsRefuse": true,
+    "orphanAllocationsAndForeignEngineLedgersRefuse": true,
+    "changedEngineOrPolicyAndPendingStorageRefuse": true,
+    "corruptMissingOrExtraMetadataRefusesBeforeTransports": true,
+    "existingPendingMarkerUntouched": true,
+    "realCliContextsAndEnvironmentSanitizationChecked": true,
+    "hostStorageAction": "admission-inspection-only",
+    "storageInitialization": false,
+    "runtimeStarted": false,
+    "executionAuthorized": false
+  },
+  "failedParallelTestRun": {
+    "exitCode": 7,
+    "accepted": false,
+    "reason": "Run terminated during observed host disk exhaustion without final test counts. Final unchanged source passes the same test selection with one worker."
+  },
+  "nativeAttempt": {
+    "nativeCompletionQualified": false,
+    "nativeBudgetGuardQualified": false,
+    "commandExit": 1,
+    "commandStdoutBytes": 0,
+    "localEntriesVerified": 8,
+    "originalLocalBytesAndInodesUnchanged": true,
+    "localPendingMarkerPresent": false,
+    "sshActions": [
+      "admission"
+    ],
+    "sshEnvironmentSanitized": true,
+    "hostStorageAfterState": "unverified: guest storage I/O error reading retained storage.allocated.json",
+    "originalDriverExit": 1,
+    "originalDriverFinalReport": false,
+    "laterReadOnlyAuditExit": 1,
+    "uncertainEffectsReplayed": false,
+    "storageRepairAttempted": false,
+    "limitations": "The generic CLI refusal does not establish which guard refused. No host-storage preservation or native completion claim is accepted."
+  },
+  "nativeFailureHandling": "Only original local metadata preservation is verified. Guest storage I/O failure prevents a post-probe host-state comparison. The generic CLI refusal does not prove which guard refused. No completion mutation, retry, storage repair or admission pass is accepted.",
+  "disposableTestCleanup": [
+    "Three abandoned synthetic fogd-transfer fixtures were verified against transfer-cli.mjs and its fixture-layer bytes, then removed as their test cleanup intended.",
+    "Qualification evidence, QA VM disks, retained native records and the nested user edit were not deleted."
+  ],
+  "limitations": [
+    "Missing profile or ledger creation, pending operation recovery and corrupt local-file repair remain open.",
+    "Native successful completion, interruption and power loss remain unqualified.",
+    "The QA storage I/O error remains unresolved; do not infer host-data preservation from software tests.",
+    "Ordinary preview runtime, native foreground launch and complete fresh-app/update acceptance remain gated."
+  ],
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-profile-completion-20261031-01",
+  "rawArtifacts": {
+    "driver.mjs": "0ec4b9e242be43f580b6cff7167b655a4a8abb1f04d392453d0e2bdb63ea1219",
+    "host-audit.py": "a90441a8365ed8669de3a347562a72e585dd4e22c58c1213a8eba64294f3971d",
+    "source-files.json": "dc2f2ce9ed33467c761fc823c314eeb9bfabecb7c474d5cc2b9d66794294114d",
+    "before.json": "e7015e8991441999664ca2f2d909a68beb53de58010daa19beab3e3a1a05d433",
+    "local-after.json": "2e5014ffa31ec45ae216e2f5af9971e99f86cb1854666cb1fe6ee0c9ee80ef5e",
+    "command-result.json": "024e55021d9d730bc9f076b1ab2e3c0e18ddc7087e892867086eab4f9a730aa5",
+    "ssh-calls.jsonl": "4669fd2ad2bf07a74d3fdc7a57b8b7e223577e323b6c322eb5ac4852e77f364a",
+    "audit-transport.stderr": "5f13fb1f7029338828bdb0eb26911802042e2291cef3c2100b1a4b123bf0ffae",
+    "failed-native-observation.json": "5fc02dc89f981dcc4137a05448b1d63db777ae3026fcdd733f36940395085d1a",
+    "fogd-profile-completion-connected-serial.log": "5ea3b3fd4b1101c94a955046473933b5d0092c24d12cf26ea2c2ef0e321c8869",
+    "fogd-profile-completion-connected-final.log": "cb1bc8014bf8bac91d78bf1e87e862e3cec66708d3f836c05b29237d6ae086cf",
+    "fogd-profile-completion-profile-final.log": "aafde3ab2b5db91a09ef4d5035e1bb0734d51f84a1d3d1525b81d0a6642462ff",
+    "fogd-profile-completion-check-final.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-profile-completion-quality-final.log": "be89c657ac3f791b80d94a18b09d29be92392e05b73ae3b97a105e312148e6ab",
+    "fogd-profile-completion-docs-writing.log": "f8341b8b604634668386fc135217c3db0229af2577f02691981e4d9bc7ca79ef",
+    "fogd-profile-completion-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+    "fogd-profile-completion-issue-writing.log": "8a404d121f63ee40a6d0946d6da32ae06e809215c0c25b4a7de0d35818b43179",
+    "fogd-profile-completion-review.md": "80af5d2662b1c4d7e18c37989cd80b1b66d6c64adc53e51a928c1fc9cd107aa2"
+  },
+  "independentAudit": {
+    "reportSha256": "c488a6c299547b8965fe014fa7cd246367c8bf8cbbc6ec7ab37baad92e064f27",
+    "auditorSha256": "ec2c837b01a1928f2b047e7abb3617d542bc26b491abc031d17e9dfe4d934e82"
+  }
+}

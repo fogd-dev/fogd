@@ -72,7 +72,10 @@ reviewed reconciliation complete missing local receipt/completion records only
 against settled, empty host storage. The [native qualification](evidence/operator-preview-storage-setup-recovery.json)
 uses local incomplete-record fixtures and preserves original request bytes/inodes,
 host storage and its charge. Pending host/profile fences and corrupt local records
-remain recovery gaps. Partial-profile recovery, shipped preview-runtime admission, manager-loss recovery and
+remain recovery gaps. Explicit [profile completion](previews.md#complete-a-missing-final-profile-record)
+can fill the final local record against an already initialized, unused target;
+modeled transports and real CLI processes verify original record preservation.
+Earlier profile interruption, shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. The foreground launch
 entrypoint reads the exact private request, uses independently selected SSH storage

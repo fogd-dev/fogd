@@ -123,6 +123,7 @@ try {
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd preview profile init --docker-context CONTEXT --storage-host SSH_ALIAS --storage-root LINUX_DIRECTORY --max-projects N --output DIR  Initialize a fresh preview host profile');
     console.log('fogd preview profile status DIRECTORY --expected-profile SHA256 --storage-host SSH_ALIAS  Inspect bound preview host budgets');
+    console.log('fogd preview profile complete DIRECTORY --expected-profile SHA256 --storage-host SSH_ALIAS  Complete a missing final record on an unused preview host');
     console.log('fogd preview prepare ID --runtime FAMILY --lifetime-seconds SECONDS --output DIR  Prepare an exact proposal without executing it');
     console.log('fogd preview storage inspect|reconcile --profile DIR --expected-profile SHA --preparation DIR --expected-preparation SHA --storage-request DIR --storage-host SSH_ALIAS [--expected-review SHA]  Inspect or acknowledge completed empty storage without reprovisioning');
     console.log('fogd preview storage prepare --profile DIR --expected-profile SHA --preparation DIR --expected-preparation SHA --storage-host SSH_ALIAS --output DIR  Provision bounded empty preview storage');

@@ -1,11 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, realpath, readdir, readFile, writeFile, rm, stat, chmod, cp, unlink } from 'node:fs/promises';
+import { mkdir, mkdtemp, realpath, readdir, readFile, writeFile, rm, stat, chmod, cp, unlink, rename } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { initializePreviewProfile, readPreviewProfile, inspectPreviewProfile } from '../src/preview/profile.mjs';
+import { completePreviewProfile } from '../src/preview/profile-completion.mjs';
+import { reservePreviewHost } from '../src/preview/host-reservations.mjs';
+import { previewPlanFixture } from './fixtures/preview-plan.mjs';
+import { previewStorageBytes } from '../src/preview/storage.mjs';
 import { hash, jsonBytes } from '../src/build-cache/paths.mjs';
 import { acquirePreviewHost } from '../src/preview/host-registry.mjs';
 import { previewStorageWorkerSha256 } from '../src/preview/storage.mjs';
@@ -102,6 +106,14 @@ test('real CLI initializes and inspects through explicit sanitized Docker/SSH tr
   const receipt = JSON.parse((await exec(process.execPath, init, { env })).stdout);
   const status = JSON.parse((await exec(process.execPath, [bin, 'preview', 'profile', 'status', receipt.directory, '--expected-profile', receipt.profileSha256, '--storage-host', 'owned-linux'], { env })).stdout);
   assert.equal(status.remainingStorageProjects, 2); assert.equal(status.executionAuthorized, false);
+  await unlink(join(receipt.directory, 'profile.complete.json'));
+  const complete = [bin, 'preview', 'profile', 'complete', receipt.directory, '--expected-profile', receipt.profileSha256, '--storage-host', 'owned-linux'];
+  const completed = JSON.parse((await exec(process.execPath, complete, { env })).stdout);
+  assert.equal(completed.completionWritten, true); assert.equal(completed.executionAuthorized, false);
+  assert.equal(completed.hostStorageActions, 'inspect-only');
+  const identity = await stat(join(receipt.directory, 'profile.complete.json'));
+  assert.equal(JSON.parse((await exec(process.execPath, complete, { env })).stdout).completionWritten, false);
+  assert.equal((await stat(join(receipt.directory, 'profile.complete.json'))).ino, identity.ino);
   assert.ok((await readFile(calls, 'utf8')).trim().split('\n').map(JSON.parse).every(value => value.ambient.length === 0));
   assert.ok(!(await readFile(join(receipt.directory, 'profile.json'), 'utf8')).includes('PRIVATE_SOURCE_PASSWORD'));
   const before = await readFile(calls); await assert.rejects(exec(process.execPath, [...init, '--candidate-enrollment'], { env }));
@@ -131,4 +143,104 @@ test('status never clears another operation fence or reaches transports while th
     await assert.rejects(f.inspect(receipt), refused);
     assert.deepEqual(await readFile(marker), original); assert.deepEqual(f.calls, []); assert.deepEqual(f.docker.calls, []);
   } finally { await held.fence.release(); }
+});
+
+async function incompleteProfile(t) {
+  const f = await fixture(t), receipt = await initializePreviewProfile(f.input);
+  const profile = await readPreviewProfile(receipt.directory, receipt.profileSha256);
+  await unlink(join(receipt.directory, 'profile.complete.json'));
+  f.calls.length = 0; f.docker.calls.length = 0;
+  return { ...f, receipt, profile, complete: () => completePreviewProfile({ directory: receipt.directory,
+    expectedProfileSha256: receipt.profileSha256, run: f.docker.run, runHost: f.input.runHost }) };
+}
+
+test('explicit completion writes only the missing final record, preserving profile, policy and ledger identities', async t => {
+  const f = await incompleteProfile(t), paths = ['profile.initialization.json', 'profile.json', 'ledger/' + hash(f.profile.engineId) + '/host.json'];
+  const original = await Promise.all(paths.map(async name => ({ name, bytes: await readFile(join(f.receipt.directory, name)), info: await stat(join(f.receipt.directory, name)) })));
+  const policy = structuredClone(f.report);
+  await assert.rejects(f.inspect(f.receipt), refused); assert.deepEqual(f.calls, []); assert.deepEqual(f.docker.calls, []);
+  const completed = await f.complete();
+  assert.equal(completed.completionWritten, true); assert.equal(completed.profileSha256, f.receipt.profileSha256);
+  assert.equal(completed.hostStorageActions, 'inspect-only'); assert.equal(completed.runtimeStarted, false);
+  assert.equal(completed.memoryReserved, false); assert.equal(completed.executionAuthorized, false);
+  assert.deepEqual(await readPreviewProfile(f.receipt.directory, f.receipt.profileSha256), f.profile);
+  const completion = join(f.receipt.directory, 'profile.complete.json'), identity = await stat(completion);
+  assert.equal(identity.mode & 0o7777, 0o600); assert.equal((await f.complete()).completionWritten, false);
+  assert.equal((await stat(completion)).ino, identity.ino);
+  for (const file of original) {
+    assert.deepEqual(await readFile(join(f.receipt.directory, file.name)), file.bytes);
+    assert.equal((await stat(join(f.receipt.directory, file.name))).ino, file.info.ino);
+  }
+  assert.deepEqual(f.report, policy); assert.deepEqual(f.calls.map(row => row.action), ['admission', 'admission']);
+  assert.ok(f.docker.calls.every(args => args[0] === 'info' || ['ls', 'inspect'].includes(args[1])));
+});
+
+for (const name of ['missing-profile', 'torn-completion', 'unknown-member', 'wrong-fingerprint']) test(`profile completion refuses ${name} before transports`, async t => {
+  const f = await incompleteProfile(t);
+  if (name === 'missing-profile') await unlink(join(f.receipt.directory, 'profile.json'));
+  if (name === 'torn-completion') await writeFile(join(f.receipt.directory, 'profile.complete.json'), '{', { mode: 0o600 });
+  if (name === 'unknown-member') await writeFile(join(f.receipt.directory, 'unknown.json'), '{}', { mode: 0o600 });
+  const names = await readdir(f.receipt.directory);
+  await assert.rejects(completePreviewProfile({ directory: f.receipt.directory,
+    expectedProfileSha256: name === 'wrong-fingerprint' ? '0'.repeat(64) : f.receipt.profileSha256,
+    run: f.docker.run, runHost: f.input.runHost }), refused);
+  assert.deepEqual(await readdir(f.receipt.directory), names); assert.deepEqual(f.calls, []); assert.deepEqual(f.docker.calls, []);
+  if (name === 'torn-completion') assert.equal(await readFile(join(f.receipt.directory, 'profile.complete.json'), 'utf8'), '{');
+});
+
+for (const change of ['engine', 'policy', 'pending-storage']) test(`profile completion preserves incomplete state on changed ${change}`, async t => {
+  const f = await incompleteProfile(t);
+  if (change === 'engine') f.docker.host.ID = 'foreign-engine';
+  if (change === 'policy') f.report.policy.id = '00000000-0000-4000-8000-000000000009';
+  if (change === 'pending-storage') { f.report.pending = true; f.report.admissionOpen = false; }
+  const before = await readFile(join(f.receipt.directory, 'profile.json'));
+  await assert.rejects(f.complete(), refused);
+  assert.deepEqual(await readFile(join(f.receipt.directory, 'profile.json')), before);
+  await assert.rejects(stat(join(f.receipt.directory, 'profile.complete.json')), { code: 'ENOENT' });
+  assert.ok(!(await readdir(join(f.profile.root, hash(f.profile.engineId)))).includes('launch.pending.json'));
+  assert.ok(f.calls.every(row => row.action === 'admission'));
+});
+
+test('profile completion refuses pending local operations without transports or marker changes', async t => {
+  const f = await incompleteProfile(t), host = await acquirePreviewHost(f.profile.root, f.profile.engineId);
+  const marker = join(f.profile.root, hash(f.profile.engineId), 'launch.pending.json'), before = await readFile(marker);
+  try {
+    await assert.rejects(f.complete(), refused); assert.deepEqual(await readFile(marker), before);
+    assert.deepEqual(f.calls, []); assert.deepEqual(f.docker.calls, []);
+  } finally { await host.fence.release(); }
+});
+
+for (const resource of ['memory', 'storage']) test(`profile completion cannot reset a used ${resource} budget`, async t => {
+  const f = await incompleteProfile(t), p = previewPlanFixture().plan;
+  if (resource === 'memory') await reservePreviewHost({ root: f.profile.root, plan: p, run: f.docker.run });
+  else {
+    const r = f.report; r.reservations.push({ schema: 1, kind: 'fogd-preview-storage-hold', profileId: r.policy.id,
+      reservation: '00000000-0000-4000-8000-000000000019', project: p.project, engineId: f.profile.engineId,
+      backingBytes: previewStorageBytes, chargeBytes: r.policy.chargeBytes });
+    r.heldProjects = 1; r.heldChargeBytes = r.policy.chargeBytes; r.remainingProjects = 1;
+  }
+  const report = structuredClone(f.report), holds = join(f.profile.root, hash(f.profile.engineId), 'holds');
+  const files = await readdir(holds), bytes = await Promise.all(files.map(name => readFile(join(holds, name))));
+  await assert.rejects(f.complete(), refused); assert.deepEqual(f.report, report); assert.deepEqual(await readdir(holds), files);
+  assert.deepEqual(await Promise.all(files.map(name => readFile(join(holds, name)))), bytes);
+  await assert.rejects(stat(join(f.receipt.directory, 'profile.complete.json')), { code: 'ENOENT' });
+});
+
+test('profile replacement during host inspection refuses even with identical profile bytes', async t => {
+  const f = await incompleteProfile(t), path = join(f.receipt.directory, 'profile.json'), bytes = await readFile(path), original = await stat(path);
+  const runHost = async (...args) => {
+    const result = await f.input.runHost(...args), replacement = join(f.root, 'replacement.json');
+    await writeFile(replacement, bytes, { mode: 0o600 }); await rename(replacement, path); return result;
+  };
+  await assert.rejects(completePreviewProfile({ directory: f.receipt.directory, expectedProfileSha256: f.receipt.profileSha256, run: f.docker.run, runHost }), refused);
+  assert.notEqual((await stat(path)).ino, original.ino); assert.deepEqual(await readFile(path), bytes);
+  await assert.rejects(stat(join(f.receipt.directory, 'profile.complete.json')), { code: 'ENOENT' });
+});
+
+for (const extra of ['allocation', 'engine-ledger']) test(`profile completion preserves an orphan ${extra} directory`, async t => {
+  const f = await incompleteProfile(t), path = extra === 'allocation' ?
+    join(f.profile.root, hash(f.profile.engineId), 'allocations', 'retained-orphan') : join(f.profile.root, hash('other-engine'));
+  await mkdir(path, { mode: 0o700 }); const identity = await stat(path);
+  await assert.rejects(f.complete(), refused); assert.equal((await stat(path)).ino, identity.ino);
+  await assert.rejects(stat(join(f.receipt.directory, 'profile.complete.json')), { code: 'ENOENT' });
 });
