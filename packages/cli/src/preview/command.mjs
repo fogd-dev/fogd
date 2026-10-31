@@ -27,6 +27,10 @@ export async function previewCommand(args) {
     const { previewLaunchCommand } = await import('./launch-command.mjs');
     return previewLaunchCommand(args.slice(1));
   }
+  if (args[0] === 'manage') {
+    const { previewOwnerBrowserCommand } = await import('./owner-browser-command.mjs');
+    return previewOwnerBrowserCommand(args.slice(1));
+  }
   if (['status', 'stop', 'retire'].includes(args[0])) {
     const { previewOwnerCommand } = await import('./owner-command.mjs');
     return previewOwnerCommand(args[0], args.slice(1));

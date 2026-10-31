@@ -128,6 +128,7 @@ try {
     console.log('fogd preview storage prepare --profile DIR --expected-profile SHA --preparation DIR --expected-preparation SHA --storage-host SSH_ALIAS --output DIR  Provision bounded empty preview storage');
     console.log('fogd preview request --profile DIR --expected-profile SHA --preparation DIR --expected-preparation SHA --storage-host SSH_ALIAS --storage-request DIR --expected-storage-request SHA --settings PRIVATE_JSON --output DIR  Create a signed preview launch request');
     console.log('fogd preview launch --request PRIVATE_DIRECTORY --expected-request SHA256 --storage-host SSH_ALIAS  Run an admitted preview in the foreground');
+    console.log('fogd preview manage ALLOCATION_UUID --control OWNER_DIRECTORY  Open loopback owner controls');
     console.log('fogd preview status ALLOCATION_UUID --control OWNER_DIRECTORY  Inspect an existing preview allocation');
     console.log('fogd preview stop ALLOCATION_UUID --control OWNER_DIRECTORY [--reason owner-stop|declined|revoked]  Stop preview execution and retain resources');
     console.log('fogd preview retire ALLOCATION_UUID --control OWNER_DIRECTORY  Release a verified stopped preview memory budget after expiry');

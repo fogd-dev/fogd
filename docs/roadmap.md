@@ -141,9 +141,14 @@ reviewed registry fingerprint, preserves a published policy and finishes missing
 metadata without resetting a used budget. Native process-loss checks and separate
 raw audits cover registry/fence/holds/policy boundaries and a lost recovery
 acknowledgment. Corrupt initialization records, damaged recovery intents, partial
-repair acknowledgments, application data restoration, browser
-withdrawal controls, public launch and complete preview/browser acceptance remain
-open. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
+repair acknowledgments, application data restoration, source-controller browser
+integration, public launch and complete preview/browser acceptance remain open.
+[Local browser owner controls](previews.md#browser-owner-controls) now inspect one
+existing allocation and request decline/revocation using a separate owner key.
+Browser decline and connection-loss checks use modeled Docker resources. A native
+read-only UI check preserves stopped previews and peer data; received-operator
+packaging uses synthetic images. These controls preserve source submissions, stop
+evidence and charges without granting launch or production approval. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
 now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,
 including missing-loop attachment and closed SQLite/binary retention. It leaves
 power-loss/crash consistency and writable application recovery unqualified.

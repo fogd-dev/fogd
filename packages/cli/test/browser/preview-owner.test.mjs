@@ -1,0 +1,68 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { chromium } from '@playwright/test';
+import { previewOwnerBrowserFixture } from '../fixtures/preview-owner-browser.mjs';
+
+test('an owner can inspect and decline an exact preview in a real browser using a separate key', { timeout: 30000 }, async t => {
+  const f = await previewOwnerBrowserFixture(t), original = structuredClone(f.source.state);
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.FOGD_TEST_CHROMIUM || chromium.executablePath() });
+  t.after(() => browser.close());
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } }), page = await context.newPage(), stopRequests = [];
+  page.on('request', request => { if (new URL(request.url()).pathname === '/stop') stopRequests.push(request.method()); });
+  assert.equal((await page.goto(f.ui.origin)).status(), 200);
+  const key = page.getByLabel('Owner access key');
+  await key.fill(f.input.bundle.ingress.accessKey); await page.getByRole('button', { name: 'Inspect preview' }).click();
+  await page.getByRole('status').filter({ hasText: 'Owner action unavailable' }).waitFor();
+  assert.equal(await page.locator('#details').isVisible(), false); assert.deepEqual(f.calls, []);
+  await key.fill(f.access.accessKey); await page.getByRole('button', { name: 'Inspect preview' }).click();
+  await page.waitForFunction(() => document.querySelector('#state').textContent === 'running');
+  assert.equal(await page.locator('#preview').textContent(), f.args.envelope.grant.preview);
+  assert.equal(await page.locator('#digest').textContent(), f.args.envelope.grant.source.digest);
+  assert.equal(await key.inputValue(), '');
+  assert.equal((await page.getByRole('link', { name: 'Open application' }).getAttribute('href')), f.args.plan.request.origin);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  assert.deepEqual(await context.cookies(), []);
+  assert.deepEqual(await page.evaluate(() => [localStorage.length, sessionStorage.length]), [0, 0]);
+  assert.ok(!(await page.content()).includes(f.access.accessKey)); assert.ok(!page.url().includes(f.access.accessKey));
+  if (process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR) await page.screenshot({ path: join(process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR, 'owner-running.png'), fullPage: true });
+  await page.getByRole('button', { name: 'Decline preview' }).click();
+  await page.waitForFunction(() => document.querySelector('#state').textContent === 'stopped');
+  assert.equal(await page.getByRole('button', { name: 'Decline preview' }).isEnabled(), false);
+  assert.equal(await page.getByRole('button', { name: 'Revoke preview' }).isEnabled(), false);
+  assert.equal(await page.getByRole('link', { name: 'Open application' }).count(), 0);
+  assert.deepEqual(stopRequests, ['POST']);
+  assert.equal(JSON.parse(await readFile(join(f.directory, 'stop.requested.json'))).reason, 'declined');
+  assert.equal(JSON.parse(await readFile(join(f.directory, 'teardown.complete.json'))).ordered, true);
+  assert.ok(f.f.observed.containers.every(row => !row.State.Running));
+  assert.deepEqual(f.source.state, original); assert.deepEqual(f.source.calls, []);
+  if (process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR) await page.screenshot({ path: join(process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR, 'owner-stopped.png'), fullPage: true });
+});
+
+test('an uncertain browser decline disables further stops and requires a separate status check', { timeout: 30000 }, async t => {
+  const f = await previewOwnerBrowserFixture(t, { transport: async (x, args, ...extra) => {
+    const result = await x.args.run(args, ...extra);
+    if (args[0] === 'stop') throw Error('PRIVATE_UNKNOWN_STOP');
+    return result;
+  } });
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.FOGD_TEST_CHROMIUM || chromium.executablePath() });
+  t.after(() => browser.close());
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } }), stops = [];
+  page.on('request', request => { if (new URL(request.url()).pathname === '/stop') stops.push(request.method()); });
+  await page.goto(f.ui.origin); await page.getByLabel('Owner access key').fill(f.access.accessKey);
+  await page.getByRole('button', { name: 'Inspect preview' }).click();
+  await page.waitForFunction(() => document.querySelector('#state').textContent === 'running');
+  await page.getByRole('button', { name: 'Decline preview' }).click();
+  await page.getByRole('status').filter({ hasText: 'Owner action unavailable' }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Decline preview' }).isEnabled(), false);
+  assert.equal(await page.getByRole('button', { name: 'Revoke preview' }).isEnabled(), false);
+  assert.deepEqual(stops, ['POST']);
+  await page.getByRole('button', { name: 'Refresh status' }).click();
+  await page.waitForFunction(() => document.querySelector('#state').textContent === 'pending');
+  assert.equal(await page.getByRole('button', { name: 'Decline preview' }).isEnabled(), false);
+  assert.deepEqual(stops, ['POST']); assert.equal(f.calls.filter(args => args[0] === 'stop').length, 1);
+  assert.equal(JSON.parse(await readFile(join(f.host, 'launch.pending.json'))).phase, 'writing');
+  assert.ok(!(await page.textContent('body')).includes('PRIVATE_UNKNOWN_STOP'));
+  if (process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR) await page.screenshot({ path: join(process.env.FOGD_OWNER_BROWSER_ARTIFACT_DIR, 'owner-pending.png'), fullPage: true });
+});

@@ -419,7 +419,8 @@ and requires the original expiry and complete stopped-state proof.
 The foreground launch command refuses this candidate; ordinary enrollment remains closed.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
 and data recovery remain open. Ordinary previews also need recovery qualification
-and browser withdrawal controls. Default cron admission remains closed.
+and source-controller review integration. Local browser owner controls are available
+below. Default cron admission remains closed.
 
 ## Preview host profiles
 
@@ -677,8 +678,8 @@ accounting separately from the historical teardown record.
 Partial, malformed or unordered proofs cannot become a fresh cleanup attempt or
 an ordered reclamation claim. Unknown effects retain their fence and hold. A
 pending-fence refusal can be observed again because it occurred before any effect;
-uncertain commands and partial writes are never retried. Public launch and browser
-decline/revocation controls remain open.
+uncertain commands and partial writes are never retried. Public launch and source-controller browser integration remain open. The local
+operator can request decline/revocation through the browser controls below.
 
 ## Owner status, stop and memory retirement
 
@@ -718,8 +719,52 @@ not be retried as a fresh operation.
 verified ordered shutdown. It refuses early retirement. Repeated retirement
 observes the existing result. Containers, data, volumes, networks, ports and names
 remain retained; this command establishes neither namespace reuse nor physical
-storage reclamation. Public launch, ordinary runtime admission and browser
-withdrawal controls remain open.
+storage reclamation. Public launch, ordinary runtime admission and source-controller browser
+integration remain open.
+
+## Browser owner controls
+
+`fogd preview manage` provides local browser status and withdrawal for one existing
+allocation. It uses the same checked owner actions as the CLI:
+
+```sh
+fogd preview manage ALLOCATION_UUID --control /private/preview-owner
+```
+
+Keep the command running. Its readiness JSON supplies a loopback URL and a private
+access-file path. Open that URL manually and paste the file's `accessKey` into
+**Owner access key**. The page verifies the selected app, preview, submission,
+release digest, expiry and current process state. Refresh status explicitly;
+process state does not establish application health.
+
+The owner key differs from the viewer key and grants only inspection and stopping
+of this allocation. It stays out of URLs, browser cookies and browser storage.
+The access file is owner-only and its key stops working when this server exits.
+The server listens only on `127.0.0.1`; this is a local operator tool rather than a
+remote administration endpoint. It does not open a browser automatically.
+
+**Decline preview** and **Revoke preview** request the corresponding durable stop
+reason. They leave the source submission and production activation unchanged.
+An authorized stop continues if the browser disconnects. SIGINT or SIGTERM closes
+the UI server and waits for an action already in progress. Closing this UI alone does not stop the
+application or replace the foreground preview manager.
+
+An uncertain response receives no automatic retry. Refresh status or inspect with
+the CLI before another action. Pending or unverified state disables stop controls;
+changed owner-control bytes refuse rather than silently selecting another target.
+Stopped previews retain their data, physical resources and storage charge. Memory
+retirement remains a separate CLI action with the original expiry and ordered-stop
+checks. This page cannot launch an app, approve production, retire memory or delete
+data.
+
+The [owner-browser qualification](evidence/operator-preview-owner-browser.json)
+uses actual loopback HTTP, CLI processes and headless Chrome. Decline, connection
+loss and retained-stop checks use a modeled Docker boundary. Separate native
+read-only status checks preserve an existing stopped allocation and its peer data;
+a received-operator check uses synthetic transfer images. These checks do not
+qualify native foreground launch, full fresh-app/update acceptance or remote
+reviewer integration. Ordinary
+preview and default cron admission remain closed.
 
 ## Preview temporary storage and log retention
 
