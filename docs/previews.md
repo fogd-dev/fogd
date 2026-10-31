@@ -402,7 +402,7 @@ and requires the original expiry and complete stopped-state proof.
 
 This candidate path has no public launch command or ordinary enrollment permission.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
-and data recovery remain open. Ordinary previews also need disk/log bounds and
+and data recovery remain open. Ordinary previews also need persistent-storage bounds and
 browser withdrawal controls. Default cron admission remains closed.
 
 ## Internal owner withdrawal and source monitoring
@@ -471,3 +471,34 @@ observes the existing result. Containers, data, volumes, networks, ports and nam
 remain retained; this command establishes neither namespace reuse nor physical
 storage reclamation. Public launch, ordinary runtime admission and browser
 withdrawal controls remain open.
+
+## Preview temporary storage and log retention
+
+New internal plans seal explicit temporary-storage and log-retention settings for
+every role. The [resource-policy check](evidence/operator-preview-resource-policy.json)
+records the realized Docker configuration and native exhaustion checks. The
+[plan constructor](../packages/cli/src/preview/plan.mjs) owns the fixed profile;
+changing those settings changes the signed target.
+
+The temporary `/tmp` filesystem has separate byte and inode limits. Exhausting
+either returns `ENOSPC` in the native check. Its memory use remains within the
+container memory limit; temporary files disappear when the container stops.
+See [Docker's tmpfs behavior](https://docs.docker.com/engine/storage/tmpfs/).
+Application data remains on separate retained volumes.
+
+Every role explicitly selects JSON log rotation and blocking delivery. The graph
+check refuses missing, unbounded, alternative or additional logging options,
+including environment values added as log metadata. Rotation removes older logs;
+it is a retention policy, not a complete audit archive or a strict physical-disk
+quota. See [Docker's JSON logging options](https://docs.docker.com/engine/logging/drivers/json-file/).
+Blocking delivery can slow a process when the logging sink cannot keep up.
+
+Historical QA plans remain verifiable for owner status, stop and memory
+retirement. They cannot create new containers or start a preview with their old
+resource policy. No existing user installation needs migration, and no retained
+container is reconfigured by this change.
+
+Persistent application volumes still lack an enforced storage quota. Host free
+space checks alone cannot bound a live writer. Ordinary preview admission and
+public launch remain closed until persistent-storage limits and the other
+acceptance gates pass. Default cron admission remains closed.

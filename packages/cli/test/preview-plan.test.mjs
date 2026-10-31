@@ -114,3 +114,25 @@ test('host reader checks complete stopped inventory and refuses a changing snaps
   let reads = 0; const changed = async args => args[0] === 'container' && args[1] === 'ls' && ++reads > 1 ? '' : run(args);
   await assert.rejects(readPreviewHost(changed), refused('inventory-changed'));
 });
+
+test('new plans seal bounded temporary storage and explicit rotating log delivery for every role', () => {
+  const f=fixture();assert.equal(f.plan.schema,2);assert.equal(f.plan.hardening.tmpfs,'/tmp:rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096');
+  for(const role of Object.keys(f.plan.services)) {
+    const secrets=Object.fromEntries(Object.values(f.plan.services[role].secretEnvironment).map(key=>[key,f[key]])),command=f.commands(role,secrets).create;
+    assert.equal(command[command.indexOf('--log-driver')+1],'json-file');
+    assert.deepEqual(command.flatMap((value,index)=>value==='--log-opt'?[command[index+1]]:[]),['max-size=1m','max-file=2','mode=blocking','compress=false']);
+    assert.equal(command[command.indexOf('--tmpfs')+1],f.plan.hardening.tmpfs);
+  }
+  for(const change of [p=>p.hardening.logging.options['max-size']='0',p=>p.hardening.tmpfs='/tmp:rw,noexec,nosuid,nodev',p=>p.schema=1]){const p=structuredClone(f.plan);change(p);assert.throws(()=>validatePreviewPlan(p),{code:'PREVIEW_PLAN_REFUSED'})}
+});
+
+test('historical plans remain verifiable without authorizing fresh legacy containers', () => {
+  const f=fixture(),legacy=structuredClone(f.plan);legacy.schema=1;legacy.hardening.tmpfs='/tmp:rw,noexec,nosuid,nodev';delete legacy.hardening.logging;
+  assert.deepEqual(validatePreviewPlan(legacy),legacy);assert.notEqual(previewPlanSha256(legacy),previewPlanSha256(f.plan));
+  assert.throws(()=>previewContainerCommands(legacy,f.envelope,{role:'gateway',publicKey:f.authority.publicKey,expectedGrantSha256:previewExecutionSha256(f.envelope),secretValues:{}}),{code:'PREVIEW_PLAN_REFUSED'});
+});
+
+test('historical resource policy refuses startup before Docker, source access or host changes',async()=>{
+  const {startPreviewAllocation}=await import('../src/preview/startup.mjs');let calls=0;
+  await assert.rejects(startPreviewAllocation({plan:{schema:1},run:async()=>{calls++;throw Error('unexpected Docker call')}}),{code:'PREVIEW_HOST_REFUSED',reason:'resource-policy'});assert.equal(calls,0);
+});

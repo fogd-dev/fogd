@@ -40,10 +40,12 @@ function expectedAuthority(plan, options) {
 export function previewContainerCommands(input, envelope, { role, publicKey, expectedGrantSha256, secretValues, allocationId }) {
   try {
     const plan = validatePreviewPlan(input), service = plan.services[role];
+    if (plan.schema !== 2) throw new PreviewPlanError();
     const grant = authorizePreviewExecution(envelope, expectedAuthority(plan, { publicKey, expectedGrantSha256 }));
     const { configuration, labels } = roleSpecification(plan, grant, role, { publicKey, expectedGrantSha256, secretValues, allocationId });
     const { environment, command } = configuration, installer = role === 'input-installer';
     const create = ['create', '--name', service.name, '--pull', 'never', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--restart', 'no',
+      '--log-driver', plan.hardening.logging.driver, ...Object.entries(plan.hardening.logging.options).flatMap(([key, value]) => ['--log-opt', `${key}=${value}`]),
       '--tmpfs', plan.hardening.tmpfs, '--memory', String(service.memoryBytes), '--cpus', String(service.cpuLimit), '--pids-limit', String(service.pidsLimit),
       ...(installer ? ['--interactive'] : []), ...Object.entries(labels).flatMap(([key, value]) => ['--label', `${key}=${value}`]), ...networkArguments(plan, role, service),
       ...previewDns.dns.flatMap(value => ['--dns', value]), ...previewDns.dns_opt.flatMap(value => ['--dns-option', value]),

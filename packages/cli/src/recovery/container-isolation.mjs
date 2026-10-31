@@ -20,8 +20,8 @@ function checkTemporaryStorage(service, container, host) {
 }
 function temporaryMounts(service) {
   if (!service.tmpfs?.length) return {};
-  if (!isDeepStrictEqual(service.tmpfs, ['/tmp:rw,noexec,nosuid,nodev'])) throw new Error('Backup supports only the sealed /tmp temporary filesystem');
-  return { '/tmp': 'rw,noexec,nosuid,nodev' };
+  if (!['/tmp:rw,noexec,nosuid,nodev', '/tmp:rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096'].some(value => isDeepStrictEqual(service.tmpfs, [value]))) throw new Error('Backup supports only the sealed /tmp temporary filesystem');
+  return { '/tmp': service.tmpfs[0].slice('/tmp:'.length) };
 }
 export function checkMounts(service, container, volumes) {
   const expected = (service.volumes || []).map(mount => [volumes[mount.source].name, mount.target, !mount.read_only]).sort();

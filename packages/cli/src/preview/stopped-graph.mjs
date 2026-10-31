@@ -75,7 +75,8 @@ function observedState(container) {
   if (!processStateMatches(container)) hostRefusal('runtime-state');
 }
 const processStateMatches = container => container.State.Running ? container.State.Status === 'running' && container.State.Pid > 0 : previewContainerStopped(container);
-function limitsAndPorts(service, host) {
+function limitsAndPorts(plan, service, host) {
+  if (plan.schema === 2) same(host.LogConfig, { Type: plan.hardening.logging.driver, Config: plan.hardening.logging.options });
   same([host.Memory, host.NanoCpus, host.PidsLimit, host.ReadonlyRootfs], [service.memoryBytes, service.cpuLimit * 1e9, service.pidsLimit, true]);
   same(host.RestartPolicy, { Name: 'no', MaximumRetryCount: 0 });
   same(host.Dns, [...previewDns.dns]); same(host.DnsOptions, [...previewDns.dns_opt]);
@@ -146,7 +147,7 @@ export function inspectPreviewGraph(input, observed, image, commands, allocation
       same([container.Config.User || '', container.Config.WorkingDir || ''], [image.Config.User || '', image.Config.WorkingDir || '']);
       same(container.Config.OpenStdin || false, role === 'input-installer');
       assertContainerPrivileges(container.HostConfig, service.networks.length ? Object.values(checkedNetworks).map(value => value.name) : ['none']);
-      limitsAndPorts(service, container.HostConfig); declaredMounts(plan, service, container, checkedVolumes); declaredNetworks(plan, role, container, checkedNetworks, observed.networks);
+      limitsAndPorts(plan, service, container.HostConfig); declaredMounts(plan, service, container, checkedVolumes); declaredNetworks(plan, role, container, checkedNetworks, observed.networks);
       containers[role] = container;
     }
     for (const [role, value] of Object.entries(checkedNetworks)) same(value.id, created.networks[role]);

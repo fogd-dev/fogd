@@ -64,17 +64,20 @@ function serviceRoles(request, project) {
 // This constructs a fixed configuration template. It authorizes neither an image
 // nor allocation. Reserve fresh resources before realizing it with the signed
 // absolute deadline; runtime execution admission is required before any start.
-export function createPreviewPlan(input) {
+function planForSchema(input, schema) {
   try {
+    if (![1, 2].includes(schema)) throw new PreviewPlanError();
     const request = checkedRequest(input), preview = request.preparation.id, project = `fogd-preview-${preview.replaceAll('-', '')}`;
     const installation = hash(jsonBytes({ engineId: request.engineId, project, preview, bucket: `fogd-preview-${preview.replaceAll('-', '')}` }));
-    return { schema: 1, kind: 'fogd-preview-plan', request, project, installation, networks: previewNetworks(project, request.subnets), volumes: volumes(project), services: serviceRoles(request, project),
-      hardening: { readOnlyRoot: true, tmpfs: '/tmp:rw,noexec,nosuid,nodev', capDrop: ['ALL'], noNewPrivileges: true, restart: 'no', deadline: 'original-execution-expiry' } };
+    return { schema, kind: 'fogd-preview-plan', request, project, installation, networks: previewNetworks(project, request.subnets), volumes: volumes(project), services: serviceRoles(request, project),
+      hardening: { readOnlyRoot: true, tmpfs: '/tmp:rw,noexec,nosuid,nodev' + (schema === 2 ? ',size=33554432,nr_inodes=4096' : ''),
+        ...(schema === 2 ? { logging: { driver: 'json-file', options: { 'max-size': '1m', 'max-file': '2', mode: 'blocking', compress: 'false' } } } : {}), capDrop: ['ALL'], noNewPrivileges: true, restart: 'no', deadline: 'original-execution-expiry' } };
   } catch { throw new PreviewPlanError(); }
 }
+export const createPreviewPlan = input => planForSchema(input, 2);
 export function validatePreviewPlan(input) {
   try {
-    const expected = createPreviewPlan(input.request);
+    const expected = planForSchema(input.request, input.schema);
     if (!isDeepStrictEqual(input, expected)) throw new PreviewPlanError();
     return expected;
   } catch { throw new PreviewPlanError(); }

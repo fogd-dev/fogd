@@ -53,3 +53,8 @@ test('ordinary inventory accepts declared read-only TLS storage and rejects a wr
   container.Mounts[0].RW = true;
   assert.throws(() => checkMounts(service, container, volumes), /write permissions differ/);
 });
+
+test('bounded preview tmpfs must match both declared byte and inode limits exactly', () => {
+  const f=fixture();f.service.tmpfs=['/tmp:rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096'];f.container.HostConfig.Tmpfs['/tmp']='rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096';checkContainer(f.service,f.container,f.image);
+  for(const options of ['rw,noexec,nosuid,nodev','rw,noexec,nosuid,nodev,size=33554432','rw,noexec,nosuid,nodev,size=67108864,nr_inodes=4096']){f.container.HostConfig.Tmpfs['/tmp']=options;assert.throws(()=>checkContainer(f.service,f.container,f.image),/temporary filesystem differs/)}
+});
