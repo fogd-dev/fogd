@@ -79,7 +79,11 @@ entrypoint reads the exact private request, uses independently selected SSH stor
 checks and waits for managed stop; the shipped candidate remains refused. Its
 [closed-pipe regression](evidence/operator-preview-foreground-output.json) now checks
 actual process stdout failure with modeled Docker resources and ordered shutdown;
-native foreground launch remains unqualified. Memory admission now budgets the
+native foreground launch remains unqualified. A [fresh-engine attempt](evidence/operator-preview-reservation-read-failure.json)
+also failed before allocation; its storage charge and checking fence remain retained.
+Reservation inventory failures now release the current attempt's unchanged checking
+fence before any hold write; existing uncertain records require separate recovery.
+Memory admission now budgets the
 [largest enforced startup phase](evidence/operator-preview-phase-memory.json),
 retaining container limits and host headroom. A native attempt on a cached-image
 QA engine refused unregistered legacy preview networks before setup, preserving

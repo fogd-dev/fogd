@@ -35,10 +35,12 @@ export async function reservePreviewHost({ root, plan: input, run }) {
   return guardPreviewHost(async () => {
     const { parent, bound, holds, records, heldRecords, fence } = await acquirePreviewHost(root, engineId);
     if (records.length >= 512) { await fence.release(); hostRefusal('hold-limit'); }
-    const observed = await readPreviewHost(run);
-    assertRegisteredPreviewResources(observed, records);
     let eligibility;
-    try { eligibility = assessPreviewAdmission(plan, observed, heldRecords.map(record => record.plan)); }
+    try {
+      const observed = await readPreviewHost(run);
+      assertRegisteredPreviewResources(observed, records);
+      eligibility = assessPreviewAdmission(plan, observed, heldRecords.map(record => record.plan));
+    }
     catch (error) { if (error instanceof PreviewAdmissionError) await fence.release(); throw error; }
     const record = { schema: 1, kind: 'fogd-preview-host-hold', id: randomUUID(), createdAt: new Date().toISOString(), planSha256: previewPlanSha256(plan), plan };
     await fence.record('writing');

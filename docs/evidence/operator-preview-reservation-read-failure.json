@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-reservation-read-failure-qualification",
+  "testedBaseCommit": "9036bf3f8141a3f987a9265f41f5582b16f18809",
+  "existingUserInstallations": 0,
+  "scope": "Reservation error handling with modeled Docker transport failures. A separate failed native foreground attempt is retained and is not accepted as launch evidence.",
+  "sourceFiles": {
+    "packages/cli/src/preview/host-reservations.mjs": "de82e32f3cc9281301525ca8bd1361a70df96d5fe59ce0ff7e78783566ac68d8",
+    "packages/cli/test/preview-host-reservations.test.mjs": "098f9c139c5042df6c43f9ccb8e5b5fa011a7fe3ff54852da25a16ccc82bc367"
+  },
+  "checks": {
+    "preFixRegressions": {
+      "tests": 22,
+      "pass": 19,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "reservationTests": {
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "allPreviewTests": {
+      "tests": 516,
+      "pass": 516,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "pass",
+    "quality": "pass",
+    "fullWorkspaceSuite": "not repeated for this reservation change",
+    "writing": "pass",
+    "standardsReview": "pass",
+    "independentEvidenceAudit": "pass"
+  },
+  "behavior": {
+    "firstAndFinalInventoryFailureReleaseOwnedCheckingFence": true,
+    "priorHoldBytesAndInodeRetained": true,
+    "priorBudgetRetained": true,
+    "subsequentSeparateReservationCanProceed": true,
+    "changedMarkerRetainedAndRefuses": true,
+    "unregisteredResourceAndUncertainWriteGuardsUnchanged": true,
+    "dockerMutationsDuringFailureTests": 0,
+    "automaticRetry": false,
+    "recoveryOfOldPendingMarkers": false
+  },
+  "nativeAttempt": {
+    "nativePassed": false,
+    "failureStage": "before-memory-hold-and-container-allocation",
+    "applicationContainers": 0,
+    "memoryHolds": 0,
+    "allocationRecords": 0,
+    "checkingFenceRetained": true,
+    "markerSha256": "5e48d775a1195cac30faf4888d64fc583cf7a1584de3cfb9f7cb679a3843dac9",
+    "originalFailureDetail": "Child stderr was not archived by driver; underlying inventory failure reason is unproven. Read-only info recheck succeeds.",
+    "heldStorageProjects": 1,
+    "retainedRecordsAndStorage": true,
+    "noReplay": true,
+    "freeBytesBeforeStop": 356360192
+  },
+  "nativeLimits": [
+    "Child stderr was not archived by the driver; the underlying native failure reason is unproven.",
+    "Transport records end at initial reservation Docker info; no hold or allocation was written.",
+    "The later read-only Docker info recheck succeeds; this does not explain the failed invocation.",
+    "One fresh bounded filesystem and its storage charge remain retained; it has not hosted application code.",
+    "Only the new failed QA VM was stopped, retaining its root/data disks and private records.",
+    "Host disk capacity is insufficient for another native trial; no resource deletion or replay was attempted.",
+    "No native foreground launch, browser application workflow, restoration, production preservation or runtime admission qualification."
+  ],
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-reservation-read-failure-20261031-01",
+  "rawArtifacts": {
+    "source-files.json": "4aa0cb04c53fba2800c706ec7a1b318ef33339dc450679752dbf530eb46af223",
+    "fogd-preview-inventory-red.log": "df871006bfc5061b4f2c84c546e3639cbc0c73db8907c47c5e1ee27f19643d39",
+    "fogd-preview-inventory-green.log": "bf9a10d3fe9882fce9db36d1e8e3065444609cd8873f91768c2840049b99feda",
+    "fogd-preview-inventory-suite.log": "332e0d6541078a0e8db31aa1baec113c7827abba13e2711b018ed6391e6e4293",
+    "fogd-preview-inventory-check.log": "f5704b8227385ddc1fdf5e22e0133740da992e33066090a3751077888fbee412",
+    "fogd-preview-inventory-quality.log": "dd89b849e85a91060e17c1bc93687a721dbb01bac768880b865de71e40ef880a",
+    "independent.json": "a7876d9a28cc2a36e16081dcdcbbfe9824fb8bc3144ef06e6f8aee2ad6254548",
+    "fogd-preview-inventory-review.md": "90472c9b0f8bed85e2ac38c3a66fa638d5206a26846b66d2348d57ee7f29910d",
+    "fogd-preview-inventory-audit.py": "17f39931825331bf7276c8e84f9e9bbc7adfc5eff78c4f4ef26bc1c8653b96ef",
+    "fogd-preview-inventory-docs-writing.log": "f29a0d86bf19386e4c7c19e09c54f236f22ea80707edfcde96201ca2db1fa95e",
+    "fogd-preview-inventory-roadmap-writing.log": "5fcc8007993d1df265fb33458bc98b4929c0d5f35dc38b9ec7512f1f197102ed",
+    "fogd-preview-inventory-issue-writing.log": "8a404d121f63ee40a6d0946d6da32ae06e809215c0c25b4a7de0d35818b43179"
+  },
+  "nativeRawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-foreground-native-20261031-01",
+  "nativeArtifacts": {
+    "driver.mjs": "d800351889944051d3120d8a0f49ddcfa2f2ce86b086980d956dffa00980659d",
+    "driver-output.log": "b374f610e8c9d30a11b5e21bce4195017efbdbf6a79b47aa7eecd56a3c19d13d",
+    "failure.json": "8de2bbca286a80abc0ff88324eb7905132dc3b977894217d19d504611e836fb7",
+    "failed-attempt-audit.json": "2f2511df74ac4c3a3d49d593eff441755affb0352977ac6f83a2792a87d01fbf",
+    "failed-storage-observation.json": "a6a40e7c6f883f626571e8e499c2736e551ad196a92701dbad6fc153a41c7e63",
+    "source-files.json": "6615742f89d3f306f6fedc264abc367e9fd6acb5b1e62e7cf0d2cdbee3762fb8",
+    "transport-calls.jsonl": "fab5d0d842f1218e4e191ae6c3310971d08c7e11db2217571d21d0d6893441d6",
+    "info-recheck.json": "11d37c02f0063d072ab5e83306759355ecdf4892e41a91db582e9daba887e93e"
+  },
+  "engineRawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-foreground-engine-20261031-01",
+  "engineArtifacts": {
+    "setup.json": "c1c3105463c8de30cb55b88ccef5b81c33c0d4d901bd68af0d540cdf16c187da",
+    "colima.yaml": "e91829c43feda81724c12e3d2bf52344ee6156533d741005f69e867eaca73be7",
+    "image-transfer.json": "e9c8ae2fc195984fec80561ef0a988667e54b97eff19236cc5b8bb328e544722",
+    "loaded-image-trim.json": "b64caa022f625d68693964c914e0dba9980f7cad67b80acded76f3ccdd8f231c"
+  }
+}

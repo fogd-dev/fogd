@@ -82,6 +82,30 @@ test('stopped and expired holds remain budgeted without any Docker resources', a
   assert.equal((await f.inspect()).length, 1);
 });
 
+for (const failureAt of [1, 2]) test(`read-only inventory failure releases its own checking fence: info=${failureAt}`, async t => {
+  const f = await fixture(t, 11 * 1024 ** 3); await f.initialize();
+  const prior = plan(); await f.reserve(prior);
+  const file = join(f.holds, prior.project + '.json'), original = await readFile(file), identity = await stat(file);
+  let infos = 0;
+  const run = args => args[0] === 'info' && ++infos === failureAt ? Promise.reject(new Error('unavailable')) : f.docker.run(args);
+  await assert.rejects(reservePreviewHost({ root: f.root, plan: plan(249, 49444), run }), { code: 'PREVIEW_ADMISSION_REFUSED', reason: 'inventory' });
+  assert.deepEqual(await readdir(f.directory), ['allocations', 'holds', 'host.json']);
+  assert.deepEqual(await readFile(file), original); assert.equal((await stat(file)).ino, identity.ino);
+  assert.equal((await f.inspect()).length, 1);
+  await f.reserve(plan(249, 49444)); assert.equal((await f.inspect()).length, 2);
+  assert.ok(f.docker.calls.every(args => args[0] === 'info' || ['ls', 'inspect'].includes(args[1])));
+});
+
+test('inventory failure cannot release a changed checking marker', async t => {
+  const f = await fixture(t); await f.initialize();
+  const changed = Buffer.from('retain uncertain marker');
+  const run = async () => { await writeFile(f.marker, changed); throw new Error('unavailable'); };
+  await assert.rejects(reservePreviewHost({ root: f.root, plan: plan(), run }), hostRefused('uncertain'));
+  assert.deepEqual(await readFile(f.marker), changed);
+  assert.deepEqual(await readdir(f.holds), []);
+  await assert.rejects(f.inspect(), hostRefused('pending'));
+});
+
 test('engine policy refusal releases checking; unregistered resources retain the fence', async t => {
   const f = await fixture(t); await f.initialize(); const p = plan();
   f.docker.host.ID = 'wrong-engine';

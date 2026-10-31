@@ -640,6 +640,14 @@ attempt cannot replay an uncertain allocation. If reservation or allocation stop
 before control creation, preserve the host ledger for explicit recovery; the
 coordinator does not reclaim that reservation automatically.
 
+A read-only inventory failure before the reservation write releases only that
+attempt's unchanged checking fence. Existing holds keep their bytes and budget;
+no Docker mutation runs. Changed markers, unregistered resources and uncertain
+writes remain fenced. The [reservation regression](evidence/operator-preview-reservation-read-failure.json)
+checks both inventory snapshots and refusal to remove a changed marker. Its
+associated native foreground attempt failed before allocation and supplies no
+native launch qualification.
+
 The [native coordinator qualification](evidence/operator-preview-launch-coordinator.json)
 uses one dedicated Linux ARM64 Docker engine and a pre-admitted empty filesystem.
 It verifies protected TLS HTTP, initially empty D1/R2 data, an acknowledged write
