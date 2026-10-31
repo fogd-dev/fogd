@@ -160,8 +160,8 @@ membership, ingress routing or a running application sandbox.
 
 The internal coordinator connects verified artifacts and signed decisions to fresh
 resources, capacity checks and managed expiry. The foreground launch command
-retains ordinary runtime admission; the current candidate is refused. Public
-request setup and complete fresh-app/update acceptance remain open. All
+retains ordinary runtime admission; the current candidate is refused. Ordinary preview
+admission and complete fresh-app/update acceptance remain open. All
 retained deployments are QA fixtures; fresh installation and same-family recovery are the release targets.
 
 ## Internal native backend image
@@ -479,6 +479,20 @@ canonical policy ownership. A second output cannot reset that policy. The fresh
 trial leaves zero application images, containers, volumes or storage holds; it
 qualifies metadata setup only. Ordinary preview and cron admission stay closed.
 
+## Profile-backed storage and request setup
+
+The [setup command reference](preview-setup.md) connects a host profile, exact
+preparation, bounded storage receipt and private TLS/settings files. Separate
+commands provision storage and generate signed launch inputs; neither reserves
+memory or starts application services. The storage-request fingerprint binds its
+original profile/preparation intent and filesystem receipt. Request generation
+rechecks actual storage and source, then creates fresh credentials and authority.
+
+Both public commands keep ordinary runtime admission. The shipped candidate is
+refused before Docker or SSH calls; explicit internal qualification APIs retain
+separate candidate access. Partial setup and existing charges remain retained.
+Public request creation is implemented; ordinary preview acceptance remains open.
+
 ## Internal owner launch requests
 
 The [launch-request API](../packages/cli/src/preview/launch-request.mjs) creates
@@ -513,15 +527,15 @@ storage reservations remain charged, exhausting this QA registry's two-project
 limit. The source is an owned HTTP fixture; full browser and real-production
 preservation acceptance remain open.
 
-This API retains the explicit internal candidate gate. Public request setup still
-requires implementation; profile setup grants no execution permission.
+This API retains the explicit internal candidate gate. The profile-backed request
+command uses the same creator; profile setup grants no execution permission.
 
 ## Foreground launch command
 
 `fogd preview launch` accepts only qualified preview runtimes. The current candidate
 is refused before source or host effects, so live public use remains closed.
-Request creation still uses the internal API above until public request setup is
-available. Profile initialization alone grants no execution permission.
+The [profile-backed request command](preview-setup.md#create-a-launch-request)
+creates its inputs. Profile initialization alone grants no execution permission.
 
 ```sh
 fogd preview launch \
@@ -614,8 +628,7 @@ retained. Separate raw reads verify signed bindings, resource limits, volume
 sources and 68 retained file digests. The source is an owned HTTP fixture. Post-stop
 D1 restoration and full browser/production-preservation acceptance remain open.
 
-Public request setup and ordinary runtime admission still need their acceptance
-checks; the foreground entrypoint keeps that admission gate.
+Ordinary runtime admission and complete native/browser acceptance remain open; the foreground entrypoint keeps that admission gate.
 Manager-loss recovery, unfinished reservation cleanup and broader artifact-size/density measurements also remain
 open. Default cron admission stays closed.
 
@@ -651,7 +664,7 @@ decline/revocation controls remain open.
 The owner CLI controls an existing candidate allocation through its private owner
 control directory. The internal managed coordinator can create that directory
 before startup. The gated foreground launch entrypoint uses the same coordinator;
-public request setup remains open.
+ordinary preview-runtime admission remains closed.
 The [owner-control check](evidence/operator-preview-owner-controls.json) records
 its bounded qualification.
 

@@ -16,6 +16,7 @@ transfer hashes and matching package alongside your recovery material.
 | Configure shared credentials and HTTPS | [Shared installation](shared-installation.md) |
 | Export a developer client | [Developer client](developer-client.md) |
 | Compare proposed and active artifacts | [Artifact review](artifact-review.md) |
+| Prepare profile-bound preview storage and launch inputs | [Preview setup](preview-setup.md) |
 | Review verified browser comparisons and exact decisions | [Browser release review](browser-release-review.md) |
 | Inspect durable administrator decisions | [Decision history](decision-history.md) |
 | Inspect recorded application state | [Application inspection](application-inspection.md) |

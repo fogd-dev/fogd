@@ -3,6 +3,10 @@ import { uuid } from '../build-cache/paths.mjs';
 import { preparePreview } from './prepare.mjs';
 
 export async function previewCommand(args) {
+  if (args[0] === 'request' || args[0] === 'storage' && args[1] === 'prepare') {
+    const { previewSetupCommand } = await import('./setup-command.mjs');
+    return previewSetupCommand(args[0], args.slice(args[0] === 'storage' ? 2 : 1));
+  }
   if (args[0] === 'profile') {
     const { previewProfileCommand } = await import('./profile-command.mjs');
     return previewProfileCommand(args[1], args.slice(2));

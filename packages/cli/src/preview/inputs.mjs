@@ -27,13 +27,20 @@ function checkedReview(review, preparation) {
   if (!isDeepStrictEqual(review.directories, { proposed: 'proposed', active: review.active ? 'active' : null })) refuseExecution();
 }
 
-// Snapshot actual bounded bytes into memory. Later allocation must use this
-// verified artifact, never reopen the mutable preparation directory for launch.
-export async function readPreviewInputs(directory, expectedPreparationSha256) {
+export async function readPreviewPreparation(directory, expectedPreparationSha256) {
   try {
     const root = resolve(directory); await previewInputDirectory(root, true);
     const preparation = await previewInputJSON(join(root, 'preview.json'), 16384, expectedPreparationSha256);
     validatePreviewPreparation(preparation, expectedPreparationSha256);
+    return { directory: root, preparation };
+  } catch { refuseExecution(); }
+}
+
+// Snapshot actual bounded bytes into memory. Later allocation must use this
+// verified artifact, never reopen the mutable preparation directory for launch.
+export async function readPreviewInputs(directory, expectedPreparationSha256) {
+  try {
+    const { directory: root, preparation } = await readPreviewPreparation(directory, expectedPreparationSha256);
     const review = await previewInputJSON(join(root, 'review.json'), 4 * 1024 ** 2, preparation.source.reviewSha256);
     checkedReview(review, preparation);
     const names = ['preview.json', 'review.json', 'proposed', ...(review.active ? ['active'] : [])].sort();

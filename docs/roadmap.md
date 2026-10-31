@@ -64,7 +64,11 @@ Real CLI process checks pass; a native used-root refusal preserves its prior reg
 and read-only data. A separate cached-base engine verifies actual fresh profile
 initialization/status, private ledger fingerprints and refusal of a second output
 that would reset the canonical budget, with zero application resources. Public
-request setup, partial-profile recovery, shipped preview-runtime admission, manager-loss recovery and
+request setup now connects exact profile/preparation inputs to bounded storage and
+signed launch requests, with private TLS file loading and fresh credentials. A native
+internal-candidate trial verifies one retained storage charge and signed request;
+actual public CLI candidates refuse before transports. Partial-profile/setup recovery,
+shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. The foreground launch
 entrypoint reads the exact private request, uses independently selected SSH storage
