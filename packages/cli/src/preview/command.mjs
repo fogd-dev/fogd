@@ -2,10 +2,22 @@ import { parseArgs } from 'node:util';
 import { uuid } from '../build-cache/paths.mjs';
 import { preparePreview } from './prepare.mjs';
 
-export async function previewCommand(args) {
-  if (args[0] === 'request' || args[0] === 'storage' && args[1] === 'prepare') {
+async function storageCommand([action, ...args]) {
+  if (action === 'prepare') {
     const { previewSetupCommand } = await import('./setup-command.mjs');
-    return previewSetupCommand(args[0], args.slice(args[0] === 'storage' ? 2 : 1));
+    return previewSetupCommand('storage', args);
+  }
+  if (['inspect', 'reconcile'].includes(action)) {
+    const { previewStorageRecoveryCommand } = await import('./storage-recovery-command.mjs');
+    return previewStorageRecoveryCommand(action, args);
+  }
+  throw new Error('Usage: fogd preview storage prepare|inspect|reconcile [options]');
+}
+export async function previewCommand(args) {
+  if (args[0] === 'storage') return storageCommand(args.slice(1));
+  if (args[0] === 'request') {
+    const { previewSetupCommand } = await import('./setup-command.mjs');
+    return previewSetupCommand('request', args.slice(1));
   }
   if (args[0] === 'profile') {
     const { previewProfileCommand } = await import('./profile-command.mjs');

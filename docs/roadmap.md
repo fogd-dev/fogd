@@ -67,8 +67,12 @@ that would reset the canonical budget, with zero application resources. Public
 request setup now connects exact profile/preparation inputs to bounded storage and
 signed launch requests, with private TLS file loading and fresh credentials. A native
 internal-candidate trial verifies one retained storage charge and signed request;
-actual public CLI candidates refuse before transports. Partial-profile/setup recovery,
-shipped preview-runtime admission, manager-loss recovery and
+actual public CLI candidates refuse before transports. Public storage inspection and
+reviewed reconciliation complete missing local receipt/completion records only
+against settled, empty host storage. The [native qualification](evidence/operator-preview-storage-setup-recovery.json)
+uses local incomplete-record fixtures and preserves original request bytes/inodes,
+host storage and its charge. Pending host/profile fences and corrupt local records
+remain recovery gaps. Partial-profile recovery, shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. The foreground launch
 entrypoint reads the exact private request, uses independently selected SSH storage

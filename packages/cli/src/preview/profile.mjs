@@ -84,7 +84,9 @@ export async function readPreviewProfile(directory, expectedProfileSha256) {
   } catch { refuse(); }
 }
 
-export async function inspectPreviewProfile({ directory, expectedProfileSha256, run, runHost }) {
+// The caller owns this checking fence until release. Keeping it open allows
+// metadata recovery to exclude allocation while observing an empty target.
+export async function openPreviewProfile({ directory, expectedProfileSha256, run, runHost }) {
   try {
     const profile = await readPreviewProfile(directory, expectedProfileSha256), host = await acquirePreviewHost(profile.root, profile.engineId);
     try {
@@ -93,11 +95,19 @@ export async function inspectPreviewProfile({ directory, expectedProfileSha256, 
       assertRegisteredPreviewResources(observed, host.records);
       const storage = await inspectPreviewStorageAdmission({ root: profile.storagePolicy.root, engineId: profile.engineId, runHost });
       policyMatches(profile, storage);
-      return { schema: 1, kind: 'fogd-preview-profile-status', id: profile.id, engineId: profile.engineId,
+      const status = { schema: 1, kind: 'fogd-preview-profile-status', id: profile.id, engineId: profile.engineId,
         historicalMemoryReservations: host.records.length, activeMemoryReservations: host.heldRecords.length,
         storagePolicyId: storage.policy.id, maxProjects: storage.policy.maxProjects, heldStorageProjects: storage.heldProjects,
         heldStorageChargeBytes: storage.heldChargeBytes, remainingStorageProjects: storage.remainingProjects, storageAdmissionOpen: storage.admissionOpen,
         resourcesRetained: true, executionAuthorized: false };
-    } finally { await host.fence.release(); }
+      return { profile, host, status };
+    } catch (error) { await host.fence.release(); throw error; }
+  } catch { refuse(); }
+}
+export async function inspectPreviewProfile(input) {
+  try {
+    const value = await openPreviewProfile(input);
+    try { return value.status; }
+    finally { await value.host.fence.release(); }
   } catch { refuse(); }
 }

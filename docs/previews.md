@@ -491,6 +491,11 @@ rechecks actual storage and source, then creates fresh credentials and authority
 Both public commands keep ordinary runtime admission. The shipped candidate is
 refused before Docker or SSH calls; explicit internal qualification APIs retain
 separate candidate access. Partial setup and existing charges remain retained.
+Public storage inspection/reconciliation can complete missing local receipt or
+completion records against already settled, empty host storage using a reviewed
+fingerprint. It requires no source credentials or runtime admission and cannot
+repair corrupt metadata or clear pending host/profile fences. See the
+[recovery procedure](preview-setup.md#inspect-and-complete-retained-local-storage-setup).
 Public request creation is implemented; ordinary preview acceptance remains open.
 
 ## Internal owner launch requests

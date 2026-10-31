@@ -40,6 +40,52 @@ any host fence and charge. Repeating the same output refuses before transports. 
 output cannot overwrite an existing project's storage. Preserve these records for
 explicit recovery; this command cannot resume, reclaim or reset them.
 
+## Inspect and complete retained local storage setup
+
+Use `storage inspect` when provisioning has already completed on the host but its
+local receipt or completion record is missing. Keep the original initialization
+record, profile and preparation fingerprints. Inspection checks the exact engine,
+policy, charged filesystem and empty role directories without source credentials
+or runtime admission. It returns a review snapshot and its `reviewSha256`.
+
+```sh
+fogd preview storage inspect \
+  --profile PROFILE_DIRECTORY --expected-profile ORIGINAL_PROFILE_SHA256 \
+  --preparation PREPARATION_DIRECTORY --expected-preparation ORIGINAL_PREPARATION_SHA256 \
+  --storage-request STORAGE_REQUEST_DIRECTORY --storage-host owned-linux
+```
+
+Review the returned binding, actual storage and local file identities. To complete
+only the missing local receipt or completion, supply that exact review fingerprint:
+
+```sh
+fogd preview storage reconcile \
+  --profile PROFILE_DIRECTORY --expected-profile ORIGINAL_PROFILE_SHA256 \
+  --preparation PREPARATION_DIRECTORY --expected-preparation ORIGINAL_PREPARATION_SHA256 \
+  --storage-request STORAGE_REQUEST_DIRECTORY --storage-host owned-linux \
+  --expected-review REVIEW_SHA256
+```
+
+Reconciliation records the accepted snapshot before filling missing files. Existing
+records must keep their bytes and inodes. A repeated accepted recovery rechecks the
+host and returns the same completion fingerprint without replacing local files.
+Keep the returned `storageRequestSha256` for request creation. That workflow still
+requires its own current source and runtime admission checks.
+
+These commands never provision storage, clear a pending host operation, reserve
+memory or start an application. A pending profile/storage fence, any historical
+memory reservation for this preview, nonempty storage or corrupt local metadata
+refuses while retaining all records and charges. Once the host and profile are
+settled, a valid recovery acknowledgment can complete its remaining missing files.
+Process loss that leaves a profile checking fence, or a partial/corrupt local file,
+requires separate recovery; these commands do not clear or repair those records.
+
+The [storage setup recovery qualification](evidence/operator-preview-storage-setup-recovery.json)
+uses owned local incomplete-record fixtures referencing an already completed empty
+Linux ARM64 filesystem. It verifies the public CLI, retained original request,
+read-only host observations and repeated local completion. It does not qualify
+interrupted host provisioning, application restoration or crash-fence recovery.
+
 ## Create a launch request
 
 Provide a private settings file with the preview URL, four subnets, TLS file paths
