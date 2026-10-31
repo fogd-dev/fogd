@@ -6,15 +6,14 @@ import { assessPreviewMemory } from './admission.mjs';
 import { appendHostRecord, hostRefusal } from './host-records.mjs';
 import { guardPreviewHost } from './host-registry.mjs';
 import { awaitPreviewReady } from './readiness.mjs';
+import { previewStartupPhases, previewCompletedHelpers } from './startup-phases.mjs';
 
 export const previewShutdownLeadMs = 30000;
-const groups = { storage: ['minio'], initialization: ['bucket-init'], natives: ['slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b'],
-  controller: ['controller'], gateway: ['gateway'], ingress: ['ingress'] };
 
 function assertProgress(actual, started) {
   for (const [role, container] of Object.entries(actual)) {
     const state = container.State;
-    const finished = role === 'input-installer' || role === 'bucket-init' && started.has(role);
+    const finished = previewCompletedHelpers.includes(role) && (role === 'input-installer' || started.has(role));
     if (finished ? state.Status !== 'exited' || state.ExitCode !== 0 : started.has(role) ? !state.Running : state.Status !== 'created') hostRefusal('startup-exited');
   }
 }
@@ -49,11 +48,11 @@ export async function startPreviewAllocation(input) {
       packageSha256: value.snapshot.sha256, runtime: verified, expiresAt: value.snapshot.grant.expiresAt, shutdownAt: new Date(shutdownAt).toISOString() };
     await value.host.fence.record('writing'); await appendHostRecord(value.bound, 'startup.pending.json', pending);
     const started = new Set();
-    for (const [phase, roles] of Object.entries(groups)) {
+    for (const { name: phase, roles, waitForExit } of previewStartupPhases) {
       live(); assertProgress((await value.observe('operating')).roles, started); live();
       await input.run(['start', ...roles.map(role => value.complete.identities.containers[role])]);
-      if (phase === 'initialization') {
-        if ((await input.run(['wait', value.complete.identities.containers['bucket-init']])).trim() !== '0') hostRefusal('startup-initialization');
+      if (waitForExit) {
+        for (const role of roles) if ((await input.run(['wait', value.complete.identities.containers[role]])).trim() !== '0') hostRefusal('startup-initialization');
       } else for (const role of roles) await awaitPreviewReady(value, role, input.run, live);
       live(); const { roles: actual } = await value.observe('operating');
       roles.forEach(role => started.add(role)); assertProgress(actual, started);

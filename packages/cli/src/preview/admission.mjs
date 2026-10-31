@@ -66,7 +66,7 @@ function reservedMemory(plan, held, containers) {
     catch { refuse('networks-held'); }
     if (other.services.ingress.publish.port === plan.services.ingress.publish.port) refuse('port-held');
     const budget = previewPlanMemory(other); envelopeBytes += budget;
-    total += budget - heldCredit(other, containers);
+    total += Math.max(0, budget - heldCredit(other, containers));
   }
   return { additionalBytes: total, envelopeBytes };
 }

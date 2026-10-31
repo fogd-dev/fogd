@@ -79,8 +79,11 @@ entrypoint reads the exact private request, uses independently selected SSH stor
 checks and waits for managed stop; the shipped candidate remains refused. Its
 [closed-pipe regression](evidence/operator-preview-foreground-output.json) now checks
 actual process stdout failure with modeled Docker resources and ordered shutdown;
-native foreground launch remains unqualified. Actual
-OpenSSH read-only checks preserve both charged QA previews. Existing
+native foreground launch remains unqualified. Memory admission now budgets the
+[largest enforced startup phase](evidence/operator-preview-phase-memory.json),
+retaining container limits and host headroom. A native attempt on a cached-image
+QA engine refused unregistered legacy preview networks before setup, preserving
+its original resources and files. Actual OpenSSH read-only checks preserve both charged QA previews. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 
 The internal preview host plan now seals role/network/volume placement and binds

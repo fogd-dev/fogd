@@ -16,7 +16,7 @@ const refused = reason => ({ code: 'PREVIEW_ADMISSION_REFUSED', reason });
 test('sealed preview plan has complete role topology, private storage and only one published listener', () => {
   const { plan } = fixture();
   assert.equal(Object.keys(plan.services).length, 10); assert.equal(Object.keys(plan.volumes).length, 12);
-  assert.equal(previewPlanMemory(plan), 4992 * mib);
+  assert.equal(previewPlanMemory(plan), 4352 * mib);
   assert.deepEqual(Object.entries(plan.services).filter(([, service]) => service.networks.includes('frontend')).map(([role]) => role), ['ingress']);
   assert.deepEqual(Object.entries(plan.services).filter(([, service]) => service.publish).map(([role]) => role), ['ingress']);
   for (const role of ['gateway', 'ingress']) { assert.deepEqual(plan.services[role].secretEnvironment, {}); assert.ok(plan.services[role].mounts.every(value => value.readOnly)); }
@@ -59,7 +59,7 @@ test('expired plans cannot realize fresh container commands', t => {
 
 test('read-only admission accounts for full memory envelope and grants neither execution nor reservation', () => {
   const { plan } = fixture(), report = assessPreviewAdmission(plan, observed(), []);
-  assert.equal(report.memory.requestedLimitBytes, 4992 * mib); assert.equal(report.memory.headroomBytes, 1024 * mib);
+  assert.equal(report.memory.requestedLimitBytes, 4352 * mib); assert.equal(report.memory.headroomBytes, 1024 * mib);
   assert.equal(report.capacityReserved, false); assert.equal(report.executionAuthorized, false);
 });
 
@@ -91,8 +91,8 @@ test('unconfirmed allocations remain fully held and known active roles are not c
   c.Config.Labels = { 'fogd.preview.project': held.plan.project, 'fogd.preview.config': previewPlanSha256(held.plan), 'fogd.preview.role': 'controller' };
   const o = observed([c]); o.host.MemTotal = 11 * 1024 ** 3;
   const report = assessPreviewAdmission(next.plan, o, [held.plan]);
-  assert.equal(report.memory.heldEnvelopeBytes, 4992 * mib); assert.equal(report.memory.heldLimitBytes, (4992 - 512) * mib);
-  assert.equal(report.memory.activeLimitBytes + report.memory.heldLimitBytes, 4992 * mib);
+  assert.equal(report.memory.heldEnvelopeBytes, 4352 * mib); assert.equal(report.memory.heldLimitBytes, (4352 - 512) * mib);
+  assert.equal(report.memory.activeLimitBytes + report.memory.heldLimitBytes, 4352 * mib);
   assert.throws(() => assessPreviewAdmission(next.plan, observed(), [held.plan]), refused('capacity'));
   assert.throws(() => assessPreviewAdmission(next.plan, o, [held.plan, held.plan]), refused('reservations-duplicate'));
   assert.throws(() => assessPreviewAdmission(next.plan, o), refused('reservations-unknown'));
@@ -102,9 +102,9 @@ test('labels alone cannot make an unrelated active container consume a held role
   const next = fixture(), held = fixture(251, 49444), c = container();
   c.Config.Labels = { 'fogd.preview.project': held.plan.project, 'fogd.preview.config': previewPlanSha256(held.plan), 'fogd.preview.role': 'controller' };
   const o = observed([c]); o.host.MemTotal = 12 * 1024 ** 3;
-  assert.equal(assessPreviewAdmission(next.plan, o, [held.plan]).memory.heldLimitBytes, 4992 * mib);
+  assert.equal(assessPreviewAdmission(next.plan, o, [held.plan]).memory.heldLimitBytes, 4352 * mib);
   c.Name = '/' + held.plan.services.controller.name; c.Image = 'sha256:' + 'f'.repeat(64);
-  assert.equal(assessPreviewAdmission(next.plan, o, [held.plan]).memory.heldLimitBytes, 4992 * mib);
+  assert.equal(assessPreviewAdmission(next.plan, o, [held.plan]).memory.heldLimitBytes, 4352 * mib);
 });
 
 test('host reader checks complete stopped inventory and refuses a changing snapshot', async () => {
@@ -135,4 +135,40 @@ test('historical plans remain verifiable without authorizing fresh legacy contai
 test('historical resource policy refuses startup before Docker, source access or host changes',async()=>{
   const {startPreviewAllocation}=await import('../src/preview/startup.mjs');let calls=0;
   await assert.rejects(startPreviewAllocation({plan:{schema:1},run:async()=>{calls++;throw Error('unexpected Docker call')}}),{code:'PREVIEW_HOST_REFUSED',reason:'resource-policy'});assert.equal(calls,0);
+});
+
+test('admission requires the simultaneous peak plus unchanged headroom, not concurrent one-shot helpers', () => {
+  const { plan } = fixture(), o = observed(); o.host.MemTotal = (4352 + 1024) * mib;
+  const report = assessPreviewAdmission(plan, o, []);
+  assert.equal(Object.values(plan.services).reduce((sum, service) => sum + service.memoryBytes, 0), 4992 * mib);
+  assert.equal(report.memory.requestedLimitBytes, 4352 * mib); assert.equal(report.memory.headroomBytes, 1024 * mib);
+  o.host.MemTotal--; assert.throws(() => assessPreviewAdmission(plan, o, []), refused('capacity'));
+});
+
+function heldContainers(plan, roles) {
+  return roles.map((role, index) => {
+    const c = container(plan.services[role].memoryBytes); c.Id = (index + 1).toString(16).padStart(64, '0');
+    c.Name = '/' + plan.services[role].name; c.Image = plan.request.image;
+    c.Config.Labels = { 'fogd.preview.project': plan.project, 'fogd.preview.config': previewPlanSha256(plan), 'fogd.preview.role': role };
+    return c;
+  });
+}
+for (const roles of [['input-installer'], ['minio', 'bucket-init'], ['minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'controller', 'gateway', 'ingress']]) {
+  test(`a held peer retains its peak budget during ${roles.join(', ')}`, () => {
+    const next = fixture(), held = fixture(251, 49444), o = observed(heldContainers(held.plan, roles));
+    o.host.MemTotal = (2 * 4352 + 1024) * mib;
+    const report = assessPreviewAdmission(next.plan, o, [held.plan]);
+    assert.equal(report.memory.activeLimitBytes + report.memory.heldLimitBytes, 4352 * mib);
+    assert.equal(report.memory.heldEnvelopeBytes, 4352 * mib);
+    o.host.MemTotal--; assert.throws(() => assessPreviewAdmission(next.plan, o, [held.plan]), refused('capacity'));
+  });
+}
+
+test('extra active helpers cannot make the held remainder negative or admit another preview', () => {
+  const next = fixture(), held = fixture(251, 49444), o = observed(heldContainers(held.plan, Object.keys(held.plan.services)));
+  o.host.MemTotal = (2 * 4352 + 1024) * mib;
+  assert.throws(() => assessPreviewAdmission(next.plan, o, [held.plan]), refused('capacity'));
+  o.host.MemTotal += 640 * mib;
+  const report = assessPreviewAdmission(next.plan, o, [held.plan]);
+  assert.equal(report.memory.activeLimitBytes, 4992 * mib); assert.equal(report.memory.heldLimitBytes, 0);
 });

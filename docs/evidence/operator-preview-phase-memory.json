@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-phase-memory-qualification",
+  "testedBaseCommit": "a83bb5357d7638808516d0f2987e60511f4de487",
+  "existingUserInstallations": 0,
+  "scope": "Phase-aware preview memory accounting and shared startup ordering. Boundary/model checks qualify the accounting change. A native foreground attempt refused unregistered retained QA networks before setup; it does not qualify native phase-memory execution, foreground launch or browser acceptance.",
+  "sourceFiles": {
+    "packages/cli/src/preview/startup-phases.mjs": "e3e8286822d75e328917d6a2d5b4a776600a9e2e056d1266fbb7f18c0cabd3f4",
+    "packages/cli/src/preview/plan.mjs": "faf9bc56dffa1907a94954b41539ac426b144eb3a9f042b73035cea80bef9643",
+    "packages/cli/src/preview/startup.mjs": "dbd480842924fbb6a26b24431ecfe87b1b3063a3c17c70f95c836af731da679a",
+    "packages/cli/src/preview/admission.mjs": "850ea49416bec936c231a8d9b722e783d7cd594a0353d5413ea80619a6925b11",
+    "packages/cli/test/preview-plan.test.mjs": "bd821b4765ade3a2ef58c0e1deb1af02fe7c797dd4d2e45daa0f983190aadcab",
+    "packages/cli/test/preview-host-reservations.test.mjs": "b1ba184c4279dc9da3f76548e1fb138e061a0ca7a1b6f4427db1a85b22af2af1",
+    "packages/cli/test/preview-startup-inspection.test.mjs": "9f74b5c47fa957b9862d6608d5637926fe17d602a2df217656894967397c94a1",
+    "packages/cli/test/preview-lifecycle.test.mjs": "fe8e6042ddca2e202db81c8812371e8ad208b80b846286e09ed5534728d9d22f"
+  },
+  "checks": {
+    "targetedMemoryStartupAndForeground": {
+      "tests": 89,
+      "pass": 89,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "newPhaseCases": 6,
+    "syntax": "pass",
+    "quality": "pass",
+    "fullSuite": {
+      "tests": 3640,
+      "pass": 3640,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "writing": "pass",
+    "standardsReview": "pass"
+  },
+  "memory": {
+    "allContainerLimitBytes": 5234491392,
+    "softwarePeakReservationBytes": 4563402752,
+    "headroomBytes": 1073741824,
+    "minimumHostBytes": 5637144576,
+    "reductionBytes": 671088640,
+    "physicalRamReservation": false,
+    "containerLimitsChanged": false,
+    "headroomChanged": false
+  },
+  "invariants": {
+    "installerRunsAloneBeforeStartup": true,
+    "oneShotInitializationMustExitSuccessfullyBeforeLaterPhases": true,
+    "startupAndAdmissionSharePhaseOrdering": true,
+    "matchingActivePeerRolesCountOnce": true,
+    "unexpectedActiveHelpersCannotCreateNegativeHeldBudget": true,
+    "unboundedActiveMemoryStillRefuses": true,
+    "failedOrExpiredHoldsRemainChargedUntilExplicitRetirement": true,
+    "unregisteredResourceGuardUnchanged": true
+  },
+  "nativeAttempt": {
+    "passed": true,
+    "scope": "Read-only audit after profile refusal. This verifies guard behavior and retained QA state, not native foreground launch or phase-memory execution.",
+    "nativeAttemptResult": "refused-before-setup",
+    "reason": "Retained unregistered legacy preview networks; guard unchanged and not bypassed",
+    "originalContainersPreserved": 77,
+    "originalVolumePaths": 59,
+    "originalFileEntries": 2705,
+    "originalRegularBytes": 45321124,
+    "allOriginalFilesAndInodesUnchanged": true,
+    "localProfileCreated": false,
+    "storageWorkerCalled": false,
+    "storageRegistryCreated": false,
+    "newStorageRootCreated": false,
+    "applicationStarted": false
+  },
+  "auditCorrections": [
+    "First read-only auditor rejected docker info --format as though it were an invalid inspect command; corrected classifier preserves read-only commands.",
+    "Second auditor compared Docker mount list order. Corrected comparison sorts by destination while retaining every mount field. Both failed audit outputs are retained; no setup or foreground attempt was replayed."
+  ],
+  "limitations": [
+    "No native execution or browser acceptance on the proposed 6 GiB engine",
+    "Memory remains an owner software budget and container upper bounds; host headroom is unchanged",
+    "No new VM or deletion of retained QA resources to bypass current capacity/registration limits",
+    "Pending operations, manager-loss recovery, native lease cleanup and writable restoration remain open"
+  ],
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-memory-phases-native-20261031-01",
+  "nativeInventoryAudit": {
+    "passed": true,
+    "unchangedNetworks": 26,
+    "unchangedVolumes": 63
+  },
+  "rawArtifacts": {
+    "before.json": "a89251d6e5e6cbbf92c31c3855f1a7f53c0dbd2d7c5f09427e51247328b23681",
+    "old-before.json": "cf519adb2b8faec76e67f74a1146bda9b8b4aac115ba1fbe7352b4274a312c51",
+    "old-after.json": "cf519adb2b8faec76e67f74a1146bda9b8b4aac115ba1fbe7352b4274a312c51",
+    "refusal-audit.json": "e030338870549ee273140be0a249cda65352d0fc541bce72ee67402777d6ddd9",
+    "network-volume-audit.json": "3714ccee4580cc5d7384ad67a3b79a2af628a09c9cc24c542a7610de3e2df880",
+    "transport-calls.jsonl": "b5eb39992aadef05b980155dce19b6cb57656c62d878b22301d6dbfebb0ab06b",
+    "source-files.json": "2adc4a812ef3a2133a8ad604994d2b56f2b14f36dc2283b580cfa0a98cf5962b",
+    "first-refusal-audit-error.log": "de3fd4ce447c7eb3ac0f71fed801409b2b8e5a751272f8135f6f6e55989ee2d1",
+    "second-refusal-audit-error.log": "53d26a826314a2cf0aba5ef016a7542c1ce6ac92e5f21143ad42b8a04469f0b8",
+    "fogd-preview-memory-native.log": "c33aa62b89979b2592f5dea013274272ec002e50235de08d0c257ffb9701dac9",
+    "fogd-preview-memory-phases-full.log": "0438a340cb5efb9c30e36e014517e63fdd265c15c34564ee9b41a9ef0acfd2da",
+    "fogd-preview-memory-phases-targeted-final.log": "914d5f017c1118fce8abf4299d337e02ca997b5c5413133054fffd17c2e11fd7"
+  }
+}

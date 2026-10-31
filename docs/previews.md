@@ -314,9 +314,18 @@ fresh-app/update browser trials remain open.
 The [input-installation check](evidence/operator-preview-input-installation.json)
 installs exact artifact, preview-secret and role-specific TLS bytes without starting
 the application. The sealed plan includes ten containers: nine runtime roles and
-one fixed input installer. Its declared memory envelope is 4,992 MiB plus 1 GiB
-headroom. The installer has no network attachments or storage credential
-environment. Its writable mounts cover only the six authority/input volumes;
+one fixed input installer. Container limits total 4,992 MiB; the software reservation
+uses the largest simultaneous startup phase, 4,352 MiB, plus unchanged 1 GiB host
+headroom. The installer runs alone and must exit successfully before startup.
+Bucket initialization must finish successfully before native/application services
+start. Admission and startup use the same [phase definition](../packages/cli/src/preview/startup-phases.mjs).
+Other active containers still consume their observed limits. A matching held
+preview receives credit for its active roles, with a nonnegative remainder; extra
+helper activity cannot create capacity. These are software accounting rules, not
+physical RAM reservations. The [phase-memory qualification](evidence/operator-preview-phase-memory.json)
+records boundary and startup checks. Its native trial refused retained unregistered
+QA networks before setup; native foreground acceptance remains open.
+The installer has no network attachments or storage credential environment. Its writable mounts cover only the six authority/input volumes;
 application-facing roles retain read-only mounts.
 
 The host snapshots and validates artifact digests/declarations, required secrets,

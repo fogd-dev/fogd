@@ -42,7 +42,7 @@ test('fresh host registry is private and engine-bound; initialization never repl
 test('durable hold reserves the entire envelope, grants no execution and survives fresh process inspection', async t => {
   const f = await fixture(t); await f.initialize(); const p = plan(), result = await f.reserve(p);
   assert.equal(result.capacityReserved, true); assert.equal(result.executionAuthorized, false);
-  assert.equal(result.memory.requestedLimitBytes, 4992 * mib);
+  assert.equal(result.memory.requestedLimitBytes, 4352 * mib);
   const held = await f.inspect(); assert.equal(held.length, 1); assert.deepEqual(held[0].plan, p);
   assert.equal((await stat(join(f.holds, p.project + '.json'))).mode & 0o7777, 0o600);
   const script = `const { inspectPreviewHostReservations } = await import(${JSON.stringify(moduleUrl)}); console.log(JSON.stringify(await inspectPreviewHostReservations({ root: process.argv[1], engineId: process.argv[2] })));`;
@@ -163,7 +163,7 @@ test('registered active roles count once and malformed unrelated active memory s
     Config: { Labels: { 'fogd.preview.project': p.project, 'fogd.preview.config': result.planSha256, 'fogd.preview.role': role } },
     HostConfig: { Memory: service.memoryBytes, PortBindings: {} }, State: { Running: true, Restarting: false, Paused: false } });
   const second = await f.reserve(plan(249, 49444));
-  assert.equal(second.memory.activeLimitBytes, service.memoryBytes); assert.equal(second.memory.heldLimitBytes, 4480 * mib);
+  assert.equal(second.memory.activeLimitBytes, service.memoryBytes); assert.equal(second.memory.heldLimitBytes, 3840 * mib);
   f.docker.records.container[0].HostConfig.Memory = 0;
   await assert.rejects(f.reserve(plan(248, 49445)), { code: 'PREVIEW_ADMISSION_REFUSED', reason: 'unbounded-active-memory' });
   assert.equal((await f.inspect()).length, 2);

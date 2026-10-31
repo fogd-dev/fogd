@@ -69,3 +69,18 @@ test('cancelled launch and a wrong expected image refuse before any Docker or so
  const x=await fixture(t),controller=new AbortController();controller.abort();await assert.rejects(startPreviewAllocation({...x.args,signal:controller.signal}));assert.deepEqual(x.calls,[]);assert.deepEqual(x.source.calls,[]);
  await assert.rejects(startPreviewAllocation({...x.args,expectedImage:'sha256:'+'0'.repeat(64)}));assert.deepEqual(x.calls,[]);assert.deepEqual(x.source.calls,[]);
 });
+
+test('a reported successful initializer that is still running cannot overlap native startup', async t => {
+  const x = await fixture(t), run = x.args.run;
+  x.args.run = async args => {
+    const result = await run(args);
+    if (args[0] === 'wait' && role(x, args[1]) === 'bucket-init') {
+      const helper = x.f.observed.containers.find(row => row.Id === args[1]);
+      Object.assign(helper.State, { Running: true, Pid: 1234, Status: 'running' });
+    }
+    return result;
+  };
+  await assert.rejects(startPreviewAllocation(x.args), { code: 'PREVIEW_HOST_REFUSED', reason: 'startup-exited' });
+  assert.ok(!x.calls.some(args => args[0] === 'start' && args.slice(1).some(id => role(x, id)?.startsWith('slot-'))));
+  assert.equal(JSON.parse(await readFile(join(x.host, 'launch.pending.json'))).phase, 'writing');
+});

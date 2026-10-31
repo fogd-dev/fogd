@@ -9,7 +9,7 @@ import { installedPreviewFixture as fixture } from './fixtures/installed-preview
 test('startup inspection rechecks current source, actual mounted bytes and capacity without starting or changing the allocation',async t=>{
  const x=await fixture(t),before=structuredClone(x.f.observed),names=await readdir(x.directory),result=await x.inspect();
  assert.equal(result.startupInspected,true);assert.equal(result.executionAuthorized,false);assert.equal(result.runtimeExecutionAdmitted,false);assert.equal(result.capacityReserved,true);
- assert.equal(result.memory.heldLimitBytes,0);assert.equal(result.memory.requestedLimitBytes,5234491392);assert.equal(result.expiresAt,x.f.envelope.grant.expiresAt);
+ assert.equal(result.memory.heldLimitBytes,0);assert.equal(result.memory.requestedLimitBytes,4563402752);assert.equal(result.expiresAt,x.f.envelope.grant.expiresAt);
  assert.equal(x.calls.filter(c=>c[0]==='cp').length,6);assert.ok(x.calls.every(c=>['info','image','container','network','volume','cp'].includes(c[0])));
  assert.equal(x.source.calls.length,2);assert.ok(x.source.calls.every(c=>c.path==='/v1/admin'&&c.method==='GET'));assert.deepEqual(x.f.observed,before);assert.deepEqual(await readdir(x.directory),names);
  assert.ok(!(await readdir(x.host)).includes('launch.pending.json'));

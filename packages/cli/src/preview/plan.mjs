@@ -4,6 +4,7 @@ import { executionKeys, executionTarget } from './execution-shape.mjs';
 import { validatePreviewPreparation } from './execution.mjs';
 import { previewNetworks } from './networks.mjs';
 import { validatePreviewStorageReceipt } from './storage.mjs';
+import { previewMemoryStages } from './startup-phases.mjs';
 
 const networkRoles = ['control', 'fleet-1', 'fleet-2', 'frontend'];
 const fingerprints = ['authorityPublicKey', 'artifact', 'previewSecrets', 'storagePassword', 'gatewayToken', 'viewerAccessKey', 'gatewayTLS', 'ingressTLS'];
@@ -92,4 +93,7 @@ export function previewPlanTarget(input) {
   const plan = validatePreviewPlan(input);
   return { project: plan.project, installation: plan.installation, configSha256: previewPlanSha256(plan), runtime: structuredClone(plan.request.preparation.runtime), origin: plan.request.origin, networks: structuredClone(plan.request.subnets) };
 }
-export function previewPlanMemory(input) { return Object.values(validatePreviewPlan(input).services).reduce((sum, service) => sum + service.memoryBytes, 0); }
+export function previewPlanMemory(input) {
+  const { services } = validatePreviewPlan(input);
+  return Math.max(...previewMemoryStages().map(roles => roles.reduce((sum, role) => sum + services[role].memoryBytes, 0)));
+}
