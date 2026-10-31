@@ -122,6 +122,7 @@ try {
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd preview prepare ID --runtime FAMILY --lifetime-seconds SECONDS --output DIR  Prepare an exact proposal without executing it');
+    console.log('fogd preview launch --request PRIVATE_DIRECTORY --expected-request SHA256 --storage-host SSH_ALIAS  Run an admitted preview in the foreground');
     console.log('fogd preview status ALLOCATION_UUID --control OWNER_DIRECTORY  Inspect an existing preview allocation');
     console.log('fogd preview stop ALLOCATION_UUID --control OWNER_DIRECTORY [--reason owner-stop|declined|revoked]  Stop preview execution and retain resources');
     console.log('fogd preview retire ALLOCATION_UUID --control OWNER_DIRECTORY  Release a verified stopped preview memory budget after expiry');

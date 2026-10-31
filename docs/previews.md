@@ -158,11 +158,11 @@ verifies private service lookup and HTTP, an outbound HTTP refusal and an extern
 DNS refusal against owned endpoints. It does not qualify complete service
 membership, ingress routing or a running application sandbox.
 
-Public execution and launch commands remain unavailable. The remaining integration
-must connect the verified artifact and decision to an admitted preview runtime,
-allocate fresh resources, enforce capacity and every-service expiry,
-then demonstrate a fresh app and an update. All retained deployments are QA
-fixtures; fresh installation and same-family recovery are the release targets.
+The internal coordinator connects verified artifacts and signed decisions to fresh
+resources, capacity checks and managed expiry. The foreground launch command
+retains ordinary runtime admission; the current candidate is refused. Public
+profile/request setup and complete fresh-app/update acceptance remain open. All
+retained deployments are QA fixtures; fresh installation and same-family recovery are the release targets.
 
 ## Internal native backend image
 
@@ -407,7 +407,7 @@ The original per-service deadline remains a fallback; manager loss and arbitrary
 Docker stalls do not establish ordered shutdown. Memory retirement stays explicit
 and requires the original expiry and complete stopped-state proof.
 
-This candidate path has no public launch command or ordinary enrollment permission.
+The foreground launch command refuses this candidate; ordinary enrollment remains closed.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
 and data recovery remain open. Ordinary previews also need recovery qualification
 and browser withdrawal controls. Default cron admission remains closed.
@@ -446,8 +446,56 @@ storage reservations remain charged, exhausting this QA registry's two-project
 limit. The source is an owned HTTP fixture; full browser and real-production
 preservation acceptance remain open.
 
-This API retains the explicit internal candidate gate. Public profile setup,
-request setup and launch commands still require implementation and acceptance.
+This API retains the explicit internal candidate gate. Public profile and request
+setup commands still require implementation and acceptance.
+
+## Foreground launch command
+
+`fogd preview launch` accepts only qualified preview runtimes. The current candidate
+is refused before source or host effects, so live public use remains closed.
+Request creation still uses the internal API above until public profile/request
+setup is available.
+
+```sh
+fogd preview launch \
+  --request /private/preview-request \
+  --expected-request ORIGINAL_REQUEST_SHA256 \
+  --storage-host owned-linux
+```
+
+The request binds the original preparation path, Docker context, engine and signed
+target. Supply source administrator credentials and TLS trust independently in the
+command environment, as for preparation. The source endpoint must still match the
+original review. Neither request metadata nor a CLI flag can enable candidate
+admission.
+
+`--storage-host` names an independently configured SSH alias for the same Linux
+Docker host. Its host key must already be trusted, authentication must work without
+prompts, and `sudo -n python3` must run as root. The fixed transport sends only the
+pinned storage worker and its JSON input over stdin. It disables agent forwarding
+and configured port forwarding and removes source/Docker environment variables
+from the local SSH process. Existing [storage host requirements](#internal-bounded-persistent-storage)
+still apply.
+
+The command emits one JSON line for readiness and one for completed stop. Readiness
+includes the original expiry, earlier shutdown time and private owner-control
+location. Viewer credentials stay in the private access file. Keep the process
+running while using the preview: it owns source monitoring and ordered shutdown.
+SIGINT or SIGTERM requests cancellation; after readiness, the command waits for
+managed stop. Interrupted provisioning retains its component evidence and any
+allocated resources. Lost readiness output also requests stop. An ambiguous
+provisioning result retains its fence and resources without cleanup or replay. Failure to prove storage ordering
+reports a nonzero exit even when all roles are stopped.
+
+The command retains memory and storage charges after stop. Use the separate owner
+commands for status and explicit post-expiry memory retirement. Manager loss,
+forced termination and arbitrary Docker stalls remain recovery gaps.
+
+The [foreground/transport qualification](evidence/operator-preview-foreground.json)
+combines process-model launch tests, real CLI candidate refusal and actual OpenSSH
+read-only inspection on the retained Linux ARM64 QA engine. The native transport
+check verifies existing storage receipts and data without launching another app;
+it does not qualify a native foreground launch or ordinary runtime admission.
 
 ## Internal coordinated provisioning and launch
 
@@ -499,9 +547,9 @@ retained. Separate raw reads verify signed bindings, resource limits, volume
 sources and 68 retained file digests. The source is an owned HTTP fixture. Post-stop
 D1 restoration and full browser/production-preservation acceptance remain open.
 
-Public profile setup, request/launch commands and ordinary preview-runtime
-admission still need their acceptance checks. Manager-loss recovery, unfinished
-reservation cleanup and broader artifact-size/density measurements also remain
+Public profile/request setup and ordinary preview-runtime admission still need
+their acceptance checks; the foreground entrypoint keeps that admission gate.
+Manager-loss recovery, unfinished reservation cleanup and broader artifact-size/density measurements also remain
 open. Default cron admission stays closed.
 
 ## Internal owner withdrawal and source monitoring
@@ -535,7 +583,8 @@ decline/revocation controls remain open.
 
 The owner CLI controls an existing candidate allocation through its private owner
 control directory. The internal managed coordinator can create that directory
-before startup; there is no public launch or control-directory provisioning command.
+before startup. The gated foreground launch entrypoint uses the same coordinator;
+public profile/request setup remains open.
 The [owner-control check](evidence/operator-preview-owner-controls.json) records
 its bounded qualification.
 
@@ -714,7 +763,8 @@ has no reset, resize or reclamation command.
 
 Older unadmitted QA storage remains available for historical inspection and owner
 controls. New plans require an admitted storage receipt. This remains an internal
-host API; public provisioning and launch commands are unavailable. Unrelated host
+host API; public provisioning remains unavailable and the foreground launch
+command keeps ordinary runtime admission closed. Unrelated host
 writers and hypervisor storage are outside this budget, and a space observation
 is not a storage-health guarantee. Corrupt initialization metadata, incomplete recovery
 sequences, writable application restoration and ordinary preview acceptance remain

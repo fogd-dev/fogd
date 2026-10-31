@@ -3,6 +3,10 @@ import { uuid } from '../build-cache/paths.mjs';
 import { preparePreview } from './prepare.mjs';
 
 export async function previewCommand(args) {
+  if (args[0] === 'launch') {
+    const { previewLaunchCommand } = await import('./launch-command.mjs');
+    return previewLaunchCommand(args.slice(1));
+  }
   if (['status', 'stop', 'retire'].includes(args[0])) {
     const { previewOwnerCommand } = await import('./owner-command.mjs');
     return previewOwnerCommand(args[0], args.slice(1));

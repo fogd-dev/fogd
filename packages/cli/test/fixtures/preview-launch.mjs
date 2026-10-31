@@ -92,3 +92,14 @@ export async function previewLaunchFixture(t) {
     runtime: runtime.id, candidateEnrollment: true, directory: source.output, env: source.env, ownerControl, run, signal: cancellation.signal };
   return { args, source, input, observed, calls, cancellation, root, ownerControl, host: join(root, hash(input.plan.request.engineId)) };
 }
+
+export async function previewLaunchRequestFixture(t) {
+  const f = await previewLaunchFixture(t);
+  return { ...f, request: { root: f.args.root, directory: f.args.directory,
+    expectedPreparationSha256: f.args.plan.request.preparationSha256,
+    engineId: f.args.plan.request.engineId, storage: f.args.plan.request.storage,
+    runtime: f.args.runtime, candidateEnrollment: true, origin: f.args.plan.request.origin,
+    subnets: f.args.plan.request.subnets, tls: { gateway: f.args.bundle.gateway.tls, ingress: f.args.bundle.ingress.tls },
+    dockerContext: f.ownerControl.dockerContext, output: join(f.input.root, 'launch-request'),
+    env: f.args.env, runStorageHost: f.args.runStorageHost } };
+}

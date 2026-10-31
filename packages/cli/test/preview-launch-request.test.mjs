@@ -6,20 +6,10 @@ import { createPreviewLaunchRequest, readPreviewLaunchRequest } from '../src/pre
 import { hash, jsonBytes } from '../src/build-cache/paths.mjs';
 import { authorizePreviewExecution } from '../src/preview/execution.mjs';
 import { previewPlanTarget } from '../src/preview/plan.mjs';
-import { previewLaunchFixture } from './fixtures/preview-launch.mjs';
+import { previewLaunchRequestFixture as fixture } from './fixtures/preview-launch.mjs';
 import { id } from './fixtures/artifact-review.mjs';
 
 const refused = { code: 'PREVIEW_LAUNCH_REQUEST_REFUSED' };
-async function fixture(t) {
-  const f = await previewLaunchFixture(t);
-  return { ...f, request: { root: f.args.root, directory: f.args.directory,
-    expectedPreparationSha256: f.args.plan.request.preparationSha256,
-    engineId: f.args.plan.request.engineId, storage: f.args.plan.request.storage,
-    runtime: f.args.runtime, candidateEnrollment: true, origin: f.args.plan.request.origin,
-    subnets: f.args.plan.request.subnets, tls: { gateway: f.args.bundle.gateway.tls, ingress: f.args.bundle.ingress.tls },
-    dockerContext: f.ownerControl.dockerContext, output: join(f.input.root, 'launch-request'),
-    env: f.args.env, runStorageHost: f.args.runStorageHost } };
-}
 const load = receipt => readPreviewLaunchRequest(receipt.directory, receipt.requestSha256, { candidateEnrollment: true });
 
 test('owner setup creates a complete private request with generated credentials and an exact verified grant', async t => {

@@ -59,9 +59,12 @@ creates private launch/access files, fresh credentials and an exact signed targe
 its strict reader requires an independently retained fingerprint. A second native
 trial verifies these generated inputs beside the retained first preview, including
 unchanged peer data and both charged storage reservations. Public profile setup,
-request/launch commands, shipped preview-runtime admission, manager-loss recovery and
+request setup, shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
-issue #2 and must reuse these fencing and restoration rules. Existing
+issue #2 and must reuse these fencing and restoration rules. The foreground launch
+entrypoint reads the exact private request, uses independently selected SSH storage
+checks and waits for managed stop; the shipped candidate remains refused. Actual
+OpenSSH read-only checks preserve both charged QA previews. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 
 The internal preview host plan now seals role/network/volume placement and binds

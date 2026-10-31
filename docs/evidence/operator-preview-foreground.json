@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-foreground-qualification",
+  "testedBaseCommit": "23f8a497a574d0d43660e989972bbcb173a06638",
+  "scope": "Foreground launch adapter and fixed SSH transport. Process-model Docker boundary for launch, real CLI candidate refusal, actual OpenSSH read-only host storage inspection. No native foreground launch or ordinary runtime admission claim.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/preview/storage-transport.mjs": "f6b0c328219cb78e39fc6183e8d9889f98213308794ee12c4ca9fedc99969e87",
+    "packages/cli/src/preview/launch-command.mjs": "c44994c69da79ad32abe02e82e8f3f41bee39f74936d98f3c920f50583f57893",
+    "packages/cli/src/preview/command.mjs": "ef60ae221e0117485ef6731107a23f781a9fb558db5092d7edf1963f9befb9c5",
+    "packages/cli/bin/fogd.js": "31421b65a86d7e8adec4ea7162bae66861e5f50d1bfd1a0995b26a9f869d44f6",
+    "packages/cli/test/fixtures/preview-launch.mjs": "c21907906e0dc5093ebabb44c3f0ff04dd92474d18c79c52bde980729965345f",
+    "packages/cli/test/preview-launch-request.test.mjs": "3c0da3525686a6b97acd8abc431cc0f2dac7e5e994ca216c4fbfc503d2231f57",
+    "packages/cli/test/preview-launch-command.test.mjs": "925ef778337c78298c4134f42d421f655c11dc16ae0b3bf06bb74347a3907ff6",
+    "packages/cli/test/preview-storage-transport.test.mjs": "767ded996ae0be4bfeffdabbb384ebf47f8a22c16f9ff725808ed8b37e8c75f5"
+  },
+  "checks": {
+    "fullSuite": {
+      "tests": 3583,
+      "pass": 3583,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "connectedPreview": {
+      "tests": 88,
+      "pass": 88,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "commandAndTransport": {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "pass",
+    "quality": "pass",
+    "writing": "pass"
+  },
+  "foreground": {
+    "boundedReadyAndStopEvents": true,
+    "credentialsAbsentFromEvents": true,
+    "sigintAndSigtermCancellation": true,
+    "preflightCancellationBeforeEffects": true,
+    "readinessOutputFailureWaitsForStop": true,
+    "ambiguousProvisioningRetainsFenceWithoutRetry": true,
+    "unorderedStorageStopExitsNonzero": true,
+    "memoryAndStorageNotReclaimed": true,
+    "signalHandlersRemoved": true,
+    "realCliCandidateRefusalBeforeDockerOrSsh": true,
+    "noCliOrEnvironmentCandidateBypass": true
+  },
+  "transport": {
+    "explicitIndependentSshAlias": true,
+    "pinnedWorkerOnly": true,
+    "fixedRemoteBootstrap": true,
+    "binaryStdinProtocolVerified": true,
+    "workerAndJsonOverStdin": true,
+    "strictKnownHostAndBatchAuthentication": true,
+    "agentAndPortForwardingDisabled": true,
+    "sourceAndDockerEnvironmentAbsentFromLocalSsh": true,
+    "privateRemoteDiagnosticsSuppressed": true,
+    "noAutomaticRetry": true
+  },
+  "native": {
+    "passed": true,
+    "scope": "Actual OpenSSH fixed-bootstrap transport to the existing Linux ARM64 QA Docker host. Read-only storage admission and receipt inspection; retained current/peer file audit. No foreground native launch or ordinary runtime admission claim.",
+    "pinnedKnownHost": true,
+    "noninteractiveSudo": true,
+    "storageHeldProjects": 2,
+    "storageHeldChargeBytes": 2181038080,
+    "remainingStorageProjects": 0,
+    "storageAdmissionOpen": false,
+    "storageReceiptUnchanged": true,
+    "twentyStoppedContainersUnchanged": true,
+    "volumes": 24,
+    "totalNetworksIncludingDockerDefaults": 11,
+    "newPreviewRetainedFilesVerified": 68,
+    "priorPreviewRetainedFilesVerified": 68,
+    "defaultDockerContextPreserved": true,
+    "defaultCronAdmission": "closed"
+  },
+  "independentHostAudit": {
+    "passed": true,
+    "readOnly": true,
+    "peerRetainedFilesVerified": 68,
+    "allTwentyContainersRetainedStopped": true,
+    "actualTenContainersRetainedStopped": true,
+    "actualCpuMemoryPidsTmpfsLogPolicyVerified": true,
+    "sourceCredentialEnvironmentAbsent": true,
+    "allTwelveBoundedVolumeSourcesVerified": true,
+    "allFourNetworkIdentitiesAndPlacementVerified": true,
+    "loopMountAndRoleInodesRetained": true,
+    "retainedFileDigestsAndInodesVerified": 68,
+    "realStorageChargeBytes": 1090519040,
+    "remainingStorageProjects": 0,
+    "storagePendingFence": false
+  },
+  "nativeForegroundLaunchQualified": false,
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "remainingGates": [
+    "Public profile/request setup commands",
+    "Ordinary preview-runtime admission",
+    "Native foreground launch and complete fresh-app/update browser acceptance",
+    "Manager-loss and unfinished reservation recovery",
+    "Broader artifact-size and density measurements"
+  ],
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-foreground-transport-20261031-02"
+}
