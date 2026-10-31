@@ -1,0 +1,141 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-private-logs-qualification",
+  "testedBaseCommit": "784585b091322dfa5cd88f592cc0e745be33ad6f",
+  "existingUserInstallations": 0,
+  "scope": "Exact-role read-only preview log capture. Actual native CLI captures one retained stopped replica; model checks cover pending markers, changed scope, private stderr and process-state transitions. No app handler, startup, stop, source request, retirement or recovery permission.",
+  "sourceFiles": {
+    "packages/cli/src/preview/allocation-observation.mjs": "a8c7478f74b284d8fa2a9d3924422b3899e4b9b9fef8934162da362d945cb01d",
+    "packages/cli/src/preview/log-observation.mjs": "01ec5628a66b3cb738037d3a7da5cd6e78d9e02e016934ebd1c7f2b3c486e552",
+    "packages/cli/src/preview/logs.mjs": "f6d401fd9c463b8915d5f9d795ab91e584c8c9840297faca8429f8dd02320e83",
+    "packages/cli/src/preview/logs-command.mjs": "ce7208a1baa2058833ce3fab701271527a41d78b428cfb4369dc31873d1940ad",
+    "packages/cli/src/preview/owner-control.mjs": "d9560dd1f161de7aa6f6ab37ffcd88238d3b5a6172c25d1c9b1d5ee430941bd6",
+    "packages/cli/src/preview/teardown.mjs": "1999af0faf363e8123f7aab29c1877c15468ccf7097e7ba0a3ef93f87cfbc723",
+    "packages/cli/bin/fogd.js": "2300e562227d240760dbc9c98f854119e8297c4322a7706854f2ad59a6ce651a",
+    "packages/cli/src/preview/command.mjs": "077eee729ca936b0353505b4488e18588bfd807156fd864bb5ea2e8cd6f5a2e4",
+    "packages/cli/src/logs/capture.mjs": "4840855bf8ee28507a78bb681ba114f4e751431f32f5c0ebc3eb418ed2644663",
+    "packages/cli/test/preview-logs.test.mjs": "4833b749400befb2316bb09a0d791499e034fdc8b7adf0814818e74f078c76d5",
+    "packages/cli/test/fixtures/preview-owner.mjs": "04bf05ebe8ce5e00c48ce64bf6ddf5a97026d0e3c2dfb7e0e45f3285c91f0403"
+  },
+  "checks": {
+    "connectedOwnerLifecycleAndLogs": {
+      "tests": 64,
+      "pass": 64,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "newLogCases": {
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "pass",
+    "fullSuite": {
+      "tests": 3664,
+      "pass": 3664,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "ownerBrowserRegression": {
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "quality": "pass",
+    "writing": "pass",
+    "standardsReview": "pass"
+  },
+  "limits": {
+    "tailDefaultLines": 2000,
+    "tailMaximumLines": 10000,
+    "combinedLogBytes": 1048576,
+    "logClientDeadlineMs": 15000,
+    "scope": "Log-client limits; ownership observations have their own bounded transports"
+  },
+  "behavior": {
+    "exactOwnerHoldAllocationImageAndGraphRequired": true,
+    "fixedContainerIdNeverNameForCollection": true,
+    "separatePrivateUnredactedStreams": true,
+    "metadataAndFingerprintsOnlyOnStdout": true,
+    "bothStreamsBoundedBySharedCaptureHelper": true,
+    "partialFilesRetainedNoAutomaticCollectionRetry": true,
+    "scopeRecheckedAfterCapture": true,
+    "processStateTransitionsNotConfusedWithIdentityChanges": true,
+    "pendingMarkerPresenceObservedWithoutParsingOrClearing": true,
+    "noOperationFenceAcquiredByLogReader": true,
+    "profileRequestOwnerAndHostOutputProtection": true,
+    "ownerDockerEnvironmentSharedAndSanitized": true,
+    "lifecycleAndDiagnosticsShareGraphObserver": true,
+    "browserCapabilityNotExpanded": true
+  },
+  "native": {
+    "passed": true,
+    "scope": "Actual preview logs CLI against one retained stopped native Linux ARM64 replica. Docker transport allows metadata reads and the selected logs read only. No app start/stop, handler request, source request, retirement or restoration.",
+    "realCliAndNativeLogs": true,
+    "exactRoleAndContainerVerified": true,
+    "streamsPrivateAndFingerprinted": true,
+    "stdoutBytes": 18119,
+    "stderrBytes": 0,
+    "noLogContentsInCommandResponse": true,
+    "noSourceOrDockerEnvironmentForwarded": true,
+    "oneCollectionOnly": true,
+    "containerScopeMatchedAtBoundaries": true,
+    "originalContainersPreserved": 20,
+    "retainedDataFilesAndInodesPreserved": 136,
+    "canonicalLedgerFilesPreserved": 65,
+    "bothOriginalMountsAndLoopsVerified": true,
+    "noDockerMutations": true,
+    "defaultDockerContextPreserved": true,
+    "ordinaryRuntimeAdmission": "closed",
+    "defaultCronAdmission": "closed"
+  },
+  "independent": {
+    "passed": true,
+    "scope": "Independent saved-state audit of actual read-only native preview log capture. No claim of application health, data restoration or native foreground launch.",
+    "privateStreamsAndManifestFingerprintsVerified": true,
+    "noFreeformLogFieldsInCommandMetadata": true,
+    "oneExactContainerLogRead": true,
+    "transportEnvironmentSanitized": true,
+    "originalContainerStatesAndConfigurationPreserved": 20,
+    "dataFilesAndInodesPreserved": 136,
+    "ledgerFilesAndInodesPreserved": 65,
+    "currentSourcesVerified": 11
+  },
+  "limitations": [
+    "Native read targets a retained stopped replica; pending-marker and changed-scope behavior are model checks",
+    "Capture and matching boundary identity do not establish application health or complete history",
+    "An incomplete/corrupt ownership or resource graph refuses before collection",
+    "A log read is not operation recovery, memory retirement, storage reclamation or namespace reuse",
+    "Native foreground and full fresh-app/update acceptance remain open"
+  ],
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-private-logs-20261031-01",
+  "rawArtifacts": {
+    "report.json": "e90fa583af9e2a1c69ebba225f3d851108f2d4c710e55ef9b79b9b11cab1c92f",
+    "independent.json": "e6ee24bcb436df1728874c8e3bf4ca23915164bd56222f42797807a8c34d77d9",
+    "source-files.json": "ed1c1fd118fc83fe0a698a0f55ef522f423b97382795c957c812be97b1350af1",
+    "final-source-files.json": "b0da2c496e787f585d727d437e35dc2511deb07ebc366a2e25b84f19a033d2ca",
+    "native-before.json": "fc442adad837c80c30ec88290fcdb56a385645d70a106331b2ccc8712cab2eeb",
+    "native-after.json": "0ff93e286d773f5f6e1d30ce005bc248dff63742853d363a1d13316082ebdb87",
+    "native-files-before.json": "4863a07f1e3734cffc010f53a078b18ca3cae5689302a0206b454f96220c6495",
+    "native-files-after.json": "4863a07f1e3734cffc010f53a078b18ca3cae5689302a0206b454f96220c6495",
+    "ledger-before.json": "b3a3a9516cb18d3f65de058475079eae9dc3ea6c89b8f4eb63348ba2a8a87849",
+    "ledger-after.json": "b3a3a9516cb18d3f65de058475079eae9dc3ea6c89b8f4eb63348ba2a8a87849",
+    "native-docker-calls.jsonl": "d0932b8784b6354c6a97b78b7e54b9809014c73a98bc92d8147688d2e2286a61",
+    "cli-result.json": "f7f874afa15d92492e6255f2735cef23322357362fb6af89bfc36a3edc7ad5b6",
+    "capture/capture.json": "9be5c87294c4289b0d5bab50caadaee747fa398a198443a5e1065c8fe241b869",
+    "capture/stdout.log": "8211f8e6f55fdfc6f85013abd81e6622f24673eb1eb092845c79ece06d7da2a4",
+    "capture/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fogd-preview-logs-full.log": "3badac7b1ea68f94415ae30a153ddbf8e29208442a895570a8e166f30089be85",
+    "fogd-preview-logs-connected-release.log": "cae5beacfb4d3fe6dfbb3fd1a02b80ee199f2ab2f4cccbc6cbb419a5e8a101e3",
+    "fogd-preview-logs-tests-release.log": "cc155bfb19309f5455ced8b71d36f801138b619f4c834687d0e310cda7684a72",
+    "fogd-preview-logs-browser-regression.log": "2468df7bb82b1ad0c9cb38bc9d4e73075bf2abcf298be1737f0e8b273ca460a4"
+  }
+}

@@ -722,6 +722,53 @@ remain retained; this command establishes neither namespace reuse nor physical
 storage reclamation. Public launch, ordinary runtime admission and source-controller browser
 integration remain open.
 
+## Private preview logs
+
+`fogd preview logs` captures one exact allocation role without starting a service
+or invoking an application handler:
+
+```sh
+fogd preview logs ALLOCATION_UUID \
+  --control /private/preview-owner --role slot-1-a \
+  --output /private/new-preview-logs --tail 100
+```
+
+Use the private owner controls and a fresh output directory under an existing
+owned `0700` parent. Output must stay outside host, owner, profile and launch-request
+records. The selected role must exist in the sealed plan. The command uses the
+control's explicit Docker context and ignores ambient Docker/source selection.
+Source credentials and ordinary runtime admission are unnecessary for inspecting
+an existing allocation.
+
+The output contains separate `stdout.log` and `stderr.log` files plus
+`capture.json`. Files use `0600` permissions. Logs contain unredacted application
+output; keep them private. Standard output contains only the capture metadata,
+file sizes and hashes. The receipt binds the owner-control fingerprint, allocation,
+image, engine, exact container and source release.
+
+The log client has a combined 1 MiB limit and a fifteen-second capture deadline.
+The tail defaults to 2,000 lines and accepts up to 10,000. These limits bound the
+log read, not the preceding/following ownership observations. A limit, client
+failure or changed scope retains private partial files and reports a nonzero exit.
+An incomplete output cannot be overwritten or automatically resumed. Docker log
+rotation can already have removed earlier output; this is a diagnostic window,
+not a complete activity history or application-health result.
+
+Ownership and immutable resource identity must match before and after collection.
+A running process can stop during capture without changing that identity. The
+receipt records process state and pending-marker presence at each boundary.
+A pending operation marker, including torn marker contents, can remain present
+while logs are read if the hold, allocation and actual graph still verify. The
+command never clears that marker, retries an uncertain operation, starts/stops
+containers or releases memory/storage charges.
+
+The [preview log qualification](evidence/operator-preview-private-logs.json)
+includes a native read from a retained stopped replica, with unchanged peer data
+and ledger records. Pending-marker and changed-scope cases use modeled Docker;
+a real CLI model verifies that stderr stays in the private artifact. This qualifies
+read-only diagnosis, not native foreground launch, logical data restoration or
+ordinary preview admission. Default cron admission remains closed.
+
 ## Browser owner controls
 
 `fogd preview manage` provides local browser status and withdrawal for one existing

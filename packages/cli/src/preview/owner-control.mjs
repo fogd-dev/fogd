@@ -60,8 +60,12 @@ export async function readPreviewOwnerControl(directory, allocationId) {
   } catch { refuseControl('control'); }
 }
 
+export function previewOwnerEnvironment() {
+  return Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('DOCKER_') && !key.startsWith('FOGD_')));
+}
+
 export function previewOwnerDocker(dockerContext) {
-  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('DOCKER_') && !key.startsWith('FOGD_')));
+  const env = previewOwnerEnvironment();
   return args => execute('docker', ['--context', dockerContext, ...args], { env, timeoutMs: 30000, maxOutputBytes: 64 * 1024 ** 2 });
 }
 

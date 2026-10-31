@@ -1,40 +1,26 @@
 import { isDeepStrictEqual } from 'node:util';
 import { hash, jsonBytes, uuid } from '../build-cache/paths.mjs';
 import { validatePreviewPlan, previewPlanTarget } from './plan.mjs';
-import { previewServiceInspection } from './container-plan.mjs';
+import { previewAllocationObserver } from './allocation-observation.mjs';
 import { inspectPreviewExecution } from './execution.mjs';
 import { acquirePreviewHost, guardPreviewHost, requirePreviewHold } from './host-registry.mjs';
 import { validatePreviewMemoryRelease } from './memory-state.mjs';
 import { previewStopGroups as groups, previewStorageRequired, previewTeardownPending, readCompletedPreviewTeardown } from './teardown-state.mjs';
 import { readPreviewStopRequest, previewStopReason, previewStopRequest } from './stop-request.mjs';
 import { readPreviewAllocation } from './allocation-state.mjs';
-import { appendHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
-import { readPreviewHost } from './host-inventory.mjs';
-import { assertPreviewAllocationImage, inspectPreviewGraph, previewContainerStopped } from './stopped-graph.mjs';
+import { appendHostRecord, hostRefusal } from './host-records.mjs';
+import { previewContainerStopped } from './stopped-graph.mjs';
 import { waitForPreviewFence } from './pending-operation.mjs';
-
-const byRole = (plan, observed) => Object.fromEntries(Object.entries(plan.services).map(([role, service]) => [role, observed.containers.find(value => value.Name === '/' + service.name)]));
 
 async function target(input, { includeRetired = false } = {}) {
   const { root, plan: proposal, allocationId, reservation, envelope, expectedImage, run, ...options } = input, plan = validatePreviewPlan(proposal);
   if (!uuid(allocationId) || !uuid(reservation) || expectedImage !== plan.request.image) hostRefusal('teardown-target');
   if (!isDeepStrictEqual(Object.values(groups).flat().sort(), Object.keys(plan.services).sort())) hostRefusal('teardown-target');
-  const specifications = previewServiceInspection(plan, envelope, options, allocationId);
+  const observeGraph = previewAllocationObserver({ plan, envelope, allocationId, expectedImage, run, ...options });
   const grant = inspectPreviewExecution(envelope, { publicKey: options.publicKey, expectedGrantSha256: options.expectedGrantSha256, preparationSha256: plan.request.preparationSha256, target: previewPlanTarget(plan) });
   const host = await acquirePreviewHost(root, plan.request.engineId), held = await requirePreviewHold(host, plan, reservation, { includeRetired });
   const { bound, complete } = await readPreviewAllocation(host, plan, { allocationId, reservation, grantSha256: options.expectedGrantSha256, expiresAt: grant.expiresAt });
-  let image;
-  const observe = async phase => {
-    if (!image) {
-      const images = JSON.parse(await run(['image', 'inspect', expectedImage]));
-      if (!Array.isArray(images) || images.length !== 1) hostRefusal('allocation-image');
-      assertPreviewAllocationImage(plan, images[0], expectedImage); image = images[0];
-    }
-    const observed = await readPreviewHost(run); assertRegisteredPreviewResources(observed, host.records);
-    const graph = inspectPreviewGraph(plan, observed, image, specifications, allocationId, complete.identities, phase);
-    if (graph.inventorySha256 !== complete.inventorySha256) hostRefusal('teardown-target');
-    return { observed, roles: byRole(plan, observed), graph };
-  };
+  const observe = phase => observeGraph(complete, host.records, phase);
   return { host, held, bound, complete, plan, grant, observe, run, allocationId, reservation };
 }
 const stoppedRoles = roles => Object.fromEntries(Object.entries(roles).map(([role, container]) => [role, container.Id]));

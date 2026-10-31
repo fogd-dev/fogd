@@ -18,6 +18,7 @@ transfer hashes and matching package alongside your recovery material.
 | Compare proposed and active artifacts | [Artifact review](artifact-review.md) |
 | Prepare profile-bound preview storage and launch inputs | [Preview setup](preview-setup.md) |
 | Inspect or withdraw an existing preview in a local browser | [Preview owner controls](previews.md#browser-owner-controls) |
+| Capture private logs from an exact preview role | [Preview logs](previews.md#private-preview-logs) |
 | Review verified browser comparisons and exact decisions | [Browser release review](browser-release-review.md) |
 | Inspect durable administrator decisions | [Decision history](decision-history.md) |
 | Inspect recorded application state | [Application inspection](application-inspection.md) |

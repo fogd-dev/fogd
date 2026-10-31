@@ -148,7 +148,12 @@ existing allocation and request decline/revocation using a separate owner key.
 Browser decline and connection-loss checks use modeled Docker resources. A native
 read-only UI check preserves stopped previews and peer data; received-operator
 packaging uses synthetic images. These controls preserve source submissions, stop
-evidence and charges without granting launch or production approval. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
+evidence and charges without granting launch or production approval.
+[Private preview log capture](previews.md#private-preview-logs) now reads one exact
+role using checked owner/hold/allocation/resource bindings. It retains a pending
+operation fence, keeps output private and rechecks immutable identity afterward.
+Native read-only evidence preserves stopped peers, data and canonical ledger files;
+this grants neither health, recovery nor execution permission. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
 now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,
 including missing-loop attachment and closed SQLite/binary retention. It leaves
 power-loss/crash consistency and writable application recovery unqualified.
