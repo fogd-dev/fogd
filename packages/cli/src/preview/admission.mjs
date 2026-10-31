@@ -92,6 +92,18 @@ export function assessPreviewAdmission(input, observed, heldPlans) {
   const plan = validatePreviewPlan(input); inventory(observed);
   if (observed.host.ID !== plan.request.engineId) refuse('engine');
   assertFresh(plan, observed); assertPort(plan, observed.containers);
+  return memoryEligibility(plan, observed, heldPlans);
+}
+
+// Memory eligibility alone grants no resource, port, runtime or launch admission.
+// Startup checks its existing exact graph separately and excludes its own hold.
+export function assessPreviewMemory(input, observed, heldPlans) {
+  const plan = validatePreviewPlan(input); inventory(observed);
+  if (observed.host.ID !== plan.request.engineId) refuse('engine');
+  return memoryEligibility(plan, observed, heldPlans);
+}
+
+function memoryEligibility(plan, observed, heldPlans) {
   const activeLimitBytes = activeMemory(observed.containers), held = reservedMemory(plan, heldPlans, observed.containers), heldLimitBytes = held.additionalBytes, requestedLimitBytes = previewPlanMemory(plan);
   const neededBytes = headroomBytes + activeLimitBytes + heldLimitBytes + requestedLimitBytes;
   if (!Number.isSafeInteger(neededBytes) || neededBytes > observed.host.MemTotal) refuse('capacity');

@@ -11,9 +11,9 @@ import { issuePreviewExecution } from '../../src/preview/execution.mjs';
 import { previewExecutionSha256 } from '../../src/preview/execution-authority.mjs';
 import { previewServiceCommands } from '../../src/preview/container-plan.mjs';
 
-export async function previewInputFixture(t) {
+export async function previewInputFixture(t, source = {}) {
   const root = await mkdtemp(join(tmpdir(), 'fogd-input-package-')); t.after(() => rm(root, { recursive: true, force: true }));
-  const f = previewPlanFixture(), body = artifact(true), preparation = structuredClone(f.request.preparation);
+  const f = previewPlanFixture(), body = source.artifact || artifact(true), preparation = structuredClone(source.preparation || f.request.preparation);
   preparation.source.app = body.app; preparation.source.digest = body.digest;
   const hostname = `${body.app}.${preparation.id.replaceAll('-', '')}.preview.test`;
   async function tls(role) {

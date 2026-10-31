@@ -14,15 +14,22 @@ function currentSelection(state, inputs) {
   return selection;
 }
 
-// Internal coordinator step only. Target freshness and runtime admission must
-// already be checked independently. Never send credentials to a prepared URL.
-export async function issueVerifiedPreviewExecution({ directory, expectedPreparationSha256, env, target, privateKey }) {
+// Observe the independently configured source twice. This cannot reserve source
+// state or authorize a later launch. Never send credentials to a prepared URL.
+export async function assertCurrentPreviewSource(inputs, env) {
   try {
-    const inputs = await readPreviewInputs(directory, expectedPreparationSha256);
     if (controllerOrigin(serverOrigin(env)) !== inputs.preparation.source.controller) refuseExecution();
     const before = currentSelection(await readAdminSnapshot(env), inputs);
     const after = currentSelection(await readAdminSnapshot(env), inputs);
     if (!isDeepStrictEqual(before.guard, after.guard)) refuseExecution();
+  } catch { refuseExecution(); }
+}
+
+// Target freshness and runtime admission are independent coordinator gates.
+export async function issueVerifiedPreviewExecution({ directory, expectedPreparationSha256, env, target, privateKey }) {
+  try {
+    const inputs = await readPreviewInputs(directory, expectedPreparationSha256);
+    await assertCurrentPreviewSource(inputs, env);
     const envelope = issuePreviewExecution(inputs.preparation, { expectedPreparationSha256, release: inputs.release, target, privateKey });
     return { envelope, artifact: inputs.artifact, release: inputs.release };
   } catch { refuseExecution(); }

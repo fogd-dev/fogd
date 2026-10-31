@@ -6,7 +6,7 @@ import { syncHostDirectory } from '../runtime/host-directory.mjs';
 import { validatePreviewPlan, previewPlanSha256 } from './plan.mjs';
 import { previewServiceCommands } from './container-plan.mjs';
 import { preparePreviewInputPackage } from './input-package.mjs';
-import { previewInputFile } from './input-files.mjs';
+import { readPreviewInputMounts } from './input-readback.mjs';
 import { acquirePreviewHost, guardPreviewHost, requirePreviewHold } from './host-registry.mjs';
 import { appendHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
@@ -20,17 +20,7 @@ async function allocationRecord(host, plan, allocationId, reservation, options, 
 }
 async function readbackInputs(bound, identities, snapshot, run) {
   const root = join(bound.canonical, 'input-readback'); await mkdir(root, { mode: 0o700 }); await syncHostDirectory(bound);
-  for (const [group, files] of Object.entries(snapshot.files)) {
-    const role = group.slice(0, group.lastIndexOf('-')), type = group.endsWith('-trust') ? 'trust' : 'input';
-    const target = type === 'trust' ? '/run/fogd-preview-trust' : role === 'controller' ? '/run/fogd-preview-input' : '/run/fogd-preview-service';
-    const directory = join(root, group); await mkdir(directory, { mode: 0o700 });
-    await run(['cp', `${identities.containers[role]}:${target}/.`, directory]);
-    if (!isDeepStrictEqual((await readdir(directory)).sort(), Object.keys(files).sort())) hostRefusal('input-readback');
-    for (const [name, expected] of Object.entries(files)) {
-      const bytes = await previewInputFile(join(directory, name), Buffer.byteLength(expected));
-      if (!bytes.equals(Buffer.from(expected))) hostRefusal('input-readback');
-    }
-  }
+  await readPreviewInputMounts(root, identities, snapshot, run);
 }
 
 // Start only the fixed networkless input installer. Every application service

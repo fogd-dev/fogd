@@ -51,8 +51,8 @@ current source snapshots before signing. A candidate backend image has bounded
 native HTTP/D1/R2 and storage/replica expiry evidence. Its exact-artifact controller
 has signed-input and native activation checks with no upload/approval HTTP API.
 The native gateway and authenticated HTTPS ingress also have a protected-URL
-D1/R2 check. Fresh enrollment, shipped preview-runtime admission, ordered shutdown,
-public launch and complete fresh-app/update trials remain open under
+D1/R2 check. Shipped preview-runtime admission, final launch orchestration,
+automatic ordered expiry, public launch and complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 
@@ -64,8 +64,10 @@ and interruption. Internal stopped allocation creates the full role layout and
 verifies actual resource identities, limits, mounts and network placement without
 starting services. The plan includes a budgeted networkless input installer;
 checked artifact/secret/TLS installation has actual mount readback with every
-application service still never-started. Shipped runtime admission, source
-recheck and final launch checks remain the next host-lifecycle work before
+application service still never-started. Host-fenced startup inspection rechecks
+the current source, actual installed mount bytes, live deadline and memory
+eligibility. It starts no application service and grants no reusable execution
+permission. Shipped runtime admission and final launch orchestration remain the next host-lifecycle work before
 public preview launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
 

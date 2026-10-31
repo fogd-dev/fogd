@@ -350,3 +350,25 @@ This releases a software memory budget, not disk or port claims. It establishes
 neither native lease cleanup nor data recovery. The live fixture covers manual
 ordered shutdown; automatic expiry ordering, public lifecycle commands and full
 fresh-app/update browser acceptance remain open.
+
+## Internal startup inspection
+
+The [startup inspection check](evidence/operator-preview-startup-inspection.json)
+reopens the verified preparation, then checks the installed input package under
+the host fence. It checks the original live grant, active hold, completed
+installation and exact stopped graph. It then copies the actual application-facing
+authority/input mounts again; a previous installation readback is insufficient.
+
+Source observations use only the independently configured administrator endpoint.
+The proposal and active baseline must still match the prepared review, and private
+consistency guards must agree between two GET snapshots. Credentials never follow an endpoint
+from prepared metadata. The final graph, original deadline and current memory
+eligibility are checked after those observations. Application code and SQL remain
+unexecuted throughout inspection.
+
+This is a point-in-time observation, not a reusable start authorization. No
+application service starts, runtime admission remains closed, and the original
+expiry cannot be extended. Inspection releases its checking fence after a refusal
+because it performs no Docker mutations; it retains the allocation and hold.
+Actual startup must integrate these checks with runtime admission, ordered service
+readiness and automatic expiry shutdown before a public launch is available.
