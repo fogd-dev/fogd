@@ -90,7 +90,9 @@ export function previewStorageAdmissionOperation(input, request) {
 }
 
 export function previewStorageRecoveryOperation(input, action, options) {
-  if (!['recover-readonly', 'inspect-readonly', 'reconcile-readonly'].includes(action) || !uuid(options?.recoveryId) || !digest(options?.storageSha256)) refuse();
+  if (!['recover-readonly', 'inspect-readonly', 'reconcile-readonly', 'repair-readonly'].includes(action) || !uuid(options?.recoveryId) || !digest(options?.storageSha256)) refuse();
+  if (action === 'repair-readonly' && !digest(options?.completionSha256)) refuse();
   const request = { ...checkedRequest(input, action), recoveryId: options.recoveryId, storageSha256: options.storageSha256 };
+  if (action === 'repair-readonly') request.completionSha256 = options.completionSha256;
   return hostReply(input, request, 'recovery');
 }

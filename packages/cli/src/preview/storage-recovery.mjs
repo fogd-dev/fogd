@@ -38,3 +38,4 @@ export const recoverPreviewStorageReadOnly = (input, options) => operation(input
 export const inspectPreviewStorageRecovery = (input, options) => operation(input, options, 'inspect-readonly');
 
 export const reconcilePreviewStorageRecovery = (input, options) => operation(input, options, 'reconcile-readonly');
+export const repairPreviewStorageRecoveryCompletion = (input, options) => operation(input, options, 'repair-readonly');

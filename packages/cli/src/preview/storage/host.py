@@ -10,6 +10,7 @@ BYTES = 1024 ** 3
 ROLES = ['minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'controller',
          'controller-trust', 'controller-input', 'gateway-trust', 'gateway-input',
          'ingress-trust', 'ingress-input']
+READONLY_ACTIONS = ['recover-readonly', 'inspect-readonly', 'reconcile-readonly', 'repair-readonly']
 ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LC_ALL': 'C'}
 
 
@@ -76,19 +77,25 @@ def read(path):
     return value
 
 
-def request(value):
-    require(isinstance(value, dict))
-    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}, 'recover-readonly': {'project', 'storageSha256', 'recoveryId'}, 'inspect-readonly': {'project', 'storageSha256', 'recoveryId'}, 'reconcile-readonly': {'project', 'storageSha256', 'recoveryId'}}
-    expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
-    require(set(value) == expected)
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold', 'recover-readonly', 'inspect-readonly', 'reconcile-readonly'])
+def checked_operation_options(value):
     if value['action'] in ['reconcile', 'quarantine', 'repair-hold']:
         require(str(uuid.UUID(value['operation'])) == value['operation'])
-    if value['action'] in ['recover-readonly', 'inspect-readonly', 'reconcile-readonly']:
+    if value['action'] in READONLY_ACTIONS:
         require(str(uuid.UUID(value['recoveryId'])) == value['recoveryId'])
         require(isinstance(value['storageSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['storageSha256']))
+    if value['action'] == 'repair-readonly':
+        require(isinstance(value['completionSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['completionSha256']))
     if value['action'] == 'repair-hold':
         require(value['holdSha256'] is None or isinstance(value['holdSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['holdSha256']))
+
+
+def request(value):
+    require(isinstance(value, dict))
+    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}, 'recover-readonly': {'project', 'storageSha256', 'recoveryId'}, 'inspect-readonly': {'project', 'storageSha256', 'recoveryId'}, 'reconcile-readonly': {'project', 'storageSha256', 'recoveryId'}, 'repair-readonly': {'project', 'storageSha256', 'recoveryId', 'completionSha256'}}
+    expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
+    require(set(value) == expected)
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold'] + READONLY_ACTIONS)
+    checked_operation_options(value)
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
     if value['action'] not in ['initialize', 'admission']:
@@ -282,8 +289,8 @@ def main():
             handler = {'quarantine': quarantine_storage, 'repair-hold': repair_storage_hold}[value['action']]
             print(json.dumps({'ok': True, 'admission': handler(value)}, separators=(',', ':')))
             return
-        if value['action'] in ['recover-readonly', 'inspect-readonly', 'reconcile-readonly']:
-            handler = {'recover-readonly': recover_readonly_storage, 'inspect-readonly': inspect_readonly_storage, 'reconcile-readonly': reconcile_readonly_storage}[value['action']]
+        if value['action'] in READONLY_ACTIONS:
+            handler = {'recover-readonly': recover_readonly_storage, 'inspect-readonly': inspect_readonly_storage, 'reconcile-readonly': reconcile_readonly_storage, 'repair-readonly': repair_readonly_completion}[value['action']]
             result = handler(value)
             print(json.dumps({'ok': True, 'recovery': result}, separators=(',', ':')))
             return

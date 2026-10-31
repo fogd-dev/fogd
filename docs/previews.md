@@ -780,6 +780,32 @@ acknowledged recovery checks the same records and view. A later mount-loss event
 needs a new owner-selected recovery UUID; it cannot bypass an unfinished earlier
 operation.
 
+A truncated or noncanonical completion file can be repaired explicitly when its
+original intent and read-only view still verify:
+
+```js
+const view = await repairPreviewStorageRecoveryCompletion(
+  { root, project, engineId, runHost },
+  { ...options, completionSha256: independentlyReviewedDamagedFileSha256 },
+);
+```
+
+The digest names the raw bytes of `recovery-<recoveryId>.complete.json` on the
+selected host. Review and retain those bytes before requesting repair. The worker
+requires the original pending fence, exclusive ownership of the registry lock and
+fresh filesystem/writer checks. It preserves the damaged file and appends
+`recovery-<recoveryId>.repair.json`, binding its bytes and inode to the verified
+view before releasing that fence. Inspection and repeated recovery check both the
+retained evidence and the current view. No mount or application operation repeats.
+
+Canonical JSON completion records, including conflicting reports, refuse repair.
+Missing completion files use reconciliation. Missing or damaged intents and partial
+repair acknowledgments remain fenced; this operation cannot repair them. The
+[completion-repair qualification](evidence/operator-preview-storage-completion-repair.json)
+uses isolated recovery records and copied accounting metadata referencing an actual
+retained read-only filesystem. It preserves the real registry, image bytes, seeded
+SQLite/binary data, loop and mount; it does not claim a naturally interrupted write.
+
 The [read-only recovery qualification](evidence/operator-preview-storage-readonly-recovery.json)
 uses an unused QA filesystem with seeded data. It covers controlled mount loss,
 a known live-writer refusal before effects, an unrelated running peer, explicit

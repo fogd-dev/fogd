@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-completion-repair-qualification",
+  "testedBaseCommit": "ebb35d91b30354e9d197b8e1028592675d2ce915",
+  "scope": "Explicit repair of a truncated read-only recovery completion record under its original pending fence. Isolated accounting metadata references an actual retained Linux ARM64 read-only filesystem; no natural write interruption or real registry repair claim.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/preview/storage.mjs": "b0b4b08907a49dc1c03f08cce7be3b65b5e6d50cb32246c191241bb61e5eb39e",
+    "packages/cli/src/preview/storage-shape.mjs": "fabbb22521d26ba562ac807b4ff2aebb75967c855555052b53398e6d4468ddc4",
+    "packages/cli/src/preview/storage-admission.mjs": "a54529aa0e6ea0121ed993bae62aa89e90f96ed80c3f6ef621117c59e151c044",
+    "packages/cli/src/preview/storage-recovery.mjs": "2bd46cf6811413f2be0341902d7a222b43f2d8121eabdc04393391a00d6c4363",
+    "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+    "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+    "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+    "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+    "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+    "packages/cli/src/preview/storage/readonly-recovery.py": "64e2225f98785df83c44986f2e6e6e7600ce8445fc7ceeff49ef710c33b822af",
+    "packages/cli/src/preview/storage/host.py": "548bc0475c9958c9dfe9f476ab577582b84d0455a016e02fbf03f020ccda2d14"
+  },
+  "native": {
+    "passed": true,
+    "scope": "Isolated recovery metadata and copied reservation policy referencing the retained real read-only filesystem. Owned partial completion injection; no natural process crash, remount, app execution or real-registry repair claim.",
+    "workerSha256": "68d3a0562c378f872c2477167a544bb90723e3a5697745d263c2fcf1e8b881c6",
+    "wrongDigestRefused": true,
+    "ordinaryReconciliationRefusedDamagedCompletion": true,
+    "explicitRepairPassed": true,
+    "repeatedRepairInspectRecoverReconcileStable": true,
+    "backingImageAndSqliteBytesUnchanged": true,
+    "originalEpochRecordsUnchanged": true,
+    "actualLoopAndMountUnchanged": true,
+    "realRegistryAndRetainedChargeUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "host": {
+      "passed": true,
+      "readOnly": true,
+      "retainedPartialBytesAndIdentityVerified": true,
+      "newRepairAndIntentBindingsVerified": true,
+      "realRegistryUnchangedAndIsolatedChargeRetained": true,
+      "backingImageAndPayloadHashesUnchanged": true,
+      "sqliteRowsAndIntegrityVerified": true,
+      "actualLoopAndReadonlyAliasesVerified": 2,
+      "roleInodesRetained": true,
+      "fixtureContainerRetainedStopped": true,
+      "bootUnchanged": true,
+      "isolatedFenceCleared": true,
+      "executionAuthorized": false
+    },
+    "sourceFiles": {
+      "packages/cli/src/preview/storage.mjs": "b0b4b08907a49dc1c03f08cce7be3b65b5e6d50cb32246c191241bb61e5eb39e",
+      "packages/cli/src/preview/storage-shape.mjs": "fabbb22521d26ba562ac807b4ff2aebb75967c855555052b53398e6d4468ddc4",
+      "packages/cli/src/preview/storage-admission.mjs": "a54529aa0e6ea0121ed993bae62aa89e90f96ed80c3f6ef621117c59e151c044",
+      "packages/cli/src/preview/storage-recovery.mjs": "2bd46cf6811413f2be0341902d7a222b43f2d8121eabdc04393391a00d6c4363",
+      "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+      "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+      "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+      "packages/cli/src/preview/storage/readonly-recovery.py": "64e2225f98785df83c44986f2e6e6e7600ce8445fc7ceeff49ef710c33b822af",
+      "packages/cli/src/preview/storage/host.py": "548bc0475c9958c9dfe9f476ab577582b84d0455a016e02fbf03f020ccda2d14"
+    },
+    "currentArchivedSourcesVerified": true,
+    "old149ContainerEngineSnapshotUnchanged": true,
+    "defaultDockerContextPreserved": true,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "checks": {
+    "storageNodeTests": {
+      "tests": 77,
+      "passed": 77,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "linuxHostCases": {
+      "tests": 53,
+      "passed": 53,
+      "failures": 0,
+      "errors": 0
+    },
+    "fullNodeSuite": {
+      "tests": 3542,
+      "pass": 3542,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "terminalExitCode": 0
+    },
+    "syntax": "passed",
+    "qualityGate": "passed; request option validation extracted to keep complexity within the existing gate",
+    "standardsSelfReview": "PASS",
+    "writing": "passed"
+  },
+  "retention": {
+    "damagedCompletionBytesAndInodePreserved": true,
+    "repairAcknowledgmentAppended": true,
+    "isolatedCopiedChargeBytes": 1090519040,
+    "realRegistryAndChargeUnchanged": true,
+    "existingReadOnlyLoopAndMountUnchanged": true,
+    "backingImageAndClosedSqliteBinaryDataUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "newEngineFixtureContainerRetainedStopped": true,
+    "qualificationRecordsRetained": true
+  },
+  "remainingGates": [
+    "Damaged recovery intent and partial repair acknowledgment recovery",
+    "Interrupted storage admission initialization",
+    "Power-loss/crash and open database/WAL consistency",
+    "Writable application restoration",
+    "Public launch/provisioning and complete browser acceptance"
+  ],
+  "executionAuthorized": false,
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed"
+}

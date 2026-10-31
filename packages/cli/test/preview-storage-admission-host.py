@@ -637,6 +637,114 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(len(calls), 1)
         self.assertFalse((self.base / 'registry/operation.pending.json').exists())
 
+    def partial_readonly_completion(self):
+        value, report, calls, patches = self.readonly_fixture()
+        path = pathlib.Path(value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json')
+        append = scope['append']
+        def interrupted(target, record):
+            if target == str(path):
+                path.touch(mode=0o600)
+                path.write_bytes(b'{"schema":')
+                raise RuntimeError('injected partial completion write')
+            append(target, record)
+        with patch.dict(scope, {**patches, 'append': interrupted}):
+            with self.assertRaises(RuntimeError):
+                scope['recover_readonly_storage'](value)
+        value['completionSha256'] = scope['hashlib'].sha256(path.read_bytes()).hexdigest()
+        return value, report, calls, patches, path
+
+    def test_completion_repair_preserves_partial_bytes_and_supports_all_readonly_operations(self):
+        value, report, calls, patches, path = self.partial_readonly_completion()
+        before = (path.read_bytes(), path.stat().st_ino)
+        with patch.dict(scope, patches):
+            with self.assertRaises(ValueError):
+                scope['reconcile_readonly_storage'](value)
+            for operation in ['repair_readonly_completion', 'repair_readonly_completion', 'inspect_readonly_storage',
+                              'recover_readonly_storage', 'reconcile_readonly_storage']:
+                self.assertEqual(scope[operation](value), report)
+        self.assertEqual((path.read_bytes(), path.stat().st_ino), before)
+        self.assertEqual(len(calls), 1)  # Only the original mount, never a repair/reconcile replay.
+        self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+
+    def test_completion_repair_requires_reviewed_bytes_and_original_fence(self):
+        value, _, _, patches, path = self.partial_readonly_completion()
+        repair = pathlib.Path(str(path).replace('.complete.json', '.repair.json'))
+        fence = self.base / 'registry/operation.pending.json'
+        with patch.dict(scope, patches):
+            with self.assertRaises(ValueError):
+                scope['repair_readonly_completion']({**value, 'completionSha256': 'b' * 64})
+            self.assertFalse(repair.exists())
+            fence.unlink()
+            foreign = scope['admission_fence'](self.project(2), 'prepare')
+            with self.assertRaises(ValueError):
+                scope['repair_readonly_completion'](value)
+            self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+        self.assertFalse(repair.exists())
+
+    def test_completion_repair_refuses_canonical_records_even_when_the_report_conflicts(self):
+        value, _, _, patches, path = self.partial_readonly_completion()
+        path.write_bytes(scope['encoded']({'conflicting': 'canonical record'}))
+        value['completionSha256'] = scope['hashlib'].sha256(path.read_bytes()).hexdigest()
+        with patch.dict(scope, patches):
+            with self.assertRaises(ValueError):
+                scope['repair_readonly_completion'](value)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+        self.assertFalse(pathlib.Path(str(path).replace('.complete.json', '.repair.json')).exists())
+
+    def test_completion_repair_refuses_a_missing_view_or_writer_before_publication(self):
+        value, _, _, patches, path = self.partial_readonly_completion()
+        def refused(*args):
+            raise ValueError('injected unsafe view')
+        for name in ['readonly_report', 'assert_no_recovery_writers']:
+            with patch.dict(scope, {**patches, name: refused}):
+                with self.assertRaises(ValueError):
+                    scope['repair_readonly_completion'](value)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+        self.assertFalse(pathlib.Path(str(path).replace('.complete.json', '.repair.json')).exists())
+
+    def test_completion_repair_rechecks_retained_source_and_refuses_a_new_fence(self):
+        value, _, _, patches, path = self.partial_readonly_completion()
+        with patch.dict(scope, patches):
+            scope['repair_readonly_completion'](value)
+            foreign = scope['admission_fence'](self.project(2), 'prepare')
+            with self.assertRaises(ValueError):
+                scope['repair_readonly_completion'](value)
+            self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+            path.write_bytes(b'changed retained evidence')
+            with self.assertRaises(ValueError):
+                scope['inspect_readonly_storage'](value)
+
+    def test_partial_repair_acknowledgment_retains_the_fence_without_mount_replay(self):
+        value, _, calls, patches, path = self.partial_readonly_completion()
+        repair = pathlib.Path(str(path).replace('.complete.json', '.repair.json'))
+        def interrupted(target, record):
+            self.assertEqual(target, str(repair))
+            repair.touch(mode=0o600)
+            repair.write_bytes(b'{')
+            raise RuntimeError('injected partial repair acknowledgment')
+        with patch.dict(scope, {**patches, 'append': interrupted}):
+            with self.assertRaises(RuntimeError):
+                scope['repair_readonly_completion'](value)
+        with patch.dict(scope, patches):
+            for operation in ['repair_readonly_completion', 'recover_readonly_storage', 'reconcile_readonly_storage']:
+                with self.assertRaises(ValueError):
+                    scope[operation](value)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(path.read_bytes(), b'{"schema":')
+
+    def test_completion_repair_acknowledgment_survives_lost_fence_release(self):
+        value, report, calls, patches, path = self.partial_readonly_completion()
+        def interrupted(fence):
+            raise RuntimeError('injected result loss after repair acknowledgment')
+        with patch.dict(scope, {**patches, 'release_admission_fence': interrupted}):
+            with self.assertRaises(RuntimeError):
+                scope['repair_readonly_completion'](value)
+        with patch.dict(scope, patches):
+            self.assertEqual(scope['repair_readonly_completion'](value), report)
+        self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+        self.assertEqual(len(calls), 1)
+
     def test_locked_native_utility_receives_only_the_held_new_file(self):
         path = str(self.base / 'owned-command-file')
         fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600)

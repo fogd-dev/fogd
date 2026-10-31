@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { recoverPreviewStorageReadOnly, inspectPreviewStorageRecovery, reconcilePreviewStorageRecovery } from '../src/preview/storage-recovery.mjs';
+import { recoverPreviewStorageReadOnly, inspectPreviewStorageRecovery, reconcilePreviewStorageRecovery, repairPreviewStorageRecoveryCompletion } from '../src/preview/storage-recovery.mjs';
 import { validatePreviewStorageReceipt } from '../src/preview/storage.mjs';
 import { previewStorageFixture } from './fixtures/preview-storage.mjs';
 
@@ -59,4 +59,24 @@ test('an unknown mount response is sanitized and never automatically replayed', 
   await assert.rejects(recoverPreviewStorageReadOnly({ ...input, runHost: async () => { calls++; throw Error('PRIVATE_HOST_SECRET'); } }, options),
     error => error.code === refused.code && error.reason === 'uncertain' && !error.message.includes('PRIVATE_HOST_SECRET'));
   assert.equal(calls, 1);
+});
+
+
+test('completion repair binds the reviewed damaged-record digest without granting execution', async () => {
+  const calls = [], repairOptions = { ...options, completionSha256: 'b'.repeat(64) };
+  const result = await repairPreviewStorageRecoveryCompletion({ ...input, runHost: async (args, extra) => {
+    calls.push(JSON.parse(extra.inputText)); return JSON.stringify({ ok: true, recovery: report() });
+  } }, repairOptions);
+  assert.deepEqual(calls, [{ action: 'repair-readonly', ...input, ...repairOptions }]);
+  assert.equal(result.executionAuthorized, false);
+  assert.throws(() => validatePreviewStorageReceipt(result, input), refused);
+});
+
+test('completion repair rejects missing or malformed digests before invoking the host', async () => {
+  let calls = 0;
+  for (const completionSha256 of [undefined, null, '', 'A'.repeat(64), 'a'.repeat(63)]) {
+    await assert.rejects(repairPreviewStorageRecoveryCompletion({ ...input, runHost: async () => { calls++; } },
+      { ...options, completionSha256 }), refused);
+  }
+  assert.equal(calls, 0);
 });

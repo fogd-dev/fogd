@@ -100,8 +100,10 @@ Native helper supervisors retain the process lock after caller loss. An explicit
 owner repair preserves a missing or damaged hold and adds a conservative
 quarantined reservation. Explicit read-only data recovery after controlled mount
 loss now verifies scoped writer refusal, an unrelated live peer, retained bytes
-and charges, and completion reconciliation without mount replay. Partial
-recovery-record and initialization repair, application data restoration, browser
+and charges, and completion reconciliation without mount replay. Explicit
+completion-record repair preserves reviewed damaged bytes and acknowledges a
+verified read-only view under its original fence. Damaged intents, partial repair
+acknowledgments and initialization repair, application data restoration, browser
 withdrawal controls, public launch and complete preview/browser acceptance remain
 open. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
 now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,

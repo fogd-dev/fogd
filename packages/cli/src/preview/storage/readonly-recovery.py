@@ -83,9 +83,28 @@ def readonly_pending(value):
     return pending
 
 
+def readonly_completion_source(value):
+    path = value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json'
+    expected = identity(path)
+    data = read_bytes(path)
+    require(identity(path) == expected)
+    return {'sha256': hashlib.sha256(data).hexdigest(), 'identity': expected, 'bytes': len(data)}
+
+
+def readonly_completion(value):
+    prefix = value['directory'] + '/recovery-' + value['recoveryId']
+    if not os.path.lexists(prefix + '.repair.json'):
+        return read(prefix + '.complete.json')
+    repair = read(prefix + '.repair.json')
+    require(set(repair) == {'schema', 'kind', 'original', 'report'} and type(repair['schema']) is int
+            and repair['schema'] == 1 and repair['kind'] == 'fogd-preview-storage-readonly-completion-repair')
+    require(repair['original'] == readonly_completion_source(value))
+    return repair['report']
+
+
 def inspect_readonly_view(value, original):
     pending = readonly_pending(value)
-    recorded = read(value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json')
+    recorded = readonly_completion(value)
     current = readonly_report(value, original, pending)
     require(recorded == current)
     assert_no_recovery_writers(value, current['loop'])
@@ -117,11 +136,39 @@ def reconcile_readonly_storage(value):
         assert_no_recovery_writers(value, report['loop'])
         complete_path = value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json'
         if os.path.lexists(complete_path):
-            require(read(complete_path) == report)
+            require(readonly_completion(value) == report)
         else:
             fence = pending['fence']
             require(identity(fence['path']) == fence['identity'] and read(fence['path']) == fence['record'])
             append(complete_path, report)
+        release_storage_recovery(pending['fence'])
+        return report
+
+
+def require_damaged_readonly_completion(value):
+    try:
+        read(value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json')
+    except (ValueError, UnicodeError):
+        return
+    require(False)  # A canonical JSON record, including a conflicting report, is never superseded.
+
+
+def repair_readonly_completion(value):
+    with admission_lock():
+        value, original = recovery_original(value)
+        pending = readonly_pending(value)
+        report = readonly_report(value, original, pending)
+        assert_no_recovery_writers(value, report['loop'])
+        source = readonly_completion_source(value)
+        require(source['sha256'] == value['completionSha256'])
+        repair_path = value['directory'] + '/recovery-' + value['recoveryId'] + '.repair.json'
+        if not os.path.lexists(repair_path):
+            fence = pending['fence']
+            require(identity(fence['path']) == fence['identity'] and read(fence['path']) == fence['record'])
+            require_damaged_readonly_completion(value)
+            append(repair_path, {'schema': 1, 'kind': 'fogd-preview-storage-readonly-completion-repair',
+                                 'original': source, 'report': report})
+        require(readonly_completion(value) == report)
         release_storage_recovery(pending['fence'])
         return report
 
