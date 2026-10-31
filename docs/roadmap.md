@@ -93,6 +93,13 @@ QA engine refused unregistered legacy preview networks before setup, preserving
 its original resources and files. Actual OpenSSH read-only checks preserve both charged QA previews. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 
+Native acceptance currently awaits healthy QA storage. A [read-only storage observation](evidence/operator-preview-storage-io-observation.json)
+still receives an I/O error from retained metadata after host free space recovers.
+The checked alternative engines have unsupported storage or retained preview
+resources, and both known preview storage policies are full. The observation
+performs no repair and changes no retained resource, policy or admission check.
+Native foreground and complete fresh-app/update gates remain open.
+
 The internal preview host plan now seals role/network/volume placement and binds
 realized commands to the signed target. Read-only eligibility includes retained
 names/ports, active memory limits and held allocations. An internal engine-bound

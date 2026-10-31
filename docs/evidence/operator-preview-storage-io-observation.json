@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-io-observation",
+  "sourceCommit": "6bfc5599da66040554417c19ae5cc7540f9a5763",
+  "existingUserInstallations": 0,
+  "scope": "Read-only diagnosis of retained QA storage and candidate target availability. This is a failed metadata-read observation, not a recovery, health or native launch pass.",
+  "observed": {
+    "exitCode": 1,
+    "stdoutBytes": 0,
+    "stderrBytes": 295,
+    "hostFreeBytes": 3785093120,
+    "mutationsRun": false,
+    "nativeCompletionQualified": false,
+    "nativeBudgetGuardQualified": false,
+    "metadataReadable": false,
+    "ioErrorObserved": true
+  },
+  "guestStorage": {
+    "mount": {
+      "filesystems": [
+        {
+          "target": "/var/lib/docker",
+          "source": "/dev/vdb1[/docker]",
+          "fstype": "ext4",
+          "options": "rw,relatime"
+        }
+      ]
+    },
+    "availableBytes": 10836348928,
+    "availableInodes": 786354
+  },
+  "rootCause": "unproven; the I/O error persists after host free space recovered. Guest free space and an rw mount do not prove metadata readability.",
+  "checkedAlternativeContexts": [
+    {
+      "context": "colima-fogd-release-20261023",
+      "engineId": "6f115109-ab52-4282-98fe-5431033615ed",
+      "driver": "overlayfs",
+      "memoryBytes": 12515160064,
+      "containers": 0,
+      "running": 0,
+      "previewLabeledNetworks": 0,
+      "previewLabeledContainers": 0
+    },
+    {
+      "context": "colima-fogd-v8-onboarding-20261030",
+      "engineId": "b18c85bf-344e-487c-982c-cbce1274a38f",
+      "driver": "overlay2",
+      "memoryBytes": 6198779904,
+      "containers": 25,
+      "running": 0,
+      "previewLabeledNetworks": 4,
+      "previewLabeledContainers": 9
+    },
+    {
+      "context": "colima-fogd-v9-onboarding-20261030",
+      "engineId": "f7d85727-3b99-4263-bdc5-80d64b593a90",
+      "driver": "overlay2",
+      "memoryBytes": 6198857728,
+      "containers": 77,
+      "running": 0,
+      "previewLabeledNetworks": 11,
+      "previewLabeledContainers": 0
+    },
+    {
+      "context": "colima-fogd-preview-launch-20261031",
+      "engineId": "d2f8db37-b4b7-4f6c-a6e3-650e059256f6",
+      "driver": "overlay2",
+      "memoryBytes": 8308510720,
+      "containers": 20,
+      "running": 0,
+      "previewLabeledNetworks": 8,
+      "previewLabeledContainers": 20
+    }
+  ],
+  "knownPreviewStoragePolicies": [
+    {
+      "profile": "fogd-preview-inputs-20261030",
+      "exitCode": 0,
+      "observed": {
+        "engineId": "cdda5dfa-3d7d-4484-a826-c0fc03361acb",
+        "root": "/var/lib/docker/fogd-preview-storage-admission-20261031-02",
+        "maxProjects": 2,
+        "heldStorageProjects": 2,
+        "pending": false,
+        "policySha256": "7ad47777d9135367037597861f47913482d2763ad7bd64504fe15ad5bbd1531b"
+      }
+    },
+    {
+      "profile": "fogd-preview-launch-20261031",
+      "exitCode": 0,
+      "observed": {
+        "engineId": "d2f8db37-b4b7-4f6c-a6e3-650e059256f6",
+        "root": "/var/lib/docker/fogd-preview-launch-storage-20261031",
+        "maxProjects": 2,
+        "heldStorageProjects": 2,
+        "pending": false,
+        "policySha256": "094a795b030f3401dec784606a855c3b3447a36cfec6ff84163ade9ce1cd45c1"
+      }
+    }
+  ],
+  "nativeAcceptanceBlocker": "No fresh qualified target is available among the checked engines without altering retained QA resources or storage policy. The current affected target still returns I/O errors, and creating another VM previously exhausted host disk.",
+  "blockingHistory": [
+    {
+      "evidence": "operator-preview-reservation-read-failure.json",
+      "condition": "Host disk exhaustion prevented another native trial; the failed launch reason itself remained unproven."
+    },
+    {
+      "evidence": "operator-preview-profile-completion.json",
+      "condition": "Host disk exhaustion terminated tests and a guest storage I/O error prevented native post-state verification."
+    },
+    {
+      "evidence": "operator-preview-storage-io-observation.json",
+      "condition": "Read-only metadata access still fails after host space recovered; candidate target/store and retained-capacity constraints remain."
+    }
+  ],
+  "actionsNotTaken": [
+    "No storage repair, filesystem check, restart, remount, mutation replay or capacity reset",
+    "No QA container, network, volume, filesystem, image or VM deletion",
+    "No weaker resource, storage-driver or admission checks"
+  ],
+  "remainingRequirements": [
+    "Healthy qualified native target with space for a fresh bounded preview",
+    "Successful native foreground launch and complete fresh-app/update acceptance",
+    "Manager-loss and remaining interrupted-operation recovery"
+  ],
+  "nativeCompletionQualified": false,
+  "nativeBudgetGuardQualified": false,
+  "hostDataPreservationVerified": false,
+  "ordinaryRuntimeAdmission": "closed",
+  "defaultCronAdmission": "closed",
+  "goalComplete": false,
+  "sourceFiles": {
+    "packages/cli/src/preview/profile-records.mjs": "c0ec857dfd0d399fffc4bf5df68d31964cec49dccb0c29c04007bc5353389b4e",
+    "packages/cli/src/preview/admission.mjs": "850ea49416bec936c231a8d9b722e783d7cd594a0353d5413ea80619a6925b11",
+    "packages/cli/src/preview/runtime-catalog.json": "3f53d74b80ed2c9ef16c2c0902e406e4ddf7be70a50a60913ce9e231d51b4f0c"
+  },
+  "rawEvidenceDirectory": "~/.local/share/fogd-qualifications/preview-profile-io-observation-20261031-01",
+  "rawArtifacts": {
+    "stderr.log": "84dfe75bcb0dfedd3e17ea315ea493022494968c02c11ec9220dfa7acd676f9c",
+    "observation.json": "384c137196ecb13009ce49a81b60d7c0f4a1d40e870147c42c1bbb0f571ec61c",
+    "storage-capacity.json": "abe9cbda45981eba0f73f8d8b75d93c9756ee08728fdca7961565df43fd92e13",
+    "alternative-contexts.json": "45b29a39b54bea3a373b58167ccf32036436e56611edea5f36e15a485b028801",
+    "reader.py": "a90441a8365ed8669de3a347562a72e585dd4e22c58c1213a8eba64294f3971d",
+    "guest-space.json": "85860b8c0a9ead81506eb6751d008d6b39b1271753be43cb985d2d48832414bc",
+    "stdout.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "driver.py": "9c652ce96e231d154fe71e3a785d9a415a161b7df5538bce589a021d71ec8f55"
+  },
+  "checks": {
+    "rawObservationsVerified": true,
+    "runtimeTests": "not rerun; no program source changed"
+  }
+}
