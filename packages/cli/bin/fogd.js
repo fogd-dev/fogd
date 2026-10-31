@@ -122,6 +122,9 @@ try {
     console.log('fogd storage space --installation PROJECT  Inspect local backing filesystem space');
     console.log('fogd stop --installation PROJECT  Stop enrolled services and retain storage');
     console.log('fogd preview prepare ID --runtime FAMILY --lifetime-seconds SECONDS --output DIR  Prepare an exact proposal without executing it');
+    console.log('fogd preview status ALLOCATION_UUID --control OWNER_DIRECTORY  Inspect an existing preview allocation');
+    console.log('fogd preview stop ALLOCATION_UUID --control OWNER_DIRECTORY [--reason owner-stop|declined|revoked]  Stop preview execution and retain resources');
+    console.log('fogd preview retire ALLOCATION_UUID --control OWNER_DIRECTORY  Release a verified stopped preview memory budget after expiry');
     console.log('fogd admin review ID --output DIR  Export verified artifacts and compare a release');
     console.log('fogd admin archive APP review [--rotation] [--output NEW_FILE]\nfogd admin archive APP approve --review FILE [--rotation]\nfogd admin archive APP secrets --review ORIGINAL_REVIEW_FILE < values.json');
     console.log('fogd admin artifacts plan  Inspect controller artifact retention without deleting');

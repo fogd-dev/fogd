@@ -3,6 +3,10 @@ import { uuid } from '../build-cache/paths.mjs';
 import { preparePreview } from './prepare.mjs';
 
 export async function previewCommand(args) {
+  if (['status', 'stop', 'retire'].includes(args[0])) {
+    const { previewOwnerCommand } = await import('./owner-command.mjs');
+    return previewOwnerCommand(args[0], args.slice(1));
+  }
   const { values, positionals } = parseArgs({ args, allowPositionals: true, options: {
     output: { type: 'string' }, runtime: { type: 'string' }, 'lifetime-seconds': { type: 'string' },
   } });

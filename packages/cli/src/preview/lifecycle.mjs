@@ -1,29 +1,14 @@
 import { setTimeout as delay } from 'node:timers/promises';
 import { performance } from 'node:perf_hooks';
-import { startPreviewAllocation, previewShutdownLeadMs } from './startup.mjs';
-import { stopPreviewAllocation, requestPreviewStop, inspectPreviewTermination } from './teardown.mjs';
+import { startPreviewAllocation } from './startup.mjs';
+import { stopPreviewAllocation, completePreviewStop, inspectPreviewTermination } from './teardown.mjs';
 import { readPreviewInputs } from './inputs.mjs';
 import { assertCurrentPreviewSource } from './decision.mjs';
 
-const pending = error => error.code === 'PREVIEW_HOST_REFUSED' && error.reason === 'pending';
+import { waitForPreviewFence as afterPending, previewFencePending as pending } from './pending-operation.mjs';
+import { writePreviewOwnerControl } from './owner-control.mjs';
 
-// A pending refusal occurs before acquiring the fence or issuing any effect.
-// Wait for that operation; never retry an uncertain command or partial write.
-async function afterPending(work, expiresAt) {
-  const until = performance.now() + previewShutdownLeadMs;
-  for (;;) {
-    try { return await work(); }
-    catch (error) {
-      if (!pending(error) || performance.now() >= until || Date.now() >= Date.parse(expiresAt)) throw error;
-      await delay(100);
-    }
-  }
-}
-
-async function stopWithReason(input, reason, expiresAt) {
-  const state = await afterPending(() => requestPreviewStop(input, { reason }), expiresAt);
-  return state.completed || afterPending(() => stopPreviewAllocation(input), expiresAt);
-}
+const stopWithReason = (input, reason, expiresAt) => completePreviewStop(input, { reason, expiresAt });
 
 function sourceMonitor(source, env) {
   const cancellation = new AbortController(); let next = 0, checking = false, failed = false;
@@ -69,7 +54,8 @@ async function watch(input, ready, source) {
 // configured source can no longer verify the original proposal/baseline.
 export async function runPreviewAllocation(input) {
   const { preparation, review } = await readPreviewInputs(input.directory, input.plan.request.preparationSha256);
-  const ready = await startPreviewAllocation(input);
+  const control = input.ownerControl ? await writePreviewOwnerControl(input, input.ownerControl) : null;
+  const started = await startPreviewAllocation(input), ready = control ? { ...started, control } : started;
   const completion = watch(input, ready, { preparation, review });
   void completion.catch(() => {}); // The owner still observes the original result.
   return { ready, completion };

@@ -11,6 +11,7 @@ import { readPreviewAllocation } from './allocation-state.mjs';
 import { appendHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
 import { assertPreviewAllocationImage, inspectPreviewGraph, previewContainerStopped } from './stopped-graph.mjs';
+import { waitForPreviewFence } from './pending-operation.mjs';
 
 const byRole = (plan, observed) => Object.fromEntries(Object.entries(plan.services).map(([role, service]) => [role, observed.containers.find(value => value.Name === '/' + service.name)]));
 
@@ -83,17 +84,17 @@ export async function releasePreviewMemory(input) {
   });
 }
 
-async function terminationState(value) {
+async function terminationState(value, { inspectIdle = false } = {}) {
   const request = await readPreviewStopRequest(value.bound, value.complete), completed = await readCompletedPreviewTeardown(value.bound, value.complete);
-  if (completed || request) await value.observe(completed ? 'stopped' : 'operating');
-  return { allocationId: value.allocationId, request, completed, memoryBudgetHeld: value.host.heldRecords.includes(value.held) };
+  const current = completed || request || inspectIdle ? await value.observe(completed ? 'stopped' : 'operating') : null;
+  return { state: { allocationId: value.allocationId, request, completed, memoryBudgetHeld: value.host.heldRecords.includes(value.held) }, current };
 }
 
 // Cheap when no intent is present: no Docker calls. Any returned stop/completion
 // proof is checked against a fresh complete graph under the host fence.
 export async function inspectPreviewTermination(input) {
   return guardPreviewHost(async () => {
-    const value = await target(input, { includeRetired: true }), state = await terminationState(value);
+    const value = await target(input, { includeRetired: true }), { state } = await terminationState(value);
     await value.host.fence.release(); return state;
   });
 }
@@ -103,12 +104,36 @@ export async function inspectPreviewTermination(input) {
 export async function requestPreviewStop(input, { reason = 'owner-stop' } = {}) {
   previewStopReason(reason);
   return guardPreviewHost(async () => {
-    const value = await target(input, { includeRetired: true }), state = await terminationState(value);
+    const value = await target(input, { includeRetired: true }), { state } = await terminationState(value);
     if (state.completed || state.request) { await value.host.fence.release(); return state; }
     await requirePreviewHold(value.host, value.plan, value.reservation); await value.observe('operating');
     const request = previewStopRequest(value.complete, reason);
     await value.host.fence.record('writing'); await appendHostRecord(value.bound, 'stop.requested.json', request);
     await value.host.fence.record('complete'); await value.host.fence.release();
     return { ...state, request };
+  });
+}
+
+export async function completePreviewStop(input, { reason = 'owner-stop', expiresAt } = {}) {
+  const state = await waitForPreviewFence(() => requestPreviewStop(input, { reason }), expiresAt);
+  return state.completed || waitForPreviewFence(() => stopPreviewAllocation(input), expiresAt);
+}
+
+// Process observation is not app health. Never expose Docker environments,
+// commands or mounted input bytes in an operator status response.
+export async function inspectPreviewStatus(input) {
+  return guardPreviewHost(async () => {
+    const value = await target(input, { includeRetired: true });
+    try {
+      const { state, current } = await terminationState(value, { inspectIdle: true });
+      const roles = Object.fromEntries(Object.entries(current.roles).map(([role, container]) => [role, container.State.Status]));
+      const active = Object.values(current.roles).some(container => container.State.Running);
+      return { schema: 1, kind: 'fogd-preview-status', preview: value.grant.preview, allocationId: value.allocationId,
+        app: value.grant.source.app, submission: value.grant.source.submission, digest: value.grant.source.digest,
+        origin: value.plan.request.origin, expiresAt: value.grant.expiresAt,
+        state: state.completed ? 'stopped' : active ? 'running' : 'not-running', runtimeObserved: true, health: 'not-assessed', roles,
+        stopRequested: Boolean(state.request), stopReason: state.request?.reason || null, shutdownOrdered: state.completed?.ordered ?? null,
+        memoryBudgetHeld: state.memoryBudgetHeld, resourcesRetained: true, namespaceReusable: false, executionAuthorized: false };
+    } finally { await value.host.fence.release(); }
   });
 }

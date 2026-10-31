@@ -69,8 +69,8 @@ the current source, actual installed mount bytes, live deadline and memory
 eligibility. It starts no application service and grants no reusable execution
 permission. An explicit candidate catalog and managed startup/expiry coordinator
 connect these checks to ordered service readiness and early ordered teardown.
-Ordinary preview-runtime admission, public lifecycle commands and complete
-preview/browser trials remain open before public launch. The ledger is local coordination, not a distributed engine
+Ordinary preview-runtime admission and complete preview/browser trials remain
+open before public launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
 
 Internal manual teardown confirms ingress, management and native-writer shutdown
@@ -83,7 +83,11 @@ manager-loss ordering and recovery remain unqualified.
 Internal durable owner withdrawal and source monitoring now converge with the
 manager on one verified stop. Repeated completed stops perform no Docker mutations,
 including after memory retirement; corrupt or partial proof remains fenced.
-Ordinary previews still need disk/log bounds and public withdrawal controls.
+The [owner CLI controls](previews.md#owner-status-stop-and-memory-retirement)
+provide status, stop and explicit memory retirement for existing candidate
+allocations through private engine-bound control directories. Public launch and
+control-directory provisioning remain open. Ordinary previews still need disk/log
+bounds and browser withdrawal controls.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

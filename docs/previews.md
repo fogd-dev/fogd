@@ -400,10 +400,10 @@ The original per-service deadline remains a fallback; manager loss and arbitrary
 Docker stalls do not establish ordered shutdown. Memory retirement stays explicit
 and requires the original expiry and complete stopped-state proof.
 
-This candidate path has no public lifecycle CLI or ordinary enrollment permission.
+This candidate path has no public launch command or ordinary enrollment permission.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
 and data recovery remain open. Ordinary previews also need disk/log bounds and
-public withdrawal controls. Default cron admission remains closed.
+browser withdrawal controls. Default cron admission remains closed.
 
 ## Internal owner withdrawal and source monitoring
 
@@ -429,5 +429,45 @@ accounting separately from the historical teardown record.
 Partial, malformed or unordered proofs cannot become a fresh cleanup attempt or
 an ordered reclamation claim. Unknown effects retain their fence and hold. A
 pending-fence refusal can be observed again because it occurred before any effect;
-uncertain commands and partial writes are never retried. Public lifecycle commands
-and browser decline/revocation controls remain open.
+uncertain commands and partial writes are never retried. Public launch and browser
+decline/revocation controls remain open.
+
+## Owner status, stop and memory retirement
+
+The owner CLI controls an existing candidate allocation through its private owner
+control directory. The internal managed coordinator can create that directory
+before startup; there is no public launch or control-directory provisioning command.
+The [owner-control check](evidence/operator-preview-owner-controls.json) records
+its bounded qualification.
+
+```sh
+fogd preview status ALLOCATION_UUID --control /private/preview-owner
+fogd preview stop ALLOCATION_UUID --control /private/preview-owner --reason declined
+fogd preview retire ALLOCATION_UUID --control /private/preview-owner
+```
+
+Keep the control directory private. It contains the signed target and the preview
+storage/gateway credentials needed to verify the graph. It excludes source
+administrator credentials, signing keys, TLS private keys and viewer access keys.
+Owner commands need local filesystem and Docker access, without source credentials.
+They select the directory's explicit Docker context, ignore ambient Docker selection
+and check the engine identity before acquiring the host operation fence. They do
+not change the global Docker context.
+
+`status` checks actual resource identities and reports process state, the original
+expiry, stop intent, ordered completion and current memory accounting. It does not
+invoke an application handler; `health: "not-assessed"` remains explicit. A busy
+host operation reports `state: "pending"`, `runtimeObserved: false` and a nonzero
+exit status without clearing that operation's fence.
+
+`stop` records the first owner reason and converges with the manager's ordered
+shutdown. Repeated completed stops recheck the graph and preserve the original
+proof without repeating Docker mutations. Unknown results remain fenced and must
+not be retried as a fresh operation.
+
+`retire` releases only the software memory budget after the original expiry and
+verified ordered shutdown. It refuses early retirement. Repeated retirement
+observes the existing result. Containers, data, volumes, networks, ports and names
+remain retained; this command establishes neither namespace reuse nor physical
+storage reclamation. Public launch, ordinary runtime admission and browser
+withdrawal controls remain open.
