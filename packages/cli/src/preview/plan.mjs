@@ -76,7 +76,10 @@ function planForSchema(input, schema) {
         ...(schema >= 2 ? { logging: { driver: 'json-file', options: { 'max-size': '1m', 'max-file': '2', mode: 'blocking', compress: 'false' } } } : {}), capDrop: ['ALL'], noNewPrivileges: true, restart: 'no', deadline: 'original-execution-expiry' } };
   } catch { throw new PreviewPlanError(); }
 }
-export const createPreviewPlan = input => planForSchema(input, 3);
+export function createPreviewPlan(input) {
+  if (input?.storage?.storage?.schema !== 2) throw new PreviewPlanError();
+  return planForSchema(input, 3);
+}
 export function validatePreviewPlan(input) {
   try {
     const expected = planForSchema(input.request, input.schema);

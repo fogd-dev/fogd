@@ -5,7 +5,7 @@ import { hostRefusal } from './host-records.mjs';
 
 export async function assertCurrentPreviewStorage(plan, runHost, phase = 'any') {
   try {
-    if (plan.schema !== 3 || typeof runHost !== 'function') hostRefusal('storage');
+    if (plan.schema !== 3 || plan.request.storage?.storage?.schema !== 2 || typeof runHost !== 'function') hostRefusal('storage');
     const expected = plan.request.storage, root = expected.storage.mount.target.slice(0, -('/' + plan.project + '/mount').length);
     const current = await inspectPreviewStorage({ root, project: plan.project, engineId: plan.request.engineId, runHost }, { phase });
     if (!isDeepStrictEqual(current, expected)) hostRefusal('storage');

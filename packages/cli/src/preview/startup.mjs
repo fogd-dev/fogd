@@ -28,7 +28,7 @@ function startupClock(input, value, shutdownAt) {
 // admission remains closed until the complete preview lifecycle is qualified.
 export async function startPreviewAllocation(input) {
   return guardPreviewHost(async () => {
-    if (input.plan?.schema !== 3) hostRefusal('resource-policy');
+    if (input.plan?.schema !== 3 || input.plan.request.storage?.storage?.schema !== 2) hostRefusal('resource-policy');
     if (input.signal !== undefined && !(input.signal instanceof AbortSignal)) hostRefusal('startup-target');
     if (input.signal?.aborted) hostRefusal('startup-window');
     const runtime = bindPreviewRuntime(input.plan, input.runtime, input.candidateEnrollment);

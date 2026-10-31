@@ -402,8 +402,8 @@ and requires the original expiry and complete stopped-state proof.
 
 This candidate path has no public launch command or ordinary enrollment permission.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
-and data recovery remain open. Ordinary previews also need backing-space admission and
-browser withdrawal controls. Default cron admission remains closed.
+and data recovery remain open. Ordinary previews also need recovery qualification
+and browser withdrawal controls. Default cron admission remains closed.
 
 ## Internal owner withdrawal and source monitoring
 
@@ -500,8 +500,8 @@ container is reconfigured by this change.
 
 New schema-3 plans bind persistent volumes to a bounded filesystem as described
 below. Host free-space checks alone cannot bound a live writer. Ordinary preview
-admission and public launch remain closed until backing-space coordination and
-the other acceptance gates pass. Default cron admission remains closed.
+admission and public launch remain closed until the remaining acceptance gates
+pass. Default cron admission remains closed.
 
 ## Internal bounded persistent storage
 
@@ -513,7 +513,8 @@ metadata consumes part of that space. A native Docker writer reaches `ENOSPC`
 inside this filesystem while the outer backing filesystem still has space.
 
 The internal host worker requires root, Python 3, Docker's local Unix socket,
-util-linux and e2fsprogs, plus an existing private root directory on ext4. The
+util-linux and e2fsprogs. New provisioning requires explicit enrollment of a fresh
+root-owned private directory on Docker's ext4 backing filesystem. The
 caller supplies an independently selected host transport; this is not a public
 storage-provisioning command. Before creating files, the worker checks that the
 local Docker engine matches the requested identity.
@@ -569,8 +570,55 @@ private Docker control directory without the privileged storage transport. Those
 controls inspect process/resource state; they do not assert filesystem health or
 release retained disk space.
 
-Historical schema-1 and schema-2 QA plans remain readable and stoppable; fresh
-container realization and startup require schema 3. There are no user
-installations to migrate. Ordinary preview admission still needs coordinated
-backing-space admission, recovery qualification and full fresh-app/update browser
-trials. Public launch and default cron admission remain closed.
+Historical QA plans remain readable and stoppable; fresh container realization
+and startup require schema 3 with admitted storage. There are no user
+installations to migrate. Ordinary preview admission still needs recovery
+qualification and full fresh-app/update browser trials. Public launch and default cron admission remain closed.
+
+
+## Backing-space admission and retained charges
+
+The [storage-admission check](evidence/operator-preview-storage-admission.json)
+serializes new provisioning through one registry for the local Docker engine and
+one explicitly enrolled storage root. Choosing another directory cannot create a
+second budget. The root must share Docker's backing filesystem, so admission can
+observe space needed for Docker logs and metadata as well as preview images.
+
+Each project receives a durable reservation before its filesystem is created.
+The configured project limit, current available bytes and free inodes all gate
+provisioning. Charges include the backing image and a conservative metadata
+allowance; the [host policy](../packages/cli/src/preview/storage/admission.py)
+defines those quantities. A count of remaining projects is a logical limit;
+current backing space is reported separately and can close admission sooner.
+
+Images are preallocated and written before use to convert unwritten extents.
+Later filesystem writes therefore keep the backing file's allocation stable in
+the native check. Provisioning rechecks headroom before reporting success.
+Concurrent requests use an exclusive durable fence. A known refusal before
+reservation releases only its own checking fence. Partial reservation writes or
+uncertain provisioning retain both the charge and the fence; no PID or elapsed
+time causes automatic release.
+
+Stopping a preview, expiry and software memory retirement never remove storage
+reservations. The native lifecycle confirms that the configured storage limit
+remains exhausted after ordered stop and memory retirement. Existing application
+data and all image/device/mount resources remain retained. The admission registry
+has no reset, resize or reclamation command.
+
+Older unadmitted QA storage remains available for historical inspection and owner
+controls. New plans require an admitted storage receipt. This remains an internal
+host API; public provisioning and launch commands are unavailable. Unrelated host
+writers and hypervisor storage are outside this budget, and a space observation
+is not a storage-health guarantee. Interrupted-operation recovery and ordinary
+preview acceptance remain open; default cron admission remains closed.
+
+For changes to the privileged admission worker, run its metadata and failure
+regressions on an owned Linux test host with a source checkout:
+
+```sh
+sudo python3 packages/cli/test/preview-storage-admission-host.py --local-source
+```
+
+These tests create only their own temporary metadata directories and inject the
+provisioning callback; they perform no loop-device or mount operations. Native
+filesystem and lifecycle qualification is separate.

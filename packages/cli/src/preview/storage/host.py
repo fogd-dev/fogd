@@ -72,20 +72,24 @@ def read(path):
 
 
 def request(value):
-    require(isinstance(value, dict) and set(value) == {'action', 'root', 'project', 'engineId'})
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed'])
+    require(isinstance(value, dict) and set(value) == ({'action', 'root', 'engineId', 'maxProjects'} if value.get('action') == 'initialize' else {'action', 'root', 'engineId'} if value.get('action') == 'admission' else {'action', 'root', 'project', 'engineId'}))
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission'])
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
-    require(isinstance(value['project'], str) and re.fullmatch(r'fogd-preview-[a-f0-9]{32}', value['project']))
+    if value['action'] not in ['initialize', 'admission']:
+        require(isinstance(value['project'], str) and re.fullmatch(r'fogd-preview-[a-f0-9]{32}', value['project']))
     require(isinstance(value['engineId'], str) and re.fullmatch(r'[^\x00-\x20\x7f]{1,256}', value['engineId']))
     require(sys.platform == 'linux' and os.geteuid() == 0)
-    engine = run(['docker', '--host', 'unix:///var/run/docker.sock', 'info', '--format', '{{.ID}}']).strip()
-    require(engine == value['engineId'])
+    engine = json.loads(run(['docker', '--host', 'unix:///var/run/docker.sock', 'info', '--format', '{{json .}}']))
+    require(engine['ID'] == value['engineId'])
     root = identity(value['root'], True)
     backing = json.loads(run(['findmnt', '--json', '--target', value['root'], '--output', 'FSTYPE']))['filesystems']
     require(len(backing) == 1 and backing[0]['fstype'] == 'ext4')
+    value = {**value, 'rootIdentity': root, 'dockerDevice': os.stat(engine['DockerRootDir']).st_dev}
+    if value['action'] in ['initialize', 'admission']:
+        return value
     project = value['project']
-    return {**value, 'rootIdentity': root, 'directory': value['root'] + '/' + project,
+    return {**value, 'directory': value['root'] + '/' + project,
             'uuid': '-'.join([project[13:21], project[21:25], project[25:29], project[29:33], project[33:45]])}
 
 
@@ -103,6 +107,8 @@ def disk_state(value):
     result = identity(disk)
     info = os.lstat(disk)
     require(info.st_size == BYTES and info.st_blocks * 512 >= BYTES)
+    if value.get('schema') == 2:
+        require(info.st_blocks * 512 <= CHARGE_BYTES)
     return {**result, 'bytes': info.st_size, 'allocatedBytes': info.st_blocks * 512}
 
 
@@ -139,7 +145,7 @@ def mounted_state(value, device):
 
 
 def marker(value):
-    return {'schema': 1, 'kind': 'fogd-preview-storage', 'project': value['project'],
+    return {'schema': value.get('schema', 1), **({'admission': value['admission']} if value.get('schema') == 2 else {}), 'kind': 'fogd-preview-storage', 'project': value['project'],
             'engineId': value['engineId'], 'uuid': value['uuid'], 'bytes': BYTES}
 
 
@@ -148,7 +154,11 @@ def inspect(value):
     directory = value['directory']
     complete = read(directory + '/storage.complete.json')
     require(set(complete) == {'schema', 'kind', 'project', 'engineId', 'uuid', 'bytes',
-                             'rootIdentity', 'directoryIdentity', 'disk', 'loop', 'mount', 'roles'})
+                             'rootIdentity', 'directoryIdentity', 'disk', 'loop', 'mount', 'roles'} | ({'admission'} if complete['schema'] == 2 else set()))
+    require(complete['schema'] in [1, 2])
+    value = {**value, 'schema': complete['schema'], **({'admission': complete['admission']} if complete['schema'] == 2 else {})}
+    if complete['schema'] == 2:
+        admission_entry(value)
     require({key: complete[key] for key in marker(value)} == marker(value))
     require(complete['rootIdentity'] == value['rootIdentity']
             and complete['directoryIdentity'] == identity(directory, True))
@@ -180,6 +190,11 @@ def format_disk(value):
         subprocess.run(['fallocate', '--length', str(BYTES), target], pass_fds=[fd],
                        check=True, capture_output=True, env=ENV, timeout=30)
         require(disk_state(value)['inode'] == os.fstat(fd).st_ino)
+        # Convert unwritten extents before use; future writes must not grow the map.
+        zeros = bytes(1024 ** 2)
+        for _ in range(BYTES // len(zeros)):
+            require(os.write(fd, zeros) == len(zeros))
+        os.fsync(fd)
         append(value['directory'] + '/storage.allocated.json', disk_state(value))
         subprocess.run(['mkfs.ext4', '-q', '-F', '-b', '4096', '-m', '0', '-N', '65536',
                         '-U', value['uuid'], '-E', 'nodiscard,lazy_itable_init=0,lazy_journal_init=0', target],
@@ -227,16 +242,20 @@ def main():
         data = sys.stdin.buffer.read(4097)
         require(len(data) <= 4096)
         value = request(json.loads(data))
-        result = prepare(value) if value['action'] == 'prepare' else inspect(value)
+        if value['action'] in ['initialize', 'admission']:
+            result = initialize_admission(value, value['maxProjects']) if value['action'] == 'initialize' else admission_status(value)
+            print(json.dumps({'ok': True, 'admission': result}, separators=(',', ':')))
+            return
+        result = prepare_admitted(value, prepare) if value['action'] == 'prepare' else inspect(value)
         if value['action'] in ['inspect-empty', 'inspect-installed']:
             roles = ROLES if value['action'] == 'inspect-empty' else ROLES[:6]
             for role in roles:
                 require(not os.listdir(paths(value)[1] + '/' + role))
         print(json.dumps({'ok': True, 'storage': result}, separators=(',', ':')))
-    except Exception:
-        # Raw utility diagnostics may contain host paths. Keep them private.
-        print('{"ok":false,"reason":"storage-refused-retain-resources"}')
-        sys.exit(1)
+    except Exception as error:
+        # Protocol refusals carry only known reasons, never raw utility output.
+        reason = error.reason if isinstance(error, StorageRefusal) else 'uncertain'
+        print(json.dumps({'ok': False, 'reason': reason}, separators=(',', ':')))
 
 
 if __name__ == '__main__':
