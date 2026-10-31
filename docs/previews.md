@@ -412,6 +412,43 @@ Full fresh-app/update browser trials, manager-loss recovery, native lease cleanu
 and data recovery remain open. Ordinary previews also need recovery qualification
 and browser withdrawal controls. Default cron admission remains closed.
 
+## Internal owner launch requests
+
+The [launch-request API](../packages/cli/src/preview/launch-request.mjs) creates
+private, signed launch inputs from a verified preparation, already admitted empty
+storage, explicit runtime/placement and owner-supplied TLS. It generates a fresh
+signing authority, storage password, gateway token and viewer access key. It checks
+the actual prepared artifact and current source through an independently supplied
+owner environment. Request creation reserves no memory and starts no containers;
+the admitted storage charge remains held.
+
+Keep the returned request fingerprint separately from its private directory. The
+request contains launch inputs, viewer access information and a completion record.
+The signing private key and source-owner credentials are absent. The private files
+still contain preview credentials and TLS keys, so retain their owner-only modes.
+Preserve both preparation and request directories at their original paths.
+
+The reader requires the original fingerprint and verifies completion, permissions,
+signature, package bindings, expiry and runtime admission. Relocation, altered or
+incomplete files refuse. An existing private owner-control subdirectory can be
+read, but the coordinator's fresh-control check prevents another launch through
+that directory. Request creation and reading cannot renew the original expiry.
+After a partial write, retain the directory for inspection; setup cannot overwrite
+or repair it implicitly.
+
+The [native request qualification](evidence/operator-preview-launch-request.json)
+feeds generated inputs through the coordinator on a Linux ARM64 QA engine. It
+verifies protected TLS, initially empty D1/R2, an acknowledged write, both replica
+reads, owner stop and post-expiry memory retirement. All twenty containers remain
+stopped and retained, including ten prior peers. Independent checks verify their
+configuration and the earlier preview's 68 file digests/inodes. Both fixed-size
+storage reservations remain charged, exhausting this QA registry's two-project
+limit. The source is an owned HTTP fixture; full browser and real-production
+preservation acceptance remain open.
+
+This API retains the explicit internal candidate gate. Public profile setup,
+request setup and launch commands still require implementation and acceptance.
+
 ## Internal coordinated provisioning and launch
 
 The [launch coordinator](../packages/cli/src/preview/launch.mjs) connects capacity
@@ -462,7 +499,7 @@ retained. Separate raw reads verify signed bindings, resource limits, volume
 sources and 68 retained file digests. The source is an owned HTTP fixture. Post-stop
 D1 restoration and full browser/production-preservation acceptance remain open.
 
-Public profile/input setup, the launch command and ordinary preview-runtime
+Public profile setup, request/launch commands and ordinary preview-runtime
 admission still need their acceptance checks. Manager-loss recovery, unfinished
 reservation cleanup and broader artifact-size/density measurements also remain
 open. Default cron admission stays closed.

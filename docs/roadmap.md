@@ -54,8 +54,12 @@ The native gateway and authenticated HTTPS ingress also have a protected-URL
 D1/R2 check. An internal launch coordinator now connects memory reservation, stopped resource
 allocation, durable owner controls, checked input installation and managed startup.
 A native signed HTTP/D1/R2 trial verifies both replicas, owner stop and post-expiry
-memory retirement while retaining charged storage. Public profile/input setup, the
-launch command, shipped preview-runtime admission, manager-loss recovery and
+memory retirement while retaining charged storage. Internal owner request setup now
+creates private launch/access files, fresh credentials and an exact signed target;
+its strict reader requires an independently retained fingerprint. A second native
+trial verifies these generated inputs beside the retained first preview, including
+unchanged peer data and both charged storage reservations. Public profile setup,
+request/launch commands, shipped preview-runtime admission, manager-loss recovery and
 complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.

@@ -48,10 +48,11 @@ export async function provisionAndRunPreview(input) {
   live(selected);
   const allocated = await allocateStoppedPreview({ ...selected, reservation: held.reservation });
   const allocation = { ...selected, reservation: held.reservation, allocationId: allocated.allocationId };
-  const control = await writePreviewOwnerControl(allocation, selected.ownerControl);
-  live(allocation);
-  await installPreviewInputs(allocation);
-  live(allocation);
-  const active = await runPreviewAllocation({ ...allocation, ownerControl: undefined });
+  const { bundle, ownerControl, ...managed } = allocation;
+  const control = await writePreviewOwnerControl(managed, ownerControl);
+  live(managed);
+  await installPreviewInputs({ ...managed, bundle });
+  live(managed);
+  const active = await runPreviewAllocation(managed);
   return { ready: { ...active.ready, control }, completion: active.completion };
 }

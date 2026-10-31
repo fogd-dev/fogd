@@ -34,7 +34,7 @@ async function controlLocation(input, { directory, dockerContext }) {
   return { root, parent, output };
 }
 export async function checkPreviewOwnerControlLocation(input, config) {
-  try { await controlLocation(input, config); }
+  try { return (await controlLocation(input, config)).output; }
   catch { refuseControl('control'); }
 }
 
