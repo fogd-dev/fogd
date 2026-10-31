@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-reconciliation-qualification",
+  "scope": "Explicit acknowledgment of completed provisioning only. No incomplete-provisioning replay, reattachment, storage reclamation or host-reboot qualification.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/distribution/manifest.mjs": "01bc63968be442669d62cafa4ba50fbb739bb45b266834944b3280b405def788",
+    "packages/cli/src/preview/storage.mjs": "e89ce82564f92e68651ef4d5da56c47616b70a91c2af8c0f6e45adeb6f299859",
+    "packages/cli/src/preview/storage/admission.py": "33f145e6b26fd84ecbfb407595a57435b09b2083376ff94c17adda024cf0ca00",
+    "packages/cli/src/preview/storage/reconciliation.py": "9cad7a149f23788f914d05f59dd9ff7850368b089adff0fcd2ac9299835241a2",
+    "packages/cli/src/preview/storage/host.py": "9fffad5a136ed3b3164c75c76709eb1c105e83adddc6ccb40e8e99a81cda31e9",
+    "packages/cli/test/preview-storage-admission-host.py": "ae872ed1e660ddf23b76845c6101d199892be8c3678376dc2264b390b7e34335",
+    "packages/cli/test/preview-storage-reconciliation.test.mjs": "43fd4952533dec4b0393efeedd5a78b8dfc25ba23d0634dca2b9e1d49dc22e5e"
+  },
+  "invariants": {
+    "operation": "Exact original prepare-operation UUID, engine, project and configured root; actual completed manifest and retained reservation must agree.",
+    "liveOwner": "Nonblocking registry-directory flock excludes current provisioning and reconciliation processes. Durable fence survives process exit. One worker version per selected engine is required.",
+    "acknowledgment": "Append and sync one private acknowledgment before removing only its matching fence. A lost acknowledgment can be inspected again without replaying provisioning.",
+    "refusal": "Incomplete or changed storage, changed acknowledgment, active owner, wrong project/operation, foreign fence or insufficient headroom retain existing records.",
+    "retention": "No format, mount, recreation, delete or reservation release. Reconciliation grants no execution permission."
+  },
+  "checks": {
+    "storageNode": {
+      "tests": 47,
+      "pass": 47,
+      "fail": 0
+    },
+    "linuxHost": {
+      "tests": 17,
+      "pass": 17,
+      "fail": 0,
+      "scope": "Owned temporary metadata and injected provisioning, including two real-process lock-exclusion cases; no loop/mount effects."
+    },
+    "previewNode": {
+      "tests": 361,
+      "pass": 361,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "fullNodeSuite": {
+      "tests": 3512,
+      "pass": 3512,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; imports/locals manually reviewed because Python dead-code tooling is unavailable",
+    "writing": "passed for operator guide, roadmap, evidence receipt, tracker and commit text",
+    "standardsSelfReview": "PASS; all ten dimensions assessed in local gate review, no external reviewer"
+  },
+  "nativeCompletedBoundaryFixture": {
+    "passed": true,
+    "scope": "Completed-boundary fixture registry referencing actual retained QA filesystems; real engine registry and storage are read-only. No fresh provisioning, reformatting or host reboot.",
+    "fixtureOwnerExited": true,
+    "liveOwnerRefused": true,
+    "wrongOperationRefused": true,
+    "completedFilesystemVerified": true,
+    "repeatAcknowledgmentStable": true,
+    "heldProjects": 2,
+    "heldChargeBytes": 2181038080,
+    "pending": false,
+    "admissionOpen": false,
+    "realRegistryFilesUnchanged": 3,
+    "bothRetainedFilesystemsUnchanged": true,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "actualNodeHostTransport": {
+    "passed": true,
+    "actualAssembledWorkerTransport": true,
+    "oneHostCall": true,
+    "storageManifestUnchanged": true,
+    "currentWorkerHashVerified": true,
+    "resourcesRetained": true,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "currentArchivedSourcesVerified": true,
+    "currentAssembledWorkerHashVerified": true,
+    "storage": {
+      "passed": true,
+      "readOnly": true,
+      "actualLocalEngineAndDockerBackingDeviceVerified": true,
+      "policyAndTwoExclusiveReservationsVerified": true,
+      "bothBackingFilesPreallocated": true,
+      "allocatedBytesObserved": 2147491840,
+      "chargedBytes": 2181038080,
+      "headroomAvailable": true,
+      "pendingFence": false,
+      "allFileLoopMountAndRoleIdentitiesVerified": true,
+      "backingFileAllocationStableAfterUse": true
+    },
+    "reconciliation": {
+      "passed": true,
+      "fixtureAcknowledgmentAndBothRetainedChargesVerified": true,
+      "noRealRegistryFence": true,
+      "fixturePending": false,
+      "readOnly": true
+    },
+    "all145QaContainersNonrunning": true,
+    "sources": {
+      "packages/cli/src/preview/storage/admission.py": "33f145e6b26fd84ecbfb407595a57435b09b2083376ff94c17adda024cf0ca00",
+      "packages/cli/src/preview/storage/reconciliation.py": "9cad7a149f23788f914d05f59dd9ff7850368b089adff0fcd2ac9299835241a2",
+      "packages/cli/src/preview/storage/host.py": "9fffad5a136ed3b3164c75c76709eb1c105e83adddc6ccb40e8e99a81cda31e9"
+    },
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "remainingGates": [
+    "Recovery of incomplete provisioning and initialization",
+    "Missing mounts and host reboot recovery",
+    "Explicit capacity changes and storage reclamation",
+    "Public provisioning and preview launch",
+    "Ordinary runtime enrollment and complete browser acceptance"
+  ],
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed"
+}

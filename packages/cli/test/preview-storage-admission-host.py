@@ -4,17 +4,20 @@ import os
 import pathlib
 import sys
 import tempfile
+import subprocess
+from unittest.mock import patch
+from contextlib import contextmanager
 import unittest
 
 if sys.argv[1:] == ['--local-source']:
     source = pathlib.Path(__file__).resolve().parents[1] / 'src/preview/storage'
-    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'host']}
+    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'reconciliation', 'host']}
 elif len(sys.argv) == 1:
     payload = json.load(sys.stdin)
 else:
     raise RuntimeError('Use --local-source or provide the source bundle on stdin')
 scope = {'__name__': 'fogd_storage_admission_test'}
-exec(compile(payload['admission'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
+exec(compile(payload['admission'] + '\n' + payload['reconciliation'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
 
 
 class AdmissionTests(unittest.TestCase):
@@ -124,6 +127,125 @@ class AdmissionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             scope['admission_status'](self.value)
         self.assertNotEqual(path.read_bytes(), original)
+
+
+    def interrupted_complete(self):
+        complete = {}
+        def lost_acknowledgment(value):
+            complete.update({'schema': 2, 'admission': value['admission'], 'testOnly': True})
+            raise RuntimeError('injected result loss after owned metadata fixture')
+        with self.assertRaises(RuntimeError):
+            scope['prepare_admitted'](self.project(1), lost_acknowledgment)
+        fence = scope['read'](scope['REGISTRY'] + '/operation.pending.json')
+        return {**self.project(1), 'operation': fence['operation']}, complete
+
+    def test_completed_reconciliation_preserves_charge_and_is_repeatable(self):
+        value, complete = self.interrupted_complete()
+        before = scope['admission_status'](self.value)
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            self.assertEqual(scope['reconcile_storage'](value), complete)
+            receipt = pathlib.Path(scope['REGISTRY'] + '/reconciled-' + value['operation'] + '.json')
+            original = receipt.read_bytes()
+            self.assertEqual(scope['reconcile_storage'](value), complete)
+            self.assertEqual(receipt.read_bytes(), original)
+        after = scope['admission_status'](self.value)
+        self.assertFalse(after['pending'])
+        self.assertTrue(after['admissionOpen'])
+        self.assertEqual(before['reservations'], after['reservations'])
+        self.assertEqual(before['heldChargeBytes'], after['heldChargeBytes'])
+        scope['prepare_admitted'](self.project(2), lambda request: {'testOnly': True})
+        self.assertFalse(scope['admission_status'](self.value)['admissionOpen'])
+
+    def test_wrong_operation_or_project_cannot_clear_a_fence(self):
+        value, complete = self.interrupted_complete()
+        before = pathlib.Path(scope['REGISTRY'] + '/operation.pending.json').read_bytes()
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            for wrong in [{**value, 'operation': str(scope['uuid'].uuid4())},
+                          {**value, 'project': self.project(2)['project']}]:
+                with self.assertRaises(ValueError):
+                    scope['reconcile_storage'](wrong)
+        self.assertEqual(pathlib.Path(scope['REGISTRY'] + '/operation.pending.json').read_bytes(), before)
+        self.assertEqual(list((self.base / 'registry').glob('reconciled-*')), [])
+
+    def test_incomplete_or_changed_storage_remains_fenced(self):
+        value, complete = self.interrupted_complete()
+        with self.assertRaises(FileNotFoundError):
+            scope['reconcile_storage'](value)  # Real inspect cannot find completion.
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            scope['reconcile_storage'](value)
+            complete['testOnly'] = 'changed'
+            with self.assertRaises(ValueError):
+                scope['reconcile_storage'](value)
+        self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 1)
+
+    def test_interrupted_reconciliation_finishes_its_durable_acknowledgment(self):
+        value, complete = self.interrupted_complete()
+        def lost_release(fence):
+            raise RuntimeError('injected failure after acknowledgment, before fence release')
+        with patch.dict(scope, {'inspect': lambda request: complete, 'release_admission_fence': lost_release}):
+            with self.assertRaises(RuntimeError):
+                scope['reconcile_storage'](value)
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            scope['reconcile_storage'](value)
+        self.assertFalse(scope['admission_status'](self.value)['pending'])
+
+    def test_previous_acknowledgment_never_clears_a_new_operation(self):
+        value, complete = self.interrupted_complete()
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            scope['reconcile_storage'](value)
+            foreign = scope['admission_fence'](self.project(2), 'prepare')
+            with self.assertRaises(ValueError):
+                scope['reconcile_storage'](value)
+            self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+
+    def test_corrupt_acknowledgment_and_low_headroom_preserve_fence(self):
+        value, complete = self.interrupted_complete()
+        low = {'availableBytes': scope['HEADROOM_BYTES'] - 1, 'availableInodes': 10000}
+        with patch.dict(scope, {'inspect': lambda request: complete, 'backing_space': lambda request: low}):
+            with self.assertRaises(ValueError):
+                scope['reconcile_storage'](value)
+        receipt = pathlib.Path(scope['REGISTRY'] + '/reconciled-' + value['operation'] + '.json')
+        self.assertFalse(receipt.exists())
+        scope['append'](str(receipt), {'foreign': True})
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            with self.assertRaises(ValueError):
+                scope['reconcile_storage'](value)
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+
+    @contextmanager
+    def live_registry_owner(self):
+        script = "import fcntl,os,sys;fd=os.open(sys.argv[1],os.O_RDONLY|os.O_DIRECTORY);fcntl.flock(fd,fcntl.LOCK_EX);print('ready',flush=True);sys.stdin.readline()"
+        child = subprocess.Popen([sys.executable, '-c', script, scope['REGISTRY']],
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+        try:
+            self.assertEqual(child.stdout.readline(), 'ready\n')
+            yield
+        finally:
+            child.communicate('release\n', timeout=10)
+        self.assertEqual(child.returncode, 0)
+
+    def test_live_process_excludes_reconciliation(self):
+        value, complete = self.interrupted_complete()
+        with self.live_registry_owner():
+            with self.assertRaises(scope['StorageRefusal']) as failure:
+                scope['reconcile_storage'](value)
+            self.assertEqual(failure.exception.reason, 'pending')
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            scope['reconcile_storage'](value)
+        self.assertFalse(scope['admission_status'](self.value)['pending'])
+
+    def test_live_process_excludes_provisioning_before_any_durable_fence(self):
+        with self.live_registry_owner():
+            with self.assertRaises(scope['StorageRefusal']) as failure:
+                scope['prepare_admitted'](self.project(1), lambda request: self.fail('busy'))
+            self.assertEqual(failure.exception.reason, 'pending')
+            observed = scope['admission_status'](self.value)
+            self.assertFalse(observed['pending'])
+            self.assertEqual(observed['heldProjects'], 0)
+        scope['prepare_admitted'](self.project(1), lambda request: {'testOnly': True})
+        self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 1)
 
 
 if sys.platform != 'linux' or os.geteuid() != 0 or sys.flags.optimize:

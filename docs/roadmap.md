@@ -92,8 +92,10 @@ fixed-size ext4 storage component has live-write exhaustion and controlled remou
 retention evidence. New schema-3 preview plans bind its receipt to the signed
 target, realized volume sources and repeated startup checks. Engine-wide
 backing-space admission now serializes provisioning and keeps charging retained
-images after stop and memory retirement. Recovery, browser withdrawal controls,
-public launch and complete preview/browser acceptance remain open.
+images after stop and memory retirement. Explicit reconciliation acknowledges
+completed provisioning after process loss while retaining its charge. Incomplete
+provisioning and host recovery, browser withdrawal controls, public launch and
+complete preview/browser acceptance remain open.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

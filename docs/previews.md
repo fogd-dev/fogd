@@ -594,10 +594,11 @@ current backing space is reported separately and can close admission sooner.
 Images are preallocated and written before use to convert unwritten extents.
 Later filesystem writes therefore keep the backing file's allocation stable in
 the native check. Provisioning rechecks headroom before reporting success.
-Concurrent requests use an exclusive durable fence. A known refusal before
-reservation releases only its own checking fence. Partial reservation writes or
-uncertain provisioning retain both the charge and the fence; no PID or elapsed
-time causes automatic release.
+Concurrent requests hold a process lock on the private registry directory as well
+as an exclusive durable fence. The lock ends with its owning process; the fence
+survives process loss. A known refusal before reservation releases only its own
+checking fence. Partial reservation writes or uncertain provisioning retain both
+the charge and the fence; no PID or elapsed time causes automatic release.
 
 Stopping a preview, expiry and software memory retirement never remove storage
 reservations. The native lifecycle confirms that the configured storage limit
@@ -609,8 +610,41 @@ Older unadmitted QA storage remains available for historical inspection and owne
 controls. New plans require an admitted storage receipt. This remains an internal
 host API; public provisioning and launch commands are unavailable. Unrelated host
 writers and hypervisor storage are outside this budget, and a space observation
-is not a storage-health guarantee. Interrupted-operation recovery and ordinary
-preview acceptance remain open; default cron admission remains closed.
+is not a storage-health guarantee. Recovery of incomplete provisioning, host-restart
+recovery and ordinary preview acceptance remain open; default cron admission
+remains closed.
+
+### Reconcile completed provisioning
+
+An explicit reconciliation can acknowledge completed storage when the provisioner
+exited before clearing its fence. It requires the exact operation UUID from the
+private `operation.pending.json` record and the independently selected engine,
+storage root and project. The [internal storage API](../packages/cli/src/preview/storage.mjs)
+exports `reconcilePreviewStorage`; it uses the same privileged host transport as
+provisioning:
+
+```js
+const receipt = await reconcilePreviewStorage(
+  { root, project, engineId, runHost },
+  { operation: reviewedOperationUuid },
+);
+```
+
+The operation refuses while another current worker holds the registry lock.
+Use one worker version for the selected engine; older workers do not participate
+in this lock. Reconciliation checks the completed manifest, reservation, backing
+file, loop device, mount, role identities and available headroom. It writes a
+private acknowledgment before releasing only the matching fence. Repeating that
+exact acknowledgment checks the same storage again. A different or newer fence,
+changed acknowledgment, missing completion or failed inspection refuses and
+retains the records. Do not delete a fence or retry provisioning to recover it.
+
+This operation never formats, mounts, recreates or deletes storage and never
+releases a reservation. Its receipt grants no application execution permission.
+Partial provisioning and missing mounts remain held for a future explicit
+recovery workflow. The [reconciliation qualification](evidence/operator-preview-storage-reconciliation.json)
+uses isolated recovery records referencing the retained QA filesystems; the real
+engine admission registry and application data remain unchanged.
 
 For changes to the privileged admission worker, run its metadata and failure
 regressions on an owned Linux test host with a source checkout:
@@ -619,6 +653,7 @@ regressions on an owned Linux test host with a source checkout:
 sudo python3 packages/cli/test/preview-storage-admission-host.py --local-source
 ```
 
-These tests create only their own temporary metadata directories and inject the
-provisioning callback; they perform no loop-device or mount operations. Native
-filesystem and lifecycle qualification is separate.
+These tests create only their own temporary metadata directories, inject the
+provisioning callback and check cross-process lock exclusion; they perform no
+loop-device or mount operations. Native filesystem and lifecycle qualification
+is separate.

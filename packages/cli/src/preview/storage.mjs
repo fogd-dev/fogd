@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { posix } from 'node:path';
-import { hash, jsonBytes } from '../build-cache/paths.mjs';
+import { hash, jsonBytes, uuid } from '../build-cache/paths.mjs';
 import { executionKeys } from './execution-shape.mjs';
 
-const worker = (await Promise.all(['admission.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
+const worker = (await Promise.all(['admission.py', 'reconciliation.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
 export const previewStorageBytes = 1024 ** 3;
 export const previewStorageChargeBytes = previewStorageBytes + 16 * 1024 ** 2;
 export const previewStorageWorkerSha256 = hash(worker);
@@ -74,10 +74,11 @@ async function hostReply(input, request, member) {
     return reply[member];
   } catch (error) { if (error.code === 'PREVIEW_STORAGE_REFUSED') throw error; refuse(); }
 }
-async function operation(input, action) {
-  const request = checkedRequest(input, action);
+async function operation(input, action, extra = {}) {
+  const request = { ...checkedRequest(input, action), ...extra };
   try {
     const storage = checkedStorage(await hostReply(input, request, 'storage'), request);
+    if (action === 'reconcile' && storage.schema !== 2) refuse();
     return { storage, sha256: hash(jsonBytes(storage)), workerSha256: previewStorageWorkerSha256,
       resourcesRetained: true, executionAuthorized: false, ordinaryEnrollment: false };
   } catch (error) { if (error.code === 'PREVIEW_STORAGE_REFUSED') throw error; refuse(); }
@@ -87,6 +88,10 @@ async function operation(input, action) {
 // This component provisions storage only; allocation/startup integration must
 // independently bind the engine, signed target and realized volume sources.
 export const preparePreviewStorage = input => operation(input, 'prepare');
+export function reconcilePreviewStorage(input, { operation: operationId } = {}) {
+  if (!uuid(operationId)) refuse();
+  return operation(input, 'reconcile', { operation: operationId });
+}
 export function inspectPreviewStorage(input, { phase = 'any' } = {}) {
   const action = { any: 'inspect', empty: 'inspect-empty', installed: 'inspect-installed' }[phase];
   if (!action) refuse();

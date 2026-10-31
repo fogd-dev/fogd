@@ -1,5 +1,7 @@
 """Engine-wide retained storage accounting and exclusive provisioning fence."""
 import uuid
+import fcntl
+from contextlib import contextmanager
 
 REGISTRY = '/var/lib/fogd-preview-storage-admission'
 HEADROOM_BYTES = 1024 ** 3
@@ -57,19 +59,37 @@ def release_admission_fence(fence):
     sync_directory(REGISTRY)
 
 
+@contextmanager
+def admission_lock():
+    expected = identity(REGISTRY, True)
+    fd = os.open(REGISTRY, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(fd)
+        require({'device': info.st_dev, 'inode': info.st_ino} == expected)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            admission_refuse('pending')
+        require(identity(REGISTRY, True) == expected)
+        yield
+    finally:
+        os.close(fd)
+
+
 def initialize_admission(value, maximum):
     policy = policy_for(value, maximum)
     require(not os.listdir(value['root']))
     check_storage_capacity(policy, 0, backing_space(value))
     os.mkdir(REGISTRY, 0o700)  # A second root/engine cannot create another budget.
     sync_directory(os.path.dirname(REGISTRY))
-    fence = admission_fence(value, 'initialize')
-    os.mkdir(REGISTRY + '/holds', 0o700)
-    sync_directory(REGISTRY)
-    append(REGISTRY + '/policy.json', policy)
-    admission_status(value)
-    release_admission_fence(fence)
-    return admission_status(value)
+    with admission_lock():
+        fence = admission_fence(value, 'initialize')
+        os.mkdir(REGISTRY + '/holds', 0o700)
+        sync_directory(REGISTRY)
+        append(REGISTRY + '/policy.json', policy)
+        admission_status(value)
+        release_admission_fence(fence)
+        return admission_status(value)
 
 
 def held_storage(value, policy):
@@ -131,6 +151,11 @@ def admission_entry(value):
 
 
 def prepare_admitted(value, provision):
+    with admission_lock():
+        return provision_admitted(value, provision)
+
+
+def provision_admitted(value, provision):
     policy = read_policy(value)
     fence = admission_fence(value, 'prepare')
     effects = False

@@ -72,8 +72,13 @@ def read(path):
 
 
 def request(value):
-    require(isinstance(value, dict) and set(value) == ({'action', 'root', 'engineId', 'maxProjects'} if value.get('action') == 'initialize' else {'action', 'root', 'engineId'} if value.get('action') == 'admission' else {'action', 'root', 'project', 'engineId'}))
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission'])
+    require(isinstance(value, dict))
+    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}}
+    expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
+    require(set(value) == expected)
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile'])
+    if value['action'] == 'reconcile':
+        require(str(uuid.UUID(value['operation'])) == value['operation'])
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
     if value['action'] not in ['initialize', 'admission']:
@@ -246,7 +251,9 @@ def main():
             result = initialize_admission(value, value['maxProjects']) if value['action'] == 'initialize' else admission_status(value)
             print(json.dumps({'ok': True, 'admission': result}, separators=(',', ':')))
             return
-        result = prepare_admitted(value, prepare) if value['action'] == 'prepare' else inspect(value)
+        handlers = {'prepare': lambda: prepare_admitted(value, prepare),
+                    'reconcile': lambda: reconcile_storage(value)}
+        result = handlers.get(value['action'], lambda: inspect(value))()
         if value['action'] in ['inspect-empty', 'inspect-installed']:
             roles = ROLES if value['action'] == 'inspect-empty' else ROLES[:6]
             for role in roles:
