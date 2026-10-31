@@ -101,9 +101,12 @@ owner repair preserves a missing or damaged hold and adds a conservative
 quarantined reservation. Explicit read-only data recovery after controlled mount
 loss now verifies scoped writer refusal, an unrelated live peer, retained bytes
 and charges, and completion reconciliation without mount replay. Partial
-recovery-record and initialization repair, actual host restart, application data
-restoration, browser withdrawal controls, public launch and complete
-preview/browser acceptance remain open.
+recovery-record and initialization repair, application data restoration, browser
+withdrawal controls, public launch and complete preview/browser acceptance remain
+open. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
+now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,
+including missing-loop attachment and closed SQLite/binary retention. It leaves
+power-loss/crash consistency and writable application recovery unqualified.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

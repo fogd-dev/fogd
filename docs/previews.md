@@ -786,9 +786,18 @@ a known live-writer refusal before effects, an unrelated running peer, explicit
 reconciliation and a fresh recovery epoch. Independent reads verify unchanged
 backing-image bytes, original loop and role identities, retained charges and
 stable recovery records. All QA containers remain stopped and retained after the
-trial. The native trial reuses the existing loop; a missing-loop attachment has
-unit coverage. Actual host restart, application consistency, data restoration and
-partial recovery-record repair remain open. Public launch and default cron
+trial. That trial reuses the existing loop. A separate
+[host-restart qualification](evidence/operator-preview-storage-host-restart.json)
+covers a fresh Linux ARM64 Docker engine after a graceful VM stop/start: the
+kernel boot ID changes, the engine identity stays stable, and the old loop and
+mount are absent before recovery. Recovery attaches a new read-only loop and
+retains closed SQLite and binary fixtures, their original role inodes and the
+storage charge. The restart-policy-`no` fixture container remains stopped; the
+existing 149-container QA engine retains its original boot, mounts and data.
+
+This qualifies same-engine read-only access for that restart profile. It does not
+qualify power-loss/crash consistency, open database/WAL recovery, writable app
+restoration or partial recovery-record repair. Public launch and default cron
 admission remain closed.
 
 For changes to the privileged admission worker, run its metadata and failure
