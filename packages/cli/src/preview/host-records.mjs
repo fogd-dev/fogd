@@ -11,6 +11,7 @@ export class PreviewHostError extends Error {
   constructor(reason) { super('Preview host operation refused; retain host records and inspect the pending operation'); this.code = 'PREVIEW_HOST_REFUSED'; this.reason = reason; }
 }
 export const hostRefusal = reason => { throw new PreviewHostError(reason); };
+export const previewRecordTime = value => typeof value === 'string' && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
 const privateFile = info => info.isFile() && info.nlink === 1 && info.uid === process.geteuid() && (info.mode & 0o7777) === 0o600 && info.size <= limit;
 
 export async function readHostRecord(bound, name) {

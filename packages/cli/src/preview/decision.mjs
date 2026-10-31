@@ -16,11 +16,11 @@ function currentSelection(state, inputs) {
 
 // Observe the independently configured source twice. This cannot reserve source
 // state or authorize a later launch. Never send credentials to a prepared URL.
-export async function assertCurrentPreviewSource(inputs, env) {
+export async function assertCurrentPreviewSource(inputs, env, { signal } = {}) {
   try {
     if (controllerOrigin(serverOrigin(env)) !== inputs.preparation.source.controller) refuseExecution();
-    const before = currentSelection(await readAdminSnapshot(env), inputs);
-    const after = currentSelection(await readAdminSnapshot(env), inputs);
+    const before = currentSelection(await readAdminSnapshot(env, { signal }), inputs);
+    const after = currentSelection(await readAdminSnapshot(env, { signal }), inputs);
     if (!isDeepStrictEqual(before.guard, after.guard)) refuseExecution();
   } catch { refuseExecution(); }
 }

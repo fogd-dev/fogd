@@ -9,11 +9,11 @@ export async function adminInspect(name, digest, revision) {
   const state = await readAdminSnapshot(await configEnv());
   console.log(JSON.stringify(applicationInspection(state, name), null, 2));
 }
-export async function readAdminSnapshot(env) {
+export async function readAdminSnapshot(env, { signal } = {}) {
   if (!env.FOGD_ADMIN_PASSWORD) throw new Error('Set FOGD_ADMIN_PASSWORD for administrator inspection');
   let response;
   try {
-    response = await controllerGet(serverOrigin(env), '/v1/admin', `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`);
+    response = await controllerGet(serverOrigin(env), '/v1/admin', `Basic ${Buffer.from(`${env.FOGD_ADMIN_USER || 'admin'}:${env.FOGD_ADMIN_PASSWORD}`).toString('base64')}`, { signal });
   } catch { throw new Error('Cannot read controller state; check its endpoint, TLS trust, and availability'); }
   if (!response.ok) {
     await discardResponse(response);

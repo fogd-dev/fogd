@@ -80,7 +80,10 @@ remain retained. Native lease cleanup, data recovery, automatic expiry ordering
 and full fresh-app/update browser acceptance are not established by that manual check.
 The managed candidate path adds timed shutdown while its owner remains alive;
 manager-loss ordering and recovery remain unqualified.
-Ordinary previews also need disk/log bounds and decline/revocation integration.
+Internal durable owner withdrawal and source monitoring now converge with the
+manager on one verified stop. Repeated completed stops perform no Docker mutations,
+including after memory retirement; corrupt or partial proof remains fenced.
+Ordinary previews still need disk/log bounds and public withdrawal controls.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

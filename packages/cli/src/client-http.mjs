@@ -1,5 +1,5 @@
-export const controllerGet = (origin, path, authorization, { timeoutMs = 15000 } = {}) => fetch(`${origin}${path}`, {
-  headers: { Authorization: authorization }, redirect: 'error', signal: AbortSignal.timeout(timeoutMs),
+export const controllerGet = (origin, path, authorization, { timeoutMs = 15000, signal } = {}) => fetch(`${origin}${path}`, {
+  headers: { Authorization: authorization }, redirect: 'error', signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs),
 });
 class ResponseLimitError extends Error {}
 export async function boundedJson(response, { limit, invalid, oversized = invalid, interrupted = invalid }) {

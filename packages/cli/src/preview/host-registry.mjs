@@ -42,8 +42,8 @@ export async function acquirePreviewHost(root, engineId) {
 }
 export const acquireFreshPreviewHostFence = (directory, engineId) => acquireHostOperationFence(directory, identity(engineId));
 
-export async function requirePreviewHold(host, plan, reservation) {
-  const held = host.heldRecords.find(record => record.id === reservation);
+export async function requirePreviewHold(host, plan, reservation, { includeRetired = false } = {}) {
+  const held = (includeRetired ? host.records : host.heldRecords).find(record => record.id === reservation);
   if (!held || !isDeepStrictEqual(held.plan, plan)) { await host.fence.release(); hostRefusal('reservation'); }
   return held;
 }

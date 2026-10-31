@@ -403,4 +403,31 @@ and requires the original expiry and complete stopped-state proof.
 This candidate path has no public lifecycle CLI or ordinary enrollment permission.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
 and data recovery remain open. Ordinary previews also need disk/log bounds and
-decline/revocation integration. Default cron admission remains closed.
+public withdrawal controls. Default cron admission remains closed.
+
+## Internal owner withdrawal and source monitoring
+
+The [withdrawal check](evidence/operator-preview-withdrawal.json) adds durable
+local-owner stop requests. The first request is immutable and binds the original
+allocation, reservation, plan, grant, resource graph and expiry. A request grants
+no execution permission, frees no memory and prevents a later startup of that
+target. Existing source credentials are unnecessary for an owner stop.
+
+The manager checks for owner requests and revalidates its cached, verified source
+review against the independently configured administrator endpoint. A rejected
+proposal, changed active baseline, refused source access or unverifiable snapshot
+causes ordered shutdown. Source checks run independently of expiry and can be
+cancelled; an unanswered source read cannot hold up scheduled shutdown. An idle
+intent check performs no Docker calls.
+
+An owner stop and the manager converge on the same completed teardown. Repeated
+stop calls validate the original complete phase proof and a fresh stopped graph,
+then return the existing result without another Docker stop or intent write.
+This also works after explicit memory retirement. Status reports current memory
+accounting separately from the historical teardown record.
+
+Partial, malformed or unordered proofs cannot become a fresh cleanup attempt or
+an ordered reclamation claim. Unknown effects retain their fence and hold. A
+pending-fence refusal can be observed again because it occurred before any effect;
+uncertain commands and partial writes are never retried. Public lifecycle commands
+and browser decline/revocation controls remain open.
