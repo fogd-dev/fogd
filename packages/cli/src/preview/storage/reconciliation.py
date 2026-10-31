@@ -54,6 +54,10 @@ def finish_storage_recovery(receipt_path, receipt, previous, fence):
         append(receipt_path, receipt)  # Durable acknowledgment precedes fence release.
     else:
         require(previous == receipt)
+    release_storage_recovery(fence)
+
+
+def release_storage_recovery(fence):
     if os.path.lexists(fence['path']):
         release_admission_fence(fence)
     sync_directory(REGISTRY)
@@ -82,6 +86,12 @@ def storage_inventory(value, policy):
         require(receipt == quarantine_record(policy, row, receipt['fence']))
         quarantines.append(receipt)
     require(names == sorted(name for name in os.listdir(REGISTRY) if name.startswith('quarantined-')))
+    for row in rows:
+        repair_path = REGISTRY + '/hold-repair-' + row['project'] + '.json'
+        if os.path.lexists(repair_path):
+            receipt = read(repair_path)
+            quarantines.append(quarantine_record(policy, row, receipt['fence']))
+    require(len({row['project'] for row in quarantines}) == len(quarantines))
     require(len({row['operation'] for row in quarantines}) == len(quarantines))
     return rows, quarantines
 
@@ -90,6 +100,7 @@ def quarantine_storage(value):
     with admission_lock():
         policy = read_policy(value)
         rows, _ = storage_inventory(value, policy)
+        require(not os.path.lexists(REGISTRY + '/hold-repair-' + value['project'] + '.json'))
         row = next(row for row in rows if row['project'] == value['project'])
         receipt_path = REGISTRY + '/quarantined-' + value['project'] + '.json'
         previous, fence = recovery_records(value, receipt_path)

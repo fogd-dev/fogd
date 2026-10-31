@@ -1,6 +1,6 @@
 import { isDeepStrictEqual } from 'node:util';
 import { posix } from 'node:path';
-import { uuid } from '../build-cache/paths.mjs';
+import { uuid, digest } from '../build-cache/paths.mjs';
 import { executionKeys } from './execution-shape.mjs';
 import { previewStorageAdmissionOperation, previewStorageBytes, previewStorageChargeBytes } from './storage.mjs';
 
@@ -69,10 +69,16 @@ export function initializePreviewStorageAdmission(input, { maxProjects = 4 } = {
 }
 export function inspectPreviewStorageAdmission(input) { return operation(input, request(input, 'admission')); }
 
-export async function quarantinePreviewStorage(input, { operation: operationId } = {}) {
-  const target = { ...request(input, 'quarantine'), project: input.project, operation: operationId };
-  if (!uuid(operationId) || !/^fogd-preview-[a-f0-9]{32}$/.test(target.project || '')) fail();
+async function quarantineOperation(input, target) {
+  if (!uuid(target.operation) || !/^fogd-preview-[a-f0-9]{32}$/.test(target.project || '')) fail();
   const report = await operation(input, target);
-  if (!report.quarantines.some(row => row.project === target.project && row.operation === operationId)) fail();
+  if (!report.quarantines.some(row => row.project === target.project && row.operation === target.operation)) fail();
   return report;
+}
+export async function quarantinePreviewStorage(input, { operation: operationId } = {}) {
+  return quarantineOperation(input, { ...request(input, 'quarantine'), project: input.project, operation: operationId });
+}
+export async function repairPreviewStorageHold(input, { operation: operationId, holdSha256 } = {}) {
+  if (holdSha256 !== null && !digest(holdSha256)) fail();
+  return quarantineOperation(input, { ...request(input, 'repair-hold'), project: input.project, operation: operationId, holdSha256 });
 }

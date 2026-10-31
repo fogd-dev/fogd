@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage } from '../src/preview/storage-admission.mjs';
+import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage, repairPreviewStorageHold } from '../src/preview/storage-admission.mjs';
 import { preparePreviewStorage, previewStorageBytes, previewStorageChargeBytes } from '../src/preview/storage.mjs';
 import { createPreviewPlan, validatePreviewPlan } from '../src/preview/plan.mjs';
 import { previewPlanFixture } from './fixtures/preview-plan.mjs';
@@ -55,4 +55,21 @@ for(const[name,change]of Object.entries({charge:x=>x.quarantinedChargeBytes=0,fo
 
 test('unknown quarantine effect is not automatically replayed',async()=>{
  const value=quarantinedReport(),row=value.quarantines[0];let calls=0;await assert.rejects(quarantinePreviewStorage({...input,project:row.project,runHost:async()=>{calls++;throw Error('private host detail')}},{operation:row.operation}),refused);assert.equal(calls,1);
+});
+
+
+test('hold repair binds the exact original digest or explicit absence without execution permission',async()=>{
+ for(const holdSha256 of ['a'.repeat(64),null]){
+  const value=quarantinedReport(),row=value.quarantines[0],calls=[];const result=await repairPreviewStorageHold({...input,project:row.project,runHost:async(args,options)=>{calls.push(JSON.parse(options.inputText));return JSON.stringify({ok:true,admission:value})}},{operation:row.operation,holdSha256});
+  assert.deepEqual(calls,[{action:'repair-hold',...input,project:row.project,operation:row.operation,holdSha256}]);assert.equal(result.heldChargeBytes,previewStorageChargeBytes);assert.equal(result.quarantinedProjects,1);assert.equal(result.executionAuthorized,false);
+ }
+});
+
+test('hold repair requires an explicit valid fingerprint before contacting the host',async()=>{
+ const row=quarantinedReport().quarantines[0];let calls=0;for(const holdSha256 of [undefined,'','bad','A'.repeat(64),0])await assert.rejects(repairPreviewStorageHold({...input,project:row.project,runHost:async()=>{calls++}},{operation:row.operation,holdSha256}),refused);assert.equal(calls,0);
+});
+
+test('hold repair cannot acknowledge another operation or silently retry unknown effects',async()=>{
+ const value=quarantinedReport(),row=value.quarantines[0];let calls=0;await assert.rejects(repairPreviewStorageHold({...input,project:row.project,runHost:async()=>{calls++;throw Error('private diagnostic')}},{operation:row.operation,holdSha256:null}),refused);assert.equal(calls,1);
+ await assert.rejects(repairPreviewStorageHold({...input,project:row.project,runHost:async()=>JSON.stringify({ok:true,admission:value})},{operation:'00000000-0000-4000-8000-000000000009',holdSha256:null}),refused);
 });

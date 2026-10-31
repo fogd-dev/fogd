@@ -96,9 +96,11 @@ images after stop and memory retirement. Explicit reconciliation acknowledges
 completed provisioning after process loss while retaining its charge. An owner
 can quarantine a valid interrupted reservation, retaining its data and charge
 while allowing other projects within remaining limits and reserved headroom.
-Native helper supervisors retain the process lock after caller loss. Partial
-ledger repair, data and host recovery, browser withdrawal controls, public launch
-and complete preview/browser acceptance remain open.
+Native helper supervisors retain the process lock after caller loss. An explicit
+owner repair preserves a missing or damaged hold and adds a conservative
+quarantined reservation. Partial recovery-record and initialization repair, data
+and host recovery, browser withdrawal controls, public launch and complete
+preview/browser acceptance remain open.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

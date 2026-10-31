@@ -3,7 +3,7 @@ import { posix } from 'node:path';
 import { hash, jsonBytes, uuid } from '../build-cache/paths.mjs';
 import { executionKeys } from './execution-shape.mjs';
 
-const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
+const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'hold-repair.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
 export const previewStorageBytes = 1024 ** 3;
 export const previewStorageChargeBytes = previewStorageBytes + 16 * 1024 ** 2;
 export const previewStorageWorkerSha256 = hash(worker);
@@ -112,6 +112,6 @@ export function validatePreviewStorageReceipt(value, { project, engineId }) {
 }
 
 export function previewStorageAdmissionOperation(input, request) {
-  if (!['initialize', 'admission', 'quarantine'].includes(request?.action)) refuse();
+  if (!['initialize', 'admission', 'quarantine', 'repair-hold'].includes(request?.action)) refuse();
   return hostReply(input, request, 'admission');
 }

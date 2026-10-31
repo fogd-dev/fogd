@@ -676,8 +676,9 @@ A quarantined project remains charged and cannot supply storage for new executio
 Storage inspection and completed-provisioning reconciliation refuse that project.
 Repeating its exact quarantine acknowledgment preserves the record. A different
 or newer fence refuses; neither process identifiers nor elapsed time clear it.
-A corrupt hold, partial quarantine record or unfinished registry initialization
-remains blocked for explicit repair. There is no unquarantine or reclamation API.
+A missing or damaged hold needs the explicit repair below. Partial quarantine or
+repair records and unfinished registry initialization remain blocked for separate
+repair. There is no unquarantine or reclamation API.
 
 Another fresh project can proceed only within the remaining project limit and
 physical headroom. Admission conservatively reserves a full additional charge
@@ -688,6 +689,43 @@ covers retained partial metadata, caller loss with a surviving helper, exact
 capacity boundaries and actual retained filesystems through isolated recovery
 records. It does not qualify restoration of interrupted application data or a
 host reboot. Public launch and default cron admission remain closed.
+
+### Repair a missing or damaged hold
+
+An owner can replace an unreadable reservation in admission accounting with a
+conservative quarantined charge, while preserving the original hold file. Repair
+requires a valid policy and the exact pending prepare-operation UUID. Review the
+original hold on the independently selected host: the request must contain its
+exact raw SHA-256 digest, or explicit `null` when the hold is absent. Omission does
+not mean absence. A valid hold uses ordinary quarantine instead.
+
+The [admission API](../packages/cli/src/preview/storage-admission.mjs) exports
+`repairPreviewStorageHold`:
+
+```js
+const admission = await repairPreviewStorageHold(
+  { root, project, engineId, runHost },
+  { operation: reviewedOperationUuid, holdSha256: reviewedHoldSha256 },
+);
+```
+
+Repair excludes live workers and helpers, then appends a separate private repair
+record before releasing only the matching fence. It preserves the damaged
+file's bytes and identity, or preserves its absence. The record supplies one
+full reservation and permanently quarantines that project. All peer records and
+the project limit must validate before the fence can be released. Repeating the
+exact repair checks the same record and original bytes without rewriting either.
+
+Changed bytes or identity, a newly appearing original file, a different operation,
+unsafe file permissions or a partial repair record refuse further admission.
+The repair never formats, mounts, restores or authorizes application storage.
+The [hold-repair qualification](evidence/operator-preview-storage-hold-repair.json)
+exits an owned worker after a partial hold write and before hold creation, then
+verifies repair through the assembled host transport and independent raw reads.
+Its fixtures contain only metadata. The real engine registry, retained application
+storage and prior QA containers remain unchanged. Data and host recovery, partial
+repair-record recovery and public launch remain open; default cron admission
+remains closed.
 
 For changes to the privileged admission worker, run its metadata and failure
 regressions on an owned Linux test host with a source checkout:

@@ -55,7 +55,7 @@ def append(path, value):
     sync_directory(os.path.dirname(path))
 
 
-def read(path):
+def read_bytes(path):
     expected = identity(path)
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
     try:
@@ -64,21 +64,28 @@ def read(path):
         with os.fdopen(fd, 'rb', closefd=False) as file:
             data = file.read(65537)
         require(len(data) <= 65536 and identity(path) == expected)
-        value = json.loads(data)
-        require(data == encoded(value))
-        return value
+        return data
     finally:
         os.close(fd)
 
 
+def read(path):
+    data = read_bytes(path)
+    value = json.loads(data)
+    require(data == encoded(value))
+    return value
+
+
 def request(value):
     require(isinstance(value, dict))
-    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}}
+    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}}
     expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
     require(set(value) == expected)
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine'])
-    if value['action'] in ['reconcile', 'quarantine']:
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold'])
+    if value['action'] in ['reconcile', 'quarantine', 'repair-hold']:
         require(str(uuid.UUID(value['operation'])) == value['operation'])
+    if value['action'] == 'repair-hold':
+        require(value['holdSha256'] is None or isinstance(value['holdSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['holdSha256']))
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
     if value['action'] not in ['initialize', 'admission']:
@@ -250,8 +257,9 @@ def main():
             result = initialize_admission(value, value['maxProjects']) if value['action'] == 'initialize' else admission_status(value)
             print(json.dumps({'ok': True, 'admission': result}, separators=(',', ':')))
             return
-        if value['action'] == 'quarantine':
-            print(json.dumps({'ok': True, 'admission': quarantine_storage(value)}, separators=(',', ':')))
+        if value['action'] in ['quarantine', 'repair-hold']:
+            handler = {'quarantine': quarantine_storage, 'repair-hold': repair_storage_hold}[value['action']]
+            print(json.dumps({'ok': True, 'admission': handler(value)}, separators=(',', ':')))
             return
         handlers = {'prepare': lambda: prepare_admitted(value, prepare),
                     'reconcile': lambda: reconcile_storage(value)}

@@ -92,26 +92,47 @@ def initialize_admission(value, maximum):
         return admission_status(value)
 
 
-def held_storage(value, policy):
-    directory = REGISTRY + '/holds'
-    identity(directory, True)
+def project_records(directory, prefix=''):
     names = sorted(os.listdir(directory))
-    require(len(names) <= policy['maxProjects'])
-    result, reservations = [], set()
+    if prefix:
+        names = [name for name in names if name.startswith(prefix)]
+    result = []
     for name in names:
-        require(re.fullmatch(r'fogd-preview-[a-f0-9]{32}\.json', name))
-        row = read(directory + '/' + name)
-        require(set(row) == {'schema', 'kind', 'profileId', 'reservation', 'project', 'engineId', 'backingBytes', 'chargeBytes'})
-        require(row['schema'] == 1 and row['kind'] == 'fogd-preview-storage-hold'
-                and row['profileId'] == policy['id'] and row['engineId'] == value['engineId']
-                and row['project'] + '.json' == name and row['backingBytes'] == BYTES
-                and row['chargeBytes'] == CHARGE_BYTES)
-        require(str(uuid.UUID(row['reservation'])) == row['reservation'] and row['reservation'] not in reservations)
+        match = re.fullmatch(re.escape(prefix) + r'(fogd-preview-[a-f0-9]{32})\.json', name)
+        require(match is not None)
+        result.append(match.group(1))
+    return result
+
+
+def admission_projects(value, policy, additional=()):
+    identity(REGISTRY + '/holds', True)
+    projects = set(project_records(REGISTRY + '/holds')) | set(project_records(REGISTRY, 'hold-repair-')) | set(additional)
+    require(len(projects) <= policy['maxProjects'])
+    require(set(os.listdir(value['root'])) <= projects)
+    return projects
+
+
+def checked_hold(row, value, policy, project):
+    require(isinstance(row, dict))
+    require(set(row) == {'schema', 'kind', 'profileId', 'reservation', 'project', 'engineId', 'backingBytes', 'chargeBytes'})
+    require(type(row['schema']) is int and row['schema'] == 1 and row['kind'] == 'fogd-preview-storage-hold'
+            and row['profileId'] == policy['id'] and row['engineId'] == value['engineId']
+            and row['project'] == project and row['backingBytes'] == BYTES and row['chargeBytes'] == CHARGE_BYTES)
+    require(isinstance(row['reservation'], str) and str(uuid.UUID(row['reservation'])) == row['reservation'])
+    return row
+
+
+def held_storage(value, policy):
+    projects = admission_projects(value, policy)
+    result, reservations = [], set()
+    for project in sorted(projects):
+        repair_path = REGISTRY + '/hold-repair-' + project + '.json'
+        row = repaired_hold(value, policy, project) if os.path.lexists(repair_path) else read(REGISTRY + '/holds/' + project + '.json')
+        checked_hold(row, value, policy, project)
+        require(row['reservation'] not in reservations)
         reservations.add(row['reservation'])
         result.append(row)
-    require(names == sorted(os.listdir(directory)))
-    projects = {row['project'] for row in result}
-    require(set(os.listdir(value['root'])) <= projects)
+    require(projects == admission_projects(value, policy))
     return result
 
 
@@ -152,8 +173,8 @@ def admission_status(value):
 
 def admission_entry(value):
     policy = read_policy(value)
-    row = read(REGISTRY + '/holds/' + value['project'] + '.json')
     rows, quarantines = storage_inventory(value, policy)
+    row = next(row for row in rows if row['project'] == value['project'])
     require(row in rows and value['project'] not in {entry['project'] for entry in quarantines})
     pending = REGISTRY + '/operation.pending.json'
     if os.path.lexists(pending):

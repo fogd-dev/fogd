@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-hold-repair-qualification",
+  "scope": "Explicit repair of a missing or malformed hold under its original pending prepare fence. Preserve original metadata and supply a fully charged quarantined reservation; no data recovery or provisioning replay.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/distribution/manifest.mjs": "593a23ec7b942eb71e117b31b872e51f264e8267ff05101654dc906d58c3b6b1",
+    "packages/cli/src/preview/storage-admission.mjs": "a54529aa0e6ea0121ed993bae62aa89e90f96ed80c3f6ef621117c59e151c044",
+    "packages/cli/src/preview/storage.mjs": "50eb115dd31de982df41b0b88ca60a236fbfbb780ea92efb73ca958d3b48a902",
+    "packages/cli/src/preview/storage/admission.py": "92836ee6546b43735112146165865a68dab566e76b30ee300a86f23f2f9dfc50",
+    "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+    "packages/cli/src/preview/storage/host.py": "c02d3f5988ac36d16b1e587211a2b1efbd2cf9cb04770dc4714931a21e6de5e1",
+    "packages/cli/src/preview/storage/reconciliation.py": "1f0e3f30977bb09c39bacf04d2f17d054dacd615d5725bac67aea743a0152878",
+    "packages/cli/test/preview-storage-admission-host.py": "13b31a29bc7774723dc36f9f8ce44128ea181b5d373c4d2db34bd02588a92339",
+    "packages/cli/test/preview-storage-admission.test.mjs": "71f3ec27d2b1485b64a05b1d3bbcd81d318874aaa3e82c77536efdcf6dc5b83f"
+  },
+  "policy": {
+    "authorization": "Exact original prepare-operation UUID, actual engine, configured root and owner-reviewed raw hold digest, or explicit null for absence. Valid holds refuse repair.",
+    "original": "Original bytes, identity and absence are retained. Changed bytes/inode or an appearing original file invalidate the repair and refuse admission.",
+    "accounting": "Append one private repair record supplying one full reservation and quarantine before releasing the matching fence. Project count, peer records and conservative quarantine headroom remain enforced.",
+    "repeat": "Repeat only the exact acknowledgment; no replacement of the repair or original hold. A newer fence refuses.",
+    "boundary": "Live workers/helpers, unsafe original files, corrupt policy, partial repair/quarantine records and unfinished initialization remain blocked. No automatic cleanup, reset, unquarantine or storage execution permission."
+  },
+  "checks": {
+    "storageNode": {
+      "tests": 59,
+      "pass": 59,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "previewNode": {
+      "tests": 373,
+      "pass": 373,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "linuxHost": {
+      "tests": 33,
+      "pass": 33,
+      "fail": 0,
+      "errors": 0,
+      "scope": "Owned temporary metadata, injected provisioning and process/helper exclusion; existing new-file 4 KiB allocation case. No loop-device or mount effects."
+    },
+    "fullNodeSuite": {
+      "tests": 3524,
+      "pass": 3524,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; Python imports and locals manually reviewed because dead-code tooling is unavailable",
+    "writing": "passed for guide, roadmap, receipt, local review, issue and commit text",
+    "standardsSelfReview": "PASS; all ten dimensions assessed in local gate self-review, no external reviewer"
+  },
+  "nativeMetadataCrashRecovery": {
+    "passed": true,
+    "scope": "Owned metadata-only registry and root on the actual Docker backing filesystem. No application storage provisioning, formatting, mounting, Docker mutation or host reboot.",
+    "actualAssembledWorkerSha256": "91f26550c6419e122c70e3db99da480e775cff673ee4a02e9ebafa8242a057f6",
+    "crashCases": 2,
+    "callerExitConfirmed": true,
+    "partialHoldBytesRetained": true,
+    "missingHoldStillAbsent": true,
+    "provisioningNeverReached": true,
+    "wrongFingerprintsRefused": true,
+    "repeatRepairRecordsStable": true,
+    "firstRepairLeavesOtherCapacityEligible": true,
+    "finalHeldProjects": 2,
+    "finalQuarantinedProjects": 2,
+    "finalHeldChargeBytes": 2181038080,
+    "finalAdmissionOpen": false,
+    "realRegistryUnchanged": true,
+    "hostCalls": 7,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "currentArchivedSourcesVerified": true,
+    "currentAssembledWorkerHashVerified": true,
+    "metadata": {
+      "passed": true,
+      "readOnly": true,
+      "actualEngineAndDockerBackingDeviceVerified": true,
+      "bothRepairRecordsAndOriginalFencesVerified": true,
+      "partialHoldOriginalBytesAndInodeRetained": true,
+      "missingHoldStillAbsent": true,
+      "twoDistinctFullyChargedQuarantinedReservations": true,
+      "fixtureRootHasNoProvisionedStorage": true,
+      "realRegistryFilesUnchanged": 3,
+      "realRegistryHoldsRetained": 2,
+      "realRegistryPending": false
+    },
+    "storage": {
+      "passed": true,
+      "readOnly": true,
+      "actualLocalEngineAndDockerBackingDeviceVerified": true,
+      "policyAndTwoExclusiveReservationsVerified": true,
+      "bothBackingFilesPreallocated": true,
+      "allocatedBytesObserved": 2147491840,
+      "chargedBytes": 2181038080,
+      "headroomAvailable": true,
+      "pendingFence": false,
+      "allFileLoopMountAndRoleIdentitiesVerified": true,
+      "backingFileAllocationStableAfterUse": true
+    },
+    "all145QaContainersNonrunning": true,
+    "sources": {
+      "packages/cli/src/preview/storage/admission.py": "92836ee6546b43735112146165865a68dab566e76b30ee300a86f23f2f9dfc50",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "1f0e3f30977bb09c39bacf04d2f17d054dacd615d5725bac67aea743a0152878",
+      "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+      "packages/cli/src/preview/storage/host.py": "c02d3f5988ac36d16b1e587211a2b1efbd2cf9cb04770dc4714931a21e6de5e1"
+    },
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "remainingGates": [
+    "Partial recovery-record and initialization repair",
+    "Data recovery and missing mounts",
+    "Host-restart recovery",
+    "Explicit capacity changes and storage reclamation",
+    "Public provisioning, launch and complete browser acceptance"
+  ],
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed",
+  "realStorageInspection": {
+    "passed": true,
+    "readOnly": true,
+    "currentAssembledWorkerInspectsBothRealFilesystems": true,
+    "originalManifestsAndDigestsUnchanged": true,
+    "realRegistryHeldProjects": 2,
+    "realRegistryQuarantinedProjects": 0,
+    "realRegistryPending": false,
+    "realRegistryAdmissionOpen": false,
+    "hostCalls": 3,
+    "executionAuthorized": false
+  }
+}

@@ -12,13 +12,13 @@ import unittest
 
 if sys.argv[1:] == ['--local-source']:
     source = pathlib.Path(__file__).resolve().parents[1] / 'src/preview/storage'
-    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'host']}
+    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'host']}
 elif len(sys.argv) == 1:
     payload = json.load(sys.stdin)
 else:
     raise RuntimeError('Use --local-source or provide the source bundle on stdin')
 scope = {'__name__': 'fogd_storage_admission_test'}
-exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
+exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['hold-repair'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
 
 
 class AdmissionTests(unittest.TestCase):
@@ -339,6 +339,123 @@ class AdmissionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 call()
 
+    def damaged_reservation(self, raw=b'{"schema":'):
+        value, _ = self.interrupted_complete()
+        path = pathlib.Path(scope['REGISTRY'] + '/holds/' + value['project'] + '.json')
+        if raw is None:
+            path.unlink()  # Owned metadata fixture, before any real provisioning.
+        else:
+            path.write_bytes(raw)
+        source = scope['hold_source'](value['project'])
+        return {**value, 'holdSha256': source['sha256']}, path, source
+
+    def test_damaged_hold_repair_preserves_original_and_adds_a_quarantined_charge(self):
+        value, path, original = self.damaged_reservation()
+        directory = pathlib.Path(value['directory']); directory.mkdir(mode=0o700)
+        data = directory / 'retained-data'; data.write_bytes(b'keep partial project data')
+        after = scope['repair_storage_hold'](value)
+        self.assertEqual(scope['hold_source'](value['project']), original)
+        self.assertEqual(path.read_bytes(), b'{"schema":')
+        self.assertEqual(data.read_bytes(), b'keep partial project data')
+        self.assertEqual(after['heldProjects'], 1)
+        self.assertEqual(after['quarantinedProjects'], 1)
+        self.assertEqual(after['heldChargeBytes'], scope['CHARGE_BYTES'])
+        self.assertFalse(after['pending'])
+        self.assertFalse(after['executionAuthorized'])
+        repair = pathlib.Path(scope['REGISTRY'] + '/hold-repair-' + value['project'] + '.json')
+        before = repair.read_bytes(); second = scope['repair_storage_hold'](value)
+        self.assertEqual(second['reservations'], after['reservations'])
+        self.assertEqual(repair.read_bytes(), before)
+        with self.assertRaises(ValueError):
+            scope['admission_entry']({**value, 'admission': after['quarantines'][0]})
+        with self.assertRaises(ValueError):
+            scope['prepare_admitted'](self.project(1), lambda request: self.fail('repaired project reused'))
+        scope['prepare_admitted'](self.project(2), lambda request: {'testOnly': True})
+        self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 2)
+
+    def test_noncanonical_or_wrong_shape_holds_can_be_quarantined_without_normalizing_them(self):
+        for raw in [b'[]', b'null', b'{}', b'\xff', b'{"schema":1,"reservation":0}']:
+            with self.subTest(raw=raw):
+                value, path, original = self.damaged_reservation(raw)
+                scope['repair_storage_hold'](value)
+                self.assertEqual(path.read_bytes(), raw)
+                self.assertEqual(scope['hold_source'](value['project']), original)
+                # Each subcase uses a new owned metadata registry and no resources.
+                self.tearDown(); self.setUp()
+
+    def test_missing_hold_repair_retains_absence_and_accounts_for_the_new_slot(self):
+        value, path, original = self.damaged_reservation(None)
+        self.assertIsNone(value['holdSha256'])
+        after = scope['repair_storage_hold'](value)
+        self.assertFalse(path.exists())
+        self.assertEqual(scope['hold_source'](value['project']), original)
+        self.assertEqual(after['heldProjects'], 1)
+        self.assertEqual(after['quarantinedProjects'], 1)
+        self.assertEqual(after['remainingProjects'], 1)
+
+    def test_repair_refuses_changed_fingerprint_operation_and_a_live_owner(self):
+        value, path, original = self.damaged_reservation()
+        for wrong in [{**value, 'holdSha256': '0' * 64}, {**value, 'operation': str(scope['uuid'].uuid4())}]:
+            with self.assertRaises(ValueError):
+                scope['repair_storage_hold'](wrong)
+        with self.live_registry_owner():
+            with self.assertRaises(scope['StorageRefusal']):
+                scope['repair_storage_hold'](value)
+        self.assertEqual(scope['hold_source'](value['project']), original)
+        self.assertEqual(list((self.base / 'registry').glob('hold-repair-*')), [])
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+
+    def test_repair_cannot_replace_a_valid_hold_or_exceed_the_project_limit(self):
+        value, _ = self.interrupted_complete()
+        value['holdSha256'] = scope['hold_source'](value['project'])['sha256']
+        with self.assertRaises(ValueError):
+            scope['repair_storage_hold'](value)
+        self.assertEqual(list((self.base / 'registry').glob('hold-repair-*')), [])
+        policy = {**self.policy, 'maxProjects': 1}
+        with self.assertRaises(ValueError):
+            scope['admission_projects'](self.value, policy, [self.project(2)['project']])
+
+    def test_interrupted_repair_can_finish_without_replacing_the_record(self):
+        value, _, _ = self.damaged_reservation()
+        def lost_release(fence):
+            raise RuntimeError('injected interruption after repair record sync')
+        with patch.dict(scope, {'release_admission_fence': lost_release}):
+            with self.assertRaises(RuntimeError):
+                scope['repair_storage_hold'](value)
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+        repair = pathlib.Path(scope['REGISTRY'] + '/hold-repair-' + value['project'] + '.json')
+        before = repair.read_bytes()
+        scope['repair_storage_hold'](value)
+        self.assertEqual(repair.read_bytes(), before)
+        self.assertFalse(scope['admission_status'](self.value)['pending'])
+        foreign = scope['admission_fence'](self.project(2), 'prepare')
+        with self.assertRaises(ValueError):
+            scope['repair_storage_hold'](value)
+        self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+
+    def test_changed_original_or_partial_repair_blocks_future_work(self):
+        value, path, _ = self.damaged_reservation()
+        scope['repair_storage_hold'](value)
+        path.write_bytes(b'changed after owner acknowledgment')
+        with self.assertRaises(ValueError):
+            scope['admission_status'](self.value)
+        with self.assertRaises(ValueError):
+            scope['prepare_admitted'](self.project(2), lambda request: self.fail('changed original'))
+        self.assertEqual(path.read_bytes(), b'changed after owner acknowledgment')
+
+    def test_partial_repair_and_unsafe_original_are_never_overwritten(self):
+        value, path, original = self.damaged_reservation()
+        repair = pathlib.Path(scope['REGISTRY'] + '/hold-repair-' + value['project'] + '.json')
+        repair.touch(mode=0o600); repair.write_bytes(b'{"schema":')
+        with self.assertRaises(ValueError):
+            scope['repair_storage_hold'](value)
+        self.assertEqual(repair.read_bytes(), b'{"schema":')
+        self.assertEqual(scope['hold_source'](value['project']), original)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+        path.chmod(0o644)
+        with self.assertRaises(ValueError):
+            scope['hold_source'](value['project'])
+
     def test_locked_native_utility_receives_only_the_held_new_file(self):
         path = str(self.base / 'owned-command-file')
         fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600)
@@ -356,7 +473,7 @@ class AdmissionTests(unittest.TestCase):
         script = "import json,sys;payload=json.load(sys.stdin);s={'__name__':'owned_test'};exec(chr(10).join(payload['sources']),s);s['REGISTRY']=payload['registry']\nwith s['admission_lock']() as fd:s['run_locked']({'_lockFd':fd},[sys.executable,'-c',payload['helper'],payload['ready'],payload['release'],str(fd)])"
         worker = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'host']],
+        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'host']],
                   'registry': scope['REGISTRY'], 'helper': helper, 'ready': ready, 'release': release}
         worker.stdin.write(json.dumps(bundle)); worker.stdin.close()
         try:
