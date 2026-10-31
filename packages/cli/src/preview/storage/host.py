@@ -73,11 +73,11 @@ def read(path):
 
 def request(value):
     require(isinstance(value, dict))
-    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}}
+    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}}
     expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
     require(set(value) == expected)
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile'])
-    if value['action'] == 'reconcile':
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine'])
+    if value['action'] in ['reconcile', 'quarantine']:
         require(str(uuid.UUID(value['operation'])) == value['operation'])
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
@@ -192,8 +192,7 @@ def format_disk(value):
     fd = os.open(disk, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     try:
         target = '/proc/self/fd/' + str(fd)
-        subprocess.run(['fallocate', '--length', str(BYTES), target], pass_fds=[fd],
-                       check=True, capture_output=True, env=ENV, timeout=30)
+        run_locked(value, ['fallocate', '--length', str(BYTES), target], pass_fds=[fd])
         require(disk_state(value)['inode'] == os.fstat(fd).st_ino)
         # Convert unwritten extents before use; future writes must not grow the map.
         zeros = bytes(1024 ** 2)
@@ -201,9 +200,9 @@ def format_disk(value):
             require(os.write(fd, zeros) == len(zeros))
         os.fsync(fd)
         append(value['directory'] + '/storage.allocated.json', disk_state(value))
-        subprocess.run(['mkfs.ext4', '-q', '-F', '-b', '4096', '-m', '0', '-N', '65536',
+        run_locked(value, ['mkfs.ext4', '-q', '-F', '-b', '4096', '-m', '0', '-N', '65536',
                         '-U', value['uuid'], '-E', 'nodiscard,lazy_itable_init=0,lazy_journal_init=0', target],
-                       pass_fds=[fd], check=True, capture_output=True, env=ENV, timeout=30)
+                   pass_fds=[fd])
         os.fsync(fd)
         require(disk_state(value)['inode'] == os.fstat(fd).st_ino)
     finally:
@@ -220,12 +219,12 @@ def prepare(value):
     append(directory + '/storage.pending.json', marker(value))
     format_disk(value)
     bound(value)
-    device = run(['losetup', '--find', '--show', '--nooverlap', paths(value)[0]]).strip()
+    device = run_locked(value, ['losetup', '--find', '--show', '--nooverlap', paths(value)[0]]).strip()
     loop = loop_state(value, device)
     append(directory + '/storage.attached.json', loop)
     mount = paths(value)[1]
     os.mkdir(mount, 0o700)
-    run(['mount', '--types', 'ext4', '--options', 'nosuid,nodev,noexec,nodiscard', device, mount])
+    run_locked(value, ['mount', '--types', 'ext4', '--options', 'nosuid,nodev,noexec,nodiscard', device, mount])
     os.chmod(mount, 0o700)
     mounted = mounted_state(value, device)
     append(directory + '/storage.mounted.json', mounted)
@@ -250,6 +249,9 @@ def main():
         if value['action'] in ['initialize', 'admission']:
             result = initialize_admission(value, value['maxProjects']) if value['action'] == 'initialize' else admission_status(value)
             print(json.dumps({'ok': True, 'admission': result}, separators=(',', ':')))
+            return
+        if value['action'] == 'quarantine':
+            print(json.dumps({'ok': True, 'admission': quarantine_storage(value)}, separators=(',', ':')))
             return
         handlers = {'prepare': lambda: prepare_admitted(value, prepare),
                     'reconcile': lambda: reconcile_storage(value)}

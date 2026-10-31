@@ -596,9 +596,15 @@ Later filesystem writes therefore keep the backing file's allocation stable in
 the native check. Provisioning rechecks headroom before reporting success.
 Concurrent requests hold a process lock on the private registry directory as well
 as an exclusive durable fence. The lock ends with its owning process; the fence
-survives process loss. A known refusal before reservation releases only its own
+survives process loss. Native provisioning helpers run under a supervisor that
+retains the lock until the helper exits, including after caller loss. A known
+refusal before reservation releases only its own
 checking fence. Partial reservation writes or uncertain provisioning retain both
 the charge and the fence; no PID or elapsed time causes automatic release.
+Ordinary storage inspection refuses its own pending prepare fence, so a caller
+cannot turn an uncertain provisioning result into an execution receipt. Only the
+original provisioner or an explicit matching reconciliation can inspect through
+that fence.
 
 Stopping a preview, expiry and software memory retirement never remove storage
 reservations. The native lifecycle confirms that the configured storage limit
@@ -610,7 +616,7 @@ Older unadmitted QA storage remains available for historical inspection and owne
 controls. New plans require an admitted storage receipt. This remains an internal
 host API; public provisioning and launch commands are unavailable. Unrelated host
 writers and hypervisor storage are outside this budget, and a space observation
-is not a storage-health guarantee. Recovery of incomplete provisioning, host-restart
+is not a storage-health guarantee. Repair of partial admission records, host-restart
 recovery and ordinary preview acceptance remain open; default cron admission
 remains closed.
 
@@ -641,10 +647,47 @@ retains the records. Do not delete a fence or retry provisioning to recover it.
 
 This operation never formats, mounts, recreates or deletes storage and never
 releases a reservation. Its receipt grants no application execution permission.
-Partial provisioning and missing mounts remain held for a future explicit
-recovery workflow. The [reconciliation qualification](evidence/operator-preview-storage-reconciliation.json)
+Quarantine can isolate an interrupted reservation; recovering its data or
+reattaching missing mounts requires a separate workflow. The [reconciliation qualification](evidence/operator-preview-storage-reconciliation.json)
 uses isolated recovery records referencing the retained QA filesystems; the real
 engine admission registry and application data remain unchanged.
+
+### Quarantine interrupted provisioning
+
+An owner can quarantine an interrupted project while retaining all its storage
+and its full reservation. The operation requires a valid durable hold and the
+exact original prepare-operation UUID. It first excludes live workers and their
+supervised native helpers. It then writes a private quarantine record before
+releasing only the matching global fence. It never deletes or modifies the
+project's files, devices, mounts or application data.
+
+The [admission API](../packages/cli/src/preview/storage-admission.mjs) exports
+`quarantinePreviewStorage` through the same independently selected privileged
+host transport:
+
+```js
+const admission = await quarantinePreviewStorage(
+  { root, project, engineId, runHost },
+  { operation: reviewedOperationUuid },
+);
+```
+
+A quarantined project remains charged and cannot supply storage for new execution.
+Storage inspection and completed-provisioning reconciliation refuse that project.
+Repeating its exact quarantine acknowledgment preserves the record. A different
+or newer fence refuses; neither process identifiers nor elapsed time clear it.
+A corrupt hold, partial quarantine record or unfinished registry initialization
+remains blocked for explicit repair. There is no unquarantine or reclamation API.
+
+Another fresh project can proceed only within the remaining project limit and
+physical headroom. Admission conservatively reserves a full additional charge
+and the host metadata inode allowance for every quarantined project, even when
+its bytes have not yet been allocated. Status reports quarantined charges as a
+subset of retained charges, not freed capacity. The [quarantine qualification](evidence/operator-preview-storage-quarantine.json)
+covers retained partial metadata, caller loss with a surviving helper, exact
+capacity boundaries and actual retained filesystems through isolated recovery
+records. It does not qualify restoration of interrupted application data or a
+host reboot. Public launch and default cron admission remain closed.
 
 For changes to the privileged admission worker, run its metadata and failure
 regressions on an owned Linux test host with a source checkout:
@@ -654,6 +697,7 @@ sudo python3 packages/cli/test/preview-storage-admission-host.py --local-source
 ```
 
 These tests create only their own temporary metadata directories, inject the
-provisioning callback and check cross-process lock exclusion; they perform no
-loop-device or mount operations. Native filesystem and lifecycle qualification
+provisioning callback and check cross-process lock exclusion. A native helper
+case allocates one new 4 KiB temporary file; the tests perform no loop-device or
+mount operations. Native filesystem and lifecycle qualification
 is separate.

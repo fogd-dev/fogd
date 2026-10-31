@@ -5,19 +5,20 @@ import pathlib
 import sys
 import tempfile
 import subprocess
+import time
 from unittest.mock import patch
 from contextlib import contextmanager
 import unittest
 
 if sys.argv[1:] == ['--local-source']:
     source = pathlib.Path(__file__).resolve().parents[1] / 'src/preview/storage'
-    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'reconciliation', 'host']}
+    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'host']}
 elif len(sys.argv) == 1:
     payload = json.load(sys.stdin)
 else:
     raise RuntimeError('Use --local-source or provide the source bundle on stdin')
 scope = {'__name__': 'fogd_storage_admission_test'}
-exec(compile(payload['admission'] + '\n' + payload['reconciliation'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
+exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
 
 
 class AdmissionTests(unittest.TestCase):
@@ -246,6 +247,145 @@ class AdmissionTests(unittest.TestCase):
             self.assertEqual(observed['heldProjects'], 0)
         scope['prepare_admitted'](self.project(1), lambda request: {'testOnly': True})
         self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 1)
+
+
+    def test_pending_storage_is_not_available_for_execution_before_reconciliation(self):
+        value, complete = self.interrupted_complete()
+        target = {**value, 'action': 'inspect', 'admission': complete['admission']}
+        with self.assertRaises(ValueError):
+            scope['admission_entry'](target)
+        scope['admission_entry']({**target, 'action': 'reconcile'})
+        with self.assertRaises(ValueError):
+            scope['admission_entry']({**target, 'action': 'reconcile', 'operation': str(scope['uuid'].uuid4())})
+        with patch.dict(scope, {'inspect': lambda request: complete}):
+            scope['reconcile_storage'](value)
+        scope['admission_entry'](target)
+
+    def test_quarantine_retains_partial_data_charge_and_denies_reuse(self):
+        value, _ = self.interrupted_complete()
+        directory = pathlib.Path(value['directory'])
+        directory.mkdir(mode=0o700)
+        data = directory / 'partial-owned-data'
+        data.write_bytes(b'retain incomplete provisioning bytes')
+        before = scope['admission_status'](self.value)
+        after = scope['quarantine_storage'](value)
+        self.assertFalse(after['pending'])
+        self.assertEqual(after['heldChargeBytes'], before['heldChargeBytes'])
+        self.assertEqual(after['quarantinedProjects'], 1)
+        self.assertEqual(after['quarantinedChargeBytes'], scope['CHARGE_BYTES'])
+        self.assertEqual(data.read_bytes(), b'retain incomplete provisioning bytes')
+        self.assertEqual(scope['quarantine_storage'](value), after)
+        with self.assertRaises(ValueError):
+            scope['prepare_admitted'](self.project(1), lambda request: self.fail('quarantined'))
+        admission = {'profileId': self.policy['id'], 'reservation': after['reservations'][0]['reservation'], 'chargeBytes': scope['CHARGE_BYTES']}
+        with self.assertRaises(ValueError):
+            scope['admission_entry']({**value, 'admission': admission})
+
+    def test_quarantine_reserves_possible_late_allocation_and_inodes(self):
+        value, _ = self.interrupted_complete()
+        scope['quarantine_storage'](value)
+        enough = {'availableBytes': scope['HEADROOM_BYTES'] + 2 * scope['CHARGE_BYTES'],
+                  'availableInodes': scope['HEADROOM_INODES'] + 64, 'device': self.value['dockerDevice']}
+        for field in ['availableBytes', 'availableInodes']:
+            low = {**enough, field: enough[field] - 1}
+            with patch.dict(scope, {'backing_space': lambda request: low}):
+                self.assertFalse(scope['admission_status'](self.value)['admissionOpen'])
+                with self.assertRaises(scope['StorageRefusal']) as failure:
+                    scope['prepare_admitted'](self.project(2), lambda request: self.fail('capacity'))
+                self.assertEqual(failure.exception.reason, 'capacity')
+        with patch.dict(scope, {'backing_space': lambda request: enough}):
+            self.assertTrue(scope['admission_status'](self.value)['admissionOpen'])
+            scope['prepare_admitted'](self.project(2), lambda request: {'testOnly': True})
+        self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 2)
+        self.assertFalse(scope['admission_status'](self.value)['admissionOpen'])
+
+    def test_quarantine_refuses_live_owner_wrong_operation_and_unheld_project(self):
+        value, _ = self.interrupted_complete()
+        with self.live_registry_owner():
+            with self.assertRaises(scope['StorageRefusal']):
+                scope['quarantine_storage'](value)
+        for wrong in [{**value, 'operation': str(scope['uuid'].uuid4())},
+                      {**self.project(2), 'operation': value['operation']}]:
+            with self.assertRaises((ValueError, StopIteration)):
+                scope['quarantine_storage'](wrong)
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+        self.assertEqual(scope['admission_status'](self.value)['quarantinedProjects'], 0)
+
+    def test_interrupted_quarantine_retains_its_record_and_can_finish(self):
+        value, _ = self.interrupted_complete()
+        def lost_release(fence):
+            raise RuntimeError('injected interruption after quarantine record sync')
+        with patch.dict(scope, {'release_admission_fence': lost_release}):
+            with self.assertRaises(RuntimeError):
+                scope['quarantine_storage'](value)
+        self.assertTrue(scope['admission_status'](self.value)['pending'])
+        self.assertEqual(scope['admission_status'](self.value)['quarantinedProjects'], 1)
+        scope['quarantine_storage'](value)
+        self.assertFalse(scope['admission_status'](self.value)['pending'])
+        foreign = scope['admission_fence'](self.project(2), 'prepare')
+        with self.assertRaises(ValueError):
+            scope['quarantine_storage'](value)
+        self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+
+    def test_corrupt_quarantine_blocks_status_inspection_and_new_provisioning(self):
+        value, _ = self.interrupted_complete()
+        after = scope['quarantine_storage'](value)
+        path = pathlib.Path(scope['REGISTRY'] + '/quarantined-' + value['project'] + '.json')
+        record = scope['read'](str(path)); record['reservation'] = str(scope['uuid'].uuid4())
+        path.write_bytes(scope['encoded'](record))
+        for call in [lambda: scope['admission_status'](self.value),
+                     lambda: scope['prepare_admitted'](self.project(2), lambda request: self.fail('corrupt')),
+                     lambda: scope['admission_entry']({**value, 'admission': after['quarantines'][0]})]:
+            with self.assertRaises(ValueError):
+                call()
+
+    def test_locked_native_utility_receives_only_the_held_new_file(self):
+        path = str(self.base / 'owned-command-file')
+        fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            with scope['admission_lock']() as lock_fd:
+                scope['run_locked']({'_lockFd': lock_fd}, ['fallocate', '--length', '4096', '/proc/self/fd/' + str(fd)], pass_fds=[fd])
+            self.assertEqual(os.fstat(fd).st_size, 4096)
+            self.assertEqual(os.stat(path).st_ino, os.fstat(fd).st_ino)
+        finally:
+            os.close(fd)
+
+    def test_native_helper_supervisor_holds_lock_after_caller_exits(self):
+        ready, release = str(self.base / 'helper-ready'), str(self.base / 'helper-release')
+        helper = "import os,pathlib,sys,time;os.close(int(sys.argv[3]));pathlib.Path(sys.argv[1]).write_text('ready');deadline=time.monotonic()+15\nwhile not pathlib.Path(sys.argv[2]).exists():\n if time.monotonic()>deadline:raise RuntimeError('test release missing')\n time.sleep(0.01)"
+        script = "import json,sys;payload=json.load(sys.stdin);s={'__name__':'owned_test'};exec(chr(10).join(payload['sources']),s);s['REGISTRY']=payload['registry']\nwith s['admission_lock']() as fd:s['run_locked']({'_lockFd':fd},[sys.executable,'-c',payload['helper'],payload['ready'],payload['release'],str(fd)])"
+        worker = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'host']],
+                  'registry': scope['REGISTRY'], 'helper': helper, 'ready': ready, 'release': release}
+        worker.stdin.write(json.dumps(bundle)); worker.stdin.close()
+        try:
+            deadline = time.monotonic() + 10
+            while not os.path.exists(ready):
+                if worker.poll() is not None:
+                    self.fail('owned helper worker exited before readiness: ' + worker.stderr.read())
+                self.assertLess(time.monotonic(), deadline)
+                time.sleep(0.01)
+            worker.terminate()  # Only this test's Python caller; no deployed process.
+            worker.wait(timeout=10)
+            self.assertNotEqual(worker.returncode, 0)
+            with self.assertRaises(scope['StorageRefusal']) as failure:
+                scope['prepare_admitted'](self.project(1), lambda request: self.fail('helper still active'))
+            self.assertEqual(failure.exception.reason, 'pending')
+        finally:
+            pathlib.Path(release).write_text('release owned helper')
+            if worker.poll() is None:
+                worker.terminate(); worker.wait(timeout=10)
+            worker.stdout.close(); worker.stderr.close()
+            deadline = time.monotonic() + 10
+            while True:
+                try:
+                    with scope['admission_lock']():
+                        break
+                except scope['StorageRefusal']:
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(0.01)
+        self.assertEqual(scope['admission_status'](self.value)['heldProjects'], 0)
 
 
 if sys.platform != 'linux' or os.geteuid() != 0 or sys.flags.optimize:

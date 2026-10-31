@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-quarantine-qualification",
+  "scope": "Owner quarantine of a valid interrupted storage reservation. Preserve project bytes and charges, exclude live helpers, and allow only other fresh projects within remaining limits and conservative headroom. No reclamation or replay.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/distribution/manifest.mjs": "e5d8c8603f258e92997d720471e78811f4748a4f3775bbea79ae6ace11a1d8b7",
+    "packages/cli/src/preview/storage-admission.mjs": "b71c97b21e902e7861f566ed55374bbab3b3b50974f2b4dfedd6cdcce84e8af9",
+    "packages/cli/src/preview/storage.mjs": "1d1fd83a6fea4a9cb75998223336aa7486cb9551e9ca02346018703a0113aa3b",
+    "packages/cli/src/preview/storage/admission.py": "45206be78a1ce45f237932c3400a330937ba32a7ce814e884ca1c477d0b670ec",
+    "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+    "packages/cli/src/preview/storage/host.py": "52b373ea3ac74c8bd8dd6af8d01930eb67332ab26d055db7d31697f23a13b7a7",
+    "packages/cli/src/preview/storage/reconciliation.py": "e135bf883b35f0c2137ce2ca8ddc42649be45d1708feac0b57a8b15371154aa3",
+    "packages/cli/test/preview-storage-admission-host.py": "413d7da1d8fa7685c684d66a77e8cf4c1acdf0a2aebc66706d2edd2989e36c2d",
+    "packages/cli/test/preview-storage-admission.test.mjs": "f3f9f3fdd2d87544d83126f2c160881b23872bbffc5507b931cb25f24412fca0"
+  },
+  "policy": {
+    "quarantine": "A valid retained hold and exact original prepare fence are required. Append and sync a private quarantine record before removing only that fence. Repeating the exact acknowledgment does not rewrite it.",
+    "execution": "A quarantined project cannot be inspected for execution or reconciled back into service. Ordinary inspection of a project with its own pending prepare fence also refuses; only the original provisioner or matching reconciliation can inspect through it.",
+    "retention": "All project files, devices, mounts, data and the full original reservation remain. Quarantined charges are a subset of retained charges, never reclaimed capacity.",
+    "headroom": "Require an additional full charge and 32 host inodes for each quarantined project, conservatively covering allocation not yet materialized. Project count and physical space remain separate gates.",
+    "liveHelpers": "A supervisor retains the registry lock while native provisioning utilities execute, including when the caller exits or the utility closes its inherited extra descriptors. One current worker version per engine is required.",
+    "blocked": "Corrupt or partial admission/quarantine records and unfinished initialization remain blocked for explicit repair. No PID/time heuristic, retry of provisioning, unquarantine or automatic cleanup."
+  },
+  "checks": {
+    "storageNode": {
+      "tests": 56,
+      "pass": 56,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "linuxHost": {
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "errors": 0,
+      "scope": "Owned temporary metadata, injected provisioning, real process/lock exclusion and caller loss; one new 4 KiB native fallocate target. No loop-device or mount effects."
+    },
+    "helperNegativeControl": {
+      "passed": true,
+      "scope": "Owned temporary metadata only",
+      "directHelperWithoutSupervisorFailsRegression": true,
+      "expectedFailure": "helper still active",
+      "deployedResourcesTouched": false
+    },
+    "previewNode": {
+      "tests": 370,
+      "pass": 370,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "fullNodeSuite": {
+      "tests": 3521,
+      "pass": 3521,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; Python imports/locals manually reviewed because dead-code tooling is unavailable",
+    "writing": "passed for operator guide, roadmap, qualification receipt, review, issue and commit text",
+    "standardsSelfReview": "PASS; all ten dimensions assessed in local gate self-review, no external reviewer"
+  },
+  "nativeRetainedFilesystemFixture": {
+    "passed": true,
+    "scope": "Isolated quarantine records referencing actual retained QA filesystems; real engine registry and application storage remain read-only. No provisioning replay, reformatting or host reboot.",
+    "liveOwnerRefused": true,
+    "fixtureOwnerExited": true,
+    "wrongOperationRefused": true,
+    "repeatAcknowledgmentStable": true,
+    "quarantinedInspectionRefused": true,
+    "quarantinedReconciliationRefused": true,
+    "peerStorageStillInspectable": true,
+    "lockedNativeUtilityTransportVerified": true,
+    "heldProjects": 2,
+    "heldChargeBytes": 2181038080,
+    "quarantinedProjects": 1,
+    "quarantinedChargeBytes": 1090519040,
+    "pending": false,
+    "admissionOpen": false,
+    "realRegistryFilesUnchanged": 3,
+    "bothRetainedFilesystemsUnchanged": true,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "actualNodeHostTransport": {
+    "passed": true,
+    "currentAssembledWorkerSha256": "5474211418626c32d4275d1eb0e77a0b7926d6e83f066a2ae6e5b3c60279c412",
+    "currentWorkerHashVerified": true,
+    "actualQuarantineStatusInspectionTransport": true,
+    "hostCalls": 3,
+    "quarantinedStorageInspectionDenied": true,
+    "retainedChargesVerified": true,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "currentArchivedSourcesVerified": true,
+    "currentAssembledWorkerHashVerified": true,
+    "storage": {
+      "passed": true,
+      "readOnly": true,
+      "actualLocalEngineAndDockerBackingDeviceVerified": true,
+      "policyAndTwoExclusiveReservationsVerified": true,
+      "bothBackingFilesPreallocated": true,
+      "allocatedBytesObserved": 2147491840,
+      "chargedBytes": 2181038080,
+      "headroomAvailable": true,
+      "pendingFence": false,
+      "allFileLoopMountAndRoleIdentitiesVerified": true,
+      "backingFileAllocationStableAfterUse": true
+    },
+    "quarantine": {
+      "passed": true,
+      "readOnly": true,
+      "fixtureQuarantineAndOriginalFenceVerified": true,
+      "bothReservationsStillCharged": true,
+      "realRegistryHasNoQuarantineOrFence": true,
+      "statusQuarantineSubsetVerified": true
+    },
+    "all145QaContainersNonrunning": true,
+    "sources": {
+      "packages/cli/src/preview/storage/admission.py": "45206be78a1ce45f237932c3400a330937ba32a7ce814e884ca1c477d0b670ec",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "e135bf883b35f0c2137ce2ca8ddc42649be45d1708feac0b57a8b15371154aa3",
+      "packages/cli/src/preview/storage/host.py": "52b373ea3ac74c8bd8dd6af8d01930eb67332ab26d055db7d31697f23a13b7a7"
+    },
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "remainingGates": [
+    "Repair of incomplete or corrupt admission records and initialization",
+    "Recovery of quarantined data and missing mounts",
+    "Host-restart recovery",
+    "Explicit capacity changes and storage reclamation",
+    "Public provisioning, launch and complete browser acceptance"
+  ],
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed"
+}

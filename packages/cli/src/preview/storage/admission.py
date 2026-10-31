@@ -71,7 +71,7 @@ def admission_lock():
         except BlockingIOError:
             admission_refuse('pending')
         require(identity(REGISTRY, True) == expected)
-        yield
+        yield fd
     finally:
         os.close(fd)
 
@@ -123,36 +123,51 @@ def backing_space(value):
             'availableInodes': facts.f_favail, 'device': value['rootIdentity']['device']}
 
 
-def check_storage_capacity(policy, count, space):
-    if count >= policy['maxProjects'] or space['availableBytes'] < CHARGE_BYTES + HEADROOM_BYTES or space['availableInodes'] < HEADROOM_INODES + 32:
+def has_storage_capacity(policy, count, space, quarantines=()):
+    return (count < policy['maxProjects']
+            and space['availableBytes'] >= CHARGE_BYTES * (1 + len(quarantines)) + HEADROOM_BYTES
+            and space['availableInodes'] >= HEADROOM_INODES + 32 * (1 + len(quarantines)))
+
+
+def check_storage_capacity(policy, count, space, quarantines=()):
+    if not has_storage_capacity(policy, count, space, quarantines):
         admission_refuse('capacity')
 
 
 def admission_status(value):
     policy = read_policy(value)
-    rows = held_storage(value, policy)
+    rows, quarantines = storage_inventory(value, policy)
     space = backing_space(value)
     pending = os.path.lexists(REGISTRY + '/operation.pending.json')
     remaining = policy['maxProjects'] - len(rows)
-    return {'schema': 1, 'kind': 'fogd-preview-storage-admission-status', 'policy': policy,
+    return {'schema': 2, 'kind': 'fogd-preview-storage-admission-status', 'policy': policy,
+            'quarantines': [{key: row[key] for key in ['operation', 'project', 'profileId', 'reservation', 'chargeBytes']} for row in quarantines],
+            'quarantinedProjects': len(quarantines),
+            'quarantinedChargeBytes': len(quarantines) * CHARGE_BYTES,
             'heldProjects': len(rows), 'heldChargeBytes': len(rows) * CHARGE_BYTES,
             'remainingProjects': remaining, 'pending': pending, 'space': space,
-            'admissionOpen': not pending and remaining > 0 and
-                space['availableBytes'] >= CHARGE_BYTES + HEADROOM_BYTES and
-                space['availableInodes'] >= HEADROOM_INODES + 32,
+            'admissionOpen': not pending and has_storage_capacity(policy, len(rows), space, quarantines),
             'reservations': rows, 'resourcesRetained': True, 'executionAuthorized': False}
 
 
 def admission_entry(value):
     policy = read_policy(value)
     row = read(REGISTRY + '/holds/' + value['project'] + '.json')
-    require(row in held_storage(value, policy))
+    rows, quarantines = storage_inventory(value, policy)
+    require(row in rows and value['project'] not in {entry['project'] for entry in quarantines})
+    pending = REGISTRY + '/operation.pending.json'
+    if os.path.lexists(pending):
+        fence = read(pending)
+        if fence['project'] == value['project']:
+            require(value.get('action') in ['prepare', 'reconcile'])
+            operation = value.get('_operation') if value['action'] == 'prepare' else value.get('operation')
+            checked_prepare_fence({**value, 'operation': operation}, fence)
     require(value['admission'] == {'profileId': policy['id'], 'reservation': row['reservation'], 'chargeBytes': CHARGE_BYTES})
 
 
 def prepare_admitted(value, provision):
-    with admission_lock():
-        return provision_admitted(value, provision)
+    with admission_lock() as lock_fd:
+        return provision_admitted({**value, '_lockFd': lock_fd}, provision)
 
 
 def provision_admitted(value, provision):
@@ -161,20 +176,21 @@ def provision_admitted(value, provision):
     effects = False
     success = False
     try:
-        rows = held_storage(value, policy)
+        rows, quarantines = storage_inventory(value, policy)
         require(value['project'] not in {row['project'] for row in rows})
         require(not os.path.lexists(value['directory']))
-        check_storage_capacity(policy, len(rows), backing_space(value))
+        check_storage_capacity(policy, len(rows), backing_space(value), quarantines)
         row = {'schema': 1, 'kind': 'fogd-preview-storage-hold', 'profileId': policy['id'],
                'reservation': str(uuid.uuid4()), 'project': value['project'],
                'engineId': value['engineId'], 'backingBytes': BYTES, 'chargeBytes': CHARGE_BYTES}
         effects = True  # Partial ledger writes are retained and block new work.
         append(REGISTRY + '/holds/' + value['project'] + '.json', row)
-        admitted = {**value, 'schema': 2, 'admission': {'profileId': policy['id'],
+        admitted = {**value, '_operation': fence['record']['operation'], 'schema': 2, 'admission': {'profileId': policy['id'],
                     'reservation': row['reservation'], 'chargeBytes': CHARGE_BYTES}}
         result = provision(admitted)
         after = backing_space(value)
-        require(after['availableBytes'] >= HEADROOM_BYTES and after['availableInodes'] >= HEADROOM_INODES)
+        require(after['availableBytes'] >= HEADROOM_BYTES + len(quarantines) * CHARGE_BYTES
+                and after['availableInodes'] >= HEADROOM_INODES + len(quarantines) * 32)
         success = True
         return result
     finally:

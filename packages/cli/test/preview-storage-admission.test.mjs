@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission } from '../src/preview/storage-admission.mjs';
+import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage } from '../src/preview/storage-admission.mjs';
 import { preparePreviewStorage, previewStorageBytes, previewStorageChargeBytes } from '../src/preview/storage.mjs';
 import { createPreviewPlan, validatePreviewPlan } from '../src/preview/plan.mjs';
 import { previewPlanFixture } from './fixtures/preview-plan.mjs';
 import { hash, jsonBytes } from '../src/build-cache/paths.mjs';
 
 const input={root:'/var/lib/docker/fogd-preview-storage',engineId:'engine-test'};
-function report(){const policy={schema:1,kind:'fogd-preview-storage-admission',id:'00000000-0000-4000-8000-000000000001',...input,rootIdentity:{device:1,inode:2},maxProjects:2,chargeBytes:previewStorageChargeBytes,headroomBytes:previewStorageBytes,headroomInodes:8192};return{schema:1,kind:'fogd-preview-storage-admission-status',policy,heldProjects:0,heldChargeBytes:0,remainingProjects:2,pending:false,space:{availableBytes:4*previewStorageBytes,availableInodes:10000,device:1},admissionOpen:true,reservations:[],resourcesRetained:true,executionAuthorized:false}}
+function report(){const policy={schema:1,kind:'fogd-preview-storage-admission',id:'00000000-0000-4000-8000-000000000001',...input,rootIdentity:{device:1,inode:2},maxProjects:2,chargeBytes:previewStorageChargeBytes,headroomBytes:previewStorageBytes,headroomInodes:8192};return{schema:2,kind:'fogd-preview-storage-admission-status',quarantines:[],quarantinedProjects:0,quarantinedChargeBytes:0,policy,heldProjects:0,heldChargeBytes:0,remainingProjects:2,pending:false,space:{availableBytes:4*previewStorageBytes,availableInodes:10000,device:1},admissionOpen:true,reservations:[],resourcesRetained:true,executionAuthorized:false}}
 const refused={code:'PREVIEW_STORAGE_REFUSED'};
 test('explicit initialization and status use closed transport requests without execution permission',async()=>{
  const calls=[],runHost=async(args,options)=>{calls.push(JSON.parse(options.inputText));return JSON.stringify({ok:true,admission:report()})};const result=await initializePreviewStorageAdmission({...input,runHost},{maxProjects:2});assert.equal(result.executionAuthorized,false);assert.deepEqual(await inspectPreviewStorageAdmission({...input,runHost}),result);assert.deepEqual(calls,[{action:'initialize',...input,maxProjects:2},{action:'admission',...input}]);
@@ -32,4 +32,27 @@ test('retained reservations close admission and duplicate identities cannot infl
 
 test('initialization cannot acknowledge a different configured limit',async()=>{
  await assert.rejects(initializePreviewStorageAdmission({...input,runHost:async()=>JSON.stringify({ok:true,admission:report()})},{maxProjects:3}),{code:'PREVIEW_STORAGE_REFUSED'});
+});
+
+
+function quarantinedReport() {
+ const value=report();const row={schema:1,kind:'fogd-preview-storage-hold',profileId:value.policy.id,reservation:'00000000-0000-4000-8000-000000000002',project:'fogd-preview-'+'a'.repeat(32),engineId:input.engineId,backingBytes:previewStorageBytes,chargeBytes:previewStorageChargeBytes};
+ Object.assign(value,{reservations:[row],heldProjects:1,heldChargeBytes:previewStorageChargeBytes,remainingProjects:1,quarantinedProjects:1,quarantinedChargeBytes:previewStorageChargeBytes,quarantines:[{operation:'00000000-0000-4000-8000-000000000003',project:row.project,profileId:row.profileId,reservation:row.reservation,chargeBytes:row.chargeBytes}]});return value;
+}
+
+test('explicit quarantine reports retained capacity and exact operation without execution authority',async()=>{
+ const value=quarantinedReport(),calls=[],row=value.quarantines[0];const result=await quarantinePreviewStorage({...input,project:row.project,runHost:async(args,options)=>{calls.push(JSON.parse(options.inputText));return JSON.stringify({ok:true,admission:value})}},{operation:row.operation});
+ assert.deepEqual(calls,[{action:'quarantine',...input,project:row.project,operation:row.operation}]);assert.equal(result.heldProjects,1);assert.equal(result.quarantinedProjects,1);assert.equal(result.executionAuthorized,false);
+});
+
+test('quarantine requires valid owner-selected identities before host execution',async()=>{
+ let calls=0;for(const extra of [{project:'../other',operation:'00000000-0000-4000-8000-000000000003'},{project:'fogd-preview-'+'a'.repeat(32),operation:'bad'}])await assert.rejects(quarantinePreviewStorage({...input,project:extra.project,runHost:async()=>{calls++}},{operation:extra.operation}),refused);assert.equal(calls,0);
+});
+
+for(const[name,change]of Object.entries({charge:x=>x.quarantinedChargeBytes=0,foreignHold:x=>x.quarantines[0].reservation='00000000-0000-4000-8000-000000000009',wrongOperation:x=>x.quarantines[0].operation='00000000-0000-4000-8000-000000000009',space:x=>{x.space.availableBytes=previewStorageBytes+previewStorageChargeBytes;x.admissionOpen=true},inodes:x=>{x.space.availableInodes=8224;x.admissionOpen=true},duplicate:x=>x.quarantines.push({...x.quarantines[0]})}))test(`quarantine rejects ${name} acknowledgments`,async()=>{
+ const value=quarantinedReport(),row={...value.quarantines[0]};change(value);await assert.rejects(quarantinePreviewStorage({...input,project:row.project,runHost:async()=>JSON.stringify({ok:true,admission:value})},{operation:row.operation}),refused);
+});
+
+test('unknown quarantine effect is not automatically replayed',async()=>{
+ const value=quarantinedReport(),row=value.quarantines[0];let calls=0;await assert.rejects(quarantinePreviewStorage({...input,project:row.project,runHost:async()=>{calls++;throw Error('private host detail')}},{operation:row.operation}),refused);assert.equal(calls,1);
 });

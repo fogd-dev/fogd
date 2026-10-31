@@ -32,20 +32,31 @@ function checkRows(rows, policy) {
   if (new Set(rows.map(row => row.project)).size !== rows.length || new Set(rows.map(row => row.reservation)).size !== rows.length) fail();
 }
 function status(value, target) {
-  executionKeys(value, ['schema', 'kind', 'policy', 'heldProjects', 'heldChargeBytes', 'remainingProjects', 'pending', 'space', 'admissionOpen', 'reservations', 'resourcesRetained', 'executionAuthorized']);
+  executionKeys(value, ['schema', 'kind', 'policy', 'quarantines', 'quarantinedProjects', 'quarantinedChargeBytes', 'heldProjects', 'heldChargeBytes', 'remainingProjects', 'pending', 'space', 'admissionOpen', 'reservations', 'resourcesRetained', 'executionAuthorized']);
   checkPolicy(value.policy, target); checkRows(value.reservations, value.policy);
+  checkQuarantines(value.quarantines, value.reservations);
   executionKeys(value.space, ['availableBytes', 'availableInodes', 'device']);
   if (!counter(value.space.availableBytes) || !counter(value.space.availableInodes) || value.space.device !== value.policy.rootIdentity.device) fail();
   checkBalance(value);
-  if (value.schema !== 1 || value.kind !== 'fogd-preview-storage-admission-status' || value.resourcesRetained !== true || value.executionAuthorized !== false) fail();
+  if (value.schema !== 2 || value.kind !== 'fogd-preview-storage-admission-status' || value.resourcesRetained !== true || value.executionAuthorized !== false) fail();
   return structuredClone(value);
 }
 function checkBalance(value) {
   const held = value.reservations.length, remaining = value.policy.maxProjects - held;
-  const open = !value.pending && remaining > 0 && value.space.availableBytes >= previewStorageChargeBytes + previewStorageBytes && value.space.availableInodes >= 8224;
+  const count = value.quarantines.length;
+  const open = !value.pending && remaining > 0 && value.space.availableBytes >= previewStorageChargeBytes * (1 + count) + previewStorageBytes && value.space.availableInodes >= 8192 + 32 * (1 + count);
   if (typeof value.pending !== 'boolean' || !isDeepStrictEqual(
-    [value.heldProjects, value.heldChargeBytes, value.remainingProjects, value.admissionOpen],
-    [held, held * previewStorageChargeBytes, remaining, open])) fail();
+    [value.heldProjects, value.heldChargeBytes, value.remainingProjects, value.admissionOpen, value.quarantinedProjects, value.quarantinedChargeBytes],
+    [held, held * previewStorageChargeBytes, remaining, open, count, count * previewStorageChargeBytes])) fail();
+}
+function checkQuarantines(rows, holds) {
+  if (!Array.isArray(rows) || rows.length > holds.length) fail();
+  for (const row of rows) {
+    executionKeys(row, ['operation', 'project', 'profileId', 'reservation', 'chargeBytes']);
+    const held = holds.find(hold => hold.project === row.project);
+    if (!uuid(row.operation) || !held || row.profileId !== held.profileId || row.reservation !== held.reservation || row.chargeBytes !== held.chargeBytes) fail();
+  }
+  if (new Set(rows.map(row => row.project)).size !== rows.length || new Set(rows.map(row => row.operation)).size !== rows.length) fail();
 }
 async function operation(input, target) {
   try { return status(await previewStorageAdmissionOperation(input, target), target); }
@@ -57,3 +68,11 @@ export function initializePreviewStorageAdmission(input, { maxProjects = 4 } = {
   return operation(input, { ...target, maxProjects });
 }
 export function inspectPreviewStorageAdmission(input) { return operation(input, request(input, 'admission')); }
+
+export async function quarantinePreviewStorage(input, { operation: operationId } = {}) {
+  const target = { ...request(input, 'quarantine'), project: input.project, operation: operationId };
+  if (!uuid(operationId) || !/^fogd-preview-[a-f0-9]{32}$/.test(target.project || '')) fail();
+  const report = await operation(input, target);
+  if (!report.quarantines.some(row => row.project === target.project && row.operation === operationId)) fail();
+  return report;
+}
