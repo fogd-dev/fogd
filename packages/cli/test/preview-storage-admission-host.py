@@ -13,13 +13,13 @@ import unittest
 
 if sys.argv[1:] == ['--local-source']:
     source = pathlib.Path(__file__).resolve().parents[1] / 'src/preview/storage'
-    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']}
+    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'initialization', 'host']}
 elif len(sys.argv) == 1:
     payload = json.load(sys.stdin)
 else:
     raise RuntimeError('Use --local-source or provide the source bundle on stdin')
 scope = {'__name__': 'fogd_storage_admission_test'}
-exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['hold-repair'] + '\n' + payload['recovery-writers'] + '\n' + payload['readonly-recovery'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
+exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['hold-repair'] + '\n' + payload['recovery-writers'] + '\n' + payload['readonly-recovery'] + '\n' + payload['initialization'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
 
 
 class AdmissionTests(unittest.TestCase):
@@ -137,7 +137,7 @@ bundle_fd=[None];os.fdopen=fdopen;os.fsync=fsync;os.link=link
 scope['append'](bundle['path'],bundle['value'])
 """
         value = {'kind': 'owned-interruption', 'payload': 'x' * 8192}
-        sources = [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']]
+        sources = [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'initialization', 'host']]
         for phase in ['partial-write', 'before-file-sync', 'before-publication', 'before-directory-sync', 'after-directory-sync']:
             with self.subTest(phase=phase):
                 directory = self.base / phase; directory.mkdir(mode=0o700)
@@ -161,6 +161,123 @@ scope['append'](bundle['path'],bundle['value'])
                 finally:
                     if process.poll() is None:process.kill();process.wait(timeout=5)
                     process.stdin.close();process.stdout.close();process.stderr.close()
+
+    def interrupted_initialization(self, stage):
+        root = self.base / ('init-' + stage); root.mkdir(mode=0o700)
+        value = {**self.value, 'root': str(root), 'rootIdentity': scope['identity'](str(root), True)}
+        scope['REGISTRY'] = str(self.base / ('registry-' + stage))
+        os.mkdir(scope['REGISTRY'], 0o700)
+        if stage != 'registry':
+            scope['admission_fence'](value, 'initialize')
+        if stage in ['holds', 'policy']:
+            os.mkdir(scope['REGISTRY'] + '/holds', 0o700)
+        if stage == 'policy':
+            scope['append'](scope['REGISTRY'] + '/policy.json', scope['policy_for'](value, 2))
+        snapshot = scope['inspect_initialization'](value)
+        return {**value, 'maxProjects': 2, 'registrySha256': scope['initialization_sha256'](snapshot)}, snapshot
+
+    def test_initialization_recovery_finishes_each_unused_boundary_without_replacing_original_records(self):
+        for stage in ['registry', 'fence', 'holds', 'policy']:
+            with self.subTest(stage=stage):
+                value, before = self.interrupted_initialization(stage)
+                result = scope['recover_initialization'](value)
+                self.assertEqual(result['heldProjects'], 0)
+                self.assertEqual(result['remainingProjects'], 2)
+                self.assertFalse(result['pending']); self.assertTrue(result['admissionOpen'])
+                self.assertFalse(result['executionAuthorized'])
+                after = scope['inspect_initialization'](value)
+                for name in ['policy.json', 'holds']:
+                    if name in before['entries']:self.assertEqual(after['entries'][name], before['entries'][name])
+                receipt = pathlib.Path(scope['REGISTRY']) / 'initialization.recovered.json'
+                receipt_before = (receipt.read_bytes(), receipt.stat().st_ino)
+                self.assertEqual(scope['recover_initialization'](value), result)
+                self.assertEqual((receipt.read_bytes(), receipt.stat().st_ino), receipt_before)
+
+    def test_initialization_recovery_requires_the_reviewed_snapshot_and_cannot_change_a_published_limit(self):
+        value, before = self.interrupted_initialization('policy')
+        policy = pathlib.Path(scope['REGISTRY']) / 'policy.json'; original = policy.read_bytes()
+        for bad in [{**value, 'registrySha256': 'f' * 64}, {**value, 'maxProjects': 3}]:
+            with self.assertRaises(ValueError):scope['recover_initialization'](bad)
+            self.assertEqual(scope['inspect_initialization'](value), before)
+        self.assertEqual(policy.read_bytes(), original)
+
+    def test_initialization_recovery_refuses_project_data_holds_and_unknown_registry_entries(self):
+        for stage, location in [('data', 'root'), ('held', 'holds'), ('unknown', 'registry')]:
+            value, _ = self.interrupted_initialization('refuse-' + stage)
+            if location == 'root':path = pathlib.Path(value['root']) / 'retained-data'
+            elif location == 'holds':
+                directory = pathlib.Path(scope['REGISTRY']) / 'holds'; directory.mkdir(mode=0o700)
+                path = directory / 'retained-hold.json'
+            else:path = pathlib.Path(scope['REGISTRY']) / 'unrecognized.json'
+            path.write_bytes(b'keep retained evidence'); path.chmod(0o600)
+            with self.assertRaises(ValueError):scope['recover_initialization'](value)
+            self.assertEqual(path.read_bytes(), b'keep retained evidence')
+            self.assertFalse((pathlib.Path(scope['REGISTRY']) / 'initialization.recovered.json').exists())
+
+    def test_initialization_recovery_refuses_foreign_fences_and_malformed_policies_without_mutation(self):
+        for stage in ['foreign', 'damaged']:
+            value, _ = self.interrupted_initialization(stage)
+            if stage == 'foreign':
+                path = pathlib.Path(scope['REGISTRY']) / 'operation.pending.json'
+                row = scope['read'](str(path));row['action'] = 'prepare';path.write_bytes(scope['encoded'](row))
+            else:
+                path = pathlib.Path(scope['REGISTRY']) / 'policy.json';path.touch(mode=0o600);path.write_bytes(b'{')
+            before = scope['inspect_initialization'](value); value['registrySha256'] = scope['initialization_sha256'](before)
+            with self.assertRaises((ValueError, KeyError)):scope['recover_initialization'](value)
+            self.assertEqual(scope['inspect_initialization'](value), before)
+
+    def test_initialization_recovery_requires_exclusive_ownership_and_sufficient_headroom(self):
+        value, before = self.interrupted_initialization('fence')
+        with scope['admission_lock']():
+            with self.assertRaises(scope['StorageRefusal']):scope['recover_initialization'](value)
+        with patch.dict(scope, {'backing_space': lambda value: {'availableBytes': 0, 'availableInodes': 0}}):
+            with self.assertRaises(scope['StorageRefusal']):scope['recover_initialization'](value)
+        self.assertEqual(scope['inspect_initialization'](value), before)
+
+    def test_initialization_recovery_acknowledgment_survives_result_loss_but_never_clears_a_foreign_fence(self):
+        value, _ = self.interrupted_initialization('fence')
+        def interrupted(fence):raise RuntimeError('injected completion result loss')
+        with patch.dict(scope, {'release_admission_fence': interrupted}):
+            with self.assertRaises(RuntimeError):scope['recover_initialization'](value)
+        result = scope['recover_initialization'](value);self.assertFalse(result['pending'])
+        foreign = scope['admission_fence'](self.project(2), 'prepare')
+        with self.assertRaises(ValueError):scope['recover_initialization'](value)
+        self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+
+    def test_initialization_recovery_syncs_the_registry_parent_before_releasing_its_fence(self):
+        value, _ = self.interrupted_initialization('fence')
+        sync_directory = scope['sync_directory']
+        def failed(path):
+            if path == os.path.dirname(scope['REGISTRY']):raise OSError('injected registry parent sync failure')
+            return sync_directory(path)
+        with patch.dict(scope, {'sync_directory': failed}):
+            with self.assertRaises(OSError):scope['recover_initialization'](value)
+        self.assertTrue((pathlib.Path(scope['REGISTRY']) / 'initialization.recovered.json').exists())
+        self.assertTrue((pathlib.Path(scope['REGISTRY']) / 'operation.pending.json').exists())
+        self.assertFalse(scope['recover_initialization'](value)['pending'])
+
+    def test_initialization_recovery_cannot_reset_a_budget_after_its_first_reservation(self):
+        value, _ = self.interrupted_initialization('fence')
+        scope['recover_initialization'](value)
+        project = {**value, 'project': 'fogd-preview-' + 'a' * 32}
+        project['directory'] = value['root'] + '/' + project['project']
+        scope['prepare_admitted'](project, lambda value: {'metadataFixtureOnly': True})
+        before = scope['admission_status'](value)
+        with self.assertRaises(ValueError):scope['recover_initialization'](value)
+        self.assertEqual(scope['admission_status'](value), before)
+        self.assertEqual(before['heldProjects'], 1)
+
+    def test_interrupted_initialization_recovery_before_acknowledgment_needs_a_new_snapshot(self):
+        value, _ = self.interrupted_initialization('fence')
+        append = scope['append']
+        def interrupted(path, record):
+            if path.endswith('/initialization.recovered.json'):raise RuntimeError('injected result loss before acknowledgment')
+            return append(path, record)
+        with patch.dict(scope, {'append': interrupted}):
+            with self.assertRaises(RuntimeError):scope['recover_initialization'](value)
+        with self.assertRaises(ValueError):scope['recover_initialization'](value)
+        value['registrySha256'] = scope['initialization_sha256'](scope['inspect_initialization'](value))
+        self.assertFalse(scope['recover_initialization'](value)['pending'])
 
     def test_byte_and_inode_headroom_boundaries(self):
         space = {'availableBytes': scope['CHARGE_BYTES'] + scope['HEADROOM_BYTES'],
@@ -884,7 +1001,7 @@ scope['append'](bundle['path'],bundle['value'])
         script = "import json,sys;payload=json.load(sys.stdin);s={'__name__':'owned_test'};exec(chr(10).join(payload['sources']),s);s['REGISTRY']=payload['registry']\nwith s['admission_lock']() as fd:s['run_locked']({'_lockFd':fd},[sys.executable,'-c',payload['helper'],payload['ready'],payload['release'],str(fd)])"
         worker = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']],
+        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'initialization', 'host']],
                   'registry': scope['REGISTRY'], 'helper': helper, 'ready': ready, 'release': release}
         worker.stdin.write(json.dumps(bundle)); worker.stdin.close()
         try:

@@ -617,9 +617,51 @@ Older unadmitted QA storage remains available for historical inspection and owne
 controls. New plans require an admitted storage receipt. This remains an internal
 host API; public provisioning and launch commands are unavailable. Unrelated host
 writers and hypervisor storage are outside this budget, and a space observation
-is not a storage-health guarantee. Interrupted initialization, incomplete recovery
+is not a storage-health guarantee. Corrupt initialization metadata, incomplete recovery
 sequences, writable application restoration and ordinary preview acceptance remain
 open; default cron admission remains closed.
+
+### Recover unused admission initialization
+
+An interrupted first initialization can leave a private registry before its policy
+and empty holds directory are complete. The owner can inspect that state through
+the [admission API](../packages/cli/src/preview/storage-admission.mjs):
+
+```js
+const input = { root, engineId, runHost };
+const inspected = await inspectPreviewStorageAdmissionInitialization(input);
+const status = await recoverPreviewStorageAdmissionInitialization(input, {
+  maxProjects: expectedUnusedProjectLimit,
+  registrySha256: inspected.sha256,
+});
+```
+
+Review the returned state and preserve its fingerprint with the selected limit in
+private owner records. Recovery requires the same registry/root identities, an
+empty managed root, no reservations and exclusive registry ownership. It refuses
+unknown registry entries, foreign fences and malformed published policies. An
+existing policy keeps its bytes, identity, profile ID and configured limit. If no
+policy was published, the explicit limit selects the new policy.
+
+Recovery completes missing initialization metadata and appends
+`initialization.recovered.json`, binding the reviewed state, resulting policy and
+original initialization fence. It syncs the registry's parent before releasing
+only that fence. It creates no preview filesystem or application resources and
+cannot reset a used budget.
+
+A completed recovery can repeat with the original fingerprint and limit, including
+after a lost response. If recovery stops before writing its acknowledgment,
+inspect and review the new state before retrying. Published policy and hold
+identities remain preserved. A malformed acknowledgment refuses recovery.
+
+The [initialization-recovery qualification](evidence/operator-preview-storage-initialization-recovery.json)
+covers owned process loss after registry, fence, holds and policy creation, plus
+loss after the recovery acknowledgment. Five isolated unused registries exercise
+the final source. Independent raw reads verify identities, policy bytes, original
+snapshot/fence bindings and empty roots/holds. The real QA budget and application
+data remain unchanged. This qualifies metadata recovery after process loss;
+power-loss consistency, corrupt-record repair and application restoration remain
+separate gates. Public launch and default cron admission stay closed.
 
 ### Record publication and interrupted sequences
 
@@ -642,8 +684,8 @@ and fails the same absence check. Independent reads verify the resulting files
 and unchanged QA data, loops, mounts and real admission registry.
 
 Individual record publication is not a transaction across records. Interruption
-between the global fence and its intent, or during registry initialization, can
-still leave an incomplete sequence. Keep its records and resources for explicit
+between the global recovery fence and its intent can still leave an incomplete
+sequence. Unused admission initialization has the explicit recovery path above. Keep its records and resources for explicit
 recovery; never repeat uncertain provisioning. The qualification covers process
 loss and injected sync errors, not power-loss durability or application consistency.
 

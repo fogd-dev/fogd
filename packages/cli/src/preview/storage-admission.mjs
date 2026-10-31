@@ -1,6 +1,6 @@
 import { isDeepStrictEqual } from 'node:util';
 import { posix } from 'node:path';
-import { uuid, digest } from '../build-cache/paths.mjs';
+import { uuid, digest, hash, jsonBytes } from '../build-cache/paths.mjs';
 import { executionKeys } from './execution-shape.mjs';
 import { previewStorageAdmissionOperation, previewStorageBytes, previewStorageChargeBytes } from './storage.mjs';
 
@@ -68,6 +68,44 @@ export function initializePreviewStorageAdmission(input, { maxProjects = 4 } = {
   return operation(input, { ...target, maxProjects });
 }
 export function inspectPreviewStorageAdmission(input) { return operation(input, request(input, 'admission')); }
+
+function initializationIdentity(value) {
+  executionKeys(value, ['device', 'inode']);
+  if (!positiveIdentity(value)) fail();
+}
+function initializationEntry(name, value) {
+  initializationIdentity(value.identity);
+  if (name === 'holds') {
+    executionKeys(value, ['kind', 'identity', 'empty']);
+    if (value.kind !== 'directory' || value.empty !== true) fail();
+  } else {
+    executionKeys(value, ['kind', 'identity', 'sha256', 'bytes']);
+    if (!['policy.json', 'operation.pending.json', 'initialization.recovered.json'].includes(name) ||
+      value.kind !== 'file' || !digest(value.sha256) || !counter(value.bytes) || value.bytes > 65536) fail();
+  }
+}
+function initializationState(value, target) {
+  executionKeys(value, ['schema', 'kind', 'engineId', 'root', 'rootIdentity', 'registryIdentity', 'entries', 'rootEmpty', 'resourcesRetained', 'executionAuthorized']);
+  if (value.schema !== 1 || value.kind !== 'fogd-preview-storage-initialization-state' || value.engineId !== target.engineId || value.root !== target.root ||
+    value.rootEmpty !== true || value.resourcesRetained !== true || value.executionAuthorized !== false ||
+    !value.entries || typeof value.entries !== 'object' || Array.isArray(value.entries)) fail();
+  initializationIdentity(value.rootIdentity); initializationIdentity(value.registryIdentity);
+  for (const [name, entry] of Object.entries(value.entries)) initializationEntry(name, entry);
+  return structuredClone(value);
+}
+export async function inspectPreviewStorageAdmissionInitialization(input) {
+  try {
+    const target = request(input, 'inspect-initialization');
+    const initialization = initializationState(await previewStorageAdmissionOperation(input, target), target);
+    return { initialization, sha256: hash(jsonBytes(initialization)), resourcesRetained: true, executionAuthorized: false, ordinaryEnrollment: false };
+  } catch { fail(); }
+}
+export async function recoverPreviewStorageAdmissionInitialization(input, { maxProjects, registrySha256 } = {}) {
+  if (!Number.isInteger(maxProjects) || maxProjects < 1 || maxProjects > 16 || !digest(registrySha256)) fail();
+  const report = await operation(input, { ...request(input, 'recover-initialization'), maxProjects, registrySha256 });
+  if (report.heldProjects !== 0 || report.quarantinedProjects !== 0 || report.pending) fail();
+  return report;
+}
 
 async function quarantineOperation(input, target) {
   if (!uuid(target.operation) || !/^fogd-preview-[a-f0-9]{32}$/.test(target.project || '')) fail();

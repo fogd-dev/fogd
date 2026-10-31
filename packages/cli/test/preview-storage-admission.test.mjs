@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage, repairPreviewStorageHold } from '../src/preview/storage-admission.mjs';
+import { initializePreviewStorageAdmission, inspectPreviewStorageAdmission, quarantinePreviewStorage, repairPreviewStorageHold, inspectPreviewStorageAdmissionInitialization, recoverPreviewStorageAdmissionInitialization } from '../src/preview/storage-admission.mjs';
 import { preparePreviewStorage, previewStorageBytes, previewStorageChargeBytes } from '../src/preview/storage.mjs';
 import { createPreviewPlan, validatePreviewPlan } from '../src/preview/plan.mjs';
 import { previewPlanFixture } from './fixtures/preview-plan.mjs';
@@ -72,4 +72,23 @@ test('hold repair requires an explicit valid fingerprint before contacting the h
 test('hold repair cannot acknowledge another operation or silently retry unknown effects',async()=>{
  const value=quarantinedReport(),row=value.quarantines[0];let calls=0;await assert.rejects(repairPreviewStorageHold({...input,project:row.project,runHost:async()=>{calls++;throw Error('private diagnostic')}},{operation:row.operation,holdSha256:null}),refused);assert.equal(calls,1);
  await assert.rejects(repairPreviewStorageHold({...input,project:row.project,runHost:async()=>JSON.stringify({ok:true,admission:value})},{operation:'00000000-0000-4000-8000-000000000009',holdSha256:null}),refused);
+});
+
+
+function initializationReport() {
+ return {engineId:input.engineId,entries:{},executionAuthorized:false,kind:'fogd-preview-storage-initialization-state',registryIdentity:{device:2,inode:3},resourcesRetained:true,root:input.root,rootEmpty:true,rootIdentity:{device:1,inode:2},schema:1};
+}
+test('unused initialization inspection binds an explicit recovery fingerprint without execution authority',async()=>{
+ const calls=[],value=initializationReport(),runHost=async(args,options)=>{calls.push(JSON.parse(options.inputText));return JSON.stringify({ok:true,...(calls.at(-1).action==='inspect-initialization'?{initialization:value}:{admission:report()})})};
+ const inspected=await inspectPreviewStorageAdmissionInitialization({...input,runHost});assert.equal(inspected.sha256,hash(jsonBytes(value)));assert.equal(inspected.executionAuthorized,false);assert.equal(inspected.ordinaryEnrollment,false);
+ const recovered=await recoverPreviewStorageAdmissionInitialization({...input,runHost},{maxProjects:2,registrySha256:inspected.sha256});assert.equal(recovered.heldProjects,0);assert.equal(recovered.pending,false);
+ assert.deepEqual(calls,[{action:'inspect-initialization',...input},{action:'recover-initialization',...input,maxProjects:2,registrySha256:inspected.sha256}]);
+});
+test('initialization recovery requires an explicit limit and valid snapshot digest before host execution',async()=>{
+ let calls=0;const runHost=async()=>{calls++};for(const options of [{},{maxProjects:2},{maxProjects:0,registrySha256:'a'.repeat(64)},{maxProjects:2,registrySha256:'bad'}])await assert.rejects(recoverPreviewStorageAdmissionInitialization({...input,runHost},options),refused);assert.equal(calls,0);
+});
+test('initialization inspection refuses foreign targets, nonempty holds and unknown registry members',async()=>{
+ for(const change of [x=>x.engineId='other',x=>x.rootEmpty=false,x=>x.entries.holds={kind:'directory',identity:{device:2,inode:4},empty:false},x=>x.entries.unknown={kind:'file',identity:{device:2,inode:4},bytes:1,sha256:'a'.repeat(64)}]){
+  const value=initializationReport();change(value);await assert.rejects(inspectPreviewStorageAdmissionInitialization({...input,runHost:async()=>JSON.stringify({ok:true,initialization:value})}),refused);
+ }
 });

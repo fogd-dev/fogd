@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-initialization-recovery-qualification",
+  "testedBaseCommit": "0a8f5c6e6286612fec997a8702198dec09ea6f55",
+  "scope": "Explicit recovery of unused admission initialization after owned process loss on Linux ARM64. Five final-source isolated metadata registries on the existing Docker backing ext4; no real-registry budget reset, preview filesystem or application provisioning.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+    "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+    "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+    "packages/cli/src/preview/storage/hold-repair.py": "baafc0e98d204abb2f37a25af0fc28f6d3e8513f3d16ca831c47874bf5e6402d",
+    "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+    "packages/cli/src/preview/storage/readonly-recovery.py": "a8e4f321e492f7596f4228569f40d1e73d8a751016d5da24a8d6de7c5c4b6eaf",
+    "packages/cli/src/preview/storage/initialization.py": "f78db0dd5cd805aeffe93338ac1f36dc5c1063cf5178669e26841d15ea30692a",
+    "packages/cli/src/preview/storage/host.py": "b57c9c503e7b95c8de4be7bef33792a3bd40df1bd4ec9fe0407c833555e61678",
+    "packages/cli/src/preview/storage.mjs": "7a560cd0d01d76e097f117aa2f9721015372613532a6f48e3eb593d8715abcc5",
+    "packages/cli/src/preview/storage-admission.mjs": "bf437717551de03fab69bba6abe37ad88f451e91e00939e9dacb345b76cc33a7",
+    "packages/cli/src/distribution/manifest.mjs": "a7d7ccd5c9afabca2b0e11783c41d4b6bf6457f9dc0b99dca792a7e363289202",
+    "packages/cli/test/preview-storage-admission-host.py": "df424ee3040dbc7718698d637c946c8368987c704bdf279a01c68c1a25133edd",
+    "packages/cli/test/preview-storage-admission.test.mjs": "e3b9d6ee04e67c22dc2691588221e600fb6eef7758f526bd6a34b8f315a057f9"
+  },
+  "native": {
+    "passed": true,
+    "scope": "Owned interrupted initialization and recovery metadata on the existing Linux ARM64 Docker backing ext4. Five isolated registries and unused roots; real engine registry, storage images and application resources unchanged. No new preview filesystem or application provisioning.",
+    "initializationProcessKillBoundaries": 4,
+    "recoveryAcknowledgmentProcessLoss": true,
+    "wrongSnapshotRefused": true,
+    "publishedLimitChangeRefused": true,
+    "originalPolicyAndHoldsIdentitiesRetained": true,
+    "repeatedRecoveryAndStatusStable": true,
+    "realRegistryImageDataBootLoopAndMountUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true,
+    "allQualificationRecordsRetained": true,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "host": {
+      "passed": true,
+      "readOnly": true,
+      "cases": [
+        {
+          "name": "registry",
+          "passed": true,
+          "emptyRootAndHoldsVerified": true,
+          "sameDockerBackingExt4Verified": true,
+          "originalRegistryAndRootIdentitiesRetained": true,
+          "policySourceAndOriginalSnapshotBindingsVerified": true,
+          "originalFenceBindingVerified": true,
+          "noPendingFence": true,
+          "heldProjects": 0,
+          "remainingProjects": 2
+        },
+        {
+          "name": "fence",
+          "passed": true,
+          "emptyRootAndHoldsVerified": true,
+          "sameDockerBackingExt4Verified": true,
+          "originalRegistryAndRootIdentitiesRetained": true,
+          "policySourceAndOriginalSnapshotBindingsVerified": true,
+          "originalFenceBindingVerified": true,
+          "noPendingFence": true,
+          "heldProjects": 0,
+          "remainingProjects": 2
+        },
+        {
+          "name": "holds",
+          "passed": true,
+          "emptyRootAndHoldsVerified": true,
+          "sameDockerBackingExt4Verified": true,
+          "originalRegistryAndRootIdentitiesRetained": true,
+          "policySourceAndOriginalSnapshotBindingsVerified": true,
+          "originalFenceBindingVerified": true,
+          "noPendingFence": true,
+          "heldProjects": 0,
+          "remainingProjects": 2
+        },
+        {
+          "name": "policy",
+          "passed": true,
+          "emptyRootAndHoldsVerified": true,
+          "sameDockerBackingExt4Verified": true,
+          "originalRegistryAndRootIdentitiesRetained": true,
+          "policySourceAndOriginalSnapshotBindingsVerified": true,
+          "originalFenceBindingVerified": true,
+          "noPendingFence": true,
+          "heldProjects": 0,
+          "remainingProjects": 2
+        },
+        {
+          "name": "acknowledgment",
+          "passed": true,
+          "emptyRootAndHoldsVerified": true,
+          "sameDockerBackingExt4Verified": true,
+          "originalRegistryAndRootIdentitiesRetained": true,
+          "policySourceAndOriginalSnapshotBindingsVerified": true,
+          "originalFenceBindingVerified": true,
+          "noPendingFence": true,
+          "heldProjects": 0,
+          "remainingProjects": 2
+        }
+      ],
+      "caseCount": 5,
+      "metadataOnly": true,
+      "noBudgetResetOrApplicationProvisioningClaim": true
+    },
+    "sourceFiles": {
+      "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+      "packages/cli/src/preview/storage/hold-repair.py": "baafc0e98d204abb2f37a25af0fc28f6d3e8513f3d16ca831c47874bf5e6402d",
+      "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+      "packages/cli/src/preview/storage/readonly-recovery.py": "a8e4f321e492f7596f4228569f40d1e73d8a751016d5da24a8d6de7c5c4b6eaf",
+      "packages/cli/src/preview/storage/initialization.py": "f78db0dd5cd805aeffe93338ac1f36dc5c1063cf5178669e26841d15ea30692a",
+      "packages/cli/src/preview/storage/host.py": "b57c9c503e7b95c8de4be7bef33792a3bd40df1bd4ec9fe0407c833555e61678",
+      "packages/cli/src/preview/storage.mjs": "7a560cd0d01d76e097f117aa2f9721015372613532a6f48e3eb593d8715abcc5",
+      "packages/cli/src/preview/storage-admission.mjs": "bf437717551de03fab69bba6abe37ad88f451e91e00939e9dacb345b76cc33a7",
+      "packages/cli/src/distribution/manifest.mjs": "a7d7ccd5c9afabca2b0e11783c41d4b6bf6457f9dc0b99dca792a7e363289202",
+      "packages/cli/test/preview-storage-admission-host.py": "df424ee3040dbc7718698d637c946c8368987c704bdf279a01c68c1a25133edd",
+      "packages/cli/test/preview-storage-admission.test.mjs": "e3b9d6ee04e67c22dc2691588221e600fb6eef7758f526bd6a34b8f315a057f9"
+    },
+    "currentArchivedSourcesAndAssembledWorkerVerified": true,
+    "realQaRegistryImageDataBootLoopAndMountUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true
+  },
+  "checks": {
+    "storageNodeTests": {
+      "tests": 80,
+      "passed": 80,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "linuxHostCases": {
+      "tests": 67,
+      "passed": 67,
+      "failures": 0,
+      "errors": 0,
+      "terminalExitCode": 0
+    },
+    "fullNodeSuite": {
+      "tests": 3545,
+      "pass": 3545,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "terminalExitCode": 0
+    },
+    "syntax": "passed",
+    "qualityGate": "passed",
+    "standardsSelfReview": "PASS",
+    "writing": "passed",
+    "supersededTrial": "Earlier source trial and regression run were superseded after review added registry-parent syncing. Earlier QA metadata remains retained; only the distinct final-source trial is accepted here.",
+    "independentAuditTransport": "Read-only audit source sent over stdin after an SSH transport-size failure; final audit completed successfully."
+  },
+  "retention": {
+    "finalSourceMetadataRegistries": 5,
+    "earlierSourceMetadataRegistriesRetained": 5,
+    "allQualificationMetadataRetained": true,
+    "realQaEngineRegistryAndDataUnchanged": true,
+    "realQaImageLoopMountAndBootUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true
+  },
+  "remainingGates": [
+    "Corrupt initialization policy or recovery acknowledgment repair",
+    "Damaged recovery intents and partial recovery completion repair acknowledgments",
+    "Power-loss/crash and open database/WAL consistency",
+    "Writable application restoration",
+    "Public preview provisioning/launch and complete browser acceptance"
+  ],
+  "executionAuthorized": false,
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed"
+}

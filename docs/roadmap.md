@@ -106,8 +106,12 @@ verified read-only view under its original fence. Storage records now use synced
 anonymous-file publication with create-only linking; native process-interruption
 checks expose either no destination or a complete record, with no named staging
 files. This prevents partial publication but does not complete interrupted
-multi-record sequences. Damaged intents, partial repair acknowledgments and
-initialization repair, application data restoration, browser
+multi-record sequences. Explicit unused-initialization recovery now binds a
+reviewed registry fingerprint, preserves a published policy and finishes missing
+metadata without resetting a used budget. Native process-loss checks and separate
+raw audits cover registry/fence/holds/policy boundaries and a lost recovery
+acknowledgment. Corrupt initialization records, damaged recovery intents, partial
+repair acknowledgments, application data restoration, browser
 withdrawal controls, public launch and complete preview/browser acceptance remain
 open. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
 now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,

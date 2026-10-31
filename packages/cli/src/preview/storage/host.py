@@ -10,6 +10,7 @@ BYTES = 1024 ** 3
 ROLES = ['minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'controller',
          'controller-trust', 'controller-input', 'gateway-trust', 'gateway-input',
          'ingress-trust', 'ingress-input']
+ADMISSION_ACTIONS = ['initialize', 'admission', 'inspect-initialization', 'recover-initialization']
 READONLY_ACTIONS = ['recover-readonly', 'inspect-readonly', 'reconcile-readonly', 'repair-readonly']
 ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LC_ALL': 'C'}
 
@@ -90,6 +91,13 @@ def read_bytes(path):
         os.close(fd)
 
 
+def record_source(path):
+    expected = identity(path)
+    data = read_bytes(path)
+    require(identity(path) == expected)
+    return {'sha256': hashlib.sha256(data).hexdigest(), 'identity': expected, 'bytes': len(data)}
+
+
 def read(path):
     data = read_bytes(path)
     value = json.loads(data)
@@ -98,6 +106,8 @@ def read(path):
 
 
 def checked_operation_options(value):
+    if value['action'] == 'recover-initialization':
+        require(isinstance(value['registrySha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['registrySha256']))
     if value['action'] in ['reconcile', 'quarantine', 'repair-hold']:
         require(str(uuid.UUID(value['operation'])) == value['operation'])
     if value['action'] in READONLY_ACTIONS:
@@ -111,14 +121,14 @@ def checked_operation_options(value):
 
 def request(value):
     require(isinstance(value, dict))
-    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}, 'recover-readonly': {'project', 'storageSha256', 'recoveryId'}, 'inspect-readonly': {'project', 'storageSha256', 'recoveryId'}, 'reconcile-readonly': {'project', 'storageSha256', 'recoveryId'}, 'repair-readonly': {'project', 'storageSha256', 'recoveryId', 'completionSha256'}}
+    fields = {'inspect-initialization': set(), 'recover-initialization': {'maxProjects', 'registrySha256'}, 'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}, 'recover-readonly': {'project', 'storageSha256', 'recoveryId'}, 'inspect-readonly': {'project', 'storageSha256', 'recoveryId'}, 'reconcile-readonly': {'project', 'storageSha256', 'recoveryId'}, 'repair-readonly': {'project', 'storageSha256', 'recoveryId', 'completionSha256'}}
     expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
     require(set(value) == expected)
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold'] + READONLY_ACTIONS)
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'reconcile', 'quarantine', 'repair-hold'] + ADMISSION_ACTIONS + READONLY_ACTIONS)
     checked_operation_options(value)
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
-    if value['action'] not in ['initialize', 'admission']:
+    if value['action'] not in ADMISSION_ACTIONS:
         require(isinstance(value['project'], str) and re.fullmatch(r'fogd-preview-[a-f0-9]{32}', value['project']))
     require(isinstance(value['engineId'], str) and re.fullmatch(r'[^\x00-\x20\x7f]{1,256}', value['engineId']))
     require(sys.platform == 'linux' and os.geteuid() == 0)
@@ -128,7 +138,7 @@ def request(value):
     backing = json.loads(run(['findmnt', '--json', '--target', value['root'], '--output', 'FSTYPE']))['filesystems']
     require(len(backing) == 1 and backing[0]['fstype'] == 'ext4')
     value = {**value, 'rootIdentity': root, 'dockerDevice': os.stat(engine['DockerRootDir']).st_dev}
-    if value['action'] in ['initialize', 'admission']:
+    if value['action'] in ADMISSION_ACTIONS:
         return value
     project = value['project']
     return {**value, 'directory': value['root'] + '/' + project,
@@ -301,9 +311,13 @@ def main():
         data = sys.stdin.buffer.read(4097)
         require(len(data) <= 4096)
         value = request(json.loads(data))
-        if value['action'] in ['initialize', 'admission']:
-            result = initialize_admission(value, value['maxProjects']) if value['action'] == 'initialize' else admission_status(value)
-            print(json.dumps({'ok': True, 'admission': result}, separators=(',', ':')))
+        if value['action'] in ADMISSION_ACTIONS:
+            handlers = {'initialize': lambda: initialize_admission(value, value['maxProjects']),
+                        'admission': lambda: admission_status(value),
+                        'inspect-initialization': lambda: inspect_initialization(value),
+                        'recover-initialization': lambda: recover_initialization(value)}
+            member = 'initialization' if value['action'] == 'inspect-initialization' else 'admission'
+            print(json.dumps({'ok': True, member: handlers[value['action']]()}, separators=(',', ':')))
             return
         if value['action'] in ['quarantine', 'repair-hold']:
             handler = {'quarantine': quarantine_storage, 'repair-hold': repair_storage_hold}[value['action']]

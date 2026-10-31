@@ -5,7 +5,7 @@ import { executionKeys } from './execution-shape.mjs';
 import { previewStorageBytes, checkedIdentity, checkedDisk, checkedAdmission, checkedLoop, checkedRoles, storageUuid } from './storage-shape.mjs';
 export { previewStorageBytes, previewStorageChargeBytes } from './storage-shape.mjs';
 
-const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'hold-repair.py', 'recovery-writers.py', 'readonly-recovery.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
+const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'hold-repair.py', 'recovery-writers.py', 'readonly-recovery.py', 'initialization.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
 export const previewStorageWorkerSha256 = hash(worker);
 const refuse = (reason = 'uncertain') => {
   const error = new Error('Preview storage refused; retain its files, devices and mounts; do not retry provisioning');
@@ -85,8 +85,8 @@ export function validatePreviewStorageReceipt(value, { project, engineId }) {
 }
 
 export function previewStorageAdmissionOperation(input, request) {
-  if (!['initialize', 'admission', 'quarantine', 'repair-hold'].includes(request?.action)) refuse();
-  return hostReply(input, request, 'admission');
+  if (!['initialize', 'admission', 'quarantine', 'repair-hold', 'inspect-initialization', 'recover-initialization'].includes(request?.action)) refuse();
+  return hostReply(input, request, request.action === 'inspect-initialization' ? 'initialization' : 'admission');
 }
 
 export function previewStorageRecoveryOperation(input, action, options) {

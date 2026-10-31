@@ -85,10 +85,7 @@ def readonly_pending(value):
 
 def readonly_completion_source(value):
     path = value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json'
-    expected = identity(path)
-    data = read_bytes(path)
-    require(identity(path) == expected)
-    return {'sha256': hashlib.sha256(data).hexdigest(), 'identity': expected, 'bytes': len(data)}
+    return record_source(path)
 
 
 def readonly_completion(value):
