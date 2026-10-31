@@ -2,9 +2,9 @@
 import hashlib
 
 
-def checked_prepare_fence(value, fence):
+def checked_storage_operation(value, fence, action='prepare'):
     require(set(fence) == {'schema', 'operation', 'action', 'project', 'engineId', 'root'})
-    require(fence == {'schema': 1, 'operation': value['operation'], 'action': 'prepare',
+    require(fence == {'schema': 1, 'operation': value['operation'], 'action': action,
                       'project': value['project'], 'engineId': value['engineId'], 'root': value['root']})
 
 
@@ -42,11 +42,11 @@ def recovery_records(value, receipt_path):
     return previous, fence
 
 
-def checked_recovery_fence(value, fence):
+def checked_recovery_fence(value, fence, action='prepare'):
     require(set(fence) == {'record', 'identity', 'path'} and fence['path'] == REGISTRY + '/operation.pending.json')
     require(set(fence['identity']) == {'device', 'inode'})
     require(all(type(v) is int and v > 0 for v in fence['identity'].values()))
-    checked_prepare_fence(value, fence['record'])
+    checked_storage_operation(value, fence['record'], action)
 
 
 def finish_storage_recovery(receipt_path, receipt, previous, fence):

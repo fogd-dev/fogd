@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import { posix } from 'node:path';
-import { hash, jsonBytes, uuid } from '../build-cache/paths.mjs';
+import { hash, jsonBytes, uuid, digest } from '../build-cache/paths.mjs';
 import { executionKeys } from './execution-shape.mjs';
+import { previewStorageBytes, checkedIdentity, checkedDisk, checkedAdmission, checkedLoop, checkedRoles, storageUuid } from './storage-shape.mjs';
+export { previewStorageBytes, previewStorageChargeBytes } from './storage-shape.mjs';
 
-const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'hold-repair.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
-export const previewStorageBytes = 1024 ** 3;
-export const previewStorageChargeBytes = previewStorageBytes + 16 * 1024 ** 2;
+const worker = (await Promise.all(['admission.py', 'commands.py', 'reconciliation.py', 'hold-repair.py', 'recovery-writers.py', 'readonly-recovery.py', 'host.py'].map(name => readFile(new URL('./storage/' + name, import.meta.url), 'utf8')))).join('\n');
 export const previewStorageWorkerSha256 = hash(worker);
 const refuse = (reason = 'uncertain') => {
   const error = new Error('Preview storage refused; retain its files, devices and mounts; do not retry provisioning');
@@ -16,44 +16,17 @@ function checkedRequest({ root, project, engineId }, action) {
     !/^fogd-preview-[a-f0-9]{32}$/.test(project || '') || typeof engineId !== 'string' || !/^[^\x00-\x20\x7f]{1,256}$/.test(engineId)) refuse();
   return { action, root, project, engineId };
 }
-const roleNames = ['minio', 'slot-1-a', 'slot-1-b', 'slot-2-a', 'slot-2-b', 'controller',
-  'controller-trust', 'controller-input', 'gateway-trust', 'gateway-input', 'ingress-trust', 'ingress-input'];
-const counter = value => Number.isSafeInteger(value) && value > 0;
-function checkedIdentity(value) {
-  executionKeys(value, ['device', 'inode']);
-  if (!counter(value.device) || !counter(value.inode)) refuse();
-}
 function checkedStorage(value, request) {
   executionKeys(value, ['schema', 'kind', 'project', 'engineId', 'uuid', 'bytes', 'rootIdentity', 'directoryIdentity', 'disk', 'loop', 'mount', 'roles', ...(value.schema === 2 ? ['admission'] : [])]);
-  const directory = request.root + '/' + request.project, id = request.project.slice(13);
-  const uuid = [id.slice(0, 8), id.slice(8, 12), id.slice(12, 16), id.slice(16, 20), id.slice(20)].join('-');
+  const directory = request.root + '/' + request.project, uuid = storageUuid(request.project);
   if (![1, 2].includes(value.schema) || value.kind !== 'fogd-preview-storage' || value.project !== request.project || value.engineId !== request.engineId ||
     value.uuid !== uuid || value.bytes !== previewStorageBytes) refuse();
   if (value.schema === 2) checkedAdmission(value.admission, value.disk);
   checkedIdentity(value.rootIdentity); checkedIdentity(value.directoryIdentity);
   checkedDisk(value.disk);
   checkedLoop(value.loop, value.disk, directory); checkedMount(value.mount, value.loop, directory, uuid);
-  executionKeys(value.roles, roleNames);
-  for (const role of roleNames) checkedIdentity(value.roles[role]);
-  if (new Set(Object.values(value.roles).map(row => row.device)).size !== 1 ||
-    new Set(Object.values(value.roles).map(row => row.inode)).size !== roleNames.length) refuse();
+  checkedRoles(value.roles);
   return value;
-}
-function checkedDisk(value) {
-  executionKeys(value, ['device', 'inode', 'bytes', 'allocatedBytes']);
-  if (!counter(value.device) || !counter(value.inode) || value.bytes !== previewStorageBytes ||
-    !counter(value.allocatedBytes) || value.allocatedBytes < previewStorageBytes) refuse();
-}
-function checkedAdmission(value, disk) {
-  executionKeys(value, ['profileId', 'reservation', 'chargeBytes']);
-  if (![value.profileId, value.reservation].every(v => /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(v)) ||
-    value.chargeBytes !== previewStorageChargeBytes || disk.allocatedBytes > previewStorageChargeBytes) refuse();
-}
-function checkedLoop(value, disk, directory) {
-  executionKeys(value, ['name', 'back-file', 'back-ino', 'back-maj:min', 'maj:min', 'ro', 'autoclear', 'offset', 'sizelimit']);
-  if (!/^\/dev\/loop[0-9]+$/.test(value.name) || value['back-file'] !== directory + '/disk.img' || value['back-ino'] !== disk.inode ||
-    !/^[0-9]+:[0-9]+$/.test(value['back-maj:min']) || !/^7:[0-9]+$/.test(value['maj:min']) ||
-    value.ro !== false || value.autoclear !== false || value.offset !== 0 || value.sizelimit !== 0) refuse();
 }
 function checkedMount(value, loop, directory, uuid) {
   executionKeys(value, ['target', 'source', 'fstype', 'uuid', 'options', 'fsroot', 'maj:min']);
@@ -114,4 +87,10 @@ export function validatePreviewStorageReceipt(value, { project, engineId }) {
 export function previewStorageAdmissionOperation(input, request) {
   if (!['initialize', 'admission', 'quarantine', 'repair-hold'].includes(request?.action)) refuse();
   return hostReply(input, request, 'admission');
+}
+
+export function previewStorageRecoveryOperation(input, action, options) {
+  if (!['recover-readonly', 'inspect-readonly', 'reconcile-readonly'].includes(action) || !uuid(options?.recoveryId) || !digest(options?.storageSha256)) refuse();
+  const request = { ...checkedRequest(input, action), recoveryId: options.recoveryId, storageSha256: options.storageSha256 };
+  return hostReply(input, request, 'recovery');
 }

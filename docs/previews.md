@@ -528,8 +528,9 @@ directory. Inspection performs no provisioning or cleanup.
 
 The native check retains a marker and sampled file across a controlled
 unmount/remount. A missing mount, wrong engine or repeated provisioning request
-refuses. This does not qualify host-restart recovery, interrupted provisioning
-recovery, automatic reattachment or application consistency after disk exhaustion.
+refuses ordinary storage inspection. Explicit read-only recovery after controlled
+mount loss is described below. Host-restart recovery, automatic reattachment and
+application consistency after disk exhaustion remain unqualified.
 All filesystem images, devices, mounts, Docker volumes and containers remain
 retained. The component has no resize, delete or reclamation operation.
 
@@ -726,6 +727,69 @@ Its fixtures contain only metadata. The real engine registry, retained applicati
 storage and prior QA containers remain unchanged. Data and host recovery, partial
 repair-record recovery and public launch remain open; default cron admission
 remains closed.
+
+### Read retained data after mount loss
+
+An owner can recover a read-only view of a completed admitted filesystem after
+its mount is lost. The operation verifies the original storage receipt, actual
+backing file, filesystem UUID, retained reservation and role inodes. It never
+formats storage or starts application code. Quarantined storage can remain
+quarantined while its completed filesystem is read; damaged or incomplete storage
+without a verifiable completed manifest refuses recovery.
+
+The [recovery API](../packages/cli/src/preview/storage-recovery.mjs) uses the same
+independently selected privileged host transport:
+
+```js
+const options = {
+  recoveryId: ownerChosenUuid,
+  storageSha256: originalStorageReceipt.sha256,
+};
+const view = await recoverPreviewStorageReadOnly(
+  { root, project, engineId, runHost }, options,
+);
+```
+
+Preserve those options with the operation's private owner records. A successful
+view exposes the recovered path through `view.recovery.mount.target`; it is a
+recovery receipt, not a provisioning receipt or execution permission. Ordinary
+storage inspection refuses the read-only mount, and fresh preview startup cannot
+use it. Data promotion and application restoration require separate decisions.
+
+Before mounting, the worker refuses live or automatically restarting containers
+that reference the project, its backing file, loop device or bound local volumes.
+It also refuses live privileged/device-enabled containers and unknown volume
+plugins when a referencing container is live or configured to restart. Unrelated ordinary containers
+keep running. The registry lock and native-helper supervisor coordinate current
+fogd workers; these observations do not freeze other host administrators.
+
+Recovery retains an existing exact loop association, or attaches a read-only loop
+when none exists. It mounts with `ro,noload` and checks all host aliases for the
+same read-only filesystem root. The [Linux ext4 documentation](https://docs.kernel.org/admin-guide/ext4.html#options)
+explains why read-only access also needs journal replay disabled. Reusing an
+existing writable loop does not make that block device immutable; the recovered
+mount is read-only. Skipping journal replay does not establish application
+consistency or repair a damaged filesystem.
+
+Unknown effects retain the durable intent and global fence without replaying the
+mount. `inspectPreviewStorageRecovery` checks a recorded completed view.
+`reconcilePreviewStorageRecovery` explicitly verifies an existing read-only view
+and records completion without mounting it again. It cannot acknowledge a missing
+or invalid view, a partial intent, or another operation's fence. Repeating an
+acknowledged recovery checks the same records and view. A later mount-loss event
+needs a new owner-selected recovery UUID; it cannot bypass an unfinished earlier
+operation.
+
+The [read-only recovery qualification](evidence/operator-preview-storage-readonly-recovery.json)
+uses an unused QA filesystem with seeded data. It covers controlled mount loss,
+a known live-writer refusal before effects, an unrelated running peer, explicit
+reconciliation and a fresh recovery epoch. Independent reads verify unchanged
+backing-image bytes, original loop and role identities, retained charges and
+stable recovery records. All QA containers remain stopped and retained after the
+trial. The native trial reuses the existing loop; a missing-loop attachment has
+unit coverage. Actual host restart, application consistency, data restoration and
+partial recovery-record repair remain open. Public launch and default cron
+admission remain closed.
 
 For changes to the privileged admission worker, run its metadata and failure
 regressions on an owned Linux test host with a source checkout:

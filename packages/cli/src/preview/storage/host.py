@@ -78,12 +78,15 @@ def read(path):
 
 def request(value):
     require(isinstance(value, dict))
-    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}}
+    fields = {'initialize': {'maxProjects'}, 'admission': set(), 'reconcile': {'project', 'operation'}, 'quarantine': {'project', 'operation'}, 'repair-hold': {'project', 'operation', 'holdSha256'}, 'recover-readonly': {'project', 'storageSha256', 'recoveryId'}, 'inspect-readonly': {'project', 'storageSha256', 'recoveryId'}, 'reconcile-readonly': {'project', 'storageSha256', 'recoveryId'}}
     expected = {'action', 'root', 'engineId'} | fields.get(value.get('action'), {'project'})
     require(set(value) == expected)
-    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold'])
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed', 'initialize', 'admission', 'reconcile', 'quarantine', 'repair-hold', 'recover-readonly', 'inspect-readonly', 'reconcile-readonly'])
     if value['action'] in ['reconcile', 'quarantine', 'repair-hold']:
         require(str(uuid.UUID(value['operation'])) == value['operation'])
+    if value['action'] in ['recover-readonly', 'inspect-readonly', 'reconcile-readonly']:
+        require(str(uuid.UUID(value['recoveryId'])) == value['recoveryId'])
+        require(isinstance(value['storageSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['storageSha256']))
     if value['action'] == 'repair-hold':
         require(value['holdSha256'] is None or isinstance(value['holdSha256'], str) and re.fullmatch(r'[a-f0-9]{64}', value['holdSha256']))
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
@@ -124,17 +127,24 @@ def disk_state(value):
     return {**result, 'bytes': info.st_size, 'allocatedBytes': info.st_blocks * 512}
 
 
+LOOP_FIELDS = 'NAME,BACK-FILE,BACK-INO,BACK-MAJ:MIN,MAJ:MIN,RO,AUTOCLEAR,OFFSET,SIZELIMIT'
+
+
 def loop_state(value, device):
     require(isinstance(device, str) and re.fullmatch(r'/dev/loop[0-9]+', device))
-    rows = json.loads(run(['losetup', '--json', '--list', '--output',
-                          'NAME,BACK-FILE,BACK-INO,BACK-MAJ:MIN,MAJ:MIN,RO,AUTOCLEAR,OFFSET,SIZELIMIT', device]))['loopdevices']
-    require(len(rows) == 1)
-    row = rows[0]
+    rows = json.loads(run(['losetup', '--json', '--list', '--output', LOOP_FIELDS, device]))['loopdevices']
+    require(len(rows) == 1 and rows[0]['name'] == device)
+    return checked_loop_binding(value, rows[0], False)
+
+
+def checked_loop_binding(value, row, read_only=None):
+    device = row['name']
+    require(isinstance(device, str) and re.fullmatch(r'/dev/loop[0-9]+', device))
     info = os.lstat(paths(value)[0])
     require(row['name'] == device and row['back-file'] == paths(value)[0]
             and int(row['back-ino']) == info.st_ino
             and row['back-maj:min'] == f'{os.major(info.st_dev)}:{os.minor(info.st_dev)}'
-            and not row['ro'] and not row['autoclear'] and row['offset'] == 0 and row['sizelimit'] == 0)
+            and type(row['ro']) is bool and (read_only is None or row['ro'] == read_only) and not row['autoclear'] and row['offset'] == 0 and row['sizelimit'] == 0)
     return row
 
 
@@ -161,7 +171,7 @@ def marker(value):
             'engineId': value['engineId'], 'uuid': value['uuid'], 'bytes': BYTES}
 
 
-def inspect(value):
+def storage_origin(value):
     bound(value)
     directory = value['directory']
     complete = read(directory + '/storage.complete.json')
@@ -169,17 +179,11 @@ def inspect(value):
                              'rootIdentity', 'directoryIdentity', 'disk', 'loop', 'mount', 'roles'} | ({'admission'} if complete['schema'] == 2 else set()))
     require(complete['schema'] in [1, 2])
     value = {**value, 'schema': complete['schema'], **({'admission': complete['admission']} if complete['schema'] == 2 else {})}
-    if complete['schema'] == 2:
-        admission_entry(value)
     require({key: complete[key] for key in marker(value)} == marker(value))
     require(complete['rootIdentity'] == value['rootIdentity']
             and complete['directoryIdentity'] == identity(directory, True))
     current = disk_state(value)
     require(current['device'] == complete['disk']['device'] and current['inode'] == complete['disk']['inode'])
-    require(loop_state(value, complete['loop']['name']) == complete['loop'])
-    require(mounted_state(value, complete['loop']['name']) == complete['mount'])
-    mount = paths(value)[1]
-    require(read(mount + '/.fogd-preview-storage.json') == marker(value))
     require(read(directory + '/storage.pending.json') == marker(value))
     require(read(directory + '/storage.attached.json') == complete['loop'])
     require(read(directory + '/storage.mounted.json') == complete['mount'])
@@ -189,8 +193,25 @@ def inspect(value):
         require(step['device'] == current['device'] and step['inode'] == current['inode']
                 and step['bytes'] == BYTES and step['allocatedBytes'] >= BYTES)
     require(set(complete['roles']) == set(ROLES))
-    for role in ROLES:
-        require(identity(mount + '/' + role, True) == complete['roles'][role])
+    return value, complete
+
+
+def storage_roles(value, complete):
+    mount = paths(value)[1]
+    require(read(mount + '/.fogd-preview-storage.json') == marker(value))
+    roles = {role: identity(mount + '/' + role, True) for role in ROLES}
+    require(all(row['inode'] == complete['roles'][role]['inode'] for role, row in roles.items()))
+    require(all(row['device'] == os.stat(mount).st_dev for row in roles.values()))
+    return roles
+
+
+def inspect(value):
+    value, complete = storage_origin(value)
+    if complete['schema'] == 2:
+        admission_entry(value)
+    require(loop_state(value, complete['loop']['name']) == complete['loop'])
+    require(mounted_state(value, complete['loop']['name']) == complete['mount'])
+    require(storage_roles(value, complete) == complete['roles'])
     return complete
 
 
@@ -260,6 +281,11 @@ def main():
         if value['action'] in ['quarantine', 'repair-hold']:
             handler = {'quarantine': quarantine_storage, 'repair-hold': repair_storage_hold}[value['action']]
             print(json.dumps({'ok': True, 'admission': handler(value)}, separators=(',', ':')))
+            return
+        if value['action'] in ['recover-readonly', 'inspect-readonly', 'reconcile-readonly']:
+            handler = {'recover-readonly': recover_readonly_storage, 'inspect-readonly': inspect_readonly_storage, 'reconcile-readonly': reconcile_readonly_storage}[value['action']]
+            result = handler(value)
+            print(json.dumps({'ok': True, 'recovery': result}, separators=(',', ':')))
             return
         handlers = {'prepare': lambda: prepare_admitted(value, prepare),
                     'reconcile': lambda: reconcile_storage(value)}

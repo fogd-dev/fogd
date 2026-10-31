@@ -182,7 +182,7 @@ def admission_entry(value):
         if fence['project'] == value['project']:
             require(value.get('action') in ['prepare', 'reconcile'])
             operation = value.get('_operation') if value['action'] == 'prepare' else value.get('operation')
-            checked_prepare_fence({**value, 'operation': operation}, fence)
+            checked_storage_operation({**value, 'operation': operation}, fence)
     require(value['admission'] == {'profileId': policy['id'], 'reservation': row['reservation'], 'chargeBytes': CHARGE_BYTES})
 
 

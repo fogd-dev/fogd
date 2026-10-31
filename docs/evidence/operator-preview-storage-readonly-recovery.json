@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-readonly-recovery-qualification",
+  "scope": "Explicit read-only data access after controlled mount loss, known live-writer refusal, unrelated live peer and completion reconciliation without mount replay. No application consistency, writable restore or host reboot qualification.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/distribution/manifest.mjs": "ea5f428f8ff18426056acb641aa0bf080c7784dfe148cb80a10aa24694de7a2b",
+    "packages/cli/src/preview/storage.mjs": "78ec154817c395f654264ad0b2ed91c90cf848c65f34eaa5cf5030c657a7bf24",
+    "packages/cli/src/preview/storage-shape.mjs": "fabbb22521d26ba562ac807b4ff2aebb75967c855555052b53398e6d4468ddc4",
+    "packages/cli/src/preview/storage-recovery.mjs": "48ebc46e0d76f63e2863fd0c9ea19cab2ea6f40059eae0509679ba822d0f850a",
+    "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+    "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+    "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+    "packages/cli/src/preview/storage/readonly-recovery.py": "2f010e44ca2d47f0fb479372f19723974aede367e909d32dc7ab19ab8951bbd1",
+    "packages/cli/src/preview/storage/host.py": "798adf0aad80c349fbabb40edd2562ab5a38a75984c90cec2734b3d62cd34ec8",
+    "packages/cli/test/preview-storage-admission-host.py": "74b865ceb5c73325008c119da0acdb90b0a2162d87f0f8f9cf3a9af4d25f0c2d",
+    "packages/cli/test/preview-storage-recovery.test.mjs": "e1903dc30bbfef7b91539d2d095bd4ac3df4a2f89e0aaabfe7d6ab5b6be0ed91"
+  },
+  "policy": {
+    "original": "Owner-selected recovery UUID and original storage receipt digest; verify completed schema-2 storage, actual engine/root/backing file, filesystem UUID, effective retained reservation and role inodes.",
+    "view": "Mount ro,noload with nosuid/nodev/noexec, validate primary mount and identical read-only root aliases. Reuse one exact retained loop, or request a read-only loop if none exists. No formatting or journal replay.",
+    "writers": "Refuse target container references, automatic restart, live privileged/device-enabled containers and referenced unknown volume plugins. Ordinary unrelated peers continue; host administrators remain outside this coordination boundary.",
+    "unknown": "Durable intent and global fence precede mount effects. Never repeat an uncertain mount. Explicit reconciliation verifies an actual read-only view and acknowledges it without mounting. Foreign fences and partial/invalid records refuse.",
+    "execution": "Recovery receipts are distinct from provisioning receipts. Ordinary storage inspection and fresh startup refuse the read-only mount. All storage charges, data and physical resources remain retained."
+  },
+  "checks": {
+    "storageNode": {
+      "tests": 75,
+      "pass": 75,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "previewNode": {
+      "tests": 389,
+      "pass": 389,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "linuxHost": {
+      "tests": 46,
+      "pass": 46,
+      "fail": 0,
+      "errors": 0,
+      "scope": "Owned temporary metadata, injected mount/loop effects, real process exclusion and one existing 4 KiB native allocation case. Covers writer aliases, read-only loop creation/refusal, unknown outcomes, reconciliation, quarantine and host bind aliases; no actual mounts or loop changes."
+    },
+    "fullNodeSuite": {
+      "tests": 3540,
+      "pass": 3540,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; Python imports and locals manually reviewed because dead-code tooling is unavailable",
+    "writing": "passed for guide, roadmap, evidence, local review, issue and commit text",
+    "standardsSelfReview": "PASS; all ten dimensions assessed in local gate self-review, no external reviewer"
+  },
+  "nativeFreshRecovery": {
+    "passed": true,
+    "scope": "Final-source fresh read-only recovery after controlled mount loss, scoped live writer refusal and unrelated live peer; earlier completed interrupted view explicitly reconciled. No application consistency or host reboot qualification.",
+    "priorContainersPreserved": 147,
+    "totalContainersNonrunning": 149,
+    "ownedQaActorsRetained": 2,
+    "writerPolicyRefusalVerified": true,
+    "freshReadonlyRecoveryVerified": true,
+    "priorInterruptedRecoveryReconciled": true,
+    "unrelatedPeerPidStable": true,
+    "seededBytesAndRoleInodesRetained": true,
+    "backingImageSha256Unchanged": true,
+    "recoveredWritesRefuseEROFS": true,
+    "originalStorageInspectionRefused": true,
+    "repeatedRecoveryRecordsAndMountStable": true,
+    "heldProjects": 2,
+    "heldChargeBytes": 2181038080,
+    "pending": false,
+    "storageAdmissionOpen": false,
+    "loopRetained": true,
+    "executionAuthorized": false,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "nativeCompletedInterruptionReconciliation": {
+    "passed": true,
+    "scope": "Earlier final-source explicit reconciliation of the known read-only view; no repeated mount. Raw records and image hash independently checked again.",
+    "writerPolicyRefusalVerified": true,
+    "unrelatedPeerPidStable": true,
+    "pendingRecordAndKernelMountIdUnchanged": true,
+    "backingImageBytesUnchanged": true
+  },
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "currentArchivedSourcesVerified": true,
+    "currentAssembledWorkerHashVerified": true,
+    "host": {
+      "passed": true,
+      "readOnly": true,
+      "actualEngineAndDockerBackingVerified": true,
+      "originalManifestAndBothReservationsRetained": true,
+      "fixedRegistryBytesUnchanged": true,
+      "backingImageBytesAndAllocationUnchanged": true,
+      "originalLoopRetained": true,
+      "readonlyAliasesVerified": 2,
+      "allRoleInodesAndSeededBytesVerified": true,
+      "bothRecoveryEpochRecordsAndOriginalFencesVerified": true,
+      "currentMountIdVerified": true,
+      "pendingFence": false
+    },
+    "priorContainersUnchanged": 147,
+    "totalContainersNonrunning": 149,
+    "onlyTwoOwnedQaActorsStartedAndStopped": true,
+    "scopedWriterRefusalEvidenceVerified": true,
+    "sourceFiles": {
+      "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+      "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+      "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+      "packages/cli/src/preview/storage/readonly-recovery.py": "2f010e44ca2d47f0fb479372f19723974aede367e909d32dc7ab19ab8951bbd1",
+      "packages/cli/src/preview/storage/host.py": "798adf0aad80c349fbabb40edd2562ab5a38a75984c90cec2734b3d62cd34ec8"
+    },
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "qaRetention": {
+    "originalQaContainers": 145,
+    "ownedQaContainersAddedAcrossTrials": 4,
+    "totalQaContainersStoppedAndRetained": 149,
+    "finalTrialPriorContainersUnchanged": 147,
+    "finalTrialActorsStartedAndStopped": 2,
+    "volumesNetworksImagesAndLoopsRetained": true,
+    "storageReservations": 2,
+    "storageChargeBytes": 2181038080,
+    "storageAdmissionOpen": false
+  },
+  "evidenceCorrections": {
+    "optionalDockerHostConfigFieldsUseMapLookup": true,
+    "liveWriterRefusalVerifiedAsPolicyNotUtilityFailure": true,
+    "hostBindAliasesRequireSameRootIdentityAndReadOnlyFlags": true,
+    "containerMountListsComparedAsUnorderedResourceIdentities": true
+  },
+  "remainingGates": [
+    "Actual host restart and missing-loop native qualification",
+    "Application consistency and writable data restoration",
+    "Partial recovery-record and initialization repair",
+    "Explicit capacity changes and storage reclamation",
+    "Public provisioning, launch and complete browser acceptance"
+  ],
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed"
+}

@@ -12,13 +12,13 @@ import unittest
 
 if sys.argv[1:] == ['--local-source']:
     source = pathlib.Path(__file__).resolve().parents[1] / 'src/preview/storage'
-    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'host']}
+    payload = {name: (source / (name + '.py')).read_text() for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']}
 elif len(sys.argv) == 1:
     payload = json.load(sys.stdin)
 else:
     raise RuntimeError('Use --local-source or provide the source bundle on stdin')
 scope = {'__name__': 'fogd_storage_admission_test'}
-exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['hold-repair'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
+exec(compile(payload['admission'] + '\n' + payload['commands'] + '\n' + payload['reconciliation'] + '\n' + payload['hold-repair'] + '\n' + payload['recovery-writers'] + '\n' + payload['readonly-recovery'] + '\n' + payload['host'], 'fogd-storage-worker', 'exec'), scope)
 
 
 class AdmissionTests(unittest.TestCase):
@@ -456,6 +456,187 @@ class AdmissionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             scope['hold_source'](value['project'])
 
+    def writer_fixture(self):
+        value = {**self.project(1), 'uuid': '00000000-0000-4000-8000-000000000001'}
+        volume = {'name': 'owned-data', 'driver': 'local', 'options': {'device': value['directory'] + '/mount/controller'}}
+        container = {'id': 'a' * 64, 'running': False, 'pid': 0, 'status': 'created', 'restart': 'no',
+                     'privileged': False, 'devices': [], 'rules': [], 'mounts': [], 'binds': ['owned-data:/data'], 'specs': []}
+        return value, volume, container
+
+    def check_writer_fixture(self, value, volumes, containers):
+        with patch.dict(scope, {'recovery_docker_rows': lambda command, format_string, pattern, field: volumes if field == 'name' else containers}):
+            scope['assert_no_recovery_writers'](value, {'name': '/dev/loop7'})
+
+    def test_readonly_recovery_keeps_effective_quarantine_separate_from_original_reservation(self):
+        value, original = self.interrupted_complete()
+        original['admission'] = {**original['admission'], 'reservation': str(scope['uuid'].uuid4())}
+        digest = scope['hashlib'].sha256((json.dumps(original, ensure_ascii=False, indent=2) + '\n').encode()).hexdigest()
+        target = {**value, 'storageSha256': digest}
+        with patch.dict(scope, {'storage_origin': lambda request: (request, original)}):
+            with self.assertRaises(ValueError):
+                scope['recovery_original'](target)
+            admitted = scope['quarantine_storage'](value)
+            recovered, _ = scope['recovery_original'](target)
+        self.assertEqual(recovered['effectiveAdmission']['reservation'], admitted['reservations'][0]['reservation'])
+        self.assertNotEqual(recovered['effectiveAdmission']['reservation'], original['admission']['reservation'])
+
+    def test_readonly_recovery_refuses_target_writers_and_automatic_restarts(self):
+        value, volume, container = self.writer_fixture()
+        self.check_writer_fixture(value, [volume], [container])
+        for changes in [{'running': True, 'pid': 9, 'status': 'running'}, {'running': True, 'pid': 9, 'status': 'paused'}, {'restart': 'always'}]:
+            with self.assertRaises(ValueError):
+                self.check_writer_fixture(value, [volume], [{**container, **changes}])
+
+    def test_readonly_recovery_allows_an_unrelated_running_peer(self):
+        value, volume, container = self.writer_fixture()
+        peer = {**container, 'binds': [], 'running': True, 'pid': 9, 'status': 'running'}
+        self.check_writer_fixture(value, [volume], [peer])
+        for changes in [{'privileged': True}, {'devices': [{'PathOnHost': '/dev/loop7'}]}, {'rules': ['b *:* rwm']}]:
+            with self.assertRaises(ValueError):
+                self.check_writer_fixture(value, [volume], [{**peer, **changes}])
+
+    def test_readonly_recovery_detects_parent_binds_specs_and_nonlocal_volume_writers(self):
+        value, volume, container = self.writer_fixture()
+        live = {**container, 'running': True, 'pid': 9, 'status': 'running'}
+        for row in [{**live, 'binds': [value['root'] + ':/data']},
+                    {**live, 'binds': [], 'specs': [{'Type': 'bind', 'Source': value['directory'] + '/mount'}]},
+                    {**live, 'binds': [], 'mounts': [{'Type': 'volume', 'Name': 'owned-data', 'Source': '/var/lib/docker/volumes/owned-data/_data'}]}]:
+            with self.assertRaises(ValueError):
+                self.check_writer_fixture(value, [volume], [row])
+        with self.assertRaises(ValueError):
+            self.check_writer_fixture(value, [{**volume, 'driver': 'unknown', 'options': None}], [live])
+
+    def test_readonly_mount_accepts_only_identical_readonly_host_bind_aliases(self):
+        value, _, _ = self.writer_fixture()
+        loop = {'name': '/dev/loop7', 'maj:min': '7:7'}
+        primary = {'target': value['directory'] + '/mount', 'source': loop['name'], 'fstype': 'ext4', 'uuid': value['uuid'],
+                   'options': 'ro,nosuid,nodev,noexec,relatime,norecovery', 'fsroot': '/', 'maj:min': '7:7'}
+        alias = {**primary, 'target': '/owned-host-bind-alias/mount'}
+        facts = type('Facts', (), {'f_frsize': 4096, 'f_blocks': 262144, 'f_files': 65536})()
+        with patch.dict(scope, {'identity': lambda path, directory=False: {'device': 7, 'inode': 2}}), patch.object(scope['os'], 'statvfs', return_value=facts):
+            self.assertEqual(scope['readonly_mount'](value, loop, [primary, alias]), primary)
+            with self.assertRaises(ValueError):
+                scope['readonly_mount'](value, loop, [primary, {**alias, 'options': 'rw,nosuid,nodev,noexec,relatime'}])
+        with patch.dict(scope, {'identity': lambda path, directory=False: {'device': 7, 'inode': 2 if path == primary['target'] else 3}}), patch.object(scope['os'], 'statvfs', return_value=facts):
+            with self.assertRaises(ValueError):
+                scope['readonly_mount'](value, loop, [primary, alias])
+
+    def readonly_fixture(self):
+        value = {**self.project(1), 'recoveryId': str(scope['uuid'].uuid4()), 'storageSha256': 'a' * 64}
+        pathlib.Path(value['directory']).mkdir(mode=0o700)
+        pathlib.Path(value['directory'] + '/mount').mkdir(mode=0o700)
+        report = {'id': value['recoveryId'], 'readOnly': True, 'executionAuthorized': False, 'loop': {'name': '/dev/loop7'}}
+        calls = []
+        patches = {'recovery_original': lambda request: (request, {}), 'readonly_loop': lambda request: {'name': '/dev/loop7', 'maj:min': '7:7'},
+                   'readonly_mount_rows': lambda: [], 'verify_recovery_image': lambda request: None,
+                   'assert_no_recovery_writers': lambda request, loop: None, 'readonly_report': lambda request, original, pending: report,
+                   'run_locked': lambda request, args: calls.append(args)}
+        return value, report, calls, patches
+
+    def test_completed_readonly_recovery_repeats_without_remounting_or_clearing_a_foreign_fence(self):
+        value, report, calls, patches = self.readonly_fixture()
+        with patch.dict(scope, patches):
+            self.assertEqual(scope['recover_readonly_storage'](value), report)
+            self.assertEqual(scope['recover_readonly_storage'](value), report)
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(calls[0][0], 'mount')
+            self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+            foreign = scope['admission_fence'](self.project(2), 'prepare')
+            with self.assertRaises(ValueError):
+                scope['recover_readonly_storage'](value)
+            self.assertEqual(scope['read'](foreign['path']), foreign['record'])
+            self.assertEqual(len(calls), 1)
+
+    def test_new_readonly_loop_is_verified_before_mounting(self):
+        value, report, calls, patches = self.readonly_fixture()
+        rows = iter([None, {'name': '/dev/loop8', 'maj:min': '7:8', 'ro': True}])
+        patches['readonly_loop'] = lambda request: next(rows)
+        report['loop'] = {'name': '/dev/loop8'}
+        def execute(request, args):
+            calls.append(args); return '/dev/loop8\n' if args[0] == 'losetup' else ''
+        patches['run_locked'] = execute
+        with patch.dict(scope, patches):
+            self.assertEqual(scope['recover_readonly_storage'](value), report)
+        self.assertEqual([args[0] for args in calls], ['losetup', 'mount'])
+        self.assertIn('--read-only', calls[0])
+        self.assertIn('ro,noload,nosuid,nodev,noexec', calls[1])
+
+    def test_new_writable_loop_refuses_without_mounting_or_cleanup(self):
+        value, _, calls, patches = self.readonly_fixture()
+        rows = iter([None, {'name': '/dev/loop8', 'maj:min': '7:8', 'ro': False}])
+        patches['readonly_loop'] = lambda request: next(rows)
+        def execute(request, args):
+            calls.append(args); return '/dev/loop8\n'
+        patches['run_locked'] = execute
+        with patch.dict(scope, patches):
+            with self.assertRaises(ValueError):
+                scope['recover_readonly_storage'](value)
+        self.assertEqual([args[0] for args in calls], ['losetup'])
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+
+    def test_unknown_readonly_mount_outcome_retains_fence_and_never_replays(self):
+        value, _, calls, patches = self.readonly_fixture()
+        def unknown(request, args):
+            calls.append(args); raise RuntimeError('injected unknown mount result')
+        patches['run_locked'] = unknown
+        with patch.dict(scope, patches):
+            with self.assertRaises(RuntimeError):
+                scope['recover_readonly_storage'](value)
+            with self.assertRaises(ValueError):
+                scope['recover_readonly_storage'](value)
+        self.assertEqual(len(calls), 1)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+        self.assertFalse(pathlib.Path(value['directory'] + '/recovery-' + value['recoveryId'] + '.complete.json').exists())
+
+    def test_explicit_readonly_reconciliation_acknowledges_verified_view_without_mount_replay(self):
+        value, report, calls, patches = self.readonly_fixture()
+        def unknown(request, args):
+            calls.append(args); raise RuntimeError('injected lost mount result')
+        with patch.dict(scope, {**patches, 'run_locked': unknown}):
+            with self.assertRaises(RuntimeError):
+                scope['recover_readonly_storage'](value)
+        with patch.dict(scope, patches):
+            self.assertEqual(scope['reconcile_readonly_storage'](value), report)
+            self.assertEqual(scope['reconcile_readonly_storage'](value), report)
+        self.assertEqual(len(calls), 1)
+        self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+
+    def test_explicit_readonly_reconciliation_does_not_acknowledge_a_missing_view(self):
+        value, _, calls, patches = self.readonly_fixture()
+        def unknown(request, args):
+            calls.append(args); raise RuntimeError('injected failed mount')
+        with patch.dict(scope, {**patches, 'run_locked': unknown}):
+            with self.assertRaises(RuntimeError):
+                scope['recover_readonly_storage'](value)
+        def absent(request, original, pending):
+            raise ValueError('no read-only view exists')
+        with patch.dict(scope, {**patches, 'readonly_report': absent}):
+            with self.assertRaises(ValueError):
+                scope['reconcile_readonly_storage'](value)
+        self.assertEqual(len(calls), 1)
+        self.assertTrue((self.base / 'registry/operation.pending.json').exists())
+
+    def test_readonly_recovery_refuses_covering_underlying_data_before_mounting(self):
+        value, _, calls, patches = self.readonly_fixture()
+        pathlib.Path(value['directory'] + '/mount/retain-underlying-data').write_bytes(b'keep')
+        with patch.dict(scope, patches):
+            with self.assertRaises(ValueError):
+                scope['recover_readonly_storage'](value)
+        self.assertEqual(calls, [])
+        self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+
+    def test_readonly_completion_acknowledgment_survives_lost_fence_release(self):
+        value, report, calls, patches = self.readonly_fixture()
+        def interrupted(fence):
+            raise RuntimeError('injected result loss after recovery completion')
+        with patch.dict(scope, {**patches, 'release_admission_fence': interrupted}):
+            with self.assertRaises(RuntimeError):
+                scope['recover_readonly_storage'](value)
+        with patch.dict(scope, patches):
+            self.assertEqual(scope['recover_readonly_storage'](value), report)
+        self.assertEqual(len(calls), 1)
+        self.assertFalse((self.base / 'registry/operation.pending.json').exists())
+
     def test_locked_native_utility_receives_only_the_held_new_file(self):
         path = str(self.base / 'owned-command-file')
         fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600)
@@ -473,7 +654,7 @@ class AdmissionTests(unittest.TestCase):
         script = "import json,sys;payload=json.load(sys.stdin);s={'__name__':'owned_test'};exec(chr(10).join(payload['sources']),s);s['REGISTRY']=payload['registry']\nwith s['admission_lock']() as fd:s['run_locked']({'_lockFd':fd},[sys.executable,'-c',payload['helper'],payload['ready'],payload['release'],str(fd)])"
         worker = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'host']],
+        bundle = {'sources': [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']],
                   'registry': scope['REGISTRY'], 'helper': helper, 'ready': ready, 'release': release}
         worker.stdin.write(json.dumps(bundle)); worker.stdin.close()
         try:

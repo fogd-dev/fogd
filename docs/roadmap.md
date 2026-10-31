@@ -98,8 +98,11 @@ can quarantine a valid interrupted reservation, retaining its data and charge
 while allowing other projects within remaining limits and reserved headroom.
 Native helper supervisors retain the process lock after caller loss. An explicit
 owner repair preserves a missing or damaged hold and adds a conservative
-quarantined reservation. Partial recovery-record and initialization repair, data
-and host recovery, browser withdrawal controls, public launch and complete
+quarantined reservation. Explicit read-only data recovery after controlled mount
+loss now verifies scoped writer refusal, an unrelated live peer, retained bytes
+and charges, and completion reconciliation without mount replay. Partial
+recovery-record and initialization repair, actual host restart, application data
+restoration, browser withdrawal controls, public launch and complete
 preview/browser acceptance remain open.
 
 Before selecting another binding milestone, implement the proposed
