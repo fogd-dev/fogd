@@ -89,7 +89,10 @@ allocations through private engine-bound control directories. Public launch and
 control-directory provisioning remain open. Ordinary previews still need persistent-storage
 bounds and browser withdrawal controls. New internal plans seal temporary-storage
 byte/inode limits and rotating Docker logs, with realized graph checks. Persistent
-application-volume quotas remain open before ordinary preview admission.
+application-volume quotas remain open before ordinary preview admission. An
+internal fixed-size ext4 storage component has live-write exhaustion and controlled
+remount-retention evidence; signed-plan, realized-volume and startup integration
+still need implementation before those limits apply to launched previews.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

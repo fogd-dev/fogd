@@ -502,3 +502,40 @@ Persistent application volumes still lack an enforced storage quota. Host free
 space checks alone cannot bound a live writer. Ordinary preview admission and
 public launch remain closed until persistent-storage limits and the other
 acceptance gates pass. Default cron admission remains closed.
+
+## Internal bounded persistent storage
+
+The [persistent-storage component](evidence/operator-preview-persistent-storage.json)
+provisions a fixed-size ext4 filesystem in a newly created, preallocated backing
+file on the Linux Docker host. Its profile reserves a 1 GiB backing file and
+creates separate directories for preview data and authority inputs. Filesystem
+metadata consumes part of that space. A native Docker writer reaches `ENOSPC`
+inside this filesystem while the outer backing filesystem still has space.
+
+The internal host worker requires root, Python 3, Docker's local Unix socket,
+util-linux and e2fsprogs, plus an existing private root directory on ext4. The
+caller supplies an independently selected host transport; this is not a public
+storage-provisioning command. Before creating files, the worker checks that the
+local Docker engine matches the requested identity.
+
+Provisioning exclusively creates a fresh project directory and regular file. It
+formats that new file through its held descriptor, then attaches and mounts it;
+it never formats an existing block device. Exclusive stage records retain file,
+filesystem, loop-device, mount and directory identities. Failed or unknown
+operations retain their resources and cannot restart provisioning into the same
+directory. Inspection performs no provisioning or cleanup.
+
+The native check retains a marker and sampled file across a controlled
+unmount/remount. A missing mount, wrong engine or repeated provisioning request
+refuses. This does not qualify host-restart recovery, interrupted provisioning
+recovery, automatic reattachment or application consistency after disk exhaustion.
+All filesystem images, devices, mounts, Docker volumes and containers remain
+retained. The component has no resize, delete or reclamation operation.
+
+Preview launch still needs to bind these storage identities to the signed target,
+realized Docker volume sources and startup checks. Existing schema-2 preview plans
+continue to use unbounded persistent volumes. Ordinary preview admission, public
+launch and default cron admission remain closed. See Docker's
+[block-device volume example](https://docs.docker.com/engine/storage/volumes/#block-storage-devices)
+and the Linux [preallocation contract](https://man7.org/linux/man-pages/man2/fallocate.2.html)
+for the underlying mechanisms.

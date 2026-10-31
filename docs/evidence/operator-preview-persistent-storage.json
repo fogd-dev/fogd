@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-persistent-storage-component-qualification",
+  "scope": "Internal preallocated ext4 storage provisioning, actual Docker write ceiling and controlled remount retention. Existing preview launch does not yet use this storage profile.",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/preview/storage.mjs": "625fb382adcab913032ac6673ef00bdae82bec5deda55ee821e8a9a3e3fa5111",
+    "packages/cli/src/preview/storage/host.py": "6cce681e9c9c13f6571f9fac5f4df7a458e1f31b1c322600e9ddf731e8de6481",
+    "packages/cli/src/distribution/manifest.mjs": "6bbf82c3ad3955ec92c39fcb98c2d44fbab4a14d26bf5f124045d797493d0531",
+    "packages/cli/test/preview-storage.test.mjs": "e6818fca2dd1039916a4be9c8cf0a89236e56f433e7dd2c8232f120c92d2a3d2"
+  },
+  "profile": {
+    "backingFileBytes": 1073741824,
+    "filesystem": "ext4",
+    "filesystemInodes": 65536,
+    "roleDirectories": 12,
+    "backingRequirement": "Existing root-owned 0700 directory on ext4, Linux root execution, Python 3, util-linux, e2fsprogs and Docker local Unix socket. Independently selected host transport is supplied by the caller.",
+    "allocation": "Create a fresh private project directory and regular file exclusively; preallocate file blocks, format only that held new file descriptor, attach a loop device and mount with nosuid/nodev/noexec and discard disabled. Verify raw geometry, file allocation, actual local Docker engine and resource identities.",
+    "retention": "Exclusive phase records and completed manifest remain outside the bounded filesystem. Unknown results retain files/devices/mounts and never retry provisioning into the same directory. Inspection performs no provisioning or cleanup. No resize, delete or reclamation API.",
+    "boundary": "Filesystem metadata reduces usable data space. This limits this filesystem, not Docker logs, unrelated host writers, hypervisor storage or all preview resources. No host-restart recovery or application consistency after ENOSPC claim."
+  },
+  "checks": {
+    "storageNode": {
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "syntax": "passed; JavaScript check and actual Linux Python worker execution",
+    "quality": "passed; erosion 15.1%, duplication 1.6%; dead-code tool unavailable for Python, imports and locals manually reviewed",
+    "packaging": "Exact host.py path is included in authenticated operator inventory; other Python and bytecode paths remain refused. No image rebuild or local Python dependency for ordinary operator commands.",
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+    "writing": "passed; terminology/style advisories retained",
+    "fullNodeSuite": {
+      "tests": 3478,
+      "pass": 3478,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "native": {
+    "passed": true,
+    "scope": "Internal fixed-size persistent filesystem provisioning, Docker live-write ceiling, controlled remount retention and refusal checks; no integrated preview launch or host-restart recovery",
+    "backingFileBytes": 1073741824,
+    "preallocated": true,
+    "roleDirectories": 12,
+    "liveWriteFailure": "ENOSPC",
+    "exhaustion": {
+      "passed": true,
+      "error": "ENOSPC",
+      "complete": 957,
+      "marker": "retained-fogd-preview-261732fd0790415ba99218e442e82ed0",
+      "sampleSha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
+      "totalBytes": 1020702720,
+      "freeBytesAfter": 0
+    },
+    "controlledRemountDataRetained": true,
+    "missingMountRefused": true,
+    "wrongEngineRefused": true,
+    "repeatedProvisioningRefused": true,
+    "priorQaContainersPreserved": 113,
+    "totalContainersStopped": 115,
+    "ownedContainersRetained": 2,
+    "ownedVolumeRetained": true,
+    "hostFilesDevicesMountsRetained": true,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "independentAudit": {
+    "passed": true,
+    "readOnly": true,
+    "sourceHashesVerified": true,
+    "earlierStorageFixtures": [
+      {
+        "name": "preview-persistent-storage-20261031-01",
+        "storageIdentityPreserved": true
+      },
+      {
+        "name": "preview-persistent-storage-20261031-02",
+        "storageIdentityPreserved": true
+      }
+    ],
+    "actualWriterProgramAndExitVerified": true,
+    "currentDockerInventoryVerified": true,
+    "priorQaContainersPreserved": 113,
+    "allContainersNonrunning": 115,
+    "ownedRolesStopped": 2,
+    "hostFilesystem": {
+      "passed": true,
+      "readOnly": true,
+      "actualLocalDockerEngineVerified": true,
+      "fileIdentityAndPreallocationVerified": true,
+      "rawFilesystemGeometryVerified": true,
+      "loopAndMountBindingVerified": true,
+      "allPhaseRecordsVerified": true,
+      "allRoleDirectoryIdentitiesVerified": true,
+      "currentQuotaFilesystemFull": true,
+      "acknowledgedMarkerAndSampleRetained": true,
+      "outerBackingFilesystemHasSpace": true,
+      "backingFileBytes": 1073741824,
+      "allocatedBytesObserved": 1073745920,
+      "roleDirectories": 12
+    },
+    "controlledRemountTraceVerified": true,
+    "storageInspectorMatchesIndependentReadback": true,
+    "publicPreviewLaunch": false,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed",
+    "dataRecoveryAfterHostFailure": "not-qualified"
+  },
+  "workerSha256": "6cce681e9c9c13f6571f9fac5f4df7a458e1f31b1c322600e9ddf731e8de6481",
+  "privateEvidence": "Executed host and JavaScript sources, native driver, Docker inventories, volume configuration, program outputs, host records and independent audit remain outside the repository. Current source hashes match the archived executed sources. The final trial preserves 113 prior QA containers and ends with all 115 nonrunning. All three filesystem images, including the two earlier fixtures, remain retained.",
+  "auditCorrection": {
+    "initialAuditPassed": false,
+    "reason": "The read-only auditor incorrectly treated losetup --json --list as a mutation. Native provisioning/ceiling trial had passed.",
+    "correction": "Require the exact read-only listing form and rerun only readback; no provisioning, Docker start or data write was replayed. The original failed audit log remains retained."
+  },
+  "remaining": [
+    "Bind storage receipt and paths to the signed preview plan",
+    "Integrate bounded Docker volume sources and startup storage checks",
+    "Coordinate backing-space admission and retained storage accounting",
+    "Qualify missing mount, interrupted provisioning and host-restart recovery through integrated preview operations",
+    "Public preview launch and provisioning commands",
+    "Full fresh-app/update browser acceptance"
+  ],
+  "admission": {
+    "ordinaryPreview": false,
+    "publicPreviewLaunch": false,
+    "defaultCron": "closed"
+  }
+}
