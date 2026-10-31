@@ -257,8 +257,9 @@ Reservation reads all holds and a complete Docker snapshot under that fence,
 checks eligibility, then appends and syncs an immutable hold before returning.
 It reserves the declared budget in the ledger, without allocating RAM in Docker,
 verifying runtime/assets or granting execution permission. Stopped containers,
-expiry and process exit do not release holds. No release operation is available;
-verified teardown and reclamation remain required work.
+expiry and process exit do not release holds. Only the explicit verified memory
+retirement described below can release that
+budget. Disk, volume/network identities and declared port claims remain retained.
 
 Malformed records or interrupted writes retain the pending marker and files.
 Ordinary capacity refusal releases the checking fence and preserves prior holds.
@@ -322,3 +323,30 @@ stopped services' read-only mounts and a fresh graph check. Every application
 service must remain never-started. Ambiguous results retain the pending operation,
 capacity hold and files without replay. Installed inputs grant no execution
 permission: runtime admission, source recheck, launch and teardown gates remain.
+
+## Internal ordered teardown and memory retirement
+
+The [teardown check](evidence/operator-preview-teardown.json) stops verified
+container IDs in four groups: ingress; gateway, controller and initialization
+roles; native writers; then MinIO. A fresh graph observation must confirm each
+group stopped before the next group runs. If storage-dependent roles had started, MinIO must
+remain running until their confirmed exit for shutdown to count as ordered.
+Missing observations or ambiguous commands retain the host fence and hold without
+replay. Successful Docker command output alone is insufficient.
+
+Signature/target inspection can identify an expired allocation for shutdown; it
+returns no Docker creation commands and grants no execution permission. Live
+execution authorization still refuses an expired decision. Teardown does not
+refresh its original deadline.
+
+Stopping keeps the memory budget held. Explicit retirement additionally requires
+the original grant to have expired, an ordered teardown journal, a fresh confirmed
+stopped graph and matching resource identities. A durable retirement record then
+removes that plan from memory admission accounting. Historical hold records and
+all containers, networks, volumes and data remain retained. Managed operations
+refuse the retired hold, and existing resources still prevent namespace reuse.
+
+This releases a software memory budget, not disk or port claims. It establishes
+neither native lease cleanup nor data recovery. The live fixture covers manual
+ordered shutdown; automatic expiry ordering, public lifecycle commands and full
+fresh-app/update browser acceptance remain open.

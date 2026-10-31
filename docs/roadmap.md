@@ -65,9 +65,15 @@ verifies actual resource identities, limits, mounts and network placement withou
 starting services. The plan includes a budgeted networkless input installer;
 checked artifact/secret/TLS installation has actual mount readback with every
 application service still never-started. Shipped runtime admission, source
-recheck, final launch checks and ordered teardown remain the next host-lifecycle work before
+recheck and final launch checks remain the next host-lifecycle work before
 public preview launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
+
+Internal manual teardown confirms ingress, management and native-writer shutdown
+before stopping storage. Explicit post-expiry memory retirement requires the
+ordered journal and a fresh stopped graph; names, data and physical resources
+remain retained. Native lease cleanup, data recovery, automatic expiry ordering
+and full fresh-app/update browser acceptance are not established by that check.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

@@ -37,12 +37,20 @@ export function issuePreviewExecution(preparation, { expectedPreparationSha256, 
 
 // Expected values come from the independently checked host enrollment/profile,
 // never from the signed message itself. Valid signatures alone admit no runtime.
-export function authorizePreviewExecution(envelope, { publicKey, expectedGrantSha256, preparationSha256, target }) {
+export function inspectPreviewExecution(envelope, { publicKey, expectedGrantSha256, preparationSha256, target }) {
   try {
     executionTarget(target);
     if (!digest(expectedGrantSha256) || !digest(preparationSha256) || previewExecutionSha256(envelope) !== expectedGrantSha256) refuseExecution();
     const grant = verifyPreviewExecution(envelope, publicKey);
-    if (grant.preparationSha256 !== preparationSha256 || !isDeepStrictEqual(grant.target, target) || Date.now() < executionTimestamp(grant.issuedAt) || Date.now() >= executionTimestamp(grant.expiresAt)) refuseExecution();
+    if (grant.preparationSha256 !== preparationSha256 || !isDeepStrictEqual(grant.target, target)) refuseExecution();
     return grant;
   } catch { refuseExecution(); }
+}
+
+// Inspection can identify an expired allocation for shutdown. Only this live
+// check authorizes execution; inspection never extends or refreshes a grant.
+export function authorizePreviewExecution(envelope, expected) {
+  const grant = inspectPreviewExecution(envelope, expected);
+  if (Date.now() < executionTimestamp(grant.issuedAt) || Date.now() >= executionTimestamp(grant.expiresAt)) refuseExecution();
+  return grant;
 }

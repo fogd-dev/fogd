@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-teardown-qualification",
+  "qualifiedAt": "2026-10-31T00:30:33.626Z",
+  "scope": "Internal manual ordered stop and explicit post-expiry software RAM-budget retirement on owned local QA allocations",
+  "existingUserInstallations": 0,
+  "sourceFiles": {
+    "packages/cli/src/preview/container-plan.mjs": "603e03a30174801e871f5602e9fbe46d21262a4268272e097175caf08dd7cadc",
+    "packages/cli/src/preview/execution.mjs": "5fa8d53953490b61a6e45460240eedd766bb0169f42ba727f9365e78983086a2",
+    "packages/cli/src/preview/host-registry.mjs": "b5139b1d8e36376479a93a89a9f28babf18002fb7493a1bb4b3f50a412ee7d19",
+    "packages/cli/src/preview/host-reservations.mjs": "36e4234caa4a84734980544867b07837fe07e26b40dec897b35ea6ab4f931a5e",
+    "packages/cli/src/preview/input-installation.mjs": "672f806bb1843b1f1a0683ad79f38adddea2c658fa0523c6be7d111ed4627aac",
+    "packages/cli/src/preview/stopped-allocation.mjs": "5abbfe40620ea42f4d555f10913f7d528330df47776d9b61cd13adfe6d5ac100",
+    "packages/cli/src/preview/stopped-graph.mjs": "75f2946c6095bc8a24149208798d3b1adb4726e3d9c2a2515f591fac6b15543c",
+    "packages/cli/test/fixtures/stopped-preview.mjs": "b6a58fe36259c57fe79087d58101743e6df6a6f50b6e78356c88f973eae9c508",
+    "packages/cli/src/preview/allocation-state.mjs": "40decff6846ac0041021d3e3826c6a06afd0926ee2a679b741eda46cc3ce4dc5",
+    "packages/cli/src/preview/memory-state.mjs": "60110a47c3a0a9c146c6cba0003b94369fb69e560708962d3bea08b2a161cc06",
+    "packages/cli/src/preview/teardown.mjs": "9640134cd7c2e72234b77dd7237d29dfbec8ddc7f37a04bf1a85b5a51759ba87",
+    "packages/cli/test/preview-teardown.test.mjs": "96b1215249ac3762ec7ef237ee1ddeed9c9ca01d39c4aaa34879023981afc00f"
+  },
+  "nativeExecutedSourceFiles": {
+    "packages/cli/src/preview/allocation-state.mjs": "40decff6846ac0041021d3e3826c6a06afd0926ee2a679b741eda46cc3ce4dc5",
+    "packages/cli/src/preview/container-plan.mjs": "603e03a30174801e871f5602e9fbe46d21262a4268272e097175caf08dd7cadc",
+    "packages/cli/src/preview/execution.mjs": "5fa8d53953490b61a6e45460240eedd766bb0169f42ba727f9365e78983086a2",
+    "packages/cli/src/preview/host-registry.mjs": "b5139b1d8e36376479a93a89a9f28babf18002fb7493a1bb4b3f50a412ee7d19",
+    "packages/cli/src/preview/host-reservations.mjs": "36e4234caa4a84734980544867b07837fe07e26b40dec897b35ea6ab4f931a5e",
+    "packages/cli/src/preview/input-installation.mjs": "672f806bb1843b1f1a0683ad79f38adddea2c658fa0523c6be7d111ed4627aac",
+    "packages/cli/src/preview/memory-state.mjs": "9421a8153913f6d601f2413440c4b9df62dd181166c9aa0a1d20465fb786cc31",
+    "packages/cli/src/preview/stopped-allocation.mjs": "5abbfe40620ea42f4d555f10913f7d528330df47776d9b61cd13adfe6d5ac100",
+    "packages/cli/src/preview/stopped-graph.mjs": "75f2946c6095bc8a24149208798d3b1adb4726e3d9c2a2515f591fac6b15543c",
+    "packages/cli/src/preview/teardown.mjs": "413c9a209075ef2e2189b9d9f94d33518170c1c24f035045e878f2766b774833"
+  },
+  "candidateImage": "sha256:9dfbbbc169476026500b85a9d984e689afa1bca1e37ee59f70a93d2881d23689",
+  "contract": {
+    "ordering": "Ingress, management, native writers, storage; confirmed fresh graph between groups",
+    "storageHistory": "Previously started controller, bucket initializer or native writers require continuous MinIO through writer exit; already-exited history cannot retrospectively prove order",
+    "inputInstaller": "Writes authority files only; no S3 dependency",
+    "failure": "Unknown command or observation retains the fence, journal and memory hold; no mutation replay",
+    "retirement": "Explicit original-grant expiry, exact stopped IDs, complete ordered phase journal and bound allocation/inventory hashes",
+    "retention": "Only software RAM-budget accounting is released; historical holds, all containers, volumes, networks, disk, data and namespace claims remain",
+    "execution": "Expired binding-only inspection returns no create/connect commands; live execution authorization still refuses expiry"
+  },
+  "nativeLive": {
+    "passed": true,
+    "scope": "Owned live HTTP/D1/R2 qualification with explicit manual ordered stop and later RAM-budget retirement; no public launch, shipped admission, automatic expiry ordering or data-recovery claim",
+    "candidateImage": "sha256:9dfbbbc169476026500b85a9d984e689afa1bca1e37ee59f70a93d2881d23689",
+    "priorQaContainersPreserved": 10,
+    "totalContainers": 20,
+    "allContainersNonrunning": true,
+    "ownedContainersRetained": 10,
+    "ownedNetworksRetained": 4,
+    "ownedVolumesRetained": 12,
+    "acknowledgedHttpMutations": 1,
+    "sqlAndR2ReadThroughBothReplicas": true,
+    "orderedStopConfirmed": true,
+    "storageRequired": true,
+    "memoryBudgetReleased": true,
+    "freshNamespaceEligible": true,
+    "oldNamespaceReusable": false,
+    "dataDurability": "not-assessed",
+    "failure": null,
+    "defaultCronAdmission": "closed",
+    "publicPreviewLaunch": "unavailable"
+  },
+  "nativeCold": {
+    "passed": true,
+    "initialDriverPassed": false,
+    "initialDriverFailure": "Post-operation assertion compared mount arrays by order; corrected readback normalizes destination order and compares every remaining field",
+    "scope": "Cold expired allocation stop/explicit RAM-budget retirement only; no live ordering claim",
+    "containersPreserved": 10,
+    "allContainersNonrunning": 10,
+    "networksPreserved": 4,
+    "volumesPreserved": 12,
+    "dockerStopCalls": 0,
+    "originalHoldRecordRetained": true,
+    "activeMemoryHolds": 0,
+    "freshNamespaceEligible": true,
+    "oldNamespaceRefused": true,
+    "dataDurability": "not-assessed",
+    "noMutationReplay": true,
+    "defaultCronAdmission": "closed",
+    "publicPreviewLaunch": "unavailable"
+  },
+  "independentAudit": {
+    "passed": true,
+    "readOnly": true,
+    "mutationReplay": false,
+    "containersNonrunning": 20,
+    "priorContainersPreserved": 10,
+    "ownedRoleGraphVerified": true,
+    "signatureVerified": true,
+    "originalDeadlineVerified": true,
+    "nativeFinishOrderVerified": true,
+    "phaseJournalsVerified": true,
+    "retirementHashesVerified": true,
+    "historicalHolds": 2,
+    "activeMemoryHolds": 0,
+    "originalNamespacesRefused": true,
+    "freshNamespaceEligible": true,
+    "applicationSqlAndR2EvidenceVerified": true,
+    "currentStorageHistoryPolicyMatchesNativeSnapshots": true,
+    "nativeRunSourceArchived": true,
+    "subsequentSourceChanges": [
+      "packages/cli/src/preview/memory-state.mjs",
+      "packages/cli/src/preview/teardown.mjs"
+    ],
+    "coldInitialDriverPassed": false,
+    "coldReadOnlyCorrectionVerified": true,
+    "automaticExpiryOrdering": "not-qualified",
+    "dataDurability": "not-assessed",
+    "publicPreviewLaunch": "unavailable",
+    "defaultCronAdmission": "closed"
+  },
+  "evidenceCorrections": {
+    "coldDriver": "Original cold driver exited 1 after successful operations because its metadata assertion treated Mounts array order as meaningful. A separate read-only audit normalized destinations and verified every remaining field without replaying mutations.",
+    "storageHistory": "Two regression tests first failed. The final predicate accounts for previously started writers and excludes the input-only installer. Native execution preceded this stricter predicate; current policy was independently evaluated on saved actual pre-stop snapshots for both successful fixtures. Archived executed sources remain intact.",
+    "fullSuite": "The pre-fix full suite was intentionally interrupted after discovering the storage-history defect; it is not accepted as passing evidence."
+  },
+  "checks": {
+    "targetedNode": {
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "connectedNode": {
+      "tests": 291,
+      "pass": 291,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "syntax": "passed",
+    "quality": "passed; erosion 14.9%, duplication 1.6%",
+    "fullNodeSuite": {
+      "tests": 3379,
+      "pass": 3379,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "standardsSelfReview": "PASS; all ten dimensions assessed; no external reviewer",
+    "writing": "passed with terminology/style advisories"
+  },
+  "limits": {
+    "automaticExpiryOrdering": "not-qualified",
+    "nativeLeaseCleanup": "not-assessed",
+    "dataRecovery": "not-assessed",
+    "diskReclamation": "not-implemented",
+    "namespaceReuse": false,
+    "shippedRuntimeExecutionAdmission": "none",
+    "publicPreviewLaunch": "unavailable",
+    "fullFreshAppAndUpdateBrowserAcceptance": "open",
+    "defaultCronAdmission": "closed",
+    "cpu": "Container CPU upper bounds do not establish per-worker quotas or density guarantees"
+  },
+  "privateEvidence": {
+    "live": "~/.local/share/fogd-qualifications/preview-teardown-live-20261030-01",
+    "cold": "~/.local/share/fogd-qualifications/preview-teardown-cold-20261030-01"
+  }
+}

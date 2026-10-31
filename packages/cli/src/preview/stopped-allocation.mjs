@@ -1,11 +1,10 @@
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { isDeepStrictEqual } from 'node:util';
 import { uuid } from '../build-cache/paths.mjs';
 import { bindHostDirectory, checkHostDirectory, syncHostDirectory } from '../runtime/host-directory.mjs';
 import { validatePreviewPlan, previewPlanSha256 } from './plan.mjs';
-import { acquirePreviewHost, guardPreviewHost } from './host-registry.mjs';
+import { acquirePreviewHost, guardPreviewHost, requirePreviewHold } from './host-registry.mjs';
 import { hostRefusal, appendHostRecord, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
 import { assessPreviewAdmission, PreviewAdmissionError } from './admission.mjs';
@@ -48,10 +47,9 @@ export async function allocateStoppedPreview({ root, plan: input, reservation, e
   const commands = previewServiceCommands(plan, envelope, options, allocationId), valid = () => previewServiceCommands(plan, envelope, options, allocationId);
   return guardPreviewHost(async () => {
     const host = await acquirePreviewHost(root, plan.request.engineId);
-    const held = host.records.find(record => record.id === reservation);
-    if (!held || !isDeepStrictEqual(held.plan, plan)) hostRefusal('reservation');
+    const held = await requirePreviewHold(host, plan, reservation);
     const before = await readPreviewHost(run); assertRegisteredPreviewResources(before, host.records);
-    try { assessPreviewAdmission(plan, before, host.records.filter(record => record !== held).map(record => record.plan)); }
+    try { assessPreviewAdmission(plan, before, host.heldRecords.filter(record => record !== held).map(record => record.plan)); }
     catch (error) { if (error instanceof PreviewAdmissionError) await host.fence.release(); throw error; }
     const images = JSON.parse(await run(['image', 'inspect', expectedImage]));
     if (!Array.isArray(images) || images.length !== 1) hostRefusal('allocation-image');

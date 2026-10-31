@@ -50,11 +50,31 @@ function neverStarted(container) {
     state.OOMKilled !== false || !/^0001-01-01T00:00:00(?:\.0+)?Z$/.test(state.StartedAt) || container.RestartCount !== 0) hostRefusal('started-container');
 }
 function serviceState(role, container, phase) {
+  if (['operating', 'stopped'].includes(phase)) {
+    observedState(container);
+    if (phase === 'stopped' && !previewContainerStopped(container)) hostRefusal('writer-active');
+    return;
+  }
   if (phase === 'allocated' || role !== 'input-installer') return neverStarted(container);
+  installerStopped(container);
+}
+function installerStopped(container) {
   const state = container.State;
   if (state?.Status !== 'exited' || state.Running !== false || state.Paused !== false || state.Restarting !== false || state.Dead !== false ||
     state.OOMKilled !== false || state.ExitCode !== 0 || state.Pid !== 0 || !Number.isFinite(Date.parse(state.StartedAt)) || Date.parse(state.StartedAt) < Date.parse('2020-01-01') || container.RestartCount !== 0) hostRefusal('installer-exit');
 }
+export function previewContainerStopped(container) {
+  const state = container.State;
+  return state?.Running === false && state.Restarting === false && state.Paused === false && state.Pid === 0 && ['created', 'exited'].includes(state.Status);
+}
+function observedState(container) {
+  const state = container.State;
+  if (!state || !['Running', 'Paused', 'Restarting', 'Dead', 'OOMKilled'].every(key => typeof state[key] === 'boolean') ||
+    state.Paused || state.Restarting || state.Dead || !Number.isInteger(state.Pid) || state.Pid < 0 || !Number.isInteger(state.ExitCode) || state.ExitCode < 0 ||
+    !['created', 'running', 'exited'].includes(state.Status) || !Number.isFinite(Date.parse(state.StartedAt)) || container.RestartCount !== 0) hostRefusal('runtime-state');
+  if (!processStateMatches(container)) hostRefusal('runtime-state');
+}
+const processStateMatches = container => container.State.Running ? container.State.Status === 'running' && container.State.Pid > 0 : previewContainerStopped(container);
 function limitsAndPorts(service, host) {
   same([host.Memory, host.NanoCpus, host.PidsLimit, host.ReadonlyRootfs], [service.memoryBytes, service.cpuLimit * 1e9, service.pidsLimit, true]);
   same(host.RestartPolicy, { Name: 'no', MaximumRetryCount: 0 });
@@ -111,9 +131,9 @@ function assertCompleteNamespace(plan, observed) {
   }
 }
 
-export function assertStoppedPreviewGraph(input, observed, image, commands, allocationId, created, phase = 'allocated') {
+export function inspectPreviewGraph(input, observed, image, commands, allocationId, created, phase) {
   try {
-    if (!['allocated', 'inputs-installed'].includes(phase)) hostRefusal('stopped-graph');
+    if (!['allocated', 'inputs-installed', 'operating', 'stopped'].includes(phase)) hostRefusal('stopped-graph');
     const plan = validatePreviewPlan(input);
     same(observed.host.ID, plan.request.engineId);
     assertCompleteNamespace(plan, observed);
@@ -135,4 +155,9 @@ export function assertStoppedPreviewGraph(input, observed, image, commands, allo
     const configurationSha256 = hash(jsonBytes(Object.fromEntries(Object.entries(commands).map(([role,value]) => [role,value.configuration]))));
     return { inventorySha256: hash(jsonBytes({ planSha256: previewPlanSha256(plan), allocationId, configurationSha256, identities })), identities };
   } catch { hostRefusal('stopped-graph'); }
+}
+
+export function assertStoppedPreviewGraph(input, observed, image, commands, allocationId, created, phase = 'allocated') {
+  if (!['allocated', 'inputs-installed'].includes(phase)) hostRefusal('stopped-graph');
+  return inspectPreviewGraph(input, observed, image, commands, allocationId, created, phase);
 }

@@ -2,22 +2,20 @@ import { mkdir, readdir, open } from 'node:fs/promises';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { uuid } from '../build-cache/paths.mjs';
-import { bindHostDirectory, syncHostDirectory } from '../runtime/host-directory.mjs';
+import { syncHostDirectory } from '../runtime/host-directory.mjs';
 import { validatePreviewPlan, previewPlanSha256 } from './plan.mjs';
 import { previewServiceCommands } from './container-plan.mjs';
 import { preparePreviewInputPackage } from './input-package.mjs';
 import { previewInputFile } from './input-files.mjs';
-import { acquirePreviewHost, guardPreviewHost } from './host-registry.mjs';
-import { readHostRecord, appendHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
+import { acquirePreviewHost, guardPreviewHost, requirePreviewHold } from './host-registry.mjs';
+import { appendHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
 import { assertPreviewAllocationImage, assertStoppedPreviewGraph } from './stopped-graph.mjs';
+import { readPreviewAllocation } from './allocation-state.mjs';
 
 async function allocationRecord(host, plan, allocationId, reservation, options, envelope) {
-  const bound = await bindHostDirectory(join(host.allocations.canonical, plan.project));
+  const { bound, complete } = await readPreviewAllocation(host, plan, { allocationId, reservation, grantSha256: options.expectedGrantSha256, expiresAt: envelope.grant.expiresAt });
   if (!isDeepStrictEqual((await readdir(bound.canonical)).sort(), ['allocation.complete.json', 'allocation.pending.json'])) hostRefusal('input-state');
-  const pending = await readHostRecord(bound, 'allocation.pending.json'), complete = await readHostRecord(bound, 'allocation.complete.json');
-  const expected = { schema: 1, kind: 'fogd-preview-stopped-allocation', allocationId, reservation, planSha256: previewPlanSha256(plan), grantSha256: options.expectedGrantSha256, expiresAt: envelope.grant.expiresAt };
-  if (!isDeepStrictEqual(pending, expected) || !isDeepStrictEqual(complete, { ...expected, inventorySha256: complete.inventorySha256, identities: complete.identities })) hostRefusal('input-state');
   return { bound, complete };
 }
 async function readbackInputs(bound, identities, snapshot, run) {
@@ -44,8 +42,7 @@ export async function installPreviewInputs({ root, plan: input, allocationId, re
   const authority = JSON.parse(commands['input-installer'].configuration.command[2]);
   const snapshot = await preparePreviewInputPackage(authority, bundle);
   return guardPreviewHost(async () => {
-    const host = await acquirePreviewHost(root, plan.request.engineId), held = host.records.find(record => record.id === reservation);
-    if (!held || !isDeepStrictEqual(held.plan, plan)) hostRefusal('reservation');
+    const host = await acquirePreviewHost(root, plan.request.engineId); await requirePreviewHold(host, plan, reservation);
     const { bound, complete } = await allocationRecord(host, plan, allocationId, reservation, options, envelope);
     const images = JSON.parse(await run(['image', 'inspect', expectedImage]));
     if (images.length !== 1) hostRefusal('allocation-image');

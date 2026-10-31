@@ -18,7 +18,7 @@ export function stoppedPreviewFixture(input) {
     const expected = commands[role];
     return { Id: id(index+1), Name: '/'+service.name, Image: image.Id, RestartCount: 0, Config: { Image: image.Id, Labels: { ...image.Config.Labels, ...expected.labels },
       Env: ['PATH=/usr/bin', ...Object.entries(expected.configuration.environment).map(([key,value]) => `${key}=${value}`)], Cmd: [...expected.configuration.command], OpenStdin: role==='input-installer', Entrypoint: ['/usr/local/bin/node'] },
-      State: { Status: 'created', Running: false, Paused: false, Restarting: false, Dead: false, OOMKilled: false, StartedAt: '0001-01-01T00:00:00Z' },
+      State: { Status: 'created', Pid: 0, ExitCode: 0, Running: false, Paused: false, Restarting: false, Dead: false, OOMKilled: false, StartedAt: '0001-01-01T00:00:00Z' },
       HostConfig: { Memory: service.memoryBytes, NanoCpus: service.cpuLimit*1e9, PidsLimit: 128, ReadonlyRootfs: true, RestartPolicy: { Name: 'no', MaximumRetryCount: 0 },
         Dns: ['127.0.0.1'], DnsOptions: ['timeout:1','attempts:1'], IpcMode: 'private', CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'], Tmpfs: { '/tmp':'rw,noexec,nosuid,nodev' }, NetworkMode: service.networks.length ? plan.networks[service.networks[0]].name : 'none',
         PortBindings: service.publish ? { '8080/tcp': [{ HostIp: '127.0.0.1', HostPort: String(service.publish.port) }] } : {},
