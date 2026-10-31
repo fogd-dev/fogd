@@ -14,7 +14,7 @@ import { acquirePreviewHost, guardPreviewHost, requirePreviewHold } from './host
 import { readPreviewAllocation } from './allocation-state.mjs';
 import { readHostRecord, hostRefusal, assertRegisteredPreviewResources } from './host-records.mjs';
 import { readPreviewHost } from './host-inventory.mjs';
-import { assertPreviewAllocationImage, assertStoppedPreviewGraph } from './stopped-graph.mjs';
+import { assertPreviewAllocationImage, inspectPreviewGraph } from './stopped-graph.mjs';
 import { assessPreviewMemory } from './admission.mjs';
 
 async function installedInputs(bound, authority, allocation, reservation) {
@@ -30,7 +30,7 @@ async function installedInputs(bound, authority, allocation, reservation) {
 
 // A point-in-time inspection, never a reusable start authorization. Runtime
 // admission, final launch and deadline orchestration remain separate gates.
-export async function inspectPreviewStartup({ root, plan: input, allocationId, reservation, envelope, expectedImage, directory, env, run, ...options }) {
+export async function openPreviewStartup({ root, plan: input, allocationId, reservation, envelope, expectedImage, directory, env, run, ...options }) {
   const plan = validatePreviewPlan(input);
   if (!uuid(allocationId) || !uuid(reservation) || expectedImage !== plan.request.image) hostRefusal('startup-target');
   const commands = previewServiceCommands(plan, envelope, options, allocationId);
@@ -44,11 +44,11 @@ export async function inspectPreviewStartup({ root, plan: input, allocationId, r
       const images = JSON.parse(await run(['image', 'inspect', expectedImage]));
       if (!Array.isArray(images) || images.length !== 1) hostRefusal('allocation-image');
       assertPreviewAllocationImage(plan, images[0], expectedImage);
-      const observe = async () => {
+      const observe = async (phase = 'inputs-installed') => {
         const observed = await readPreviewHost(run); assertRegisteredPreviewResources(observed, host.records);
-        const graph = assertStoppedPreviewGraph(plan, observed, images[0], commands, allocationId, complete.identities, 'inputs-installed');
+        const graph = inspectPreviewGraph(plan, observed, images[0], commands, allocationId, complete.identities, phase);
         if (graph.inventorySha256 !== complete.inventorySha256) hostRefusal('startup-target');
-        return observed;
+        return { observed, graph, roles: Object.fromEntries(Object.entries(plan.services).map(([role, service]) => [role, observed.containers.find(value => value.Name === '/' + service.name)])) };
       };
       await observe();
       const snapshot = await installedInputs(bound, authority, complete, reservation);
@@ -56,13 +56,19 @@ export async function inspectPreviewStartup({ root, plan: input, allocationId, r
       await readPreviewInputMounts(temporary, complete.identities, snapshot, run);
       await assertCurrentPreviewSource(inputs, env);
       previewServiceCommands(plan, envelope, options, allocationId);
-      const observed = await observe(), eligibility = assessPreviewMemory(plan, observed, host.heldRecords.filter(record => record !== held).map(record => record.plan));
-      return { startupInspected: true, allocationId, planSha256: previewPlanSha256(plan), inventorySha256: complete.inventorySha256, packageSha256: snapshot.sha256,
+      const { observed } = await observe(), eligibility = assessPreviewMemory(plan, observed, host.heldRecords.filter(record => record !== held).map(record => record.plan));
+      const inspection = { startupInspected: true, allocationId, planSha256: previewPlanSha256(plan), inventorySha256: complete.inventorySha256, packageSha256: snapshot.sha256,
         source: inputs.preparation.source, expiresAt: envelope.grant.expiresAt, memory: eligibility.memory,
         executionAuthorized: false, runtimeExecutionAdmitted: false, capacityReserved: true };
-    } finally {
+      return { inspection, plan, host, held, bound, complete, commands, snapshot, inputs, image: images[0], observe };
+    } catch (error) { await host.fence.release(); throw error; } finally {
       if (temporary) await rm(temporary, { recursive: true });
-      await host.fence.release();
     }
   });
+}
+
+export async function inspectPreviewStartup(input) {
+  const value = await openPreviewStartup(input);
+  await value.host.fence.release();
+  return value.inspection;
 }

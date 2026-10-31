@@ -21,7 +21,7 @@ export async function previewInputFixture(t, source = {}) {
     return { cert: await readFile(join(root,role+'.crt'),'utf8'), key: await readFile(join(root,role+'.key'),'utf8') };
   }
   const gatewayTLS = await tls('gateway'), ingressTLS = await tls('ingress'), secrets = {}, accessKey = 'd'.repeat(64);
-  const request = { ...f.request, preparation, preparationSha256: hash(jsonBytes(preparation)), origin: `https://${hostname}:49443`, fingerprints: {
+  const request = { ...f.request, image: source.image || f.request.image, preparation, preparationSha256: hash(jsonBytes(preparation)), origin: `https://${hostname}:49443`, fingerprints: {
     ...f.request.fingerprints, artifact: hash(jsonBytes(body)), previewSecrets: hash(jsonBytes(secrets)), gatewayTLS: hash(jsonBytes(gatewayTLS)), ingressTLS: hash(jsonBytes(ingressTLS)), viewerAccessKey: hash(accessKey),
   } };
   const plan = createPreviewPlan(request), release = { app: body.app, digest: body.digest, requiredSecrets: [], resources: { script: body.app, durable: { bindings: [] }, d1: [], r2: [] } };

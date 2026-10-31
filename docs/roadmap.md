@@ -67,15 +67,20 @@ checked artifact/secret/TLS installation has actual mount readback with every
 application service still never-started. Host-fenced startup inspection rechecks
 the current source, actual installed mount bytes, live deadline and memory
 eligibility. It starts no application service and grants no reusable execution
-permission. Shipped runtime admission and final launch orchestration remain the next host-lifecycle work before
-public preview launch. The ledger is local coordination, not a distributed engine
+permission. An explicit candidate catalog and managed startup/expiry coordinator
+connect these checks to ordered service readiness and early ordered teardown.
+Ordinary preview-runtime admission, public lifecycle commands and complete
+preview/browser trials remain open before public launch. The ledger is local coordination, not a distributed engine
 lock or a Docker memory allocation.
 
 Internal manual teardown confirms ingress, management and native-writer shutdown
 before stopping storage. Explicit post-expiry memory retirement requires the
 ordered journal and a fresh stopped graph; names, data and physical resources
 remain retained. Native lease cleanup, data recovery, automatic expiry ordering
-and full fresh-app/update browser acceptance are not established by that check.
+and full fresh-app/update browser acceptance are not established by that manual check.
+The managed candidate path adds timed shutdown while its owner remains alive;
+manager-loss ordering and recovery remain unqualified.
+Ordinary previews also need disk/log bounds and decline/revocation integration.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

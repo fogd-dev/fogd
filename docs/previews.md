@@ -38,8 +38,8 @@ A later source submission does not replace the selected artifact.
 ## Execution policy and remaining work
 
 Preparation records the intended execution policy. Enforcement and launch remain
-unavailable. The lifetime is an integer from 60 to 3600 seconds, measured from a
-future authorized launch rather than from download time. This initial profile
+unavailable. The lifetime is an integer from 60 to 3600 seconds, measured from
+signed execution authorization rather than preparation or readiness. This initial profile
 accepts HTTP applications; queue and cron declarations refuse preparation.
 Required secret names are recorded, but source vault values and credentials are
 never copied into the preparation.
@@ -372,3 +372,35 @@ expiry cannot be extended. Inspection releases its checking fence after a refusa
 because it performs no Docker mutations; it retains the allocation and hold.
 Actual startup must integrate these checks with runtime admission, ordered service
 readiness and automatic expiry shutdown before a public launch is available.
+
+## Internal managed lifecycle
+
+The [managed lifecycle check](evidence/operator-preview-lifecycle.json) uses an
+explicit candidate runtime from the [preview catalog](../packages/cli/src/preview/runtime-catalog.json).
+Ordinary enrollment refuses that candidate. Its immutable image and catalog hash
+must match the signed target; all cataloged source programs are copied from the
+stopped installer and rehashed without executing an image inspector or copying
+dependency links outside their package directory.
+
+The host coordinator repeats source and capacity checks before recording a
+durable startup intent. It starts storage, completes bucket initialization, then
+starts native replicas, the exact-artifact controller, gateway and ingress. Fresh
+graph observations and read-only readiness probes precede each later phase.
+Readiness probes use storage health, TCP/TLS connections, authenticated controller
+identity and unauthenticated ingress refusal; they never invoke an app handler.
+An unknown start or observation retains the fence, resources and hold without
+replay. Interrupted startup remains fenced and uses the original service deadlines.
+
+The managed entry point schedules shutdown before returning readiness. It begins
+ordered teardown thirty seconds before the original deadline, or on cancellation
+of a ready preview through its supplied signal. Its owner must observe completion.
+Setup and the shutdown interval consume the original lifetime; readiness reports
+the earlier shutdown time separately from the original expiry.
+The original per-service deadline remains a fallback; manager loss and arbitrary
+Docker stalls do not establish ordered shutdown. Memory retirement stays explicit
+and requires the original expiry and complete stopped-state proof.
+
+This candidate path has no public lifecycle CLI or ordinary enrollment permission.
+Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
+and data recovery remain open. Ordinary previews also need disk/log bounds and
+decline/revocation integration. Default cron admission remains closed.
