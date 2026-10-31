@@ -11,8 +11,8 @@ export function stoppedPreviewFixture(input) {
   const image = { Id: plan.request.image, Os: 'linux', Architecture: 'arm64', Config: { Env: ['PATH=/usr/bin'], Labels: { 'io.fogd.runtime.mode': 'preview-backend-candidate' } } };
   const networks = Object.entries(plan.networks).map(([role, value], index) => ({ Id: id(index+100), Name: value.name, Driver: 'bridge', Scope: 'local', Internal: value.internal,
     EnableIPv6: false, Ingress: false, ConfigOnly: false, Options: value.driver_opts, Labels: { ...value.labels, ...labels }, IPAM: { Driver: 'default', Config: [{ Subnet: value.ipam.config[0].subnet }] } }));
-  const volumes = Object.entries(plan.volumes).map(([role, value]) => ({ Name: value.name, Driver: 'local', Scope: 'local', Options: null, CreatedAt: '2026-10-30T00:00:00Z', Mountpoint: '/var/lib/docker/volumes/'+value.name+'/_data', Labels: { ...labels, 'fogd.preview.volume': role } }));
-  const options = { publicKey: f.authority.publicKey, expectedGrantSha256: previewExecutionSha256(f.envelope), secretValues: { storagePassword: f.storagePassword, gatewayToken: f.gatewayToken } };
+  const volumes = Object.entries(plan.volumes).map(([role, value]) => ({ Name: value.name, Driver: 'local', Scope: 'local', Options: value.driverOptions || null, CreatedAt: '2026-10-30T00:00:00Z', Mountpoint: '/var/lib/docker/volumes/'+value.name+'/_data', Labels: { ...labels, 'fogd.preview.volume': role } }));
+  const options = { runStorageHost: f.runStorageHost || f.options?.runStorageHost, publicKey: f.authority.publicKey, expectedGrantSha256: previewExecutionSha256(f.envelope), secretValues: { storagePassword: f.storagePassword, gatewayToken: f.gatewayToken } };
   const commands = Object.fromEntries(Object.entries(plan.services).map(([role, service]) => [role, previewContainerCommands(plan, f.envelope, { ...options, allocationId, role, secretValues: Object.fromEntries(Object.values(service.secretEnvironment).map(key => [key, options.secretValues[key]])) })]));
   const containers = Object.entries(plan.services).map(([role, service], index) => {
     const expected = commands[role];

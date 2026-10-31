@@ -18,7 +18,7 @@ export async function awaitPreviewReady(value, role, run, live) {
   const code = `try{const ready=await(async()=>{${probe}})();console.log(JSON.stringify({ready}))}catch{console.log(JSON.stringify({ready:false}))}`;
   for (;;) {
     live();
-    const { roles } = await value.observe('operating');
+    const { roles } = await value.observe('operating'); live();
     if (!roles[role].State.Running) hostRefusal('startup-exited');
     const output = JSON.parse(await run(['exec', value.complete.identities.containers.minio, '/usr/local/bin/node', '--input-type=module', '-e', code]));
     if (Object.keys(output).length !== 1 || typeof output.ready !== 'boolean') hostRefusal('startup-readiness');

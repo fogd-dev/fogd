@@ -1,3 +1,4 @@
+import { assertCurrentPreviewStorage } from './storage-binding.mjs';
 import { mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -30,7 +31,7 @@ async function installedInputs(bound, authority, allocation, reservation) {
 
 // A point-in-time inspection, never a reusable start authorization. Runtime
 // admission, final launch and deadline orchestration remain separate gates.
-export async function openPreviewStartup({ root, plan: input, allocationId, reservation, envelope, expectedImage, directory, env, run, ...options }) {
+export async function openPreviewStartup({ root, plan: input, allocationId, reservation, envelope, expectedImage, directory, env, run, runStorageHost, ...options }) {
   const plan = validatePreviewPlan(input);
   if (!uuid(allocationId) || !uuid(reservation) || expectedImage !== plan.request.image) hostRefusal('startup-target');
   const commands = previewServiceCommands(plan, envelope, options, allocationId);
@@ -45,6 +46,7 @@ export async function openPreviewStartup({ root, plan: input, allocationId, rese
       if (!Array.isArray(images) || images.length !== 1) hostRefusal('allocation-image');
       assertPreviewAllocationImage(plan, images[0], expectedImage);
       const observe = async (phase = 'inputs-installed') => {
+        await assertCurrentPreviewStorage(plan, runStorageHost, phase === 'inputs-installed' ? 'installed' : 'any');
         const observed = await readPreviewHost(run); assertRegisteredPreviewResources(observed, host.records);
         const graph = inspectPreviewGraph(plan, observed, images[0], commands, allocationId, complete.identities, phase);
         if (graph.inventorySha256 !== complete.inventorySha256) hostRefusal('startup-target');
@@ -56,7 +58,8 @@ export async function openPreviewStartup({ root, plan: input, allocationId, rese
       await readPreviewInputMounts(temporary, complete.identities, snapshot, run);
       await assertCurrentPreviewSource(inputs, env);
       previewServiceCommands(plan, envelope, options, allocationId);
-      const { observed } = await observe(), eligibility = assessPreviewMemory(plan, observed, host.heldRecords.filter(record => record !== held).map(record => record.plan));
+      const { observed } = await observe(); previewServiceCommands(plan, envelope, options, allocationId);
+      const eligibility = assessPreviewMemory(plan, observed, host.heldRecords.filter(record => record !== held).map(record => record.plan));
       const inspection = { startupInspected: true, allocationId, planSha256: previewPlanSha256(plan), inventorySha256: complete.inventorySha256, packageSha256: snapshot.sha256,
         source: inputs.preparation.source, expiresAt: envelope.grant.expiresAt, memory: eligibility.memory,
         executionAuthorized: false, runtimeExecutionAdmitted: false, capacityReserved: true };

@@ -68,4 +68,21 @@ async function operation(input, action) {
 // This component provisions storage only; allocation/startup integration must
 // independently bind the engine, signed target and realized volume sources.
 export const preparePreviewStorage = input => operation(input, 'prepare');
-export const inspectPreviewStorage = input => operation(input, 'inspect');
+export function inspectPreviewStorage(input, { phase = 'any' } = {}) {
+  const action = { any: 'inspect', empty: 'inspect-empty', installed: 'inspect-installed' }[phase];
+  if (!action) refuse();
+  return operation(input, action);
+}
+
+export function validatePreviewStorageReceipt(value, { project, engineId }) {
+  try {
+    executionKeys(value, ['storage', 'sha256', 'workerSha256', 'resourcesRetained', 'executionAuthorized', 'ordinaryEnrollment']);
+    const suffix = '/' + project + '/mount', target = value.storage.mount.target;
+    if (typeof target !== 'string' || !target.endsWith(suffix)) refuse();
+    const request = checkedRequest({ root: target.slice(0, -suffix.length), project, engineId }, 'inspect');
+    checkedStorage(value.storage, request);
+    if (value.sha256 !== hash(jsonBytes(value.storage)) || !/^[a-f0-9]{64}$/.test(value.workerSha256) ||
+      value.resourcesRetained !== true || value.executionAuthorized !== false || value.ordinaryEnrollment !== false) refuse();
+    return structuredClone(value);
+  } catch { refuse(); }
+}

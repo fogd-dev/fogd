@@ -28,7 +28,7 @@ function startupClock(input, value, shutdownAt) {
 // admission remains closed until the complete preview lifecycle is qualified.
 export async function startPreviewAllocation(input) {
   return guardPreviewHost(async () => {
-    if (input.plan?.schema !== 2) hostRefusal('resource-policy');
+    if (input.plan?.schema !== 3) hostRefusal('resource-policy');
     if (input.signal !== undefined && !(input.signal instanceof AbortSignal)) hostRefusal('startup-target');
     if (input.signal?.aborted) hostRefusal('startup-window');
     const runtime = bindPreviewRuntime(input.plan, input.runtime, input.candidateEnrollment);
@@ -41,7 +41,7 @@ export async function startPreviewAllocation(input) {
       if (shutdownAt - Date.now() < 15000) hostRefusal('startup-window');
       verified = await verifyPreviewRuntime(runtime, value.complete.identities.containers['input-installer'], input.run);
       await assertCurrentPreviewSource(value.inputs, input.env); live();
-      const { observed } = await value.observe();
+      const { observed } = await value.observe(); live();
       assessPreviewMemory(value.plan, observed, value.host.heldRecords.filter(record => record !== value.held).map(record => record.plan));
     } catch (error) { await value.host.fence.release(); throw error; }
     const pending = { schema: 1, kind: 'fogd-preview-startup', allocationId: input.allocationId, reservation: input.reservation,
@@ -50,7 +50,7 @@ export async function startPreviewAllocation(input) {
     await value.host.fence.record('writing'); await appendHostRecord(value.bound, 'startup.pending.json', pending);
     const started = new Set();
     for (const [phase, roles] of Object.entries(groups)) {
-      live(); assertProgress((await value.observe('operating')).roles, started);
+      live(); assertProgress((await value.observe('operating')).roles, started); live();
       await input.run(['start', ...roles.map(role => value.complete.identities.containers[role])]);
       if (phase === 'initialization') {
         if ((await input.run(['wait', value.complete.identities.containers['bucket-init']])).trim() !== '0') hostRefusal('startup-initialization');

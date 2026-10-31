@@ -6,6 +6,7 @@ import { assertContainerPrivileges, assertInstallationExclusion } from '../recov
 import { previewDns, assertPreviewNetwork } from './networks.mjs';
 import { validatePreviewPlan, previewPlanSha256 } from './plan.mjs';
 import { hostRefusal } from './host-records.mjs';
+import { assertPreviewStorageExclusion, previewStorageAliases } from './storage-binding.mjs';
 
 const empty = value => value == null || typeof value === 'object' && !Object.keys(value).length;
 const same = (actual, expected) => { if (!isDeepStrictEqual(actual, expected)) hostRefusal('stopped-graph'); };
@@ -27,7 +28,7 @@ function volumes(plan, observed, allocationId) {
   const result = {};
   for (const [role, declaration] of Object.entries(plan.volumes)) {
     const value = one(observed.volumes, 'Name', declaration.name);
-    if (value.Driver !== 'local' || value.Scope !== 'local' || !empty(value.Options) || typeof value.Mountpoint !== 'string' || !value.Mountpoint.startsWith('/') || !value.CreatedAt) hostRefusal('stopped-graph');
+    if (value.Driver !== 'local' || value.Scope !== 'local' || !isDeepStrictEqual(value.Options || {}, declaration.driverOptions || {}) || typeof value.Mountpoint !== 'string' || !value.Mountpoint.startsWith('/') || !value.CreatedAt) hostRefusal('stopped-graph');
     same(value.Labels, { ...labels(plan, allocationId), 'fogd.preview.volume': role });
     result[role] = { ...value, mountpoint: value.Mountpoint };
   }
@@ -76,7 +77,7 @@ function observedState(container) {
 }
 const processStateMatches = container => container.State.Running ? container.State.Status === 'running' && container.State.Pid > 0 : previewContainerStopped(container);
 function limitsAndPorts(plan, service, host) {
-  if (plan.schema === 2) same(host.LogConfig, { Type: plan.hardening.logging.driver, Config: plan.hardening.logging.options });
+  if (plan.schema >= 2) same(host.LogConfig, { Type: plan.hardening.logging.driver, Config: plan.hardening.logging.options });
   same([host.Memory, host.NanoCpus, host.PidsLimit, host.ReadonlyRootfs], [service.memoryBytes, service.cpuLimit * 1e9, service.pidsLimit, true]);
   same(host.RestartPolicy, { Name: 'no', MaximumRetryCount: 0 });
   same(host.Dns, [...previewDns.dns]); same(host.DnsOptions, [...previewDns.dns_opt]);
@@ -137,7 +138,7 @@ export function inspectPreviewGraph(input, observed, image, commands, allocation
     if (!['allocated', 'inputs-installed', 'operating', 'stopped'].includes(phase)) hostRefusal('stopped-graph');
     const plan = validatePreviewPlan(input);
     same(observed.host.ID, plan.request.engineId);
-    assertCompleteNamespace(plan, observed);
+    assertCompleteNamespace(plan, observed); assertPreviewStorageExclusion(plan, observed);
     const checkedVolumes = volumes(plan, observed, allocationId), checkedNetworks = networks(plan, observed, allocationId), containers = {};
     for (const [role, service] of Object.entries(plan.services)) {
       const container = one(observed.containers, 'Name', '/' + service.name), expected = commands[role];
@@ -151,7 +152,7 @@ export function inspectPreviewGraph(input, observed, image, commands, allocation
       containers[role] = container;
     }
     for (const [role, value] of Object.entries(checkedNetworks)) same(value.id, created.networks[role]);
-    for (const container of observed.containers) if (!Object.values(containers).includes(container)) assertInstallationExclusion({ name: plan.project, volumes: plan.volumes }, container, Object.values(containers), checkedVolumes, checkedNetworks);
+    for (const container of observed.containers) if (!Object.values(containers).includes(container)) assertInstallationExclusion({ name: plan.project, volumes: plan.volumes }, container, Object.values(containers), { ...checkedVolumes, ...previewStorageAliases(plan) }, checkedNetworks);
     const identities = { containers: Object.fromEntries(Object.entries(containers).map(([role, value]) => [role, value.Id])), networks: Object.fromEntries(Object.entries(checkedNetworks).map(([role,value]) => [role,value.id])), volumes: Object.fromEntries(Object.entries(checkedVolumes).map(([role,value]) => [role, { name: value.Name, createdAt: value.CreatedAt, mountpoint: value.Mountpoint }])) };
     const configurationSha256 = hash(jsonBytes(Object.fromEntries(Object.entries(commands).map(([role,value]) => [role,value.configuration]))));
     return { inventorySha256: hash(jsonBytes({ planSha256: previewPlanSha256(plan), allocationId, configurationSha256, identities })), identities };

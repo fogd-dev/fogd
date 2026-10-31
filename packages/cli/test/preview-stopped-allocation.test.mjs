@@ -106,3 +106,7 @@ test('expired original execution grant refuses before host lock or Docker effect
  await assert.rejects(f.allocate(),{code:'PREVIEW_PLAN_REFUSED'});assert.equal(f.calls.length,before);
  assert.equal((await inspectPreviewHostReservations({root:f.root,engineId:f.plan.request.engineId})).length,1);
 });
+
+test('missing live storage proof refuses allocation before resource creation and releases only its checking fence',async t=>{
+ const f=await hostFixture(t);f.options.runStorageHost=undefined;await assert.rejects(f.allocate(),{code:'PREVIEW_HOST_REFUSED',reason:'storage'});assert.ok(!f.calls.some(c=>c[0]==='create'||c[1]==='create'));assert.ok(!(await readdir(join(f.root,hash(f.plan.request.engineId)))).includes('launch.pending.json'));assert.equal((await inspectPreviewHostReservations({root:f.root,engineId:f.plan.request.engineId})).length,1);
+});

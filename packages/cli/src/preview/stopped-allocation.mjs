@@ -1,3 +1,4 @@
+import { assertCurrentPreviewStorage } from './storage-binding.mjs';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -26,7 +27,7 @@ async function createResources(plan, commands, allocationId, run, valid) {
   }
   for (const [role, volume] of Object.entries(plan.volumes)) {
     valid();
-    if ((await run(['volume', 'create', '--driver', 'local', ...labelArgs({ ...labels, 'fogd.preview.volume': role }), volume.name])).trim() !== volume.name) hostRefusal('created-identity');
+    if ((await run(['volume', 'create', '--driver', 'local', ...Object.entries(volume.driverOptions || {}).flatMap(([key,value]) => ['--opt', key + '=' + value]), ...labelArgs({ ...labels, 'fogd.preview.volume': role }), volume.name])).trim() !== volume.name) hostRefusal('created-identity');
   }
   for (const [role, command] of Object.entries(commands)) {
     valid(); result.containers[role] = createdId(await run(command.create));
@@ -40,7 +41,7 @@ async function createResources(plan, commands, allocationId, run, valid) {
 // Only stopped resources are created. Empty input/trust volumes and an image
 // identity check do not admit runtime execution or constitute launch readiness.
 // Any ambiguous effect retains the allocation journal, hold and host fence.
-export async function allocateStoppedPreview({ root, plan: input, reservation, envelope, expectedImage, run, ...options }) {
+export async function allocateStoppedPreview({ root, plan: input, reservation, envelope, expectedImage, run, runStorageHost, ...options }) {
   const plan = validatePreviewPlan(input), allocationId = randomUUID();
   if (!uuid(reservation)) hostRefusal('reservation');
   if (expectedImage !== plan.request.image) hostRefusal('allocation-image');
@@ -54,6 +55,8 @@ export async function allocateStoppedPreview({ root, plan: input, reservation, e
     const images = JSON.parse(await run(['image', 'inspect', expectedImage]));
     if (!Array.isArray(images) || images.length !== 1) hostRefusal('allocation-image');
     assertPreviewAllocationImage(plan, images[0], expectedImage); valid();
+    try { await assertCurrentPreviewStorage(plan, runStorageHost, 'empty'); valid(); }
+    catch (error) { await host.fence.release(); throw error; }
     await host.fence.record('writing'); await checkHostDirectory(host.parent);
     const directory = join(host.allocations.canonical, plan.project); await mkdir(directory, { mode: 0o700 }); await syncHostDirectory(host.allocations);
     const bound = await bindHostDirectory(directory), pending = { schema: 1, kind: 'fogd-preview-stopped-allocation', allocationId, reservation, planSha256: previewPlanSha256(plan), grantSha256: options.expectedGrantSha256, expiresAt: envelope.grant.expiresAt };

@@ -1,13 +1,10 @@
 import test from 'node:test';
+import { previewStorageFixture } from './fixtures/preview-storage.mjs';
 import assert from 'node:assert/strict';
 import { preparePreviewStorage, inspectPreviewStorage, previewStorageBytes, previewStorageWorkerSha256 } from '../src/preview/storage.mjs';
 
 const request=()=>({root:'/var/lib/fogd-preview-storage',project:'fogd-preview-'+'a'.repeat(32),engineId:'engine-fixture'});
-const reply=input=>{
- const id=input.project.slice(13),uuid=[id.slice(0,8),id.slice(8,12),id.slice(12,16),id.slice(16,20),id.slice(20)].join('-'),dir=input.root+'/'+input.project;
- const roles=['minio','slot-1-a','slot-1-b','slot-2-a','slot-2-b','controller','controller-trust','controller-input','gateway-trust','gateway-input','ingress-trust','ingress-input'];
- return{ok:true,storage:{schema:1,kind:'fogd-preview-storage',project:input.project,engineId:input.engineId,uuid,bytes:previewStorageBytes,rootIdentity:{device:1,inode:1},directoryIdentity:{device:1,inode:2},disk:{device:1,inode:3,bytes:previewStorageBytes,allocatedBytes:previewStorageBytes},mount:{target:dir+'/mount',source:'/dev/loop3',fstype:'ext4',uuid,options:'rw,nosuid,nodev,noexec,relatime',fsroot:'/', 'maj:min':'7:3'},loop:{name:'/dev/loop3','back-file':dir+'/disk.img','back-ino':3,'back-maj:min':'0:1','maj:min':'7:3',ro:false,autoclear:false,offset:0,sizelimit:0},roles:Object.fromEntries(roles.map((r,i)=>[r,{device:2,inode:i+1}]))}};
-};
+const reply=input=>({ok:true,storage:previewStorageFixture(input.project,input.engineId,input.root).storage});
 const refused={code:'PREVIEW_STORAGE_REFUSED'};
 
 test('host storage transport binds the independently selected project and engine, without execution admission',async()=>{

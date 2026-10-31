@@ -73,7 +73,7 @@ def read(path):
 
 def request(value):
     require(isinstance(value, dict) and set(value) == {'action', 'root', 'project', 'engineId'})
-    require(value['action'] in ['prepare', 'inspect'])
+    require(value['action'] in ['prepare', 'inspect', 'inspect-empty', 'inspect-installed'])
     require(isinstance(value['root'], str) and re.fullmatch(r'/[A-Za-z0-9_./-]{1,200}', value['root']))
     require(os.path.realpath(value['root']) == value['root'] and os.path.normpath(value['root']) == value['root'])
     require(isinstance(value['project'], str) and re.fullmatch(r'fogd-preview-[a-f0-9]{32}', value['project']))
@@ -228,6 +228,10 @@ def main():
         require(len(data) <= 4096)
         value = request(json.loads(data))
         result = prepare(value) if value['action'] == 'prepare' else inspect(value)
+        if value['action'] in ['inspect-empty', 'inspect-installed']:
+            roles = ROLES if value['action'] == 'inspect-empty' else ROLES[:6]
+            for role in roles:
+                require(not os.listdir(paths(value)[1] + '/' + role))
         print(json.dumps({'ok': True, 'storage': result}, separators=(',', ':')))
     except Exception:
         # Raw utility diagnostics may contain host paths. Keep them private.

@@ -1,3 +1,4 @@
+import { previewStorageFixture, previewStorageHostFixture } from './preview-storage.mjs';
 import { randomUUID } from 'node:crypto';
 import { hash, jsonBytes } from '../../src/build-cache/paths.mjs';
 import { createPreviewExecutionAuthority, previewExecutionSha256 } from '../../src/preview/execution-authority.mjs';
@@ -15,9 +16,10 @@ export function previewPlanFixture(octet = 250, port = 49443) {
   const request = { preparation, preparationSha256: hash(jsonBytes(preparation)), engineId: 'engine-fixture', image: 'sha256:' + '4'.repeat(64), origin: `https://demo.${id.replaceAll('-', '')}.preview.test:${port}`,
     subnets: { control: `10.${octet}.1.0/24`, 'fleet-1': `10.${octet}.2.0/24`, 'fleet-2': `10.${octet}.3.0/24`, frontend: `10.${octet}.4.0/24` },
     fingerprints: { authorityPublicKey: hash(authority.publicKey), artifact: '5'.repeat(64), previewSecrets: hash(jsonBytes({})), storagePassword: hash(storagePassword), gatewayToken: hash(gatewayToken), viewerAccessKey: '6'.repeat(64), gatewayTLS: '7'.repeat(64), ingressTLS: '8'.repeat(64) } };
+  request.storage = previewStorageFixture('fogd-preview-' + id.replaceAll('-', ''), request.engineId);
   const plan = createPreviewPlan(request), target = previewPlanTarget(plan);
   const release = { app: 'demo', digest: preparation.source.digest, requiredSecrets: [], resources: { script: 'demo', durable: { bindings: [] }, d1: [], r2: [] } };
   const envelope = issuePreviewExecution(preparation, { expectedPreparationSha256: request.preparationSha256, release, target, privateKey: authority.privateKey });
-  return { plan, request, envelope, authority, storagePassword, gatewayToken,
+  return { plan, request, envelope, authority, storagePassword, gatewayToken, runStorageHost: previewStorageHostFixture(request.storage),
     commands: (role, secretValues = {}) => previewContainerCommands(plan, envelope, { role, secretValues, publicKey: authority.publicKey, expectedGrantSha256: previewExecutionSha256(envelope) }) };
 }

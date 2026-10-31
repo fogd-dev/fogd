@@ -1,3 +1,4 @@
+import { assertCurrentPreviewStorage } from './storage-binding.mjs';
 import { mkdir, readdir, open } from 'node:fs/promises';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
@@ -25,7 +26,7 @@ async function readbackInputs(bound, identities, snapshot, run) {
 
 // Start only the fixed networkless input installer. Every application service
 // must remain never-started; source recheck and runtime admission still gate launch.
-export async function installPreviewInputs({ root, plan: input, allocationId, reservation, envelope, bundle, expectedImage, run, ...options }) {
+export async function installPreviewInputs({ root, plan: input, allocationId, reservation, envelope, bundle, expectedImage, run, runStorageHost, ...options }) {
   const plan = validatePreviewPlan(input);
   if (!uuid(allocationId) || !uuid(reservation) || expectedImage !== plan.request.image) hostRefusal('input-state');
   const commands = previewServiceCommands(plan, envelope, options, allocationId);
@@ -40,11 +41,15 @@ export async function installPreviewInputs({ root, plan: input, allocationId, re
     const before = await readPreviewHost(run); assertRegisteredPreviewResources(before, host.records);
     const graph = assertStoppedPreviewGraph(plan, before, images[0], commands, allocationId, complete.identities);
     if (graph.inventorySha256 !== complete.inventorySha256) hostRefusal('input-state');
+    try { await assertCurrentPreviewStorage(plan, runStorageHost, 'empty'); previewServiceCommands(plan, envelope, options, allocationId); }
+    catch (error) { await host.fence.release(); throw error; }
     const pending = { schema: 1, kind: 'fogd-preview-input-installation', allocationId, reservation, planSha256: previewPlanSha256(plan), grantSha256: options.expectedGrantSha256, packageSha256: snapshot.sha256, inventorySha256: graph.inventorySha256 };
     await host.fence.record('writing'); await appendHostRecord(bound, 'inputs.pending.json', pending);
     const packageFile = await open(join(bound.canonical, 'inputs.package.json'), 'wx', 0o600);
     try { await packageFile.writeFile(snapshot.bytes); await packageFile.sync(); } finally { await packageFile.close(); }
     await syncHostDirectory(bound);
+    previewServiceCommands(plan, envelope, options, allocationId);
+    await assertCurrentPreviewStorage(plan, runStorageHost, 'empty');
     previewServiceCommands(plan, envelope, options, allocationId);
     const output = await run(['start', '--attach', '--interactive', complete.identities.containers['input-installer']], { inputText: snapshot.bytes.toString('utf8') });
     if (output.trim() !== JSON.stringify({ installed: true, packageSha256: snapshot.sha256 })) hostRefusal('installer-result');

@@ -40,7 +40,7 @@ function expectedAuthority(plan, options) {
 export function previewContainerCommands(input, envelope, { role, publicKey, expectedGrantSha256, secretValues, allocationId }) {
   try {
     const plan = validatePreviewPlan(input), service = plan.services[role];
-    if (plan.schema !== 2) throw new PreviewPlanError();
+    if (plan.schema !== 3) throw new PreviewPlanError();
     const grant = authorizePreviewExecution(envelope, expectedAuthority(plan, { publicKey, expectedGrantSha256 }));
     const { configuration, labels } = roleSpecification(plan, grant, role, { publicKey, expectedGrantSha256, secretValues, allocationId });
     const { environment, command } = configuration, installer = role === 'input-installer';

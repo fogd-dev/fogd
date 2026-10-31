@@ -1,3 +1,4 @@
+import { previewStorageFixture, previewStorageHostFixture } from './preview-storage.mjs';
 import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -24,9 +25,10 @@ export async function previewInputFixture(t, source = {}) {
   const request = { ...f.request, image: source.image || f.request.image, preparation, preparationSha256: hash(jsonBytes(preparation)), origin: `https://${hostname}:49443`, fingerprints: {
     ...f.request.fingerprints, artifact: hash(jsonBytes(body)), previewSecrets: hash(jsonBytes(secrets)), gatewayTLS: hash(jsonBytes(gatewayTLS)), ingressTLS: hash(jsonBytes(ingressTLS)), viewerAccessKey: hash(accessKey),
   } };
+  request.storage = previewStorageFixture('fogd-preview-' + preparation.id.replaceAll('-', ''), request.engineId);
   const plan = createPreviewPlan(request), release = { app: body.app, digest: body.digest, requiredSecrets: [], resources: { script: body.app, durable: { bindings: [] }, d1: [], r2: [] } };
   const envelope = issuePreviewExecution(preparation, { expectedPreparationSha256: request.preparationSha256, release, target: previewPlanTarget(plan), privateKey: f.authority.privateKey });
-  const options = { publicKey: f.authority.publicKey, expectedGrantSha256: previewExecutionSha256(envelope), secretValues: { storagePassword: f.storagePassword, gatewayToken: f.gatewayToken } };
+  const options = { runStorageHost: previewStorageHostFixture(request.storage), publicKey: f.authority.publicKey, expectedGrantSha256: previewExecutionSha256(envelope), secretValues: { storagePassword: f.storagePassword, gatewayToken: f.gatewayToken } };
   const bundle = { envelope, artifact: body, secrets, gateway: { tls: gatewayTLS, gatewayToken: f.gatewayToken }, ingress: { tls: ingressTLS, accessKey, upstreamCA: gatewayTLS.cert } };
   const commands = previewServiceCommands(plan, envelope, options);
   return { root, plan, request, envelope, bundle, options, signer: f.authority, authority: JSON.parse(commands['input-installer'].configuration.command[2]) };

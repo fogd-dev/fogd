@@ -402,7 +402,7 @@ and requires the original expiry and complete stopped-state proof.
 
 This candidate path has no public launch command or ordinary enrollment permission.
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
-and data recovery remain open. Ordinary previews also need persistent-storage bounds and
+and data recovery remain open. Ordinary previews also need backing-space admission and
 browser withdrawal controls. Default cron admission remains closed.
 
 ## Internal owner withdrawal and source monitoring
@@ -498,10 +498,10 @@ retirement. They cannot create new containers or start a preview with their old
 resource policy. No existing user installation needs migration, and no retained
 container is reconfigured by this change.
 
-Persistent application volumes still lack an enforced storage quota. Host free
-space checks alone cannot bound a live writer. Ordinary preview admission and
-public launch remain closed until persistent-storage limits and the other
-acceptance gates pass. Default cron admission remains closed.
+New schema-3 plans bind persistent volumes to a bounded filesystem as described
+below. Host free-space checks alone cannot bound a live writer. Ordinary preview
+admission and public launch remain closed until backing-space coordination and
+the other acceptance gates pass. Default cron admission remains closed.
 
 ## Internal bounded persistent storage
 
@@ -532,10 +532,45 @@ recovery, automatic reattachment or application consistency after disk exhaustio
 All filesystem images, devices, mounts, Docker volumes and containers remain
 retained. The component has no resize, delete or reclamation operation.
 
-Preview launch still needs to bind these storage identities to the signed target,
-realized Docker volume sources and startup checks. Existing schema-2 preview plans
-continue to use unbounded persistent volumes. Ordinary preview admission, public
-launch and default cron admission remain closed. See Docker's
+The storage-bound lifecycle below connects these identities to the signed target,
+realized Docker volume sources and startup checks. Historical schema-2 QA plans
+retain their original unbounded volume definitions for owner controls. Ordinary
+preview admission, public launch and default cron admission remain closed. See Docker's
 [block-device volume example](https://docs.docker.com/engine/storage/volumes/#block-storage-devices)
 and the Linux [preallocation contract](https://man7.org/linux/man-pages/man2/fallocate.2.html)
 for the underlying mechanisms.
+
+## Storage-bound preview lifecycle
+
+The [bounded-preview integration](evidence/operator-preview-bounded-storage.json)
+connects the storage component to new schema-3 plans, Docker volumes and startup.
+The signed target covers the storage receipt, source engine, filesystem/file
+identities, worker fingerprint and each role's source directory. Changing a valid
+storage receipt changes the target and requires a new execution decision.
+
+Allocation checks the actual host filesystem and empty role directories before
+creating resources. Input installation repeats that check before writing through
+the fixed networkless installer. Startup requires empty application-data
+directories, verified installed inputs and a matching mounted filesystem. Each
+service phase and readiness observation checks storage again. A missing or changed
+mount cannot silently fall back to an unbounded directory.
+
+The realized Docker graph must match every local-volume driver option and source
+path. Graph verification refuses foreign volumes, bind mounts or device mappings
+that reference the sealed storage directory or loop device. The worker checks the actual local Docker
+engine through its Unix socket; the caller supplies the privileged host transport
+separately from source credentials and viewer access.
+
+A storage refusal before effects releases that operation's checking fence. Once
+an operation has issued effects, unknown outcomes retain the writing fence, hold
+and resources. No failure automatically formats, reattaches or retries storage.
+Owner status, stop and explicit memory retirement remain available through their
+private Docker control directory without the privileged storage transport. Those
+controls inspect process/resource state; they do not assert filesystem health or
+release retained disk space.
+
+Historical schema-1 and schema-2 QA plans remain readable and stoppable; fresh
+container realization and startup require schema 3. There are no user
+installations to migrate. Ordinary preview admission still needs coordinated
+backing-space admission, recovery qualification and full fresh-app/update browser
+trials. Public launch and default cron admission remain closed.

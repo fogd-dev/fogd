@@ -41,3 +41,7 @@ test('invalid input package refuses before acquiring a host fence or sending Doc
  await assert.rejects(x.install(),{code:'PREVIEW_EXECUTION_REFUSED'});assert.equal(x.calls.length,before);
  assert.ok(!(await readdir(x.host)).includes('launch.pending.json'));
 });
+
+test('missing storage proof prevents installer execution and leaves no input journal or checking fence',async t=>{
+ const x=await fixture(t);x.input.options.runStorageHost=undefined;await assert.rejects(x.install(),{code:'PREVIEW_HOST_REFUSED',reason:'storage'});assert.ok(!x.calls.some(c=>c[0]==='start'));assert.ok(!(await readdir(x.directory)).includes('inputs.pending.json'));assert.ok(!(await readdir(x.host)).includes('launch.pending.json'));
+});

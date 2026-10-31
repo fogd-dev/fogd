@@ -116,7 +116,7 @@ test('host reader checks complete stopped inventory and refuses a changing snaps
 });
 
 test('new plans seal bounded temporary storage and explicit rotating log delivery for every role', () => {
-  const f=fixture();assert.equal(f.plan.schema,2);assert.equal(f.plan.hardening.tmpfs,'/tmp:rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096');
+  const f=fixture();assert.equal(f.plan.schema,3);assert.equal(f.plan.hardening.tmpfs,'/tmp:rw,noexec,nosuid,nodev,size=33554432,nr_inodes=4096');
   for(const role of Object.keys(f.plan.services)) {
     const secrets=Object.fromEntries(Object.values(f.plan.services[role].secretEnvironment).map(key=>[key,f[key]])),command=f.commands(role,secrets).create;
     assert.equal(command[command.indexOf('--log-driver')+1],'json-file');
@@ -127,7 +127,7 @@ test('new plans seal bounded temporary storage and explicit rotating log deliver
 });
 
 test('historical plans remain verifiable without authorizing fresh legacy containers', () => {
-  const f=fixture(),legacy=structuredClone(f.plan);legacy.schema=1;legacy.hardening.tmpfs='/tmp:rw,noexec,nosuid,nodev';delete legacy.hardening.logging;
+  const f=fixture(),legacy=structuredClone(f.plan);legacy.schema=1;delete legacy.request.storage;for(const volume of Object.values(legacy.volumes))delete volume.driverOptions;legacy.hardening.tmpfs='/tmp:rw,noexec,nosuid,nodev';delete legacy.hardening.logging;
   assert.deepEqual(validatePreviewPlan(legacy),legacy);assert.notEqual(previewPlanSha256(legacy),previewPlanSha256(f.plan));
   assert.throws(()=>previewContainerCommands(legacy,f.envelope,{role:'gateway',publicKey:f.authority.publicKey,expectedGrantSha256:previewExecutionSha256(f.envelope),secretValues:{}}),{code:'PREVIEW_PLAN_REFUSED'});
 });

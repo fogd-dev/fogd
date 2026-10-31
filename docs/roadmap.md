@@ -86,13 +86,13 @@ including after memory retirement; corrupt or partial proof remains fenced.
 The [owner CLI controls](previews.md#owner-status-stop-and-memory-retirement)
 provide status, stop and explicit memory retirement for existing candidate
 allocations through private engine-bound control directories. Public launch and
-control-directory provisioning remain open. Ordinary previews still need persistent-storage
-bounds and browser withdrawal controls. New internal plans seal temporary-storage
-byte/inode limits and rotating Docker logs, with realized graph checks. Persistent
-application-volume quotas remain open before ordinary preview admission. An
-internal fixed-size ext4 storage component has live-write exhaustion and controlled
-remount-retention evidence; signed-plan, realized-volume and startup integration
-still need implementation before those limits apply to launched previews.
+control-directory provisioning remain open. New internal plans seal temporary-storage
+byte/inode limits and rotating Docker logs, with realized graph checks. The
+fixed-size ext4 storage component has live-write exhaustion and controlled remount
+retention evidence. New schema-3 preview plans bind its receipt to the signed
+target, realized volume sources and repeated startup checks. Coordinated
+backing-space admission, recovery, browser withdrawal controls and complete
+preview/browser acceptance remain open.
 
 Before selecting another binding milestone, implement the proposed
 [operator-readiness contract](operator-readiness.md) under G2 and G3. It addresses

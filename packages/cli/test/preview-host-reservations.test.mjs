@@ -1,3 +1,4 @@
+import { previewStorageFixture } from './fixtures/preview-storage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm, realpath, readFile, writeFile, readdir, stat, chmod, symlink, mkdir } from 'node:fs/promises';
@@ -191,7 +192,7 @@ test('duplicate reservation identities and mixed engine holds refuse further adm
     await f.reserve(a); await f.reserve(b);
     const original = (await f.inspect()).find(record => record.plan.project === a.project), file = join(f.holds, b.project + '.json'), changed = JSON.parse(await readFile(file));
     if (corrupt === 'duplicate-id') changed.id = original.id;
-    else { changed.plan = createPreviewPlan({ ...b.request, engineId: 'other-engine' }); changed.planSha256 = hash(jsonBytes(changed.plan)); }
+    else { changed.plan = createPreviewPlan({ ...b.request, engineId: 'other-engine', storage: previewStorageFixture(b.project, 'other-engine') }); changed.planSha256 = hash(jsonBytes(changed.plan)); }
     await writeFile(file, jsonBytes(changed));
     await assert.rejects(f.reserve(plan(248, 49445)), hostRefused('holds'));
     assert.equal((await readdir(f.holds)).length, 2);

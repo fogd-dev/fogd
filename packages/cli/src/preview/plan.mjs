@@ -3,6 +3,7 @@ import { hash, jsonBytes, digest } from '../build-cache/paths.mjs';
 import { executionKeys, executionTarget } from './execution-shape.mjs';
 import { validatePreviewPreparation } from './execution.mjs';
 import { previewNetworks } from './networks.mjs';
+import { validatePreviewStorageReceipt } from './storage.mjs';
 
 const networkRoles = ['control', 'fleet-1', 'fleet-2', 'frontend'];
 const fingerprints = ['authorityPublicKey', 'artifact', 'previewSecrets', 'storagePassword', 'gatewayToken', 'viewerAccessKey', 'gatewayTLS', 'ingressTLS'];
@@ -18,8 +19,8 @@ function assertOrigin(input, preview, origin) {
     !origin.hostname.split('.').every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)) || Number(origin.port || 443) < 1) throw new PreviewPlanError();
 }
 
-function checkedRequest(input) {
-  executionKeys(input, ['preparation', 'preparationSha256', 'engineId', 'image', 'origin', 'subnets', 'fingerprints']);
+function checkedRequest(input, schema) {
+  executionKeys(input, ['preparation', 'preparationSha256', 'engineId', 'image', 'origin', 'subnets', 'fingerprints', ...(schema === 3 ? ['storage'] : [])]);
   validatePreviewPreparation(input.preparation, input.preparationSha256);
   if (typeof input.engineId !== 'string' || !input.engineId.length || input.engineId.length > 256 || /[\x00-\x20\x7f]/.test(input.engineId) ||
     typeof input.image !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(input.image)) throw new PreviewPlanError();
@@ -28,13 +29,14 @@ function checkedRequest(input) {
   const preview = input.preparation.id.replaceAll('-', ''), origin = new URL(input.origin);
   executionTarget({ project: 'probe', installation: '0'.repeat(64), configSha256: '0'.repeat(64), runtime: input.preparation.runtime, origin: input.origin, networks: input.subnets });
   assertOrigin(input, preview, origin);
-  return { preparation: structuredClone(input.preparation), preparationSha256: input.preparationSha256, engineId: input.engineId, image: input.image, origin: input.origin,
+  const storage = schema === 3 ? validatePreviewStorageReceipt(input.storage, { project: 'fogd-preview-' + preview, engineId: input.engineId }) : null;
+  return { ...(storage ? { storage } : {}), preparation: structuredClone(input.preparation), preparationSha256: input.preparationSha256, engineId: input.engineId, image: input.image, origin: input.origin,
     subnets: Object.fromEntries(networkRoles.map(role => [role, input.subnets[role]])), fingerprints: Object.fromEntries(fingerprints.map(key => [key, input.fingerprints[key]])) };
 }
 
-function volumes(project) {
+function volumes(project, storage) {
   const names = [...dataRoles, ...authorityRoles.flatMap(role => [`${role}-trust`, `${role}-input`])];
-  return Object.fromEntries(names.map(role => [role, { name: `${project}_${role}` }]));
+  return Object.fromEntries(names.map(role => [role, { name: `${project}_${role}`, ...(storage ? { driverOptions: { type: 'none', o: 'bind', device: storage.storage.mount.target + '/' + role } } : {}) }]));
 }
 const mount = (volume, target, readOnly = false) => ({ volume, target, readOnly });
 function serviceRoles(request, project) {
@@ -66,15 +68,15 @@ function serviceRoles(request, project) {
 // absolute deadline; runtime execution admission is required before any start.
 function planForSchema(input, schema) {
   try {
-    if (![1, 2].includes(schema)) throw new PreviewPlanError();
-    const request = checkedRequest(input), preview = request.preparation.id, project = `fogd-preview-${preview.replaceAll('-', '')}`;
+    if (![1, 2, 3].includes(schema)) throw new PreviewPlanError();
+    const request = checkedRequest(input, schema), preview = request.preparation.id, project = `fogd-preview-${preview.replaceAll('-', '')}`;
     const installation = hash(jsonBytes({ engineId: request.engineId, project, preview, bucket: `fogd-preview-${preview.replaceAll('-', '')}` }));
-    return { schema, kind: 'fogd-preview-plan', request, project, installation, networks: previewNetworks(project, request.subnets), volumes: volumes(project), services: serviceRoles(request, project),
-      hardening: { readOnlyRoot: true, tmpfs: '/tmp:rw,noexec,nosuid,nodev' + (schema === 2 ? ',size=33554432,nr_inodes=4096' : ''),
-        ...(schema === 2 ? { logging: { driver: 'json-file', options: { 'max-size': '1m', 'max-file': '2', mode: 'blocking', compress: 'false' } } } : {}), capDrop: ['ALL'], noNewPrivileges: true, restart: 'no', deadline: 'original-execution-expiry' } };
+    return { schema, kind: 'fogd-preview-plan', request, project, installation, networks: previewNetworks(project, request.subnets), volumes: volumes(project, request.storage), services: serviceRoles(request, project),
+      hardening: { readOnlyRoot: true, tmpfs: '/tmp:rw,noexec,nosuid,nodev' + (schema >= 2 ? ',size=33554432,nr_inodes=4096' : ''),
+        ...(schema >= 2 ? { logging: { driver: 'json-file', options: { 'max-size': '1m', 'max-file': '2', mode: 'blocking', compress: 'false' } } } : {}), capDrop: ['ALL'], noNewPrivileges: true, restart: 'no', deadline: 'original-execution-expiry' } };
   } catch { throw new PreviewPlanError(); }
 }
-export const createPreviewPlan = input => planForSchema(input, 2);
+export const createPreviewPlan = input => planForSchema(input, 3);
 export function validatePreviewPlan(input) {
   try {
     const expected = planForSchema(input.request, input.schema);
