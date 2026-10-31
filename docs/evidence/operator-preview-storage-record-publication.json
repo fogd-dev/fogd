@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "kind": "fogd-operator-preview-storage-record-publication-qualification",
+  "testedBaseCommit": "06d899b98b24f134e9301ffa404a521e3de92fd8",
+  "existingUserInstallations": 0,
+  "scope": "Shared JSON record publication on owned Linux ARM64 metadata paths on Docker backing ext4. Application-level process interruptions and injected sync errors; no power-loss, fresh app provisioning or multi-record transaction claim.",
+  "sourceFiles": {
+    "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+    "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+    "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+    "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+    "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+    "packages/cli/src/preview/storage/readonly-recovery.py": "64e2225f98785df83c44986f2e6e6e7600ce8445fc7ceeff49ef710c33b822af",
+    "packages/cli/src/preview/storage/host.py": "53d4b2c3cbbbab9ad8c1bc9ecae5135ef6cdbe7df19c8508bbe1b5a5c71f2cc8",
+    "packages/cli/test/preview-storage-admission-host.py": "29868e72e9fcde5ce56f60e27e5b4c83929cf15e98fb4e9f1b540b936801c6bb"
+  },
+  "native": {
+    "passed": true,
+    "workerSha256": "334fd2eaaf40fd4731ea207f77e7111a1e7837e42781b6bbc68335c06e916b69",
+    "processKillBoundaries": 5,
+    "negativeDirectWriterControlDetected": true,
+    "concurrentCreateOnlyCollisionPassed": true,
+    "noNamedStagingFiles": true,
+    "readOnlyFilesystemRefused": true,
+    "qaBackingImagePayloadAndRecordsUnchanged": true,
+    "qaBootLoopMountAndRegistryUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true,
+    "allQualificationFilesRetained": true,
+    "ordinaryEnrollment": false,
+    "defaultCronAdmission": "closed"
+  },
+  "interruptionCases": [
+    {
+      "phase": "partial-write",
+      "exitCode": -9,
+      "published": false,
+      "canonical": false,
+      "namespace": []
+    },
+    {
+      "phase": "before-file-sync",
+      "exitCode": -9,
+      "published": false,
+      "canonical": false,
+      "namespace": []
+    },
+    {
+      "phase": "before-publication",
+      "exitCode": -9,
+      "published": false,
+      "canonical": false,
+      "namespace": []
+    },
+    {
+      "phase": "before-directory-sync",
+      "exitCode": -9,
+      "published": true,
+      "canonical": true,
+      "namespace": [
+        "record.json"
+      ]
+    },
+    {
+      "phase": "after-directory-sync",
+      "exitCode": -9,
+      "published": true,
+      "canonical": true,
+      "namespace": [
+        "record.json"
+      ]
+    }
+  ],
+  "negativeControl": {
+    "expectedViolationDetected": true,
+    "retainedPartialBytes": 17,
+    "phase": "partial-write",
+    "previousCommitDirectWriter": true,
+    "sourceCommit": "06d899b98b24f134e9301ffa404a521e3de92fd8",
+    "hostSourceSha256": "548bc0475c9958c9dfe9f476ab577582b84d0455a016e02fbf03f020ccda2d14"
+  },
+  "concurrentWriters": [
+    {
+      "exit": 0,
+      "exclusiveCollision": false
+    },
+    {
+      "exit": 1,
+      "exclusiveCollision": true
+    }
+  ],
+  "independentReadbacks": {
+    "passed": true,
+    "readOnly": true,
+    "host": {
+      "passed": true,
+      "readOnly": true,
+      "prepublicationNamespacesEmpty": 3,
+      "publishedRecordsCanonicalAndPrivate": 2,
+      "negativeControlMalformedBytesRetained": 17,
+      "positiveRetryCanonical": true,
+      "collisionWinnerCanonicalAndSingleLinked": true,
+      "retainedFileCount": 5,
+      "identitiesAndDigestsMatchNativeRecords": true,
+      "noNamedStagingFiles": true
+    },
+    "currentArchivedSourcesAndAssembledHashVerified": true,
+    "sourceFiles": {
+      "packages/cli/src/preview/storage/admission.py": "5a0bfcf44563de533285e202abb97cb2b0667d022936ac9cf39186023cb2e0df",
+      "packages/cli/src/preview/storage/commands.py": "0a0751897830fc19b0ffff86f4269706112bb3dd92087b7b8c18e15978117455",
+      "packages/cli/src/preview/storage/reconciliation.py": "cee6d0a391dbb7819d12d3480dedb78254de8831738a8d9a2f24f8db1c47e7e9",
+      "packages/cli/src/preview/storage/hold-repair.py": "daeb6573b61f1f2b0b0b7646731f22c97ade2b4e0ffe589db00cd15c82942294",
+      "packages/cli/src/preview/storage/recovery-writers.py": "0d06c32048e7427c1ab7b5af5fdcab8e72a5d3668e4213de5e7cf6c6f300050a",
+      "packages/cli/src/preview/storage/readonly-recovery.py": "64e2225f98785df83c44986f2e6e6e7600ce8445fc7ceeff49ef710c33b822af",
+      "packages/cli/src/preview/storage/host.py": "53d4b2c3cbbbab9ad8c1bc9ecae5135ef6cdbe7df19c8508bbe1b5a5c71f2cc8",
+      "packages/cli/test/preview-storage-admission-host.py": "29868e72e9fcde5ce56f60e27e5b4c83929cf15e98fb4e9f1b540b936801c6bb"
+    },
+    "qaImagePayloadRegistryBootLoopAndMountUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true
+  },
+  "checks": {
+    "fullNodeSuite": {
+      "tests": 3542,
+      "pass": 3542,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "terminalExitCode": 0
+    },
+    "storageNodeTests": {
+      "tests": 77,
+      "passed": 77,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "linuxHostCases": {
+      "tests": 58,
+      "passed": 58,
+      "failures": 0,
+      "errors": 0,
+      "terminalExitCode": 0
+    },
+    "initialHarnessAttempt": "Rejected: child waited for EOF while the control pipe remained open; fixed to read one line and reran to terminal success.",
+    "syntax": "passed",
+    "qualityGate": "passed",
+    "standardsSelfReview": "PASS",
+    "writing": "passed"
+  },
+  "retention": {
+    "qualificationFilesRetained": 5,
+    "existingQaDataResourcesAndRegistryUnchanged": true,
+    "old149ContainerEngineUnchanged": true,
+    "defaultDockerContextPreserved": true
+  },
+  "remainingGates": [
+    "Interrupted initialization and incomplete multi-record recovery sequences",
+    "Power-loss/crash and open database/WAL consistency",
+    "Writable application restoration",
+    "Public preview provisioning/launch and complete browser acceptance"
+  ],
+  "ordinaryEnrollment": false,
+  "defaultCronAdmission": "closed",
+  "environment": {
+    "passed": true,
+    "sameDockerBackingDeviceVerified": true,
+    "filesystem": "ext4",
+    "architecture": "aarch64",
+    "kernelVersion": "6.8.0-117-generic",
+    "pythonVersion": "3.12.3"
+  }
+}

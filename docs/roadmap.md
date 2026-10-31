@@ -102,8 +102,12 @@ quarantined reservation. Explicit read-only data recovery after controlled mount
 loss now verifies scoped writer refusal, an unrelated live peer, retained bytes
 and charges, and completion reconciliation without mount replay. Explicit
 completion-record repair preserves reviewed damaged bytes and acknowledges a
-verified read-only view under its original fence. Damaged intents, partial repair
-acknowledgments and initialization repair, application data restoration, browser
+verified read-only view under its original fence. Storage records now use synced
+anonymous-file publication with create-only linking; native process-interruption
+checks expose either no destination or a complete record, with no named staging
+files. This prevents partial publication but does not complete interrupted
+multi-record sequences. Damaged intents, partial repair acknowledgments and
+initialization repair, application data restoration, browser
 withdrawal controls, public launch and complete preview/browser acceptance remain
 open. A [dedicated restart trial](evidence/operator-preview-storage-host-restart.json)
 now qualifies read-only access after a graceful same-engine Linux ARM64 VM restart,

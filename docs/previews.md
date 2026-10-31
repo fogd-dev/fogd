@@ -617,9 +617,35 @@ Older unadmitted QA storage remains available for historical inspection and owne
 controls. New plans require an admitted storage receipt. This remains an internal
 host API; public provisioning and launch commands are unavailable. Unrelated host
 writers and hypervisor storage are outside this budget, and a space observation
-is not a storage-health guarantee. Repair of partial admission records, host-restart
-recovery and ordinary preview acceptance remain open; default cron admission
-remains closed.
+is not a storage-health guarantee. Interrupted initialization, incomplete recovery
+sequences, writable application restoration and ordinary preview acceptance remain
+open; default cron admission remains closed.
+
+### Record publication and interrupted sequences
+
+The storage worker publishes each new JSON record only after writing and syncing
+its complete contents. It uses a private unnamed inode, links it to the requested
+name without replacing any existing entry, then syncs the parent directory before
+reporting success. Records are bounded to 64 KiB and remain root-owned, mode 600,
+with one link in a checked private directory. No named staging file is created.
+
+This requires Linux anonymous-file support and procfs descriptor links on the
+selected host. Unsupported hosts refuse the write; there is no direct-write
+fallback. See the [Linux anonymous-file publication contract](https://man7.org/linux/man-pages/man2/open.2.html)
+and [Python directory-relative links](https://docs.python.org/3/library/os.html#os.link).
+
+The [record-publication qualification](evidence/operator-preview-storage-record-publication.json)
+checks five process-interruption boundaries on Docker's backing ext4 filesystem,
+a concurrent create-only collision and refusal on the retained read-only view.
+A negative control using the previous direct writer exposes a truncated record
+and fails the same absence check. Independent reads verify the resulting files
+and unchanged QA data, loops, mounts and real admission registry.
+
+Individual record publication is not a transaction across records. Interruption
+between the global fence and its intent, or during registry initialization, can
+still leave an incomplete sequence. Keep its records and resources for explicit
+recovery; never repeat uncertain provisioning. The qualification covers process
+loss and injected sync errors, not power-loss durability or application consistency.
 
 ### Reconcile completed provisioning
 

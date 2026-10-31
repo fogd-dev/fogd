@@ -45,15 +45,35 @@ def encoded(value):
 
 
 def append(path, value):
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    parent, name = os.path.split(path)
+    expected = identity(parent, True)
+    directory_fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(directory_fd)
+        require({'device': info.st_dev, 'inode': info.st_ino} == expected)
+        append_in_directory(directory_fd, parent, name, expected, value)
+    finally:
+        os.close(directory_fd)
+
+
+def append_in_directory(directory_fd, parent, name, expected, value):
+    data = encoded(value)
+    require(0 < len(data) <= 65536)
+    fd = os.open('.', os.O_TMPFILE | os.O_RDWR, 0o600, dir_fd=directory_fd)
     try:
         with os.fdopen(fd, 'wb', closefd=False) as file:
-            file.write(encoded(value))
+            file.write(data)
             file.flush()
             os.fsync(fd)
+        info = os.fstat(fd)
+        require(stat.S_ISREG(info.st_mode) and stat.S_IMODE(info.st_mode) == 0o600
+                and info.st_uid == 0 and info.st_nlink == 0)
+        require(identity(parent, True) == expected)
+        os.link('/proc/self/fd/' + str(fd), name, dst_dir_fd=directory_fd, follow_symlinks=True)
+        os.fsync(directory_fd)
+        require(identity(parent, True) == expected and os.fstat(fd).st_nlink == 1)
     finally:
         os.close(fd)
-    sync_directory(os.path.dirname(path))
 
 
 def read_bytes(path):

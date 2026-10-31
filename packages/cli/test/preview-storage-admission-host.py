@@ -6,6 +6,7 @@ import sys
 import tempfile
 import subprocess
 import time
+import select
 from unittest.mock import patch
 from contextlib import contextmanager
 import unittest
@@ -39,6 +40,127 @@ class AdmissionTests(unittest.TestCase):
     def project(self, number):
         name = 'fogd-preview-' + format(number, '032x')
         return {**self.value, 'project': name, 'directory': str(self.root / name)}
+
+    def test_record_publication_is_private_canonical_exclusive_and_leaves_no_staging_names(self):
+        path = self.base / 'record.json'
+        value = {'kind': 'owned-record', 'payload': 'x' * 8192}
+        before = set(self.base.iterdir())
+        scope['append'](str(path), value)
+        self.assertEqual(scope['read'](str(path)), value)
+        self.assertEqual(path.stat().st_nlink, 1)
+        identity = scope['identity'](str(path))
+        with self.assertRaises(FileExistsError):
+            scope['append'](str(path), {'replacement': True})
+        self.assertEqual(scope['identity'](str(path)), identity)
+        self.assertEqual(scope['read'](str(path)), value)
+        self.assertEqual(set(self.base.iterdir()), before | {path})
+
+    def test_record_publication_cannot_replace_a_symlink_or_write_through_an_unsafe_parent(self):
+        original = self.base / 'original'
+        original.write_bytes(b'keep existing bytes'); original.chmod(0o600)
+        link = self.base / 'record.json'; link.symlink_to(original)
+        with self.assertRaises(FileExistsError):
+            scope['append'](str(link), {'replacement': True})
+        self.assertTrue(link.is_symlink()); self.assertEqual(original.read_bytes(), b'keep existing bytes')
+        directory = self.base / 'unsafe'; directory.mkdir(mode=0o755)
+        with self.assertRaises(ValueError):
+            scope['append'](str(directory / 'record.json'), {'private': True})
+        self.assertEqual(list(directory.iterdir()), [])
+
+    def test_record_publication_refuses_oversized_data_and_missing_anonymous_file_support(self):
+        path = self.base / 'record.json'
+        with self.assertRaises(ValueError):
+            scope['append'](str(path), {'tooLarge': 'x' * 65536})
+        original_open = os.open
+        def unsupported(path, flags, *args, **kwargs):
+            if flags & os.O_TMPFILE == os.O_TMPFILE:
+                raise OSError('injected unsupported anonymous file creation')
+            return original_open(path, flags, *args, **kwargs)
+        with patch.object(os, 'open', unsupported):
+            with self.assertRaises(OSError):
+                scope['append'](str(path), {'private': True})
+        self.assertFalse(path.exists())
+
+    def test_record_sync_errors_keep_unpublished_data_absent_and_published_data_intact(self):
+        original_fsync = os.fsync
+        for fail_directory in [False, True]:
+            with self.subTest(fail_directory=fail_directory):
+                path = self.base / ('record-' + str(fail_directory) + '.json')
+                value = {'retained': True}
+                def failed(fd):
+                    if scope['stat'].S_ISDIR(os.fstat(fd).st_mode) == fail_directory:
+                        raise OSError('injected sync failure')
+                    return original_fsync(fd)
+                with patch.object(os, 'fsync', failed):
+                    with self.assertRaises(OSError):
+                        scope['append'](str(path), value)
+                if fail_directory:
+                    self.assertEqual(scope['read'](str(path)), value)
+                    with self.assertRaises(FileExistsError):
+                        scope['append'](str(path), {'replacement': True})
+                else:
+                    self.assertFalse(path.exists())
+
+    def test_record_publication_interruptions_expose_only_absent_or_complete_records(self):
+        child = r"""
+import json,os,stat,sys
+bundle=json.loads(sys.stdin.readline());scope={'__name__':'owned_record_publication_child'}
+exec(compile('\n'.join(bundle['sources']),'fogd-storage-worker','exec'),scope)
+phase=bundle['phase'];original_fdopen=os.fdopen;original_fsync=os.fsync;original_link=os.link
+
+def pause():
+ print('ready',flush=True);sys.stdin.readline()
+
+class PartialWriter:
+ def __enter__(self):return self
+ def __exit__(self,*args):pass
+ def write(self,data):
+  os.write(bundle_fd[0],data[:17]);pause();raise RuntimeError('child unexpectedly resumed')
+
+def fdopen(fd,*args,**kwargs):
+ if phase=='partial-write':bundle_fd[0]=fd;return PartialWriter()
+ return original_fdopen(fd,*args,**kwargs)
+
+def fsync(fd):
+ directory=stat.S_ISDIR(os.fstat(fd).st_mode)
+ if phase=='before-file-sync' and not directory:pause()
+ if phase=='before-directory-sync' and directory:pause()
+ result=original_fsync(fd)
+ if phase=='after-directory-sync' and directory:pause()
+ return result
+
+def link(*args,**kwargs):
+ if phase=='before-publication':pause()
+ return original_link(*args,**kwargs)
+
+bundle_fd=[None];os.fdopen=fdopen;os.fsync=fsync;os.link=link
+scope['append'](bundle['path'],bundle['value'])
+"""
+        value = {'kind': 'owned-interruption', 'payload': 'x' * 8192}
+        sources = [payload[name] for name in ['admission', 'commands', 'reconciliation', 'hold-repair', 'recovery-writers', 'readonly-recovery', 'host']]
+        for phase in ['partial-write', 'before-file-sync', 'before-publication', 'before-directory-sync', 'after-directory-sync']:
+            with self.subTest(phase=phase):
+                directory = self.base / phase; directory.mkdir(mode=0o700)
+                path = directory / 'record.json'
+                process = subprocess.Popen([sys.executable, '-c', child], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                try:
+                    process.stdin.write(json.dumps({'sources': sources, 'phase': phase, 'path': str(path), 'value': value}) + '\n'); process.stdin.flush()
+                    self.assertTrue(select.select([process.stdout], [], [], 10)[0], 'child did not reach its publication boundary')
+                    self.assertEqual(process.stdout.readline().strip(), 'ready')
+                    process.kill(); self.assertEqual(process.wait(timeout=5), -9)
+                    if phase in ['before-directory-sync', 'after-directory-sync']:
+                        self.assertEqual(scope['read'](str(path)), value)
+                        self.assertEqual(path.stat().st_nlink, 1)
+                        with self.assertRaises(FileExistsError):
+                            scope['append'](str(path), {'replacement': True})
+                    else:
+                        self.assertEqual(list(directory.iterdir()), [])
+                        scope['append'](str(path), value)
+                        self.assertEqual(scope['read'](str(path)), value)
+                    self.assertEqual(list(directory.iterdir()), [path])
+                finally:
+                    if process.poll() is None:process.kill();process.wait(timeout=5)
+                    process.stdin.close();process.stdout.close();process.stderr.close()
 
     def test_byte_and_inode_headroom_boundaries(self):
         space = {'availableBytes': scope['CHARGE_BYTES'] + scope['HEADROOM_BYTES'],
