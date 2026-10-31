@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { dirname, basename, join, resolve, sep, isAbsolute } from 'node:path';
-import { hash, jsonBytes, uuid } from '../build-cache/paths.mjs';
+import { hash, jsonBytes, uuid, exists } from '../build-cache/paths.mjs';
 import { execute } from '../recovery/execute.mjs';
 import { bindHostDirectory, syncHostDirectory, checkHostDirectory } from '../runtime/host-directory.mjs';
 import { executionKeys } from './execution-shape.mjs';
@@ -25,14 +25,24 @@ function validateControl(value) {
 }
 const within = (directory, parent) => directory === parent || directory.startsWith(parent + sep);
 
+async function controlLocation(input, { directory, dockerContext }) {
+  if (typeof directory !== 'string' || !directory || typeof dockerContext !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/.test(dockerContext)) hostRefusal('owner-control');
+  const root = await bindHostDirectory(input.root), parent = await bindHostDirectory(dirname(resolve(directory)));
+  const output = join(parent.canonical, basename(resolve(directory)));
+  const preparation = input.directory ? await bindHostDirectory(input.directory) : null;
+  if (within(output, root.canonical) || preparation && within(output, preparation.canonical) || await exists(output)) hostRefusal('owner-control-location');
+  return { root, parent, output };
+}
+export async function checkPreviewOwnerControlLocation(input, config) {
+  try { await controlLocation(input, config); }
+  catch { refuseControl('control'); }
+}
+
 // Expectations only, not a readiness receipt or new execution permission.
 // Keep this owner-only configuration outside both immutable inputs and host state.
 export async function writePreviewOwnerControl(input, { directory, dockerContext }) {
   try {
-    const root = await bindHostDirectory(input.root), parent = await bindHostDirectory(dirname(resolve(directory)));
-    const output = join(parent.canonical, basename(resolve(directory)));
-    const preparation = input.directory ? await bindHostDirectory(input.directory) : null;
-    if (within(output, root.canonical) || preparation && within(output, preparation.canonical)) hostRefusal('owner-control-location');
+    const { root, parent, output } = await controlLocation(input, { directory, dockerContext });
     const data = validateControl(JSON.parse(jsonBytes({ schema: 1, kind: 'fogd-preview-owner-control', root: root.canonical, dockerContext,
       ...Object.fromEntries(fields.slice(4).map(key => [key, input[key]])) })));
     await checkHostDirectory(parent); await mkdir(output, { mode: 0o700 }); await syncHostDirectory(parent);

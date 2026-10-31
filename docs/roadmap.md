@@ -51,8 +51,12 @@ current source snapshots before signing. A candidate backend image has bounded
 native HTTP/D1/R2 and storage/replica expiry evidence. Its exact-artifact controller
 has signed-input and native activation checks with no upload/approval HTTP API.
 The native gateway and authenticated HTTPS ingress also have a protected-URL
-D1/R2 check. Shipped preview-runtime admission, final launch orchestration,
-automatic ordered expiry, public launch and complete fresh-app/update trials remain open under
+D1/R2 check. An internal launch coordinator now connects memory reservation, stopped resource
+allocation, durable owner controls, checked input installation and managed startup.
+A native signed HTTP/D1/R2 trial verifies both replicas, owner stop and post-expiry
+memory retirement while retaining charged storage. Public profile/input setup, the
+launch command, shipped preview-runtime admission, manager-loss recovery and
+complete fresh-app/update trials remain open under
 issue #2 and must reuse these fencing and restoration rules. Existing
 deployments are QA fixtures; cross-family migration is outside this release path.
 

@@ -35,9 +35,16 @@ catalog-entry fingerprint. Standard output includes the preparation SHA-256.
 Fingerprints identify bytes; they do not authenticate a publisher or grant access.
 A later source submission does not replace the selected artifact.
 
+A preparation for live launch must identify the separate preview runtime catalog.
+Archive-family preparations remain valid review inputs but cannot match a preview
+runtime's signed target. The internal preparation API accepts an explicit candidate
+selection for owned qualification; the CLI accepts qualified entries and exposes
+no candidate-enrollment flag. The current preview runtime is still a candidate,
+so public live launch remains closed.
+
 ## Execution policy and remaining work
 
-Preparation records the intended execution policy. Enforcement and launch remain
+Preparation records the intended execution policy. Public launch remains
 unavailable. The lifetime is an integer from 60 to 3600 seconds, measured from
 signed execution authorization rather than preparation or readiness. This initial profile
 accepts HTTP applications; queue and cron declarations refuse preparation.
@@ -404,6 +411,61 @@ This candidate path has no public launch command or ordinary enrollment permissi
 Full fresh-app/update browser trials, manager-loss recovery, native lease cleanup
 and data recovery remain open. Ordinary previews also need recovery qualification
 and browser withdrawal controls. Default cron admission remains closed.
+
+## Internal coordinated provisioning and launch
+
+The [launch coordinator](../packages/cli/src/preview/launch.mjs) connects capacity
+reservation, stopped allocation, checked input installation and the managed
+lifecycle in one fresh attempt. Its inputs include an already admitted storage
+receipt in the sealed plan, a signed execution envelope, preview-only input bundle,
+initialized host ledger and independently selected transports:
+
+```js
+const active = await provisionAndRunPreview({
+  root: hostLedgerRoot, plan, envelope, bundle,
+  directory: preparationDirectory, env: sourceOwnerEnvironment,
+  runtime: previewRuntimeId,
+  run: ownerDocker, runStorageHost: privilegedStorageTransport,
+  publicKey, expectedGrantSha256, secretValues,
+  ownerControl: { directory: freshOwnerDirectory, dockerContext },
+  signal: stopSignal,
+});
+// Readiness includes the allocation, URL, original expiry and owner-control path.
+const stopped = await active.completion;
+```
+
+Ordinary runtime admission applies before reservation. Owned candidate qualification
+requires an explicit internal API option; there is no CLI bypass. The coordinator
+checks the signed bundle, actual preparation files and current source before host
+effects. It preserves the checked package and service configuration across later
+caller edits. Artifact file-list order can differ while the verified path/data
+pairs and signed package bytes stay bound to the same release.
+
+The owner-control location must be fresh and outside preparation and host-ledger
+state. After stopped allocation, the coordinator durably writes those controls
+before starting the input installer. They can support inspection and recovery even
+when a later phase fails. Readiness follows verified service startup with the
+manager already watching for expiry, source withdrawal and owner stop.
+
+Failures retain component journals, holds, resources and uncertainty. A repeated
+attempt cannot replay an uncertain allocation. If reservation or allocation stops
+before control creation, preserve the host ledger for explicit recovery; the
+coordinator does not reclaim that reservation automatically.
+
+The [native coordinator qualification](evidence/operator-preview-launch-coordinator.json)
+uses one dedicated Linux ARM64 Docker engine and a pre-admitted empty filesystem.
+It verifies protected TLS HTTP, initially empty D1/R2 data, an acknowledged write
+and both live replica reads. Public owner stop works without source credentials;
+the manager observes the same ordered completion. Explicit memory retirement after
+the original expiry leaves the storage charge, data and all physical resources
+retained. Separate raw reads verify signed bindings, resource limits, volume
+sources and 68 retained file digests. The source is an owned HTTP fixture. Post-stop
+D1 restoration and full browser/production-preservation acceptance remain open.
+
+Public profile/input setup, the launch command and ordinary preview-runtime
+admission still need their acceptance checks. Manager-loss recovery, unfinished
+reservation cleanup and broader artifact-size/density measurements also remain
+open. Default cron admission stays closed.
 
 ## Internal owner withdrawal and source monitoring
 

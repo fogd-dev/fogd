@@ -3,10 +3,28 @@ import assert from 'node:assert/strict';
 import { access, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { reviewFixture, artifact, id, hash } from './fixtures/artifact-review.mjs';
+import { prepareCandidatePreview, previewLaunchRuntime } from './fixtures/preview-launch.mjs';
+import { previewRuntimeFamily } from '../src/preview/runtime-catalog.mjs';
+import { jsonBytes } from '../src/build-cache/paths.mjs';
 
 const family = 'celld-archive-v9-linux-arm64';
 const args = (f, ttl = '900', runtime = family) => ['prepare', id, '--runtime', runtime, `--lifetime-seconds=${ttl}`, '--output', f.output];
 const fixture = (t, respond) => reviewFixture(t, respond, ['preview']);
+
+test('owned candidate preparation binds the preview catalog directly without an execution grant', async t => {
+  const f = await fixture(t), runtime = previewRuntimeFamily(previewLaunchRuntime, { candidateEnrollment: true });
+  const prepared = await prepareCandidatePreview(f);
+  assert.deepEqual(prepared.runtime, { family: runtime.id, catalogEntrySha256: hash(jsonBytes(runtime)) });
+  assert.equal(prepared.executionAuthorized, false); assert.equal(prepared.capacityReserved, false);
+  assert.ok(f.calls.every(call => call.method === 'GET'));
+});
+
+test('CLI preparation cannot enroll a candidate preview runtime or accept a candidate bypass flag', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.run(args(f, '900', previewLaunchRuntime)));
+  await assert.rejects(f.run([...args(f, '900', previewLaunchRuntime), '--candidate-enrollment']));
+  assert.deepEqual(f.calls, []); await assert.rejects(access(f.output), { code: 'ENOENT' });
+});
 
 test('preview preparation binds verified proposed bytes without executing code or changing production', async t => {
   const f = await fixture(t), before = structuredClone(f.state);

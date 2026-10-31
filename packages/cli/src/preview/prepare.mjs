@@ -3,15 +3,22 @@ import { join } from 'node:path';
 import { exportArtifactReview } from '../review/export.mjs';
 import { privateJSON, jsonBytes, hash } from '../build-cache/paths.mjs';
 import { runtimeFamily } from '../runtime/catalog.mjs';
+import { previewRuntimeFamily } from './runtime-catalog.mjs';
 
 function previewLifetime(value) {
   if (typeof value !== 'string' || !/^[1-9][0-9]*$/.test(value) || Number(value) < 60 || Number(value) > 3600) throw new Error('Preview lifetime must be an integer from 60 to 3600 seconds');
   return Number(value);
 }
 
-export async function preparePreview({ id, output, runtime, lifetimeSeconds }) {
-  const lifetime = previewLifetime(lifetimeSeconds), family = runtimeFamily(runtime);
+function preparationRuntime(name, candidateEnrollment) {
+  let family;
+  try { family = runtimeFamily(name); }
+  catch { return previewRuntimeFamily(name, { candidateEnrollment }); }
   if (family.schema !== 3) throw new Error('Preview preparation requires an archive-capable qualified runtime family');
+  return family;
+}
+export async function preparePreview({ id, output, runtime, lifetimeSeconds, candidateEnrollment = false }) {
+  const lifetime = previewLifetime(lifetimeSeconds), family = preparationRuntime(runtime, candidateEnrollment);
   const { origin, directory, report } = await exportArtifactReview(id, output);
   if (!['pending', 'failed'].includes(report.proposed.status)) throw new Error('Prepare a pending or failed submission; this artifact is no longer proposed');
   const declarations = report.comparison.declarations.after;

@@ -5,8 +5,8 @@ import { previewExecutionSha256 } from '../../src/preview/execution-authority.mj
 import { previewPlanSha256 } from '../../src/preview/plan.mjs';
 
 const id = n => n.toString(16).padStart(64, '0');
-export function stoppedPreviewFixture(input) {
-  const f = input || previewPlanFixture(), allocationId = randomUUID(), { plan } = f;
+export function stoppedPreviewFixture(input, allocationId = randomUUID()) {
+  const f = input || previewPlanFixture(), { plan } = f;
   const labels = { 'fogd.preview.project': plan.project, 'fogd.preview.config': previewPlanSha256(plan), 'fogd.preview.allocation': allocationId };
   const image = { Id: plan.request.image, Os: 'linux', Architecture: 'arm64', Config: { Env: ['PATH=/usr/bin'], Labels: { 'io.fogd.runtime.mode': 'preview-backend-candidate' } } };
   const networks = Object.entries(plan.networks).map(([role, value], index) => ({ Id: id(index+100), Name: value.name, Driver: 'bridge', Scope: 'local', Internal: value.internal,

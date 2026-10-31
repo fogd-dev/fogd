@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join } from 'node:path';
 import { hash, jsonBytes } from '../../src/build-cache/paths.mjs';
 import { inspectPreviewStartup } from '../../src/preview/startup-inspection.mjs';
 import { initializePreviewHost, reservePreviewHost } from '../../src/preview/host-reservations.mjs';
@@ -10,6 +10,7 @@ import { previewPlanSha256 } from '../../src/preview/plan.mjs';
 import { previewInputFixture } from './preview-input-package.mjs';
 import { stoppedPreviewFixture } from './stopped-preview.mjs';
 import { reviewFixture, id } from './artifact-review.mjs';
+import { copyPreviewRuntime, previewProcessCommand } from './preview-docker.mjs';
 
 export async function installedPreviewFixture(t, respond, { runtime } = {}) {
  const source=await reviewFixture(t,respond,['preview']);
@@ -22,10 +23,10 @@ export async function installedPreviewFixture(t, respond, { runtime } = {}) {
  const root=join(input.root,'host');await mkdir(root,{mode:0o700});let observed={...f.observed,containers:[],networks:[],volumes:[]};const calls=[],snapshot=await preparePreviewInputPackage(input.authority,input.bundle),mounted=structuredClone(snapshot.files);
  const run=async args=>{
   calls.push(args);if(args[0]==='info')return JSON.stringify(observed.host);if(args[0]==='image')return JSON.stringify([f.image]);
-  if(['start','stop','wait','exec'].includes(args[0]))return processCommand(observed,args);
+  if(['start','stop','wait','exec'].includes(args[0]))return previewProcessCommand(observed,args);
   if(args[0]==='cp'){
    if(args[1].endsWith(':/app/packages/.'))throw Error('Docker rejects dependency links outside the copied package directory');
-   if(args[1].includes(':/app/packages/'))return runtimeCopy(runtime,args[1].split(':')[1],args[2]);
+   if(args[1].includes(':/app/packages/'))return copyPreviewRuntime(runtime,args[1].split(':')[1],args[2]);
    const [container,path]=args[1].split(':'),role=Object.keys(f.created.containers).find(r=>f.created.containers[r]===container),group=role+(path.includes('-trust')?'-trust':'-input');
    for(const[name,bytes]of Object.entries(mounted[group]))await writeFile(join(args[2],name),bytes,{mode:0o600});return '';
   }
@@ -45,24 +46,4 @@ export async function installedPreviewFixture(t, respond, { runtime } = {}) {
  calls.length=0;source.calls.length=0;
  const args={root,plan:f.plan,allocationId:f.allocationId,reservation:held.reservation,envelope:f.envelope,expectedImage:f.plan.request.image,directory:source.output,env:source.env,run,...input.options,...(runtime?{runtime:runtime.id,candidateEnrollment:true}:{})};
  return {source,input,f,root,host,directory,mounted,calls,args,run,inspect:()=>inspectPreviewStartup(args)};
-}
-
-
-async function runtimeCopy(runtime, source, target) {
- const prefix=source.replace('/app/','').replace(/\/\.$/,'/');
- for(const path of Object.keys(runtime.sourceFiles).filter(path=>path===prefix||path.startsWith(prefix))){
-  const name=path===prefix?target:join(target,path.slice(prefix.length));await mkdir(dirname(name),{recursive:true,mode:0o700});await writeFile(name,await readFile(path),{mode:0o600});
- }
- return '';
-}
-function processCommand(observed, args) {
- if(args[0]==='exec')return JSON.stringify({ready:true});
- if(args[0]==='wait'){
-  const c=observed.containers.find(c=>c.Id===args[1]);Object.assign(c.State,{Status:'exited',Running:false,Pid:0,ExitCode:0});return '0';
- }
- for(const id of args.slice(args[0]==='stop'?3:1)){
-  const c=observed.containers.find(c=>c.Id===id);
-  Object.assign(c.State,args[0]==='start'?{Status:'running',Running:true,Pid:100,StartedAt:new Date().toISOString()}:{Status:'exited',Running:false,Pid:0,ExitCode:0});
- }
- return '';
 }
